@@ -19,6 +19,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class AvocadoBinary(BinarySensorEntity):
     """Expose central safety state."""
 
+    _attr_should_poll = True
+
     def __init__(self, entry: ConfigEntry, key: str, name: str, state_key: str) -> None:
         self._entry = entry
         self._state_key = state_key
