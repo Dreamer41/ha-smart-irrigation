@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime, timedelta
+
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_time_change
+from homeassistant.helpers.storage import Store
 
 from .const import DOMAIN
 from .coordinator import calculate_deep_soak, calculate_routine
@@ -12,14 +14,14 @@ from .rain_manager import RainManager
 
 
 class IrrigationController:
-    """Central scheduler, mutex and safety controller."""
+    """Central scheduler, mutex and hard safety controller."""
 
     def __init__(self, hass: HomeAssistant, entry_id: str, rain: RainManager) -> None:
         self.hass = hass
         self.entry_id = entry_id
         self.rain = rain
+        self.store = Store(hass, 1, f"avocado_irrigation_controller_{entry_id}")
         self._unsubs = []
-        self._task: asyncio.Task | None = None
         self.last_irrigation: datetime | None = None
         self.last_deep_soak: datetime | None = None
         self.fault_lockout = False
@@ -31,19 +33,34 @@ class IrrigationController:
 
     @property
     def config(self) -> dict:
-        return self.data["config"]
+        return {**self.data["config"], **self.hass.config_entries.async_get_entry(self.entry_id).options}
 
     async def async_start(self) -> None:
+        saved = await self.store.async_load() or {}
+        self.last_irrigation = self._parse(saved.get("last_irrigation"))
+        self.last_deep_soak = self._parse(saved.get("last_deep_soak"))
+        self.fault_lockout = bool(saved.get("fault_lockout", False))
+        self.data["fault_lockout"] = self.fault_lockout
         self._unsubs.append(async_track_time_change(self.hass, self._scheduled, hour=6, minute=0, second=0))
         self._unsubs.append(async_track_time_change(self.hass, self._deep_soak_schedule, hour=5, minute=30, second=0))
-        self._unsubs.append(self.hass.bus.async_listen("state_changed", self._watchdog))
+        self._unsubs.append(async_track_time_change(self.hass, self._watchdog_tick, second=0))
 
     async def async_stop(self) -> None:
         for unsub in self._unsubs:
             unsub()
         self._unsubs.clear()
-        if self._task:
-            self._task.cancel()
+        await self._save()
+
+    @staticmethod
+    def _parse(value: str | None) -> datetime | None:
+        return datetime.fromisoformat(value) if value else None
+
+    async def _save(self) -> None:
+        await self.store.async_save({
+            "last_irrigation": self.last_irrigation.isoformat() if self.last_irrigation else None,
+            "last_deep_soak": self.last_deep_soak.isoformat() if self.last_deep_soak else None,
+            "fault_lockout": self.fault_lockout,
+        })
 
     async def _scheduled(self, now: datetime) -> None:
         await self.run_routine()
@@ -51,14 +68,11 @@ class IrrigationController:
     async def _deep_soak_schedule(self, now: datetime) -> None:
         await self.run_deep_soak()
 
-    def _set_state(self, **kwargs) -> None:
-        self.data.update(kwargs)
-        self.hass.helpers.entity_platform.async_get_platforms(self.hass, DOMAIN) if False else None
-
     def _temperature(self) -> float:
         entity = self.config.get("outdoor_temperature")
         try:
-            return float(self.hass.states.get(entity).state) if entity else 30.0
+            state = self.hass.states.get(entity) if entity else None
+            return float(state.state) if state else 30.0
         except (AttributeError, ValueError, TypeError):
             return 30.0
 
@@ -91,7 +105,7 @@ class IrrigationController:
         )
         if calc.capped or calc.runtime_minutes <= 0:
             return False
-        return await self._run_valve(calc.runtime_minutes, "routine")
+        return await self._run_valve(calc.runtime_minutes)
 
     async def run_deep_soak(self, force: bool = False) -> bool:
         if self._blocked():
@@ -115,12 +129,14 @@ class IrrigationController:
         try:
             for index in range(3):
                 await self._valve_on()
+                await self._pump_audit()
                 await asyncio.sleep(calc.pulse_runtime_minutes * 60)
                 await self._valve_off()
                 if index < 2:
                     await asyncio.sleep(20 * 60)
             self.last_deep_soak = datetime.now().astimezone()
             self.data["last_deep_soak"] = self.last_deep_soak
+            await self._save()
             return True
         finally:
             await self._valve_off()
@@ -131,44 +147,69 @@ class IrrigationController:
         last = self.rain.last_significant_rain
         return last is None or (datetime.now().astimezone() - last).total_seconds() >= days * 86400
 
-    async def _run_valve(self, minutes: int, kind: str) -> bool:
+    async def _run_valve(self, minutes: int) -> bool:
         self.irrigation_in_progress = True
         self.data["irrigation_in_progress"] = True
         try:
             await self._valve_on()
+            await self._pump_audit()
+            # Preserve the reference YAML's runtime behavior: runtime - 1 minute.
             await asyncio.sleep(max(minutes - 1, 0) * 60)
             await self._valve_off()
             self.last_irrigation = datetime.now().astimezone()
             self.data["last_irrigation"] = self.last_irrigation
+            await self._save()
             return True
         finally:
             await self._valve_off()
             self.irrigation_in_progress = False
             self.data["irrigation_in_progress"] = False
 
+    async def _pump_audit(self) -> None:
+        await asyncio.sleep(30)
+        entity = self.config.get("pump_power")
+        if not entity:
+            return
+        try:
+            power = float(self.hass.states.get(entity).state)
+        except (AttributeError, ValueError, TypeError):
+            return
+        if power < float(self.config.get("pump_min_watts", 100.0)):
+            self.hass.async_create_task(self.hass.services.async_call(
+                "persistent_notification", "create",
+                {"title": "Avocado Irrigation: Low Pump Power Audit", "message": f"Pump reads {power:.0f} W while irrigation is active. Continuing because this is an audit warning, not a hard failure."},
+            ))
+
     async def _valve_on(self) -> None:
-        valve = self.config["irrigation_valve"]
-        await self.hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
+        await self.hass.services.async_call("switch", "turn_on", {"entity_id": self.config["irrigation_valve"]}, blocking=True)
 
     async def _valve_off(self) -> None:
-        valve = self.config["irrigation_valve"]
-        await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+        await self.hass.services.async_call("switch", "turn_off", {"entity_id": self.config["irrigation_valve"]}, blocking=True)
 
-    async def _watchdog(self, event) -> None:
-        if event.data.get("entity_id") != self.config.get("irrigation_valve"):
-            return
-        new = event.data.get("new_state")
-        if new is None or new.state != "on":
-            return
-        # Independent hard cutoff. A scheduled/manual run is always far below this.
-        started = new.last_changed
-        if (datetime.now().astimezone() - started).total_seconds() >= 150 * 60:
-            await self._valve_off()
-            self.fault_lockout = True
-            self.data["fault_lockout"] = True
-            self.irrigation_in_progress = False
-            self.data["irrigation_in_progress"] = False
+    async def _watchdog_tick(self, now: datetime) -> None:
+        valve = self.config["irrigation_valve"]
+        state = self.hass.states.get(valve)
+        if state and state.state == "on":
+            if (now - state.last_changed).total_seconds() >= 150 * 60:
+                await self._trip_fault("Valve remained ON for 150 minutes. Emergency shutdown executed.")
+        if self.irrigation_in_progress and self.data.get("irrigation_started"):
+            started = self.data["irrigation_started"]
+            if (now - started).total_seconds() >= 180 * 60:
+                await self._trip_fault("Irrigation mutex remained active for 180 minutes.")
+
+    async def _trip_fault(self, message: str) -> None:
+        await self._valve_off()
+        self.fault_lockout = True
+        self.data["fault_lockout"] = True
+        self.irrigation_in_progress = False
+        self.data["irrigation_in_progress"] = False
+        await self._save()
+        await self.hass.services.async_call(
+            "persistent_notification", "create",
+            {"title": "CRITICAL: Avocado Irrigation Fault Lockout", "message": f"{message} System is locked until manually reset."},
+        )
 
     async def clear_fault(self) -> None:
         self.fault_lockout = False
         self.data["fault_lockout"] = False
+        await self._save()
