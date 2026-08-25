@@ -41,7 +41,9 @@ class AvocadoIrrigationConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_IRRIGATION_VALVE): selector.EntitySelector(selector.EntitySelectorConfig(domain="switch")),
                 vol.Required(CONF_RAIN_GAUGE): selector.EntitySelector(selector.EntitySelectorConfig(domain=["binary_sensor", "counter"])),
                 vol.Optional(CONF_PUMP_POWER): selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
-                vol.Optional(CONF_OUTDOOR_TEMPERATURE): selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
+                vol.Optional(CONF_OUTDOOR_TEMPERATURE): selector.EntitySelector(
+                    selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+                ),
                 vol.Required("weekly_target_mm", default=DEFAULT_WEEKLY_TARGET_MM): vol.All(vol.Coerce(float), vol.Range(min=1, max=50)),
                 vol.Required("rain_efficiency", default=DEFAULT_RAIN_EFFICIENCY): vol.All(vol.Coerce(float), vol.Range(min=0, max=1)),
                 vol.Required("flow_rate_mm_per_min", default=DEFAULT_FLOW_RATE_MM_PER_MIN): vol.All(vol.Coerce(float), vol.Range(min=0.05, max=2)),
