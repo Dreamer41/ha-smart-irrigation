@@ -5,6 +5,10 @@ NAME = "Avocado Irrigation"
 VERSION = "0.1.0"
 
 CONF_NAME = "name"
+CONF_IRRIGATION_VALVE = "irrigation_valve"
+CONF_RAIN_GAUGE = "rain_gauge"
+CONF_PUMP_POWER = "pump_power"
+CONF_OUTDOOR_TEMPERATURE = "outdoor_temperature"
 
 DEFAULT_NAME = "Avocado Irrigation"
 
