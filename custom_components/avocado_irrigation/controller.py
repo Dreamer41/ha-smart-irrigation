@@ -103,7 +103,9 @@ class IrrigationController:
         interval = 3 if self._temperature() >= float(self.config.get("hot_temperature_c", 31.5)) else 4
         if not force and (now - self._last_run()).total_seconds() < interval * 86400:
             return False
-        if not force and not self._drydown_ok(float(self.config.get("routine_drydown_days", 4.0))):
+        # Manual run may bypass the schedule interval, but never bypasses the
+        # reference rain/dry-down safety check.
+        if not self._drydown_ok(float(self.config.get("routine_drydown_days", 4.0))):
             return False
         calc = calculate_routine(
             average_peak_temperature_c=self._temperature(),
@@ -124,9 +126,11 @@ class IrrigationController:
         now = datetime.now().astimezone()
         if not force and (now - self._last_deep()).total_seconds() < 14 * 86400:
             return False
-        if not force and not self._drydown_ok(float(self.config.get("deep_soak_drydown_days", 8.0))):
+        # Manual run may bypass the 14-day schedule gate, but retains both
+        # significant-rain dry-down and 14-day rain-ceiling protection.
+        if not self._drydown_ok(float(self.config.get("deep_soak_drydown_days", 8.0))):
             return False
-        if not force and self.rain.rainfall(336, now) >= float(self.config.get("deep_soak_rain_threshold_mm", 40.0)):
+        if self.rain.rainfall(336, now) >= float(self.config.get("deep_soak_rain_threshold_mm", 40.0)):
             return False
         calc = calculate_deep_soak(
             target_mm=float(self.config.get("deep_soak_target_mm", 25.0)),
