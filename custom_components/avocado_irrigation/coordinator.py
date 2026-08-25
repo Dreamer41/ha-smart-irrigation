@@ -1,10 +1,4 @@
-"""Core calculations for Avocado Irrigation.
-
-This module intentionally contains pure calculation helpers first.  The existing
-Home Assistant YAML is the reference implementation; keeping the math isolated
-makes it possible to compare the integration against the working automation
-before valve control is introduced.
-"""
+"""Core calculations for Avocado Irrigation."""
 
 from __future__ import annotations
 
@@ -20,12 +14,15 @@ from .const import (
     DEFAULT_HOT_TEMPERATURE_C,
     ROUTINE_INTERVAL_COOL_DAYS,
     ROUTINE_INTERVAL_HOT_DAYS,
+    SIGNIFICANT_RAIN_24H_MM,
+    SIGNIFICANT_RAIN_4D_MM,
+    SIGNIFICANT_RAIN_7D_MM,
 )
 
 
 @dataclass(frozen=True, slots=True)
 class RoutineCalculation:
-    """Result of the routine irrigation calculation."""
+    """Result of routine irrigation calculation."""
 
     target_interval_days: int
     interval_target_mm: float
@@ -37,7 +34,7 @@ class RoutineCalculation:
 
 @dataclass(frozen=True, slots=True)
 class DeepSoakCalculation:
-    """Result of the deep-soak runtime calculation."""
+    """Result of deep-soak calculation."""
 
     target_mm: float
     flow_rate_mm_per_min: float
@@ -50,7 +47,7 @@ def routine_interval_days(
     average_peak_temperature_c: float,
     hot_temperature_c: float = DEFAULT_HOT_TEMPERATURE_C,
 ) -> int:
-    """Return the 3-day hot or 4-day normal routine interval."""
+    """Return 3 days when hot, otherwise 4 days."""
     return (
         ROUTINE_INTERVAL_HOT_DAYS
         if average_peak_temperature_c >= hot_temperature_c
@@ -68,35 +65,19 @@ def calculate_routine(
     max_runtime_minutes: int = DEFAULT_MAX_RUNTIME_MIN,
     hot_temperature_c: float = DEFAULT_HOT_TEMPERATURE_C,
 ) -> RoutineCalculation:
-    """Calculate routine irrigation using the reference YAML formula.
-
-    Weekly target is scaled to the actual 3- or 4-day application interval:
-        interval target = (weekly target / 7) * interval days
-
-    Effective rain is the matching four-day rainfall multiplied by the configured
-    absorption efficiency.  The result is never allowed to go below zero.
-    """
-    interval_days = routine_interval_days(
-        average_peak_temperature_c, hot_temperature_c
-    )
+    """Calculate routine irrigation using the reference YAML formula."""
+    interval_days = routine_interval_days(average_peak_temperature_c, hot_temperature_c)
     interval_target = (weekly_target_mm / 7.0) * interval_days
     effective_rain = max(rain_past_4d_mm, 0.0) * max(rain_efficiency, 0.0)
     needed = max(interval_target - effective_rain, 0.0)
-
-    if flow_rate_mm_per_min <= 0:
-        runtime = 0
-    else:
-        runtime = int(round(needed / flow_rate_mm_per_min))
-
-    capped = runtime > max_runtime_minutes
-
+    runtime = 0 if flow_rate_mm_per_min <= 0 else int(round(needed / flow_rate_mm_per_min))
     return RoutineCalculation(
         target_interval_days=interval_days,
         interval_target_mm=interval_target,
         effective_rain_mm=effective_rain,
         needed_mm=needed,
         runtime_minutes=runtime,
-        capped=capped,
+        capped=runtime > max_runtime_minutes,
     )
 
 
@@ -107,13 +88,12 @@ def calculate_deep_soak(
     max_runtime_minutes: int = DEFAULT_DEEP_SOAK_MAX_RUNTIME_MIN,
 ) -> DeepSoakCalculation:
     """Calculate total and three-pulse deep-soak runtime."""
-    if flow_rate_mm_per_min <= 0:
-        total_runtime = 0
-    else:
-        total_runtime = int(round(max(target_mm, 0.0) / flow_rate_mm_per_min))
-
+    total_runtime = (
+        0
+        if flow_rate_mm_per_min <= 0
+        else int(round(max(target_mm, 0.0) / flow_rate_mm_per_min))
+    )
     pulse_runtime = max(int(round(total_runtime / 3)), 5)
-
     return DeepSoakCalculation(
         target_mm=max(target_mm, 0.0),
         flow_rate_mm_per_min=max(flow_rate_mm_per_min, 0.0),
@@ -131,7 +111,7 @@ def significant_rain(
 ) -> bool:
     """Return whether any reference significant-rain threshold is met."""
     return (
-        rain_24h_mm >= 35.0
-        or rain_4d_mm >= 50.0
-        or rain_7d_mm >= 100.0
+        rain_24h_mm >= SIGNIFICANT_RAIN_24H_MM
+        or rain_4d_mm >= SIGNIFICANT_RAIN_4D_MM
+        or rain_7d_mm >= SIGNIFICANT_RAIN_7D_MM
     )
