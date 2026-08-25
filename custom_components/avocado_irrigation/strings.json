@@ -3,9 +3,13 @@
     "step": {
       "user": {
         "title": "Avocado Irrigation",
-        "description": "Initial setup for the Avocado Irrigation integration.",
+        "description": "Select the Home Assistant entities used by the irrigation system.",
         "data": {
-          "name": "Name"
+          "name": "Name",
+          "irrigation_valve": "Irrigation valve",
+          "rain_gauge": "Rain gauge / tip source",
+          "pump_power": "Pump power sensor",
+          "outdoor_temperature": "Outdoor temperature sensor"
         }
       }
     }
