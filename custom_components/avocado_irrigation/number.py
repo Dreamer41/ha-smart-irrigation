@@ -47,7 +47,9 @@ class AvocadoNumber(NumberEntity):
         return float(self._entry.options.get(self._key, self._entry.data.get(self._key, self._default)))
 
     async def async_set_native_value(self, value: float) -> None:
-        self.hass.config_entries.async_update_entry(
-            self._entry, options={**self._entry.options, self._key: value}
-        )
+        self.hass.config_entries.async_update_entry(self._entry, options={**self._entry.options, self._key: value})
+        if self._key == "rain_mm_per_tip":
+            data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id)
+            if data and data.get("rain"):
+                data["rain"].mm_per_tip = value
         self.async_write_ha_state()
