@@ -33,7 +33,8 @@ class IrrigationController:
 
     @property
     def config(self) -> dict:
-        return {**self.data["config"], **self.hass.config_entries.async_get_entry(self.entry_id).options}
+        entry = self.hass.config_entries.async_get_entry(self.entry_id)
+        return {**self.data["config"], **(entry.options if entry else {})}
 
     async def async_start(self) -> None:
         saved = await self.store.async_load() or {}
@@ -85,6 +86,16 @@ class IrrigationController:
     def _blocked(self) -> bool:
         return self.fault_lockout or self.irrigation_in_progress
 
+    def _start_mutex(self) -> None:
+        self.irrigation_in_progress = True
+        self.data["irrigation_in_progress"] = True
+        self.data["irrigation_started"] = datetime.now().astimezone()
+
+    def _stop_mutex(self) -> None:
+        self.irrigation_in_progress = False
+        self.data["irrigation_in_progress"] = False
+        self.data.pop("irrigation_started", None)
+
     async def run_routine(self, force: bool = False) -> bool:
         if self._blocked():
             return False
@@ -124,8 +135,7 @@ class IrrigationController:
         )
         if calc.capped or calc.total_runtime_minutes <= 0:
             return False
-        self.irrigation_in_progress = True
-        self.data["irrigation_in_progress"] = True
+        self._start_mutex()
         try:
             for index in range(3):
                 await self._valve_on()
@@ -140,16 +150,14 @@ class IrrigationController:
             return True
         finally:
             await self._valve_off()
-            self.irrigation_in_progress = False
-            self.data["irrigation_in_progress"] = False
+            self._stop_mutex()
 
     def _drydown_ok(self, days: float) -> bool:
         last = self.rain.last_significant_rain
         return last is None or (datetime.now().astimezone() - last).total_seconds() >= days * 86400
 
     async def _run_valve(self, minutes: int) -> bool:
-        self.irrigation_in_progress = True
-        self.data["irrigation_in_progress"] = True
+        self._start_mutex()
         try:
             await self._valve_on()
             await self._pump_audit()
@@ -162,8 +170,7 @@ class IrrigationController:
             return True
         finally:
             await self._valve_off()
-            self.irrigation_in_progress = False
-            self.data["irrigation_in_progress"] = False
+            self._stop_mutex()
 
     async def _pump_audit(self) -> None:
         await asyncio.sleep(30)
@@ -171,14 +178,15 @@ class IrrigationController:
         if not entity:
             return
         try:
-            power = float(self.hass.states.get(entity).state)
+            state = self.hass.states.get(entity)
+            power = float(state.state) if state else 0.0
         except (AttributeError, ValueError, TypeError):
             return
         if power < float(self.config.get("pump_min_watts", 100.0)):
-            self.hass.async_create_task(self.hass.services.async_call(
+            await self.hass.services.async_call(
                 "persistent_notification", "create",
                 {"title": "Avocado Irrigation: Low Pump Power Audit", "message": f"Pump reads {power:.0f} W while irrigation is active. Continuing because this is an audit warning, not a hard failure."},
-            ))
+            )
 
     async def _valve_on(self) -> None:
         await self.hass.services.async_call("switch", "turn_on", {"entity_id": self.config["irrigation_valve"]}, blocking=True)
@@ -189,20 +197,18 @@ class IrrigationController:
     async def _watchdog_tick(self, now: datetime) -> None:
         valve = self.config["irrigation_valve"]
         state = self.hass.states.get(valve)
-        if state and state.state == "on":
-            if (now - state.last_changed).total_seconds() >= 150 * 60:
-                await self._trip_fault("Valve remained ON for 150 minutes. Emergency shutdown executed.")
-        if self.irrigation_in_progress and self.data.get("irrigation_started"):
-            started = self.data["irrigation_started"]
-            if (now - started).total_seconds() >= 180 * 60:
-                await self._trip_fault("Irrigation mutex remained active for 180 minutes.")
+        if state and state.state == "on" and (now - state.last_changed).total_seconds() >= 150 * 60:
+            await self._trip_fault("Valve remained ON for 150 minutes. Emergency shutdown executed.")
+            return
+        started = self.data.get("irrigation_started")
+        if self.irrigation_in_progress and started and (now - started).total_seconds() >= 180 * 60:
+            await self._trip_fault("Irrigation mutex remained active for 180 minutes.")
 
     async def _trip_fault(self, message: str) -> None:
         await self._valve_off()
         self.fault_lockout = True
         self.data["fault_lockout"] = True
-        self.irrigation_in_progress = False
-        self.data["irrigation_in_progress"] = False
+        self._stop_mutex()
         await self._save()
         await self.hass.services.async_call(
             "persistent_notification", "create",
