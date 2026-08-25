@@ -1,0 +1,9 @@
+run_routine:
+  name: Run routine irrigation
+  description: Run the calculated routine irrigation cycle.
+run_deep_soak:
+  name: Run deep soak
+  description: Run the calculated three-pulse deep soak cycle.
+clear_fault:
+  name: Clear fault lockout
+  description: Clear the manual irrigation safety lockout after inspection.
