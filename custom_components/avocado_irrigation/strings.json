@@ -3,13 +3,25 @@
     "step": {
       "user": {
         "title": "Avocado Irrigation",
-        "description": "Select the Home Assistant entities used by the irrigation system.",
+        "description": "Select the existing Home Assistant entities used by the irrigation system. The temperature source should be your 3-day average peak temperature sensor.",
         "data": {
           "name": "Name",
           "irrigation_valve": "Irrigation valve",
-          "rain_gauge": "Rain gauge / tip source",
+          "rain_gauge": "Rain gauge tip sensor",
           "pump_power": "Pump power sensor",
-          "outdoor_temperature": "Outdoor temperature sensor"
+          "outdoor_temperature": "3-day average peak temperature sensor",
+          "weekly_target_mm": "Routine weekly target (mm)",
+          "rain_efficiency": "Rain absorption efficiency",
+          "flow_rate_mm_per_min": "Emitter flow rate (mm/min)",
+          "deep_soak_target_mm": "Deep soak target (mm)",
+          "pump_min_watts": "Pump low-power warning (W)",
+          "max_runtime_minutes": "Routine maximum runtime (min)",
+          "deep_soak_max_runtime_minutes": "Deep soak maximum runtime (min)",
+          "routine_drydown_days": "Routine dry-down (days)",
+          "deep_soak_drydown_days": "Deep soak dry-down (days)",
+          "deep_soak_rain_threshold_mm": "Deep soak 14-day rain ceiling (mm)",
+          "hot_temperature_c": "Hot-temperature threshold (°C)",
+          "rain_mm_per_tip": "Rain gauge mm per tip"
         }
       }
     }
