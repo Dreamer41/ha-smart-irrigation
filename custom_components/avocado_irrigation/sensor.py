@@ -1,5 +1,4 @@
-"""Diagnostic sensors for Avocado Irrigation."""
-
+"""Rainfall and irrigation diagnostic sensors."""
 from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity
@@ -11,26 +10,27 @@ from .const import DOMAIN
 from .coordinator import calculate_deep_soak, calculate_routine
 
 
-async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback,
-) -> None:
-    """Set up calculation/diagnostic sensors."""
-    async_add_entities(
-        [
-            AvocadoCalculationSensor(entry, "interval_target", "Interval Target", "mm"),
-            AvocadoCalculationSensor(entry, "effective_rain", "Effective Rain", "mm"),
-            AvocadoCalculationSensor(entry, "irrigation_deficit", "Irrigation Deficit", "mm"),
-            AvocadoCalculationSensor(entry, "routine_runtime", "Calculated Routine Runtime", "min"),
-            AvocadoCalculationSensor(entry, "deep_soak_runtime", "Calculated Deep Soak Runtime", "min"),
-            AvocadoCalculationSensor(entry, "deep_soak_pulse", "Deep Soak Pulse Runtime", "min"),
-        ]
-    )
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    entities = []
+    for key, name, unit in (
+        ("rain_lifetime", "Rain Lifetime", "mm"),
+        ("rain_24h", "Rain Past 24h", "mm"),
+        ("rain_4d", "Rain Past 4d", "mm"),
+        ("rain_7d", "Rain Past 7d", "mm"),
+        ("rain_14d", "Rain Past 14d", "mm"),
+        ("interval_target", "Interval Target", "mm"),
+        ("effective_rain", "Effective Rain", "mm"),
+        ("irrigation_deficit", "Irrigation Deficit", "mm"),
+        ("routine_runtime", "Calculated Routine Runtime", "min"),
+        ("deep_soak_runtime", "Calculated Deep Soak Runtime", "min"),
+        ("deep_soak_pulse", "Deep Soak Pulse Runtime", "min"),
+    ):
+        entities.append(AvocadoSensor(entry, key, name, unit))
+    async_add_entities(entities)
 
 
-class AvocadoCalculationSensor(SensorEntity):
-    """Expose calculation results for tuning and diagnostics."""
+class AvocadoSensor(SensorEntity):
+    """Expose live rainfall and reference calculation diagnostics."""
 
     _attr_should_poll = True
 
@@ -40,40 +40,37 @@ class AvocadoCalculationSensor(SensorEntity):
         self._attr_name = f"Avocado {name}"
         self._attr_unique_id = f"{entry.entry_id}_{key}"
         self._attr_native_unit_of_measurement = unit
+        self._attr_state_class = "measurement"
+        if key == "rain_lifetime":
+            self._attr_state_class = "total_increasing"
+            self._attr_device_class = "precipitation"
 
     @property
     def native_value(self):
-        """Calculate current value from configured settings.
+        data = self.hass.data[DOMAIN][self._entry.entry_id]
+        rain = data["rain"]
+        if self._key == "rain_lifetime":
+            return rain.lifetime_mm
+        if self._key.startswith("rain_"):
+            hours = {"rain_24h": 24, "rain_4d": 96, "rain_7d": 168, "rain_14d": 336}[self._key]
+            return rain.rainfall(hours)
 
-        Rain/temperature source values are deliberately read live from HA. If the
-        source is unavailable, the calculation falls back to zero/30 C rather than
-        producing an invalid state.
-        """
-        config = self._entry.data
-        rain_entity = config.get("rain_gauge")
-        temp_entity = config.get("outdoor_temperature")
-        rain_4d = 0.0
-        temperature = 30.0
-        if rain_entity:
-            rain_4d = _state_float(self.hass, rain_entity)
-        if temp_entity:
-            temperature = _state_float(self.hass, temp_entity, 30.0)
-
+        config = data["config"]
+        temperature = _state_float(self.hass, config.get("outdoor_temperature"), 30.0)
         routine = calculate_routine(
             average_peak_temperature_c=temperature,
-            rain_past_4d_mm=rain_4d,
-            weekly_target_mm=config.get("weekly_target_mm", 12.0),
-            rain_efficiency=config.get("rain_efficiency", 0.75),
-            flow_rate_mm_per_min=config.get("flow_rate_mm_per_min", 0.30),
-            max_runtime_minutes=config.get("max_runtime_minutes", 60),
-            hot_temperature_c=config.get("hot_temperature_c", 31.5),
+            rain_past_4d_mm=rain.rainfall(96),
+            weekly_target_mm=float(config.get("weekly_target_mm", 12.0)),
+            rain_efficiency=float(config.get("rain_efficiency", 0.75)),
+            flow_rate_mm_per_min=float(config.get("flow_rate_mm_per_min", 0.30)),
+            max_runtime_minutes=int(config.get("max_runtime_minutes", 60)),
+            hot_temperature_c=float(config.get("hot_temperature_c", 31.5)),
         )
         deep = calculate_deep_soak(
-            target_mm=config.get("deep_soak_target_mm", 25.0),
-            flow_rate_mm_per_min=config.get("flow_rate_mm_per_min", 0.30),
-            max_runtime_minutes=config.get("deep_soak_max_runtime_minutes", 120),
+            target_mm=float(config.get("deep_soak_target_mm", 25.0)),
+            flow_rate_mm_per_min=float(config.get("flow_rate_mm_per_min", 0.30)),
+            max_runtime_minutes=int(config.get("deep_soak_max_runtime_minutes", 120)),
         )
-
         return {
             "interval_target": routine.interval_target_mm,
             "effective_rain": routine.effective_rain_mm,
@@ -84,12 +81,11 @@ class AvocadoCalculationSensor(SensorEntity):
         }[self._key]
 
 
-def _state_float(hass: HomeAssistant, entity_id: str, default: float = 0.0) -> float:
-    """Return an entity state as float."""
+def _state_float(hass: HomeAssistant, entity_id: str | None, default: float) -> float:
+    if not entity_id:
+        return default
     try:
-        value = hass.states.get(entity_id)
-        if value is None:
-            return default
-        return float(value.state)
+        state = hass.states.get(entity_id)
+        return float(state.state) if state else default
     except (TypeError, ValueError):
         return default
