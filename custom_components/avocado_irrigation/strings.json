@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Avocado Irrigation",
+        "description": "Initial setup for the Avocado Irrigation integration.",
+        "data": {
+          "name": "Name"
+        }
+      }
+    }
+  }
+}
