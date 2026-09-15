@@ -11,3 +11,21 @@ services:
     restart: unless-stopped
     ports:
       - "8123:8123"
+
+  code-server:
+    # Browser-based VS Code, same idea as the "Studio Code Server" add-on
+    # on your real HA -- pointed straight at this sandbox's config folder.
+    # This sandbox uses plain HA Container (not Home Assistant OS), so it
+    # has no Supervisor and can't run real add-ons; this sidecar container
+    # gives the same editing experience without one.
+    container_name: avocado-irrigation-sandbox-code
+    image: codercom/code-server:latest
+    user: "1000:1000"
+    environment:
+      - PASSWORD=avocado
+    volumes:
+      - ./config:/home/coder/config
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    command: --bind-addr 0.0.0.0:8080 /home/coder/config
