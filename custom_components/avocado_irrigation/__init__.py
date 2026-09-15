@@ -1,72 +1,64 @@
-"""Avocado Irrigation Home Assistant integration."""
+"""Avocado Irrigation — native port of the confirmed-final HA automation."""
 from __future__ import annotations
 
+import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall
 
-from .const import DOMAIN
-from .controller import IrrigationController
-from .rain_manager import RainManager
+from .const import DOMAIN, PLATFORMS
+from .controller import AvocadoIrrigationController
 
-PLATFORMS = ["sensor", "number", "binary_sensor", "button"]
+SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
+SERVICE_RUN_ROUTINE = "run_routine_irrigation"
+SERVICE_RESET_LOCK = "reset_lock"
+SERVICE_TEST_PULSE = "test_pulse"
 
-
-async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Set up the integration."""
-    hass.data.setdefault(DOMAIN, {})
-
-    async def run_routine(call: ServiceCall) -> None:
-        entry_id = call.data.get("entry_id") or next(iter(hass.data[DOMAIN]), None)
-        if entry_id:
-            await hass.data[DOMAIN][entry_id]["controller"].run_routine(force=True)
-
-    async def run_deep_soak(call: ServiceCall) -> None:
-        entry_id = call.data.get("entry_id") or next(iter(hass.data[DOMAIN]), None)
-        if entry_id:
-            await hass.data[DOMAIN][entry_id]["controller"].run_deep_soak(force=True)
-
-    async def clear_fault(call: ServiceCall) -> None:
-        entry_id = call.data.get("entry_id") or next(iter(hass.data[DOMAIN]), None)
-        if entry_id:
-            await hass.data[DOMAIN][entry_id]["controller"].clear_fault()
-
-    hass.services.async_register(DOMAIN, "run_routine", run_routine)
-    hass.services.async_register(DOMAIN, "run_deep_soak", run_deep_soak)
-    hass.services.async_register(DOMAIN, "clear_fault", clear_fault)
-    return True
+TEST_PULSE_SCHEMA = vol.Schema({vol.Optional("seconds", default=10): vol.All(int, vol.Range(min=1, max=120))})
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up a configured irrigation system."""
-    config = dict(entry.data)
-    config.update(entry.options)
-    data = {
-        "config": config,
-        "rain_tips": 0,
-        "last_significant_rain": None,
-        "last_irrigation": None,
-        "last_deep_soak": None,
-        "fault_lockout": False,
-        "irrigation_in_progress": False,
-    }
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = data
-    rain = RainManager(hass, entry.entry_id, config["rain_gauge"], float(config.get("rain_mm_per_tip", 0.3)))
-    controller = IrrigationController(hass, entry.entry_id, rain)
-    data["rain"] = rain
-    data["controller"] = controller
-    await rain.async_start()
-    await controller.async_start()
+    hass.data.setdefault(DOMAIN, {})
+    controller = AvocadoIrrigationController(hass, entry)
+    hass.data[DOMAIN][entry.entry_id] = controller
+    await controller.async_setup()
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    async def _handle_run_deep_soak(call: ServiceCall) -> None:
+        await controller.run_deep_soak()
+
+    async def _handle_run_routine(call: ServiceCall) -> None:
+        await controller.run_routine_irrigation()
+
+    async def _handle_reset_lock(call: ServiceCall) -> None:
+        await controller.reset_lock()
+
+    async def _handle_test_pulse(call: ServiceCall) -> None:
+        # Deliberately bypasses every schedule/dry-down/rain gate — this
+        # exists ONLY so you can bench-test the valve/pump wiring and the
+        # low-pump-power audit path before trusting the 05:00/05:30 schedule
+        # unattended. It still respects the abort watchdogs (power loss etc).
+        await controller.test_pulse(call.data["seconds"])
+
+    hass.services.async_register(DOMAIN, SERVICE_RUN_DEEP_SOAK, _handle_run_deep_soak)
+    hass.services.async_register(DOMAIN, SERVICE_RUN_ROUTINE, _handle_run_routine)
+    hass.services.async_register(DOMAIN, SERVICE_RESET_LOCK, _handle_reset_lock)
+    hass.services.async_register(DOMAIN, SERVICE_TEST_PULSE, _handle_test_pulse, schema=TEST_PULSE_SCHEMA)
+
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
 
 
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    await hass.config_entries.async_reload(entry.entry_id)
+
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload an irrigation system."""
-    data = hass.data[DOMAIN].get(entry.entry_id)
-    if data:
-        await data["controller"].async_stop()
-        await data["rain"].async_stop()
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded:
-        hass.data[DOMAIN].pop(entry.entry_id, None)
+        controller: AvocadoIrrigationController = hass.data[DOMAIN].pop(entry.entry_id)
+        await controller.async_unload()
+        if not hass.data[DOMAIN]:
+            for service in (SERVICE_RUN_DEEP_SOAK, SERVICE_RUN_ROUTINE, SERVICE_RESET_LOCK, SERVICE_TEST_PULSE):
+                hass.services.async_remove(DOMAIN, service)
     return unloaded

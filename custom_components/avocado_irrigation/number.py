@@ -1,55 +1,57 @@
-"""Tunable number entities for Avocado Irrigation."""
+"""The 18 tunable sliders, 1:1 with the input_number helpers in the live
+configuration.yaml (same name/min/max/step/unit).
+
+Uses RestoreNumber so a value you set on the dashboard survives an HA
+restart. Deliberately does NOT set a value at construction time beyond the
+restored/default one — that `initial:` bug (helpers snapping back to
+calibrated defaults on every reboot) is exactly what you had to fix in the
+YAML helpers in Sept 2026, so this is built to not repeat it.
+"""
 from __future__ import annotations
 
-from homeassistant.components.number import NumberEntity
+from homeassistant.components.number import RestoreNumber
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
-
-SETTINGS = (
-    ("weekly_target_mm", "Weekly Target", 1.0, 50.0, 0.5, "mm", 12.0),
-    ("rain_efficiency", "Rain Efficiency", 0.0, 1.0, 0.05, None, 0.75),
-    ("flow_rate_mm_per_min", "Flow Rate", 0.05, 2.0, 0.01, "mm/min", 0.30),
-    ("deep_soak_target_mm", "Deep Soak Target", 15.0, 40.0, 1.0, "mm", 25.0),
-    ("pump_min_watts", "Pump Warning Threshold", 20.0, 500.0, 10.0, "W", 100.0),
-    ("max_runtime_minutes", "Routine Max Runtime", 10.0, 120.0, 5.0, "min", 60.0),
-    ("deep_soak_max_runtime_minutes", "Deep Soak Max Runtime", 30.0, 180.0, 10.0, "min", 120.0),
-    ("routine_drydown_days", "Routine Dry-Down", 1.0, 10.0, 0.5, "d", 4.0),
-    ("deep_soak_drydown_days", "Deep Soak Dry-Down", 4.0, 14.0, 0.5, "d", 8.0),
-    ("deep_soak_rain_threshold_mm", "Deep Soak Rain Ceiling", 0.0, 100.0, 5.0, "mm", 40.0),
-    ("hot_temperature_c", "Hot Temperature Threshold", 25.0, 40.0, 0.1, "°C", 31.5),
-    ("rain_mm_per_tip", "Rain mm per Tip", 0.05, 1.0, 0.001, "mm", 0.30),
-)
+from .const import DOMAIN, NUMBER_DEFAULTS, NUMBER_DEFS
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    async_add_entities([AvocadoNumber(entry, *setting) for setting in SETTINGS])
+    controller = hass.data[DOMAIN][entry.entry_id]
+    entities = [AvocadoNumber(entry, controller, key) for key in NUMBER_DEFS]
+    async_add_entities(entities)
 
 
-class AvocadoNumber(NumberEntity):
-    """Persistent tuning parameter backed by config-entry options."""
+class AvocadoNumber(RestoreNumber):
+    _attr_has_entity_name = True
 
-    def __init__(self, entry: ConfigEntry, key: str, name: str, minimum: float, maximum: float, step: float, unit: str | None, default: float) -> None:
-        self._entry = entry
+    def __init__(self, entry: ConfigEntry, controller, key: str) -> None:
+        name, min_v, max_v, step, unit = NUMBER_DEFS[key]
         self._key = key
-        self._default = default
-        self._attr_name = f"Avocado {name}"
+        self._controller = controller
         self._attr_unique_id = f"{entry.entry_id}_{key}"
-        self._attr_native_min_value = minimum
-        self._attr_native_max_value = maximum
+        self._attr_name = name
+        self._attr_native_min_value = min_v
+        self._attr_native_max_value = max_v
         self._attr_native_step = step
         self._attr_native_unit_of_measurement = unit
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name="Avocado Irrigation",
+            manufacturer="Juha (ported from live automations.yaml)",
+        )
 
-    @property
-    def native_value(self) -> float:
-        return float(self._entry.options.get(self._key, self._entry.data.get(self._key, self._default)))
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        last = await self.async_get_last_number_data()
+        if last is not None and last.native_value is not None:
+            self._attr_native_value = last.native_value
+        else:
+            self._attr_native_value = NUMBER_DEFAULTS[self._key]
+        self._controller.register_number(self._key, self)
 
     async def async_set_native_value(self, value: float) -> None:
-        self.hass.config_entries.async_update_entry(self._entry, options={**self._entry.options, self._key: value})
-        if self._key == "rain_mm_per_tip":
-            data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id)
-            if data and data.get("rain"):
-                data["rain"].mm_per_tip = value
+        self._attr_native_value = value
         self.async_write_ha_state()

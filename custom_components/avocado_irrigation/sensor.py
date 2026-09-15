@@ -1,91 +1,129 @@
-"""Rainfall and irrigation diagnostic sensors."""
+"""Diagnostic sensors: rain windows, 3-day avg peak temp, next irrigation
+estimate, last water delivered estimate, days since last run. Ports of the
+matching template sensors in configuration.yaml."""
 from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+import homeassistant.util.dt as dt_util
 
+from . import calculations as calc
 from .const import DOMAIN
-from .coordinator import calculate_deep_soak, calculate_routine
+
+RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
-    entities = []
-    for key, name, unit in (
-        ("rain_lifetime", "Rain Lifetime", "mm"),
-        ("rain_24h", "Rain Past 24h", "mm"),
-        ("rain_4d", "Rain Past 4d", "mm"),
-        ("rain_7d", "Rain Past 7d", "mm"),
-        ("rain_14d", "Rain Past 14d", "mm"),
-        ("interval_target", "Interval Target", "mm"),
-        ("effective_rain", "Effective Rain", "mm"),
-        ("irrigation_deficit", "Irrigation Deficit", "mm"),
-        ("routine_runtime", "Calculated Routine Runtime", "min"),
-        ("deep_soak_runtime", "Calculated Deep Soak Runtime", "min"),
-        ("deep_soak_pulse", "Deep Soak Pulse Runtime", "min"),
-    ):
-        entities.append(AvocadoSensor(entry, key, name, unit))
-    async_add_entities(entities)
+    controller = hass.data[DOMAIN][entry.entry_id]
+    entities: list[SensorEntity] = [
+        AvocadoRainWindowSensor(entry, controller, window) for window in RAIN_WINDOW_SENSORS
+    ]
+    entities += [
+        AvocadoAvgPeakTempSensor(entry, controller),
+        AvocadoNextIrrigationSensor(entry, controller),
+        AvocadoLastWaterDeliveredSensor(entry, controller),
+        AvocadoTodayRainSensor(entry, controller),
+    ]
+    async_add_entities(entities, update_before_add=False)
+    for entity in entities:
+        entity.async_schedule_update_ha_state()
 
 
-class AvocadoSensor(SensorEntity):
-    """Expose live rainfall and reference calculation diagnostics."""
-
+class _Base(SensorEntity):
+    _attr_has_entity_name = True
     _attr_should_poll = True
 
-    def __init__(self, entry: ConfigEntry, key: str, name: str, unit: str) -> None:
-        self._entry = entry
-        self._key = key
-        self._attr_name = f"Avocado {name}"
-        self._attr_unique_id = f"{entry.entry_id}_{key}"
-        self._attr_native_unit_of_measurement = unit
-        self._attr_state_class = "measurement"
-        if key == "rain_lifetime":
-            self._attr_state_class = "total_increasing"
-            self._attr_device_class = "precipitation"
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        self._controller = controller
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name="Avocado Irrigation")
+
+
+class AvocadoRainWindowSensor(_Base):
+    _attr_native_unit_of_measurement = "mm"
+    _attr_icon = "mdi:weather-pouring"
+
+    def __init__(self, entry: ConfigEntry, controller, window: str) -> None:
+        super().__init__(entry, controller)
+        self._window = window
+        self._attr_unique_id = f"{entry.entry_id}_rain_past_{window}"
+        self._attr_name = f"Rain Past {window}"
+
+    @property
+    def native_value(self) -> float:
+        return round(self._controller.rain_windows()[self._window], 2)
+
+
+class AvocadoAvgPeakTempSensor(_Base):
+    _attr_native_unit_of_measurement = "°C"
+    _attr_icon = "mdi:thermometer"
+    _attr_device_class = "temperature"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_avg_peak_temp_3d"
+        self._attr_name = "3-Day Average Peak Temperature"
+
+    @property
+    def native_value(self) -> float:
+        return self._controller.avg_peak_temp()
+
+
+class AvocadoNextIrrigationSensor(_Base):
+    _attr_icon = "mdi:calendar-clock"
+    _attr_device_class = "timestamp"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_next_irrigation_estimate"
+        self._attr_name = "Next Irrigation Estimate"
 
     @property
     def native_value(self):
-        data = self.hass.data[DOMAIN][self._entry.entry_id]
-        rain = data["rain"]
-        if self._key == "rain_lifetime":
-            return rain.lifetime_mm
-        if self._key.startswith("rain_"):
-            hours = {"rain_24h": 24, "rain_4d": 96, "rain_7d": 168, "rain_14d": 336}[self._key]
-            return rain.rainfall(hours)
-
-        config = data["config"]
-        temperature = _state_float(self.hass, config.get("outdoor_temperature"), 30.0)
-        routine = calculate_routine(
-            average_peak_temperature_c=temperature,
-            rain_past_4d_mm=rain.rainfall(96),
-            weekly_target_mm=float(config.get("weekly_target_mm", 12.0)),
-            rain_efficiency=float(config.get("rain_efficiency", 0.75)),
-            flow_rate_mm_per_min=float(config.get("flow_rate_mm_per_min", 0.30)),
-            max_runtime_minutes=int(config.get("max_runtime_minutes", 60)),
-            hot_temperature_c=float(config.get("hot_temperature_c", 31.5)),
+        state = self._controller.store.state
+        est = calc.estimate_next_irrigation(
+            last_routine_ts=state.last_routine_ts or 0.0,
+            last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
+            avg_peak_temp=self._controller.avg_peak_temp(),
+            hot_threshold=self._controller.number("hot_temp_threshold"),
+            routine_drydown_days=self._controller.number("routine_drydown_days"),
         )
-        deep = calculate_deep_soak(
-            target_mm=float(config.get("deep_soak_target_mm", 25.0)),
-            flow_rate_mm_per_min=float(config.get("flow_rate_mm_per_min", 0.30)),
-            max_runtime_minutes=int(config.get("deep_soak_max_runtime_minutes", 120)),
+        return dt_util.utc_from_timestamp(est.next_ts)
+
+
+class AvocadoLastWaterDeliveredSensor(_Base):
+    _attr_native_unit_of_measurement = "mm"
+    _attr_icon = "mdi:water-gauge"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_last_water_delivered"
+        self._attr_name = "Last Water Delivered (Estimate)"
+
+    @property
+    def native_value(self) -> float:
+        return calc.estimate_last_water_delivered_mm(
+            avg_peak_temp=self._controller.avg_peak_temp(),
+            hot_threshold=self._controller.number("hot_temp_threshold"),
+            cool_threshold=self._controller.number("cool_temp_threshold"),
+            normal_weekly_mm=self._controller.number("target_weekly_mm"),
+            hot_weekly_mm=self._controller.number("target_weekly_hot_mm"),
+            cool_weekly_mm=self._controller.number("target_weekly_cool_mm"),
         )
-        return {
-            "interval_target": routine.interval_target_mm,
-            "effective_rain": routine.effective_rain_mm,
-            "irrigation_deficit": routine.needed_mm,
-            "routine_runtime": routine.runtime_minutes,
-            "deep_soak_runtime": deep.total_runtime_minutes,
-            "deep_soak_pulse": deep.pulse_runtime_minutes,
-        }[self._key]
 
 
-def _state_float(hass: HomeAssistant, entity_id: str | None, default: float) -> float:
-    if not entity_id:
-        return default
-    try:
-        state = hass.states.get(entity_id)
-        return float(state.state) if state else default
-    except (TypeError, ValueError):
-        return default
+class AvocadoTodayRainSensor(_Base):
+    _attr_native_unit_of_measurement = "mm"
+    _attr_icon = "mdi:weather-rainy"
+    _attr_device_class = "precipitation"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_rain_today"
+        self._attr_name = "Rain Today"
+
+    @property
+    def native_value(self) -> float:
+        return round(self._controller.today_rain_mm(), 2)

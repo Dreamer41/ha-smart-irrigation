@@ -3,9 +3,32 @@
     "step": {
       "user": {
         "title": "Avocado Irrigation",
-        "description": "Initial setup for the Avocado Irrigation integration.",
+        "description": "Point this at your real entities. It never creates new physical entities of its own.",
         "data": {
-          "name": "Name"
+          "valve_entity": "Valve switch",
+          "pump_power_entity": "Pump power sensor",
+          "rain_counter_entity": "Rain gauge tip counter",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "notify_entity": "Phone notify target (optional)",
+          "csv_path": "CSV log file path",
+          "deep_soak_time": "Deep soak schedule time",
+          "routine_time": "Routine irrigation schedule time"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "valve_entity": "Valve switch",
+          "pump_power_entity": "Pump power sensor",
+          "rain_counter_entity": "Rain gauge tip counter",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "notify_entity": "Phone notify target (optional)",
+          "csv_path": "CSV log file path",
+          "deep_soak_time": "Deep soak schedule time",
+          "routine_time": "Routine irrigation schedule time"
         }
       }
     }

@@ -1,9 +1,35 @@
-run_routine:
-  name: Run routine irrigation
-  description: Run the calculated routine irrigation cycle.
 run_deep_soak:
-  name: Run deep soak
-  description: Run the calculated three-pulse deep soak cycle.
-clear_fault:
-  name: Clear fault lockout
-  description: Clear the manual irrigation safety lockout after inspection.
+  name: Run Deep Soak
+  description: >-
+    Runs the deep-soak cycle now if (and only if) the same gates the 05:00
+    schedule uses are satisfied (mutex free, 14-day interval + dry-down met,
+    14-day rain ceiling not exceeded). Identical code path to the scheduled
+    run.
+
+run_routine_irrigation:
+  name: Run Routine Irrigation
+  description: >-
+    Runs the routine irrigation cycle now if (and only if) the same gates
+    the 05:30 schedule uses are satisfied. Identical code path to the
+    scheduled run.
+
+reset_lock:
+  name: Reset Irrigation Lock
+  description: Force-clears the mutex lock and abort flag. Emergency use only.
+
+test_pulse:
+  name: Test Pulse
+  description: >-
+    Bypasses every schedule/dry-down/rain gate and runs one short valve
+    pulse, for bench-testing the valve/pump wiring before trusting the real
+    schedule. Still respects the mutex lock and safety watchdogs.
+  fields:
+    seconds:
+      name: Seconds
+      description: Pulse duration in seconds (1-120).
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 120
+          unit_of_measurement: s

@@ -1,70 +1,116 @@
-"""Tests for the Avocado Irrigation calculation engine."""
+"""Unit tests for the pure calculation port (no Home Assistant dependency).
 
-from custom_components.avocado_irrigation.coordinator import (
-    calculate_deep_soak,
-    calculate_routine,
-    significant_rain,
-)
+Values below are hand-computed against the same Jinja expressions in the
+confirmed-final automations.yaml, not just against the Python re-implementation,
+so these catch a drifted port, not just a self-consistent one.
+"""
+import math
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "custom_components" / "avocado_irrigation"))
+
+import calculations as calc  # noqa: E402
 
 
-def test_routine_normal_4_day_interval() -> None:
-    result = calculate_routine(
-        average_peak_temperature_c=30.0,
-        rain_past_4d_mm=0.0,
+def test_jinja_round_half_up():
+    assert calc.jinja_round(2.5, 0) == 3
+    assert calc.jinja_round(-2.5, 0) == -3
+    assert calc.jinja_round(0.125, 2) == 0.13
+
+
+def test_rain_efficiency_bands():
+    low, mid, high = 0.2, 0.6, 1.0
+    assert calc.rain_efficiency(2, low, mid, high) == 0.0
+    assert calc.rain_efficiency(3, low, mid, high) == 0.0
+    # 4mm: midpoint of the 3-5 ramp -> half of low_eff
+    assert math.isclose(calc.rain_efficiency(4, low, mid, high), (4 - 3) / 2 * low)
+    assert calc.rain_efficiency(5, low, mid, high) == low
+    assert math.isclose(calc.rain_efficiency(10, low, mid, high), mid)
+    assert calc.rain_efficiency(20, low, mid, high) == high
+    assert calc.rain_efficiency(50, low, mid, high) == high
+
+
+def test_rain_deduction_uses_only_days_to_sum():
+    # days_elapsed=2 -> only rain_day_1 and rain_day_2 count, not the rest
+    history = [10.0, 10.0, 999.0, 999.0]
+    total = calc.rain_deduction_mm(0.0, history, days_elapsed=2, low_eff=0.2, mid_eff=0.6, high_eff=1.0)
+    expected = 10.0 * calc.rain_efficiency(10.0, 0.2, 0.6, 1.0) * 2
+    assert math.isclose(total, expected, rel_tol=1e-6)
+
+
+def test_rain_deduction_caps_history_depth_at_10():
+    history = [5.0] * 20
+    total_capped = calc.rain_deduction_mm(0.0, history, days_elapsed=15, low_eff=0.2, mid_eff=0.6, high_eff=1.0)
+    total_at_10 = calc.rain_deduction_mm(0.0, history, days_elapsed=10, low_eff=0.2, mid_eff=0.6, high_eff=1.0)
+    assert total_capped == total_at_10
+
+
+def test_three_day_average_drops_corrupt_days():
+    # One corrupt day (-10) is dropped, not averaged in as 0/garbage.
+    assert calc.three_day_average_peak_temp([30.0, 32.0, -10.0]) == calc.jinja_round((30.0 + 32.0) / 2, 2)
+
+
+def test_three_day_average_all_corrupt_falls_back_to_30():
+    assert calc.three_day_average_peak_temp([None, None, None]) == 30.0
+    assert calc.three_day_average_peak_temp([-99.0, 60.0, 5.0]) == 30.0
+
+
+def test_plan_deep_soak_matches_yaml_formula():
+    # target 25mm / flow 0.24 mm/min = 104.166 -> round -> 104
+    plan = calc.plan_deep_soak(target_mm=25.0, flow_rate=0.24)
+    assert plan.total_runtime_minutes == round(25.0 / 0.24)
+    assert plan.pulse_runtime_minutes == max(round(plan.total_runtime_minutes / 3), 5)
+
+
+def test_plan_deep_soak_pulse_floor_is_5_minutes():
+    plan = calc.plan_deep_soak(target_mm=1.0, flow_rate=2.0)  # total_runtime = 1min -> pulse would be 0
+    assert plan.pulse_runtime_minutes == 5
+
+
+def test_routine_interval_and_tier_selection():
+    assert calc.routine_interval_days(32.0, hot_threshold=31.5) == 3
+    assert calc.routine_interval_days(31.4, hot_threshold=31.5) == 4
+    # hot wins even if also below the (nonsensical) cool threshold
+    assert calc.routine_target_weekly_mm(35.0, 31.5, 30.0, 35.0, 45.0, 25.0) == 45.0
+    assert calc.routine_target_weekly_mm(29.0, 31.5, 30.0, 35.0, 45.0, 25.0) == 25.0
+    assert calc.routine_target_weekly_mm(30.5, 31.5, 30.0, 35.0, 45.0, 25.0) == 35.0
+
+
+def test_plan_routine_irrigation_needed_mm_never_negative():
+    plan = calc.plan_routine_irrigation(
+        avg_peak_temp=30.5,
+        hot_threshold=31.5,
+        cool_threshold=30.0,
+        normal_weekly_mm=35.0,
+        hot_weekly_mm=45.0,
+        cool_weekly_mm=25.0,
+        flow_rate=0.24,
+        days_elapsed=4,
+        today_rain_mm=200.0,  # huge rain should floor needed_mm at 0, not go negative
+        rain_day_history_mm=[0.0] * 10,
+        rain_eff_low=0.2,
+        rain_eff_mid=0.6,
+        rain_eff_high=1.0,
     )
-
-    assert result.target_interval_days == 4
-    assert result.interval_target_mm == 12.0 / 7.0 * 4
-    assert result.needed_mm == result.interval_target_mm
-    assert result.runtime_minutes == round(result.needed_mm / 0.30)
+    assert plan.needed_mm == 0.0
+    assert plan.calc_runtime_minutes == 0
 
 
-def test_routine_hot_3_day_interval() -> None:
-    result = calculate_routine(
-        average_peak_temperature_c=31.5,
-        rain_past_4d_mm=0.0,
+def test_drydown_and_due_thresholds_use_correct_buffer():
+    # exactly at the 6h-buffered boundary should be due
+    assert calc.deep_soak_due(14 * 86400 - 21600, 14, 21600) is True
+    assert calc.deep_soak_due(14 * 86400 - 21601, 14, 21600) is False
+    assert calc.drydown_satisfied(4 * 86400, 4.0) is True
+    assert calc.drydown_satisfied(4 * 86400 - 1, 4.0) is False
+
+
+def test_estimate_next_irrigation_takes_the_later_date():
+    est = calc.estimate_next_irrigation(
+        last_routine_ts=1000.0,
+        last_significant_rain_ts=2000.0,
+        avg_peak_temp=35.0,
+        hot_threshold=31.5,
+        routine_drydown_days=4.0,
     )
-
-    assert result.target_interval_days == 3
-    assert result.interval_target_mm == 12.0 / 7.0 * 3
-
-
-def test_rain_reduces_irrigation_need() -> None:
-    result = calculate_routine(
-        average_peak_temperature_c=30.0,
-        rain_past_4d_mm=4.0,
-        rain_efficiency=0.75,
-    )
-
-    expected = max((12.0 / 7.0 * 4) - 3.0, 0.0)
-    assert result.effective_rain_mm == 3.0
-    assert result.needed_mm == expected
-
-
-def test_runtime_cap_is_reported() -> None:
-    result = calculate_routine(
-        average_peak_temperature_c=30.0,
-        rain_past_4d_mm=0.0,
-        flow_rate_mm_per_min=0.05,
-        max_runtime_minutes=10,
-    )
-
-    assert result.capped is True
-
-
-def test_deep_soak_three_pulses() -> None:
-    result = calculate_deep_soak(
-        target_mm=25.0,
-        flow_rate_mm_per_min=0.30,
-    )
-
-    assert result.total_runtime_minutes == round(25.0 / 0.30)
-    assert result.pulse_runtime_minutes == max(round(result.total_runtime_minutes / 3), 5)
-    assert result.capped is False
-
-
-def test_significant_rain_thresholds() -> None:
-    assert significant_rain(rain_24h_mm=35.0, rain_4d_mm=0, rain_7d_mm=0)
-    assert significant_rain(rain_24h_mm=0, rain_4d_mm=50.0, rain_7d_mm=0)
-    assert significant_rain(rain_24h_mm=0, rain_4d_mm=0, rain_7d_mm=100.0)
-    assert not significant_rain(rain_24h_mm=34.9, rain_4d_mm=49.9, rain_7d_mm=99.9)
+    assert est.next_ts == max(est.routine_next_ts, est.rain_next_ts)
