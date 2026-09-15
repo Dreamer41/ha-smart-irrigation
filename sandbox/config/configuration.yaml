@@ -31,30 +31,30 @@ input_boolean:
   fake_valve_state:
     name: "Simulated Valve (internal, don't add to dashboard)"
 
-switch:
-  - platform: template
-    switches:
-      watering1:
-        friendly_name: "Simulated Watering Valve"
-        value_template: "{{ is_state('input_boolean.fake_valve_state', 'on') }}"
+# Modern template syntax (the old `platform: template` under sensor:/switch:
+# was removed by Home Assistant -- this is the current replacement).
+template:
+  - switch:
+      - name: "Simulated Watering Valve"
+        unique_id: avocado_sandbox_watering1
+        state: "{{ is_state('input_boolean.fake_valve_state', 'on') }}"
         turn_on:
-          service: input_boolean.turn_on
-          target:
-            entity_id: input_boolean.fake_valve_state
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fake_valve_state
         turn_off:
-          service: input_boolean.turn_off
-          target:
-            entity_id: input_boolean.fake_valve_state
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.fake_valve_state
 
-sensor:
-  - platform: template
-    sensors:
-      waterpump_power_power:
-        friendly_name: "Simulated Water Pump Power"
+  - sensor:
+      - name: "Simulated Water Pump Power"
+        unique_id: avocado_sandbox_pump_power
         unit_of_measurement: "W"
-        value_template: "{{ states('input_number.fake_pump_power') }}"
-      outdoor_temp_temperature:
-        friendly_name: "Simulated Outdoor Temperature"
+        state: "{{ states('input_number.fake_pump_power') }}"
+
+      - name: "Simulated Outdoor Temperature"
+        unique_id: avocado_sandbox_outdoor_temp
         unit_of_measurement: "°C"
         device_class: temperature
-        value_template: "{{ states('input_number.fake_outdoor_temp') }}"
+        state: "{{ states('input_number.fake_outdoor_temp') }}"
