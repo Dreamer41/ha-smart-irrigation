@@ -28,8 +28,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         AvocadoTodayRainSensor(entry, controller),
     ]
     async_add_entities(entities, update_before_add=False)
-    for entity in entities:
-        entity.async_schedule_update_ha_state()
 
 
 class _Base(SensorEntity):
