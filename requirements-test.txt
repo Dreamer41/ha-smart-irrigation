@@ -1,0 +1,18 @@
+# Test-only dependencies for the pytest suite in tests/.
+# These are NOT needed to run the integration on real Home Assistant --
+# only to run the automated test suite that simulates it.
+#
+# IMPORTANT (Linux/macOS): one of Home Assistant's own dependencies (PyRIC)
+# fails to build on modern setuptools. Before installing this file, run:
+#   pip install "setuptools<66" wheel
+# then:
+#   pip install -r requirements-test.txt
+#
+# On Windows this PyRIC build issue does not apply (PyRIC is Linux-only
+# and Home Assistant skips it there), so a plain
+#   pip install -r requirements-test.txt
+# should work directly inside a virtual environment.
+
+pytest-homeassistant-custom-component==0.13.109
+pytest-asyncio
+tzdata

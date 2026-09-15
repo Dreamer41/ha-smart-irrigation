@@ -1,0 +1,13 @@
+services:
+  homeassistant:
+    container_name: avocado-irrigation-sandbox
+    image: "homeassistant/home-assistant:stable"
+    volumes:
+      - ./config:/config
+      # Mount the real integration code read-only, straight from the repo.
+      # Pull latest changes and `docker compose restart` to pick them up --
+      # no copying files around by hand.
+      - ../custom_components:/config/custom_components:ro
+    restart: unless-stopped
+    ports:
+      - "8123:8123"

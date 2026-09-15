@@ -1,0 +1,60 @@
+default_config:
+
+# --- Simulated hardware for testing the Avocado Irrigation integration ---
+# Nothing below touches your real Home Assistant or the real valve/pump.
+# Each of these is a slider, counter, or toggle you control by hand from
+# this sandbox's own dashboard to fake rain, sun, and pump behavior.
+
+input_number:
+  fake_pump_power:
+    name: "Simulated Pump Power"
+    min: 0
+    max: 1500
+    step: 10
+    unit_of_measurement: "W"
+    icon: mdi:flash
+
+  fake_outdoor_temp:
+    name: "Simulated Outdoor Temperature"
+    min: -10
+    max: 50
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+counter:
+  fake_rain_tips:
+    name: "Simulated Rain Gauge Tips"
+    icon: mdi:weather-pouring
+
+input_boolean:
+  fake_valve_state:
+    name: "Simulated Valve (internal, don't add to dashboard)"
+
+switch:
+  - platform: template
+    switches:
+      watering1:
+        friendly_name: "Simulated Watering Valve"
+        value_template: "{{ is_state('input_boolean.fake_valve_state', 'on') }}"
+        turn_on:
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.fake_valve_state
+        turn_off:
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.fake_valve_state
+
+sensor:
+  - platform: template
+    sensors:
+      waterpump_power_power:
+        friendly_name: "Simulated Water Pump Power"
+        unit_of_measurement: "W"
+        value_template: "{{ states('input_number.fake_pump_power') }}"
+      outdoor_temp_temperature:
+        friendly_name: "Simulated Outdoor Temperature"
+        unit_of_measurement: "°C"
+        device_class: temperature
+        value_template: "{{ states('input_number.fake_outdoor_temp') }}"
