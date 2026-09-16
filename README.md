@@ -72,6 +72,15 @@ verification test pulse run before it calls the job done.
   zero rain actually measured, ZoneFlow waters anyway. Set it low for a
   thirsty seedling bed, higher for a drought-tolerant succulent zone — each
   zone/crop can have its own tolerance.
+- **Seed a zone's history at setup**: a brand-new zone has no watering
+  history, which correctly (but often unhelpfully) makes it look overdue and
+  fire on the very next scheduled time. Each zone gets three `datetime`
+  entities — Last Routine Irrigation, Last Deep Soak, Last Significant Rain —
+  you can set right after adding the zone (or any time after, to correct
+  them) so an already-established plant doesn't get double-watered just
+  because you're migrating it onto ZoneFlow. Leave them unset for a genuinely
+  brand-new setup; the corresponding gate then behaves exactly as if it's
+  never happened.
 
 ## Installation
 
@@ -91,7 +100,13 @@ verification test pulse run before it calls the job done.
    - a CSV log file path
    - deep-soak and routine schedule times, or a sunrise/sunset-relative
      trigger instead (see above)
-6. To add another zone, repeat from step 3 with a different name/entities. If
+6. If this zone's plant already has recent watering/rain history (e.g.
+   you're migrating it from another system), set its Last Routine
+   Irrigation / Last Deep Soak / Last Significant Rain `datetime` entities
+   now, before leaving it to run unattended — otherwise it looks overdue
+   from a blank slate and will water on the very next scheduled time
+   regardless of whether it actually needs it yet.
+7. To add another zone, repeat from step 3 with a different name/entities. If
    it shares a pump-power sensor with an existing zone, pump-sharing kicks in
    automatically.
 

@@ -12,7 +12,7 @@ from __future__ import annotations
 from homeassistant.const import Platform
 
 DOMAIN = "zoneflow"
-PLATFORMS = [Platform.NUMBER, Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
+PLATFORMS = [Platform.NUMBER, Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON, Platform.DATETIME]
 
 STORAGE_VERSION = 1
 STORAGE_KEY_SUFFIX = "state"
@@ -113,8 +113,15 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "flow_rate_mm_per_min": ("Emitter Flow Rate Calibration", 0.05, 2.0, 0.01, "mm/min"),
     "deep_soak_target_mm": ("Deep Soak Target Depth", 15.0, 40.0, 1.0, "mm"),
     "pump_min_watts": ("Pump Low-Power Warning Threshold", 20.0, 500.0, 10.0, "W"),
-    "deep_soak_max_runtime_minutes": ("Deep Soak Max Safety Runtime Cap", 30.0, 220.0, 10.0, "min"),
-    "max_runtime_minutes": ("Routine Max Safety Runtime Cap", 10.0, 150.0, 5.0, "min"),
+    # Upper bound covers the worst case a slow drip emitter can legitimately
+    # need: at the lowest configurable flow_rate_mm_per_min (0.05) and the
+    # highest configurable target (deep_soak_target_mm 40 / weekly targets
+    # up to 75), the calculated runtime can approach ~800-860 minutes. The
+    # cap exists to catch a genuinely wrong calibration/config, not to
+    # arbitrarily block a real slow-drip system -- raise it here, not by
+    # disabling the cap.
+    "deep_soak_max_runtime_minutes": ("Deep Soak Max Safety Runtime Cap", 30.0, 900.0, 10.0, "min"),
+    "max_runtime_minutes": ("Routine Max Safety Runtime Cap", 10.0, 900.0, 5.0, "min"),
     "routine_drydown_days": ("Routine Dry-Down Holdoff", 1.0, 10.0, 0.5, "d"),
     "deep_soak_drydown_days": ("Deep Soak Subsoil Dry-Down Holdoff", 4.0, 14.0, 0.5, "d"),
     "deep_soak_rain_threshold": ("Deep Soak Rain Ceiling (14d)", 0.0, 100.0, 5.0, "mm"),

@@ -177,6 +177,37 @@ immediately, but every tunable number below still has its factory default
 until you set it in §5 — **do that before leaving the person alone with a
 live valve.**
 
+### 4a. Seed the zone's history if it isn't actually brand-new
+
+Ask this before moving on, every time: **"has this plant/zone already been
+getting watered some other way, or is it genuinely starting from zero?"**
+
+A newly-created zone has no watering history at all, which makes it look
+overdue by default — left alone, it will run its first routine/deep-soak
+cycle at the very next scheduled time, whether or not the plant actually
+needs it yet. That's correct behavior for a genuinely new setup, but wrong
+for someone migrating an already-established plant onto ZoneFlow (which is
+the more common case in practice).
+
+If the person says the plant has recent real watering/rain history, set the
+zone's three `datetime` entities (found the same place as the number
+entities — the zone's device page, or `datetime.<zone_name_slug>_*` in
+Developer Tools → States) accordingly, using whatever they can tell you
+(exact dates if they know them, otherwise "a few days ago" is fine — being
+approximate here is much better than leaving it blank when it shouldn't be):
+
+- **Last Routine Irrigation** — when it last got its normal/frequent watering
+- **Last Deep Soak** — when it last got a deep, thorough watering
+- **Last Significant Rain** — when it last actually rained enough to matter
+  (not just a drizzle)
+
+Setting these via the `datetime.set_value` service (or the UI date/time
+picker) immediately changes the gating math — e.g. seeding "Last Deep Soak"
+to today correctly makes the zone *not* due for another ~14 days. Leave any
+of the three unset ("unknown") if the person genuinely doesn't know or it
+really hasn't happened yet; that's the honest default and gates behave as
+if it's simply never occurred.
+
 ## 5. Set the tunable numbers for this zone/crop
 
 After the config entry is created, several dozen `number.<zone>_*` entities
@@ -196,6 +227,7 @@ its factory default.
 | `..._cool_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "cool" | local climate — usually 5-8°C below the hot threshold |
 | `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: run `zoneflow.test_pulse` for a known number of minutes, measure water depth/volume delivered, divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
 | `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | deeper-rooted / drought-tolerant plants (trees, established shrubs) want more (25-40mm); shallow-rooted beds want less (15-20mm) |
+| `..._deep_soak_max_safety_runtime_cap` / `..._routine_max_safety_runtime_cap` (min) | hard abort ceiling — if the calculated runtime for a cycle exceeds this, that cycle is aborted rather than run, since it usually means a miscalibration | **check this for very low-flow drip emitters** (below roughly 0.1mm/min): the calculated runtime for a full target can genuinely run into several hundred minutes, and the factory default caps (124min / 103min) will wrongly abort a perfectly correct, just-slow cycle. Raise the cap (up to 900min) to comfortably cover `target_mm / flow_rate_mm_per_min` for this zone's real numbers — don't just raise it blindly to max "to be safe," since its whole job is catching a genuine miscalibration (e.g. a wrong flow-rate number producing a runaway runtime). |
 | `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | ask for the pump's rated running wattage, set ~20-30% below it |
 | `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d) |
 | `..._deep_soak_subsoil_dry_down_holdoff` (days) | same, for deep soak | usually higher than the routine holdoff — trees/deep roots hold subsoil moisture longer |
