@@ -1,6 +1,6 @@
 services:
   homeassistant:
-    container_name: avocado-irrigation-sandbox
+    container_name: zoneflow-sandbox
     image: "homeassistant/home-assistant:stable"
     volumes:
       - ./config:/config
@@ -18,11 +18,11 @@ services:
     # This sandbox uses plain HA Container (not Home Assistant OS), so it
     # has no Supervisor and can't run real add-ons; this sidecar container
     # gives the same editing experience without one.
-    container_name: avocado-irrigation-sandbox-code
+    container_name: zoneflow-sandbox-code
     image: codercom/code-server:latest
     user: "1000:1000"
     environment:
-      - PASSWORD=avocado
+      - PASSWORD=zoneflow
     volumes:
       - ./config:/home/coder/config
     restart: unless-stopped

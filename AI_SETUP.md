@@ -1,0 +1,302 @@
+# ZoneFlow — AI Setup Guide
+
+> **If you are an AI assistant reading this file because a person asked you
+> to help them set up ZoneFlow: this whole file is written for you.** Follow
+> it top to bottom. The person should not need to open any other doc in this
+> repo, and you should not need to ask them anything not listed here.
+>
+> Drive the conversation. Ask one question (or one small group of related
+> questions) at a time, use sensible defaults instead of asking about every
+> field, and get the integration actually configured and running a test
+> pulse before you consider the job done. Do not explain ZoneFlow's internal
+> architecture unless asked — the person wants working irrigation, not a
+> code tour.
+
+## 0. What you're setting up, in one paragraph
+
+ZoneFlow is a Home Assistant custom integration for drip/valve irrigation.
+Each **zone** (one plant, bed, or lawn area with its own valve) is added as
+its own separate config entry, done through Home Assistant's normal "Add
+Integration" UI flow — there is no YAML to write. Your job is to (a) work
+out what to put in each field of that flow and each crop-relevant tunable
+number, and (b) either enter it yourself (if you have tool access to their
+Home Assistant — §1a) or tell the person exactly what to click and type
+(if you don't — §1).
+
+## 1. First question: who's doing the clicking?
+
+Before anything else, work out — and if it's not already obvious from how
+you were invoked, just ask the person outright — which mode this is:
+
+- **Mode A — you drive it directly.** You have live tool/API access to the
+  person's actual Home Assistant instance (an MCP server, a long-lived
+  access token you can call the REST API with, or equivalent). If so, tell
+  the person you can configure this for them directly and just confirm
+  before each real change (creating the config entry, setting number
+  values) — you don't need to walk them through clicking anything. See
+  §1a for the concrete calls.
+- **Mode B — you guide, they click.** You have no tool access, only the
+  chat. Say so, and be an efficient guide: tell them exactly what to click
+  and type, one screen at a time, and ask them to paste back what they see
+  (entity lists, error messages, confirmation screens) so you can keep
+  steering without them needing to describe HA's UI to you from scratch.
+
+If you *do* have HA tool access, still ask the person once, up front,
+whether they'd rather you just do it or walk them through it themselves —
+some people want to watch/learn the UI, most want it just done. Respect
+whichever they pick.
+
+Either way, the information you need to gather is the same — §2 through §7
+below. Only the *mechanism* for entering it differs.
+
+### 1a. Mode A mechanics: driving the config flow via the REST API
+
+If your tool access is via Home Assistant's REST API (directly, or through
+an MCP server that exposes raw HTTP), a config entry is created by starting
+and stepping through a **config flow**, the same state machine the UI form
+walks — there is no "just POST the final data" shortcut, because
+`config_flow.py` is a two-step flow (zone name, then entities/schedule):
+
+1. `POST /api/config/config_entries/flow` with body
+   `{"handler": "zoneflow", "show_advanced_options": false}`. The response
+   includes a `flow_id` and the first form's `data_schema` (the zone-name
+   step).
+2. `POST /api/config/config_entries/flow/<flow_id>` with body
+   `{"zone_name": "<the name you agreed on>"}`. The response is the second
+   step's form — read its `data_schema` to confirm you're matching field
+   names/types exactly (don't hardcode them from this doc if the schema
+   response disagrees; the live response is ground truth).
+3. `POST /api/config/config_entries/flow/<flow_id>` again with the full
+   entities/schedule payload (all the fields from §4's table, keyed exactly
+   as the schema names them). A successful response has `"type": "create_entry"`
+   and includes the new `result` (the config entry). An error response
+   has `"type": "form"` again with an `errors` object — fix and resubmit,
+   don't guess blindly at what changed.
+4. Once created, the zone's `number.*` entities exist with factory
+   defaults. To set one from §5's table, call the `number.set_value`
+   service: `POST /api/services/number/set_value` with
+   `{"entity_id": "number.<zone>_<field>", "value": <float>}`. Confirm
+   afterwards by reading the entity's state back
+   (`GET /api/states/<entity_id>`) rather than assuming the call worked.
+5. To run the verification pulse from §7: `POST /api/services/zoneflow/test_pulse`
+   with `{"entity_id": "<any entity belonging to that zone's device>", "seconds": 10}`
+   (or however your tool's service-call helper targets a specific config
+   entry/device — some MCP servers want a device_id instead of an
+   entity_id; check your tool's own parameters rather than assuming this
+   shape). Then read back the valve and pump-power states to confirm the
+   pulse actually happened.
+
+If your tool access is a higher-level MCP for Home Assistant rather than
+raw REST, look for whatever it calls "start config flow" / "add
+integration" / "call service" — the sequence above is the same regardless
+of which concrete tool call performs each step.
+
+Whichever way you're driving it, **never silently create the entry or
+change a number value without having told the person what you're about to
+set it to** — a quick "I'm going to set X to Y because Z, creating the zone
+now" is enough; you don't need to wait for a reply on every single field
+once they've agreed to let you drive.
+
+## 2. Prerequisites (check these first, in order)
+
+1. **The custom component files are installed.** They should already be at
+   `/config/custom_components/zoneflow/` on the person's Home Assistant. If
+   you have file access and they aren't there, that's step zero — get the
+   contents of this repo's `custom_components/zoneflow/` folder onto their
+   system first (HACS custom repository, or copying the folder manually),
+   then have them restart Home Assistant. If you have no file/HA access at
+   all, just tell them this prerequisite plainly and ask them to confirm
+   it's done before continuing.
+2. **They have already restarted Home Assistant** after installing (custom
+   integrations require a full restart the first time — a UI reload is not
+   enough).
+3. Ask them, in one message, for the physical setup of the **first zone**
+   they want to configure:
+   - What are they watering (a plant/crop name, or "lawn")? You'll use this
+     later for §6's default suggestions and it becomes the zone's display
+     name.
+   - Do they already have Home Assistant entities for: a valve (switch), a
+     pump power sensor, a rain gauge tip counter, and an outdoor temperature
+     sensor? If any don't exist yet, that's a hardware/other-integration
+     problem outside ZoneFlow's scope — tell them plainly and stop for that
+     piece; don't invent a workaround.
+
+## 3. Find the entity IDs
+
+If you have HA tool/API access, search for candidates and propose them
+rather than asking the person to hunt for IDs blind:
+
+- Valve: a `switch.*` entity that plausibly controls water flow (name
+  hints: "valve", "water", "irrigation", "zone", the crop name they gave
+  you).
+- Pump power: a `sensor.*` entity reporting watts (name hints: "pump",
+  "power"). This is used to confirm the pump is actually drawing current
+  during a pulse, not to control the pump.
+- Rain counter: a `counter.*` or `sensor.*` entity that only increases
+  (a tipping-bucket rain gauge's raw tip count, or a cumulative mm sensor).
+- Outdoor temperature: a `sensor.*` with device class `temperature`.
+- (Optional) Notify target: a `notify.*` entity for phone alerts.
+- (Optional) Weather: a `weather.*` entity, for the forecast gate (§6).
+
+Present your best-guess matches and ask the person to confirm or correct
+each one — never submit an entity ID you're not confident about. If you
+have no HA access, ask the person to open **Settings → Devices & Services →
+Entities**, filter by domain (`switch.`, `sensor.`, etc.), and read you back
+the exact entity IDs.
+
+## 4. Walk through the config flow
+
+In Home Assistant: **Settings → Devices & Services → Add Integration →
+"ZoneFlow Irrigation"**. It's two screens:
+
+**Screen 1 — zone name.** One field, `Zone name`: a short, human name (e.g.
+"Front Lawn", "Avocado Tree", "Herb Bed"). This becomes the device name in
+the HA UI and the default CSV log filename, so it must be distinct from any
+other zone's name.
+
+**Screen 2 — entities and schedule.** Fields, in the order they appear:
+
+| Field | What it is | How to fill it in |
+|---|---|---|
+| Valve switch | the `switch.*` from §3 | required |
+| Pump power sensor | the `sensor.*` from §3 | required |
+| Rain gauge tip counter | the `counter.*`/`sensor.*` from §3 | required |
+| Outdoor temperature sensor | the `sensor.*` from §3 | required |
+| Phone notify target | a `notify.*` entity | optional — leave blank if none |
+| Weather forecast source | a `weather.*` entity | optional — leave blank unless the person wants the forecast gate (§6.4); can be added later via the integration's Options |
+| CSV log file path | a file path | accept the pre-filled default (`/config/zoneflow_<zone-name-slug>.csv`) unless the person has a reason to change it |
+| Deep soak schedule time | `HH:MM:SS` | default `05:00:00` is reasonable for most climates (before sunrise, before daytime evaporation); ask if they have a strong preference |
+| Routine irrigation schedule time | `HH:MM:SS` | default `05:30:00`, same reasoning |
+| Deep soak trigger | Fixed time / before or after sunrise / before or after sunset | leave as "Fixed time" unless they specifically want sunrise/sunset-relative scheduling (§6.3) |
+| Deep soak sun offset (minutes) | only relevant if the above isn't "Fixed time" | ask how many minutes before/after |
+| Routine trigger | same options as deep soak trigger | same guidance |
+| Routine sun offset (minutes) | only relevant if routine trigger isn't "Fixed time" | ask how many minutes before/after |
+
+Submitting this screen creates the zone. It starts running on the schedule
+immediately, but every tunable number below still has its factory default
+until you set it in §5 — **do that before leaving the person alone with a
+live valve.**
+
+## 5. Set the tunable numbers for this zone/crop
+
+After the config entry is created, several dozen `number.<zone>_*` entities
+appear (Settings → Devices & Services → the zone's device → its entities,
+or just search `number.<zone_name_slug>` in Developer Tools → States). Don't
+make the person click through all of them one at a time — tell them (or set
+directly, if you have HA control access) the handful that actually matter
+for their crop, using this table. Everything not mentioned is fine left at
+its factory default.
+
+| Number entity (suffix) | What it controls | Suggest based on... |
+|---|---|---|
+| `..._routine_normal_weekly_target` (mm) | weekly water target in normal weather | crop water needs — see the quick table below |
+| `..._routine_hot_weekly_target` (mm) | weekly target once it's classified "hot" | usually ~1.3x the normal target |
+| `..._routine_cool_weekly_target` (mm) | weekly target once it's classified "cool" | usually ~0.7x the normal target |
+| `..._hot_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "hot" | local climate — ask, or use ~31°C in the tropics, ~28°C in temperate zones |
+| `..._cool_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "cool" | local climate — usually 5-8°C below the hot threshold |
+| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: run `zoneflow.test_pulse` for a known number of minutes, measure water depth/volume delivered, divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
+| `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | deeper-rooted / drought-tolerant plants (trees, established shrubs) want more (25-40mm); shallow-rooted beds want less (15-20mm) |
+| `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | ask for the pump's rated running wattage, set ~20-30% below it |
+| `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d) |
+| `..._deep_soak_subsoil_dry_down_holdoff` (days) | same, for deep soak | usually higher than the routine holdoff — trees/deep roots hold subsoil moisture longer |
+| `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§6.2) | leave at 0 for a single-zone/independent-pump setup |
+| `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§6.4) | see §6.4 |
+
+**Quick weekly-water-target starting points by crop type** (mm/week, normal
+weather — adjust from here rather than treating these as exact):
+- Lawn / turf: 25-35mm
+- Vegetable beds, herbs (shallow roots, frequent light watering preferred): 20-30mm, and prefer a lower routine interval logic — this integration adapts the interval automatically via temperature, so you mainly need the weekly target right
+- Established trees / avocado / fruit trees: 25-45mm routine **plus** rely on the deep-soak cycle (20-30mm depth) for root-zone penetration
+- Succulents / drought-tolerant natives: 10-20mm, and set the dry-down holdoffs and forecast dry-spell override (if used) higher
+
+These are reasonable starting points, not agronomy guarantees — say so if
+the person asks, and suggest they watch the diagnostic sensors (§7) for the
+first couple of weeks and adjust the weekly target up/down from there.
+
+## 6. Situational features — ask only if relevant
+
+### 6.1 Multiple zones
+If the person has more than one plant/area to water, repeat §3-§5 for each
+zone (Add Integration → ZoneFlow Irrigation again, with a different zone
+name and its own entities). Nothing extra to configure for this by itself.
+
+### 6.2 Shared pump
+If two zones' **pump power sensor** is the same entity, ZoneFlow
+automatically detects this and makes sure they never run at once — nothing
+to configure. If their pump needs a moment to build pressure, set
+`pump_preamble_seconds` (delay after the pump starts before the valve
+opens) and/or `pump_postamble_seconds` (delay after the valve closes before
+the next queued zone can start) on the zones that share that pump. Ask the
+person if their pump has a noticeable spin-up/pressure-settle time; if they
+don't know, leave both at 0 and revisit only if they see flow-rate
+inconsistency between zones.
+
+### 6.3 Sunrise/sunset-relative scheduling
+If the person wants watering tied to daylight rather than a fixed clock
+time (e.g. "start 30 minutes before sunrise" so it adapts across seasons),
+set the relevant trigger field (in §4's table) to one of Before/After
+Sunrise/Sunset and fill in the offset in minutes. This is independent per
+schedule (deep soak and routine can each use a different mode).
+
+### 6.4 Weather forecast gate
+Only set this up if the person wants ZoneFlow to skip a scheduled run when
+rain is forecast. Requires a `weather.*` entity (any integration that
+provides one — ask which weather integration they use, or find it via §3).
+
+1. Set the zone's "Weather forecast source" field to that entity (in the
+   config flow, or later via the integration's **Options** if already set up).
+2. Ask how much forecasted rain should count as "skip this run" — default
+   is 3mm. Thirstier/more rain-sensitive setups can lower it; if the person
+   wants to be conservative about not missing water, raise it.
+3. Ask about the **dry-spell override** (`forecast_dry_spell_override`,
+   default 2 days) — **this is the one number worth actively discussing per
+   crop**, since it's exactly "how many days can this plant go if the
+   forecast keeps promising rain that never comes":
+   - Thirsty, shallow-rooted, or heat-stressed plants (seedlings, potted
+     plants, vegetables in hot weather): set it low, 1-2 days.
+   - Established, drought-tolerant plants (trees, succulents, natives): set
+     it higher, 4-7 days — they can comfortably wait out a longer stretch of
+     wrong forecasts.
+   Explain the mechanic briefly if asked: the gate only ever *delays* a
+   watering, never skips it outright — once the configured number of days
+   passes with the forecast still saying rain but zero rain actually
+   measured, ZoneFlow overrides the forecast and waters anyway. A missing or
+   unavailable weather entity never blocks a run either.
+
+## 7. Verify before you're done
+
+Do not consider setup finished until these are confirmed for each zone:
+
+1. Run **Developer Tools → Actions → `zoneflow.test_pulse`** with
+   `seconds: 10` (targeting that zone's device, since each zone is its own
+   config entry/service target if the person has multiple). Confirm: the
+   valve entity actually switches on then off, the pump-power sensor reads
+   a plausible non-zero value while it's on, and a new row appears in the
+   configured CSV log file.
+2. Check the zone's diagnostic sensors exist and show sane values: rain
+   past 24h/3d/7d/14d, 3-day average peak temperature, next-irrigation
+   estimate.
+3. Confirm the lock/abort binary sensors both read "off"/`False` at rest —
+   if either is stuck on, something is wrong before you hand this back to
+   the person unattended (`zoneflow.reset_lock` clears a stuck lock, but
+   find out why it was stuck first).
+4. Tell the person plainly what will happen next (which zones water at
+   which times) and remind them the `test_pulse` service bypasses every
+   safety/rain gate on purpose, so it's not representative of a real run —
+   don't leave them thinking a successful test pulse alone proves the rain
+   logic works.
+
+## 8. Ground rules while you do this
+
+- Never guess an entity ID and submit it without the person confirming it,
+  or without your own tool-based lookup giving you real confidence.
+- Never disable or bypass a safety watchdog (stuck-valve force-off,
+  power-loss abort, stale-lock recovery) — these aren't configurable by
+  design, and that's intentional; don't suggest workarounds.
+- Don't touch `custom_components/zoneflow/calculations.py` or any other
+  integration source file as part of "setup" — setup is entity selection +
+  number tuning through the UI, never a code change.
+- If something doesn't fit this guide (an entity type you can't find, a
+  request to change scheduling logic itself, an error message not covered
+  here), say so plainly and point the person at opening a GitHub issue,
+  rather than improvising a change to how the integration behaves.

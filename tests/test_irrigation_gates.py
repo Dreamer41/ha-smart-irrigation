@@ -11,7 +11,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.avocado_irrigation.const import DOMAIN
+from custom_components.zoneflow.const import DOMAIN
 
 from .test_smoke_setup import RAIN_COUNTER, _seed_source_entities, make_entry
 

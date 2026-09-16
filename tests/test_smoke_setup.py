@@ -7,7 +7,7 @@ RestoreNumber, and the service registry.
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.avocado_irrigation.const import (
+from custom_components.zoneflow.const import (
     CONF_CSV_PATH,
     CONF_DEEP_SOAK_TIME,
     CONF_NOTIFY_ENTITY,
@@ -16,6 +16,7 @@ from custom_components.avocado_irrigation.const import (
     CONF_RAIN_COUNTER_ENTITY,
     CONF_ROUTINE_TIME,
     CONF_VALVE_ENTITY,
+    CONF_ZONE_NAME,
     DOMAIN,
 )
 
@@ -27,17 +28,18 @@ OUTDOOR_TEMP = "sensor.outdoor_temp_temperature"
 
 def make_entry(hass, **overrides):
     data = {
+        CONF_ZONE_NAME: "Test Zone",
         CONF_VALVE_ENTITY: VALVE,
         CONF_PUMP_POWER_ENTITY: PUMP,
         CONF_RAIN_COUNTER_ENTITY: RAIN_COUNTER,
         CONF_OUTDOOR_TEMP_ENTITY: OUTDOOR_TEMP,
         CONF_NOTIFY_ENTITY: None,
-        CONF_CSV_PATH: "/tmp/test_avocado_irrigation.csv",
+        CONF_CSV_PATH: "/tmp/test_zoneflow.csv",
         CONF_DEEP_SOAK_TIME: "05:00:00",
         CONF_ROUTINE_TIME: "05:30:00",
     }
     data.update(overrides)
-    entry = MockConfigEntry(domain=DOMAIN, data=data)
+    entry = MockConfigEntry(domain=DOMAIN, data=data, title=data[CONF_ZONE_NAME])
     entry.add_to_hass(hass)
     return entry
 
@@ -58,8 +60,8 @@ async def test_setup_creates_all_expected_entities(hass):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    # 18 tunable numbers
-    from custom_components.avocado_irrigation.const import NUMBER_DEFS
+    # every tunable number entity
+    from custom_components.zoneflow.const import NUMBER_DEFS
 
     for key, (name, *_rest) in NUMBER_DEFS.items():
         entity_id = None

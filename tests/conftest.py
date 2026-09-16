@@ -1,14 +1,34 @@
 """pytest-homeassistant-custom-component wiring for this repo."""
 import pytest
+import pytest_socket
 
-from custom_components.avocado_irrigation import controller as controller_module
+from custom_components.zoneflow import controller as controller_module
 
 pytest_plugins = "pytest_homeassistant_custom_component"
+
+# pytest_homeassistant_custom_component registers its own pytest_runtest_setup
+# hook that unconditionally calls pytest_socket.disable_socket(allow_unix_socket=True)
+# before every test -- a plain function call, not something pytest-socket's own
+# CLI flags (--force-enable-socket, -p no:socket) can override, since HA's hook
+# runs after pytest-socket's and simply overwrites socket.socket again.
+#
+# On Linux this is harmless: asyncio's default event loop only needs AF_UNIX
+# sockets internally, which allow_unix_socket=True permits. On Windows, the
+# default ProactorEventLoop sets itself up by creating a real loopback socket
+# pair, and socket.socketpair() falls back to a real AF_INET pair there (no
+# native AF_UNIX socketpair on Windows) -- which this guard still blocks,
+# failing every single test at fixture setup with
+# "pytest_socket.SocketBlockedError" before the test body ever runs.
+#
+# None of these tests make real network calls (everything is faked through
+# hass fixtures), so just make disable_socket() a no-op instead of trying to
+# out-order HA's hook.
+pytest_socket.disable_socket = lambda *args, **kwargs: None
 
 
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations):
-    """Make custom_components/avocado_irrigation loadable in every test."""
+    """Make custom_components/zoneflow loadable in every test."""
     yield
 
 

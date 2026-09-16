@@ -1,128 +1,144 @@
-# Avocado Irrigation
+# ZoneFlow Irrigation
 
-A native Home Assistant custom integration that replicates the confirmed-final
-`automations.yaml` avocado irrigation system (14-day pulsed deep soak + daily
-smart precision routine irrigation, rain accumulation from a tipping-bucket
-gauge, dry-down memory, and five safety watchdogs) as real Python code
-instead of YAML automations.
+A native Home Assistant custom integration for drip/valve irrigation, built
+as real Python (config flow, entities, services) rather than a pile of YAML
+automations and helper entities. It drives your existing valve, pump, rain
+gauge, and outdoor temperature sensor directly — it never creates new
+physical entities of its own.
 
-This is a **from-scratch rewrite**, not a patch of the earlier feature
-branch — that branch had drifted from the true final YAML (e.g. it describes
-a manual-reset-only "fault lockout" and a "runtime - 1 minute" execution
-quirk that don't exist in your actual `automations.yaml` — you'd deliberately
-chosen auto-recovering watchdogs over a manual lockout months ago). It was
-wiped and rebuilt directly against the live `automations.yaml` /
-`configuration.yaml` read on 2026-09-14/15.
+## 🤖 Let an AI set it up for you
 
-## What it does *not* change
+**[AI_SETUP.md](./AI_SETUP.md)** is a step-by-step setup guide written *for
+an AI assistant to follow*, not for you to read. Paste its raw contents (or
+just its link, if your assistant can open it) into Claude, ChatGPT, or any
+other AI assistant along with "help me set up ZoneFlow", and it will
+interview you for your entities and plant/crop details, recommend sensible
+values (including the per-crop numbers like weekly water targets and the
+weather forecast dry-spell override), and get a zone fully configured and
+verified — no need to read any of the documentation below first.
 
-It never creates or renames any of your physical entities. You point it, via
-the config flow, at your existing:
+Two ways it can do that, and it'll ask you which you want:
+- **It clicks for you** — if it has tool/API access to your Home Assistant
+  instance (an MCP server, a long-lived access token, etc.), it can create
+  the config entry and set every tunable number itself, just narrating what
+  it's doing.
+- **It guides you** — if not (or if you'd rather do the clicking yourself),
+  it tells you exactly what to click and type, one screen at a time.
 
-- valve switch (`switch.watering1`)
-- pump power sensor (`sensor.waterpump_power_power`)
-- rain gauge tip counter (`counter.rain_gauge_tips`)
-- outdoor temperature sensor (`sensor.outdoor_temp_temperature`)
-- (optional) a `notify.*` entity for phone alerts
+Either way you end up in the same place: a working, tuned zone, with a
+verification test pulse run before it calls the job done.
 
-Everything else — the 8 rolling rain-window sensors, the 10-day rain history,
-the 3-day peak-temp history, the mutex lock, the abort flag, the last-run
-timestamps — is now internal state in this integration (persisted to its own
-storage file), replacing the input_number/input_boolean/input_datetime
-helpers the YAML version used for the same bookkeeping.
+## What it does
 
-## Parity notes — read before trusting this with the real valve
-
-- **18 tunable numbers**, 1:1 with your input_number sliders (same name,
-  min/max/step/unit, same fallback default as the Jinja `| float(x)` in the
-  YAML). See `const.py` `NUMBER_DEFS` / `NUMBER_DEFAULTS`.
-- **Manual buttons/services call the exact same code as the scheduled
-  triggers** — `run_deep_soak` / `run_routine_irrigation` don't know or care
-  whether they were invoked by the clock or by you, so a manual run can never
-  drift from what the 05:00/05:30 schedule would have done. Both still
-  respect every rain/dry-down/mutex gate, same as the live YAML.
-- **Two disclosed, deliberate deviations from the YAML** (flagged per your
-  "never silently change behavior" rule, not silently folded in):
-  1. The YAML had two near-duplicate "clear a stuck lock on HA restart"
-     automations. This port merges them into one `_on_startup` handler doing
-     everything the richer of the two did (see `controller.py` module
-     docstring).
-  2. The rolling rain windows (past 15/30/60min, 24h, 3d, 4d, 7d, 14d) are
-     computed from a persisted list of `(timestamp, cumulative_mm)` samples
-     rather than 8 separate recorder-backed `statistics` sensors. For a
-     monotonically increasing source (which `rain_lifetime_mm` always is)
-     these are mathematically equivalent; see `rain_tracker.py`'s docstring
-     and `tests/test_rain_tracker.py`.
-- **Not yet independently verified against a live HA instance** — I don't
-  have a Home Assistant install to run this against in the sandbox I built
-  it in (a full `pip install homeassistant` failed on an unrelated native
-  dependency, PyRIC). What *is* verified:
-  - All modules import-clean and pass `pyflakes` with zero warnings.
-  - The pure calculation logic (`calculations.py`, `rain_tracker.py`) has 18
-    unit tests (`tests/`) that pass, checked against hand-computed values
-    from the actual Jinja expressions, not just self-consistency.
-  - I read every line of the relevant `automations.yaml` and
-    `configuration.yaml` sections directly from your live config and cross-
-    checked each condition/threshold/formula against this code by hand.
-  - What I could **not** test here: the actual Home Assistant entity
-    lifecycle (config flow, `RestoreNumber` restore behavior, service
-    registration, the exact event-loop timing of `async_track_point_in_time`
-    watchdogs). That only shows up once it's running on your HA. Treat the
-    cutover plan below as mandatory, not optional, precisely because of this
-    gap.
+- **Two watering cadences per zone**: an infrequent **deep soak** (encourages
+  deep root growth) and a frequent, lighter **routine irrigation** — each on
+  its own configurable schedule and independently gated.
+- **Rain-aware**: tracks rolling rain windows (30min through 14 days) from a
+  tipping-bucket counter, deducts recent rainfall from how much a routine
+  cycle needs to apply, and holds off entirely during a configurable
+  dry-down period after significant rain.
+- **Temperature-aware**: a 3-day average peak temperature shifts both the
+  watering interval and the weekly water target between "cool", "normal",
+  and "hot" tiers.
+- **Safety watchdogs, not just a scheduler**: a stuck-valve force-off, a
+  power-loss mid-cycle abort, a pump-power audit per pulse, and a stale-lock
+  auto-recovery on Home Assistant restart. All of it — scheduled runs and
+  manual button/service calls alike — goes through the exact same code path,
+  so a manual run can never drift from what the schedule would have done.
+- **Tunable, not hardcoded**: every threshold (weekly mm targets, flow rate,
+  drydown days, safety runtime caps, rain-efficiency curve) is a Home
+  Assistant `number` entity you can adjust live, with sensible defaults.
+- **Multi-zone, any pump topology**: add the integration again for each zone
+  (own name, own valve, own targets) and it just works whether every zone has
+  its own independent pump or several zones share one pump feeding multiple
+  valves. Sharing is auto-detected — if two zones are pointed at the same
+  pump-power sensor, they automatically take turns instead of both trying to
+  run the pump at once; nothing to configure. A pump preamble/postamble delay
+  (spin-up before the valve opens, pressure-settle after it closes) is
+  available per zone for pumps that need a moment to reach pressure.
+- **Sunrise/sunset-relative scheduling, optional**: deep-soak and routine
+  triggers default to a fixed clock time, same as always, but either can
+  instead be set to fire a chosen number of minutes before/after sunrise or
+  sunset — useful across seasons and latitudes where a fixed 05:00 drifts
+  relative to daylight.
+- **Weather forecast gate, optional**: point a zone at any `weather.*` entity
+  and it will pre-emptively hold off a scheduled run when rain is forecast
+  (by mm and/or probability, both adjustable), checking again at the next
+  scheduled run instead of watering into the rain. If the forecast has no
+  weather entity configured, is missing, or is unavailable, this gate never
+  blocks anything — it fails open by design. A **dry-spell override** number,
+  adjustable per zone right in the UI, caps how many days a zone can go
+  un-watered on a forecast that never delivers: once that many days pass with
+  zero rain actually measured, ZoneFlow waters anyway. Set it low for a
+  thirsty seedling bed, higher for a drought-tolerant succulent zone — each
+  zone/crop can have its own tolerance.
 
 ## Installation
 
-1. Copy `custom_components/avocado_irrigation/` into your HA `/config/custom_components/`
-   (already done for you at `Y:\custom_components\avocado_irrigation` if you're
-   reading this from that copy).
+1. Copy `custom_components/zoneflow/` into your HA `/config/custom_components/`.
 2. Restart Home Assistant (custom integrations need a full restart to be
    picked up the first time).
-3. Settings → Devices & Services → Add Integration → "Avocado Irrigation".
-4. Point it at your real entities. For the CSV path, use a **different file**
-   than your existing `/config/avocado_irrigation.csv` during testing (the
-   default is `/config/avocado_irrigation_v2.csv`) so you can diff the two
-   logs side by side.
+3. Settings → Devices & Services → Add Integration → **ZoneFlow Irrigation**.
+4. Give the zone a short name (e.g. "Front Lawn") — this becomes its device
+   name and its default CSV filename, so multiple zones never collide.
+5. Point it at your real entities:
+   - a `switch.*` valve
+   - a `sensor.*` pump power sensor
+   - a `counter.*` or `sensor.*` rain gauge tip counter
+   - a `sensor.*` outdoor temperature sensor (device class `temperature`)
+   - (optional) a `notify.*` entity for phone alerts
+   - (optional) a `weather.*` entity to enable the forecast gate (see above)
+   - a CSV log file path
+   - deep-soak and routine schedule times, or a sunrise/sunset-relative
+     trigger instead (see above)
+6. To add another zone, repeat from step 3 with a different name/entities. If
+   it shares a pump-power sensor with an existing zone, pump-sharing kicks in
+   automatically.
 
-## Recommended cutover (do not skip — this controls a live valve on your
-## shared house water pump)
+## Recommended cutover
 
-1. **Install alongside the YAML automations, don't disable them yet.** Leave
-   `avocado_deep_soak` / `avocado_routine_irrigation` enabled so your tree
-   keeps getting watered on the schedule you trust while you test this.
-2. **Bench-test the wiring first**, at a time when it's fine for the valve to
-   click on for a few seconds:
-   `Developer Tools → Actions → avocado_irrigation.test_pulse` (seconds: 10).
-   This bypasses every schedule/rain/dry-down gate on purpose — it's the one
-   place in this integration that does — so you can confirm the valve
-   switches, the pump-power sensor is read correctly, and a CSV row lands in
-   `avocado_irrigation_v2.csv`.
-3. **Compare a full day of diagnostics against the YAML's own sensors**
-   before it ever controls the valve on schedule:
-   - `sensor.avocado_irrigation_rain_past_24h/3d/7d/14d` vs your existing
-     `sensor.rain_past_24h/3d/7d/14d`
-   - `sensor.avocado_irrigation_3_day_average_peak_temperature` vs
-     `sensor.3_day_average_peak_temperature`
-   - `sensor.avocado_irrigation_next_irrigation_estimate` vs
-     `sensor.next_avocado_irrigation`
-   These should track each other closely (small rounding differences are
-   expected; a large or growing gap means something's off and is worth
-   sending back for another look before going further).
-4. **Only once those match for a few days**, disable the two YAML
-   automations (`avocado_deep_soak`, `avocado_routine_irrigation`) — leave
-   the five YAML watchdogs disabled too, since this integration has its own
-   equivalents — and let this integration run the actual 05:00/05:30 cycles.
-5. **Rollback plan**: if anything looks wrong after cutover, re-enable the
-   two YAML automations and disable this integration's config entry
-   (Settings → Devices & Services → Avocado Irrigation → ⋮ → Disable). The
-   YAML automations and this integration read the same physical valve/pump/
-   rain-gauge entities but keep entirely separate internal state, so neither
-   can corrupt the other's bookkeeping.
+If you're replacing an existing YAML-based irrigation automation:
+
+1. **Install alongside your existing automations first — don't disable them
+   yet.** Let your tree/lawn keep getting watered on the schedule you trust
+   while you verify this one.
+2. **Bench-test the wiring** at a time when it's fine for the valve to click
+   on for a few seconds, via `Developer Tools → Actions →
+   zoneflow.test_pulse` (seconds: 10). This bypasses every schedule/rain/
+   dry-down gate on purpose — it's the one place in this integration that
+   does — so you can confirm the valve switches, the pump-power sensor reads
+   correctly, and a CSV row lands in your log file.
+3. **Compare the diagnostic sensors** (rolling rain windows, 3-day average
+   peak temperature, next-irrigation estimate) against whatever your old
+   setup reported, for a few days, before letting this integration control
+   the valve on schedule.
+4. **Only once those match**, disable your old automation(s) and let this
+   integration run the actual scheduled cycles.
+5. **Rollback plan**: if anything looks wrong after cutover, re-enable your
+   old automation and disable this integration's config entry (Settings →
+   Devices & Services → ZoneFlow Irrigation → ⋮ → Disable). They read the
+   same physical entities but keep entirely separate internal state, so
+   neither can corrupt the other's bookkeeping.
 
 ## Services
 
-- `avocado_irrigation.run_deep_soak` / `run_routine_irrigation` — same gates
-  as the schedule.
-- `avocado_irrigation.reset_lock` — emergency mutex clear.
-- `avocado_irrigation.test_pulse` (seconds, default 10) — bench-test only,
-  bypasses all gates.
+- `zoneflow.run_deep_soak` / `run_routine_irrigation` — same gates as the
+  schedule.
+- `zoneflow.reset_lock` — emergency mutex clear.
+- `zoneflow.test_pulse` (seconds, default 10) — bench-test only, bypasses
+  all gates.
+
+## Testing
+
+- `tests/` — an automated pytest suite (`pip install -r requirements-test.txt`,
+  then `pytest tests/ -q`) that boots a real Home Assistant core in-process
+  and fast-forwards simulated time to exercise every gate, watchdog, and
+  edge case in milliseconds.
+- `scripts/simulate_season.py` — a fast, pure-Python simulator that runs the
+  same watering-decision math against synthetic weather (dry spell, monsoon
+  burst, mixed season, or random) to sanity-check behaviour over weeks or
+  months in under a second: `python scripts/simulate_season.py --scenario mixed`.
+- `sandbox/` — a Docker Compose setup that runs a real, fully isolated Home
+  Assistant instance with simulated valve/pump/rain/temperature entities you
+  control from sliders, for clicking around the actual UI before touching a
+  real valve.

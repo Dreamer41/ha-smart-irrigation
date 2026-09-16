@@ -8,7 +8,7 @@ import math
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "custom_components" / "avocado_irrigation"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "custom_components" / "zoneflow"))
 
 import calculations as calc  # noqa: E402
 

@@ -25,7 +25,7 @@ First boot takes ~30-60 seconds. Then open **http://localhost:8123**
 1. Complete Home Assistant's normal onboarding (create a local account --
    this account only exists inside this sandbox container).
 2. Go to **Settings → Devices & Services → Add Integration**, search for
-   **Avocado Irrigation**, and point it at the simulated entities (search
+   **ZoneFlow Irrigation**, and point it at the simulated entities (search
    by name in each picker -- exact `entity_id`s are listed for reference):
    - Valve: **Simulated Watering Valve** (`switch.simulated_watering_valve`)
    - Pump power sensor: **Simulated Water Pump Power**
@@ -34,7 +34,7 @@ First boot takes ~30-60 seconds. Then open **http://localhost:8123**
    - Outdoor temperature sensor: **Simulated Outdoor Temperature**
      (`sensor.simulated_outdoor_temperature`)
    - Notify (optional): leave blank
-   - CSV log path: `/config/avocado_irrigation.csv` (writable inside the
+   - CSV log path: `/config/zoneflow.csv` (writable inside the
      container)
    - Deep soak / routine times: whatever you like, doesn't matter here
 
@@ -46,7 +46,7 @@ dashboard or drive from **Developer Tools → Actions**.
 ## 3. Things to try
 
 - **Basic pulse test**: set "Simulated Pump Power" to something above your
-  configured minimum (e.g. 800W), then call the `avocado_irrigation.test_pulse`
+  configured minimum (e.g. 800W), then call the `zoneflow.test_pulse`
   service (or press a Test Pulse button if you add one). Watch
   "Simulated Watering Valve" actually flip on and off in the dashboard in
   real time.
@@ -56,10 +56,10 @@ dashboard or drive from **Developer Tools → Actions**.
 - **Heat response**: drag "Simulated Outdoor Temperature" up over several
   simulated days (see note below) and watch `3-Day Average Peak Temperature`
   and the routine watering size respond.
-- **Full run**: call `avocado_irrigation.run_deep_soak` or
+- **Full run**: call `zoneflow.run_deep_soak` or
   `run_routine_irrigation`. Watch `Irrigation In Progress` (binary_sensor)
   turn on, the valve pulse for real, and a row get appended to the CSV
-  (`docker exec avocado-irrigation-sandbox cat /config/avocado_irrigation.csv`).
+  (`docker exec zoneflow-sandbox cat /config/zoneflow.csv`).
 - **Lock behavior**: while one of the above is running, try calling the
   other service. It should be refused instantly (matching the YAML's
   behavior) rather than queuing/waiting.

@@ -11,7 +11,7 @@ import homeassistant.util.dt as dt_util
 import pytest
 from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
-from custom_components.avocado_irrigation.const import DOMAIN
+from custom_components.zoneflow.const import DOMAIN
 
 from .test_smoke_setup import VALVE, _seed_source_entities, make_entry
 

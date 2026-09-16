@@ -1,0 +1,12 @@
+{
+  "domain": "zoneflow",
+  "name": "ZoneFlow Irrigation",
+  "version": "1.0.0",
+  "documentation": "https://github.com/Dreamer41/ha-smart-irrigation",
+  "issue_tracker": "https://github.com/Dreamer41/ha-smart-irrigation/issues",
+  "codeowners": ["@Dreamer41"],
+  "config_flow": true,
+  "integration_type": "service",
+  "iot_class": "local_push",
+  "requirements": []
+}
