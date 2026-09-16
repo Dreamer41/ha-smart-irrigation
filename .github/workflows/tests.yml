@@ -11,10 +11,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          # 3.13 has no numpy==1.26.0 wheel, which pytest-homeassistant-custom-component
+          # pins -- same issue hit setting this up locally on Windows. 3.12 has one.
+          python-version: "3.12"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install homeassistant pytest
+          # PyRIC (a Home Assistant dependency) fails to build on modern
+          # setuptools on Linux -- see requirements-test.txt for details.
+          pip install "setuptools<66" wheel
+          pip install -r requirements-test.txt
       - name: Run tests
-        run: pytest -q
+        run: pytest tests/ -q
