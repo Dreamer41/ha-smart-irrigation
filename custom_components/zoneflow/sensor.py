@@ -81,8 +81,16 @@ class ZoneFlowNextIrrigationSensor(_Base):
     @property
     def native_value(self):
         state = self._controller.store.state
+        if state.last_routine_ts is None:
+            # Never watered yet (a brand-new zone) -- there's no real last-run
+            # time to project a next-run estimate from. Falling back to epoch
+            # (0.0) here used to compute a "next irrigation" date decades in
+            # the past ("56 years ago" in the UI) instead of an honest
+            # "unknown". Once the first routine cycle actually runs, this
+            # starts producing a real estimate.
+            return None
         est = calc.estimate_next_irrigation(
-            last_routine_ts=state.last_routine_ts or 0.0,
+            last_routine_ts=state.last_routine_ts,
             last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
             avg_peak_temp=self._controller.avg_peak_temp(),
             hot_threshold=self._controller.number("hot_temp_threshold"),
