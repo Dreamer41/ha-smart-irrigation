@@ -237,10 +237,29 @@ class ZoneFlowController:
             async_track_time_change(self.hass, self._on_midnight, hour=0, minute=0, second=0)
         )
 
+        # _on_startup deliberately sleeps for STARTUP_GRACE_SECONDS (2 minutes)
+        # before doing anything, so Home Assistant's config entries are almost
+        # always still set up while hass.is_running is already True (it flips
+        # true at the start of the STARTING phase, not the end). Scheduling
+        # that sleep as a normal tracked task -- via hass.async_create_task,
+        # or by handing an async callback straight to
+        # bus.async_listen_once -- makes HA's own end-of-startup
+        # async_block_till_done() wait on it too, which produces a scary
+        # "something is blocking the start up phase" warning (and the
+        # equivalent on every config-entry reload) even though nothing is
+        # actually wrong. entry.async_create_background_task keeps the delay
+        # working exactly as before but explicitly outside that wait, and
+        # also auto-cancels it if the entry is unloaded before the grace
+        # period elapses.
+        def _schedule_on_startup(event=None) -> None:
+            self.entry.async_create_background_task(
+                self.hass, self._on_startup(event), name=f"{DOMAIN}_on_startup_{self.entry.entry_id}"
+            )
+
         if self.hass.is_running:
-            self.hass.async_create_task(self._on_startup(None))
+            _schedule_on_startup()
         else:
-            self._unsubs.append(self.hass.bus.async_listen_once("homeassistant_start", self._on_startup))
+            self._unsubs.append(self.hass.bus.async_listen_once("homeassistant_start", _schedule_on_startup))
 
     async def async_unload(self) -> None:
         for unsub in self._unsubs:
