@@ -1,0 +1,27 @@
+name: Validate
+
+# Structural checks required for HACS default-store eligibility, separate
+# from tests.yml (which runs the actual pytest suite). hassfest checks
+# manifest.json against Home Assistant core's own rules; the HACS action
+# checks the repo layout/metadata HACS itself needs.
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *" # catches breakage from upstream HA/HACS rule changes
+  workflow_dispatch:
+
+jobs:
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hacs/action@main
+        with:
+          category: integration

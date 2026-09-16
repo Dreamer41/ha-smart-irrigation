@@ -142,3 +142,8 @@ If you're replacing an existing YAML-based irrigation automation:
   Assistant instance with simulated valve/pump/rain/temperature entities you
   control from sliders, for clicking around the actual UI before touching a
   real valve.
+
+## License
+
+[MIT](./LICENSE) — use it, modify it, redistribute it, just keep the
+copyright notice.
