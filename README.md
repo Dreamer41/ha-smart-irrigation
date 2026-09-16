@@ -12,8 +12,13 @@ A real zone's device page in Home Assistant — every threshold below is a
 live, adjustable `number` entity, not a hardcoded setting:
 
 <img src="docs/screenshots/device-controls-1.png" width="800" alt="ZoneFlow device page: controls and activity log">
-<img src="docs/screenshots/device-controls-2.png" width="400" alt="ZoneFlow device page: more tunable numbers">
-<img src="docs/screenshots/device-sensors.png" width="400" alt="ZoneFlow diagnostic sensors">
+
+<table>
+<tr>
+<td><img src="docs/screenshots/device-controls-2.png" width="400" alt="ZoneFlow device page: more tunable numbers"></td>
+<td><img src="docs/screenshots/device-sensors.png" width="400" alt="ZoneFlow diagnostic sensors"></td>
+</tr>
+</table>
 
 ## 🤖 Let an AI set it up for you
 
