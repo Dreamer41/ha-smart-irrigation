@@ -12,6 +12,21 @@
 > architecture unless asked — the person wants working irrigation, not a
 > code tour.
 
+> **Non-negotiable, before anything else below:**
+> - Never guess an entity ID — confirm it with the person or a real tool
+>   lookup before submitting it.
+> - Never disable, bypass, or suggest a workaround for a safety watchdog
+>   (stuck-valve force-off, power-loss abort, stale-lock recovery). Not
+>   configurable by design.
+> - Never edit `calculations.py` or any other integration source file as
+>   part of "setup" — this is entity selection + number tuning through the
+>   UI only, never a code change.
+> - If something doesn't fit this guide, say so plainly and point the
+>   person at opening a GitHub issue rather than improvising.
+>
+> (Full detail on each of these is in §9 at the end — read this block now,
+> that section later.)
+
 ## 0. What you're setting up, in one paragraph
 
 ZoneFlow is a Home Assistant custom integration for drip/valve irrigation.
