@@ -318,7 +318,150 @@ Do not consider setup finished until these are confirmed for each zone:
    don't leave them thinking a successful test pulse alone proves the rain
    logic works.
 
-## 8. Ground rules while you do this
+## 8. Optional finishing touch: build a dashboard card for this zone
+
+Everything above gets a zone *working*. This step is purely cosmetic and
+entirely optional — offer it after §7 passes, don't insist on it, and skip
+it outright if the person just wants the default auto-generated device page.
+
+The goal is a dashboard section that groups this zone's entities the way a
+person actually thinks about them (status, manual controls, targets, safety)
+instead of HA's default alphabetical device-page list. Do **not** hand the
+person a generic template with guessed entity IDs — every ID below depends
+on the zone name they chose in §4, and HA's own slugification of punctuation
+(dashes, parentheses, "+") is inconsistent enough that a guessed ID is
+frequently wrong by one character. Instead:
+
+1. Look up the real entity IDs for *this* zone. If you have HA tool/API
+   access, list entities belonging to this zone's device (by device name, or
+   by filtering `number.*`, `sensor.*`, `binary_sensor.*`, `button.*`,
+   `datetime.*` for the zone's slug) and read back the exact IDs — don't
+   reuse the guessed slugs from earlier in this guide. If you don't have HA
+   access, ask the person to open **Settings → Devices & Services → your
+   zone's device**, and read you the entity IDs directly (or have them
+   export the device's entities from **Developer Tools → States**, filtered
+   by the zone name).
+2. Fill the template below with those confirmed IDs — every `<entity.id>`
+   placeholder — so what you hand back is genuinely paste-ready, not a
+   fill-in-the-blanks exercise for the person.
+3. Tell them exactly where to paste it: **Settings → Dashboards → (their
+   dashboard) → ⋮ Edit Dashboard → ⋮ Raw configuration editor**, then either
+   paste this as a new item under an existing `views:` list, or as a whole
+   new dashboard if they don't have a YAML-mode one yet. If they're on the
+   default auto-generated dashboard (most first-time users are), point them
+   at **Settings → Dashboards → + Add Dashboard → "New dashboard from
+   scratch"** first, since the auto-generated one can't be hand-edited.
+
+Template — one `views:` entry per zone, using only plain built-in cards (no
+extra HACS frontend dependency required):
+
+```yaml
+title: <Zone Name>
+path: <zone-slug>
+icon: mdi:sprinkler
+cards:
+  - type: entities
+    title: Status
+    show_header_toggle: false
+    entities:
+      - entity: <switch.valve_entity>
+        name: Valve
+      - entity: <binary_sensor.zone_irrigation_abort_flag>
+        name: Abort Flag
+      - entity: <sensor.zone_pump_power_entity_if_relevant>
+        name: Pump Power
+      - entity: <sensor.zone_next_irrigation_estimate>
+        name: Next Run Estimate
+
+  - type: entities
+    title: Manual Controls
+    show_header_toggle: false
+    entities:
+      - type: buttons
+        entities:
+          - entity: <button.zone_run_deep_soak>
+            name: Run Deep Soak
+            icon: mdi:waves
+          - entity: <button.zone_run_routine_irrigation>
+            name: Run Routine
+            icon: mdi:play
+          - entity: <button.zone_reset_lock>
+            name: Reset Lock
+            icon: mdi:lock-open-variant
+
+  - type: entities
+    title: Routine Irrigation
+    show_header_toggle: false
+    entities:
+      - entity: <number.zone_routine_normal_weekly_target>
+      - entity: <number.zone_routine_hot_weekly_target>
+      - entity: <number.zone_hot_weather_temp_threshold>
+      - entity: <number.zone_routine_cool_weekly_target>
+      - entity: <number.zone_routine_dry_down_holdoff>
+
+  - type: entities
+    title: Deep Soak (14-Day)
+    show_header_toggle: false
+    entities:
+      - entity: <number.zone_deep_soak_target_depth>
+      - entity: <number.zone_deep_soak_rain_ceiling>
+      - entity: <number.zone_deep_soak_subsoil_dry_down_holdoff>
+
+  - type: entities
+    title: Forecast Gate & Dry-Spell Override
+    show_header_toggle: false
+    entities:
+      - entity: <number.zone_forecast_rain_skip_threshold>
+      - entity: <number.zone_forecast_rain_probability_threshold>
+      - entity: <number.zone_forecast_dry_spell_override>
+
+  - type: entities
+    title: Calibration & Safety Caps
+    show_header_toggle: false
+    entities:
+      - entity: <number.zone_emitter_flow_rate_calibration>
+      - entity: <number.zone_rain_gauge_mm_per_tip>
+      - entity: <number.zone_pump_low_power_warning_threshold>
+      - entity: <number.zone_deep_soak_max_safety_runtime_cap>
+      - entity: <number.zone_routine_max_safety_runtime_cap>
+
+  - type: entities
+    title: History Seeding
+    show_header_toggle: false
+    entities:
+      - entity: <datetime.zone_last_routine_irrigation>
+      - entity: <datetime.zone_last_deep_soak>
+      - entity: <datetime.zone_last_significant_rain>
+
+  - type: markdown
+    title: Zone Trigger Log
+    content: |
+      {% set abort = states('<binary_sensor.zone_irrigation_abort_flag>') %}
+      {% set routine_ts = states('<datetime.zone_last_routine_irrigation>') %}
+      {% set deep_soak_ts = states('<datetime.zone_last_deep_soak>') %}
+      | Field | Value |
+      | :--- | :--- |
+      | **Abort Flag** | {{ 'PROBLEM' if abort == 'on' else 'OK' }} |
+      {% if routine_ts not in ['unknown', 'unavailable', none] %}
+      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom('%b %d, %H:%M') }} |
+      {% endif %}
+      {% if deep_soak_ts not in ['unknown', 'unavailable', none] %}
+      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom('%b %d, %H:%M') }} |
+      {% endif %}
+```
+
+If the person has multiple zones, repeat the whole `cards:` block as another
+`views:` entry (one tab per zone) rather than stacking every zone's cards
+into a single long page — mirrors how the entities themselves are already
+split one config entry per zone.
+
+One honest caveat to pass on to the person: this is plain built-in HA
+cards, chosen deliberately so nothing extra needs installing. It won't look
+as polished as a purpose-built dashboard (gauges, sparklines, a custom
+panel) — if they want that, it's a separate, bigger undertaking outside
+what this integration ships with.
+
+## 9. Ground rules while you do this
 
 - Never guess an entity ID and submit it without the person confirming it,
   or without your own tool-based lookup giving you real confidence.
