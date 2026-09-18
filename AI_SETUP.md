@@ -245,6 +245,36 @@ if it's simply never occurred.
 
 ## 5. Set the tunable numbers for this zone/crop
 
+**Before suggesting any values, ask (or infer from context) two things if
+you don't already know them: what's being watered (the crop/plant type),
+and roughly where in the world this is (country or region is enough — you
+don't need a precise location).** Climate varies enough between, say, the
+tropics, a temperate continental climate, and a Mediterranean one that the
+same crop genuinely wants different weekly targets and temperature
+thresholds in each. Use both together, not just the crop table below in
+isolation:
+
+- **Hot/tropical climates** (e.g. Thailand, most of Southeast Asia, much of
+  India, equatorial Africa/South America): lean toward the higher end of
+  the crop ranges below, set the hot-weather temp threshold around
+  30-32°C, and expect the "hot" tier to be in effect for a large fraction
+  of the year rather than the exception.
+- **Temperate climates** (e.g. much of Europe, the northern US, Finland):
+  lean toward the lower end of the crop ranges, set the hot threshold
+  around 26-29°C (a "hot day" is a lower bar than in the tropics), and the
+  cool threshold matters more here since cool weather is common for a
+  larger part of the year.
+- **Arid/Mediterranean climates** (e.g. much of Australia, southern
+  Europe, the US Southwest): similar targets to hot/tropical for the dry
+  season, but watch the forecast dry-spell override (§6.4) — long genuine
+  dry spells are normal here, not a sign the forecast gate is misbehaving.
+
+These are starting points to reason from, not a lookup table to follow
+blindly — say so if asked, and adjust based on anything more specific the
+person tells you about their actual local conditions (a very hot
+microclimate, unusually high humidity reducing evaporation, etc.) rather
+than the country name alone.
+
 After the config entry is created, several dozen `number.<zone>_*` entities
 appear (Settings → Devices & Services → the zone's device → its entities,
 or just search `number.<zone_name_slug>` in Developer Tools → States). Don't
@@ -352,6 +382,15 @@ Do not consider setup finished until these are confirmed for each zone:
    safety/rain gate on purpose, so it's not representative of a real run —
    don't leave them thinking a successful test pulse alone proves the rain
    logic works.
+5. **Check whether they said yes to a dashboard card back in §1.** If they
+   did, setup is *not* finished until §8 is actually done and the person
+   has the finished YAML in hand — not just noted as something you'll get
+   to. It's easy to reach this point, confirm the test pulse and sensors
+   look good, and declare the job done without circling back to a "cosmetic
+   extra" from several steps ago. Don't let that happen: treat a yes on the
+   dashboard card exactly like any other item on this list — required
+   before you say setup is complete, not an afterthought you can skip if it
+   slips your mind.
 
 ## 8. Optional finishing touch: build a dashboard card for this zone
 
