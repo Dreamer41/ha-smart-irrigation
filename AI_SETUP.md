@@ -38,61 +38,48 @@ number, and (b) either enter it yourself (if you have tool access to their
 Home Assistant — §1a) or tell the person exactly what to click and type
 (if you don't — §1).
 
-## 1. First question: who's doing the clicking?
+## 1. First questions — ask all four together, before anything else
 
-Before anything else, work out — and if it's not already obvious from how
-you were invoked, just ask the person outright — which mode this is:
+Before touching §2, ask the person these four things **in one go, as a
+single batch** — not spread across the conversation, not deferred, and
+never silently defaulted to "no" because a later section calls a field
+"optional." An unanswered optional field is not the same as a "no."
 
-- **Mode A — you drive it directly.** You have live tool/API access to the
-  person's actual Home Assistant instance (an MCP server, a long-lived
-  access token you can call the REST API with, or equivalent). If so, tell
-  the person you can configure this for them directly and just confirm
-  before each real change (creating the config entry, setting number
-  values) — you don't need to walk them through clicking anything. See
-  §1a for the concrete calls.
-- **Mode B — you guide, they click.** You have no tool access, only the
-  chat. Say so, and be an efficient guide: tell them exactly what to click
-  and type, one screen at a time, and ask them to paste back what they see
-  (entity lists, error messages, confirmation screens) so you can keep
-  steering without them needing to describe HA's UI to you from scratch.
+1. **Mode A or Mode B?** Do you have live tool/API access to their actual
+   Home Assistant instance (an MCP server, a long-lived access token, or
+   equivalent)? If yes, ask whether *they'd* rather you just configure it
+   directly (Mode A) or walk them through clicking it themselves (Mode B)
+   — some people want to watch/learn the UI, most want it just done. If you
+   have no tool access at all, you're in Mode B by default, no need to ask.
+2. **Dashboard card?** Would they like a ready-to-paste dashboard YAML for
+   this zone once setup's done (§8 — purely cosmetic, entirely optional,
+   but the answer changes what you need to track during §4).
+3. **Phone notifications?** ZoneFlow can alert a `notify.*` target on
+   things like a stuck-valve force-off or a low pump-power warning. Do they
+   want this, and if so, which `notify.*` entity?
+4. **Weather forecast gate?** Point this zone at a `weather.*` entity to
+   hold off watering when rain is forecast (§6.4). Do they have one they'd
+   like to use here?
 
-If you *do* have HA tool access, still ask the person once, up front,
-whether they'd rather you just do it or walk them through it themselves —
-some people want to watch/learn the UI, most want it just done. Respect
-whichever they pick.
+Carry all four answers forward — don't re-ask any of them later, and don't
+let §4's config-flow table talk you back into treating an unanswered field
+as a default "no." Specifically:
 
-**Also ask now** whether they'd like a ready-to-paste dashboard card for
-this zone once setup's done (§8 — purely cosmetic, entirely optional).
-Asking here, not at the end, matters: if they say yes, you note this zone's
-entity IDs as you naturally encounter them while walking through §4 and §4a
-below, instead of having to go back and rediscover them from scratch after
-everything's already set up. If they say no, skip §8 entirely and don't
-bring it up again unless they ask.
-
-**Also ask now — don't silently leave these blank later:**
-- **Phone notifications.** ZoneFlow can send alerts to a `notify.*` target
-  (e.g. a stuck-valve force-off, a low pump-power warning) — genuinely
-  useful for anything that can go wrong unattended with a live valve. Ask
-  if they want this, and if so, which `notify.*` entity to use (their phone
-  app's notify service, a Telegram bot, etc. — whatever they already have
-  set up in HA). If they don't have one or don't want it, that's a fine
-  answer too — just make it an actual answer, not something skipped past
-  because it's marked "optional" on the config-flow screen in §4.
-- **Weather forecast gate.** Point this zone at a `weather.*` entity to
-  hold off watering when rain is forecast (§6.4 has the full behavior,
-  including the dry-spell override that prevents it from stalling forever
-  on a forecast that never delivers). Ask if they have a `weather.*`
-  entity they'd like to use for this zone, and if so, walk them through
-  §6.4's threshold numbers once the zone exists. If they say no or don't
-  have one, leave it blank — the zone works fine without it, just without
-  that extra layer.
-
-Whatever they answer for these two, carry the answer forward to §4 instead
-of re-asking — by the time you reach that screen you should already know
-whether to fill those two fields or leave them blank.
-
-Either way, the information you need to gather is the same — §2 through §7
-below. Only the *mechanism* for entering it differs.
+- **Mode** decides the mechanism for every step in §2 through §7 (you
+  clicking via tool access vs. telling them what to click) — the
+  information gathered is identical either way. See §1a for Mode A's
+  concrete calls.
+- **Dashboard = yes** means: while walking through §4 and §4a, note this
+  zone's entity IDs as you naturally encounter them, instead of having to
+  go back and rediscover them from scratch after everything's set up. If
+  no, skip §8 entirely and don't bring it up again unless asked.
+- **Notifications = yes** means: collect the `notify.*` entity now, and
+  fill it into §4's "Phone notify target" field. If no, that field stays
+  blank in §4 — but because they were actually asked, not because you
+  defaulted it.
+- **Weather gate = yes** means: collect the `weather.*` entity now, fill it
+  into §4's "Weather forecast source" field, and walk them through §6.4's
+  threshold numbers once the zone exists. If no, that field stays blank.
 
 ### 1a. Mode A mechanics: driving the config flow via the REST API
 
@@ -180,8 +167,11 @@ rather than asking the person to hunt for IDs blind:
 - Rain counter: a `counter.*` or `sensor.*` entity that only increases
   (a tipping-bucket rain gauge's raw tip count, or a cumulative mm sensor).
 - Outdoor temperature: a `sensor.*` with device class `temperature`.
-- (Optional) Notify target: a `notify.*` entity for phone alerts.
-- (Optional) Weather: a `weather.*` entity, for the forecast gate (§6).
+- Notify target: a `notify.*` entity for phone alerts — only look for this
+  if they said yes to notifications in §1; skip this search entirely if
+  they said no.
+- Weather: a `weather.*` entity for the forecast gate (§6.4) — only look
+  for this if they said yes to the forecast gate in §1; skip it if not.
 
 Present your best-guess matches and ask the person to confirm or correct
 each one — never submit an entity ID you're not confident about. If you
@@ -462,6 +452,8 @@ cards:
     entities:
       - entity: <switch.valve_entity>
         name: Valve
+      - entity: <binary_sensor.zone_irrigation_in_progress>
+        name: Lock (In Progress)
       - entity: <binary_sensor.zone_irrigation_abort_flag>
         name: Abort Flag
       - entity: <sensor.zone_pump_power_entity_if_relevant>
@@ -475,13 +467,13 @@ cards:
     entities:
       - type: buttons
         entities:
-          - entity: <button.zone_run_deep_soak>
+          - entity: <button.zone_run_deep_soak_now>
             name: Run Deep Soak
             icon: mdi:waves
-          - entity: <button.zone_run_routine_irrigation>
+          - entity: <button.zone_run_routine_irrigation_now>
             name: Run Routine
             icon: mdi:play
-          - entity: <button.zone_reset_lock>
+          - entity: <button.zone_reset_irrigation_lock>
             name: Reset Lock
             icon: mdi:lock-open-variant
 
@@ -500,7 +492,7 @@ cards:
     show_header_toggle: false
     entities:
       - entity: <number.zone_deep_soak_target_depth>
-      - entity: <number.zone_deep_soak_rain_ceiling>
+      - entity: <number.zone_deep_soak_rain_ceiling_14d>
       - entity: <number.zone_deep_soak_subsoil_dry_down_holdoff>
 
   - type: entities
@@ -516,7 +508,7 @@ cards:
     show_header_toggle: false
     entities:
       - entity: <number.zone_emitter_flow_rate_calibration>
-      - entity: <number.zone_rain_gauge_mm_per_tip>
+      - entity: <number.zone_rain_gauge_mm_per_tip_calibration>
       - entity: <number.zone_pump_low_power_warning_threshold>
       - entity: <number.zone_deep_soak_max_safety_runtime_cap>
       - entity: <number.zone_routine_max_safety_runtime_cap>
@@ -532,11 +524,13 @@ cards:
   - type: markdown
     title: Zone Trigger Log
     content: |
+      {% set lock = states('<binary_sensor.zone_irrigation_in_progress>') %}
       {% set abort = states('<binary_sensor.zone_irrigation_abort_flag>') %}
       {% set routine_ts = states('<datetime.zone_last_routine_irrigation>') %}
       {% set deep_soak_ts = states('<datetime.zone_last_deep_soak>') %}
       | Field | Value |
       | :--- | :--- |
+      | **Lock (In Progress)** | {{ 'RUNNING' if lock == 'on' else 'idle' }} |
       | **Abort Flag** | {{ 'PROBLEM' if abort == 'on' else 'OK' }} |
       {% if routine_ts not in ['unknown', 'unavailable', none] %}
       | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom('%b %d, %H:%M') }} |
