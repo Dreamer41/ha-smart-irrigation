@@ -46,6 +46,14 @@ whether they'd rather you just do it or walk them through it themselves —
 some people want to watch/learn the UI, most want it just done. Respect
 whichever they pick.
 
+**Also ask now** whether they'd like a ready-to-paste dashboard card for
+this zone once setup's done (§8 — purely cosmetic, entirely optional).
+Asking here, not at the end, matters: if they say yes, you note this zone's
+entity IDs as you naturally encounter them while walking through §4 and §4a
+below, instead of having to go back and rediscover them from scratch after
+everything's already set up. If they say no, skip §8 entirely and don't
+bring it up again unless they ask.
+
 Either way, the information you need to gather is the same — §2 through §7
 below. Only the *mechanism* for entering it differs.
 
@@ -176,6 +184,18 @@ Submitting this screen creates the zone. It starts running on the schedule
 immediately, but every tunable number below still has its factory default
 until you set it in §5 — **do that before leaving the person alone with a
 live valve.**
+
+**If they asked for a dashboard card in §1:** this is the moment to note
+this zone's real entity IDs, while you're already looking at its device
+page for §4a and §5 anyway — don't wait until everything else is finished.
+If you have HA tool access, list this zone's device's entities now (by
+device name, or filtering `number.*`/`sensor.*`/`binary_sensor.*`/
+`button.*`/`datetime.*` for the zone's slug) and keep the list. In Mode B,
+ask the person to open the zone's device page (**Settings → Devices &
+Services → [zone name]**) and read you every entity ID shown there, once,
+while they're already on that screen for §4a/§5 — not as a separate ask
+later. Either way, hold onto this list; §8 uses it directly instead of
+looking anything up again.
 
 ### 4a. Seed the zone's history if it isn't actually brand-new
 
@@ -320,27 +340,27 @@ Do not consider setup finished until these are confirmed for each zone:
 
 ## 8. Optional finishing touch: build a dashboard card for this zone
 
-Everything above gets a zone *working*. This step is purely cosmetic and
-entirely optional — offer it after §7 passes, don't insist on it, and skip
-it outright if the person just wants the default auto-generated device page.
+This only applies if the person said yes to this back in §1. Everything
+above gets a zone *working* — this step is purely cosmetic, and skip it
+outright if they never asked or said the default device page is fine.
 
 The goal is a dashboard section that groups this zone's entities the way a
 person actually thinks about them (status, manual controls, targets, safety)
 instead of HA's default alphabetical device-page list. Do **not** hand the
-person a generic template with guessed entity IDs — every ID below depends
-on the zone name they chose in §4, and HA's own slugification of punctuation
-(dashes, parentheses, "+") is inconsistent enough that a guessed ID is
-frequently wrong by one character. Instead:
+person a generic template with guessed entity IDs — HA's own slugification
+of punctuation (dashes, parentheses, "+") is inconsistent enough that a
+guessed ID is frequently wrong by one character. That's exactly why §4
+already had you collect this zone's real entity IDs while you were on its
+device page for §4a/§5 — use that list now instead of looking anything up
+again:
 
-1. Look up the real entity IDs for *this* zone. If you have HA tool/API
-   access, list entities belonging to this zone's device (by device name, or
-   by filtering `number.*`, `sensor.*`, `binary_sensor.*`, `button.*`,
-   `datetime.*` for the zone's slug) and read back the exact IDs — don't
-   reuse the guessed slugs from earlier in this guide. If you don't have HA
-   access, ask the person to open **Settings → Devices & Services → your
-   zone's device**, and read you the entity IDs directly (or have them
-   export the device's entities from **Developer Tools → States**, filtered
-   by the zone name).
+1. Take the entity ID list you collected back in §4. If for some reason you
+   skipped that (the person changed their mind about wanting a card only
+   after setup was already finished), do it now the same way: HA tool/API
+   lookup by device name or by filtering `number.*`, `sensor.*`,
+   `binary_sensor.*`, `button.*`, `datetime.*` for the zone's slug, or ask
+   the person to read the IDs off **Settings → Devices & Services → their
+   zone's device**.
 2. Fill the template below with those confirmed IDs — every `<entity.id>`
    placeholder — so what you hand back is genuinely paste-ready, not a
    fill-in-the-blanks exercise for the person.
