@@ -98,9 +98,25 @@ verification test pulse run before it calls the job done.
 
 ## Installation
 
+**Via HACS (recommended):**
+
+1. HACS → ⋮ (top right) → **Custom repositories** → add
+   `https://github.com/Dreamer41/ha-smart-irrigation` as type **Integration**.
+   (Once this repo is accepted into HACS's default store, this manual step
+   won't be needed — you'll be able to just search for "ZoneFlow" in HACS
+   directly.)
+2. Find **ZoneFlow Irrigation** in HACS and click **Download**.
+3. Restart Home Assistant (custom integrations need a full restart to be
+   picked up the first time).
+
+**Manual install (alternative):**
+
 1. Copy `custom_components/zoneflow/` into your HA `/config/custom_components/`.
 2. Restart Home Assistant (custom integrations need a full restart to be
    picked up the first time).
+
+**Then, either way:**
+
 3. Settings → Devices & Services → Add Integration → **ZoneFlow Irrigation**.
 4. Give the zone a short name (e.g. "Front Lawn") — this becomes its device
    name and its default CSV filename, so multiple zones never collide.
