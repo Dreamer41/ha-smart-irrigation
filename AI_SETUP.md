@@ -69,6 +69,28 @@ below, instead of having to go back and rediscover them from scratch after
 everything's already set up. If they say no, skip §8 entirely and don't
 bring it up again unless they ask.
 
+**Also ask now — don't silently leave these blank later:**
+- **Phone notifications.** ZoneFlow can send alerts to a `notify.*` target
+  (e.g. a stuck-valve force-off, a low pump-power warning) — genuinely
+  useful for anything that can go wrong unattended with a live valve. Ask
+  if they want this, and if so, which `notify.*` entity to use (their phone
+  app's notify service, a Telegram bot, etc. — whatever they already have
+  set up in HA). If they don't have one or don't want it, that's a fine
+  answer too — just make it an actual answer, not something skipped past
+  because it's marked "optional" on the config-flow screen in §4.
+- **Weather forecast gate.** Point this zone at a `weather.*` entity to
+  hold off watering when rain is forecast (§6.4 has the full behavior,
+  including the dry-spell override that prevents it from stalling forever
+  on a forecast that never delivers). Ask if they have a `weather.*`
+  entity they'd like to use for this zone, and if so, walk them through
+  §6.4's threshold numbers once the zone exists. If they say no or don't
+  have one, leave it blank — the zone works fine without it, just without
+  that extra layer.
+
+Whatever they answer for these two, carry the answer forward to §4 instead
+of re-asking — by the time you reach that screen you should already know
+whether to fill those two fields or leave them blank.
+
 Either way, the information you need to gather is the same — §2 through §7
 below. Only the *mechanism* for entering it differs.
 
@@ -185,8 +207,8 @@ other zone's name.
 | Pump power sensor | the `sensor.*` from §3 | required |
 | Rain gauge tip counter | the `counter.*`/`sensor.*` from §3 | required |
 | Outdoor temperature sensor | the `sensor.*` from §3 | required |
-| Phone notify target | a `notify.*` entity | optional — leave blank if none |
-| Weather forecast source | a `weather.*` entity | optional — leave blank unless the person wants the forecast gate (§6.4); can be added later via the integration's Options |
+| Phone notify target | a `notify.*` entity | use whatever they answered in §1 — fill it in if they wanted alerts, leave blank if they didn't |
+| Weather forecast source | a `weather.*` entity | use whatever they answered in §1 — fill it in if they wanted the forecast gate (§6.4), leave blank if they didn't; can also be added later via the integration's Options if they change their mind |
 | CSV log file path | a file path | accept the pre-filled default (`/config/zoneflow_<zone-name-slug>.csv`) unless the person has a reason to change it |
 | Deep soak schedule time | `HH:MM:SS` | default `05:00:00` is reasonable for most climates (before sunrise, before daytime evaporation); ask if they have a strong preference |
 | Routine irrigation schedule time | `HH:MM:SS` | default `05:30:00`, same reasoning |
