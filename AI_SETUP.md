@@ -59,7 +59,10 @@ never silently defaulted to "no" because a later section calls a field
    want this, and if so, which `notify.*` entity?
 4. **Weather forecast gate?** Point this zone at a `weather.*` entity to
    hold off watering when rain is forecast (§6.4). Do they have one they'd
-   like to use here?
+   like to use here? (Note: §2 asks next whether this zone is outdoors or
+   a greenhouse/indoor space — if it turns out to be a greenhouse, revisit
+   this answer, since the forecast gate isn't useful there. Don't worry
+   about that distinction yet if you don't already know it.)
 
 Carry all four answers forward — don't re-ask any of them later, and don't
 let §4's config-flow table talk you back into treating an unanswered field
@@ -147,11 +150,37 @@ once they've agreed to let you drive.
    - What are they watering (a plant/crop name, or "lawn")? You'll use this
      later for §6's default suggestions and it becomes the zone's display
      name.
+   - **Outdoors, or in a greenhouse/other indoor grow space?** This isn't
+     just a detail — it changes two real decisions later: whether the
+     weather forecast gate (§6.4) is even useful for this zone (it isn't,
+     for a greenhouse — see below), and what their "outdoor temperature"
+     sensor should actually be measuring for this zone.
    - Do they already have Home Assistant entities for: a valve (switch), a
      pump power sensor, a rain gauge tip counter, and an outdoor temperature
      sensor? If any don't exist yet, that's a hardware/other-integration
      problem outside ZoneFlow's scope — tell them plainly and stop for that
      piece; don't invent a workaround.
+
+   **If this zone is a greenhouse/indoor setup:**
+   - **Don't offer the weather forecast gate for this zone**, even if you
+     already have a `weather.*` entity from another (outdoor) zone. A
+     forecast of rain outside doesn't mean this zone should hold off —
+     real rain never reaches these plants. If the person specifically
+     wants it anyway (e.g. their greenhouse vents open in certain weather,
+     changing the internal climate), that's their call, but don't suggest
+     it as the default the way you would for an outdoor zone.
+   - The rain gauge tip counter is still a **required** field on the
+     config-flow screen (§4), but if this zone genuinely gets no rain at
+     all, point it at any real counter/sensor entity even if it will
+     simply never tip. It reads as zero rain either way, which is harmless
+     — the routine/deep-soak math just never gets a rain deduction for this
+     zone, which is correct.
+   - The "outdoor temperature" sensor should be whatever actually measures
+     **this zone's real ambient conditions** — a sensor physically inside
+     the greenhouse, not a literal outside-the-building sensor. A
+     greenhouse commonly runs hotter than the outside air, and that
+     temperature is what drives the hot/cool tier classification (§5) for
+     this specific zone.
 
 ## 3. Find the entity IDs
 
@@ -351,6 +380,13 @@ schedule (deep soak and routine can each use a different mode).
 Only set this up if the person wants ZoneFlow to skip a scheduled run when
 rain is forecast. Requires a `weather.*` entity (any integration that
 provides one — ask which weather integration they use, or find it via §3).
+
+**Skip this for a greenhouse/indoor zone** (per §2) unless the person has a
+specific reason to want it anyway — a forecast of rain outside is
+irrelevant to plants that never get rained on. If you're setting up
+multiple zones and only some are greenhouses, this is genuinely per-zone:
+an outdoor zone using the same `weather.*` entity is completely normal,
+you just don't offer or apply the gate to the greenhouse zone(s).
 
 1. Set the zone's "Weather forecast source" field to that entity (in the
    config flow, or later via the integration's **Options** if already set up).
