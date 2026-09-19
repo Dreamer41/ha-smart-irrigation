@@ -34,6 +34,12 @@ LAST_EVENT_FIELDS: list[tuple[str, str]] = [
     ("last_routine_ts", "Last Routine Irrigation"),
     ("last_deep_soak_ts", "Last Deep Soak"),
     ("last_significant_rain_ts", "Last Significant Rain"),
+    # Feeds the optional growth-stage auto-ramp (see controller.py's
+    # growth_ramp_fraction()) -- left unset, the ramp is simply never
+    # applied (full weekly target from day one), same as the growth-ramp
+    # profile itself defaulting to "off". Setting/updating this later is
+    # exactly as valid as setting it at initial setup.
+    ("planting_date_ts", "Planting / Transplant Date"),
 ]
 
 
@@ -57,7 +63,9 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
         self._controller = controller
         self._state_field = state_field
         self._attr_unique_id = f"{entry.entry_id}_{state_field}"
-        self._attr_name = name
+        # See translations/<lang>.json's entity.datetime.<key>.name -- key is
+        # the state field with its "_ts" suffix dropped (e.g. "last_routine").
+        self._attr_translation_key = state_field.removesuffix("_ts")
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
 
     @property

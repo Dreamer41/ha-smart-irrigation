@@ -11,9 +11,17 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
-from .const import DOMAIN
+from .const import DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
+
+
+def _label(raw: str) -> str:
+    """Turn a stored option key like "clay_loam" / "off" into a display
+    string ("Clay Loam" / "Off") without needing a separate lookup table --
+    these are informational-only categories (see const.py), never parsed
+    back out of the label."""
+    return raw.replace("_", " ").title()
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
@@ -26,6 +34,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowNextIrrigationSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
         ZoneFlowTodayRainSensor(entry, controller),
+        ZoneFlowSoilProfileSensor(entry, controller),
+        ZoneFlowGrowthRampSensor(entry, controller),
+        ZoneFlowLastCycleWaterSensor(entry, controller),
     ]
     async_add_entities(entities, update_before_add=False)
 
@@ -47,7 +58,7 @@ class ZoneFlowRainWindowSensor(_Base):
         super().__init__(entry, controller)
         self._window = window
         self._attr_unique_id = f"{entry.entry_id}_rain_past_{window}"
-        self._attr_name = f"Rain Past {window}"
+        self._attr_translation_key = f"rain_past_{window}"
 
     @property
     def native_value(self) -> float:
@@ -62,7 +73,7 @@ class ZoneFlowAvgPeakTempSensor(_Base):
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_avg_peak_temp_3d"
-        self._attr_name = "3-Day Average Peak Temperature"
+        self._attr_translation_key = "avg_peak_temp_3d"
 
     @property
     def native_value(self) -> float:
@@ -76,7 +87,7 @@ class ZoneFlowNextIrrigationSensor(_Base):
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_next_irrigation_estimate"
-        self._attr_name = "Next Irrigation Estimate"
+        self._attr_translation_key = "next_irrigation_estimate"
 
     @property
     def native_value(self):
@@ -106,7 +117,7 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_last_water_delivered"
-        self._attr_name = "Last Water Delivered (Estimate)"
+        self._attr_translation_key = "last_water_delivered"
 
     @property
     def native_value(self) -> float:
@@ -128,8 +139,104 @@ class ZoneFlowTodayRainSensor(_Base):
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_rain_today"
-        self._attr_name = "Rain Today"
+        self._attr_translation_key = "rain_today"
 
     @property
     def native_value(self) -> float:
         return round(self._controller.today_rain_mm(), 2)
+
+
+class ZoneFlowSoilProfileSensor(_Base):
+    """Read-only summary of the descriptive soil/site fields set at setup
+    (see const.py's CONF_SOIL_TYPE block) -- purely informational, so this
+    sensor never feeds back into any scheduling decision. Its state is the
+    soil type; drainage/slope/irrigation method ride along as attributes so
+    the whole profile is visible at a glance on one entity."""
+
+    _attr_icon = "mdi:layers-outline"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_soil_profile"
+        self._attr_translation_key = "soil_profile"
+
+    @property
+    def native_value(self) -> str:
+        return _label(self._controller.soil_type)
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {
+            "drainage": _label(self._controller.drainage),
+            "slope": _label(self._controller.slope),
+            "irrigation_method": _label(self._controller.irrigation_method),
+        }
+
+
+class ZoneFlowGrowthRampSensor(_Base):
+    """Current growth-stage auto-ramp fraction (see controller.py's
+    growth_ramp_fraction()) as a percentage of the full weekly target.
+    Always 100% when the feature is off, or on but no planting date has
+    been recorded yet -- an enabled-but-unconfigured ramp never silently
+    reduces watering, and this sensor reflects that honestly rather than
+    showing a misleading partial value."""
+
+    _attr_native_unit_of_measurement = "%"
+    _attr_icon = "mdi:sprout"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_growth_ramp_pct"
+        self._attr_translation_key = "growth_ramp_pct"
+
+    @property
+    def native_value(self) -> float:
+        return round(self._controller.growth_ramp_fraction() * 100, 0)
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        profile = self._controller.growth_ramp_profile
+        attrs = {"profile": _label(profile)}
+        if profile == GROWTH_RAMP_OFF:
+            return attrs
+        # "manual" here means the dashboard growth-stage select (select.py)
+        # is currently overriding the planting-date curve -- see
+        # ZoneFlowController.growth_ramp_fraction. days_since_planting keeps
+        # being reported either way since the planting date itself is
+        # unaffected by the override.
+        attrs["mode"] = self._controller.store.state.growth_stage_mode
+        planting_ts = self._controller.store.state.planting_date_ts
+        if planting_ts is not None:
+            days = max((dt_util.utcnow().timestamp() - planting_ts) / 86400.0, 0.0)
+            attrs["days_since_planting"] = round(days, 1)
+        if profile == GROWTH_RAMP_CUSTOM:
+            # Surfaces exactly what the "Custom Ramp: ..." sliders currently
+            # produce, sorted the same way _custom_growth_ramp_curve
+            # (controller.py) applies them -- so it's easy to tell at a
+            # glance whether the sliders are set the way you think they are.
+            curve = self._controller._custom_growth_ramp_curve()
+            attrs["custom_curve"] = [
+                {"day": round(day, 1), "pct": round(pct * 100, 0)} for day, pct in curve
+            ]
+        return attrs
+
+
+class ZoneFlowLastCycleWaterSensor(_Base):
+    """Measured (not estimated) water delivered by the most recently
+    completed cycle, from the optional flow-meter entity -- distinct from
+    ZoneFlowLastWaterDeliveredSensor above, which is always a target-based
+    estimate. Stays "unknown" until a cycle has actually run with a flow
+    meter configured and readable at both ends (see
+    ZoneFlowController._run_pulses)."""
+
+    _attr_native_unit_of_measurement = "L"
+    _attr_icon = "mdi:water"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_last_cycle_water_liters"
+        self._attr_translation_key = "last_cycle_water_liters"
+
+    @property
+    def native_value(self) -> float | None:
+        return self._controller.store.state.last_cycle_water_liters

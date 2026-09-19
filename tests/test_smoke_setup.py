@@ -88,6 +88,10 @@ async def test_setup_creates_all_expected_entities(hass):
     assert any("irrigation_in_progress" in e for e in binary_ids)
     assert any("irrigation_abort" in e for e in binary_ids)
 
+    # switch (deep-soak on/off dashboard toggle -- see switch.py)
+    switch_ids = {s.entity_id for s in hass.states.async_all("switch")}
+    assert any("deep_soak_enabled" in e for e in switch_ids)
+
     # buttons
     button_ids = {s.entity_id for s in hass.states.async_all("button")}
     assert any("deep_soak" in e for e in button_ids)

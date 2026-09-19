@@ -1,3 +1,9 @@
+# All four services below are domain-level (not entity-platform) services.
+# With only one ZoneFlow zone configured, the target below is optional --
+# the single zone is used automatically. With two or more zones, target one
+# zone's device (or one of its entities) so the call goes to the intended
+# zone; calling without a target when 2+ zones exist is a clear error
+# rather than a silent guess (see __init__.py's _resolve_controller).
 run_deep_soak:
   name: Run Deep Soak
   description: >-
@@ -5,6 +11,9 @@ run_deep_soak:
     schedule uses are satisfied (mutex free, 14-day interval + dry-down met,
     14-day rain ceiling not exceeded). Identical code path to the scheduled
     run.
+  target:
+    device:
+      integration: zoneflow
 
 run_routine_irrigation:
   name: Run Routine Irrigation
@@ -12,10 +21,16 @@ run_routine_irrigation:
     Runs the routine irrigation cycle now if (and only if) the same gates
     the 05:30 schedule uses are satisfied. Identical code path to the
     scheduled run.
+  target:
+    device:
+      integration: zoneflow
 
 reset_lock:
   name: Reset Irrigation Lock
   description: Force-clears the mutex lock and abort flag. Emergency use only.
+  target:
+    device:
+      integration: zoneflow
 
 test_pulse:
   name: Test Pulse
@@ -23,6 +38,9 @@ test_pulse:
     Bypasses every schedule/dry-down/rain gate and runs one short valve
     pulse, for bench-testing the valve/pump wiring before trusting the real
     schedule. Still respects the mutex lock and safety watchdogs.
+  target:
+    device:
+      integration: zoneflow
   fields:
     seconds:
       name: Seconds

@@ -22,6 +22,59 @@ input_number:
     unit_of_measurement: "°C"
     icon: mdi:thermometer
 
+  # --- Bologna garden scenario (5 real-feeling zones: Chilis, Tomatoes,
+  # Strawberry, Cherry Trees, Olive Trees) -- see AI_SETUP.md for how each
+  # one gets used. Same "manually drag the slider to simulate reality"
+  # pattern as the two helpers above.
+
+  fake_outdoor_temp_shared:
+    name: "Simulated Outdoor Temperature (Chilis/Strawberry/Cherry/Olive)"
+    min: -10
+    max: 50
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+  fake_greenhouse_temp:
+    name: "Simulated Greenhouse Temperature (Tomatoes)"
+    min: -10
+    max: 60
+    step: 0.5
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+  fake_pump_power_olive_chili:
+    name: "Simulated Pump Power (Olive Trees + Chilis shared pump)"
+    min: 0
+    max: 1500
+    step: 10
+    unit_of_measurement: "W"
+    icon: mdi:flash
+
+  fake_flow_olive_chili:
+    name: "Simulated Flow Meter (Olive Trees + Chilis shared line, before valves)"
+    min: 0
+    max: 100000
+    step: 1
+    unit_of_measurement: "L"
+    icon: mdi:water
+
+  fake_flow_tomatoes:
+    name: "Simulated Flow Meter (Tomatoes, own meter)"
+    min: 0
+    max: 100000
+    step: 1
+    unit_of_measurement: "L"
+    icon: mdi:water
+
+  fake_flow_strawberry:
+    name: "Simulated Flow Meter (Strawberry, own meter)"
+    min: 0
+    max: 100000
+    step: 1
+    unit_of_measurement: "L"
+    icon: mdi:water
+
 counter:
   fake_rain_tips:
     name: "Simulated Rain Gauge Tips"
@@ -30,6 +83,32 @@ counter:
 input_boolean:
   fake_valve_state:
     name: "Simulated Valve (internal, don't add to dashboard)"
+
+  fake_valve_state_chilis:
+    name: "Simulated Valve - Chilis (internal, don't add to dashboard)"
+
+  fake_valve_state_tomatoes:
+    name: "Simulated Valve - Tomatoes (internal, don't add to dashboard)"
+
+  fake_valve_state_strawberry:
+    name: "Simulated Valve - Strawberry (internal, don't add to dashboard)"
+
+  fake_valve_state_cherry:
+    name: "Simulated Valve - Cherry Trees (internal, don't add to dashboard)"
+
+  fake_valve_state_olive:
+    name: "Simulated Valve - Olive Trees (internal, don't add to dashboard)"
+
+# A real notify.* entity -- ZoneFlow's "Phone notify target" field requires
+# an actual entity in the notify domain, not a plain string. The built-in
+# "file" platform is the simplest way to get one without a real phone
+# integration: it just appends each notification to a text file, and HA
+# exposes it as notify.fake_phone. Open the file to see what would have
+# been sent to a real phone.
+notify:
+  - name: "Fake Phone"
+    platform: file
+    filename: fake_phone_notifications.log
 
 # Modern template syntax (the old `platform: template` under sensor:/switch:
 # was removed by Home Assistant -- this is the current replacement).
@@ -47,6 +126,66 @@ template:
             target:
               entity_id: input_boolean.fake_valve_state
 
+      - name: "Simulated Valve Chilis"
+        unique_id: zoneflow_sandbox_valve_chilis
+        state: "{{ is_state('input_boolean.fake_valve_state_chilis', 'on') }}"
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fake_valve_state_chilis
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.fake_valve_state_chilis
+
+      - name: "Simulated Valve Tomatoes"
+        unique_id: zoneflow_sandbox_valve_tomatoes
+        state: "{{ is_state('input_boolean.fake_valve_state_tomatoes', 'on') }}"
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fake_valve_state_tomatoes
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.fake_valve_state_tomatoes
+
+      - name: "Simulated Valve Strawberry"
+        unique_id: zoneflow_sandbox_valve_strawberry
+        state: "{{ is_state('input_boolean.fake_valve_state_strawberry', 'on') }}"
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fake_valve_state_strawberry
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.fake_valve_state_strawberry
+
+      - name: "Simulated Valve Cherry Trees"
+        unique_id: zoneflow_sandbox_valve_cherry
+        state: "{{ is_state('input_boolean.fake_valve_state_cherry', 'on') }}"
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fake_valve_state_cherry
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.fake_valve_state_cherry
+
+      - name: "Simulated Valve Olive Trees"
+        unique_id: zoneflow_sandbox_valve_olive
+        state: "{{ is_state('input_boolean.fake_valve_state_olive', 'on') }}"
+        turn_on:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fake_valve_state_olive
+        turn_off:
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.fake_valve_state_olive
+
   - sensor:
       - name: "Simulated Water Pump Power"
         unique_id: zoneflow_sandbox_pump_power
@@ -58,3 +197,35 @@ template:
         unit_of_measurement: "°C"
         device_class: temperature
         state: "{{ states('input_number.fake_outdoor_temp') }}"
+
+      - name: "Simulated Outdoor Temperature Shared"
+        unique_id: zoneflow_sandbox_outdoor_temp_shared
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state: "{{ states('input_number.fake_outdoor_temp_shared') }}"
+
+      - name: "Simulated Greenhouse Temperature"
+        unique_id: zoneflow_sandbox_greenhouse_temp
+        unit_of_measurement: "°C"
+        device_class: temperature
+        state: "{{ states('input_number.fake_greenhouse_temp') }}"
+
+      - name: "Simulated Pump Power Olive Chili"
+        unique_id: zoneflow_sandbox_pump_power_olive_chili
+        unit_of_measurement: "W"
+        state: "{{ states('input_number.fake_pump_power_olive_chili') }}"
+
+      - name: "Simulated Flow Meter Olive Chili"
+        unique_id: zoneflow_sandbox_flow_olive_chili
+        unit_of_measurement: "L"
+        state: "{{ states('input_number.fake_flow_olive_chili') }}"
+
+      - name: "Simulated Flow Meter Tomatoes"
+        unique_id: zoneflow_sandbox_flow_tomatoes
+        unit_of_measurement: "L"
+        state: "{{ states('input_number.fake_flow_tomatoes') }}"
+
+      - name: "Simulated Flow Meter Strawberry"
+        unique_id: zoneflow_sandbox_flow_strawberry
+        unit_of_measurement: "L"
+        state: "{{ states('input_number.fake_flow_strawberry') }}"

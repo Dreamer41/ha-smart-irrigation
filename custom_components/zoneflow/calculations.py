@@ -87,14 +87,22 @@ class DeepSoakPlan:
     pulse_runtime_minutes: int
 
 
-def plan_deep_soak(target_mm: float, flow_rate: float) -> DeepSoakPlan:
+def plan_deep_soak(
+    target_mm: float, flow_rate: float, pulse_count: int = 3, min_pulse_minutes: int = 5
+) -> DeepSoakPlan:
     """Port of the variables block in avocado_deep_soak.
 
     total_runtime = round(target_mm / flow_rate)
-    pulse_runtime = max(round(total_runtime / 3), 5)   # 3 pulses, 5-min floor
-    """
+    pulse_runtime = max(round(total_runtime / pulse_count), min_pulse_minutes)
+
+    pulse_count and min_pulse_minutes default to the original fixed values
+    (3 pulses, 5-min floor) so an existing call site that doesn't pass them
+    behaves exactly as before. A zone's actual pulse_count now comes from
+    its own "Deep Soak Pulse Count (Split-Cycle)" number entity -- see
+    ZoneFlowController.run_deep_soak -- chosen based on drainage (slow-
+    draining soil generally wants more, shorter pulses)."""
     total_runtime = int(jinja_round(target_mm / flow_rate, 0))
-    pulse_runtime = max(int(jinja_round(total_runtime / 3, 0)), 5)
+    pulse_runtime = max(int(jinja_round(total_runtime / pulse_count, 0)), min_pulse_minutes)
     return DeepSoakPlan(target_mm, flow_rate, total_runtime, pulse_runtime)
 
 
@@ -109,13 +117,22 @@ class RoutinePlan:
     pulse_runtime_minutes: int
 
 
-def routine_interval_days(avg_peak_temp: float, hot_threshold: float) -> int:
-    """Port of `target_interval_days`: 3 if hot, else 4."""
+def routine_interval_days(avg_peak_temp: float | None, hot_threshold: float) -> int:
+    """Port of `target_interval_days`: 3 if hot, else 4.
+
+    avg_peak_temp is None when the zone's temperature sensor is either not
+    configured or is currently unavailable/unknown -- see
+    ZoneFlowController.effective_avg_peak_temp(). That is treated as an
+    explicit "use the normal tier" branch, not a numeric coincidence, so a
+    dead sensor can never silently freeze a zone on whatever tier its last
+    real reading happened to imply."""
+    if avg_peak_temp is None:
+        return 4
     return 3 if avg_peak_temp >= hot_threshold else 4
 
 
 def routine_target_weekly_mm(
-    avg_peak_temp: float,
+    avg_peak_temp: float | None,
     hot_threshold: float,
     cool_threshold: float,
     normal_mm: float,
@@ -123,7 +140,12 @@ def routine_target_weekly_mm(
     cool_mm: float,
 ) -> float:
     """Port of `target_weekly_mm`. Hot is tested before cool so the two
-    thresholds can never invert, exactly as the YAML comment states."""
+    thresholds can never invert, exactly as the YAML comment states.
+
+    See routine_interval_days for why avg_peak_temp being None explicitly
+    means "normal tier", independent of where cool_threshold happens to sit."""
+    if avg_peak_temp is None:
+        return normal_mm
     if avg_peak_temp >= hot_threshold:
         return hot_mm
     if avg_peak_temp < cool_threshold:
@@ -133,7 +155,7 @@ def routine_target_weekly_mm(
 
 def plan_routine_irrigation(
     *,
-    avg_peak_temp: float,
+    avg_peak_temp: float | None,
     hot_threshold: float,
     cool_threshold: float,
     normal_weekly_mm: float,
@@ -146,9 +168,16 @@ def plan_routine_irrigation(
     rain_eff_low: float,
     rain_eff_mid: float,
     rain_eff_high: float,
+    pulse_count: int = 3,
+    min_pulse_minutes: int = 1,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
-    (interval_target_mm through pulse_runtime)."""
+    (interval_target_mm through pulse_runtime).
+
+    pulse_count/min_pulse_minutes default to the original fixed values (3
+    pulses, 1-min floor) for the same backward-compatibility reason as
+    plan_deep_soak above -- a zone's real pulse_count comes from its
+    "Routine Pulse Count (Split-Cycle)" number entity."""
     interval_days = routine_interval_days(avg_peak_temp, hot_threshold)
     target_weekly_mm = routine_target_weekly_mm(
         avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
@@ -159,7 +188,7 @@ def plan_routine_irrigation(
     )
     needed_mm = max(interval_target_mm - eff_rain, 0.0)
     calc_runtime = int(jinja_round(needed_mm / flow_rate, 0))
-    pulse_runtime = max(int(jinja_round(calc_runtime / 3, 0)), 1)
+    pulse_runtime = max(int(jinja_round(calc_runtime / pulse_count, 0)), min_pulse_minutes)
     return RoutinePlan(
         interval_days=interval_days,
         target_weekly_mm=target_weekly_mm,
@@ -206,6 +235,32 @@ def estimate_next_irrigation(
     routine_next = last_routine_ts + interval_days * 86400
     rain_next = last_significant_rain_ts + routine_drydown_days * 86400
     return NextIrrigationEstimate(routine_next, rain_next, max(routine_next, rain_next))
+
+
+def growth_ramp_fraction(days_since_planting: float, curve: list[tuple[int, float]]) -> float:
+    """Linear interpolation between a growth-curve profile's control points
+    (see GROWTH_RAMP_CURVES in const.py). Clamped to the first point's
+    fraction for a negative/zero days-since-planting (e.g. a planting date
+    set in the future by mistake) and to the last point's fraction (1.0)
+    beyond the curve's final point, rather than extrapolating past it.
+
+    This is a calendar-day approximation of typical growth timing, not a
+    growing-degree-day model -- a cooler or hotter season will genuinely
+    make real growth lag behind or run ahead of this curve. It is meant as
+    a reasonable default to ramp FROM, not a precise measurement, and the
+    weekly-target number it scales stays fully overridable at any time
+    regardless of what this returns."""
+    if not curve:
+        return 1.0
+    if days_since_planting <= curve[0][0]:
+        return curve[0][1]
+    for (day_a, frac_a), (day_b, frac_b) in zip(curve, curve[1:]):
+        if days_since_planting <= day_b:
+            if day_b == day_a:
+                return frac_b
+            t = (days_since_planting - day_a) / (day_b - day_a)
+            return frac_a + t * (frac_b - frac_a)
+    return curve[-1][1]
 
 
 def estimate_last_water_delivered_mm(

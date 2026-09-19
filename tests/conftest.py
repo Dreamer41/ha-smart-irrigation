@@ -51,13 +51,31 @@ async def fake_valve_services(hass):
     run_routine_irrigation) or the watchdogs that call switch.turn_off need
     the "switch" domain's services to actually exist -- in the plain `hass`
     fixture nothing has registered them, since we never load a real switch
-    platform (the tests fake VALVE's state directly with
+    platform for the FAKED valve (the tests fake VALVE's state directly with
     hass.states.async_set instead of a template/demo platform). This gives
     the controller's service calls something real to land on without
     pulling in a whole switch platform, which is the right boundary: these
     tests are verifying our controller's decisions, not Home Assistant's
     own switch component.
+
+    zoneflow itself now ships a real "switch" platform (the deep-soak
+    on/off toggle -- see switch.py), so a config entry set up later in the
+    same test loads the real "switch" component for the first time and its
+    own async_setup() re-registers switch.turn_on/turn_off with the REAL
+    generic entity-dispatch handler, silently overwriting the fake ones
+    registered here (Home Assistant only runs a component's setup once per
+    hass instance, and last-registered-wins for a service name) -- that
+    generic handler can't do anything for VALVE, which was never a real
+    registered entity, so it would start silently no-op'ing instead of
+    flipping VALVE's state. Force the real "switch" component to finish its
+    one-time setup right here, first, so our fake handlers are what get
+    registered last and stick around even after zoneflow's own switch
+    platform loads afterward (adding entities to an already-set-up
+    component doesn't re-register its services).
     """
+    from homeassistant.setup import async_setup_component
+
+    await async_setup_component(hass, "switch", {})
 
     async def _set_state(call, target_state):
         entity_ids = call.data.get("entity_id")

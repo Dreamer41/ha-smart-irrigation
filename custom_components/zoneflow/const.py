@@ -12,7 +12,15 @@ from __future__ import annotations
 from homeassistant.const import Platform
 
 DOMAIN = "zoneflow"
-PLATFORMS = [Platform.NUMBER, Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON, Platform.DATETIME]
+PLATFORMS = [
+    Platform.NUMBER,
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.DATETIME,
+    Platform.SWITCH,
+    Platform.SELECT,
+]
 
 STORAGE_VERSION = 1
 STORAGE_KEY_SUFFIX = "state"
@@ -21,15 +29,137 @@ STORAGE_KEY_SUFFIX = "state"
 # Config entry keys (set once via the config flow, changeable via options)
 # ---------------------------------------------------------------------------
 CONF_ZONE_NAME = "zone_name"
-CONF_VALVE_ENTITY = "valve_entity"
-CONF_PUMP_POWER_ENTITY = "pump_power_entity"
-CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"
-CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"
+CONF_VALVE_ENTITY = "valve_entity"  # the only entity that is truly mandatory -- everything else below degrades gracefully when unset
+CONF_PUMP_POWER_ENTITY = "pump_power_entity"  # optional -- backs the pump-audit watchdog
+# Optional, arbitrary string the person picks (e.g. "Pump A") to explicitly
+# say which *physical* pump this zone's valve draws from -- decoupled from
+# CONF_PUMP_POWER_ENTITY on purpose. The shared-pump lock (controller.py's
+# _get_pump_lock) used to be keyed off pump_power_entity alone, which meant
+# two zones that genuinely share a pump but don't have a wattage sensor on
+# it (or only one of them does) could never be detected as sharing one --
+# and, worse, any two zones that both simply have no pump-power sensor
+# configured would collide onto the same lock key (None) and be wrongly
+# serialized even on completely independent pumps. Setting the same pump_id
+# string on every zone that shares a physical pump fixes both: it works
+# with or without a wattage sensor, and leaving it blank never accidentally
+# groups unrelated zones together (see the lock-key fallback order in
+# ZoneFlowController._pump_lock_key).
+CONF_PUMP_ID = "pump_id"
+CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
+CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
+CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter
 CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
 CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
 CONF_CSV_PATH = "csv_path"
-CONF_DEEP_SOAK_TIME = "deep_soak_time"  # "HH:MM:SS", default matches live YAML
+# Off-switch for the whole deep-soak cycle -- some plants/setups (shallow-
+# rooted crops, containers, frequent-drip greenhouse zones) genuinely don't
+# benefit from an infrequent deep soak on top of routine irrigation. Default
+# is True (not False like growth-ramp) because, unlike growth-ramp, deep
+# soak is not a new capability -- every zone created before this field
+# existed already ran it, so True is the only default that doesn't silently
+# change an existing installation's behavior. The AI setup guide is what
+# actually decides per zone/crop whether to recommend turning this off, not
+# this default.
+CONF_DEEP_SOAK_ENABLED = "deep_soak_enabled"
+DEFAULT_DEEP_SOAK_ENABLED = True
+CONF_DEEP_SOAK_TIME = "deep_soak_time"  # "HH:MM:SS", default matches live YAML -- irrelevant while deep_soak_enabled is False
 CONF_ROUTINE_TIME = "routine_time"
+
+# Descriptive soil/site metadata -- informational context an AI or person
+# uses to pick sensible split-cycle NUMBER_DEFS values below (pulse count,
+# soak interval, rain-efficiency, dry-down holdoffs). None of it is read by
+# the scheduler's own decision logic directly -- the physical parameters
+# it should inform are always the real adjustable number entities, never a
+# hidden lookup keyed off these strings, so a person who disagrees with the
+# category can always just move the numbers themselves.
+CONF_SOIL_TYPE = "soil_type"
+CONF_DRAINAGE = "drainage"
+CONF_SLOPE = "slope"
+CONF_IRRIGATION_METHOD = "irrigation_method"
+
+SOIL_TYPE_OPTIONS = ["unknown", "sandy", "sandy_loam", "loam", "clay_loam", "clay"]
+DRAINAGE_OPTIONS = ["unknown", "fast", "medium", "slow"]
+SLOPE_OPTIONS = ["flat", "slight", "moderate", "steep"]
+IRRIGATION_METHOD_OPTIONS = ["drip", "micro_sprinkler", "sprinkler", "soaker_hose", "other"]
+DEFAULT_SOIL_TYPE = "unknown"
+DEFAULT_DRAINAGE = "unknown"
+DEFAULT_SLOPE = "flat"
+DEFAULT_IRRIGATION_METHOD = "drip"
+
+# Growth-stage auto-ramp (optional, off by default -- see controller.py's
+# growth_ramp_fraction()). "off" means the weekly-target math behaves
+# exactly as it always has; any other profile scales the weekly target by
+# a days-since-planting curve intended as a reasonable starting
+# approximation from typical growth timing, not a precise measurement.
+CONF_GROWTH_RAMP_PROFILE = "growth_ramp_profile"
+CONF_PLANTING_DATE_ENTITY_ID = "planting_date_entity_id"  # informational only; the real datetime entity is platform-created
+GROWTH_RAMP_OFF = "off"
+GROWTH_RAMP_FAST_ANNUAL = "fast_annual"
+GROWTH_RAMP_SLOW_FRUITING = "slow_fruiting"
+GROWTH_RAMP_ESTABLISHED_PERENNIAL = "established_perennial"
+# A person's own curve, built from the "growth_ramp_custom_*" NUMBER_DEFS
+# sliders below rather than a fixed GROWTH_RAMP_CURVES entry -- see
+# ZoneFlowController.growth_ramp_fraction. Lets two zones on genuinely
+# different plants (e.g. a chili pepper vs. a young avocado tree) each get
+# their own real curve instead of picking whichever of the three fixed
+# presets happens to fit best.
+GROWTH_RAMP_CUSTOM = "custom"
+GROWTH_RAMP_PROFILE_OPTIONS = [
+    GROWTH_RAMP_OFF,
+    GROWTH_RAMP_FAST_ANNUAL,
+    GROWTH_RAMP_SLOW_FRUITING,
+    GROWTH_RAMP_ESTABLISHED_PERENNIAL,
+    GROWTH_RAMP_CUSTOM,
+]
+DEFAULT_GROWTH_RAMP_PROFILE = GROWTH_RAMP_OFF
+
+# (days_since_planting_upper_bound, ramp_fraction) control points per
+# profile, linearly interpolated between points and clamped to 1.0 beyond
+# the last point. These are calendar-day approximations of typical growth
+# timing, not growing-degree-day accuracy -- a cool or hot season will
+# genuinely run ahead of or behind the real plant. Deliberately
+# conservative early (never below 0.4) so a young planting is never
+# starved outright while ramping up.
+GROWTH_RAMP_CURVES: dict[str, list[tuple[int, float]]] = {
+    GROWTH_RAMP_FAST_ANNUAL: [(0, 0.4), (14, 0.6), (30, 0.85), (45, 1.0)],
+    GROWTH_RAMP_SLOW_FRUITING: [(0, 0.4), (21, 0.55), (45, 0.75), (70, 0.9), (100, 1.0)],
+    GROWTH_RAMP_ESTABLISHED_PERENNIAL: [(0, 0.5), (30, 0.7), (60, 0.85), (90, 1.0)],
+}
+
+# ---------------------------------------------------------------------------
+# Manual growth-stage override -- lets a person directly say "what stage is
+# this plant at" instead of waiting on the planting-date curve above. Purely
+# a dashboard convenience layered on top of growth_ramp_fraction(): it never
+# takes effect when the zone's growth-ramp profile is "off" (see
+# ZoneFlowController.growth_ramp_fraction -- off always means "no
+# adjustment, ever," override or not), and it is entirely separate from the
+# planting date itself, which keeps recording real elapsed time underneath
+# regardless of whether the override is active.
+#
+# GROWTH_STAGE_MODE_AUTO is the only default -- an existing zone (or a
+# freshly created one) always starts on the computed curve; "manual" is
+# something a person opts into explicitly via the select entity below.
+GROWTH_STAGE_MODE_AUTO = "auto"
+GROWTH_STAGE_MODE_MANUAL = "manual"
+
+# Named presets are just a shortcut that jumps the paired
+# "growth_stage_override_pct" number (slider) to a representative value and
+# switches the mode to manual in one step -- the same generic labels apply
+# regardless of which curve (fast_annual/slow_fruiting/established_perennial)
+# the zone is otherwise using, since they're a rough "how far along is it"
+# stand-in, not a per-curve exact match.
+GROWTH_STAGE_PRESETS: dict[str, float] = {
+    "seedling": 40.0,
+    "establishing": 55.0,
+    "vegetative": 75.0,
+    "near_fruiting": 90.0,
+    "mature": 100.0,
+}
+GROWTH_STAGE_SELECT_OPTIONS = [
+    GROWTH_STAGE_MODE_AUTO,
+    *GROWTH_STAGE_PRESETS,
+    GROWTH_STAGE_MODE_MANUAL,
+]
 
 # Optional alternative to the fixed clock time above: fire relative to
 # sunrise/sunset instead. Mode "fixed" (the default) means "ignore this and
@@ -65,12 +195,13 @@ DAILY_SHIFT_TIME = "23:59:50"  # matches shift_avocado_daily_peak_temps / shift_
 # ---------------------------------------------------------------------------
 DEEP_SOAK_INTERVAL_DAYS = 14
 DEEP_SOAK_INTERVAL_BUFFER_SECONDS = 6 * 3600  # "14-day check with a 6-hour buffer"
-DEEP_SOAK_PULSE_COUNT = 3
-DEEP_SOAK_PULSE_REST_MINUTES = 20
+# Pulse COUNT and REST MINUTES used to be fixed here (3 / 20 for both
+# cycles) -- they are now the "..._pulse_count" / "..._pulse_rest_minutes"
+# NUMBER_DEFS below, adjustable per zone based on soil drainage. Only the
+# per-pulse MINIMUM floor stays a fixed constant (matches the original
+# automation's floor exactly; there's no agronomic reason to make an
+# absolute minimum pulse length itself configurable).
 DEEP_SOAK_MIN_PULSE_MINUTES = 5
-
-ROUTINE_PULSE_COUNT = 3
-ROUTINE_PULSE_REST_MINUTES = 20
 ROUTINE_MIN_PULSE_MINUTES = 1
 ROUTINE_INTERVAL_BUFFER_SECONDS = 6 * 3600  # (interval_days*86400) - 21600, same buffer
 ROUTINE_HOT_INTERVAL_DAYS = 3
@@ -140,6 +271,48 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "forecast_rain_threshold_mm": ("Forecast Rain Skip Threshold", 0.5, 20.0, 0.5, "mm"),
     "forecast_probability_threshold_pct": ("Forecast Rain Probability Threshold", 0.0, 100.0, 5.0, "%"),
     "forecast_dry_override_days": ("Forecast Dry-Spell Override", 1.0, 10.0, 1.0, "d"),
+    # Split-cycle watering: how many on/soak/on pulses a cycle is broken
+    # into, and how long the soak gap between pulses is. Slow-draining
+    # soil (clay) generally wants MORE pulses and a LONGER soak so water
+    # doesn't pool/run off; fast-draining soil (sand) can often use fewer,
+    # shorter-soak pulses since infiltration isn't the bottleneck. These
+    # replace what used to be fixed constants (3 pulses / 20min rest,
+    # identical for every zone regardless of soil) -- see const.py history
+    # for the previous DEEP_SOAK_PULSE_COUNT / ROUTINE_PULSE_COUNT etc.
+    # Defaults below are exactly those previous fixed values, so an
+    # existing installation's behavior does not change on upgrade.
+    "routine_pulse_count": ("Routine Pulse Count (Split-Cycle)", 1.0, 8.0, 1.0, None),
+    "routine_pulse_rest_minutes": ("Routine Soak Interval Between Pulses", 0.0, 120.0, 5.0, "min"),
+    "deep_soak_pulse_count": ("Deep Soak Pulse Count (Split-Cycle)", 1.0, 8.0, 1.0, None),
+    "deep_soak_pulse_rest_minutes": ("Deep Soak Soak Interval Between Pulses", 0.0, 120.0, 5.0, "min"),
+    # A hard ceiling on total irrigation runtime across BOTH cycles in a
+    # rolling day, independent of the per-cycle safety caps above -- those
+    # catch one miscalculated cycle, this catches the case where several
+    # legitimately-sized cycles would still add up to more water than is
+    # reasonable to apply in a single day (e.g. a mis-set schedule firing
+    # more often than intended). Generous default so it doesn't interfere
+    # with normal use; it exists to catch a real runaway, not to micromanage.
+    "max_daily_runtime_minutes": ("Max Daily Irrigation Runtime (Safety Cap)", 10.0, 1440.0, 10.0, "min"),
+    # The manual growth-stage override slider (see GROWTH_STAGE_MODE_* above).
+    # Only read by growth_ramp_fraction() while the paired select entity is
+    # not set to "auto" -- otherwise this value just sits here unused, so
+    # leaving it at its default is always harmless.
+    "growth_stage_override_pct": ("Growth Stage Manual Override", 0.0, 100.0, 1.0, "%"),
+    # A person's own growth-ramp curve -- only read when this zone's
+    # growth_ramp_profile is "custom" (see GROWTH_RAMP_CUSTOM above and
+    # ZoneFlowController.growth_ramp_fraction). Shape mirrors the built-in
+    # curves: a day-0 floor, two adjustable midpoints, and a day at which
+    # the ramp reaches 100% (clamped there and beyond, same as the fixed
+    # curves). The two "day" sliders aren't ordering-enforced against each
+    # other or against the full-ramp day here -- growth_ramp_fraction sorts
+    # them before building the curve, so entering them out of order just
+    # reorders the points rather than producing a broken/backwards ramp.
+    "growth_ramp_custom_start_pct": ("Custom Ramp: Day 0 Starting %", 0.0, 100.0, 1.0, "%"),
+    "growth_ramp_custom_point1_day": ("Custom Ramp: Midpoint 1 Day", 0.0, 365.0, 1.0, "d"),
+    "growth_ramp_custom_point1_pct": ("Custom Ramp: Midpoint 1 %", 0.0, 100.0, 1.0, "%"),
+    "growth_ramp_custom_point2_day": ("Custom Ramp: Midpoint 2 Day", 0.0, 365.0, 1.0, "d"),
+    "growth_ramp_custom_point2_pct": ("Custom Ramp: Midpoint 2 %", 0.0, 100.0, 1.0, "%"),
+    "growth_ramp_custom_full_day": ("Custom Ramp: Day Reaching 100%", 0.0, 365.0, 1.0, "d"),
 }
 
 NUMBER_DEFAULTS: dict[str, float] = {
@@ -166,6 +339,22 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "forecast_rain_threshold_mm": 3.0,
     "forecast_probability_threshold_pct": 60.0,
     "forecast_dry_override_days": 2.0,
+    "routine_pulse_count": 3.0,
+    "routine_pulse_rest_minutes": 20.0,
+    "deep_soak_pulse_count": 3.0,
+    "deep_soak_pulse_rest_minutes": 20.0,
+    "max_daily_runtime_minutes": 240.0,
+    "growth_stage_override_pct": 40.0,
+    # Defaults trace out a reasonable generic curve on their own (40% -> 60%
+    # by day 15 -> 85% by day 35 -> 100% by day 60) so a zone freshly
+    # switched to "custom" doesn't start from a degenerate flat line before
+    # anyone has touched these sliders.
+    "growth_ramp_custom_start_pct": 40.0,
+    "growth_ramp_custom_point1_day": 15.0,
+    "growth_ramp_custom_point1_pct": 60.0,
+    "growth_ramp_custom_point2_day": 35.0,
+    "growth_ramp_custom_point2_pct": 85.0,
+    "growth_ramp_custom_full_day": 60.0,
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"

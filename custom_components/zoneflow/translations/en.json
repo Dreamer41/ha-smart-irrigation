@@ -10,15 +10,23 @@
       },
       "entities": {
         "title": "ZoneFlow Irrigation",
-        "description": "Point this at your real entities. It never creates new physical entities of its own.",
+        "description": "Point this at your real entities. It never creates new physical entities of its own. Only the valve switch is required -- everything else below degrades gracefully when left unset.",
         "data": {
           "valve_entity": "Valve switch",
-          "pump_power_entity": "Pump power sensor",
-          "rain_counter_entity": "Rain gauge tip counter",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "pump_power_entity": "Pump power sensor (optional)",
+          "pump_id": "Shared pump ID (optional, e.g. \"Pump A\" -- only needed if this zone shares a physical pump with another zone)",
+          "rain_counter_entity": "Rain gauge tip counter (optional)",
+          "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
+          "flow_meter_entity": "Flow meter (optional)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
+          "soil_type": "Soil type",
+          "drainage": "Drainage",
+          "slope": "Slope",
+          "irrigation_method": "Irrigation method",
+          "growth_ramp_profile": "Growth-stage auto-ramp",
           "csv_path": "CSV log file path",
+          "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
           "routine_time": "Routine irrigation schedule time",
           "deep_soak_sun_mode": "Deep soak trigger",
@@ -37,12 +45,20 @@
       "init": {
         "data": {
           "valve_entity": "Valve switch",
-          "pump_power_entity": "Pump power sensor",
-          "rain_counter_entity": "Rain gauge tip counter",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "pump_power_entity": "Pump power sensor (optional)",
+          "pump_id": "Shared pump ID (optional, e.g. \"Pump A\" -- only needed if this zone shares a physical pump with another zone)",
+          "rain_counter_entity": "Rain gauge tip counter (optional)",
+          "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
+          "flow_meter_entity": "Flow meter (optional)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
+          "soil_type": "Soil type",
+          "drainage": "Drainage",
+          "slope": "Slope",
+          "irrigation_method": "Irrigation method",
+          "growth_ramp_profile": "Growth-stage auto-ramp",
           "csv_path": "CSV log file path",
+          "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
           "routine_time": "Routine irrigation schedule time",
           "deep_soak_sun_mode": "Deep soak trigger",
@@ -61,6 +77,270 @@
         "after_sunrise": "After sunrise",
         "before_sunset": "Before sunset",
         "after_sunset": "After sunset"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Not sure / mixed",
+        "sandy": "Sandy",
+        "sandy_loam": "Sandy loam",
+        "loam": "Loam",
+        "clay_loam": "Clay loam",
+        "clay": "Clay"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Not sure",
+        "fast": "Fast-draining",
+        "medium": "Medium",
+        "slow": "Slow-draining"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Flat",
+        "slight": "Slight slope",
+        "moderate": "Moderate slope",
+        "steep": "Steep slope"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Drip line / emitters",
+        "micro_sprinkler": "Micro-sprinkler",
+        "sprinkler": "Sprinkler",
+        "soaker_hose": "Soaker hose",
+        "other": "Other"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Off (always use full weekly target)",
+        "fast_annual": "Fast-growing annual (e.g. most vegetables)",
+        "slow_fruiting": "Slow fruiting crop (e.g. tomatoes, peppers)",
+        "established_perennial": "Establishing perennial (e.g. a young tree or shrub)",
+        "custom": "Custom (set your own curve)"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Routine Normal Weekly Target"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Routine Hot Weekly Target"
+      },
+      "hot_temp_threshold": {
+        "name": "Hot Weather Temp Threshold"
+      },
+      "cool_temp_threshold": {
+        "name": "Cool Weather Temp Threshold"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Routine Cool Weekly Target"
+      },
+      "rain_eff_low": {
+        "name": "Rain Efficiency - Light (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Rain Efficiency - Moderate (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Rain Efficiency - Heavy (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Emitter Flow Rate Calibration"
+      },
+      "deep_soak_target_mm": {
+        "name": "Deep Soak Target Depth"
+      },
+      "pump_min_watts": {
+        "name": "Pump Low-Power Warning Threshold"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Deep Soak Max Safety Runtime Cap"
+      },
+      "max_runtime_minutes": {
+        "name": "Routine Max Safety Runtime Cap"
+      },
+      "routine_drydown_days": {
+        "name": "Routine Dry-Down Holdoff"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Deep Soak Subsoil Dry-Down Holdoff"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Deep Soak Rain Ceiling (14d)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Rain Gauge mm per Tip (Calibration)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Pre-Irrigation Cancel Threshold (30min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pump Preamble (Warm-Up Delay)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pump Postamble (Settle Delay)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Forecast Rain Skip Threshold"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Forecast Rain Probability Threshold"
+      },
+      "forecast_dry_override_days": {
+        "name": "Forecast Dry-Spell Override"
+      },
+      "routine_pulse_count": {
+        "name": "Routine Pulse Count (Split-Cycle)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Routine Soak Interval Between Pulses"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Deep Soak Pulse Count (Split-Cycle)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Deep Soak Soak Interval Between Pulses"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Max Daily Irrigation Runtime (Safety Cap)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Growth Stage Manual Override"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Custom Ramp: Day 0 Starting %"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Custom Ramp: Midpoint 1 Day"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Custom Ramp: Midpoint 1 %"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Custom Ramp: Midpoint 2 Day"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Custom Ramp: Midpoint 2 %"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Custom Ramp: Day Reaching 100%"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Last Routine Irrigation"
+      },
+      "last_deep_soak": {
+        "name": "Last Deep Soak"
+      },
+      "last_significant_rain": {
+        "name": "Last Significant Rain"
+      },
+      "planting_date": {
+        "name": "Planting / Transplant Date"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Run Deep Soak Now"
+      },
+      "run_routine": {
+        "name": "Run Routine Irrigation Now"
+      },
+      "reset_lock": {
+        "name": "Reset Irrigation Lock"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Irrigation In Progress"
+      },
+      "irrigation_abort": {
+        "name": "Irrigation Abort Flag"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Deep Soak Enabled"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Rain Past 30min"
+      },
+      "rain_past_24h": {
+        "name": "Rain Past 24h"
+      },
+      "rain_past_3d": {
+        "name": "Rain Past 3d"
+      },
+      "rain_past_7d": {
+        "name": "Rain Past 7d"
+      },
+      "rain_past_14d": {
+        "name": "Rain Past 14d"
+      },
+      "avg_peak_temp_3d": {
+        "name": "3-Day Average Peak Temperature"
+      },
+      "next_irrigation_estimate": {
+        "name": "Next Irrigation Estimate"
+      },
+      "last_water_delivered": {
+        "name": "Last Water Delivered (Estimate)"
+      },
+      "rain_today": {
+        "name": "Rain Today"
+      },
+      "soil_profile": {
+        "name": "Soil Profile"
+      },
+      "growth_ramp_pct": {
+        "name": "Growth Stage Ramp"
+      },
+      "last_cycle_water_liters": {
+        "name": "Last Cycle Water Delivered (Measured)"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Soil Type",
+        "state": {
+          "unknown": "Not sure / mixed",
+          "sandy": "Sandy",
+          "sandy_loam": "Sandy loam",
+          "loam": "Loam",
+          "clay_loam": "Clay loam",
+          "clay": "Clay"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Growth Stage",
+        "state": {
+          "auto": "Auto (by planting date)",
+          "seedling": "Seedling",
+          "establishing": "Establishing",
+          "vegetative": "Vegetative",
+          "near_fruiting": "Near fruiting",
+          "mature": "Mature",
+          "manual": "Manual (use slider)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Growth Ramp Profile",
+        "state": {
+          "off": "Off (always use full weekly target)",
+          "fast_annual": "Fast-growing annual (e.g. most vegetables)",
+          "slow_fruiting": "Slow fruiting crop (e.g. tomatoes, peppers)",
+          "established_perennial": "Establishing perennial (e.g. a young tree or shrub)",
+          "custom": "Custom (set your own curve)"
+        }
       }
     }
   }

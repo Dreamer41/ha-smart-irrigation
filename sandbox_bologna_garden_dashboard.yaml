@@ -1,0 +1,606 @@
+views:
+- title: Chilis
+  path: chilis
+  icon: mdi:chili-hot
+  cards:
+  - type: heading
+    heading: Chilis
+    heading_style: title
+    icon: mdi:chili-hot
+  - type: entities
+    title: Status
+    show_header_toggle: false
+    entities:
+    - entity: switch.simulated_valve_chilis
+      name: Valve
+    - entity: binary_sensor.chilis_irrigation_in_progress
+      name: Lock (In Progress)
+    - entity: binary_sensor.chilis_irrigation_abort_flag
+      name: Abort Flag
+    - entity: sensor.simulated_pump_power_olive_chili
+      name: Pump Power (shared with Olive Trees)
+    - entity: sensor.chilis_last_cycle_water_delivered_measured
+      name: Last Cycle Water Delivered
+    - entity: sensor.chilis_next_irrigation_estimate
+      name: Next Run Estimate
+  - type: entities
+    title: Manual Controls
+    show_header_toggle: false
+    entities:
+    - entity: switch.chilis_deep_soak_enabled
+      name: Deep Soak Enabled
+    - type: buttons
+      entities:
+      - entity: button.chilis_run_deep_soak_now
+        name: Run Deep Soak
+        icon: mdi:waves
+      - entity: button.chilis_run_routine_irrigation_now
+        name: Run Routine
+        icon: mdi:play
+      - entity: button.chilis_reset_irrigation_lock
+        name: Reset Lock
+        icon: mdi:lock-open-variant
+  - type: entities
+    title: Site & Growth Profile
+    show_header_toggle: false
+    entities:
+    - entity: sensor.chilis_soil_profile
+    - entity: sensor.chilis_growth_stage_ramp
+    - entity: datetime.chilis_planting_transplant_date
+  - type: entities
+    title: Routine Irrigation
+    show_header_toggle: false
+    entities:
+    - entity: number.chilis_routine_normal_weekly_target
+    - entity: number.chilis_routine_hot_weekly_target
+    - entity: number.chilis_hot_weather_temp_threshold
+    - entity: number.chilis_routine_cool_weekly_target
+    - entity: number.chilis_cool_weather_temp_threshold
+    - entity: number.chilis_routine_dry_down_holdoff
+    - entity: number.chilis_routine_pulse_count_split_cycle
+    - entity: number.chilis_routine_soak_interval_between_pulses
+  - type: entities
+    title: Deep Soak (14-Day)
+    show_header_toggle: false
+    entities:
+    - entity: number.chilis_deep_soak_target_depth
+    - entity: number.chilis_deep_soak_rain_ceiling_14d
+    - entity: number.chilis_deep_soak_subsoil_dry_down_holdoff
+    - entity: number.chilis_deep_soak_pulse_count_split_cycle
+    - entity: number.chilis_deep_soak_soak_interval_between_pulses
+  - type: entities
+    title: Forecast Gate & Dry-Spell Override
+    show_header_toggle: false
+    entities:
+    - entity: number.chilis_forecast_rain_skip_threshold
+    - entity: number.chilis_forecast_rain_probability_threshold
+    - entity: number.chilis_forecast_dry_spell_override
+  - type: entities
+    title: Calibration & Safety Caps
+    show_header_toggle: false
+    entities:
+    - entity: number.chilis_emitter_flow_rate_calibration
+    - entity: number.chilis_rain_gauge_mm_per_tip_calibration
+    - entity: number.chilis_pump_low_power_warning_threshold
+    - entity: number.chilis_deep_soak_max_safety_runtime_cap
+    - entity: number.chilis_routine_max_safety_runtime_cap
+    - entity: number.chilis_max_daily_irrigation_runtime_safety_cap
+  - type: entities
+    title: History Seeding
+    show_header_toggle: false
+    entities:
+    - entity: datetime.chilis_last_routine_irrigation
+    - entity: datetime.chilis_last_deep_soak
+    - entity: datetime.chilis_last_significant_rain
+  - type: markdown
+    title: Zone Trigger Log
+    content: '{% set lock = states(''binary_sensor.chilis_irrigation_in_progress'') %}
+
+      {% set abort = states(''binary_sensor.chilis_irrigation_abort_flag'') %}
+
+      {% set routine_ts = states(''datetime.chilis_last_routine_irrigation'') %}
+
+      {% set deep_soak_ts = states(''datetime.chilis_last_deep_soak'') %}
+
+      | Field | Value |
+
+      | :--- | :--- |
+
+      | **Lock (In Progress)** | {{ ''RUNNING'' if lock == ''on'' else ''idle'' }} |
+
+      | **Abort Flag** | {{ ''PROBLEM'' if abort == ''on'' else ''OK'' }} |
+
+      {% if routine_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom(''%b %d, %H:%M'')
+      }} |
+
+      {% endif %}
+
+      {% if deep_soak_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom(''%b %d, %H:%M'') }} |
+
+      {% endif %}
+
+      '
+- title: Tomatoes
+  path: tomatoes
+  icon: mdi:greenhouse
+  cards:
+  - type: heading
+    heading: Tomatoes
+    heading_style: title
+    icon: mdi:greenhouse
+  - type: entities
+    title: Status
+    show_header_toggle: false
+    entities:
+    - entity: switch.simulated_valve_tomatoes
+      name: Valve
+    - entity: binary_sensor.tomatoes_irrigation_in_progress
+      name: Lock (In Progress)
+    - entity: binary_sensor.tomatoes_irrigation_abort_flag
+      name: Abort Flag
+    - entity: sensor.tomatoes_last_cycle_water_delivered_measured
+      name: Last Cycle Water Delivered
+    - entity: sensor.tomatoes_next_irrigation_estimate
+      name: Next Run Estimate
+  - type: entities
+    title: Manual Controls
+    show_header_toggle: false
+    entities:
+    - entity: switch.tomatoes_deep_soak_enabled
+      name: Deep Soak Enabled
+    - type: buttons
+      entities:
+      - entity: button.tomatoes_run_deep_soak_now
+        name: Run Deep Soak
+        icon: mdi:waves
+      - entity: button.tomatoes_run_routine_irrigation_now
+        name: Run Routine
+        icon: mdi:play
+      - entity: button.tomatoes_reset_irrigation_lock
+        name: Reset Lock
+        icon: mdi:lock-open-variant
+  - type: entities
+    title: Site & Growth Profile
+    show_header_toggle: false
+    entities:
+    - entity: sensor.tomatoes_soil_profile
+    - entity: sensor.tomatoes_growth_stage_ramp
+    - entity: datetime.tomatoes_planting_transplant_date
+  - type: entities
+    title: Routine Irrigation
+    show_header_toggle: false
+    entities:
+    - entity: number.tomatoes_routine_normal_weekly_target
+    - entity: number.tomatoes_routine_hot_weekly_target
+    - entity: number.tomatoes_hot_weather_temp_threshold
+    - entity: number.tomatoes_routine_cool_weekly_target
+    - entity: number.tomatoes_cool_weather_temp_threshold
+    - entity: number.tomatoes_routine_dry_down_holdoff
+    - entity: number.tomatoes_routine_pulse_count_split_cycle
+    - entity: number.tomatoes_routine_soak_interval_between_pulses
+  - type: entities
+    title: Deep Soak (14-Day)
+    show_header_toggle: false
+    entities:
+    - entity: number.tomatoes_deep_soak_target_depth
+    - entity: number.tomatoes_deep_soak_rain_ceiling_14d
+    - entity: number.tomatoes_deep_soak_subsoil_dry_down_holdoff
+    - entity: number.tomatoes_deep_soak_pulse_count_split_cycle
+    - entity: number.tomatoes_deep_soak_soak_interval_between_pulses
+  - type: entities
+    title: Calibration & Safety Caps
+    show_header_toggle: false
+    entities:
+    - entity: number.tomatoes_emitter_flow_rate_calibration
+    - entity: number.tomatoes_deep_soak_max_safety_runtime_cap
+    - entity: number.tomatoes_routine_max_safety_runtime_cap
+    - entity: number.tomatoes_max_daily_irrigation_runtime_safety_cap
+  - type: entities
+    title: History Seeding
+    show_header_toggle: false
+    entities:
+    - entity: datetime.tomatoes_last_routine_irrigation
+    - entity: datetime.tomatoes_last_deep_soak
+  - type: markdown
+    title: Zone Trigger Log
+    content: '{% set lock = states(''binary_sensor.tomatoes_irrigation_in_progress'') %}
+
+      {% set abort = states(''binary_sensor.tomatoes_irrigation_abort_flag'') %}
+
+      {% set routine_ts = states(''datetime.tomatoes_last_routine_irrigation'') %}
+
+      {% set deep_soak_ts = states(''datetime.tomatoes_last_deep_soak'') %}
+
+      | Field | Value |
+
+      | :--- | :--- |
+
+      | **Lock (In Progress)** | {{ ''RUNNING'' if lock == ''on'' else ''idle'' }} |
+
+      | **Abort Flag** | {{ ''PROBLEM'' if abort == ''on'' else ''OK'' }} |
+
+      {% if routine_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom(''%b %d, %H:%M'')
+      }} |
+
+      {% endif %}
+
+      {% if deep_soak_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom(''%b %d, %H:%M'') }} |
+
+      {% endif %}
+
+      '
+- title: Strawberry
+  path: strawberry
+  icon: mdi:sprout
+  cards:
+  - type: heading
+    heading: Strawberry
+    heading_style: title
+    icon: mdi:sprout
+  - type: entities
+    title: Status
+    show_header_toggle: false
+    entities:
+    - entity: switch.simulated_valve_strawberry
+      name: Valve
+    - entity: binary_sensor.strawberry_irrigation_in_progress
+      name: Lock (In Progress)
+    - entity: binary_sensor.strawberry_irrigation_abort_flag
+      name: Abort Flag
+    - entity: sensor.strawberry_last_cycle_water_delivered_measured
+      name: Last Cycle Water Delivered
+    - entity: sensor.strawberry_next_irrigation_estimate
+      name: Next Run Estimate
+  - type: entities
+    title: Manual Controls
+    show_header_toggle: false
+    entities:
+    - entity: switch.strawberry_deep_soak_enabled
+      name: Deep Soak Enabled
+    - type: buttons
+      entities:
+      - entity: button.strawberry_run_deep_soak_now
+        name: Run Deep Soak
+        icon: mdi:waves
+      - entity: button.strawberry_run_routine_irrigation_now
+        name: Run Routine
+        icon: mdi:play
+      - entity: button.strawberry_reset_irrigation_lock
+        name: Reset Lock
+        icon: mdi:lock-open-variant
+  - type: entities
+    title: Site & Growth Profile
+    show_header_toggle: false
+    entities:
+    - entity: sensor.strawberry_soil_profile
+    - entity: sensor.strawberry_growth_stage_ramp
+    - entity: datetime.strawberry_planting_transplant_date
+  - type: entities
+    title: Routine Irrigation
+    show_header_toggle: false
+    entities:
+    - entity: number.strawberry_routine_normal_weekly_target
+    - entity: number.strawberry_routine_hot_weekly_target
+    - entity: number.strawberry_hot_weather_temp_threshold
+    - entity: number.strawberry_routine_cool_weekly_target
+    - entity: number.strawberry_cool_weather_temp_threshold
+    - entity: number.strawberry_routine_dry_down_holdoff
+    - entity: number.strawberry_routine_pulse_count_split_cycle
+    - entity: number.strawberry_routine_soak_interval_between_pulses
+  - type: entities
+    title: Deep Soak (14-Day)
+    show_header_toggle: false
+    entities:
+    - entity: number.strawberry_deep_soak_target_depth
+    - entity: number.strawberry_deep_soak_rain_ceiling_14d
+    - entity: number.strawberry_deep_soak_subsoil_dry_down_holdoff
+    - entity: number.strawberry_deep_soak_pulse_count_split_cycle
+    - entity: number.strawberry_deep_soak_soak_interval_between_pulses
+  - type: entities
+    title: Forecast Gate & Dry-Spell Override
+    show_header_toggle: false
+    entities:
+    - entity: number.strawberry_forecast_rain_skip_threshold
+    - entity: number.strawberry_forecast_rain_probability_threshold
+    - entity: number.strawberry_forecast_dry_spell_override
+  - type: entities
+    title: Calibration & Safety Caps
+    show_header_toggle: false
+    entities:
+    - entity: number.strawberry_emitter_flow_rate_calibration
+    - entity: number.strawberry_rain_gauge_mm_per_tip_calibration
+    - entity: number.strawberry_deep_soak_max_safety_runtime_cap
+    - entity: number.strawberry_routine_max_safety_runtime_cap
+    - entity: number.strawberry_max_daily_irrigation_runtime_safety_cap
+  - type: entities
+    title: History Seeding
+    show_header_toggle: false
+    entities:
+    - entity: datetime.strawberry_last_routine_irrigation
+    - entity: datetime.strawberry_last_deep_soak
+    - entity: datetime.strawberry_last_significant_rain
+  - type: markdown
+    title: Zone Trigger Log
+    content: '{% set lock = states(''binary_sensor.strawberry_irrigation_in_progress'') %}
+
+      {% set abort = states(''binary_sensor.strawberry_irrigation_abort_flag'') %}
+
+      {% set routine_ts = states(''datetime.strawberry_last_routine_irrigation'') %}
+
+      {% set deep_soak_ts = states(''datetime.strawberry_last_deep_soak'') %}
+
+      | Field | Value |
+
+      | :--- | :--- |
+
+      | **Lock (In Progress)** | {{ ''RUNNING'' if lock == ''on'' else ''idle'' }} |
+
+      | **Abort Flag** | {{ ''PROBLEM'' if abort == ''on'' else ''OK'' }} |
+
+      {% if routine_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom(''%b %d, %H:%M'')
+      }} |
+
+      {% endif %}
+
+      {% if deep_soak_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom(''%b %d, %H:%M'') }} |
+
+      {% endif %}
+
+      '
+- title: Cherry Trees
+  path: cherry-trees
+  icon: mdi:tree
+  cards:
+  - type: heading
+    heading: Cherry Trees
+    heading_style: title
+    icon: mdi:tree
+  - type: entities
+    title: Status
+    show_header_toggle: false
+    entities:
+    - entity: switch.simulated_valve_cherry_trees
+      name: Valve
+    - entity: binary_sensor.cherry_trees_irrigation_in_progress
+      name: Lock (In Progress)
+    - entity: binary_sensor.cherry_trees_irrigation_abort_flag
+      name: Abort Flag
+    - entity: sensor.cherry_trees_next_irrigation_estimate
+      name: Next Run Estimate
+  - type: entities
+    title: Manual Controls
+    show_header_toggle: false
+    entities:
+    - entity: switch.cherry_trees_deep_soak_enabled
+      name: Deep Soak Enabled
+    - type: buttons
+      entities:
+      - entity: button.cherry_trees_run_deep_soak_now
+        name: Run Deep Soak
+        icon: mdi:waves
+      - entity: button.cherry_trees_run_routine_irrigation_now
+        name: Run Routine
+        icon: mdi:play
+      - entity: button.cherry_trees_reset_irrigation_lock
+        name: Reset Lock
+        icon: mdi:lock-open-variant
+  - type: entities
+    title: Site & Growth Profile
+    show_header_toggle: false
+    entities:
+    - entity: sensor.cherry_trees_soil_profile
+    - entity: sensor.cherry_trees_growth_stage_ramp
+    - entity: datetime.cherry_trees_planting_transplant_date
+  - type: entities
+    title: Routine Irrigation
+    show_header_toggle: false
+    entities:
+    - entity: number.cherry_trees_routine_normal_weekly_target
+    - entity: number.cherry_trees_routine_hot_weekly_target
+    - entity: number.cherry_trees_hot_weather_temp_threshold
+    - entity: number.cherry_trees_routine_cool_weekly_target
+    - entity: number.cherry_trees_cool_weather_temp_threshold
+    - entity: number.cherry_trees_routine_dry_down_holdoff
+    - entity: number.cherry_trees_routine_pulse_count_split_cycle
+    - entity: number.cherry_trees_routine_soak_interval_between_pulses
+  - type: entities
+    title: Deep Soak (14-Day)
+    show_header_toggle: false
+    entities:
+    - entity: number.cherry_trees_deep_soak_target_depth
+    - entity: number.cherry_trees_deep_soak_rain_ceiling_14d
+    - entity: number.cherry_trees_deep_soak_subsoil_dry_down_holdoff
+    - entity: number.cherry_trees_deep_soak_pulse_count_split_cycle
+    - entity: number.cherry_trees_deep_soak_soak_interval_between_pulses
+  - type: entities
+    title: Forecast Gate & Dry-Spell Override
+    show_header_toggle: false
+    entities:
+    - entity: number.cherry_trees_forecast_rain_skip_threshold
+    - entity: number.cherry_trees_forecast_rain_probability_threshold
+    - entity: number.cherry_trees_forecast_dry_spell_override
+  - type: entities
+    title: Calibration & Safety Caps
+    show_header_toggle: false
+    entities:
+    - entity: number.cherry_trees_emitter_flow_rate_calibration
+    - entity: number.cherry_trees_rain_gauge_mm_per_tip_calibration
+    - entity: number.cherry_trees_deep_soak_max_safety_runtime_cap
+    - entity: number.cherry_trees_routine_max_safety_runtime_cap
+    - entity: number.cherry_trees_max_daily_irrigation_runtime_safety_cap
+  - type: entities
+    title: History Seeding
+    show_header_toggle: false
+    entities:
+    - entity: datetime.cherry_trees_last_routine_irrigation
+    - entity: datetime.cherry_trees_last_deep_soak
+    - entity: datetime.cherry_trees_last_significant_rain
+  - type: markdown
+    title: Zone Trigger Log
+    content: '{% set lock = states(''binary_sensor.cherry_trees_irrigation_in_progress'') %}
+
+      {% set abort = states(''binary_sensor.cherry_trees_irrigation_abort_flag'') %}
+
+      {% set routine_ts = states(''datetime.cherry_trees_last_routine_irrigation'') %}
+
+      {% set deep_soak_ts = states(''datetime.cherry_trees_last_deep_soak'') %}
+
+      | Field | Value |
+
+      | :--- | :--- |
+
+      | **Lock (In Progress)** | {{ ''RUNNING'' if lock == ''on'' else ''idle'' }} |
+
+      | **Abort Flag** | {{ ''PROBLEM'' if abort == ''on'' else ''OK'' }} |
+
+      {% if routine_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom(''%b %d, %H:%M'')
+      }} |
+
+      {% endif %}
+
+      {% if deep_soak_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom(''%b %d, %H:%M'') }} |
+
+      {% endif %}
+
+      '
+- title: Olive Trees
+  path: olive-trees
+  icon: mdi:pine-tree
+  cards:
+  - type: heading
+    heading: Olive Trees
+    heading_style: title
+    icon: mdi:pine-tree
+  - type: entities
+    title: Status
+    show_header_toggle: false
+    entities:
+    - entity: switch.simulated_valve_olive_trees
+      name: Valve
+    - entity: binary_sensor.olive_trees_irrigation_in_progress
+      name: Lock (In Progress)
+    - entity: binary_sensor.olive_trees_irrigation_abort_flag
+      name: Abort Flag
+    - entity: sensor.simulated_pump_power_olive_chili
+      name: Pump Power (shared with Chilis)
+    - entity: sensor.olive_trees_last_cycle_water_delivered_measured
+      name: Last Cycle Water Delivered
+    - entity: sensor.olive_trees_next_irrigation_estimate
+      name: Next Run Estimate
+  - type: entities
+    title: Manual Controls
+    show_header_toggle: false
+    entities:
+    - entity: switch.olive_trees_deep_soak_enabled
+      name: Deep Soak Enabled
+    - type: buttons
+      entities:
+      - entity: button.olive_trees_run_deep_soak_now
+        name: Run Deep Soak
+        icon: mdi:waves
+      - entity: button.olive_trees_run_routine_irrigation_now
+        name: Run Routine
+        icon: mdi:play
+      - entity: button.olive_trees_reset_irrigation_lock
+        name: Reset Lock
+        icon: mdi:lock-open-variant
+  - type: entities
+    title: Site & Growth Profile
+    show_header_toggle: false
+    entities:
+    - entity: sensor.olive_trees_soil_profile
+    - entity: sensor.olive_trees_growth_stage_ramp
+    - entity: datetime.olive_trees_planting_transplant_date
+  - type: entities
+    title: Routine Irrigation
+    show_header_toggle: false
+    entities:
+    - entity: number.olive_trees_routine_normal_weekly_target
+    - entity: number.olive_trees_routine_hot_weekly_target
+    - entity: number.olive_trees_hot_weather_temp_threshold
+    - entity: number.olive_trees_routine_cool_weekly_target
+    - entity: number.olive_trees_cool_weather_temp_threshold
+    - entity: number.olive_trees_routine_dry_down_holdoff
+    - entity: number.olive_trees_routine_pulse_count_split_cycle
+    - entity: number.olive_trees_routine_soak_interval_between_pulses
+  - type: entities
+    title: Deep Soak (14-Day)
+    show_header_toggle: false
+    entities:
+    - entity: number.olive_trees_deep_soak_target_depth
+    - entity: number.olive_trees_deep_soak_rain_ceiling_14d
+    - entity: number.olive_trees_deep_soak_subsoil_dry_down_holdoff
+    - entity: number.olive_trees_deep_soak_pulse_count_split_cycle
+    - entity: number.olive_trees_deep_soak_soak_interval_between_pulses
+  - type: entities
+    title: Forecast Gate & Dry-Spell Override
+    show_header_toggle: false
+    entities:
+    - entity: number.olive_trees_forecast_rain_skip_threshold
+    - entity: number.olive_trees_forecast_rain_probability_threshold
+    - entity: number.olive_trees_forecast_dry_spell_override
+  - type: entities
+    title: Calibration & Safety Caps
+    show_header_toggle: false
+    entities:
+    - entity: number.olive_trees_emitter_flow_rate_calibration
+    - entity: number.olive_trees_rain_gauge_mm_per_tip_calibration
+    - entity: number.olive_trees_pump_low_power_warning_threshold
+    - entity: number.olive_trees_deep_soak_max_safety_runtime_cap
+    - entity: number.olive_trees_routine_max_safety_runtime_cap
+    - entity: number.olive_trees_max_daily_irrigation_runtime_safety_cap
+  - type: entities
+    title: History Seeding
+    show_header_toggle: false
+    entities:
+    - entity: datetime.olive_trees_last_routine_irrigation
+    - entity: datetime.olive_trees_last_deep_soak
+    - entity: datetime.olive_trees_last_significant_rain
+  - type: markdown
+    title: Zone Trigger Log
+    content: '{% set lock = states(''binary_sensor.olive_trees_irrigation_in_progress'') %}
+
+      {% set abort = states(''binary_sensor.olive_trees_irrigation_abort_flag'') %}
+
+      {% set routine_ts = states(''datetime.olive_trees_last_routine_irrigation'') %}
+
+      {% set deep_soak_ts = states(''datetime.olive_trees_last_deep_soak'') %}
+
+      | Field | Value |
+
+      | :--- | :--- |
+
+      | **Lock (In Progress)** | {{ ''RUNNING'' if lock == ''on'' else ''idle'' }} |
+
+      | **Abort Flag** | {{ ''PROBLEM'' if abort == ''on'' else ''OK'' }} |
+
+      {% if routine_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom(''%b %d, %H:%M'')
+      }} |
+
+      {% endif %}
+
+      {% if deep_soak_ts not in [''unknown'', ''unavailable'', none] %}
+
+      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom(''%b %d, %H:%M'') }} |
+
+      {% endif %}
+
+      '

@@ -39,7 +39,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from custom_components.zoneflow import calculations as calc  # noqa: E402
-from custom_components.zoneflow.const import NUMBER_DEFAULTS  # noqa: E402
+from custom_components.zoneflow.const import (  # noqa: E402
+    GROWTH_RAMP_CURVES,
+    GROWTH_RAMP_OFF,
+    GROWTH_RAMP_PROFILE_OPTIONS,
+    NUMBER_DEFAULTS,
+)
 
 DAY_SECONDS = 86400
 
@@ -130,6 +135,7 @@ class DayResult:
     avg_peak_temp_c: float
     action: str
     applied_mm: float
+    growth_ramp_pct: float = 100.0
     note: str = ""
 
 
@@ -148,14 +154,35 @@ def rolling_sum(daily_rain_log: list[float], window_days: int) -> float:
     return sum(daily_rain_log[-window_days:]) if daily_rain_log else 0.0
 
 
-def run_simulation(days: int, scenario: str, seed: int, numbers: dict[str, float]) -> list[DayResult]:
+def run_simulation(
+    days: int,
+    scenario: str,
+    seed: int,
+    numbers: dict[str, float],
+    growth_ramp_profile: str = GROWTH_RAMP_OFF,
+    planting_day: int = 0,
+) -> list[DayResult]:
     rng = random.Random(seed)
     gen = SCENARIOS[scenario]
     state = SimState()
     results: list[DayResult] = []
+    ramp_curve = GROWTH_RAMP_CURVES.get(growth_ramp_profile)
 
     for d in range(days):
         rain_mm, peak_temp = gen(d, rng)
+
+        # Growth-stage auto-ramp (see const.py's GROWTH_RAMP_CURVES / the
+        # "revamp" notes): only ever scales the ROUTINE weekly targets, the
+        # same restriction controller.py's growth_ramp_fraction() applies --
+        # deep soak's target depth models root-zone penetration, which
+        # doesn't shrink for a young plant the way day-to-day routine
+        # watering does. "off" (the default) always yields 100%, matching
+        # a zone that never touches this feature getting identical results
+        # to before it existed.
+        if growth_ramp_profile == GROWTH_RAMP_OFF or ramp_curve is None:
+            growth_ramp = 1.0
+        else:
+            growth_ramp = calc.growth_ramp_fraction(d - planting_day, ramp_curve)
 
         # -- Decisions use *yesterday-and-earlier* history, mirroring the
         # real automation's 05:00/05:30 checks running before today's rain
@@ -204,9 +231,9 @@ def run_simulation(days: int, scenario: str, seed: int, numbers: dict[str, float
                         avg_peak_temp=avg_peak_temp,
                         hot_threshold=hot_threshold,
                         cool_threshold=numbers["cool_temp_threshold"],
-                        normal_weekly_mm=numbers["target_weekly_mm"],
-                        hot_weekly_mm=numbers["target_weekly_hot_mm"],
-                        cool_weekly_mm=numbers["target_weekly_cool_mm"],
+                        normal_weekly_mm=numbers["target_weekly_mm"] * growth_ramp,
+                        hot_weekly_mm=numbers["target_weekly_hot_mm"] * growth_ramp,
+                        cool_weekly_mm=numbers["target_weekly_cool_mm"] * growth_ramp,
                         flow_rate=numbers["flow_rate_mm_per_min"],
                         days_elapsed=days_elapsed_int,
                         today_rain_mm=0.0,  # decision happens before today's rain accrues
@@ -238,6 +265,7 @@ def run_simulation(days: int, scenario: str, seed: int, numbers: dict[str, float
                 avg_peak_temp_c=round(avg_peak_temp, 1),
                 action=action,
                 applied_mm=round(applied_mm, 1),
+                growth_ramp_pct=round(growth_ramp * 100, 0),
                 note=note,
             )
         )
@@ -266,8 +294,9 @@ def run_simulation(days: int, scenario: str, seed: int, numbers: dict[str, float
     return results
 
 
-def print_report(results: list[DayResult]) -> None:
-    header = f"{'Date':<11} {'Rain':>6} {'Peak':>6} {'3dAvg':>6}  {'Action':<20} {'Applied':>8}  Note"
+def print_report(results: list[DayResult], show_ramp: bool = False) -> None:
+    ramp_col = f" {'Ramp':>5} " if show_ramp else " "
+    header = f"{'Date':<11} {'Rain':>6} {'Peak':>6} {'3dAvg':>6} {ramp_col} {'Action':<20} {'Applied':>8}  Note"
     print(header)
     print("-" * len(header))
     for r in results:
@@ -276,9 +305,10 @@ def print_report(results: list[DayResult]) -> None:
             marker = "  <-- DEEP SOAK"
         elif r.action == "routine":
             marker = "  <-- routine"
+        ramp_field = f"{r.growth_ramp_pct:>4.0f}% " if show_ramp else ""
         print(
             f"{r.calendar_date.isoformat():<11} {r.rain_mm:>5.1f}m {r.peak_temp_c:>5.1f}C "
-            f"{r.avg_peak_temp_c:>5.1f}C  {r.action:<20} {r.applied_mm:>6.1f}mm  {r.note}{marker}"
+            f"{r.avg_peak_temp_c:>5.1f}C  {ramp_field}{r.action:<20} {r.applied_mm:>6.1f}mm  {r.note}{marker}"
         )
 
     total_days = len(results)
@@ -315,10 +345,21 @@ def print_report(results: list[DayResult]) -> None:
 def write_csv(results: list[DayResult], path: Path) -> None:
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv_module.writer(handle)
-        writer.writerow(["date", "rain_mm", "peak_temp_c", "avg_peak_temp_c", "action", "applied_mm", "note"])
+        writer.writerow(
+            ["date", "rain_mm", "peak_temp_c", "avg_peak_temp_c", "growth_ramp_pct", "action", "applied_mm", "note"]
+        )
         for r in results:
             writer.writerow(
-                [r.calendar_date.isoformat(), r.rain_mm, r.peak_temp_c, r.avg_peak_temp_c, r.action, r.applied_mm, r.note]
+                [
+                    r.calendar_date.isoformat(),
+                    r.rain_mm,
+                    r.peak_temp_c,
+                    r.avg_peak_temp_c,
+                    r.growth_ramp_pct,
+                    r.action,
+                    r.applied_mm,
+                    r.note,
+                ]
             )
 
 
@@ -376,6 +417,18 @@ def main() -> None:
         metavar="key=value",
         help="override one of the tunable numbers (see const.py NUMBER_DEFAULTS), e.g. --set target_weekly_mm=45",
     )
+    parser.add_argument(
+        "--growth-ramp",
+        choices=sorted(GROWTH_RAMP_PROFILE_OPTIONS),
+        default=GROWTH_RAMP_OFF,
+        help="optional growth-stage auto-ramp profile (default off -- always 100%%, matches pre-revamp behavior)",
+    )
+    parser.add_argument(
+        "--planting-day",
+        type=int,
+        default=0,
+        help="simulated day index the crop was planted/transplanted (default 0, i.e. the run starts at planting)",
+    )
     args = parser.parse_args()
 
     numbers = dict(NUMBER_DEFAULTS)
@@ -385,8 +438,10 @@ def main() -> None:
             parser.error(f"unknown tunable number {key!r} (see const.py NUMBER_DEFAULTS)")
         numbers[key] = float(value)
 
-    results = run_simulation(args.days, args.scenario, args.seed, numbers)
-    print_report(results)
+    results = run_simulation(
+        args.days, args.scenario, args.seed, numbers, growth_ramp_profile=args.growth_ramp, planting_day=args.planting_day
+    )
+    print_report(results, show_ramp=args.growth_ramp != GROWTH_RAMP_OFF)
 
     if args.csv:
         write_csv(results, args.csv)

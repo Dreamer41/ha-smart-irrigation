@@ -37,33 +37,47 @@ import homeassistant.util.dt as dt_util
 from . import calculations as calc
 from .const import (
     CONF_CSV_PATH,
+    CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
     CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
     CONF_DEEP_SOAK_TIME,
+    CONF_DRAINAGE,
+    CONF_FLOW_METER_ENTITY,
+    CONF_GROWTH_RAMP_PROFILE,
+    CONF_IRRIGATION_METHOD,
     CONF_NOTIFY_ENTITY,
     CONF_OUTDOOR_TEMP_ENTITY,
+    CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    CONF_SLOPE,
+    CONF_SOIL_TYPE,
     CONF_VALVE_ENTITY,
     CONF_WEATHER_ENTITY,
     DAILY_SHIFT_TIME,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
     DEEP_SOAK_INTERVAL_DAYS,
     DEEP_SOAK_MIN_PULSE_MINUTES,
-    DEEP_SOAK_PULSE_COUNT,
-    DEEP_SOAK_PULSE_REST_MINUTES,
+    DEFAULT_DEEP_SOAK_ENABLED,
+    DEFAULT_DRAINAGE,
+    DEFAULT_GROWTH_RAMP_PROFILE,
+    DEFAULT_IRRIGATION_METHOD,
+    DEFAULT_SLOPE,
+    DEFAULT_SOIL_TYPE,
     DOMAIN,
     EVENT_LOG,
+    GROWTH_RAMP_CURVES,
+    GROWTH_RAMP_CUSTOM,
+    GROWTH_RAMP_OFF,
+    GROWTH_STAGE_MODE_AUTO,
     NUMBER_DEFAULTS,
     POWER_LOSS_GRACE_MINUTES,
     PUMP_POWER_WAIT_TIMEOUT_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
     ROUTINE_MIN_PULSE_MINUTES,
-    ROUTINE_PULSE_COUNT,
-    ROUTINE_PULSE_REST_MINUTES,
     SIGNIFICANT_RAIN_24H_MM,
     SIGNIFICANT_RAIN_4D_MM,
     SIGNIFICANT_RAIN_7D_MM,
@@ -105,21 +119,95 @@ class ZoneFlowController:
     # ------------------------------------------------------------------
     # Config accessors
     # ------------------------------------------------------------------
+    # NOTE on the options-first pattern below: the options flow (§ config
+    # flow "Configure") writes into entry.options, not entry.data -- every
+    # property here must check entry.options first (falling back to
+    # entry.data, which is what the entry has at initial creation) or a
+    # change made through Options silently never takes effect. This used to
+    # be inconsistent (several of these read entry.data only), which meant
+    # reconfiguring e.g. the pump-power entity or soil type via Options
+    # looked like it saved (entry.options really did update) but the
+    # running controller kept using the original value forever. Fixed here
+    # across the board rather than just for the new pump_id field below.
     @property
     def valve_entity(self) -> str:
-        return self.entry.data[CONF_VALVE_ENTITY]
+        """The only entity that is truly mandatory -- ZoneFlow cannot
+        irrigate without something to open."""
+        return self.entry.options.get(CONF_VALVE_ENTITY, self.entry.data[CONF_VALVE_ENTITY])
 
     @property
-    def pump_power_entity(self) -> str:
-        return self.entry.data[CONF_PUMP_POWER_ENTITY]
+    def pump_power_entity(self) -> str | None:
+        """Optional. Without it, the pump-audit watchdog is skipped
+        entirely (see _execute_pulses) rather than warning on every pulse
+        about a "low" reading that was never real to begin with."""
+        return self.entry.options.get(CONF_PUMP_POWER_ENTITY, self.entry.data.get(CONF_PUMP_POWER_ENTITY))
 
     @property
-    def rain_counter_entity(self) -> str:
-        return self.entry.data[CONF_RAIN_COUNTER_ENTITY]
+    def pump_id(self) -> str | None:
+        """Optional, arbitrary string naming which physical pump this
+        zone's valve draws from -- see const.py's CONF_PUMP_ID comment and
+        _pump_lock_key below for why this is separate from
+        pump_power_entity. Empty string (the config-flow field's default)
+        and unset both mean "no explicit id given," normalized to None."""
+        return self.entry.options.get(CONF_PUMP_ID, self.entry.data.get(CONF_PUMP_ID)) or None
 
     @property
-    def outdoor_temp_entity(self) -> str:
-        return self.entry.data[CONF_OUTDOOR_TEMP_ENTITY]
+    def rain_counter_entity(self) -> str | None:
+        """Optional. Without it, every rain-aware gate simply never fires
+        -- rain_windows()/today_rain_mm() naturally return 0.0 for an
+        empty tracker, which is the correct "assume no rain" fallback."""
+        return self.entry.options.get(CONF_RAIN_COUNTER_ENTITY, self.entry.data.get(CONF_RAIN_COUNTER_ENTITY))
+
+    @property
+    def outdoor_temp_entity(self) -> str | None:
+        """Optional. Without it (or if it's currently unavailable/unknown
+        -- see effective_avg_peak_temp), the hot/cool tier logic falls back
+        to the "normal" tier rather than freezing on stale history."""
+        return self.entry.options.get(CONF_OUTDOOR_TEMP_ENTITY, self.entry.data.get(CONF_OUTDOOR_TEMP_ENTITY))
+
+    @property
+    def flow_meter_entity(self) -> str | None:
+        """Optional cumulative-volume sensor (e.g. a pulse flow meter).
+        When set, backs the "Last Cycle Water Delivered" diagnostic and a
+        no-flow-detected check that can substitute for the pump-power audit
+        when no pump-power sensor is configured."""
+        return self.entry.options.get(CONF_FLOW_METER_ENTITY, self.entry.data.get(CONF_FLOW_METER_ENTITY))
+
+    @property
+    def soil_type(self) -> str:
+        """The live dashboard select (select.py) can override this without
+        touching the config entry at all -- checked first so it always wins
+        once set, with no reload required. None (never touched, the default)
+        falls through to the config-flow/options value exactly as before."""
+        override = self.store.state.soil_type_override
+        if override is not None:
+            return override
+        return self.entry.options.get(CONF_SOIL_TYPE, self.entry.data.get(CONF_SOIL_TYPE, DEFAULT_SOIL_TYPE))
+
+    @property
+    def drainage(self) -> str:
+        return self.entry.options.get(CONF_DRAINAGE, self.entry.data.get(CONF_DRAINAGE, DEFAULT_DRAINAGE))
+
+    @property
+    def slope(self) -> str:
+        return self.entry.options.get(CONF_SLOPE, self.entry.data.get(CONF_SLOPE, DEFAULT_SLOPE))
+
+    @property
+    def irrigation_method(self) -> str:
+        return self.entry.options.get(
+            CONF_IRRIGATION_METHOD, self.entry.data.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
+        )
+
+    @property
+    def growth_ramp_profile(self) -> str:
+        """Same live-override pattern as soil_type: select.py's growth-ramp-
+        profile select can override this without a config-entry reload."""
+        override = self.store.state.growth_ramp_profile_override
+        if override is not None:
+            return override
+        return self.entry.options.get(
+            CONF_GROWTH_RAMP_PROFILE, self.entry.data.get(CONF_GROWTH_RAMP_PROFILE, DEFAULT_GROWTH_RAMP_PROFILE)
+        )
 
     @property
     def notify_entity(self) -> str | None:
@@ -132,6 +220,16 @@ class ZoneFlowController:
     @property
     def csv_path(self) -> str:
         return self.entry.options.get(CONF_CSV_PATH, self.entry.data.get(CONF_CSV_PATH))
+
+    @property
+    def deep_soak_enabled(self) -> bool:
+        """False means this zone's deep-soak cycle is turned off entirely --
+        see run_deep_soak()'s gate. Default True (not False) so an existing
+        zone from before this field existed keeps running deep soak exactly
+        as before; see const.py's CONF_DEEP_SOAK_ENABLED comment."""
+        return self.entry.options.get(
+            CONF_DEEP_SOAK_ENABLED, self.entry.data.get(CONF_DEEP_SOAK_ENABLED, DEFAULT_DEEP_SOAK_ENABLED)
+        )
 
     @property
     def deep_soak_time(self) -> dt_time:
@@ -190,10 +288,14 @@ class ZoneFlowController:
         # Seed the rain window baseline from the counter's current value
         # *before* anything else touches the tracker, so a fresh install (or
         # a restart with no persisted samples yet) has a sane baseline from
-        # the first moment rather than momentarily reading 0.0.
-        counter_state = self.hass.states.get(self.rain_counter_entity)
-        if counter_state is not None:
-            self._sync_rain_from_counter_state(counter_state, seed_only=True)
+        # the first moment rather than momentarily reading 0.0. Skipped
+        # entirely when no rain gauge is configured -- the tracker simply
+        # stays empty, and rain_windows()/today_rain_mm() already return
+        # 0.0 for an empty tracker (the correct "assume no rain" fallback).
+        if self.rain_counter_entity:
+            counter_state = self.hass.states.get(self.rain_counter_entity)
+            if counter_state is not None:
+                self._sync_rain_from_counter_state(counter_state, seed_only=True)
 
         if state.today_date_iso != dt_util.now().date().isoformat():
             self._start_new_day()
@@ -223,16 +325,18 @@ class ZoneFlowController:
         self._unsubs.append(
             async_track_state_change_event(self.hass, [self.valve_entity], self._on_valve_state_change)
         )
-        self._unsubs.append(
-            async_track_state_change_event(
-                self.hass, [self.rain_counter_entity], self._on_rain_counter_change
+        if self.rain_counter_entity:
+            self._unsubs.append(
+                async_track_state_change_event(
+                    self.hass, [self.rain_counter_entity], self._on_rain_counter_change
+                )
             )
-        )
-        self._unsubs.append(
-            async_track_state_change_event(
-                self.hass, [self.outdoor_temp_entity], self._on_outdoor_temp_change
+        if self.outdoor_temp_entity:
+            self._unsubs.append(
+                async_track_state_change_event(
+                    self.hass, [self.outdoor_temp_entity], self._on_outdoor_temp_change
+                )
             )
-        )
         self._unsubs.append(
             async_track_time_change(self.hass, self._on_midnight, hour=0, minute=0, second=0)
         )
@@ -346,16 +450,18 @@ class ZoneFlowController:
         state.today_date_iso = dt_util.now().date().isoformat()
         state.today_peak_temp_c = seed_temp
         state.rain_midnight_baseline_mm = state.rain_tracker().latest_cumulative()
+        state.today_runtime_minutes = 0.0
 
     @callback
     def _on_midnight(self, now) -> None:
         seed = None
-        temp_state = self.hass.states.get(self.outdoor_temp_entity)
-        if temp_state is not None:
-            try:
-                seed = float(temp_state.state)
-            except (TypeError, ValueError):
-                seed = None
+        if self.outdoor_temp_entity:
+            temp_state = self.hass.states.get(self.outdoor_temp_entity)
+            if temp_state is not None:
+                try:
+                    seed = float(temp_state.state)
+                except (TypeError, ValueError):
+                    seed = None
         self._start_new_day(seed_temp=seed)
         self.hass.async_create_task(self.store.async_save())
 
@@ -404,6 +510,78 @@ class ZoneFlowController:
     def avg_peak_temp(self) -> float:
         state = self.store.state
         return calc.three_day_average_peak_temp(state.peak_temp_day_history_c)
+
+    def effective_avg_peak_temp(self) -> float | None:
+        """The rolling 3-day average to use for the routine hot/cool/normal
+        tier DECISION, as opposed to avg_peak_temp() above (which stays a
+        plain historical value, used for display on the diagnostic sensor).
+
+        Returns None -- meaning "use the normal tier", an explicit branch
+        in calculations.routine_interval_days/routine_target_weekly_mm, not
+        a numeric coincidence -- whenever there is no temperature sensor
+        configured at all, OR the configured one is *currently*
+        unavailable/unknown. Without this check, a sensor that goes dead
+        mid-season would silently keep whatever tier its last real reading
+        implied, indefinitely (peak_temp_day_history_c keeps carrying that
+        stale value forward at each daily shift) -- this makes the fallback
+        immediate instead, and it recovers automatically the moment the
+        sensor reports a real value again."""
+        entity_id = self.outdoor_temp_entity
+        if not entity_id:
+            return None
+        state = self.hass.states.get(entity_id)
+        if state is None or state.state in ("unavailable", "unknown"):
+            return None
+        return self.avg_peak_temp()
+
+    def growth_ramp_fraction(self) -> float:
+        """See const.py's GROWTH_RAMP_CURVES comment. Returns 1.0 (no
+        adjustment) whenever the feature is off, or on but no planting date
+        has been set yet -- an enabled-but-unconfigured ramp must never
+        silently reduce watering.
+
+        A manual override (select.py's growth-stage select, paired with the
+        "growth_stage_override_pct" slider) takes precedence over the
+        planting-date curve whenever it's active -- but, like the curve
+        itself, ONLY while the zone's growth-ramp profile isn't "off": off
+        must always mean "no adjustment, ever," regardless of what the
+        override happens to be set to, or a person could accidentally scale
+        down a mature-tree zone's watering just by touching the wrong
+        dashboard slider."""
+        profile = self.growth_ramp_profile
+        if profile == GROWTH_RAMP_OFF:
+            return 1.0
+        if self.store.state.growth_stage_mode != GROWTH_STAGE_MODE_AUTO:
+            return max(0.0, min(1.0, self.number("growth_stage_override_pct") / 100.0))
+        planting_ts = self.store.state.planting_date_ts
+        if planting_ts is None:
+            return 1.0
+        curve = self._custom_growth_ramp_curve() if profile == GROWTH_RAMP_CUSTOM else GROWTH_RAMP_CURVES.get(profile)
+        if not curve:
+            return 1.0
+        days_since_planting = max((dt_util.utcnow().timestamp() - planting_ts) / 86400.0, 0.0)
+        return calc.growth_ramp_fraction(days_since_planting, curve)
+
+    def _custom_growth_ramp_curve(self) -> list[tuple[float, float]]:
+        """Builds a curve from the "growth_ramp_custom_*" sliders (const.py),
+        for a person's own plant-specific ramp instead of the three fixed
+        presets -- e.g. a chili pepper and a young avocado tree can each get
+        their own real numbers instead of both settling for whichever preset
+        curve happens to fit best. Percent sliders are clamped to [0, 100]
+        and the points are sorted by day before use, so entering the two
+        midpoints (or the "day reaching 100%" point) out of order reorders
+        the curve rather than producing a broken/backwards ramp -- and two
+        points landing on the same day is handled the same way the fixed
+        curves already handle it (calculations.growth_ramp_fraction treats
+        equal-day points as a vertical step, not a divide-by-zero)."""
+        pct = lambda key: max(0.0, min(100.0, self.number(key))) / 100.0
+        points = [
+            (0.0, pct("growth_ramp_custom_start_pct")),
+            (max(self.number("growth_ramp_custom_point1_day"), 0.0), pct("growth_ramp_custom_point1_pct")),
+            (max(self.number("growth_ramp_custom_point2_day"), 0.0), pct("growth_ramp_custom_point2_pct")),
+            (max(self.number("growth_ramp_custom_full_day"), 0.0), 1.0),
+        ]
+        return sorted(points, key=lambda p: p[0])
 
     def rain_windows(self) -> dict[str, float]:
         now_ts = dt_util.utcnow().timestamp()
@@ -580,17 +758,52 @@ class ZoneFlowController:
     # Irrigation cycles
     # ------------------------------------------------------------------
     async def _pump_watts(self) -> float:
-        state = self.hass.states.get(self.pump_power_entity)
+        entity_id = self.pump_power_entity
+        if not entity_id:
+            return 0.0
+        state = self.hass.states.get(entity_id)
         try:
             return float(state.state) if state else 0.0
         except (TypeError, ValueError):
             return 0.0
 
+    async def _flow_meter_reading(self) -> float | None:
+        """Current cumulative reading of the optional flow-meter entity, or
+        None if no flow meter is configured or its reading can't be parsed
+        right now. None (not 0.0) so a caller can tell "no data" apart from
+        "reads zero" -- delta math must never mix the two."""
+        entity_id = self.flow_meter_entity
+        if not entity_id:
+            return None
+        state = self.hass.states.get(entity_id)
+        try:
+            return float(state.state) if state else None
+        except (TypeError, ValueError):
+            return None
+
+    @property
+    def _pump_lock_key(self) -> str:
+        """Which physical pump this zone's valve draws from, for
+        _get_pump_lock below. Explicit pump_id (const.py's CONF_PUMP_ID)
+        always wins when set -- it's the only way to correctly group zones
+        that share a pump but don't have a wattage sensor on it (or only
+        one of them does), and the only way to tell two zones with the
+        *same* pump_power_entity apart if that ever turns out not to mean
+        "same pump" for some setup. Falling back to pump_power_entity next
+        preserves the original behavior for zones that already relied on
+        "same sensor = same pump" before pump_id existed. Falling back to
+        this zone's own entry_id last (never a bare None) matters just as
+        much as the pump_id case: without it, every zone that simply has no
+        pump-power sensor configured would collide on the same key and be
+        wrongly serialized with every other sensorless zone, even on
+        completely independent pumps."""
+        return self.pump_id or self.pump_power_entity or f"__zone_{self.entry.entry_id}"
+
     def _get_pump_lock(self) -> asyncio.Lock:
-        """A lock keyed by the physical pump-power entity, shared across
-        every zone (config entry) that names the same pump. Two zones that
-        each have their own independent pump never touch each other's lock
-        (different keys); two zones that share a physical pump get
+        """A lock keyed by _pump_lock_key, shared across every zone (config
+        entry) that resolves to the same key. Two zones on independent
+        pumps never touch each other's lock (different keys) and so never
+        wait on each other; two zones that share a physical pump get
         automatically serialized here instead of opening two valves on the
         same pump at once, which would skew both zones' flow-rate
         calibration. Deliberately stored under its own hass.data key, not
@@ -599,7 +812,7 @@ class ZoneFlowController:
         whether to deregister services, and a stray lock left in that same
         dict would make it permanently non-falsy."""
         locks: dict[str, asyncio.Lock] = self.hass.data.setdefault(f"{DOMAIN}_pump_locks", {})
-        return locks.setdefault(self.pump_power_entity, asyncio.Lock())
+        return locks.setdefault(self._pump_lock_key, asyncio.Lock())
 
     async def _run_pulses(
         self,
@@ -623,6 +836,9 @@ class ZoneFlowController:
             preamble = self.number("pump_preamble_seconds")
             if preamble > 0:
                 await asyncio.sleep(preamble)
+
+            flow_start = await self._flow_meter_reading()
+
             completed = await self._execute_pulses(
                 count=count,
                 pulse_minutes=pulse_minutes,
@@ -633,6 +849,30 @@ class ZoneFlowController:
                 deducted_mm_for_log=deducted_mm_for_log,
                 runtime_for_log=runtime_for_log,
             )
+
+            flow_end = await self._flow_meter_reading()
+            if flow_start is not None and flow_end is not None:
+                delta_liters = max(flow_end - flow_start, 0.0)
+                self.store.state.last_cycle_water_liters = delta_liters
+                await self.store.async_save()
+                # Only meaningful for a cycle that actually ran to
+                # completion -- an aborted cycle legitimately may not have
+                # moved any water, and that's not a flow-meter problem.
+                if completed and delta_liters <= 0.0:
+                    await self._log_event(
+                        event_type="No Flow Detected",
+                        status="WARNING",
+                        target_mm=target_mm_for_log,
+                        deducted_mm=deducted_mm_for_log,
+                        runtime=runtime_for_log,
+                        notify_phone=True,
+                        phone_title=f"⚠️ {kind.upper()}: No Water Flow Detected",
+                        phone_msg=(
+                            "Cycle completed but the flow meter shows no water delivered. "
+                            "Check the valve/pump/flow-meter wiring."
+                        ),
+                    )
+
             postamble = self.number("pump_postamble_seconds")
             if postamble > 0:
                 # Runs whether or not the cycle completed cleanly -- the
@@ -666,22 +906,31 @@ class ZoneFlowController:
                 "switch", "turn_on", {"entity_id": self.valve_entity}, blocking=True
             )
 
-            # wait_template pump-power check, timeout 45s, continue_on_timeout
-            try:
-                await asyncio.wait_for(self._wait_for_pump_watts(min_pump_watts), timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS)
-            except asyncio.TimeoutError:
-                pass
-            if await self._pump_watts() < min_pump_watts:
-                await self._log_event(
-                    event_type="Low Pump Power Audit",
-                    status="WARNING",
-                    target_mm=target_mm_for_log,
-                    deducted_mm=deducted_mm_for_log,
-                    runtime=runtime_for_log,
-                    notify_phone=True,
-                    phone_title=f"⚠️ {kind.upper()}: Low Pump Power",
-                    phone_msg=f"Pulse {index} running, pump reads {await self._pump_watts()}W.",
-                )
+            # The pump-power audit only makes sense when a pump-power
+            # sensor is actually configured -- without one, _pump_watts()
+            # would always read 0.0, which would otherwise warn on every
+            # single pulse about a "low" reading that was never real to
+            # begin with. Skipping cleanly here (not by making the
+            # threshold trivially pass) means no wasted 45s wait either.
+            if self.pump_power_entity:
+                # wait_template pump-power check, timeout 45s, continue_on_timeout
+                try:
+                    await asyncio.wait_for(
+                        self._wait_for_pump_watts(min_pump_watts), timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS
+                    )
+                except asyncio.TimeoutError:
+                    pass
+                if await self._pump_watts() < min_pump_watts:
+                    await self._log_event(
+                        event_type="Low Pump Power Audit",
+                        status="WARNING",
+                        target_mm=target_mm_for_log,
+                        deducted_mm=deducted_mm_for_log,
+                        runtime=runtime_for_log,
+                        notify_phone=True,
+                        phone_title=f"⚠️ {kind.upper()}: Low Pump Power",
+                        phone_msg=f"Pulse {index} running, pump reads {await self._pump_watts()}W.",
+                    )
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
             try:
@@ -870,6 +1119,13 @@ class ZoneFlowController:
     async def run_deep_soak(self) -> None:
         """Port of avocado_deep_soak. Called by the 05:00 trigger and by the
         manual 'Run Deep Soak Now' button/service — same code, same gates."""
+        if not self.deep_soak_enabled:
+            # Silent, like every other routine gate below -- a zone that has
+            # deliberately turned this cycle off shouldn't get a log entry
+            # every single day just for staying off. The manual "Run Deep
+            # Soak Now" button/service hits this exact same gate, so it
+            # no-ops too rather than bypassing the zone's own setting.
+            return
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
 
@@ -888,7 +1144,13 @@ class ZoneFlowController:
         if not await self._forecast_gate_allows_run("deep_soak"):
             return
 
-        plan = calc.plan_deep_soak(self.number("deep_soak_target_mm"), self.number("flow_rate_mm_per_min"))
+        deep_soak_pulse_count = max(int(round(self.number("deep_soak_pulse_count"))), 1)
+        plan = calc.plan_deep_soak(
+            self.number("deep_soak_target_mm"),
+            self.number("flow_rate_mm_per_min"),
+            pulse_count=deep_soak_pulse_count,
+            min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+        )
 
         if plan.total_runtime_minutes > self.number("deep_soak_max_runtime_minutes"):
             await self._log_event(
@@ -900,6 +1162,24 @@ class ZoneFlowController:
                 notify_phone=True,
                 phone_title="⚠️ DEEP SOAK ABORTED",
                 phone_msg=f"Calculated runtime ({plan.total_runtime_minutes} min) exceeded safety cap. Watering cancelled.",
+            )
+            return
+
+        max_daily = self.number("max_daily_runtime_minutes")
+        if state.today_runtime_minutes + plan.total_runtime_minutes > max_daily:
+            await self._log_event(
+                event_type="Max Daily Runtime Cap Reached",
+                status="ABORTED",
+                target_mm=plan.target_mm,
+                deducted_mm=0.0,
+                runtime=plan.total_runtime_minutes,
+                notify_phone=True,
+                phone_title="⚠️ DEEP SOAK SKIPPED: Daily Runtime Cap",
+                phone_msg=(
+                    f"Already applied {state.today_runtime_minutes:.0f} min today; this deep soak "
+                    f"({plan.total_runtime_minutes} min) would exceed the {max_daily:.0f} min daily cap. "
+                    "Skipped -- will retry when due again."
+                ),
             )
             return
 
@@ -921,9 +1201,9 @@ class ZoneFlowController:
         await self._set_abort(False)
 
         completed = await self._run_pulses(
-            count=DEEP_SOAK_PULSE_COUNT,
-            pulse_minutes=max(plan.pulse_runtime_minutes, DEEP_SOAK_MIN_PULSE_MINUTES),
-            rest_minutes=DEEP_SOAK_PULSE_REST_MINUTES,
+            count=deep_soak_pulse_count,
+            pulse_minutes=plan.pulse_runtime_minutes,
+            rest_minutes=int(round(self.number("deep_soak_pulse_rest_minutes"))),
             min_pump_watts=self.number("pump_min_watts"),
             kind="Deep Soak",
             target_mm_for_log=plan.target_mm,
@@ -935,6 +1215,7 @@ class ZoneFlowController:
             return
 
         state.last_deep_soak_ts = dt_util.utcnow().timestamp()
+        state.today_runtime_minutes += plan.total_runtime_minutes
         await self.store.async_save()
         await self._set_lock(False)
         await self._log_event(
@@ -959,7 +1240,12 @@ class ZoneFlowController:
         if state.lock_on:
             return
 
-        avg_peak_temp = self.avg_peak_temp()
+        # effective_avg_peak_temp() (not avg_peak_temp()) is what must drive
+        # this decision -- it returns None, an explicit "use normal tier"
+        # branch, whenever the temp sensor is unconfigured OR currently
+        # unavailable/unknown, rather than silently running whatever tier a
+        # dead sensor's last real reading happened to imply.
+        avg_peak_temp = self.effective_avg_peak_temp()
         hot_threshold = self.number("hot_temp_threshold")
         interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
 
@@ -972,14 +1258,22 @@ class ZoneFlowController:
         if not await self._forecast_gate_allows_run("routine"):
             return
 
+        # Growth-stage auto-ramp (optional, off by default -- see
+        # growth_ramp_fraction) scales only the routine weekly targets, not
+        # the deep-soak depth target: it models "a young plant needs less
+        # water overall right now", which is the routine cycle's job, while
+        # deep soak's job (root-zone penetration depth) doesn't scale the
+        # same way with plant age.
+        ramp = self.growth_ramp_fraction()
+        routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
         days_elapsed = int(elapsed_seconds / 86400)
         plan = calc.plan_routine_irrigation(
             avg_peak_temp=avg_peak_temp,
             hot_threshold=hot_threshold,
             cool_threshold=self.number("cool_temp_threshold"),
-            normal_weekly_mm=self.number("target_weekly_mm"),
-            hot_weekly_mm=self.number("target_weekly_hot_mm"),
-            cool_weekly_mm=self.number("target_weekly_cool_mm"),
+            normal_weekly_mm=self.number("target_weekly_mm") * ramp,
+            hot_weekly_mm=self.number("target_weekly_hot_mm") * ramp,
+            cool_weekly_mm=self.number("target_weekly_cool_mm") * ramp,
             flow_rate=self.number("flow_rate_mm_per_min"),
             days_elapsed=days_elapsed,
             today_rain_mm=self.today_rain_mm(),
@@ -987,6 +1281,8 @@ class ZoneFlowController:
             rain_eff_low=self.number("rain_eff_low"),
             rain_eff_mid=self.number("rain_eff_mid"),
             rain_eff_high=self.number("rain_eff_high"),
+            pulse_count=routine_pulse_count,
+            min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
         )
 
         if days_elapsed > 10:
@@ -1015,6 +1311,24 @@ class ZoneFlowController:
             )
             return
 
+        max_daily = self.number("max_daily_runtime_minutes")
+        if state.today_runtime_minutes + plan.calc_runtime_minutes > max_daily:
+            await self._log_event(
+                event_type="Max Daily Runtime Cap Reached",
+                status="ABORTED",
+                target_mm=round(plan.interval_target_mm, 1),
+                deducted_mm=round(plan.eff_rain_mm, 1),
+                runtime=plan.calc_runtime_minutes,
+                notify_phone=True,
+                phone_title="⚠️ ROUTINE IRRIGATION SKIPPED: Daily Runtime Cap",
+                phone_msg=(
+                    f"Already applied {state.today_runtime_minutes:.0f} min today; this cycle "
+                    f"({plan.calc_runtime_minutes} min) would exceed the {max_daily:.0f} min daily cap. "
+                    "Skipped -- will retry when due again."
+                ),
+            )
+            return
+
         if plan.calc_runtime_minutes <= 0:
             return
 
@@ -1036,9 +1350,9 @@ class ZoneFlowController:
         await self._set_abort(False)
 
         completed = await self._run_pulses(
-            count=ROUTINE_PULSE_COUNT,
-            pulse_minutes=max(plan.pulse_runtime_minutes, ROUTINE_MIN_PULSE_MINUTES),
-            rest_minutes=ROUTINE_PULSE_REST_MINUTES,
+            count=routine_pulse_count,
+            pulse_minutes=plan.pulse_runtime_minutes,
+            rest_minutes=int(round(self.number("routine_pulse_rest_minutes"))),
             min_pump_watts=self.number("pump_min_watts"),
             kind="Routine Irrigation",
             target_mm_for_log=round(plan.interval_target_mm, 1),
@@ -1050,6 +1364,7 @@ class ZoneFlowController:
             return
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
+        state.today_runtime_minutes += plan.calc_runtime_minutes
         await self.store.async_save()
         await self._set_lock(False)
         await self._log_event(

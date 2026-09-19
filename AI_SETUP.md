@@ -13,75 +13,134 @@
 > code tour.
 
 > **Non-negotiable, before anything else below:**
-> - Never guess an entity ID — confirm it with the person or a real tool
->   lookup before submitting it.
+> - Never guess an entity ID, and never decide one on the person's behalf —
+>   confirm every single one with the person before submitting it, even one
+>   your own tool-based search turned up as an apparently-obvious match.
+>   **This has no "it's just a test/demo/sandbox setup" exception.** A test
+>   run through this guide uses exactly the same process as a real one: ask
+>   about every entity, at every step, the same as you would for the
+>   person's actual production system. Don't quietly fill in whatever
+>   entity happens to exist in a sandbox because asking felt unnecessary for
+>   "just a test" — if you need entities that don't exist yet to exercise a
+>   step, say so and ask whether to create them or which real ones to reuse,
+>   rather than picking for the person.
 > - Never disable, bypass, or suggest a workaround for a safety watchdog
 >   (stuck-valve force-off, power-loss abort, stale-lock recovery). Not
 >   configurable by design.
 > - Never edit `calculations.py` or any other integration source file as
 >   part of "setup" — this is entity selection + number tuning through the
 >   UI only, never a code change.
-> - If something doesn't fit this guide, say so plainly and point the
->   person at opening a GitHub issue rather than improvising.
->
-> (Full detail on each of these is in §9 at the end — read this block now,
-> that section later.)
+> - If something doesn't fit this guide, say so plainly and offer to draft a
+>   GitHub issue (§10 covers exactly how, including a hard privacy rule on
+>   what must never appear in it) rather than improvising a code change.
 
 ## 0. What you're setting up, in one paragraph
 
 ZoneFlow is a Home Assistant custom integration for drip/valve irrigation.
 Each **zone** (one plant, bed, or lawn area with its own valve) is added as
 its own separate config entry, done through Home Assistant's normal "Add
-Integration" UI flow — there is no YAML to write. Your job is to (a) work
-out what to put in each field of that flow and each crop-relevant tunable
-number, and (b) either enter it yourself (if you have tool access to their
-Home Assistant — §1a) or tell the person exactly what to click and type
-(if you don't — §1).
+Integration" UI flow — there is no YAML to write. The only entity ZoneFlow
+truly requires is the valve switch; a rain gauge, outdoor temperature
+sensor, pump-power sensor, and flow meter are all optional and each
+degrades gracefully on its own when left out (§2 explains exactly what each
+one buys you, so the person can make an informed choice rather than feeling
+like they need hardware they don't have to get started). Your job is to (a)
+work out what to put in each field of that flow and each crop-relevant
+tunable number, and (b) either enter it yourself (if you have tool access
+to their Home Assistant — §1a) or tell the person exactly what to click and
+type (if you don't — §1).
 
-## 1. First questions — ask all four together, before anything else
+## 1. First questions — ask all together, before anything else
 
-Before touching §2, ask the person these four things **in one go, as a
-single batch** — not spread across the conversation, not deferred, and
-never silently defaulted to "no" because a later section calls a field
-"optional." An unanswered optional field is not the same as a "no."
+Before touching §2, ask the person these things **in one go, as a single
+batch** — not spread across the conversation, not deferred, and never
+silently defaulted because a later section calls a field "optional." An
+unanswered optional field is not the same as a "no."
 
-1. **Mode A or Mode B?** Do you have live tool/API access to their actual
+1. **How many zones total?** Get the total count up front, even if you're
+   only going to configure the first one right now. This is what tells you
+   to keep going through §2-§9 again for zone 2, zone 3, etc. instead of
+   stopping after the first zone and leaving the rest for the person to
+   somehow figure out is still needed. If they don't know yet (e.g. "at
+   least one, maybe more later"), that's fine — just don't assume "one"
+   silently when they said something else.
+2. **Mode A or Mode B?** Do you have live tool/API access to their actual
    Home Assistant instance (an MCP server, a long-lived access token, or
    equivalent)? If yes, ask whether *they'd* rather you just configure it
    directly (Mode A) or walk them through clicking it themselves (Mode B)
    — some people want to watch/learn the UI, most want it just done. If you
    have no tool access at all, you're in Mode B by default, no need to ask.
-2. **Dashboard card?** Would they like a ready-to-paste dashboard YAML for
-   this zone once setup's done (§8 — purely cosmetic, entirely optional,
+3. **What exactly is being watered, and where?** Ask this as a genuinely
+   open question — "what plant/crop is this?" — never as a multiple-choice
+   pick from a handful of broad categories (even with a free-text
+   "other/something else" escape hatch). A preset list anchors people
+   toward whichever option sounds closest, and correct watering depends on
+   the actual, specific plant, not the nearest-sounding category — a
+   pumpkin and a cucumber are both "vining vegetables" but want different
+   numbers. Also get roughly where in the world this is (country/region is
+   enough). The moment you have a specific plant name, **do real research
+   on it** (web search) rather than leaning only on §5's quick-reference
+   table, which only covers a handful of broad categories — look up its
+   typical root depth, weekly water needs, whether it actually benefits
+   from an infrequent deep soak versus frequent shallow watering (§6a), and
+   roughly how many days from planting to maturity/fruiting (useful for
+   §6's growth-ramp curve later). Bring this research to the person as a
+   suggestion they can confirm or correct, not as a silent internal
+   decision.
+4. **Outdoors, in a greenhouse, or otherwise indoors?** Don't leave this
+   for later — it changes real decisions: whether the weather forecast
+   gate (§7.4/question 7 below) is even useful for this zone (it isn't,
+   for a greenhouse or indoor space), and what an "outdoor temperature"
+   sensor should actually be measuring for it (§2 has the full detail once
+   you know the answer).
+5. **Slope?** This one's easy to just ask outright rather than explain at
+   length: is the ground this zone sits on flat, a slight slope, a
+   moderate slope, or steep? (A person can usually answer this from memory
+   without going to look at anything, unlike soil type below — that's why
+   it's worth getting out of the way immediately.) It's descriptive/
+   informational only (§4's table says more), so "not sure" is a fine
+   answer if they genuinely don't know.
+6. **Dashboard card?** Would they like a ready-to-paste dashboard YAML for
+   this zone once setup's done (§9 — purely cosmetic, entirely optional,
    but the answer changes what you need to track during §4).
-3. **Phone notifications?** ZoneFlow can alert a `notify.*` target on
+7. **Phone notifications?** ZoneFlow can alert a `notify.*` target on
    things like a stuck-valve force-off or a low pump-power warning. Do they
    want this, and if so, which `notify.*` entity?
-4. **Weather forecast gate?** Point this zone at a `weather.*` entity to
-   hold off watering when rain is forecast (§6.4). Do they have one they'd
-   like to use here? (Note: §2 asks next whether this zone is outdoors or
-   a greenhouse/indoor space — if it turns out to be a greenhouse, revisit
-   this answer, since the forecast gate isn't useful there. Don't worry
-   about that distinction yet if you don't already know it.)
+8. **Weather forecast gate?** Point this zone at a `weather.*` entity to
+   hold off watering when rain is forecast (§7.4). Do they have one they'd
+   like to use here? Skip offering this one at all if question 4 said
+   greenhouse/indoor (see §2 for why).
 
-Carry all four answers forward — don't re-ask any of them later, and don't
+Carry all these answers forward — don't re-ask any of them later, and don't
 let §4's config-flow table talk you back into treating an unanswered field
 as a default "no." Specifically:
 
-- **Mode** decides the mechanism for every step in §2 through §7 (you
+- **Zone count** governs how many times you repeat §2 through §9 in this
+  conversation — after finishing one zone, move straight to the next one
+  rather than stopping and waiting to be told to continue, unless the
+  person asked you to pause.
+- **Mode** decides the mechanism for every step in §2 through §8 (you
   clicking via tool access vs. telling them what to click) — the
   information gathered is identical either way. See §1a for Mode A's
   concrete calls.
+- **Crop/region (+ your research on it)** feeds §5's starting-point
+  suggestions (weekly targets, root depth, split-cycle pulse tuning), §6a's
+  deep-soak recommendation, and, if they turn on growth-stage auto-ramp
+  (§6), which ramp profile fits.
+- **Environment (outdoor/greenhouse/indoor)** fills §2's greenhouse-specific
+  handling and rules the forecast gate in or out.
+- **Slope** fills straight into §4's "Slope" field — don't ask it again
+  there.
 - **Dashboard = yes** means: while walking through §4 and §4a, note this
   zone's entity IDs as you naturally encounter them, instead of having to
   go back and rediscover them from scratch after everything's set up. If
-  no, skip §8 entirely and don't bring it up again unless asked.
+  no, skip §9 entirely and don't bring it up again unless asked.
 - **Notifications = yes** means: collect the `notify.*` entity now, and
   fill it into §4's "Phone notify target" field. If no, that field stays
   blank in §4 — but because they were actually asked, not because you
   defaulted it.
 - **Weather gate = yes** means: collect the `weather.*` entity now, fill it
-  into §4's "Weather forecast source" field, and walk them through §6.4's
+  into §4's "Weather forecast source" field, and walk them through §7.4's
   threshold numbers once the zone exists. If no, that field stays blank.
 
 ### 1a. Mode A mechanics: driving the config flow via the REST API
@@ -100,26 +159,31 @@ walks — there is no "just POST the final data" shortcut, because
    `{"zone_name": "<the name you agreed on>"}`. The response is the second
    step's form — read its `data_schema` to confirm you're matching field
    names/types exactly (don't hardcode them from this doc if the schema
-   response disagrees; the live response is ground truth).
+   response disagrees; the live response is ground truth — this matters
+   more now than it used to, since several fields in that schema are
+   genuinely optional and simply won't appear in the response at all if
+   you don't set them).
 3. `POST /api/config/config_entries/flow/<flow_id>` again with the full
    entities/schedule payload (all the fields from §4's table, keyed exactly
-   as the schema names them). A successful response has `"type": "create_entry"`
-   and includes the new `result` (the config entry). An error response
-   has `"type": "form"` again with an `errors` object — fix and resubmit,
-   don't guess blindly at what changed.
+   as the schema names them — **omit a key entirely** for any optional
+   entity field the person is skipping; do not send it as `null` or `""`,
+   which the schema rejects). A successful response has
+   `"type": "create_entry"` and includes the new `result` (the config
+   entry). An error response has `"type": "form"` again with an `errors`
+   object — fix and resubmit, don't guess blindly at what changed.
 4. Once created, the zone's `number.*` entities exist with factory
    defaults. To set one from §5's table, call the `number.set_value`
    service: `POST /api/services/number/set_value` with
    `{"entity_id": "number.<zone>_<field>", "value": <float>}`. Confirm
    afterwards by reading the entity's state back
    (`GET /api/states/<entity_id>`) rather than assuming the call worked.
-5. To run the verification pulse from §7: `POST /api/services/zoneflow/test_pulse`
+5. To run the verification pulse from §8: `POST /api/services/zoneflow/test_pulse`
    with `{"entity_id": "<any entity belonging to that zone's device>", "seconds": 10}`
    (or however your tool's service-call helper targets a specific config
    entry/device — some MCP servers want a device_id instead of an
    entity_id; check your tool's own parameters rather than assuming this
-   shape). Then read back the valve and pump-power states to confirm the
-   pulse actually happened.
+   shape). Then read back the valve (and pump-power/flow-meter states, if
+   configured) to confirm the pulse actually happened.
 
 If your tool access is a higher-level MCP for Home Assistant rather than
 raw REST, look for whatever it calls "start config flow" / "add
@@ -145,68 +209,184 @@ once they've agreed to let you drive.
 2. **They have already restarted Home Assistant** after installing (custom
    integrations require a full restart the first time — a UI reload is not
    enough).
-3. Ask them, in one message, for the physical setup of the **first zone**
-   they want to configure:
-   - What are they watering (a plant/crop name, or "lawn")? You'll use this
-     later for §6's default suggestions and it becomes the zone's display
-     name.
-   - **Outdoors, or in a greenhouse/other indoor grow space?** This isn't
-     just a detail — it changes two real decisions later: whether the
-     weather forecast gate (§6.4) is even useful for this zone (it isn't,
-     for a greenhouse — see below), and what their "outdoor temperature"
-     sensor should actually be measuring for this zone.
-   - Do they already have Home Assistant entities for: a valve (switch), a
-     pump power sensor, a rain gauge tip counter, and an outdoor temperature
-     sensor? If any don't exist yet, that's a hardware/other-integration
-     problem outside ZoneFlow's scope — tell them plainly and stop for that
-     piece; don't invent a workaround.
+3. **What hardware/sensors do they actually have?** Only the **valve
+   switch** is truly required — ZoneFlow cannot irrigate without something
+   to open. Everything else is optional, and each one degrades gracefully
+   on its own when left unset rather than being blocked or half-broken.
+   Walk through this plainly rather than assuming they need all four before
+   they can start — someone with just a valve can still get real, working
+   automatic irrigation today, add sensors later, and nothing about setup
+   has to be redone when they do:
+
+   | Sensor | What it's for | What's lost without it |
+   |---|---|---|
+   | Rain gauge tip counter | rain-aware watering (skip/reduce when it's already rained) | rain-aware gates simply never fire — ZoneFlow waters on a temperature-driven schedule only, same as if it never rains |
+   | Outdoor temperature sensor | hot/cool weekly-target tiers | the hot/cool tier logic falls back to the "normal" tier permanently — one flat weekly target year-round |
+   | Pump power sensor | confirms the pump is actually drawing current during a pulse (a safety/reliability audit, not a control) | no low-pump-power warning if the pump fails silently mid-cycle |
+   | Flow meter (cumulative-volume sensor) | measures actual water delivered per cycle, and can flag "pump ran but no water moved" | no "Last Cycle Water Delivered" reading and no no-flow-detected check |
+
+   **Recommend having at least one of pump-power or flow-meter, for
+   reliability** — without either, ZoneFlow has no way to notice a pump
+   that's running dry, clogged, or disconnected; it'll faithfully open and
+   close the valve on schedule with no idea whether water actually moved.
+   Say this plainly as a recommendation, not a requirement — plenty of
+   setups run fine without either, they just lose that one safety net.
+
+4. Ask them, in one message, for the physical setup of the **first zone**
+   they want to configure — crop/plant and environment (outdoor/greenhouse/
+   indoor) should already be in hand from §1's batch (questions 3 and 4);
+   don't re-ask them here, just carry them forward and apply the
+   greenhouse-specific handling below if relevant.
+
+   **Ask about each sensor in the table above by name, individually — never
+   as one lumped "which of these do you have" line that's easy to answer
+   incompletely, and never silently checked off as "probably not set up
+   yet" for a test/sandbox instance.** Almost everything here is optional,
+   which is exactly why none of it can be assumed either way — "optional"
+   means "ask, and the answer might genuinely be no," never "skip asking
+   and default to no because most fields are optional anyway." Ask each of
+   these as its own short yes/no, every time, for every zone:
+   - **"Do you have a rain gauge?"** — either answer leads into §2a right
+     below before moving on.
+   - **"Do you have an outdoor temperature sensor"** (or, for a greenhouse/
+     indoor zone, "one that reads this specific zone's actual growing-area
+     temperature, not the outside air")?
+   - **"Do you have a pump power sensor?"**
+   - **"Do you have a flow meter?"**
+
+   Whichever they say no to is simply left unset in §4 — a normal, fully-
+   supported configuration, not a problem to solve before continuing. But
+   don't decide "no" on their behalf, and don't skip a search in §3 for one
+   they said yes to just because it felt like extra steps.
 
    **If this zone is a greenhouse/indoor setup:**
-   - **Don't offer the weather forecast gate for this zone**, even if you
-     already have a `weather.*` entity from another (outdoor) zone. A
-     forecast of rain outside doesn't mean this zone should hold off —
-     real rain never reaches these plants. If the person specifically
-     wants it anyway (e.g. their greenhouse vents open in certain weather,
-     changing the internal climate), that's their call, but don't suggest
-     it as the default the way you would for an outdoor zone.
-   - The rain gauge tip counter is still a **required** field on the
-     config-flow screen (§4), but if this zone genuinely gets no rain at
-     all, point it at any real counter/sensor entity even if it will
-     simply never tip. It reads as zero rain either way, which is harmless
-     — the routine/deep-soak math just never gets a rain deduction for this
-     zone, which is correct.
-   - The "outdoor temperature" sensor should be whatever actually measures
-     **this zone's real ambient conditions** — a sensor physically inside
-     the greenhouse, not a literal outside-the-building sensor. A
-     greenhouse commonly runs hotter than the outside air, and that
-     temperature is what drives the hot/cool tier classification (§5) for
-     this specific zone.
+   - **Always ask, explicitly, every time this comes up: "Can real rain
+     actually get into the greenhouse?"** (open roof vents, gaps, a
+     structure that's more of a rain shelter than sealed — versus a fully
+     enclosed structure that never sees outside weather). Never assume
+     either way and never skip the question because it feels obvious from
+     how the rest of the conversation has gone.
+   - **Default to skipping both the rain gauge and the weather forecast
+     gate for this zone unless the answer is a genuine yes.** These two
+     go together because they answer the same underlying question — does
+     outside weather reach these plants — so treat them as one decision,
+     not two separate ones to ask about independently:
+     - **Weather forecast gate**: don't offer it for this zone, even if
+       you already have a `weather.*` entity from another (outdoor) zone.
+       A forecast of rain outside doesn't mean this zone should hold off —
+       real rain never reaches these plants when the answer is no.
+     - **Rain gauge**: leave it unset for this zone by default. A
+       greenhouse zone that genuinely never sees the gauge tip would just
+       read zero rain forever, which is harmless but also pointless to
+       wire up — better to leave it unset and say so, so the person isn't
+       maintaining a sensor that can't do anything for this zone.
+   - **If the answer is yes** — vents open, the structure lets real rain
+     through — set up both the rain gauge and the weather forecast gate
+     for this zone exactly as you would for an outdoor zone; there's
+     nothing greenhouse-specific left to special-case once rain genuinely
+     reaches the plants.
+   - If they have an "outdoor temperature" sensor, make sure it's
+     whatever actually measures **this zone's real ambient conditions** —
+     a sensor physically inside the greenhouse, not a literal
+     outside-the-building sensor. A greenhouse commonly runs hotter than
+     the outside air, and that temperature is what drives the hot/cool
+     tier classification (§5) for this specific zone.
+
+### 2a. Rain gauge: calibration, or building one if they don't have one
+
+   **If they have a rain gauge**, ask whether they already know its
+   mm-per-tip calibration value — the depth of rainfall over the gauge's
+   catchment area that one tip of the bucket represents; this feeds the
+   `rain_mm_per_tip` number in §5's table. Two paths from here:
+   - **They know it** — use that value directly, nothing more to ask.
+   - **They don't know it** — ask what brand/model the gauge is (e.g.
+     "Misol," a specific WH-model number, "Ambient Weather," etc.) and look
+     it up (web search) for its published mm-per-tip spec as a starting
+     point — most mechanical tipping-bucket gauges document this, commonly
+     somewhere in the 0.2-0.5mm/tip range depending on model and funnel
+     size. Say plainly that this is the manufacturer's figure standing in
+     for a real measurement, not something you've confirmed for their
+     specific unit, and offer the more precise alternative for anyone who
+     wants it: pour a known amount of water slowly into the gauge's funnel,
+     count how many tips it produces, then divide (water depth ÷ tip count)
+     — genuinely more accurate since it captures that individual unit's
+     actual catchment area and any manufacturing variance, but entirely
+     optional if the looked-up factory figure is good enough for them.
+
+   **If they don't have one**, recommend getting one rather than quietly
+   leaving rain-aware watering off — of the four optional sensors in §2's
+   table, it's one of the cheaper, more worthwhile additions (without it,
+   ZoneFlow waters on a temperature-only schedule with no idea it already
+   rained). Offer both routes and let them pick:
+   - **A ready-made wireless rain-gauge console** with its own Home
+     Assistant integration or an MQTT bridge — several weather-station
+     brands support this — the simpler route if they'd rather just buy
+     something that works out of the box.
+   - **A cheap DIY build**, for anyone who'd rather not buy a whole
+     weather-station console just for the rain gauge: a bare mechanical
+     tipping-bucket rain gauge (sold on its own, no electronics, roughly
+     $15-25) already has a magnetic reed switch inside that closes briefly
+     on every tip. Wire that reed switch's two leads into a spare Zigbee/
+     Z-Wave door-and-window contact sensor's dry-contact terminals (or an
+     ESPHome board's GPIO input) in place of the gauge's own wireless
+     console — Home Assistant then sees each tip as an ordinary open/close
+     event on that contact sensor. From there, add a `counter:` helper (or
+     a template sensor that increments on the contact's state changes) so
+     there's a genuinely cumulative, always-increasing entity to point
+     ZoneFlow's "Rain gauge tip counter" field at. This is a real,
+     low-cost, commonly-used approach — a spare contact sensor is often
+     already on hand or costs only a few dollars, versus buying an entire
+     wireless rain-gauge console.
+
+   Either way, say plainly that this is a "worth adding for reliability"
+   recommendation, not a blocker — a zone runs fine with no rain gauge at
+   all, on the temperature-driven schedule alone, and setup can absolutely
+   continue today without one.
 
 ## 3. Find the entity IDs
 
 If you have HA tool/API access, search for candidates and propose them
-rather than asking the person to hunt for IDs blind:
+rather than asking the person to hunt for IDs blind. Only search for a
+sensor the person actually said they have (§2) — don't go hunting for a
+pump-power sensor to fill in "just in case" if they told you they don't
+have one.
 
 - Valve: a `switch.*` entity that plausibly controls water flow (name
   hints: "valve", "water", "irrigation", "zone", the crop name they gave
   you).
-- Pump power: a `sensor.*` entity reporting watts (name hints: "pump",
-  "power"). This is used to confirm the pump is actually drawing current
-  during a pulse, not to control the pump.
-- Rain counter: a `counter.*` or `sensor.*` entity that only increases
-  (a tipping-bucket rain gauge's raw tip count, or a cumulative mm sensor).
-- Outdoor temperature: a `sensor.*` with device class `temperature`.
+- Rain counter (optional): a `counter.*` or `sensor.*` entity that only
+  increases (a tipping-bucket rain gauge's raw tip count, or a cumulative
+  mm sensor).
+- Outdoor temperature (optional): a `sensor.*` with device class
+  `temperature`.
+- Pump power (optional): a `sensor.*` entity reporting watts (name hints:
+  "pump", "power"). This is used to confirm the pump is actually drawing
+  current during a pulse, not to control the pump.
+- Flow meter (optional): a `sensor.*` reporting a cumulative volume (name
+  hints: "flow", "water meter", "liters"/"litres"/"gallons") — must be
+  cumulative (always increasing), the same shape as the rain counter, not
+  an instantaneous flow-rate reading. If more than one zone will point at
+  the same flow meter entity, ask where it's physically plumbed relative
+  to those zones' valves and pumps before assuming that's fine as-is —
+  see §7.2a, since a meter shared across genuinely different pumps changes
+  how those specific zones queue.
 - Notify target: a `notify.*` entity for phone alerts — only look for this
   if they said yes to notifications in §1; skip this search entirely if
   they said no.
-- Weather: a `weather.*` entity for the forecast gate (§6.4) — only look
+- Weather: a `weather.*` entity for the forecast gate (§7.4) — only look
   for this if they said yes to the forecast gate in §1; skip it if not.
 
 Present your best-guess matches and ask the person to confirm or correct
-each one — never submit an entity ID you're not confident about. If you
-have no HA access, ask the person to open **Settings → Devices & Services →
-Entities**, filter by domain (`switch.`, `sensor.`, etc.), and read you back
-the exact entity IDs.
+each one — never submit an entity ID you're not confident about, and never
+treat your own search as the confirmation. This applies exactly as much to
+a test, demo, or sandbox instance as to someone's real production Home
+Assistant — "it's just a test" is never a reason to pick an entity yourself
+instead of asking. If a needed entity doesn't exist at all yet (common in a
+sandbox), say so and ask the person whether to create one or which existing
+one to point at instead; don't silently invent or select one to keep the
+walkthrough moving. If you have no HA access, ask the person to open
+**Settings → Devices & Services → Entities**, filter by domain (`switch.`,
+`sensor.`, etc.), and read you back the exact entity IDs.
 
 ## 4. Walk through the config flow
 
@@ -218,23 +398,40 @@ In Home Assistant: **Settings → Devices & Services → Add Integration →
 the HA UI and the default CSV log filename, so it must be distinct from any
 other zone's name.
 
-**Screen 2 — entities and schedule.** Fields, in the order they appear:
+**Screen 2 — entities, site description, and schedule.** Fields, in the
+order they appear:
 
 | Field | What it is | How to fill it in |
 |---|---|---|
-| Valve switch | the `switch.*` from §3 | required |
-| Pump power sensor | the `sensor.*` from §3 | required |
-| Rain gauge tip counter | the `counter.*`/`sensor.*` from §3 | required |
-| Outdoor temperature sensor | the `sensor.*` from §3 | required |
+| Valve switch | the `switch.*` from §3 | required — the only truly required entity |
+| Pump power sensor (optional) | the `sensor.*` from §3 | fill in if they have one (§2); leave blank otherwise — see §2's table for what's lost |
+| Shared pump ID (optional) | a short label, not an entity — e.g. "Pump A" | leave blank for a single zone or a zone on its own dedicated pump; for a second-or-later zone, see §7.2's pump-grouping question first — set the identical label on every zone that's genuinely on the same physical pump |
+| Rain gauge tip counter (optional) | the `counter.*`/`sensor.*` from §3 | fill in if they have one; leave blank otherwise |
+| Outdoor temperature sensor (optional) | the `sensor.*` from §3 | fill in if they have one; leave blank otherwise |
+| Flow meter (optional) | the cumulative-volume `sensor.*` from §3 | fill in if they have one; leave blank otherwise |
 | Phone notify target | a `notify.*` entity | use whatever they answered in §1 — fill it in if they wanted alerts, leave blank if they didn't |
-| Weather forecast source | a `weather.*` entity | use whatever they answered in §1 — fill it in if they wanted the forecast gate (§6.4), leave blank if they didn't; can also be added later via the integration's Options if they change their mind |
+| Weather forecast source | a `weather.*` entity | use whatever they answered in §1 — fill it in if they wanted the forecast gate (§7.4), leave blank if they didn't; can also be added later via the integration's Options if they change their mind |
+| Soil type | a dropdown (not sure / sandy / sandy loam / loam / clay loam / clay) | see §5's soil-type guidance below — inform this from the squeeze test if they don't already know, don't just default to "not sure" |
+| Drainage | a dropdown (not sure / fast / medium / slow) | usually falls straight out of the soil-type answer — sandy≈fast, loam≈medium, clay≈slow — ask separately only if they describe unusual site drainage (e.g. a raised bed, or a low spot that pools) |
+| Slope | a dropdown (flat / slight / moderate / steep) | whatever they answered in §1 |
+| Irrigation method | a dropdown (drip / micro-sprinkler / sprinkler / soaker hose / other) | ask directly — this is about their physical hardware, not something to infer |
+| Growth-stage auto-ramp | a dropdown (off / fast-growing annual / slow fruiting crop / establishing perennial) | **default is off** — only turn this on if the person opts in; see §6 before offering it |
 | CSV log file path | a file path | accept the pre-filled default (`/config/zoneflow_<zone-name-slug>.csv`) unless the person has a reason to change it |
-| Deep soak schedule time | `HH:MM:SS` | default `05:00:00` is reasonable for most climates (before sunrise, before daytime evaporation); ask if they have a strong preference |
+| Enable the deep soak cycle | on/off toggle | **default is on** (this cycle predates the toggle, so on is what every existing zone already does) — but don't just accept the default silently for a *new* zone; see §6a first and actually recommend on/off based on the crop. This same setting also shows up as a real `switch.<zone>_deep_soak_enabled` entity on the zone's dashboard/device page once created (see §6a) — either one flips the identical underlying value, so mention both so the person knows they can toggle it later straight from the dashboard without touching this config flow or the integration's Options again |
+| Deep soak schedule time | `HH:MM:SS` | irrelevant if deep soak is disabled above; otherwise default `05:00:00` is reasonable for most climates (before sunrise, before daytime evaporation); ask if they have a strong preference |
 | Routine irrigation schedule time | `HH:MM:SS` | default `05:30:00`, same reasoning |
-| Deep soak trigger | Fixed time / before or after sunrise / before or after sunset | leave as "Fixed time" unless they specifically want sunrise/sunset-relative scheduling (§6.3) |
+| Deep soak trigger | Fixed time / before or after sunrise / before or after sunset | leave as "Fixed time" unless they specifically want sunrise/sunset-relative scheduling (§7.3) |
 | Deep soak sun offset (minutes) | only relevant if the above isn't "Fixed time" | ask how many minutes before/after |
 | Routine trigger | same options as deep soak trigger | same guidance |
 | Routine sun offset (minutes) | only relevant if routine trigger isn't "Fixed time" | ask how many minutes before/after |
+
+The four descriptive site fields (soil type, drainage, slope, irrigation
+method) are **informational only** — nothing in ZoneFlow's scheduling logic
+reads them directly. Their entire job is to inform how *you* fill in §5's
+real tunable numbers (split-cycle pulse counts, dry-down holdoffs, rain
+efficiency); they always have a valid value (even "not sure"/"flat"/"drip"
+as defaults), so they never block submitting this screen. Say this plainly
+if the person asks why an "unknown" answer is fine here.
 
 Submitting this screen creates the zone. It starts running on the schedule
 immediately, but every tunable number below still has its factory default
@@ -246,54 +443,82 @@ this zone's real entity IDs, while you're already looking at its device
 page for §4a and §5 anyway — don't wait until everything else is finished.
 If you have HA tool access, list this zone's device's entities now (by
 device name, or filtering `number.*`/`sensor.*`/`binary_sensor.*`/
-`button.*`/`datetime.*` for the zone's slug) and keep the list. In Mode B,
+`button.*`/`datetime.*`/`switch.*` for the zone's slug — the deep-soak
+on/off switch, §6a, is a `switch.*` entity too) and keep the list. In Mode B,
 ask the person to open the zone's device page (**Settings → Devices &
 Services → [zone name]**) and read you every entity ID shown there, once,
 while they're already on that screen for §4a/§5 — not as a separate ask
-later. Either way, hold onto this list; §8 uses it directly instead of
+later. Either way, hold onto this list; §9 uses it directly instead of
 looking anything up again.
 
 ### 4a. Seed the zone's history if it isn't actually brand-new
 
-Ask this before moving on, every time: **"has this plant/zone already been
-getting watered some other way, or is it genuinely starting from zero?"**
+**Never assume Home Assistant already has this history, and never phrase
+the question as if you're going to go check for it.** A ZoneFlow config
+entry is brand new the moment it's created — its `datetime` entities always
+start at "unknown," regardless of how long the actual plant has existed or
+how it was watered before today. There is nothing to look up here; the
+person is the only source for this, every time.
 
-A newly-created zone has no watering history at all, which makes it look
-overdue by default — left alone, it will run its first routine/deep-soak
-cycle at the very next scheduled time, whether or not the plant actually
-needs it yet. That's correct behavior for a genuinely new setup, but wrong
-for someone migrating an already-established plant onto ZoneFlow (which is
-the more common case in practice).
+Ask this before moving on, every time, as two explicit questions (not one
+vague one):
 
-If the person says the plant has recent real watering/rain history, set the
-zone's three `datetime` entities (found the same place as the number
-entities — the zone's device page, or `datetime.<zone_name_slug>_*` in
-Developer Tools → States) accordingly, using whatever they can tell you
-(exact dates if they know them, otherwise "a few days ago" is fine — being
-approximate here is much better than leaving it blank when it shouldn't be):
+1. **"Is this plant/zone genuinely brand new — never watered on any regular
+   basis before today — or has it already been getting watered some other
+   way (by hand, a different system, or just rain)?"**
+2. **If it's been watered before:** "Roughly when did it last get a normal
+   watering, when did it last get a deep/thorough soaking (if that's ever
+   applied separately), and when did it last actually rain enough to
+   matter?" Exact dates are great if they know them; "about a week ago" or
+   "early this month" is completely fine too — approximate beats blank.
+
+A newly-created zone left with all three unset looks overdue by default —
+it will run its first routine/deep-soak cycle at the very next scheduled
+time, whether or not the plant actually needs it yet. That's correct
+behavior for a genuinely new planting (question 1 answered "brand new"),
+but wrong for someone migrating an already-established plant onto ZoneFlow
+(question 1 answered "already watered some other way" — the more common
+case in practice), so don't skip asking just because the plant has existed
+for a while — the plant's age and the *zone's* watering history are two
+different things, and only the second one matters here.
+
+Once you have an answer, set the zone's `datetime` entities (found the same
+place as the number entities — the zone's device page, or
+`datetime.<zone_name_slug>_*` in Developer Tools → States) accordingly:
 
 - **Last Routine Irrigation** — when it last got its normal/frequent watering
-- **Last Deep Soak** — when it last got a deep, thorough watering
+- **Last Deep Soak** — when it last got a deep, thorough watering (skip if
+  deep soak is disabled for this zone — see §6a)
 - **Last Significant Rain** — when it last actually rained enough to matter
   (not just a drizzle)
+- **Planting / Transplant Date** — set this one separately in §6, as part of
+  turning on growth-stage auto-ramp, not here — it answers a different
+  question (when did the plant's life start) than the three above (when did
+  ZoneFlow-relevant watering last happen).
 
 Setting these via the `datetime.set_value` service (or the UI date/time
 picker) immediately changes the gating math — e.g. seeding "Last Deep Soak"
 to today correctly makes the zone *not* due for another ~14 days. Leave any
-of the three unset ("unknown") if the person genuinely doesn't know or it
+of these unset ("unknown") if the person genuinely doesn't know or it
 really hasn't happened yet; that's the honest default and gates behave as
-if it's simply never occurred.
+if it's simply never occurred (for the growth ramp specifically: leaving
+planting date unset while the ramp is "on" is safe by design — it just
+means the full weekly target applies until a date is set, never a reduced
+one).
 
 ## 5. Set the tunable numbers for this zone/crop
 
-**Before suggesting any values, ask (or infer from context) two things if
-you don't already know them: what's being watered (the crop/plant type),
-and roughly where in the world this is (country or region is enough — you
-don't need a precise location).** Climate varies enough between, say, the
-tropics, a temperate continental climate, and a Mediterranean one that the
-same crop genuinely wants different weekly targets and temperature
-thresholds in each. Use both together, not just the crop table below in
-isolation:
+**Before suggesting any values, make sure you have four things: what's
+being watered (the crop/plant type), roughly where in the world this is,
+what kind of soil it's planted in, and the site description already
+collected in §4 (drainage, slope, irrigation method).** Assume the person
+may know nothing about gardening or irrigation — don't assume they'll know
+these terms or why you're asking; a short explanation of *why* each answer
+matters is worth the extra sentence.
+
+**Climate.** The same crop genuinely wants different weekly targets and
+temperature thresholds depending on climate — use this together with the
+crop table below, not in isolation:
 
 - **Hot/tropical climates** (e.g. Thailand, most of Southeast Asia, much of
   India, equatorial Africa/South America): lean toward the higher end of
@@ -307,14 +532,123 @@ isolation:
   larger part of the year.
 - **Arid/Mediterranean climates** (e.g. much of Australia, southern
   Europe, the US Southwest): similar targets to hot/tropical for the dry
-  season, but watch the forecast dry-spell override (§6.4) — long genuine
+  season, but watch the forecast dry-spell override (§7.4) — long genuine
   dry spells are normal here, not a sign the forecast gate is misbehaving.
+
+**Soil type, drainage and slope.** These were already collected as
+descriptive fields in §4 — this is where that context actually gets used,
+translated into real numbers. Most people don't know their soil type off
+the top of their head, so if the §4 answer was "not sure," describe this
+simple test rather than assuming they'll guess right: *take a handful of
+moist (not soaking) soil and squeeze it — if it falls apart immediately,
+it's sandy; if it holds a ball shape but crumbles with a poke, it's loam;
+if it holds a shape and can be rolled into a ribbon between your fingers,
+it's clay.* If they can now answer it, go back and update the §4 field too
+— it's a two-second edit via the integration's **Options**, and keeps the
+descriptive field honest.
+
+- **Sandy soil / fast drainage:** absorbs even heavy rain well (little
+  runoff) but dries out again quickly. Rain efficiency can stay near the
+  factory defaults; **shorten the dry-down holdoffs** (both routine and
+  deep soak) versus what you'd otherwise pick from root depth alone. For
+  split-cycle pulsing (below), sandy soil rarely needs more than 1-2
+  pulses with a short or zero soak gap — infiltration isn't the
+  bottleneck.
+- **Loam / medium drainage:** the "average" case the factory defaults were
+  tuned around — no adjustment needed unless something else about the site
+  is unusual. 2-3 pulses with a moderate soak gap (15-20min) is a
+  reasonable split-cycle starting point.
+- **Clay soil / slow drainage:** a heavy downpour runs off rather than
+  soaking in, so heavy rain should get *less* credit than the factory
+  default assumes — lower `rain_eff_high` (heavy rain efficiency, default
+  1.0) toward 0.6-0.7. Clay holds moisture much longer once it does soak
+  in, so it's fine to **lengthen the dry-down holdoffs** versus what root
+  depth alone would suggest. For split-cycle pulsing, clay is where it
+  matters most: use **more, shorter pulses with a longer soak gap between
+  them** (e.g. 3-4 pulses, 25-35min rest) so water has time to actually
+  infiltrate instead of pooling or running off between pulses.
+- **Slope** compounds whichever of the above applies rather than replacing
+  it: a sloped clay/slow-drainage site is the case that benefits most from
+  more/shorter pulses and a longer soak, since runoff on a slope happens
+  faster than on flat ground; a sloped sandy/fast-drainage site is less
+  affected, since it absorbs water quickly enough that runoff is less of a
+  concern even on a slope. Steep + slow-draining is the strongest signal
+  to lean toward the high end of both pulse count and soak-gap length.
+
+**Root depth (deep soak target depth).** Suggest a starting number
+yourself first, rather than asking the person to name a depth in
+millimeters out of nowhere — most people, even fairly experienced
+gardeners, don't have this memorized. Base your suggestion on the crop,
+their region, and the soil type already gathered above (root systems
+generally reach deeper in well-drained soil and stay shallower in dense
+clay; established trees and deep-rooted crops want more depth than
+shallow-rooted ones). State the number and your reasoning in one sentence,
+then explicitly invite them to override it if they know better — some
+people genuinely do have more precise knowledge of their own plant's root
+system than a general suggestion can capture, and that input should always
+win over the default:
+
+> "For [crop] in [region]'s [soil type] soil, established roots typically
+> reach around [X]mm — I'll start the deep soak target there. Let me know
+> if you know your plant's actual root depth better than that."
+
+Never *ask* "how deep are your plant's roots?" as an open question first —
+that puts the burden on someone who likely can't answer it, when a
+reasoned suggestion they can simply accept or correct is far more useful.
+
+**Growth stage.** A plant's water needs aren't flat over its life —
+they generally climb as it grows, and peak around flowering/fruit-set for
+fruiting crops (pumpkins, strawberries, tomatoes, etc.). If the planting is
+a young seedling or was just transplanted, **start at the low end of the
+crop range** rather than the number you'd pick for a mature plant of that
+type, and say plainly that this is a starting point the person should
+revisit upward once the plant is established or starts flowering/fruiting
+— unless they turned on growth-stage auto-ramp in §4/§6, in which case say
+so instead: the ramp handles that gradual climb automatically from
+whatever weekly target you set here, so there's no manual revisiting to
+remember. Either way, this is also exactly the moment to ask §6's growth-
+stage question if you haven't already — don't leave it implicit or assume
+"just planted" by default.
 
 These are starting points to reason from, not a lookup table to follow
 blindly — say so if asked, and adjust based on anything more specific the
 person tells you about their actual local conditions (a very hot
-microclimate, unusually high humidity reducing evaporation, etc.) rather
-than the country name alone.
+microclimate, unusually high humidity reducing evaporation, heavy mulching
+that cuts evaporation significantly and can justify a lower weekly target,
+etc.) rather than climate/soil alone.
+
+One thing worth stating plainly to a first-time user: ZoneFlow drives
+**drip or valve** irrigation, not overhead sprinklers, so the usual advice
+about watering in the morning to avoid overnight wet foliage (a fungal-
+disease concern with sprinklers) doesn't apply to a drip/soaker setup —
+drip keeps foliage dry regardless of timing. If they picked micro-sprinkler
+or sprinkler as the irrigation method in §4, that concern *does* apply, and
+the 05:00/05:30 default schedule is doing double duty for them (minimizing
+both evaporation loss and overnight leaf-wetness time); for drip/soaker
+hose, it's purely about minimizing evaporation loss before the day heats up.
+
+Also worth setting expectations on: the **deep soak** cycle is a
+deep-root strategy — it matters most for plants that actually send roots
+down (trees, established shrubs, tomatoes). For genuinely **shallow-rooted
+crops** (strawberries, lettuce, most leafy greens, herbs), deep soak is a
+minor lever at best — keep its depth modest (see the table below) and
+tell the person nearly all of their real watering strategy for those crops
+comes from the routine cycle's weekly target, not from leaning on deep
+soak.
+
+**Flow rate calibration — ask this directly, don't let it slide by as just
+another table row.** This is the one number the whole runtime calculation
+is built on (`runtime = needed_mm / flow_rate_mm_per_min`), and it's the
+one you must never guess. Ask outright: "do you know your drip/sprinkler
+system's actual flow rate?" If yes, use it. If not, walk them through
+measuring it now rather than leaving the factory default in place and
+moving on: run `zoneflow.test_pulse` for a known number of minutes, then
+either read the flow meter's delta (if one is configured) or have them
+measure the water depth/volume actually delivered, and divide. Only fall
+back to a generic assumption for the irrigation method (e.g. a typical
+drip-emitter or sprinkler flow rate) as a temporary placeholder if they
+genuinely can't measure it right now, and say plainly that it's a
+placeholder that should be replaced with a real measurement when they can.
 
 After the config entry is created, several dozen `number.<zone>_*` entities
 appear (Settings → Devices & Services → the zone's device → its entities,
@@ -329,16 +663,20 @@ its factory default.
 | `..._routine_normal_weekly_target` (mm) | weekly water target in normal weather | crop water needs — see the quick table below |
 | `..._routine_hot_weekly_target` (mm) | weekly target once it's classified "hot" | usually ~1.3x the normal target |
 | `..._routine_cool_weekly_target` (mm) | weekly target once it's classified "cool" | usually ~0.7x the normal target |
-| `..._hot_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "hot" | local climate — ask, or use ~31°C in the tropics, ~28°C in temperate zones |
-| `..._cool_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "cool" | local climate — usually 5-8°C below the hot threshold |
-| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: run `zoneflow.test_pulse` for a known number of minutes, measure water depth/volume delivered, divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
-| `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | deeper-rooted / drought-tolerant plants (trees, established shrubs) want more (25-40mm); shallow-rooted beds want less (15-20mm) |
-| `..._deep_soak_max_safety_runtime_cap` / `..._routine_max_safety_runtime_cap` (min) | hard abort ceiling — if the calculated runtime for a cycle exceeds this, that cycle is aborted rather than run, since it usually means a miscalibration | **check this for very low-flow drip emitters** (below roughly 0.1mm/min): the calculated runtime for a full target can genuinely run into several hundred minutes, and the factory default caps (124min / 103min) will wrongly abort a perfectly correct, just-slow cycle. Raise the cap (up to 900min) to comfortably cover `target_mm / flow_rate_mm_per_min` for this zone's real numbers — don't just raise it blindly to max "to be safe," since its whole job is catching a genuine miscalibration (e.g. a wrong flow-rate number producing a runaway runtime). |
-| `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | ask for the pump's rated running wattage, set ~20-30% below it |
+| `..._hot_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "hot" | local climate — ask, or use ~31°C in the tropics, ~28°C in temperate zones; **only meaningful if an outdoor temperature sensor is configured** — otherwise every cycle uses the normal tier regardless of this number, so don't spend much time tuning it for a zone with no temp sensor |
+| `..._cool_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "cool" | local climate — usually 5-8°C below the hot threshold; same caveat as above if there's no temp sensor |
+| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: run `zoneflow.test_pulse` for a known number of minutes, measure water depth/volume delivered (or read the flow meter's delta, if configured), divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
+| `..._rain_gauge_mm_per_tip_calibration` (mm) | **only relevant if a rain gauge is configured** — how much rainfall one tip of the bucket represents, which the whole rain-aware gate is built on | see §2a — ask if they already know it; if not, look up the gauge's model spec as a starting point, or offer the pour-and-count measurement for a precise value. Skip this row entirely for a zone with no rain gauge. |
+| `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise see "Root depth" above, suggest first from crop/region/soil, let the person override |
+| `..._routine_pulse_count_split_cycle` / `..._routine_soak_interval_between_pulses` (split-cycle for routine) | how many on/soak/on pulses a routine cycle breaks into, and the soak gap between them | soil-driven — see the soil-type guidance above (more/longer-soak for clay, fewer/shorter for sand); factory default (3 pulses, 20min rest) is a loam-tuned middle ground |
+| `..._deep_soak_pulse_count_split_cycle` / `..._deep_soak_soak_interval_between_pulses` (split-cycle for deep soak) | same, for the deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise same soil-driven guidance; deep soak's larger total depth often benefits from leaning slightly higher on pulse count for clay than the routine cycle does |
+| `..._deep_soak_max_safety_runtime_cap` / `..._routine_max_safety_runtime_cap` (min) | hard abort ceiling for a single cycle — if the calculated runtime exceeds this, that cycle is aborted rather than run, since it usually means a miscalibration | **check this for very low-flow drip emitters** (below roughly 0.1mm/min): the calculated runtime for a full target can genuinely run into several hundred minutes, and the factory default caps (124min / 103min) will wrongly abort a perfectly correct, just-slow cycle. Raise the cap (up to 900min) to comfortably cover `target_mm / flow_rate_mm_per_min` for this zone's real numbers — don't just raise it blindly to max "to be safe," since its whole job is catching a genuine miscalibration. The deep-soak cap is moot if deep soak is disabled (§6a). |
+| `..._max_daily_irrigation_runtime_safety_cap` (min) | hard ceiling on TOTAL runtime across both cycles in a rolling day — catches a mis-set schedule firing more often than intended, separate from the per-cycle caps above | factory default (240min) is generous; only worth lowering for a genuinely water-restricted setup, and worth checking it comfortably covers deep soak + routine's realistic combined runtime for this zone before lowering it |
+| `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | **only relevant if a pump-power sensor is configured** — ask for the pump's rated running wattage, set ~20-30% below it; skip this row entirely for a zone with no pump-power sensor |
 | `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d) |
-| `..._deep_soak_subsoil_dry_down_holdoff` (days) | same, for deep soak | usually higher than the routine holdoff — trees/deep roots hold subsoil moisture longer |
-| `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§6.2) | leave at 0 for a single-zone/independent-pump setup |
-| `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§6.4) | see §6.4 |
+| `..._deep_soak_subsoil_dry_down_holdoff` (days) | same, for deep soak | **irrelevant if deep soak is disabled (§6a)** — otherwise usually higher than the routine holdoff, since trees/deep roots hold subsoil moisture longer |
+| `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§7.2) | leave at 0 for a single-zone/independent-pump setup |
+| `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§7.4) | see §7.4 |
 
 **Quick weekly-water-target starting points by crop type** (mm/week, normal
 weather — adjust from here rather than treating these as exact):
@@ -348,45 +686,238 @@ weather — adjust from here rather than treating these as exact):
 - Succulents / drought-tolerant natives: 10-20mm, and set the dry-down holdoffs and forecast dry-spell override (if used) higher
 
 These are reasonable starting points, not agronomy guarantees — say so if
-the person asks, and suggest they watch the diagnostic sensors (§7) for the
+the person asks, and suggest they watch the diagnostic sensors (§8) for the
 first couple of weeks and adjust the weekly target up/down from there.
 
-## 6. Situational features — ask only if relevant
+## 6. Growth-stage auto-ramp (optional, off by default)
 
-### 6.1 Multiple zones
+Only bring this up as an offer, not a default — most first-time setups are
+fine leaving it off, and it's easy to turn on later via the integration's
+Options if the person changes their mind.
+
+**What it does:** scales the routine weekly target (never the deep-soak
+depth target — see §5's `deep_soak_target_depth` row for why those are
+treated differently) by how many days it's been since the recorded
+planting/transplant date, following one of three built-in curves (fast-
+growing annual, slow fruiting crop, establishing perennial). A brand-new
+seedling gets a fraction of the full target; by the time the curve
+reaches its final control point, it gets 100%.
+
+**Be upfront about its real limitation when offering it:** this is a
+calendar-day approximation of *typical* growth timing for that category of
+plant, not a measurement of this specific plant's actual growth. A cooler
+or hotter season than average will make the real plant's growth genuinely
+run ahead of or behind the curve — it's tracking averages, not this
+particular plant's own progress. Say this plainly rather than letting the
+person think it's more precise than it is.
+
+**Also worth saying plainly why it can still be worth turning on despite
+that:** a reasonable automatic adjustment that's sometimes a bit off in
+either direction is still generally better than a flat weekly target that
+never adjusts for the plant's actual life stage at all — some
+automatically-adjusted watering beats none, even when the adjustment isn't
+perfect. Frame it to the person as "set it and forget it, revisit only if
+you notice something looks off" rather than something that needs regular
+attention once it's on.
+
+**If they want it:**
+1. Set the "Growth-stage auto-ramp" field in §4 to whichever profile best
+   matches the crop — fast-growing annual (most vegetables), slow fruiting
+   crop (tomatoes, peppers, strawberries, pumpkins), or establishing
+   perennial (a young tree or shrub still becoming established).
+2. **Ask what stage the plant is at right now, as its own explicit
+   question — never assume "just planted" and never fold this into the
+   "do you want the ramp" question above.** Two ways they might answer,
+   handle both:
+   - **They know the actual planting/transplant date** — set the "Planting
+     / Transplant Date" datetime entity (§4a) to that real date directly.
+   - **They don't know the exact date, but can describe the current stage**
+     (e.g. "just a seedling," "growing well but no flowers yet," "already
+     flowering/fruiting," "fully mature") — back-calculate an approximate
+     planting date instead of leaving this unanswered: look at the chosen
+     profile's curve control points (`GROWTH_RAMP_CURVES` in `const.py` —
+     e.g. slow-fruiting is roughly 0d=just-planted, ~45d=vegetative
+     growth, ~70-100d=flowering/fruiting/mature), pick the days-ago figure
+     that matches the stage they described, and set the planting date to
+     today minus that many days. Say plainly that this is a backdated
+     approximation standing in for a date they don't know, not a guess
+     you're hiding.
+3. Tell them the ramp fraction is visible on the zone's "Growth Stage Ramp"
+   diagnostic sensor (§8) if they want to sanity-check it's doing something
+   sensible.
+
+If the profile is on but the planting date is left unset, the ramp simply
+never reduces watering (always 100%) until a date is set — this is
+intentional, not a bug to work around.
+
+## 6a. Should this zone even run deep soak?
+
+The deep soak cycle is **on by default** (the "Enable the deep soak cycle"
+toggle in §4) because it predates that toggle — every zone created before
+this field existed already ran it, so "on" is the only default that doesn't
+silently change an existing zone's behavior. That default is about
+backward compatibility, not a recommendation — for a **new** zone, actually
+work out whether this crop/setup benefits from it rather than leaving the
+toggle untouched:
+
+**Lean toward turning it off for:** shallow-rooted crops (lettuce, most
+leafy greens, herbs, strawberries), anything in a container or small raised
+bed (there's no deep subsoil reservoir to fill), and greenhouse/indoor
+zones already on frequent drip irrigation where an infrequent deep,
+thorough watering doesn't match how the growing medium behaves. For these,
+nearly all of the real watering strategy already comes from the routine
+cycle's weekly target (§5) — nothing meaningful is lost by leaving deep
+soak off, and it removes several irrelevant number entities' worth of
+tuning (§5's table already flags each one that stops mattering here).
+
+**Lean toward keeping it on for:** trees, established shrubs, and other
+genuinely deep-rooted plants in real ground — anything where infrequent,
+thorough soaking actually reaches and encourages deeper root growth versus
+frequent shallow watering keeping roots shallow.
+
+**Use your crop research from §1, not just this quick split** — if you
+looked up the specific plant's typical root system when you first learned
+what's being grown, that's exactly what settles this question for
+in-between cases. State your recommendation and reasoning in one or two
+sentences and let the person confirm or override it, the same pattern as
+root depth in §5 — don't just silently apply your own judgment call.
+
+**Whatever you set it to now isn't final, and doesn't require coming back
+through this guide (or the integration's Options) to change later.** Once
+the zone exists, this same setting is also a real dashboard entity —
+`switch.<zone>_deep_soak_enabled` — right alongside the zone's other
+controls (§9's dashboard card includes it). Tell the person about this
+switch explicitly: it's there specifically so they can turn deep soak on or
+off themselves, on the fly, without needing an AI assistant or a trip
+through Settings → the integration's Options every time they want to flip
+it. Both the config-flow field, the Options-flow field, and the dashboard
+switch are the exact same underlying value — whichever one they use last
+wins, and the other two immediately reflect the change.
+
+## 7. Situational features — ask only if relevant
+
+### 7.1 Multiple zones
 If the person has more than one plant/area to water, repeat §3-§5 for each
 zone (Add Integration → ZoneFlow Irrigation again, with a different zone
-name and its own entities). Nothing extra to configure for this by itself.
+name and its own entities). **The moment you're on zone 2 or later, ask the
+pump-grouping question below (§7.2) before finishing that zone's config
+flow** — don't treat pump sharing as an afterthought to circle back to
+later, since it changes a real field on screen 2 of the flow (§4's "Shared
+pump ID").
 
-### 6.2 Shared pump
-If two zones' **pump power sensor** is the same entity, ZoneFlow
-automatically detects this and makes sure they never run at once — nothing
-to configure. If their pump needs a moment to build pressure, set
+### 7.2 Shared pump
+**Ask this explicitly for every zone from the second one onward — never
+infer it from whether a pump-power sensor happens to be configured.**
+Something like: *"Does this zone share a physical pump with any of the
+other zone(s) you've already set up, or does it have its own dedicated
+pump?"* For three or more zones, don't stop at a yes/no per zone — work out
+the **full grouping** explicitly, the same way you'd ask about a multi-pump
+property: "so to confirm — Zone A and Zone B are on the same pump, and Zone
+C is on a separate, different pump, is that right?" Get that full picture
+before moving on, since a partial answer (confirming just one pair) can
+leave a third zone's grouping ambiguous.
+
+Once you know the grouping, set the **same "Shared pump ID"** (config flow
+field, or the integration's Options for a zone already created) on every
+zone that's genuinely on the same physical pump — a short label the person
+picks, like "Pump A" or "Well Pump," doesn't need to match anything else in
+their system, it just has to be identical across the zones that share that
+pump. Leave it blank for a zone with its own dedicated pump, or when there's
+only one zone total. **This is independent of whether a pump-power sensor
+is configured** — ZoneFlow used to only detect sharing when two zones
+happened to point at the exact same pump-power sensor entity, which silently
+missed sharing when that sensor wasn't set (or wasn't set on both), and
+could even wrongly force two genuinely separate, sensorless pumps to
+serialize. The "Shared pump ID" field is the deliberate, explicit way to
+tell ZoneFlow the real grouping regardless of what sensors happen to be
+configured — always ask for it rather than relying on the pump-power sensor
+alone to imply sharing.
+
+**Zones with different "Shared pump ID" values (or one set and one blank)
+never wait on each other** — including a 3+ zone setup with a mixed
+grouping (e.g. Zone A and B share "Pump A," Zone C is on its own "Pump B"):
+Zone C runs independently and freely overlaps with A or B, while A and B
+still correctly take turns. Only zones sharing the identical "Shared pump
+ID" serialize.
+
+If the shared pump needs a moment to build pressure, set
 `pump_preamble_seconds` (delay after the pump starts before the valve
 opens) and/or `pump_postamble_seconds` (delay after the valve closes before
-the next queued zone can start) on the zones that share that pump. Ask the
-person if their pump has a noticeable spin-up/pressure-settle time; if they
-don't know, leave both at 0 and revisit only if they see flow-rate
+the next queued zone can start) on the zones that share that pump ID. Ask
+the person if their pump has a noticeable spin-up/pressure-settle time; if
+they don't know, leave both at 0 and revisit only if they see flow-rate
 inconsistency between zones.
 
-### 6.3 Sunrise/sunset-relative scheduling
+Worth setting expectations on if the person asks how the queuing actually
+behaves: a zone holds the shared pump for its **entire** cycle once it
+starts, including any soak gaps between split-cycle pulses (§5) — a second
+zone waiting on the same pump will not sneak a pulse in during the first
+zone's soak gap, even though the pump is technically idle at that moment.
+It waits for the whole first cycle to finish. This is deliberate: letting a
+second zone borrow a "free" gap risks that zone getting cut off mid-pulse
+the moment the first zone reclaims the pump, which is worse than a
+predictable wait.
+
+### 7.2a One flow meter shared across multiple zones
+
+A single physical flow meter behaves differently depending on **where**
+it's plumbed relative to the zones — ask about its position, don't assume:
+
+- **Positioned on one shared pump's own line** (after that pump, before it
+  branches out to that pump's own zones' valves — the same physical spot
+  as a shared pump-power sensor): this just works. Point every zone on
+  that pump at the same flow meter entity, same as they already share a
+  "Shared pump ID" (§7.2). Since those zones already take turns on the
+  pump lock, only one of their valves is ever open while the meter is
+  being read, so each zone's own "Last Cycle Water Delivered" reading
+  comes out correct automatically — no extra configuration needed.
+- **Positioned upstream of MULTIPLE independent pumps** (e.g. one
+  main-line meter for the whole property, feeding two or three separate
+  pump branches that each have their own zones): this is the case worth
+  asking about explicitly, because those pumps are otherwise deliberately
+  free to run at the same time (§7.2) — if two zones on genuinely
+  different pumps both drew through that one meter at once, its single
+  running total would have no way to say afterwards which zone's water
+  was which, because the water is actually mixed on that shared line, not
+  just ambiguously counted. **There's no way to sort this out after the
+  fact by checking which valve is open** — that only works if exactly one
+  valve downstream of the meter can ever be open at a time, which two
+  simultaneous pumps don't guarantee on their own.
+
+  ZoneFlow handles this automatically the moment two zones are pointed at
+  the **same flow meter entity**, regardless of their "Shared pump ID":
+  it serializes those specific zones' cycles against each other too, the
+  same way pump-sharing zones already take turns. Tell the person plainly
+  what this costs them: those particular zones lose the "different pumps
+  run at the same time" benefit they'd otherwise get, purely because a
+  shared meter can't tell their water apart if it doesn't. If they'd
+  rather keep their independent pumps running fully concurrently, the
+  fix is a separate flow meter per pump (even one meter per pump, shared
+  across that pump's own zones, is enough — it's specifically sharing
+  *across* pumps that forces the trade-off) — mention this as the
+  alternative, but let them decide; plenty of setups are fine giving up a
+  little concurrency for one meter's worth of savings.
+
+### 7.3 Sunrise/sunset-relative scheduling
 If the person wants watering tied to daylight rather than a fixed clock
 time (e.g. "start 30 minutes before sunrise" so it adapts across seasons),
 set the relevant trigger field (in §4's table) to one of Before/After
 Sunrise/Sunset and fill in the offset in minutes. This is independent per
 schedule (deep soak and routine can each use a different mode).
 
-### 6.4 Weather forecast gate
+### 7.4 Weather forecast gate
 Only set this up if the person wants ZoneFlow to skip a scheduled run when
 rain is forecast. Requires a `weather.*` entity (any integration that
 provides one — ask which weather integration they use, or find it via §3).
 
-**Skip this for a greenhouse/indoor zone** (per §2) unless the person has a
-specific reason to want it anyway — a forecast of rain outside is
-irrelevant to plants that never get rained on. If you're setting up
-multiple zones and only some are greenhouses, this is genuinely per-zone:
-an outdoor zone using the same `weather.*` entity is completely normal,
-you just don't offer or apply the gate to the greenhouse zone(s).
+**For a greenhouse/indoor zone, this is governed by the rain-can-enter
+question in §2** — always ask it, and default to skipping this gate
+(along with the rain gauge) unless the person confirms real rain reaches
+the zone. A forecast of rain outside is irrelevant to plants that never
+get rained on. If you're setting up multiple zones and only some are
+greenhouses, this is genuinely per-zone: an outdoor zone using the same
+`weather.*` entity is completely normal, you just don't offer or apply
+the gate to a sealed greenhouse zone.
 
 1. Set the zone's "Weather forecast source" field to that entity (in the
    config flow, or later via the integration's **Options** if already set up).
@@ -408,19 +939,82 @@ you just don't offer or apply the gate to the greenhouse zone(s).
    measured, ZoneFlow overrides the forecast and waters anyway. A missing or
    unavailable weather entity never blocks a run either.
 
-## 7. Verify before you're done
+### 7.5 One zone, two different crops
+If a single valve/zone actually waters two different crops planted
+together (a shared bed, a mixed container, two things sharing one drip
+line) and the person wants ZoneFlow to treat it as one zone rather than
+splitting it into two, don't just pick one crop's numbers and quietly
+drop the other — the whole point of asking about crop type in §1 is to
+get the right target for what's actually planted, and picking only one
+plant silently waters the other wrong for as long as the zone exists.
+
+Instead, help the person find a compromise that reasonably satisfies
+both:
+1. Work out what each crop would want on its own — its weekly target
+   range, hot/cool temp thresholds, and (if relevant) deep-soak posture —
+   using the same reasoning §5/§6a would apply if it were its own zone.
+2. Where the two crops' numbers are close, just pick a value that covers
+   both (e.g. the higher of two similar weekly targets rarely hurts the
+   lower-need crop, especially with decent drainage).
+3. Where they genuinely conflict (e.g. one crop wants deep, infrequent
+   watering and the other wants frequent, shallow watering — or one is
+   drought-tolerant and the other isn't), say so plainly rather than
+   averaging blindly: explain the tension in plain terms, propose a
+   middle value that leans toward whichever crop is more sensitive to
+   under-watering (thirstier/shallower-rooted plants suffer faster from a
+   shortfall than a drought-tolerant one suffers from a bit of extra
+   water), and let the person make the final call if they'd rather
+   prioritize one crop over the other.
+4. Note the compromise and the reasoning behind it somewhere the person
+   will see again later (e.g. in the zone's name, a comment, or just
+   restating it back to them) — a shared-zone compromise is exactly the
+   kind of setup decision that's easy to forget the "why" behind months
+   later.
+5. If the mismatch is too large for any single number to serve both
+   crops without real harm to one of them, say that plainly too, and
+   suggest splitting into two zones (two valves) as the more correct
+   long-term fix — a compromise is for when splitting isn't practical,
+   not a substitute for it when the two crops are just too different.
+
+### 7.6 A sensor drops out later (already configured, now unavailable)
+Worth mentioning proactively once, rather than waiting for the person to
+notice and worry: if an already-configured optional sensor goes
+unavailable later (dead battery, a Zigbee dropout, a broken template) —
+not "never configured," but "was working, now isn't" — ZoneFlow degrades
+the same safe way as if it had never been set, automatically, with no
+action needed:
+- **Outdoor temperature drops out:** the hot/cool tier logic immediately
+  falls back to the normal tier (not whatever tier the last real reading
+  implied), and recovers automatically the moment the sensor reports again.
+- **Rain gauge drops out:** unreadable readings are simply ignored, not
+  recorded as "it stopped raining" — the rolling rain window keeps its last
+  good value rather than resetting.
+- **Pump-power sensor drops out:** treated the same as a genuine low-power
+  reading — it warns (if notifications are on), but the cycle still
+  completes; a dead sensor never blocks the actual watering.
+- **Flow meter drops out:** the no-flow-detected check is skipped for that
+  cycle rather than firing a false alarm — "no data" is never treated as
+  "definitely zero flow."
+
+## 8. Verify before you're done
 
 Do not consider setup finished until these are confirmed for each zone:
 
 1. Run **Developer Tools → Actions → `zoneflow.test_pulse`** with
    `seconds: 10` (targeting that zone's device, since each zone is its own
    config entry/service target if the person has multiple). Confirm: the
-   valve entity actually switches on then off, the pump-power sensor reads
-   a plausible non-zero value while it's on, and a new row appears in the
-   configured CSV log file.
+   valve entity actually switches on then off, and a new row appears in the
+   configured CSV log file. If a pump-power sensor is configured, also
+   confirm it reads a plausible non-zero value while the valve is on. If a
+   flow meter is configured, confirm its "Last Cycle Water Delivered"
+   sensor picks up a plausible non-zero value after the pulse.
 2. Check the zone's diagnostic sensors exist and show sane values: rain
-   past 24h/3d/7d/14d, 3-day average peak temperature, next-irrigation
-   estimate.
+   past 24h/3d/7d/14d (if a rain gauge is configured), 3-day average peak
+   temperature (if a temp sensor is configured), next-irrigation estimate,
+   Soil Profile (should reflect what was set in §4), and Growth Stage Ramp
+   (only meaningfully non-100% if that feature is on — §6). Also confirm the
+   `switch.<zone>_deep_soak_enabled` entity exists and its on/off state
+   matches whatever you set/recommended in §6a.
 3. Confirm the lock/abort binary sensors both read "off"/`False` at rest —
    if either is stuck on, something is wrong before you hand this back to
    the person unattended (`zoneflow.reset_lock` clears a stuck lock, but
@@ -431,7 +1025,7 @@ Do not consider setup finished until these are confirmed for each zone:
    don't leave them thinking a successful test pulse alone proves the rain
    logic works.
 5. **Check whether they said yes to a dashboard card back in §1.** If they
-   did, setup is *not* finished until §8 is actually done and the person
+   did, setup is *not* finished until §9 is actually done and the person
    has the finished YAML in hand — not just noted as something you'll get
    to. It's easy to reach this point, confirm the test pulse and sensors
    look good, and declare the job done without circling back to a "cosmetic
@@ -440,7 +1034,7 @@ Do not consider setup finished until these are confirmed for each zone:
    before you say setup is complete, not an afterthought you can skip if it
    slips your mind.
 
-## 8. Optional finishing touch: build a dashboard card for this zone
+## 9. Optional finishing touch: build a dashboard card for this zone
 
 This only applies if the person said yes to this back in §1. Everything
 above gets a zone *working* — this step is purely cosmetic, and skip it
@@ -454,7 +1048,11 @@ of punctuation (dashes, parentheses, "+") is inconsistent enough that a
 guessed ID is frequently wrong by one character. That's exactly why §4
 already had you collect this zone's real entity IDs while you were on its
 device page for §4a/§5 — use that list now instead of looking anything up
-again:
+again. **Only include cards/rows for entities that actually exist for this
+zone** — a zone with no pump-power sensor configured has no pump-power
+entity to reference, and a zone with the growth ramp off still has the
+Growth Stage Ramp diagnostic sensor (it just reads 100%), so that one's
+always safe to include:
 
 1. Take the entity ID list you collected back in §4. If for some reason you
    skipped that (the person changed their mind about wanting a card only
@@ -465,7 +1063,9 @@ again:
    zone's device**.
 2. Fill the template below with those confirmed IDs — every `<entity.id>`
    placeholder — so what you hand back is genuinely paste-ready, not a
-   fill-in-the-blanks exercise for the person.
+   fill-in-the-blanks exercise for the person. Drop any row whose entity
+   doesn't exist for this zone (see above) rather than leaving a
+   placeholder unfilled.
 3. Tell them exactly where to paste it: **Settings → Dashboards → (their
    dashboard) → ⋮ Edit Dashboard → ⋮ Raw configuration editor**, then either
    paste this as a new item under an existing `views:` list, or as a whole
@@ -474,112 +1074,166 @@ again:
    at **Settings → Dashboards → + Add Dashboard → "New dashboard from
    scratch"** first, since the auto-generated one can't be hand-edited.
 
-Template — one `views:` entry per zone, using only plain built-in cards (no
-extra HACS frontend dependency required):
+**Give every zone a distinct icon and a visible zone-name heading — never
+reuse the same generic icon (e.g. `mdi:sprinkler`) across zones.** With
+several zones set up, identical tab icons make the view switcher a row of
+lookalikes the person can only tell apart by squinting at small text, and
+that defeats the point of splitting zones into separate views at all. For
+each zone:
+- Pick an icon that fits what's actually planted, not just "it's a zone" —
+  a real crop/plant icon (e.g. a chili, a tree, a sprout, a greenhouse for
+  an indoor zone) reads at a glance in a way a repeated watering-can icon
+  never will. Use whatever fits best; there's no fixed list, but don't
+  fall back to one generic icon for every zone just because picking one
+  per crop takes an extra moment.
+- Put a `heading` card as the **first card in the view**, `heading` set to
+  the zone's actual name and `icon` set to that same per-zone icon. This
+  makes the zone identifiable the instant the view loads, not just from
+  the tab label — useful on a phone where tab labels get cramped, or when
+  the person is several cards deep and scrolled past the tab bar.
+
+Template — a complete dashboard document with one `views:` entry per zone,
+using only plain built-in cards (no extra HACS frontend dependency
+required). **The top-level `views:` key is mandatory** — pasting just a
+bare `title:`/`path:`/`cards:` block on its own into the raw configuration
+editor fails with `Expected an array value, but received: undefined` at
+`views`, because that's not a complete dashboard document by itself:
 
 ```yaml
-title: <Zone Name>
-path: <zone-slug>
-icon: mdi:sprinkler
-cards:
-  - type: entities
-    title: Status
-    show_header_toggle: false
-    entities:
-      - entity: <switch.valve_entity>
-        name: Valve
-      - entity: <binary_sensor.zone_irrigation_in_progress>
-        name: Lock (In Progress)
-      - entity: <binary_sensor.zone_irrigation_abort_flag>
-        name: Abort Flag
-      - entity: <sensor.zone_pump_power_entity_if_relevant>
-        name: Pump Power
-      - entity: <sensor.zone_next_irrigation_estimate>
-        name: Next Run Estimate
+views:
+  - title: <Zone Name>
+    path: <zone-slug>
+    icon: <a distinct per-zone icon, e.g. mdi:chili-hot, mdi:greenhouse, mdi:sprout, mdi:tree>
+    cards:
+      - type: heading
+        heading: <Zone Name>
+        heading_style: title
+        icon: <same per-zone icon as above>
 
-  - type: entities
-    title: Manual Controls
-    show_header_toggle: false
-    entities:
-      - type: buttons
+      - type: entities
+        title: Status
+        show_header_toggle: false
         entities:
-          - entity: <button.zone_run_deep_soak_now>
-            name: Run Deep Soak
-            icon: mdi:waves
-          - entity: <button.zone_run_routine_irrigation_now>
-            name: Run Routine
-            icon: mdi:play
-          - entity: <button.zone_reset_irrigation_lock>
-            name: Reset Lock
-            icon: mdi:lock-open-variant
+          - entity: <switch.valve_entity>
+            name: Valve
+          - entity: <binary_sensor.zone_irrigation_in_progress>
+            name: Lock (In Progress)
+          - entity: <binary_sensor.zone_irrigation_abort_flag>
+            name: Abort Flag
+          - entity: <sensor.zone_pump_power_entity_if_configured>
+            name: Pump Power
+          - entity: <sensor.zone_last_cycle_water_delivered_if_flow_meter_configured>
+            name: Last Cycle Water Delivered
+          - entity: <sensor.zone_next_irrigation_estimate>
+            name: Next Run Estimate
 
-  - type: entities
-    title: Routine Irrigation
-    show_header_toggle: false
-    entities:
-      - entity: <number.zone_routine_normal_weekly_target>
-      - entity: <number.zone_routine_hot_weekly_target>
-      - entity: <number.zone_hot_weather_temp_threshold>
-      - entity: <number.zone_routine_cool_weekly_target>
-      - entity: <number.zone_routine_dry_down_holdoff>
+      - type: entities
+        title: Manual Controls
+        show_header_toggle: false
+        entities:
+          - entity: <switch.zone_deep_soak_enabled>
+            name: Deep Soak Enabled
+          - type: buttons
+            entities:
+              - entity: <button.zone_run_deep_soak_now>
+                name: Run Deep Soak
+                icon: mdi:waves
+              - entity: <button.zone_run_routine_irrigation_now>
+                name: Run Routine
+                icon: mdi:play
+              - entity: <button.zone_reset_irrigation_lock>
+                name: Reset Lock
+                icon: mdi:lock-open-variant
 
-  - type: entities
-    title: Deep Soak (14-Day)
-    show_header_toggle: false
-    entities:
-      - entity: <number.zone_deep_soak_target_depth>
-      - entity: <number.zone_deep_soak_rain_ceiling_14d>
-      - entity: <number.zone_deep_soak_subsoil_dry_down_holdoff>
+      - type: entities
+        title: Site & Growth Profile
+        show_header_toggle: false
+        entities:
+          - entity: <sensor.zone_soil_profile>
+          - entity: <sensor.zone_growth_stage_ramp_if_enabled>
+          - entity: <datetime.zone_planting_transplant_date_if_enabled>
 
-  - type: entities
-    title: Forecast Gate & Dry-Spell Override
-    show_header_toggle: false
-    entities:
-      - entity: <number.zone_forecast_rain_skip_threshold>
-      - entity: <number.zone_forecast_rain_probability_threshold>
-      - entity: <number.zone_forecast_dry_spell_override>
+      - type: entities
+        title: Routine Irrigation
+        show_header_toggle: false
+        entities:
+          - entity: <number.zone_routine_normal_weekly_target>
+          - entity: <number.zone_routine_hot_weekly_target>
+          - entity: <number.zone_hot_weather_temp_threshold>
+          - entity: <number.zone_routine_cool_weekly_target>
+          - entity: <number.zone_routine_dry_down_holdoff>
+          - entity: <number.zone_routine_pulse_count_split_cycle>
+          - entity: <number.zone_routine_soak_interval_between_pulses>
 
-  - type: entities
-    title: Calibration & Safety Caps
-    show_header_toggle: false
-    entities:
-      - entity: <number.zone_emitter_flow_rate_calibration>
-      - entity: <number.zone_rain_gauge_mm_per_tip_calibration>
-      - entity: <number.zone_pump_low_power_warning_threshold>
-      - entity: <number.zone_deep_soak_max_safety_runtime_cap>
-      - entity: <number.zone_routine_max_safety_runtime_cap>
+      - type: entities
+        title: Deep Soak (14-Day)
+        show_header_toggle: false
+        entities:
+          - entity: <number.zone_deep_soak_target_depth>
+          - entity: <number.zone_deep_soak_rain_ceiling_14d>
+          - entity: <number.zone_deep_soak_subsoil_dry_down_holdoff>
+          - entity: <number.zone_deep_soak_pulse_count_split_cycle>
+          - entity: <number.zone_deep_soak_soak_interval_between_pulses>
 
-  - type: entities
-    title: History Seeding
-    show_header_toggle: false
-    entities:
-      - entity: <datetime.zone_last_routine_irrigation>
-      - entity: <datetime.zone_last_deep_soak>
-      - entity: <datetime.zone_last_significant_rain>
+      - type: entities
+        title: Forecast Gate & Dry-Spell Override
+        show_header_toggle: false
+        entities:
+          - entity: <number.zone_forecast_rain_skip_threshold>
+          - entity: <number.zone_forecast_rain_probability_threshold>
+          - entity: <number.zone_forecast_dry_spell_override>
 
-  - type: markdown
-    title: Zone Trigger Log
-    content: |
-      {% set lock = states('<binary_sensor.zone_irrigation_in_progress>') %}
-      {% set abort = states('<binary_sensor.zone_irrigation_abort_flag>') %}
-      {% set routine_ts = states('<datetime.zone_last_routine_irrigation>') %}
-      {% set deep_soak_ts = states('<datetime.zone_last_deep_soak>') %}
-      | Field | Value |
-      | :--- | :--- |
-      | **Lock (In Progress)** | {{ 'RUNNING' if lock == 'on' else 'idle' }} |
-      | **Abort Flag** | {{ 'PROBLEM' if abort == 'on' else 'OK' }} |
-      {% if routine_ts not in ['unknown', 'unavailable', none] %}
-      | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom('%b %d, %H:%M') }} |
-      {% endif %}
-      {% if deep_soak_ts not in ['unknown', 'unavailable', none] %}
-      | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom('%b %d, %H:%M') }} |
-      {% endif %}
+      - type: entities
+        title: Calibration & Safety Caps
+        show_header_toggle: false
+        entities:
+          - entity: <number.zone_emitter_flow_rate_calibration>
+          - entity: <number.zone_rain_gauge_mm_per_tip_calibration_if_configured>
+          - entity: <number.zone_pump_low_power_warning_threshold_if_configured>
+          - entity: <number.zone_deep_soak_max_safety_runtime_cap>
+          - entity: <number.zone_routine_max_safety_runtime_cap>
+          - entity: <number.zone_max_daily_irrigation_runtime_safety_cap>
+
+      - type: entities
+        title: History Seeding
+        show_header_toggle: false
+        entities:
+          - entity: <datetime.zone_last_routine_irrigation>
+          - entity: <datetime.zone_last_deep_soak>
+          - entity: <datetime.zone_last_significant_rain>
+
+      - type: markdown
+        title: Zone Trigger Log
+        content: |
+          {% set lock = states('<binary_sensor.zone_irrigation_in_progress>') %}
+          {% set abort = states('<binary_sensor.zone_irrigation_abort_flag>') %}
+          {% set routine_ts = states('<datetime.zone_last_routine_irrigation>') %}
+          {% set deep_soak_ts = states('<datetime.zone_last_deep_soak>') %}
+          | Field | Value |
+          | :--- | :--- |
+          | **Lock (In Progress)** | {{ 'RUNNING' if lock == 'on' else 'idle' }} |
+          | **Abort Flag** | {{ 'PROBLEM' if abort == 'on' else 'OK' }} |
+          {% if routine_ts not in ['unknown', 'unavailable', none] %}
+          | **Last Routine Irrigation** | {{ as_timestamp(routine_ts) | timestamp_custom('%b %d, %H:%M') }} |
+          {% endif %}
+          {% if deep_soak_ts not in ['unknown', 'unavailable', none] %}
+          | **Last Deep Soak** | {{ as_timestamp(deep_soak_ts) | timestamp_custom('%b %d, %H:%M') }} |
+          {% endif %}
 ```
 
-If the person has multiple zones, repeat the whole `cards:` block as another
-`views:` entry (one tab per zone) rather than stacking every zone's cards
+**Drop the entire "Deep Soak (14-Day)" card** for a zone that has the deep
+soak cycle turned off (§6a) — every entity in it still technically exists,
+but none of it does anything meaningful, so including it would just be
+confusing clutter rather than a genuinely-existing-but-irrelevant row (the
+same "only include what actually applies to this zone" rule as any other
+optional entity).
+
+If the person has multiple zones, add another entry to the same top-level
+`views:` list (one tab per zone) rather than stacking every zone's cards
 into a single long page — mirrors how the entities themselves are already
-split one config entry per zone.
+split one config entry per zone. If they're pasting this into raw
+configuration alongside views that already exist, add these entries into
+their existing `views:` list rather than replacing it wholesale.
 
 One honest caveat to pass on to the person: this is plain built-in HA
 cards, chosen deliberately so nothing extra needs installing. It won't look
@@ -587,7 +1241,7 @@ as polished as a purpose-built dashboard (gauges, sparklines, a custom
 panel) — if they want that, it's a separate, bigger undertaking outside
 what this integration ships with.
 
-## 9. Ground rules while you do this
+## 10. Ground rules while you do this
 
 - Never guess an entity ID and submit it without the person confirming it,
   or without your own tool-based lookup giving you real confidence.
@@ -599,5 +1253,36 @@ what this integration ships with.
   number tuning through the UI, never a code change.
 - If something doesn't fit this guide (an entity type you can't find, a
   request to change scheduling logic itself, an error message not covered
-  here), say so plainly and point the person at opening a GitHub issue,
-  rather than improvising a change to how the integration behaves.
+  here), say so plainly, and offer to draft a GitHub issue for it rather
+  than improvising a change to how the integration behaves.
+
+### 10.1 Drafting a GitHub issue — privacy comes first
+
+If the person wants you to open (or draft the text for) a GitHub issue —
+a bug report, a feature request, anything that will end up on a **public**
+repository — treat this as sensitive by default, not as "just copy what
+happened." Home Assistant setups routinely contain things that must never
+end up in a public issue tracker. Before showing the person a draft:
+
+- **Strip, don't just paraphrase:** never include access tokens, API keys,
+  or credentials of any kind, even partially or "just the first few
+  characters."
+- **Strip full local file paths that embed the OS username** (e.g.
+  `C:\Users\<name>\...` or `/home/<name>/...`) — replace the username
+  segment with something generic like `<user>` and keep the rest of the
+  path if it's actually relevant to the issue.
+- **Strip external URLs, hostnames, and IP addresses** that aren't
+  necessary to explain the bug (a public HACS/GitHub URL that's already
+  public is fine; the person's own HA instance URL, a local network
+  hostname, or a home IP address is not).
+- **Strip notify/device names that embed a real person's name** (e.g.
+  `notify.mobile_app_johns_iphone` → describe it generically as "a mobile
+  app notify target" instead).
+- **Strip GPS coordinates** (a `zone.home` or weather entity's exact
+  latitude/longitude) — describe the location only as generally as the
+  issue actually needs (e.g. "tropical climate," not exact coordinates).
+
+After redacting, **tell the person plainly what you removed and why**
+before posting or handing over the draft — don't redact silently. If
+you're unsure whether something is sensitive, treat it as sensitive and
+ask, rather than including it and hoping it's fine.

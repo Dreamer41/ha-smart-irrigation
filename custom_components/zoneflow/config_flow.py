@@ -19,72 +19,133 @@ from homeassistant.util import slugify
 
 from .const import (
     CONF_CSV_PATH,
+    CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
     CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
     CONF_DEEP_SOAK_TIME,
+    CONF_DRAINAGE,
+    CONF_FLOW_METER_ENTITY,
+    CONF_GROWTH_RAMP_PROFILE,
+    CONF_IRRIGATION_METHOD,
     CONF_NOTIFY_ENTITY,
     CONF_OUTDOOR_TEMP_ENTITY,
+    CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    CONF_SLOPE,
+    CONF_SOIL_TYPE,
     CONF_VALVE_ENTITY,
     CONF_WEATHER_ENTITY,
     CONF_ZONE_NAME,
     DEFAULT_CSV_PATH,
+    DEFAULT_DEEP_SOAK_ENABLED,
     DEFAULT_DEEP_SOAK_TIME,
+    DEFAULT_DRAINAGE,
+    DEFAULT_GROWTH_RAMP_PROFILE,
+    DEFAULT_IRRIGATION_METHOD,
     DEFAULT_ROUTINE_TIME,
+    DEFAULT_SLOPE,
+    DEFAULT_SOIL_TYPE,
     DEFAULT_SUN_MODE,
     DEFAULT_SUN_OFFSET_MINUTES,
     DOMAIN,
+    DRAINAGE_OPTIONS,
+    GROWTH_RAMP_PROFILE_OPTIONS,
+    IRRIGATION_METHOD_OPTIONS,
+    SLOPE_OPTIONS,
+    SOIL_TYPE_OPTIONS,
     SUN_MODE_OPTIONS,
 )
 
 
+def _optional_entity_key(defaults: dict[str, Any], conf_key: str):
+    """Shared pattern for every genuinely-optional entity field: passing
+    default=None into vol.Optional() for an EntitySelector makes the
+    frontend try to validate the literal string "None" as an entity ID/UUID
+    ("Entity None is neither a valid entity ID nor a valid UUID") -- so only
+    attach a default when one actually exists; otherwise leave the key
+    truly unset and let the marker default to nothing selected."""
+    value = defaults.get(conf_key)
+    return vol.Optional(conf_key, default=value) if value else vol.Optional(conf_key)
+
+
 def _schema(defaults: dict[str, Any]) -> vol.Schema:
-    # CONF_NOTIFY_ENTITY is genuinely optional (there may be no phone to
-    # notify). Passing default=None into vol.Optional() for an
-    # EntitySelector makes the frontend try to validate the literal string
-    # "None" as an entity ID/UUID ("Entity None is neither a valid entity ID
-    # nor a valid UUID") -- so only attach a default when one actually
-    # exists; otherwise leave the key truly unset and let the marker default
-    # to nothing selected.
-    notify_default = defaults.get(CONF_NOTIFY_ENTITY)
-    notify_key = (
-        vol.Optional(CONF_NOTIFY_ENTITY, default=notify_default)
-        if notify_default
-        else vol.Optional(CONF_NOTIFY_ENTITY)
-    )
-    # Same optional-with-no-fake-default pattern as notify_entity above --
-    # this zone works exactly as before if you never touch this field. When
-    # set, it enables the forecast gate (skip a scheduled run pre-emptively
-    # when rain is forecast) and the dry-spell override numbers below become
-    # relevant; when unset, those numbers are simply unused.
-    weather_default = defaults.get(CONF_WEATHER_ENTITY)
-    weather_key = (
-        vol.Optional(CONF_WEATHER_ENTITY, default=weather_default)
-        if weather_default
-        else vol.Optional(CONF_WEATHER_ENTITY)
-    )
+    # The valve is the only entity that is truly mandatory -- ZoneFlow
+    # cannot irrigate without something to open. Every other entity below
+    # degrades gracefully when left unset (see controller.py): rain-aware
+    # gates simply never fire without a rain gauge, hot/cool tiers fall
+    # back to "normal" without a temp sensor, the pump-audit watchdog is
+    # skipped without a pump-power or flow-meter reading, and the forecast
+    # gate is skipped without a weather entity. The AI setup guide explains
+    # exactly what capability is lost by skipping each one.
+    notify_key = _optional_entity_key(defaults, CONF_NOTIFY_ENTITY)
+    weather_key = _optional_entity_key(defaults, CONF_WEATHER_ENTITY)
+    pump_power_key = _optional_entity_key(defaults, CONF_PUMP_POWER_ENTITY)
+    rain_counter_key = _optional_entity_key(defaults, CONF_RAIN_COUNTER_ENTITY)
+    outdoor_temp_key = _optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)
+    flow_meter_key = _optional_entity_key(defaults, CONF_FLOW_METER_ENTITY)
 
     return vol.Schema(
         {
             vol.Required(CONF_VALVE_ENTITY, default=defaults.get(CONF_VALVE_ENTITY)): selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="switch")
             ),
-            vol.Required(
-                CONF_PUMP_POWER_ENTITY, default=defaults.get(CONF_PUMP_POWER_ENTITY)
-            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
-            vol.Required(
-                CONF_RAIN_COUNTER_ENTITY, default=defaults.get(CONF_RAIN_COUNTER_ENTITY)
-            ): selector.EntitySelector(selector.EntitySelectorConfig(domain=["counter", "sensor"])),
-            vol.Required(
-                CONF_OUTDOOR_TEMP_ENTITY, default=defaults.get(CONF_OUTDOOR_TEMP_ENTITY)
-            ): selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="temperature")),
+            pump_power_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
+            # Plain text, not an entity selector -- this identifies the
+            # physical pump (e.g. "Pump A"), independent of whether a
+            # wattage sensor exists for it. See const.py's CONF_PUMP_ID
+            # comment. Blank is a valid, common answer (single-pump/
+            # independent-pump setups never need this).
+            vol.Optional(CONF_PUMP_ID, default=defaults.get(CONF_PUMP_ID, "")): str,
+            rain_counter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=["counter", "sensor"])),
+            outdoor_temp_key: selector.EntitySelector(
+                selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+            ),
+            flow_meter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
             notify_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="notify")),
             weather_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="weather")),
+            # Descriptive soil/site metadata -- see const.py's comment on
+            # CONF_SOIL_TYPE for why these never drive scheduler logic
+            # directly. "unknown"/"flat"/"drip" are always valid answers,
+            # so these are vol.Required only in the sense that the field
+            # always has SOME value, never in the sense of blocking setup.
+            vol.Required(CONF_SOIL_TYPE, default=defaults.get(CONF_SOIL_TYPE, DEFAULT_SOIL_TYPE)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=SOIL_TYPE_OPTIONS, translation_key="soil_type")
+            ),
+            vol.Required(CONF_DRAINAGE, default=defaults.get(CONF_DRAINAGE, DEFAULT_DRAINAGE)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=DRAINAGE_OPTIONS, translation_key="drainage")
+            ),
+            vol.Required(CONF_SLOPE, default=defaults.get(CONF_SLOPE, DEFAULT_SLOPE)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=SLOPE_OPTIONS, translation_key="slope")
+            ),
+            vol.Required(
+                CONF_IRRIGATION_METHOD, default=defaults.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=IRRIGATION_METHOD_OPTIONS, translation_key="irrigation_method")
+            ),
+            # Off by default. See const.py's GROWTH_RAMP_CURVES comment --
+            # this scales the weekly target by a days-since-planting curve
+            # as a starting approximation, never as a replacement for the
+            # number entity staying manually overridable.
+            vol.Required(
+                CONF_GROWTH_RAMP_PROFILE, default=defaults.get(CONF_GROWTH_RAMP_PROFILE, DEFAULT_GROWTH_RAMP_PROFILE)
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=GROWTH_RAMP_PROFILE_OPTIONS, translation_key="growth_ramp_profile"
+                )
+            ),
             vol.Required(CONF_CSV_PATH, default=defaults.get(CONF_CSV_PATH, DEFAULT_CSV_PATH)): str,
+            # Off-switch for the whole deep-soak cycle -- see const.py's
+            # comment on CONF_DEEP_SOAK_ENABLED for why this defaults True
+            # rather than following growth-ramp's off-by-default pattern.
+            # The two fields below (time/sun-mode) are simply unused while
+            # this is False.
+            vol.Required(
+                CONF_DEEP_SOAK_ENABLED, default=defaults.get(CONF_DEEP_SOAK_ENABLED, DEFAULT_DEEP_SOAK_ENABLED)
+            ): selector.BooleanSelector(),
             vol.Required(
                 CONF_DEEP_SOAK_TIME, default=defaults.get(CONF_DEEP_SOAK_TIME, DEFAULT_DEEP_SOAK_TIME)
             ): selector.TimeSelector(),

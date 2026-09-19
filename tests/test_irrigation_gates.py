@@ -11,14 +11,14 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from custom_components.zoneflow.const import DOMAIN
+from custom_components.zoneflow.const import CONF_DEEP_SOAK_ENABLED, DOMAIN
 
 from .test_smoke_setup import RAIN_COUNTER, _seed_source_entities, make_entry
 
 
-async def _setup(hass):
+async def _setup(hass, **entry_overrides):
     await _seed_source_entities(hass)
-    entry = make_entry(hass)
+    entry = make_entry(hass, **entry_overrides)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
@@ -61,6 +61,30 @@ async def test_deep_soak_skipped_when_not_yet_due(hass):
     await controller.run_deep_soak()
     await hass.async_block_till_done()
 
+    spy.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_deep_soak_skipped_entirely_when_turned_off_for_this_zone(hass):
+    """Some crops/setups don't want the deep-soak cycle at all (see
+    const.py's CONF_DEEP_SOAK_ENABLED) -- with it off, run_deep_soak() must
+    never touch the valve, even though every other gate (due, dry-down,
+    rain ceiling) would otherwise allow it."""
+    controller, spy = await _setup(hass, **{CONF_DEEP_SOAK_ENABLED: False})
+    # Nothing else is blocking a run -- never watered, no recent rain -- so
+    # this isolates the deep_soak_enabled gate specifically.
+    controller.store.state.last_deep_soak_ts = 0.0
+    controller.store.state.last_significant_rain_ts = 0.0
+
+    await controller.run_deep_soak()
+    await hass.async_block_till_done()
+
+    spy.assert_not_called()
+
+    # The manual "Run Deep Soak Now" button hits the exact same code path,
+    # so it must no-op too rather than bypassing the zone's own setting.
+    await controller.run_deep_soak()
+    await hass.async_block_till_done()
     spy.assert_not_called()
 
 

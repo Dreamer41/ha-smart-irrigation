@@ -31,7 +31,7 @@ class ZoneFlowButton(ButtonEntity):
     def __init__(self, entry: ConfigEntry, controller, key: str, name: str, action) -> None:
         self._action = action
         self._attr_unique_id = f"{entry.entry_id}_{key}"
-        self._attr_name = name
+        self._attr_translation_key = key  # see translations/<lang>.json's entity.button.<key>.name
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
 
     async def async_press(self) -> None:

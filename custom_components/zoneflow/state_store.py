@@ -60,6 +60,36 @@ class IrrigationState:
     forecast_routine_skip_count: int = 0
     forecast_routine_skip_start_ts: float | None = None
 
+    # Growth-stage auto-ramp (optional, off by default) -- set via the
+    # "Planting / Transplant Date" datetime entity. None means "not set",
+    # in which case the ramp is never applied regardless of the configured
+    # profile, same as leaving the other three "last event" fields unset.
+    planting_date_ts: float | None = None
+
+    # Rolling same-day total across BOTH cycles, backing the max-daily-
+    # runtime safety cap. Reset at local midnight alongside the other
+    # "today" bookkeeping (see ZoneFlowController._start_new_day).
+    today_runtime_minutes: float = 0.0
+
+    # Most recent completed cycle's measured water use, from the optional
+    # flow-meter entity (None if no flow meter is configured, or if the
+    # meter's reading couldn't be read at both ends of the cycle).
+    last_cycle_water_liters: float | None = None
+
+    # Live dashboard overrides (select.py) -- both are pure convenience
+    # layers on top of the config-flow/planting-date-driven values, not a
+    # replacement for them. None/"auto" always means "behave exactly as
+    # before this feature existed."
+    soil_type_override: str | None = None
+    growth_stage_mode: str = "auto"
+
+    # Live override of the growth-ramp profile itself (which curve this
+    # zone follows), same "checked first, no reload" pattern as
+    # soil_type_override -- lets a person switch to "custom" (or back) from
+    # the dashboard instead of Settings -> Configure. None means "use the
+    # config-flow/options value," exactly as before this existed.
+    growth_ramp_profile_override: str | None = None
+
     def rain_tracker(self) -> RainWindowTracker:
         return RainWindowTracker.from_persisted(self.rain_samples)
 

@@ -8,17 +8,7 @@ physical entities of its own.
 
 ## Screenshots
 
-A real zone's device page in Home Assistant — every threshold below is a
-live, adjustable `number` entity, not a hardcoded setting:
-
-<img src="docs/screenshots/device-controls-1.png" width="800" alt="ZoneFlow device page: controls and activity log">
-
-<table>
-<tr>
-<td><img src="docs/screenshots/device-controls-2.png" width="400" alt="ZoneFlow device page: more tunable numbers"></td>
-<td><img src="docs/screenshots/device-sensors.png" width="400" alt="ZoneFlow diagnostic sensors"></td>
-</tr>
-</table>
+<img src="docs/screenshots/hero.jpg" width="100%" alt="ZoneFlow dashboard on tablet and phone, in the garden">
 
 ## 🤖 Let an AI set it up for you
 

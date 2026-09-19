@@ -33,7 +33,7 @@ class ZoneFlowNumber(RestoreNumber):
         self._key = key
         self._controller = controller
         self._attr_unique_id = f"{entry.entry_id}_{key}"
-        self._attr_name = name
+        self._attr_translation_key = key  # see translations/<lang>.json's entity.number.<key>.name
         self._attr_native_min_value = min_v
         self._attr_native_max_value = max_v
         self._attr_native_step = step

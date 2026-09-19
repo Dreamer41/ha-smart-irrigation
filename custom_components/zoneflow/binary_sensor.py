@@ -36,7 +36,7 @@ class ZoneFlowLockBinarySensor(_Base):
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_irrigation_in_progress"
-        self._attr_name = "Irrigation In Progress"
+        self._attr_translation_key = "irrigation_in_progress"
 
     @property
     def is_on(self) -> bool:
@@ -50,7 +50,7 @@ class ZoneFlowAbortBinarySensor(_Base):
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_irrigation_abort"
-        self._attr_name = "Irrigation Abort Flag"
+        self._attr_translation_key = "irrigation_abort"
 
     @property
     def is_on(self) -> bool:

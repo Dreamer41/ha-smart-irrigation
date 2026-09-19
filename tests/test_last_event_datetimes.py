@@ -32,7 +32,7 @@ async def test_datetime_entities_are_created_and_start_unknown(hass, fake_valve_
         # Entity IDs are derived from the friendly name by HA, not literally
         # this string -- fall back to a search if the exact slug differs.
         matches = [s for s in hass.states.async_all("datetime") if s.entity_id.startswith("datetime.test_zone")]
-        assert len(matches) == 3
+        assert len(matches) == 4
         for state in matches:
             assert state.state == "unknown"
 
