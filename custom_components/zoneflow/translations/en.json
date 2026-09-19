@@ -343,5 +343,67 @@
         }
       }
     }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Run Deep Soak",
+      "description": "Runs the deep-soak cycle now if (and only if) the same gates the 05:00 schedule uses are satisfied (mutex free, 14-day interval + dry-down met, 14-day rain ceiling not exceeded). Identical code path to the scheduled run.",
+      "fields": {
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone's device. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Run Routine Irrigation",
+      "description": "Runs the routine irrigation cycle now if (and only if) the same gates the 05:30 schedule uses are satisfied. Identical code path to the scheduled run.",
+      "fields": {
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone's device. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Reset Irrigation Lock",
+      "description": "Force-clears the mutex lock and abort flag. Emergency use only.",
+      "fields": {
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone's device. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Test Pulse",
+      "description": "Bypasses every schedule/dry-down/rain gate and runs one short valve pulse, for bench-testing the valve/pump wiring before trusting the real schedule. Still respects the mutex lock and safety watchdogs.",
+      "fields": {
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone's device. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        },
+        "seconds": {
+          "name": "Seconds",
+          "description": "Pulse duration in seconds (1-120)."
+        }
+      }
+    }
   }
 }

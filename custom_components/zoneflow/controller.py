@@ -19,6 +19,7 @@ silently merging/changing behavior beyond what was asked.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import csv
 import logging
 from datetime import time as dt_time, timedelta
@@ -574,7 +575,9 @@ class ZoneFlowController:
         points landing on the same day is handled the same way the fixed
         curves already handle it (calculations.growth_ramp_fraction treats
         equal-day points as a vertical step, not a divide-by-zero)."""
-        pct = lambda key: max(0.0, min(100.0, self.number(key))) / 100.0
+        def pct(key: str) -> float:
+            return max(0.0, min(100.0, self.number(key))) / 100.0
+
         points = [
             (0.0, pct("growth_ramp_custom_start_pct")),
             (max(self.number("growth_ramp_custom_point1_day"), 0.0), pct("growth_ramp_custom_point1_pct")),
@@ -919,12 +922,10 @@ class ZoneFlowController:
             # threshold trivially pass) means no wasted 45s wait either.
             if self.pump_power_entity:
                 # wait_template pump-power check, timeout 45s, continue_on_timeout
-                try:
+                with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(
                         self._wait_for_pump_watts(min_pump_watts), timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS
                     )
-                except asyncio.TimeoutError:
-                    pass
                 if await self._pump_watts() < min_pump_watts:
                     await self._log_event(
                         event_type="Low Pump Power Audit",
@@ -938,10 +939,8 @@ class ZoneFlowController:
                     )
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
-            try:
+            with contextlib.suppress(asyncio.TimeoutError):
                 await asyncio.wait_for(self._abort_event.wait(), timeout=pulse_minutes * 60)
-            except asyncio.TimeoutError:
-                pass
 
             if self.store.state.abort_on:
                 valve_state = self.hass.states.get(self.valve_entity)
@@ -961,8 +960,35 @@ class ZoneFlowController:
         return True
 
     async def _wait_for_pump_watts(self, min_pump_watts: float) -> None:
-        while await self._pump_watts() < min_pump_watts:
-            await asyncio.sleep(1)
+        """Waits until the pump-power reading reaches min_pump_watts.
+
+        Event-driven rather than a fixed 1s poll: a 1s poll can only ever
+        notice a new reading once the sensor has actually reported one, so
+        polling faster than the sensor updates bought nothing but wasted
+        wakeups -- waiting on the entity's own state-changed event is
+        exactly as responsive (reacts the instant a new reading arrives)
+        without the busy-loop. The caller wraps this whole call in
+        asyncio.wait_for(..., timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS), so
+        cancellation on timeout still unwinds through the `finally` below
+        and removes the listener -- the external 45s-cap-then-warn
+        behavior is unchanged.
+        """
+        if await self._pump_watts() >= min_pump_watts:
+            return
+
+        watts_updated = asyncio.Event()
+
+        @callback
+        def _on_pump_power_change(event: Event) -> None:
+            watts_updated.set()
+
+        unsub = async_track_state_change_event(self.hass, [self.pump_power_entity], _on_pump_power_change)
+        try:
+            while await self._pump_watts() < min_pump_watts:
+                watts_updated.clear()
+                await watts_updated.wait()
+        finally:
+            unsub()
 
     def _track_schedule(self, sun_mode: str, offset_minutes: float, fixed_time: dt_time, action) -> Any:
         """Wire up one schedule trigger (deep soak or routine). Fixed clock
@@ -979,7 +1005,9 @@ class ZoneFlowController:
         # unlike async_track_time_change (which passes `now`) -- adapt so
         # the same _on_deep_soak_time/_on_routine_time callbacks work either
         # way.
-        sun_action = lambda: action(None)
+        def sun_action() -> None:
+            action(None)
+
         if sun_mode == SUN_MODE_BEFORE_SUNRISE:
             return async_track_sunrise(self.hass, sun_action, offset=-offset)
         if sun_mode == SUN_MODE_AFTER_SUNRISE:

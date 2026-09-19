@@ -81,7 +81,7 @@ class RainWindowTracker:
         return [[t, c] for t, c in self.samples]
 
     @classmethod
-    def from_persisted(cls, data: list[list[float]] | None) -> "RainWindowTracker":
+    def from_persisted(cls, data: list[list[float]] | None) -> RainWindowTracker:
         if not data:
             return cls()
         return cls(samples=[(row[0], row[1]) for row in data])

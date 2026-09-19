@@ -254,7 +254,7 @@ def growth_ramp_fraction(days_since_planting: float, curve: list[tuple[int, floa
         return 1.0
     if days_since_planting <= curve[0][0]:
         return curve[0][1]
-    for (day_a, frac_a), (day_b, frac_b) in zip(curve, curve[1:]):
+    for (day_a, frac_a), (day_b, frac_b) in zip(curve, curve[1:], strict=False):
         if days_since_planting <= day_b:
             if day_b == day_a:
                 return frac_b
