@@ -21,6 +21,14 @@ values (including the per-crop numbers like weekly water targets and the
 weather forecast dry-spell override), and get a zone fully configured and
 verified — no need to read any of the documentation below first.
 
+It doesn't just plug in generic defaults: it factors in your crop, your
+region/climate (tropical, temperate, arid, etc.), and your soil type to
+recommend realistic weekly water targets and temperature thresholds for
+*your* conditions, explaining its reasoning as it goes rather than handing
+you a number with no justification. It can also, on request, generate a
+ready-to-paste Home Assistant dashboard card for the zone — grouping the
+schedule, live sensors, and manual controls into one clean view.
+
 Two ways it can do that, and it'll ask you which you want:
 - **It clicks for you** — if it has tool/API access to your Home Assistant
   instance (an MCP server, a long-lived access token, etc.), it can create
