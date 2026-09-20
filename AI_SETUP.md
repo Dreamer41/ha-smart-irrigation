@@ -11,8 +11,44 @@
 > pulse before you consider the job done. Do not explain ZoneFlow's internal
 > architecture unless asked — the person wants working irrigation, not a
 > code tour.
+>
+> Gauge how comfortable this specific person is with Home Assistant from
+> how they talk, in the first couple of exchanges — don't ask this as its
+> own formal question. Someone who's clearly done this before can be moved
+> through quickly with normal HA terminology. Someone who seems unsure, or
+> says so outright, deserves shorter steps, one screen at a time, plain
+> language over jargon (say "the switch that turns your valve on" before or
+> instead of "a `switch.*` entity"), and more frequent "does that make
+> sense so far?" checks. Recalibrate as you go if they turn out more or
+> less comfortable than your first read suggested.
+>
+> **Whenever the person seems stuck, confused, or unsure what they're
+> looking at, remind them they can just take a screenshot of their screen
+> and paste it into the chat.** You can read a screenshot directly and say
+> exactly what to click next — this is often faster and far less
+> frustrating than a back-and-forth of "I don't see that" / "it's the icon
+> in the top right" written out in words. Mention this possibility once,
+> early on (so it's a known option rather than a rescue they have to think
+> to ask for), and again anytime they sound lost.
 
 > **Non-negotiable, before anything else below:**
+> - **Scope lock: you are here to set up ZoneFlow, nothing else.** If you
+>   have tool/API access to the person's real Home Assistant (Mode A —
+>   §1a), that access is scoped to this task only. Never modify, delete,
+>   rename, or "clean up" any existing entity, automation, script, helper,
+>   dashboard view, or config entry that isn't the new ZoneFlow zone you
+>   were asked to create — not even something that looks obviously broken,
+>   redundant, or improvable. And never volunteer improvement suggestions
+>   about their wider setup unprompted — no "by the way, I noticed your
+>   automation X could be optimized." If something you encounter along the
+>   way looks like a real problem in their existing setup, you may mention
+>   it once, plainly, and then drop it unless they ask you to act on it —
+>   never fix it yourself as a side effect of this setup. This exists
+>   because AI assistants overstepping scope on live Home Assistant configs
+>   has caused real, painful damage before; the same caution this project's
+>   own maintainer requires of any AI touching their production system
+>   applies here to everyone using this guide, on every instance,
+>   every time — the boundary is not a suggestion.
 > - Never guess an entity ID, and never decide one on the person's behalf —
 >   confirm every single one with the person before submitting it, even one
 >   your own tool-based search turned up as an apparently-obvious match.
@@ -64,12 +100,49 @@ unanswered optional field is not the same as a "no."
    somehow figure out is still needed. If they don't know yet (e.g. "at
    least one, maybe more later"), that's fine — just don't assume "one"
    silently when they said something else.
-2. **Mode A or Mode B?** Do you have live tool/API access to their actual
-   Home Assistant instance (an MCP server, a long-lived access token, or
-   equivalent)? If yes, ask whether *they'd* rather you just configure it
-   directly (Mode A) or walk them through clicking it themselves (Mode B)
-   — some people want to watch/learn the UI, most want it just done. If you
-   have no tool access at all, you're in Mode B by default, no need to ask.
+2. **Mode A or Mode B?** Check your own available tools/functions right now
+   for anything that looks like Home Assistant control — an MCP server
+   exposing calls like `ha_call_service`/`ha_set_entity`/`ha_get_state`, a
+   Home Assistant connector, or a long-lived access token you've been
+   given. Don't just ask the person whether they have this set up — look
+   first, then tell them plainly what you found ("I do have Home Assistant
+   tool access available" / "I don't see any Home Assistant tools
+   available to me right now").
+   - **If you found tool access:** don't assume it's pointed at *their*
+     instance just because it exists — confirm that before touching
+     anything ("I have Home Assistant tools available — is this already
+     connected to your actual system, or is this a demo/different
+     instance?"). Once confirmed, ask whether they'd rather you configure
+     it directly (**Mode A**) or walk them through clicking it themselves
+     (**Mode B**) — some people want to watch/learn the UI, most want it
+     just done.
+   - **If you found no tool access:** say so, then offer a real choice
+     instead of silently defaulting to Mode B: (a) walk them through
+     connecting one now — Home Assistant has a built-in **"Model Context
+     Protocol Server"** integration (Settings → Devices & Services → Add
+     Integration → search "Model Context Protocol Server") that exposes
+     their instance to compatible AI tools, so this (or a future) session
+     could use Mode A; (b) proceed in **Mode B** (you guide, they click)
+     right now, no setup needed — this is a perfectly complete way to
+     finish the whole setup; or (c) if they'd rather not set anything up,
+     mention that some other AI assistant/session might already have this
+     kind of access configured, and they're welcome to paste this same
+     guide there instead. Don't steer them toward any one option —
+     whichever is less hassle for them is the right one.
+   - **If they go with (a) — setting up a brand-new connection just for
+     this:** say plainly, before they spend the effort connecting it, that
+     this works best on a paid AI plan. Tool/API calls (each entity lookup,
+     each config write) burn through a free usage allowance much faster
+     than plain chatting, and running out partway through — after already
+     wiring up the connection — is a worse outcome than never having
+     started that way. This warning is specifically for *new* connections
+     made for this setup, not a blanket rule: if they already had tool
+     access configured before asking for help (the first bullet above),
+     they already know what their own setup can do and don't need this
+     spelled out — just proceed. If they're on a free plan and would
+     rather not risk it, Mode B remains the simplest safe default: it's
+     plain conversation with no tool calls, so there's nothing to run out
+     of mid-setup.
 3. **What exactly is being watered, and where?** Ask this as a genuinely
    open question — "what plant/crop is this?" — never as a multiple-choice
    pick from a handful of broad categories (even with a free-text
@@ -100,9 +173,17 @@ unanswered optional field is not the same as a "no."
    it's worth getting out of the way immediately.) It's descriptive/
    informational only (§4's table says more), so "not sure" is a fine
    answer if they genuinely don't know.
-6. **Dashboard card?** Would they like a ready-to-paste dashboard YAML for
-   this zone once setup's done (§9 — purely cosmetic, entirely optional,
-   but the answer changes what you need to track during §4).
+6. **Dashboard card, and/or a plain-language cheat sheet?** Two separate,
+   independent, purely-cosmetic offers — ask about both, don't assume one
+   implies the other: (a) a ready-to-paste dashboard YAML for this zone
+   (§9), and (b) a short, jargon-free cheat sheet (§9a) covering what this
+   zone does day to day and exactly what to click for the two or three
+   things a person actually does by hand (run a cycle now, reset a stuck
+   lock). A dashboard shows numbers; a cheat sheet explains what they mean
+   in plain words — worth offering separately since the second one matters
+   most for anyone less technical who'll also use this zone day to day (a
+   housemate, family member, or just future-them after months away from
+   HA's UI). Either answer changes what you need to track during §4.
 7. **Phone notifications?** ZoneFlow can alert a `notify.*` target on
    things like a stuck-valve force-off or a low pump-power warning. Do they
    want this, and if so, which `notify.*` entity?
@@ -131,10 +212,12 @@ as a default "no." Specifically:
   handling and rules the forecast gate in or out.
 - **Slope** fills straight into §4's "Slope" field — don't ask it again
   there.
-- **Dashboard = yes** means: while walking through §4 and §4a, note this
-  zone's entity IDs as you naturally encounter them, instead of having to
-  go back and rediscover them from scratch after everything's set up. If
-  no, skip §9 entirely and don't bring it up again unless asked.
+- **Dashboard and/or cheat sheet = yes (either one)** means: while walking
+  through §4 and §4a, note this zone's entity IDs as you naturally
+  encounter them, instead of having to go back and rediscover them from
+  scratch after everything's set up — both §9 and §9a need the same list.
+  Skip whichever one they didn't ask for, and don't bring it up again
+  unless asked.
 - **Notifications = yes** means: collect the `notify.*` entity now, and
   fill it into §4's "Phone notify target" field. If no, that field stays
   blank in §4 — but because they were actually asked, not because you
@@ -384,9 +467,97 @@ Assistant — "it's just a test" is never a reason to pick an entity yourself
 instead of asking. If a needed entity doesn't exist at all yet (common in a
 sandbox), say so and ask the person whether to create one or which existing
 one to point at instead; don't silently invent or select one to keep the
-walkthrough moving. If you have no HA access, ask the person to open
-**Settings → Devices & Services → Entities**, filter by domain (`switch.`,
-`sensor.`, etc.), and read you back the exact entity IDs.
+walkthrough moving.
+
+### 3a. If you have no HA tool access: don't make them hunt blind
+
+First, reassure them this is easier than it sounds: **when they get to §4's
+"Add Integration" form, every entity field is already a searchable dropdown
+of friendly names, filtered to only the relevant kind** (the valve field
+only lists switches, the temperature field only lists temperature sensors,
+etc.) — Home Assistant does that filtering natively, nothing you need to
+set up. They are never asked to type or read out a raw entity ID like
+`switch.shellyplug_s_a1b2c3`. The only real task here is figuring out
+*which* item in that list is theirs, before or when they reach it — ask
+plainly which of the tiers below they want, rather than picking one for
+them:
+
+1. **"I already know which is which"** — skip straight to §4; they'll
+   recognize their own devices in the dropdown by name.
+2. **"I'm not sure — help me find them"** — the easiest no-typing option:
+   have them go to **Settings → Devices & Services → Entities**, type a
+   keyword into the search box (`valve`, `pump`, `rain`, `temperature`),
+   and either read you back what shows up or take a screenshot and paste
+   it — you can read a screenshot's entity names directly.
+3. **"I want one list of everything relevant, in one go"** — the
+   Developer Tools → Template method below. More setup (one extra click),
+   but surfaces all of it at once instead of five separate searches.
+   ⚠️ **Common snag:** if they don't see **Developer Tools** in their
+   sidebar at all, it's hidden behind **Advanced Mode** — tell them to
+   click their name/profile (bottom-left corner), scroll down, and turn on
+   **Advanced Mode**, then Developer Tools appears in the sidebar.
+
+If they pick option 3, have them open **Developer Tools → Template**,
+paste the block below into the left-hand editor, and read back (or
+screenshot) what appears on the right — it lists every switch, every
+temperature/power sensor, every counter, weather entity, and notify
+target, each with its friendly name next to the entity ID so they can
+recognize their own hardware instead of decoding cryptic IDs:
+
+```jinja2
+=== Switches (candidate valve) ===
+{% for s in states.switch -%}
+{{ s.entity_id }} — {{ s.name }}
+{% endfor %}
+
+=== Temperature sensors ===
+{% for s in states.sensor if s.attributes.device_class == 'temperature' -%}
+{{ s.entity_id }} — {{ s.name }} ({{ s.state }}{{ s.attributes.unit_of_measurement }})
+{% endfor %}
+
+=== Power sensors (candidate pump-power) ===
+{% for s in states.sensor if s.attributes.device_class == 'power' -%}
+{{ s.entity_id }} — {{ s.name }} ({{ s.state }}{{ s.attributes.unit_of_measurement }})
+{% endfor %}
+
+=== Counters (candidate rain gauge) ===
+{% for s in states.counter -%}
+{{ s.entity_id }} — {{ s.name }} ({{ s.state }})
+{% endfor %}
+
+=== Sensors mentioning "rain" (candidate rain gauge, if not a counter) ===
+{% for s in states.sensor if 'rain' in s.entity_id or 'rain' in s.name.lower() -%}
+{{ s.entity_id }} — {{ s.name }} ({{ s.state }})
+{% endfor %}
+
+=== Weather entities ===
+{% for s in states.weather -%}
+{{ s.entity_id }} — {{ s.name }}
+{% endfor %}
+
+=== Notify targets ===
+{% for s in states.notify -%}
+{{ s.entity_id }} — {{ s.name }}
+{% endfor %}
+```
+
+If they mentioned they've already organized their devices into an **Area**
+(e.g. "Garden", "Backyard") in Home Assistant, offer the shorter,
+area-scoped version instead — much less to scroll through:
+
+```jinja2
+{% set area = "Garden" %}
+{% for e in area_entities(area) -%}
+{{ e }} — {{ state_attr(e, 'friendly_name') or e }}
+{% endfor %}
+```
+
+(Replace `"Garden"` with their actual area name before handing it over.)
+
+Whichever tier they pick, if at any point they say they can't find
+something or aren't sure what they're looking at, fall back to the
+screenshot option from the very top of this guide — it works for any
+screen, not just this step.
 
 ## 4. Walk through the config flow
 
@@ -1024,15 +1195,16 @@ Do not consider setup finished until these are confirmed for each zone:
    safety/rain gate on purpose, so it's not representative of a real run —
    don't leave them thinking a successful test pulse alone proves the rain
    logic works.
-5. **Check whether they said yes to a dashboard card back in §1.** If they
-   did, setup is *not* finished until §9 is actually done and the person
-   has the finished YAML in hand — not just noted as something you'll get
+5. **Check whether they said yes to a dashboard card and/or a cheat sheet
+   back in §1's item 6.** For whichever one(s) they said yes to, setup is
+   *not* finished until §9 and/or §9a are actually done and the person has
+   the finished output in hand — not just noted as something you'll get
    to. It's easy to reach this point, confirm the test pulse and sensors
    look good, and declare the job done without circling back to a "cosmetic
-   extra" from several steps ago. Don't let that happen: treat a yes on the
-   dashboard card exactly like any other item on this list — required
-   before you say setup is complete, not an afterthought you can skip if it
-   slips your mind.
+   extra" from several steps ago. Don't let that happen: treat a yes on
+   either one exactly like any other item on this list — required before
+   you say setup is complete, not an afterthought you can skip if it slips
+   your mind.
 
 ## 9. Optional finishing touch: build a dashboard card for this zone
 
@@ -1241,8 +1413,66 @@ as polished as a purpose-built dashboard (gauges, sparklines, a custom
 panel) — if they want that, it's a separate, bigger undertaking outside
 what this integration ships with.
 
+## 9a. Optional finishing touch: a plain-language cheat sheet
+
+This only applies if the person said yes to it back in §1's item 6 —
+independent of the dashboard card above, skip it outright if they only
+wanted one or neither. Where §9 is built for looking at, this is built for
+*reading*: a short, plain-language reference for anyone who'll interact
+with this zone day to day without necessarily knowing (or wanting to know)
+what a config entry or a `number` entity is. Write it in the same message
+or as a short separate document, whichever the person prefers — no fixed
+format is required, but cover:
+
+1. **What this zone does, in one or two sentences** — plain description
+   using the crop/zone name they gave you, not ZoneFlow's internal terms
+   ("Front Lawn waters automatically every morning, and gets a deeper soak
+   every two weeks" beats "runs routine_irrigation and deep_soak on
+   independent schedules").
+2. **The two or three things a person might actually want to do by hand**,
+   each as a literal click-path using the real entity/button names from
+   this zone's device page — not the generic service names. For example:
+   "To water it right now: go to Settings → Devices & Services →
+   [zone name] → click **Run Routine Irrigation** ." Only include
+   controls that exist for this zone (skip deep-soak buttons if that
+   cycle is disabled per §6a).
+3. **What to do if something looks stuck or wrong** — in plain terms: if
+   the valve seems to be running forever, or hasn't run in a long time and
+   should have, point them at the **Reset Irrigation Lock** button and
+   suggest they mention it to whoever set this up (or paste it back to an
+   AI) rather than guessing at a fix themselves.
+4. **Skip anything that requires understanding a number's meaning** to act
+   on — weekly water targets, thresholds, calibration numbers, etc. belong
+   on the dashboard (§9) or in the full docs, not this cheat sheet. The
+   goal here is confident day-to-day use by someone who never opens the
+   Options flow, not a tuning reference.
+
+Keep it short — a few sentences and a short list of click-paths, not a
+restated version of this whole guide.
+
 ## 10. Ground rules while you do this
 
+- **Scope lock (see the non-negotiable at the top) — what this means in
+  practice for Mode A:**
+  - **Reads are always fine.** Looking up entities, states, existing
+    automations, or areas to find candidates (§3) or to write dashboard
+    entity IDs correctly (§9/§9a) never touches anything, so there's
+    nothing to be cautious about there.
+  - **Writes are scoped to exactly what this guide asks you to create**:
+    the new ZoneFlow config entry, its options, its number/select/datetime
+    values, and — only if requested — new dashboard content or a cheat
+    sheet. Never edit, reorder, or remove an existing automation, script,
+    helper, entity, or dashboard view as part of this.
+  - **Dashboard edits (§9) are additive only.** Add a new `views:` entry;
+    never touch an existing view or card that was already there, even if
+    it looks related or you think it could be improved to match.
+  - **Don't comment on unrelated parts of their setup unprompted** — not a
+    naming convention you'd do differently, not an automation that looks
+    inefficient, not an entity that looks misconfigured for something
+    else entirely. If it's not blocking this specific setup, it's not
+    your concern right now. The one exception: something you notice that
+    looks like a genuine problem is worth mentioning once, plainly, then
+    dropping — never acting on it without being asked.
 - Never guess an entity ID and submit it without the person confirming it,
   or without your own tool-based lookup giving you real confidence.
 - Never disable or bypass a safety watchdog (stuck-valve force-off,
