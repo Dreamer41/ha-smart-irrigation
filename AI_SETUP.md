@@ -5,12 +5,20 @@
 > it top to bottom. The person should not need to open any other doc in this
 > repo, and you should not need to ask them anything not listed here.
 >
-> Drive the conversation. Ask one question (or one small group of related
-> questions) at a time, use sensible defaults instead of asking about every
-> field, and get the integration actually configured and running a test
-> pulse before you consider the job done. Do not explain ZoneFlow's internal
-> architecture unless asked — the person wants working irrigation, not a
-> code tour.
+> Drive the conversation on everything that's actually clear: ask one
+> question (or one small group of related questions) at a time, use
+> sensible defaults instead of asking about every field, and get the
+> integration actually configured and running a test pulse before you
+> consider the job done. Do not explain ZoneFlow's internal architecture
+> unless asked — the person wants working irrigation, not a code tour.
+>
+> **But "drive the conversation" never means "push through uncertainty to
+> reach completion."** If you can't confidently tell which entity, value,
+> or setting applies, that uncertainty is itself a valid reason to stop and
+> ask — never pick the plausible-looking option just to keep moving. A
+> half-finished, honestly-flagged setup is a fine place to pause; a
+> fully-finished setup built on a guessed entity or a guessed number is
+> not a good outcome even though it looks like one.
 >
 > Gauge how comfortable this specific person is with Home Assistant from
 > how they talk, in the first couple of exchanges — don't ask this as its
@@ -29,7 +37,12 @@
 > frustrating than a back-and-forth of "I don't see that" / "it's the icon
 > in the top right" written out in words. Mention this possibility once,
 > early on (so it's a known option rather than a rescue they have to think
-> to ask for), and again anytime they sound lost.
+> to ask for), and again anytime they sound lost. The first time you
+> suggest it, add one honest line: a full-screen HA screenshot can catch
+> more than intended — camera feeds, other people's names, notifications,
+> exact location — so cropping to just the relevant panel is worth doing
+> when that's quick, and either way it stays private to this conversation,
+> never posted anywhere public.
 
 > **Non-negotiable, before anything else below:**
 > - **Scope lock: you are here to set up ZoneFlow, nothing else.** If you
@@ -115,14 +128,22 @@ unanswered optional field is not the same as a "no."
      instance?"). Once confirmed, ask whether they'd rather you configure
      it directly (**Mode A**) or walk them through clicking it themselves
      (**Mode B**) — some people want to watch/learn the UI, most want it
-     just done.
+     just done. Before making any change in Mode A, it's worth mentioning —
+     as a suggestion, not a blocker — that a quick **Settings → System →
+     Backups → Create Backup** first costs a minute and means anything you
+     do here is trivially undoable; proceed either way once they answer,
+     don't insist on it.
    - **If you found no tool access:** say so, then offer a real choice
      instead of silently defaulting to Mode B: (a) walk them through
      connecting one now — Home Assistant has a built-in **"Model Context
      Protocol Server"** integration (Settings → Devices & Services → Add
      Integration → search "Model Context Protocol Server") that exposes
      their instance to compatible AI tools, so this (or a future) session
-     could use Mode A; (b) proceed in **Mode B** (you guide, they click)
+     could use Mode A (if that integration offers a way to limit which
+     entities it exposes, similar to Assist's "Expose" settings, mention
+     that scoping it to just this zone's entities is worth doing — but
+     don't hold up the setup hunting for that option if it's not obvious);
+     (b) proceed in **Mode B** (you guide, they click)
      right now, no setup needed — this is a perfectly complete way to
      finish the whole setup; or (c) if they'd rather not set anything up,
      mention that some other AI assistant/session might already have this
@@ -142,7 +163,12 @@ unanswered optional field is not the same as a "no."
      spelled out — just proceed. If they're on a free plan and would
      rather not risk it, Mode B remains the simplest safe default: it's
      plain conversation with no tool calls, so there's nothing to run out
-     of mid-setup.
+     of mid-setup. If a **long-lived access token** (rather than the MCP
+     Server integration) is how this connection gets made, mention once
+     that it's worth revoking (**Settings → Your profile → Security →
+     Long-lived access tokens**) after setup if they don't plan to keep
+     using AI-driven control day to day — a token left lying around in a
+     chat session/config file is a standing credential, not a one-time key.
 3. **What exactly is being watered, and where?** Ask this as a genuinely
    open question — "what plant/crop is this?" — never as a multiple-choice
    pick from a handful of broad categories (even with a free-text
@@ -502,7 +528,16 @@ paste the block below into the left-hand editor, and read back (or
 screenshot) what appears on the right — it lists every switch, every
 temperature/power sensor, every counter, weather entity, and notify
 target, each with its friendly name next to the entity ID so they can
-recognize their own hardware instead of decoding cryptic IDs:
+recognize their own hardware instead of decoding cryptic IDs.
+
+**Say this plainly before they run it:** this list can reveal more about
+their home than just irrigation — device names, room layout, other
+people's names if a notify target or entity is named after them, and so
+on. It's fine to paste into this private conversation, same as anything
+else discussed here, but **it should never be pasted into a public place**
+— a public forum post, a public GitHub issue, a public chat channel. If
+they only want to hand over less, option 2 (search by keyword) surfaces
+just the one entity type at a time instead of everything at once.
 
 ```jinja2
 === Switches (candidate valve) ===
@@ -605,9 +640,30 @@ as defaults), so they never block submitting this screen. Say this plainly
 if the person asks why an "unknown" answer is fine here.
 
 Submitting this screen creates the zone. It starts running on the schedule
-immediately, but every tunable number below still has its factory default
-until you set it in §5 — **do that before leaving the person alone with a
-live valve.**
+immediately, with every tunable number still at its factory default until
+you set it in §5 — treat the gap between "zone created" and "§5 and §8
+both actually finished" as a real window you should close as fast as
+possible, not just something to be quick about:
+
+- **Immediately after creating the zone** (before anything else — before
+  §4a, before §5), go to this zone's device page → **⋮ → Disable** on the
+  config entry. Disabling unloads the integration for this entry, which
+  tears down its schedule timers along with everything else — the zone is
+  now genuinely inert, not just "running with defaults and hopefully
+  finished in time." Tell the person plainly that you're doing this and
+  why. Re-enable it (same menu → **Enable**, then reload if prompted) only
+  once §5's numbers are set and §8's test pulse has passed. If the
+  conversation gets interrupted for any reason while the entry is
+  disabled, nothing runs — that's the point.
+- **If for some reason you skip disabling it** (Mode B and the person
+  would rather not click through that right now, say), say plainly that
+  the zone is live with default numbers and, if a temperature/rain sensor
+  isn't yet configured, may run on a schedule that doesn't fit this
+  specific plant. It's still worth naming what's *not* at risk regardless:
+  the stuck-valve and power-loss watchdogs are unconditional Python logic
+  in the integration itself, not dependent on this conversation finishing
+  — the worst case with default numbers is "waters on a generic schedule
+  for a generic duration," never a valve stuck open or a runaway cycle.
 
 **If they asked for a dashboard card in §1:** this is the moment to note
 this zone's real entity IDs, while you're already looking at its device
@@ -1171,11 +1227,23 @@ action needed:
 
 Do not consider setup finished until these are confirmed for each zone:
 
-1. Run **Developer Tools → Actions → `zoneflow.test_pulse`** with
-   `seconds: 10` (targeting that zone's device, since each zone is its own
-   config entry/service target if the person has multiple). Confirm: the
-   valve entity actually switches on then off, and a new row appears in the
-   configured CSV log file. If a pump-power sensor is configured, also
+1. **If you have Mode A tool access, get an explicit yes before you
+   trigger this — never call the service yourself just because the guide
+   says to run it.** Tell the person plainly, by name: "This will
+   physically open `switch.<their valve>` for 10 seconds — is now a safe
+   time to run that?" This is a real, physical action on their actual
+   hardware, bypassing every schedule/rain/dry-down gate on purpose, and
+   you have no way to know whether someone's mid-repair on the plumbing,
+   whether the pump is disconnected, or anything else about the physical
+   state of the system right now — only the person on-site knows that. In
+   Mode B this step is naturally already gated, since the person is the
+   one clicking it.
+
+   Once confirmed, run **Developer Tools → Actions → `zoneflow.test_pulse`**
+   with `seconds: 10` (targeting that zone's device, since each zone is its
+   own config entry/service target if the person has multiple). Confirm:
+   the valve entity actually switches on then off, and a new row appears in
+   the configured CSV log file. If a pump-power sensor is configured, also
    confirm it reads a plausible non-zero value while the valve is on. If a
    flow meter is configured, confirm its "Last Cycle Water Delivered"
    sensor picks up a plausible non-zero value after the pulse.
@@ -1239,12 +1307,27 @@ always safe to include:
    doesn't exist for this zone (see above) rather than leaving a
    placeholder unfilled.
 3. Tell them exactly where to paste it: **Settings → Dashboards → (their
-   dashboard) → ⋮ Edit Dashboard → ⋮ Raw configuration editor**, then either
-   paste this as a new item under an existing `views:` list, or as a whole
-   new dashboard if they don't have a YAML-mode one yet. If they're on the
-   default auto-generated dashboard (most first-time users are), point them
-   at **Settings → Dashboards → + Add Dashboard → "New dashboard from
-   scratch"** first, since the auto-generated one can't be hand-edited.
+   dashboard) → ⋮ Edit Dashboard → ⋮ Raw configuration editor**. **Never
+   have them select-all and paste over what's already there** — the raw
+   editor shows their *entire* dashboard, and overwriting it deletes every
+   other view/card they already have. What they should actually do:
+   - If they already have a YAML-mode dashboard with a `views:` list, this
+     zone's view (the one `- title: ...` block below) gets added as one
+     more item in that existing list — inserted right after the last `-`
+     entry under `views:`, keeping everything above it untouched. Tell them
+     explicitly: "scroll to the end of your `views:` list and add this as a
+     new `-` entry, don't replace anything above it."
+   - If they don't have a YAML-mode dashboard yet (most first-time users on
+     the default auto-generated one don't), point them at **Settings →
+     Dashboards → + Add Dashboard → "New dashboard from scratch"** first —
+     the auto-generated dashboard can't be hand-edited — and only on that
+     brand-new, empty dashboard is pasting the whole template from scratch
+     (including the top-level `views:` key) correct.
+   - If at any point you're not looking at their actual current YAML (e.g.
+     they're describing it to you rather than you reading it via tool
+     access), say so and have them paste their existing raw config back to
+     you first so you can show the insertion point precisely, rather than
+     guessing where their existing views end.
 
 **Give every zone a distinct icon and a visible zone-name heading — never
 reuse the same generic icon (e.g. `mdi:sprinkler`) across zones.** With
@@ -1473,8 +1556,10 @@ restated version of this whole guide.
     your concern right now. The one exception: something you notice that
     looks like a genuine problem is worth mentioning once, plainly, then
     dropping — never acting on it without being asked.
-- Never guess an entity ID and submit it without the person confirming it,
-  or without your own tool-based lookup giving you real confidence.
+- Never guess an entity ID and submit it without the person confirming it —
+  a confident tool-based lookup earns you a good candidate to propose, not
+  a substitute for the person actually confirming it. This is unconditional
+  (§3 already says the same thing; this isn't a looser restatement of it).
 - Never disable or bypass a safety watchdog (stuck-valve force-off,
   power-loss abort, stale-lock recovery) — these aren't configurable by
   design, and that's intentional; don't suggest workarounds.
