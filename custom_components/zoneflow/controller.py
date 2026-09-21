@@ -1320,14 +1320,14 @@ class ZoneFlowController:
 
         if days_elapsed > 10:
             await self._log_event(
-                event_type="Rain History Depth Exceeded",
+                event_type="Irrigation Overdue",
                 status="WARNING",
                 target_mm=0.0,
                 deducted_mm=0.0,
                 runtime=0,
                 notify_phone=True,
-                phone_title="⚠️ Rain History Limited",
-                phone_msg=f"{days_elapsed} days since last watering exceeds stored 10-day rain history — deduction may undercount rain.",
+                phone_title="⚠️ Irrigation Overdue",
+                phone_msg=f"{days_elapsed} days since last watering — unusually long gap, worth checking the system.",
             )
 
         max_runtime = self.number("max_runtime_minutes")
@@ -1363,6 +1363,16 @@ class ZoneFlowController:
             return
 
         if plan.calc_runtime_minutes <= 0:
+            await self._log_event(
+                event_type="Rain Credit Sufficient",
+                status="Skipped",
+                target_mm=round(plan.interval_target_mm, 1),
+                deducted_mm=round(plan.eff_rain_mm, 1),
+                runtime=0,
+                notify_phone=False,
+                phone_title="🌧️ Routine Irrigation Skipped",
+                phone_msg=f"Rain credit ({round(plan.eff_rain_mm, 1)}mm) already covers target ({round(plan.interval_target_mm, 1)}mm) — no watering needed.",
+            )
             return
 
         rain_30min = self.rain_windows()["30min"]

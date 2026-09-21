@@ -52,14 +52,24 @@ def rain_deduction_mm(
     low_eff: float,
     mid_eff: float,
     high_eff: float,
+    max_lookback_days: int = 10,
 ) -> float:
     """Port of the `eff_rain` variable in avocado_routine_irrigation.
 
     day_history_mm[0] is "yesterday" (rain_day_1) ... [9] is 10 days ago.
-    Only the first `min(days_elapsed, 10)` history days are summed, exactly
-    like the YAML's `days_to_sum = [days_elapsed, 10] | min`.
+    Only the first `min(days_elapsed, max_lookback_days)` history days are
+    summed. `max_lookback_days` used to be a hardcoded 10 (matching the
+    original YAML's `days_to_sum = [days_elapsed, 10] | min`), which meant a
+    storm from over a week ago -- already handled by the separate
+    significant-rain drydown holdoff -- could keep suppressing routine
+    watering for up to 10 days after it fell, long after the holdoff itself
+    had cleared. `plan_routine_irrigation` now passes the zone's own
+    `interval_days` (3 hot / 4 normal-or-cool) here instead, so each cycle
+    only ever credits rain that actually fell within that cycle's own
+    window. The 10-day default is kept only for direct callers that don't
+    pass their own interval.
     """
-    days_to_sum = min(days_elapsed, 10)
+    days_to_sum = min(days_elapsed, max_lookback_days)
     total = today_mm * rain_efficiency(today_mm, low_eff, mid_eff, high_eff)
     for i in range(days_to_sum):
         mm = day_history_mm[i] if i < len(day_history_mm) else 0.0
@@ -184,7 +194,13 @@ def plan_routine_irrigation(
     )
     interval_target_mm = (target_weekly_mm / 7.0) * interval_days
     eff_rain = rain_deduction_mm(
-        today_rain_mm, rain_day_history_mm, days_elapsed, rain_eff_low, rain_eff_mid, rain_eff_high
+        today_rain_mm,
+        rain_day_history_mm,
+        days_elapsed,
+        rain_eff_low,
+        rain_eff_mid,
+        rain_eff_high,
+        max_lookback_days=interval_days,
     )
     needed_mm = max(interval_target_mm - eff_rain, 0.0)
     calc_runtime = int(jinja_round(needed_mm / flow_rate, 0))

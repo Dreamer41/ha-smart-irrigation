@@ -46,6 +46,22 @@ def test_rain_deduction_caps_history_depth_at_10():
     assert total_capped == total_at_10
 
 
+def test_rain_deduction_max_lookback_days_is_overridable():
+    # A storm sitting just past a 4-day window must not count once the
+    # caller passes max_lookback_days=4 -- this is what plan_routine_irrigation
+    # now does with its own interval_days instead of relying on the 10 default.
+    history = [0.0, 0.0, 0.0, 0.0, 77.0, 31.5, 12.7]  # big rain at days 5-7
+    total = calc.rain_deduction_mm(
+        0.0, history, days_elapsed=11, low_eff=0.2, mid_eff=0.6, high_eff=1.0, max_lookback_days=4
+    )
+    assert total == 0.0
+    # Same history with the old default (10) would have picked up the storm.
+    total_default = calc.rain_deduction_mm(
+        0.0, history, days_elapsed=11, low_eff=0.2, mid_eff=0.6, high_eff=1.0
+    )
+    assert total_default > 0.0
+
+
 def test_three_day_average_drops_corrupt_days():
     # One corrupt day (-10) is dropped, not averaged in as 0/garbage.
     assert calc.three_day_average_peak_temp([30.0, 32.0, -10.0]) == calc.jinja_round((30.0 + 32.0) / 2, 2)
@@ -95,6 +111,41 @@ def test_plan_routine_irrigation_needed_mm_never_negative():
     )
     assert plan.needed_mm == 0.0
     assert plan.calc_runtime_minutes == 0
+
+
+def test_plan_routine_irrigation_old_storm_no_longer_blocks_new_cycle():
+    """Regression test for the real 2026-09-21 incident: a storm 5-7 days
+    ago (already handled by the separate significant-rain drydown holdoff)
+    used to keep crediting the routine cycle's rain deduction for up to 10
+    days afterwards, even though the interval is only 3-4 days. Once the
+    drydown holdoff has cleared (checked separately by the caller, not by
+    this function), the rain-credit window must match the current interval,
+    not a fixed 10 days, so old already-handled rain can't silently zero out
+    every cycle until it ages out of a much longer window.
+    """
+    # Cool tier -> interval_days=4, target 25mm/7*4 = ~14.3mm. Big rain sits
+    # at days 5-7 (indices 4-6), outside a 4-day window but inside the old
+    # fixed 10-day one.
+    history = [0.0, 0.0, 0.0, 0.0, 77.0, 31.5, 12.7, 0.0, 0.0, 0.0]
+    plan = calc.plan_routine_irrigation(
+        avg_peak_temp=29.7,
+        hot_threshold=31.5,
+        cool_threshold=30.0,
+        normal_weekly_mm=35.0,
+        hot_weekly_mm=45.0,
+        cool_weekly_mm=25.0,
+        flow_rate=0.24,
+        days_elapsed=11,
+        today_rain_mm=0.0,
+        rain_day_history_mm=history,
+        rain_eff_low=0.2,
+        rain_eff_mid=0.6,
+        rain_eff_high=1.0,
+    )
+    assert plan.interval_days == 4
+    assert plan.eff_rain_mm == 0.0  # the days-5-7 storm is outside the 4-day window
+    assert plan.needed_mm > 0.0
+    assert plan.calc_runtime_minutes > 0
 
 
 def test_drydown_and_due_thresholds_use_correct_buffer():
