@@ -900,10 +900,12 @@ its factory default.
 | `..._deep_soak_max_safety_runtime_cap` / `..._routine_max_safety_runtime_cap` (min) | hard abort ceiling for a single cycle — if the calculated runtime exceeds this, that cycle is aborted rather than run, since it usually means a miscalibration | **check this for very low-flow drip emitters** (below roughly 0.1mm/min): the calculated runtime for a full target can genuinely run into several hundred minutes, and the factory default caps (124min / 103min) will wrongly abort a perfectly correct, just-slow cycle. Raise the cap (up to 900min) to comfortably cover `target_mm / flow_rate_mm_per_min` for this zone's real numbers — don't just raise it blindly to max "to be safe," since its whole job is catching a genuine miscalibration. The deep-soak cap is moot if deep soak is disabled (§6a). |
 | `..._max_daily_irrigation_runtime_safety_cap` (min) | hard ceiling on TOTAL runtime across both cycles in a rolling day — catches a mis-set schedule firing more often than intended, separate from the per-cycle caps above | factory default (240min) is generous; only worth lowering for a genuinely water-restricted setup, and worth checking it comfortably covers deep soak + routine's realistic combined runtime for this zone before lowering it |
 | `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | **only relevant if a pump-power sensor is configured** — ask for the pump's rated running wattage, set ~20-30% below it; skip this row entirely for a zone with no pump-power sensor |
-| `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d) |
+| `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes; also the number the **self-tuning** feature (below) nudges automatically | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d). Note this one can drift 0.5d at a time on its own over time based on how the person actually uses the manual/snooze buttons — that's expected, not a bug, and they can always move it back by hand |
 | `..._deep_soak_subsoil_dry_down_holdoff` (days) | same, for deep soak | **irrelevant if deep soak is disabled (§6a)** — otherwise usually higher than the routine holdoff, since trees/deep roots hold subsoil moisture longer |
+| `..._deep_soak_interval_days` (days, default 14) | how many days between deep-soak cycles | shallow-rooted/frequent-deep-soak crops: lower (7-10d); deep-rooted trees needing infrequent deep watering: higher (18-30d). Same category as the target depth above — suggest from crop/root-depth reasoning, let the person override |
 | `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§7.2) | leave at 0 for a single-zone/independent-pump setup |
 | `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§7.4) | see §7.4 |
+| `..._soil_moisture_dry_threshold` (%) / `..._soil_moisture_wet_threshold` (%) | only relevant if a soil-moisture sensor was set (§7.7) | see §7.7 |
 
 **Quick weekly-water-target starting points by crop type** (mm/week, normal
 weather — adjust from here rather than treating these as exact):
@@ -1222,6 +1224,35 @@ action needed:
 - **Flow meter drops out:** the no-flow-detected check is skipped for that
   cycle rather than firing a false alarm — "no data" is never treated as
   "definitely zero flow."
+- **Soil moisture sensor drops out (§7.7):** the routine-irrigation decision
+  falls back to the plain modeled interval, exactly as if no soil-moisture
+  sensor had ever been configured, until it reports a real reading again.
+
+### 7.7 Optional soil-moisture sensor
+Only set this up if the person has an actual soil-moisture probe already
+installed (this is never something to suggest buying just for ZoneFlow —
+it's a pure enhancement on top of the modeled schedule, not a requirement).
+Requires a `sensor.*` entity reporting moisture as a percentage.
+
+1. Set the zone's "Soil Moisture Sensor" field to that entity (config flow,
+   or later via **Options**).
+2. Ask about the two threshold numbers, `..._soil_moisture_dry_threshold`
+   (default 20%) and `..._soil_moisture_wet_threshold` (default 60%):
+   - Sandy/fast-draining soil dries out at a higher raw percentage than clay
+     holding the same practical moisture — if the person knows their
+     sensor's typical dry/wet readings for their soil, use those instead of
+     the defaults.
+   - Shallow-rooted, drought-sensitive plants benefit from a higher dry
+     threshold (react to dryness sooner); drought-tolerant/deep-rooted
+     plants can tolerate a lower one.
+3. Explain the mechanic briefly if asked: this is deliberately **routine-only**,
+   not deep soak — a shallow probe measures topsoil moisture, which is
+   exactly what the routine cycle targets, but doesn't reflect the
+   root-zone depth the deep-soak cycle is aiming for. Below the dry
+   threshold, ZoneFlow waters even if the modeled interval isn't due yet;
+   above the wet threshold, it skips even if the interval says overdue; in
+   between, it defers entirely to the plain modeled schedule, same as
+   before this was configured. A dropout degrades the same way (§7.6).
 
 ## 8. Verify before you're done
 
@@ -1250,10 +1281,10 @@ Do not consider setup finished until these are confirmed for each zone:
 2. Check the zone's diagnostic sensors exist and show sane values: rain
    past 24h/3d/7d/14d (if a rain gauge is configured), 3-day average peak
    temperature (if a temp sensor is configured), next-irrigation estimate,
-   Soil Profile (should reflect what was set in §4), and Growth Stage Ramp
-   (only meaningfully non-100% if that feature is on — §6). Also confirm the
-   `switch.<zone>_deep_soak_enabled` entity exists and its on/off state
-   matches whatever you set/recommended in §6a.
+   Days Until Next Run, Soil Profile (should reflect what was set in §4),
+   and Growth Stage Ramp (only meaningfully non-100% if that feature is on
+   — §6). Also confirm the `switch.<zone>_deep_soak_enabled` entity exists
+   and its on/off state matches whatever you set/recommended in §6a.
 3. Confirm the lock/abort binary sensors both read "off"/`False` at rest —
    if either is stuck on, something is wrong before you hand this back to
    the person unattended (`zoneflow.reset_lock` clears a stuck lock, but

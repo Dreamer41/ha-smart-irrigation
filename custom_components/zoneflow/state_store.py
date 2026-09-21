@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass, field
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
+from .const import DEFAULT_HEALTH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
 from .rain_tracker import RainWindowTracker
 
 
@@ -89,6 +89,29 @@ class IrrigationState:
     # the dashboard instead of Settings -> Configure. None means "use the
     # config-flow/options value," exactly as before this existed.
     growth_ramp_profile_override: str | None = None
+
+    # Pure human journal fields (select.py / text.py) -- see const.py's
+    # HEALTH_STATUS_OPTIONS comment. Nothing in the controller reads either
+    # one; they exist purely for a person to record how the zone's actually
+    # doing, with no effect on scheduling or watering amounts.
+    health_status: str = DEFAULT_HEALTH_STATUS
+    health_notes: str = ""
+
+    # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
+    # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
+    # when not snoozed. Compared against the local date at each cycle's
+    # run-gate, not a timestamp/countdown, so it always means "skip
+    # whichever of today's scheduled runs hasn't happened yet" regardless
+    # of what time of day the button was pressed, and it can never leak
+    # into skipping tomorrow's run by drifting past a fixed duration.
+    snooze_date_iso: str | None = None
+
+    # Self-tuning intervals (controller.py's _register_self_tune_signal) --
+    # see const.py's SELF_TUNE_* comment. Two independent rolling counts,
+    # each reset by the other, so a mixed pattern of presses never quietly
+    # accumulates toward a threshold on either side.
+    self_tune_early_streak: int = 0
+    self_tune_skip_streak: int = 0
 
     def rain_tracker(self) -> RainWindowTracker:
         return RainWindowTracker.from_persisted(self.rain_samples)

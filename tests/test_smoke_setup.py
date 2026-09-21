@@ -75,6 +75,7 @@ async def test_setup_creates_all_expected_entities(hass):
     sensor_ids = {s.entity_id for s in hass.states.async_all("sensor")}
     assert any("rain_past_24h" in e for e in sensor_ids)
     assert any("next_irrigation_estimate" in e for e in sensor_ids)
+    assert any("days_until_next_run" in e for e in sensor_ids)
     assert any("3_day_average_peak_temperature" in e for e in sensor_ids)
     # Regression: a zone that has never run yet used to fall back to epoch
     # (Jan 1970) as its "last routine run" baseline, showing a nonsensical
@@ -82,6 +83,10 @@ async def test_setup_creates_all_expected_entities(hass):
     # "unknown" instead until there's a real run to estimate from.
     next_irrigation_entity_id = next(e for e in sensor_ids if "next_irrigation_estimate" in e)
     assert hass.states.get(next_irrigation_entity_id).state == "unknown"
+    # Same "never run yet" guard applies to the days-until-next-run
+    # countdown, which is derived from the same estimate.
+    days_until_entity_id = next(e for e in sensor_ids if "days_until_next_run" in e)
+    assert hass.states.get(days_until_entity_id).state == "unknown"
 
     # binary sensors
     binary_ids = {s.entity_id for s in hass.states.async_all("binary_sensor")}

@@ -18,6 +18,7 @@
           "rain_counter_entity": "Rain gauge tip counter (optional)",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
+          "soil_moisture_entity": "Soil moisture sensor (optional, % -- when set, decides routine watering directly instead of the modeled schedule)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
           "soil_type": "Soil type",
@@ -50,6 +51,7 @@
           "rain_counter_entity": "Rain gauge tip counter (optional)",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
+          "soil_moisture_entity": "Soil moisture sensor (optional, % -- when set, decides routine watering directly instead of the modeled schedule)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
           "soil_type": "Soil type",
@@ -171,6 +173,9 @@
       "deep_soak_drydown_days": {
         "name": "Deep Soak Subsoil Dry-Down Holdoff"
       },
+      "deep_soak_interval_days": {
+        "name": "Deep Soak Interval"
+      },
       "deep_soak_rain_threshold": {
         "name": "Deep Soak Rain Ceiling (14d)"
       },
@@ -194,6 +199,12 @@
       },
       "forecast_dry_override_days": {
         "name": "Forecast Dry-Spell Override"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Soil Moisture Dry Threshold"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Soil Moisture Wet Threshold"
       },
       "routine_pulse_count": {
         "name": "Routine Pulse Count (Split-Cycle)"
@@ -255,6 +266,9 @@
       },
       "reset_lock": {
         "name": "Reset Irrigation Lock"
+      },
+      "snooze_today": {
+        "name": "Snooze Today"
       }
     },
     "binary_sensor": {
@@ -291,6 +305,9 @@
       },
       "next_irrigation_estimate": {
         "name": "Next Irrigation Estimate"
+      },
+      "days_until_next_run": {
+        "name": "Days Until Next Run"
       },
       "last_water_delivered": {
         "name": "Last Water Delivered (Estimate)"
@@ -341,6 +358,20 @@
           "established_perennial": "Establishing perennial (e.g. a young tree or shrub)",
           "custom": "Custom (set your own curve)"
         }
+      },
+      "health_status": {
+        "name": "Health",
+        "state": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "poor": "Poor",
+          "sick": "Sick"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Health Notes"
       }
     }
   },
@@ -376,6 +407,20 @@
     "reset_lock": {
       "name": "Reset Irrigation Lock",
       "description": "Force-clears the mutex lock and abort flag. Emergency use only.",
+      "fields": {
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone's device. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Snooze Today",
+      "description": "Skips whichever of this zone's scheduled cycles (deep soak, routine, or both) hasn't already run today, without changing any other setting. Normal scheduling resumes automatically starting tomorrow.",
       "fields": {
         "device_id": {
           "name": "Zone Device",

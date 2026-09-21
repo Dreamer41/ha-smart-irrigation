@@ -17,8 +17,9 @@ SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
 SERVICE_RUN_ROUTINE = "run_routine_irrigation"
 SERVICE_RESET_LOCK = "reset_lock"
 SERVICE_TEST_PULSE = "test_pulse"
+SERVICE_SNOOZE_TODAY = "snooze_today"
 
-# These four are domain-level services, not entity-platform services, so
+# These five are domain-level services, not entity-platform services, so
 # Home Assistant's automatic area/device -> entity expansion (the thing
 # that makes e.g. light.turn_on with an area_id "just work") does not apply
 # here -- we resolve device_id/entity_id -> zone ourselves in
@@ -116,10 +117,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             await _resolve_controller(hass, call).run_deep_soak()
 
         async def _handle_run_routine(call: ServiceCall) -> None:
-            await _resolve_controller(hass, call).run_routine_irrigation()
+            # manual=True feeds the self-tuning "early" signal, same as the
+            # button -- a service call is just as much a deliberate human
+            # decision as pressing the button.
+            await _resolve_controller(hass, call).run_routine_irrigation(manual=True)
 
         async def _handle_reset_lock(call: ServiceCall) -> None:
             await _resolve_controller(hass, call).reset_lock()
+
+        async def _handle_snooze_today(call: ServiceCall) -> None:
+            await _resolve_controller(hass, call).snooze_today()
 
         async def _handle_test_pulse(call: ServiceCall) -> None:
             # Deliberately bypasses every schedule/dry-down/rain gate — this
@@ -133,6 +140,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_RUN_ROUTINE, _handle_run_routine, schema=ZONE_TARGET_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_RESET_LOCK, _handle_reset_lock, schema=ZONE_TARGET_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_TEST_PULSE, _handle_test_pulse, schema=TEST_PULSE_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_SNOOZE_TODAY, _handle_snooze_today, schema=ZONE_TARGET_SCHEMA)
 
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
@@ -148,6 +156,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         controller: ZoneFlowController = hass.data[DOMAIN].pop(entry.entry_id)
         await controller.async_unload()
         if not hass.data[DOMAIN]:
-            for service in (SERVICE_RUN_DEEP_SOAK, SERVICE_RUN_ROUTINE, SERVICE_RESET_LOCK, SERVICE_TEST_PULSE):
+            for service in (
+                SERVICE_RUN_DEEP_SOAK,
+                SERVICE_RUN_ROUTINE,
+                SERVICE_RESET_LOCK,
+                SERVICE_TEST_PULSE,
+                SERVICE_SNOOZE_TODAY,
+            ):
                 hass.services.async_remove(DOMAIN, service)
     return unloaded

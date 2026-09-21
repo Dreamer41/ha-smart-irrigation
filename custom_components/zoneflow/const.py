@@ -20,6 +20,7 @@ PLATFORMS = [
     Platform.DATETIME,
     Platform.SWITCH,
     Platform.SELECT,
+    Platform.TEXT,
 ]
 
 STORAGE_VERSION = 1
@@ -48,6 +49,17 @@ CONF_PUMP_ID = "pump_id"
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
 CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
 CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter
+# Optional -- a % soil-moisture sensor. When configured AND currently
+# readable, it becomes the direct decider of whether routine irrigation is
+# due (see ZoneFlowController._soil_moisture_pct and run_routine_irrigation's
+# dry/wet threshold gate below), instead of only the time-interval-since-
+# last-watering estimate. Deliberately routine-only, not deep soak -- a
+# shallow surface probe measures near-surface moisture, not the deeper
+# root-zone dryness deep soak targets, which is already handled by the
+# separate "Deep Soak Subsoil Dry-Down Holdoff" number. Unconfigured or
+# currently unavailable/unknown both mean the same thing: fall back to the
+# existing modeled schedule exactly as if this feature didn't exist.
+CONF_SOIL_MOISTURE_ENTITY = "soil_moisture_entity"
 CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
 CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
 CONF_CSV_PATH = "csv_path"
@@ -85,6 +97,14 @@ DEFAULT_SOIL_TYPE = "unknown"
 DEFAULT_DRAINAGE = "unknown"
 DEFAULT_SLOPE = "flat"
 DEFAULT_IRRIGATION_METHOD = "drip"
+
+# A pure human journal entity (select.py's ZoneFlowHealthSelect + text.py's
+# ZoneFlowHealthNotesText) -- nothing in the controller reads either value,
+# they exist purely so a person (or anyone else who tends the zone) has
+# somewhere to record how the plant is actually doing over time, without
+# that ever silently changing what/when ZoneFlow waters.
+HEALTH_STATUS_OPTIONS = ["excellent", "good", "poor", "sick"]
+DEFAULT_HEALTH_STATUS = "good"
 
 # Growth-stage auto-ramp (optional, off by default -- see controller.py's
 # growth_ramp_fraction()). "off" means the weekly-target math behaves
@@ -193,7 +213,9 @@ DAILY_SHIFT_TIME = "23:59:50"  # matches shift_avocado_daily_peak_temps / shift_
 # ---------------------------------------------------------------------------
 # Fixed structural constants taken directly from the automation (not sliders)
 # ---------------------------------------------------------------------------
-DEEP_SOAK_INTERVAL_DAYS = 14
+# Deep-soak interval used to be fixed here at 14 -- it's now the
+# "deep_soak_interval_days" NUMBER_DEFS entry below, adjustable per zone
+# (see calc.deep_soak_due). Only the buffer stays a fixed constant.
 DEEP_SOAK_INTERVAL_BUFFER_SECONDS = 6 * 3600  # "14-day check with a 6-hour buffer"
 # Pulse COUNT and REST MINUTES used to be fixed here (3 / 20 for both
 # cycles) -- they are now the "..._pulse_count" / "..._pulse_rest_minutes"
@@ -214,6 +236,23 @@ VALVE_STUCK_ON_MINUTES = 150
 STALE_LOCK_MINUTES = 180
 POWER_LOSS_GRACE_MINUTES = 10
 STARTUP_GRACE_SECONDS = 120  # "delay: 00:02:00" before checking stale lock on startup
+
+# Self-tuning intervals (ZoneFlowController._register_self_tune_signal):
+# a rolling streak of manual "Run Routine Now" presses made BEFORE the
+# modeled schedule says routine irrigation is due nudges
+# "routine_drydown_days" shorter (the person keeps deciding the plant
+# needs water sooner than the model thinks); a rolling streak of "Snooze
+# Today" presses nudges it longer (the person keeps deciding it doesn't).
+# Either streak resets the other -- a mixed pattern never quietly
+# accumulates toward a threshold on either side. These are algorithm
+# parameters, not a per-crop physical quantity, so they're fixed constants
+# rather than a tunable number entity (same category as VALVE_STUCK_ON_MINUTES
+# above), while the number they actually adjust (routine_drydown_days)
+# stays exactly as adjustable as it always was -- a self-tune nudge is
+# indistinguishable from a person moving that slider themselves, and
+# either can override the other at any time.
+SELF_TUNE_STREAK_THRESHOLD = 3
+SELF_TUNE_ADJUST_STEP_DAYS = 0.5  # matches routine_drydown_days' own NUMBER_DEFS step
 
 # Significant-rain thresholds (avocado_significant_rain_logger)
 SIGNIFICANT_RAIN_24H_MM = 35.0
@@ -255,6 +294,12 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "max_runtime_minutes": ("Routine Max Safety Runtime Cap", 10.0, 900.0, 5.0, "min"),
     "routine_drydown_days": ("Routine Dry-Down Holdoff", 1.0, 10.0, 0.5, "d"),
     "deep_soak_drydown_days": ("Deep Soak Subsoil Dry-Down Holdoff", 4.0, 14.0, 0.5, "d"),
+    "deep_soak_interval_days": ("Deep Soak Interval", 3.0, 30.0, 1.0, "d"),
+    # NOTE: the rain-ceiling check just below still looks at the fixed
+    # rolling "14d" rain_windows() bucket (a standard reporting window
+    # shared with the dashboard diagnostics), independent of whatever this
+    # zone's deep_soak_interval_days is now set to -- they only happened to
+    # share the number 14 back when the interval itself was hardcoded.
     "deep_soak_rain_threshold": ("Deep Soak Rain Ceiling (14d)", 0.0, 100.0, 5.0, "mm"),
     "rain_mm_per_tip": ("Rain Gauge mm per Tip (Calibration)", 0.05, 1.0, 0.001, "mm"),
     "preirrigation_rain_threshold_mm": ("Pre-Irrigation Cancel Threshold (30min)", 0.5, 20.0, 0.5, "mm"),
@@ -271,6 +316,15 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "forecast_rain_threshold_mm": ("Forecast Rain Skip Threshold", 0.5, 20.0, 0.5, "mm"),
     "forecast_probability_threshold_pct": ("Forecast Rain Probability Threshold", 0.0, 100.0, 5.0, "%"),
     "forecast_dry_override_days": ("Forecast Dry-Spell Override", 1.0, 10.0, 1.0, "d"),
+    # Only apply when a soil-moisture entity is configured for this zone --
+    # see const.py's CONF_SOIL_MOISTURE_ENTITY comment and
+    # ZoneFlowController.run_routine_irrigation's threshold gate. Not
+    # ordering-enforced against each other (same as the growth-ramp custom
+    # curve's points) -- a dry_pct set above wet_pct just means the
+    # "ambiguous middle band that defers to the modeled schedule" never
+    # occurs, which is harmless, not broken.
+    "soil_moisture_dry_pct": ("Soil Moisture Dry Threshold", 0.0, 100.0, 1.0, "%"),
+    "soil_moisture_wet_pct": ("Soil Moisture Wet Threshold", 0.0, 100.0, 1.0, "%"),
     # Split-cycle watering: how many on/soak/on pulses a cycle is broken
     # into, and how long the soak gap between pulses is. Slow-draining
     # soil (clay) generally wants MORE pulses and a LONGER soak so water
@@ -331,6 +385,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "max_runtime_minutes": 103.0,
     "routine_drydown_days": 4.0,
     "deep_soak_drydown_days": 8.0,
+    "deep_soak_interval_days": 14.0,
     "deep_soak_rain_threshold": 40.0,
     "rain_mm_per_tip": 0.3,
     "preirrigation_rain_threshold_mm": 3.0,
@@ -339,6 +394,8 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "forecast_rain_threshold_mm": 3.0,
     "forecast_probability_threshold_pct": 60.0,
     "forecast_dry_override_days": 2.0,
+    "soil_moisture_dry_pct": 20.0,
+    "soil_moisture_wet_pct": 60.0,
     "routine_pulse_count": 3.0,
     "routine_pulse_rest_minutes": 20.0,
     "deep_soak_pulse_count": 3.0,

@@ -222,14 +222,67 @@ def routine_due(elapsed_seconds: float, interval_days: int, buffer_seconds: int)
     return elapsed_seconds >= (interval_days * 86400 - buffer_seconds)
 
 
-def deep_soak_due(elapsed_seconds: float, interval_days: int, buffer_seconds: int) -> bool:
-    """Port of the deep-soak 14-day-with-6h-buffer check."""
+def deep_soak_due(elapsed_seconds: float, interval_days: float, buffer_seconds: int) -> bool:
+    """Port of the deep-soak interval-with-6h-buffer check. interval_days
+    used to be a fixed 14 -- it's now the zone's own tunable
+    "deep_soak_interval_days" number entity, hence the float type (a
+    number entity always reports a float even when set to a whole number)."""
     return elapsed_seconds >= (interval_days * 86400 - buffer_seconds)
 
 
 def drydown_satisfied(elapsed_seconds_since_rain: float, drydown_days: float) -> bool:
     """Port of the dry-down check shared by both deep soak and routine."""
     return elapsed_seconds_since_rain >= (drydown_days * 86400)
+
+
+def routine_due_with_soil_moisture(
+    interval_due: bool,
+    moisture_pct: float | None,
+    dry_pct: float,
+    wet_pct: float,
+) -> bool:
+    """Whether routine irrigation is due, factoring in an optional soil-
+    moisture reading on top of the plain time-interval estimate
+    (`interval_due`, from routine_due() above) -- see
+    ZoneFlowController.run_routine_irrigation and const.py's
+    CONF_SOIL_MOISTURE_ENTITY comment.
+
+    moisture_pct is None whenever no soil-moisture sensor is configured, or
+    it's currently unavailable/unreadable -- in that case this is a pure
+    passthrough of interval_due, i.e. behaves exactly as if the feature
+    didn't exist.
+
+    When a reading IS available, it becomes the direct decider at the
+    extremes and the interval estimate only breaks the tie in the
+    ambiguous middle band:
+      - moisture >= wet_pct  -> definitely wet enough: skip, regardless of
+        how overdue the time interval says this is.
+      - moisture <= dry_pct  -> definitely dry: water now, even if the
+        time interval hasn't technically elapsed yet.
+      - dry_pct < moisture < wet_pct -> genuinely ambiguous: defer to
+        interval_due, exactly as if there were no soil-moisture sensor.
+    dry_pct and wet_pct are not required to be ordered relative to each
+    other (same as the growth-ramp custom curve's points) -- if dry_pct
+    ends up >= wet_pct, the "ambiguous middle band" is simply empty, which
+    just means every reading resolves at one of the two extremes; it is
+    not treated as a misconfiguration error."""
+    if moisture_pct is None:
+        return interval_due
+    if moisture_pct >= wet_pct:
+        return False
+    if moisture_pct <= dry_pct:
+        return True
+    return interval_due
+
+
+def adjust_drydown_days(current_days: float, step_days: float, min_days: float, max_days: float) -> float:
+    """Nudge current_days by step_days (positive to extend, negative to
+    shrink), clamped to [min_days, max_days] -- see
+    ZoneFlowController._register_self_tune_signal and const.py's
+    SELF_TUNE_* comment. The clamp is what keeps repeated self-tune nudges
+    from ever pushing the value outside the same safe range a person could
+    reach by hand on the number slider."""
+    return max(min_days, min(max_days, current_days + step_days))
 
 
 @dataclass

@@ -36,6 +36,7 @@ from .const import (
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
     CONF_SLOPE,
+    CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
     CONF_VALVE_ENTITY,
     CONF_WEATHER_ENTITY,
@@ -87,6 +88,7 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     rain_counter_key = _optional_entity_key(defaults, CONF_RAIN_COUNTER_ENTITY)
     outdoor_temp_key = _optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)
     flow_meter_key = _optional_entity_key(defaults, CONF_FLOW_METER_ENTITY)
+    soil_moisture_key = _optional_entity_key(defaults, CONF_SOIL_MOISTURE_ENTITY)
 
     return vol.Schema(
         {
@@ -105,6 +107,7 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             flow_meter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
+            soil_moisture_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
             notify_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="notify")),
             weather_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="weather")),
             # Descriptive soil/site metadata -- see const.py's comment on

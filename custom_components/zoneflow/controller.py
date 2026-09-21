@@ -55,12 +55,12 @@ from .const import (
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
     CONF_SLOPE,
+    CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
     CONF_VALVE_ENTITY,
     CONF_WEATHER_ENTITY,
     DAILY_SHIFT_TIME,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
-    DEEP_SOAK_INTERVAL_DAYS,
     DEEP_SOAK_MIN_PULSE_MINUTES,
     DEFAULT_DEEP_SOAK_ENABLED,
     DEFAULT_DRAINAGE,
@@ -75,10 +75,13 @@ from .const import (
     GROWTH_RAMP_OFF,
     GROWTH_STAGE_MODE_AUTO,
     NUMBER_DEFAULTS,
+    NUMBER_DEFS,
     POWER_LOSS_GRACE_MINUTES,
     PUMP_POWER_WAIT_TIMEOUT_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
     ROUTINE_MIN_PULSE_MINUTES,
+    SELF_TUNE_ADJUST_STEP_DAYS,
+    SELF_TUNE_STREAK_THRESHOLD,
     SIGNIFICANT_RAIN_24H_MM,
     SIGNIFICANT_RAIN_4D_MM,
     SIGNIFICANT_RAIN_7D_MM,
@@ -173,6 +176,13 @@ class ZoneFlowController:
         no-flow-detected check that can substitute for the pump-power audit
         when no pump-power sensor is configured."""
         return self.entry.options.get(CONF_FLOW_METER_ENTITY, self.entry.data.get(CONF_FLOW_METER_ENTITY))
+
+    @property
+    def soil_moisture_entity(self) -> str | None:
+        """Optional % soil-moisture sensor -- see const.py's
+        CONF_SOIL_MOISTURE_ENTITY comment and run_routine_irrigation's
+        dry/wet threshold gate."""
+        return self.entry.options.get(CONF_SOIL_MOISTURE_ENTITY, self.entry.data.get(CONF_SOIL_MOISTURE_ENTITY))
 
     @property
     def soil_type(self) -> str:
@@ -789,6 +799,26 @@ class ZoneFlowController:
         except (TypeError, ValueError):
             return None
 
+    async def _soil_moisture_pct(self) -> float | None:
+        """Current soil-moisture reading (%), or None if no soil-moisture
+        sensor is configured for this zone or its reading isn't currently
+        parseable (missing entity, or state "unavailable"/"unknown" --
+        float() raising ValueError on either of those strings is exactly
+        what makes this fail open the same way _flow_meter_reading does).
+        None here always means "no override -- defer to the modeled
+        schedule", never "treat as 0% (bone dry)" or "100% (saturated)" --
+        either numeric guess could force a wrong decision in either
+        direction, where deferring to the existing time-interval schedule
+        is always a safe, previously-correct fallback."""
+        entity_id = self.soil_moisture_entity
+        if not entity_id:
+            return None
+        state = self.hass.states.get(entity_id)
+        try:
+            return float(state.state) if state else None
+        except (TypeError, ValueError):
+            return None
+
     @property
     def _pump_lock_key(self) -> str:
         """Which physical pump this zone's valve draws from, for
@@ -1164,8 +1194,12 @@ class ZoneFlowController:
 
         if state.lock_on:
             return
+        if self._is_snoozed_today():
+            return
         if not calc.deep_soak_due(
-            now_ts - (state.last_deep_soak_ts or 0.0), DEEP_SOAK_INTERVAL_DAYS, DEEP_SOAK_INTERVAL_BUFFER_SECONDS
+            now_ts - (state.last_deep_soak_ts or 0.0),
+            self.number("deep_soak_interval_days"),
+            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
         ):
             return
         if not calc.drydown_satisfied(
@@ -1262,15 +1296,30 @@ class ZoneFlowController:
             phone_msg=f"DEEP SOAK COMPLETED: {plan.target_mm}mm applied over 3 pulses ({plan.total_runtime_minutes} min).",
         )
 
-    async def run_routine_irrigation(self) -> None:
+    async def run_routine_irrigation(self, manual: bool = False) -> None:
         """Port of avocado_routine_irrigation. Called by the 05:30 trigger and
-        by the manual 'Run Routine Irrigation Now' button/service."""
+        by the manual 'Run Routine Irrigation Now' button/service.
+
+        `manual=True` marks this call as a human-triggered press (button or
+        service, not the scheduled time trigger). It never bypasses any
+        gate -- a manual press is evaluated by exactly the same logic as
+        the scheduled trigger, so it can still be a no-op, same as before
+        this feature existed. Its only effect is feeding the self-tuning
+        "early" signal (see _register_self_tune_signal / const.py's
+        SELF_TUNE_* comment) at the one point where the plain time-based
+        model explicitly says "not yet due": the person pressing the
+        button there is itself the signal, whether or not soil moisture
+        (if configured) goes on to force the cycle to run anyway. A manual
+        press that was already due, or blocked earlier by the lock/snooze
+        gate, never touches the streak."""
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
         last_run_ts = state.last_routine_ts or 0.0
         elapsed_seconds = now_ts - last_run_ts
 
         if state.lock_on:
+            return
+        if self._is_snoozed_today():
             return
 
         # effective_avg_peak_temp() (not avg_peak_temp()) is what must drive
@@ -1281,8 +1330,26 @@ class ZoneFlowController:
         avg_peak_temp = self.effective_avg_peak_temp()
         hot_threshold = self.number("hot_temp_threshold")
         interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
+        interval_due = calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS)
 
-        if not calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS):
+        # Soil moisture (if configured and currently readable) becomes the
+        # direct decider at the extremes, ahead of the plain time-interval
+        # estimate -- see calc.routine_due_with_soil_moisture's docstring.
+        # Deliberately routine-only, not deep soak (see const.py's
+        # CONF_SOIL_MOISTURE_ENTITY comment).
+        moisture_pct = await self._soil_moisture_pct()
+        if not calc.routine_due_with_soil_moisture(
+            interval_due,
+            moisture_pct,
+            self.number("soil_moisture_dry_pct"),
+            self.number("soil_moisture_wet_pct"),
+        ):
+            # This is the plain time-based model's own "not yet due" verdict
+            # (soil moisture, if configured, didn't override it to True) --
+            # a manual press landing here, itself, is the self-tune "early"
+            # signal, independent of whether anything actually gets watered.
+            if manual and not interval_due:
+                await self._register_self_tune_signal("early")
             return
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("routine_drydown_days")
@@ -1410,6 +1477,13 @@ class ZoneFlowController:
         state.today_runtime_minutes += plan.calc_runtime_minutes
         await self.store.async_save()
         await self._set_lock(False)
+        # Reaching completion with interval_due False only happens when a
+        # configured soil-moisture sensor forced the run through despite the
+        # plain time model saying "not yet" -- if this was also a manual
+        # press, it's a second, rarer flavor of the same "early" signal as
+        # the no-op case above (that one already returned before here).
+        if manual and not interval_due:
+            await self._register_self_tune_signal("early")
         await self._log_event(
             event_type="Routine Irrigation Completed",
             status="Completed",
@@ -1466,6 +1540,96 @@ class ZoneFlowController:
             notify_phone=False,
             phone_title="",
             phone_msg="",
+        )
+
+    def _is_snoozed_today(self) -> bool:
+        """See run_deep_soak()/run_routine_irrigation()'s snooze gate and
+        state_store.py's snooze_date_iso comment. A plain local-date string
+        comparison rather than a timestamp/duration -- it self-expires the
+        moment the calendar date changes, with no separate cleanup needed,
+        and it means "skip today" always means today's local calendar day
+        regardless of what time the button was pressed."""
+        return self.store.state.snooze_date_iso == dt_util.now().date().isoformat()
+
+    async def snooze_today(self) -> None:
+        """Manual 'Snooze Today' button/service. Skips whichever of this
+        zone's scheduled cycles (deep soak, routine, or both) hasn't
+        already run today, without touching any other setting -- the
+        zone's schedule, targets, and every other gate go right back to
+        normal starting tomorrow with no further action needed. Does
+        nothing to an already-running cycle (the mutex lock, not this
+        flag, governs that) -- it only prevents a NEW cycle from starting
+        for the rest of today."""
+        self.store.state.snooze_date_iso = dt_util.now().date().isoformat()
+        await self.store.async_save()
+        await self._register_self_tune_signal("skip")
+        await self._log_event(
+            event_type="Manual Snooze Today",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+        )
+
+    async def _register_self_tune_signal(self, direction: str) -> None:
+        """Record one "early" (a manual routine run that completed before
+        the modeled interval said it was due) or "skip" (a Snooze Today
+        press) signal, and nudge routine_drydown_days once the relevant
+        streak hits SELF_TUNE_STREAK_THRESHOLD -- see const.py's SELF_TUNE_*
+        comment for the full rationale. Either direction resets the other
+        streak, so an early-then-skip (or vice versa) pattern never quietly
+        carries partial progress toward the opposite nudge."""
+        state = self.store.state
+        if direction == "early":
+            state.self_tune_early_streak += 1
+            state.self_tune_skip_streak = 0
+            step_days = -SELF_TUNE_ADJUST_STEP_DAYS
+            streak = state.self_tune_early_streak
+        else:
+            state.self_tune_skip_streak += 1
+            state.self_tune_early_streak = 0
+            step_days = SELF_TUNE_ADJUST_STEP_DAYS
+            streak = state.self_tune_skip_streak
+
+        if streak < SELF_TUNE_STREAK_THRESHOLD:
+            await self.store.async_save()
+            return
+
+        if direction == "early":
+            state.self_tune_early_streak = 0
+        else:
+            state.self_tune_skip_streak = 0
+
+        _, min_days, max_days, _, _ = NUMBER_DEFS["routine_drydown_days"]
+        current_days = self.number("routine_drydown_days")
+        new_days = calc.adjust_drydown_days(current_days, step_days, min_days, max_days)
+        await self.store.async_save()
+
+        if new_days == current_days:
+            # Already sitting at the clamp boundary -- nothing to move and
+            # nothing worth logging (the streak still reset above, so a new
+            # streak has to build up again before this is re-evaluated).
+            return
+
+        number_entity = self.numbers.get("routine_drydown_days")
+        if number_entity is not None:
+            await number_entity.async_set_native_value(new_days)
+
+        await self._log_event(
+            event_type="Self-Tuning Adjustment",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            phone_title="🌱 Self-Tuning Adjustment",
+            phone_msg=(
+                f"Routine Dry-Down Holdoff {'shortened' if step_days < 0 else 'extended'} to "
+                f"{new_days:g}d, based on your recent {'early runs' if direction == 'early' else 'snoozes'}."
+            ),
         )
 
     # ------------------------------------------------------------------

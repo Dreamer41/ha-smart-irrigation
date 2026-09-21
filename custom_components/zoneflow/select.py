@@ -27,6 +27,13 @@ on the planting date (growth stage):
   "growth_ramp_custom_*" number sliders (const.py/number.py) for a
   plant-specific ramp that doesn't have to fit one of the three presets.
 
+- ZoneFlowHealthSelect: a pure human journal field (Excellent / Good /
+  Poor / Sick) for tracking how the zone's plant is actually doing over
+  time -- see const.py's HEALTH_STATUS_OPTIONS comment. Nothing in the
+  controller reads this; it exists purely for a person (or anyone else
+  who tends the zone) to record their own observation, paired with the
+  free-text notes field in text.py.
+
 Both persist through IrrigationState (state_store.py), the same Store
 already used for the planting date etc., so a value set here survives an
 HA restart exactly like everything else that store holds.
@@ -45,6 +52,7 @@ from .const import (
     GROWTH_STAGE_MODE_AUTO,
     GROWTH_STAGE_PRESETS,
     GROWTH_STAGE_SELECT_OPTIONS,
+    HEALTH_STATUS_OPTIONS,
     SOIL_TYPE_OPTIONS,
 )
 
@@ -56,6 +64,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowSoilTypeSelect(entry, controller),
             ZoneFlowGrowthStageSelect(entry, controller),
             ZoneFlowGrowthRampProfileSelect(entry, controller),
+            ZoneFlowHealthSelect(entry, controller),
         ]
     )
 
@@ -154,5 +163,28 @@ class ZoneFlowGrowthRampProfileSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.growth_ramp_profile_override = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowHealthSelect(_Base):
+    """Pure human journal field -- see module docstring. Deliberately has
+    no getter/setter into the controller's watering logic at all; this is
+    the entire implementation, on purpose."""
+
+    _attr_icon = "mdi:sprout"
+    _attr_options = HEALTH_STATUS_OPTIONS
+    _attr_translation_key = "health_status"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_health_status_select"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.store.state.health_status
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.health_status = option
         await self._controller.store.async_save()
         self.async_write_ha_state()

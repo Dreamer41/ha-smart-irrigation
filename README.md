@@ -138,6 +138,43 @@ verification test pulse run before it calls the job done.
    it shares a pump-power sensor with an existing zone, pump-sharing kicks in
    automatically.
 
+## Also included
+
+- **Deep-soak interval, adjustable**: how many days between deep-soak cycles
+  is its own `number` slider (default 14, 3-30 days) instead of a fixed
+  constant -- tune it per zone right from the dashboard, same as every other
+  threshold.
+- **Days Until Next Run sensor**: a plain-language countdown to whichever
+  comes first, the next routine cycle or the next deep soak, so you can see
+  at a glance whether a zone is about to water without doing the math from
+  the raw timestamps yourself.
+- **Health journal**: a per-zone `select` (Excellent / Good / Poor / Sick)
+  plus a free-text notes field, purely for you to record how the plant's
+  actually doing over time. Nothing in ZoneFlow reads either one back -- it
+  never changes scheduling or watering amounts -- it's just a place to keep
+  that context next to the zone instead of in a separate notebook.
+- **Snooze Today button**: skip whichever of today's scheduled cycles (deep
+  soak, routine, or both) hasn't run yet, without touching the schedule,
+  targets, or any other gate -- everything's back to normal starting
+  tomorrow with no further action needed.
+- **Optional soil-moisture input**: point a zone at a `sensor.*` soil
+  moisture entity (with adjustable dry/wet % thresholds) and it becomes the
+  direct decider for routine irrigation at the extremes -- dry soil waters
+  even if the modeled interval isn't due yet, wet soil skips even if it's
+  overdue. In the ambiguous middle band, or if the sensor is unconfigured or
+  currently unreadable, it defers entirely to the existing modeled schedule
+  -- this is a pure addition, never a replacement, and fully inert if you
+  don't set it up.
+- **Self-tuning routine interval**: ZoneFlow quietly learns from how you use
+  the manual controls. Press "Run Routine Irrigation Now" three times in a
+  row while the model still thinks it isn't due yet, and it shortens the
+  Routine Dry-Down Holdoff slider a notch -- you keep telling it the plant
+  needs water sooner than it thinks. Do the same with "Snooze Today" three
+  times running, and it lengthens that same slider instead. Either pattern
+  resets the other, the nudge is clamped to the slider's normal safe range,
+  and you can always override it by hand at any time -- a self-tune nudge is
+  just the same slider move a human could make, nothing more.
+
 ## Recommended cutover
 
 If you're replacing an existing YAML-based irrigation automation:

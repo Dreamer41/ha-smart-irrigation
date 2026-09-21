@@ -165,3 +165,53 @@ def test_estimate_next_irrigation_takes_the_later_date():
         routine_drydown_days=4.0,
     )
     assert est.next_ts == max(est.routine_next_ts, est.rain_next_ts)
+
+
+def test_soil_moisture_none_is_a_pure_passthrough_of_interval_due():
+    """No sensor configured (or currently unreadable) must behave exactly
+    as if the feature didn't exist -- a pure passthrough either way."""
+    assert calc.routine_due_with_soil_moisture(True, None, 20.0, 60.0) is True
+    assert calc.routine_due_with_soil_moisture(False, None, 20.0, 60.0) is False
+
+
+def test_soil_moisture_wet_skips_even_when_interval_says_overdue():
+    assert calc.routine_due_with_soil_moisture(True, 65.0, 20.0, 60.0) is False
+
+
+def test_soil_moisture_dry_waters_even_when_interval_says_not_due_yet():
+    assert calc.routine_due_with_soil_moisture(False, 15.0, 20.0, 60.0) is True
+
+
+def test_soil_moisture_ambiguous_middle_band_defers_to_interval():
+    assert calc.routine_due_with_soil_moisture(True, 40.0, 20.0, 60.0) is True
+    assert calc.routine_due_with_soil_moisture(False, 40.0, 20.0, 60.0) is False
+
+
+def test_soil_moisture_exactly_at_thresholds():
+    # >= wet_pct skips; <= dry_pct waters -- boundary values are inclusive
+    # on both sides, matching the docstring's ">=" / "<=" wording exactly.
+    assert calc.routine_due_with_soil_moisture(True, 60.0, 20.0, 60.0) is False
+    assert calc.routine_due_with_soil_moisture(False, 20.0, 20.0, 60.0) is True
+
+
+def test_soil_moisture_inverted_thresholds_never_raises():
+    """dry_pct >= wet_pct isn't cross-validated (same as the growth-ramp
+    custom curve's points) -- every reading must still resolve to a real
+    True/False at one of the two extremes rather than erroring."""
+    assert calc.routine_due_with_soil_moisture(True, 50.0, 70.0, 30.0) is False
+    assert calc.routine_due_with_soil_moisture(True, 10.0, 70.0, 30.0) is True
+
+
+def test_adjust_drydown_days_shrinks_and_extends():
+    assert calc.adjust_drydown_days(4.0, -0.5, 1.0, 10.0) == 3.5
+    assert calc.adjust_drydown_days(4.0, 0.5, 1.0, 10.0) == 4.5
+
+
+def test_adjust_drydown_days_clamps_at_minimum():
+    assert calc.adjust_drydown_days(1.2, -0.5, 1.0, 10.0) == 1.0
+    assert calc.adjust_drydown_days(1.0, -0.5, 1.0, 10.0) == 1.0
+
+
+def test_adjust_drydown_days_clamps_at_maximum():
+    assert calc.adjust_drydown_days(9.8, 0.5, 1.0, 10.0) == 10.0
+    assert calc.adjust_drydown_days(10.0, 0.5, 1.0, 10.0) == 10.0

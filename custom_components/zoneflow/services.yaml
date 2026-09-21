@@ -68,6 +68,28 @@ reset_lock:
           integration: zoneflow
           multiple: true
 
+snooze_today:
+  name: Snooze Today
+  description: >-
+    Skips whichever of this zone's scheduled cycles (deep soak, routine, or
+    both) hasn't already run today, without changing any other setting.
+    Normal scheduling resumes automatically starting tomorrow.
+  fields:
+    device_id:
+      name: Zone Device
+      description: The zone's device. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+          multiple: true
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+          multiple: true
+
 test_pulse:
   name: Test Pulse
   description: >-

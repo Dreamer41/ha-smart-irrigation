@@ -32,6 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     entities += [
         ZoneFlowAvgPeakTempSensor(entry, controller),
         ZoneFlowNextIrrigationSensor(entry, controller),
+        ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
         ZoneFlowTodayRainSensor(entry, controller),
         ZoneFlowSoilProfileSensor(entry, controller),
@@ -108,6 +109,47 @@ class ZoneFlowNextIrrigationSensor(_Base):
             routine_drydown_days=self._controller.number("routine_drydown_days"),
         )
         return dt_util.utc_from_timestamp(est.next_ts)
+
+
+class ZoneFlowDaysUntilNextRunSensor(_Base):
+    """A friendly "how many days until the next scheduled run" readout,
+    derived from the same estimate_next_irrigation() math as
+    ZoneFlowNextIrrigationSensor above -- this is just that same timestamp
+    expressed as a countdown instead of a calendar date, for a dashboard
+    or cheat-sheet reader who'd rather see "in 2.5 days" than do date math
+    in their head. Inherits the same known limitation as the timestamp
+    sensor: it models the interval/drydown gates only, not the rain-credit
+    calculation, so it can occasionally under-count when a recent rain
+    credit would push the real next run further out. Clamped to 0 rather
+    than showing a negative countdown when the modeled estimate has
+    already passed but the gates haven't actually fired yet (e.g. still
+    waiting on the rain-credit calc) -- "0 days" reads as "due any time
+    now", which is accurate, where a negative number would just look like
+    a bug to whoever's reading the dashboard."""
+
+    _attr_native_unit_of_measurement = "d"
+    _attr_icon = "mdi:calendar-arrow-right"
+    _attr_suggested_display_precision = 1
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_days_until_next_run"
+        self._attr_translation_key = "days_until_next_run"
+
+    @property
+    def native_value(self) -> float | None:
+        state = self._controller.store.state
+        if state.last_routine_ts is None:
+            return None
+        est = calc.estimate_next_irrigation(
+            last_routine_ts=state.last_routine_ts,
+            last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
+            avg_peak_temp=self._controller.avg_peak_temp(),
+            hot_threshold=self._controller.number("hot_temp_threshold"),
+            routine_drydown_days=self._controller.number("routine_drydown_days"),
+        )
+        seconds_until = est.next_ts - dt_util.utcnow().timestamp()
+        return round(max(seconds_until, 0.0) / 86400, 1)
 
 
 class ZoneFlowLastWaterDeliveredSensor(_Base):
