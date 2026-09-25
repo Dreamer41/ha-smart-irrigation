@@ -172,3 +172,20 @@ async def test_a_less_drought_tolerant_crop_can_be_configured_to_override_sooner
     # the hardy zone's 5-day limit.
     assert await thirsty._forecast_gate_allows_run("routine") is True
     assert await hardy._forecast_gate_allows_run("routine") is False
+
+
+@pytest.mark.asyncio
+@pytest.mark.xfail(strict=True, reason=(
+    "FINDING: the forecast gate reads the forecast's precipitation as mm "
+    "without checking the weather entity's precipitation_unit. On an HA set "
+    "to imperial units the forecast is in inches (0.33 in = 8.4 mm), so a "
+    "rainy forecast reads as 0.33 mm and never holds a run off. Seen live in "
+    "the sandbox (weather.forecast_home reports precipitation_unit 'in')."
+))
+async def test_a_forecast_in_inches_is_converted_before_comparing_to_the_mm_threshold(hass, fake_valve_services):
+    await _seed(hass)
+    hass.states.async_set(WEATHER, "rainy", {"precipitation_unit": "in"})
+    _register_forecast_service(hass, precipitation=0.33)  # 8.4 mm
+    controller = await _make_zone(hass)
+
+    assert await controller._forecast_gate_allows_run("routine") is False
