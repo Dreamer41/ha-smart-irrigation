@@ -460,6 +460,7 @@ class ZoneFlowController:
         state = self.store.state
         state.today_date_iso = dt_util.now().date().isoformat()
         state.today_peak_temp_c = seed_temp
+        state.today_min_temp_c = seed_temp
         state.rain_midnight_baseline_mm = state.rain_tracker().latest_cumulative()
         state.today_runtime_minutes = 0.0
 
@@ -493,6 +494,16 @@ class ZoneFlowController:
             # reading, instead of waiting for the next midnight.
             self._start_new_day(seed_temp=temp)
         else:
+            # Minimum first, while today_peak_temp_c still shows whether the
+            # day had readings before this one: a peak with no minimum only
+            # happens on the day this version is first installed (the peak
+            # has been tracked since midnight, the minimum hasn't), so that
+            # partial day is left as None -- skipped for ET0 -- rather than
+            # recorded with a too-narrow temperature range.
+            if state.today_min_temp_c is not None:
+                state.today_min_temp_c = min(temp, state.today_min_temp_c)
+            elif state.today_peak_temp_c is None:
+                state.today_min_temp_c = temp
             state.today_peak_temp_c = max(temp, state.today_peak_temp_c) if state.today_peak_temp_c is not None else temp
         self.hass.async_create_task(self.store.async_save())
 
@@ -509,6 +520,13 @@ class ZoneFlowController:
             state.peak_temp_day_history_c[0],
             state.peak_temp_day_history_c[1],
         ]
+        # Daily-minimum shift register, for ET0 -- no fallback on purpose
+        # (see state_store.py's min_temp_day_history_c comment).
+        state.min_temp_day_history_c = [
+            state.today_min_temp_c,
+            state.min_temp_day_history_c[0],
+            state.min_temp_day_history_c[1],
+        ]
         # Rain day shift register (10-deep)
         today_rain = self.today_rain_mm()
         state.rain_day_history_mm = [today_rain, *state.rain_day_history_mm[:9]]
@@ -521,6 +539,38 @@ class ZoneFlowController:
     def avg_peak_temp(self) -> float:
         state = self.store.state
         return calc.three_day_average_peak_temp(state.peak_temp_day_history_c)
+
+    def et0_daily_history(self) -> list[float | None]:
+        """Hargreaves ET0 (mm/day) for each of the last three completed
+        days, newest first, using Home Assistant's own configured home
+        latitude. A day is None when it has no real min+max pair on record
+        -- including the peak register's carried-forward fallback days,
+        since those always have a None minimum alongside them."""
+        state = self.store.state
+        latitude = self.hass.config.latitude
+        today = dt_util.now().date()
+        values: list[float | None] = []
+        for i, (t_min, t_max) in enumerate(zip(state.min_temp_day_history_c, state.peak_temp_day_history_c)):
+            day = today - timedelta(days=i + 1)
+            values.append(calc.hargreaves_et0(t_min, t_max, latitude, day.timetuple().tm_yday))
+        return values
+
+    def avg_et0(self) -> float | None:
+        """3-day average reference ET0 (mm/day), or None until at least
+        one full day of min/max tracking has been recorded. Display-only
+        for now -- see calculations.py's ET0 section comment."""
+        return calc.average_et0(self.et0_daily_history())
+
+    def today_et0_so_far(self) -> float | None:
+        """Today's ET0 from the min/max seen SO FAR -- informational only
+        (it grows through the day as the temperature range widens)."""
+        state = self.store.state
+        return calc.hargreaves_et0(
+            state.today_min_temp_c,
+            state.today_peak_temp_c,
+            self.hass.config.latitude,
+            dt_util.now().date().timetuple().tm_yday,
+        )
 
     def effective_avg_peak_temp(self) -> float | None:
         """The rolling 3-day average to use for the routine hot/cool/normal

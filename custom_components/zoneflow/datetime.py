@@ -40,6 +40,10 @@ LAST_EVENT_FIELDS: list[tuple[str, str]] = [
     # profile itself defaulting to "off". Setting/updating this later is
     # exactly as valid as setting it at initial setup.
     ("planting_date_ts", "Planting / Transplant Date"),
+    # Pure journal field (paired with select.py's "Next Fertilizing In"
+    # dropdown) -- unlike the entries above, nothing in the controller ever
+    # reads this one; it's just where a person records the last feed.
+    ("last_fertilizing_ts", "Last Fertilizing"),
 ]
 
 

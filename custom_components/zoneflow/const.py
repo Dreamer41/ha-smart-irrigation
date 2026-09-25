@@ -106,6 +106,14 @@ DEFAULT_IRRIGATION_METHOD = "drip"
 HEALTH_STATUS_OPTIONS = ["excellent", "good", "poor", "sick"]
 DEFAULT_HEALTH_STATUS = "good"
 
+# Fertilizing journal (datetime.py's "Last Fertilizing" + select.py's
+# ZoneFlowFertilizingIntervalSelect) -- same pure-journal rule as the health
+# fields above: nothing in the controller reads either value, so recording
+# a feed never changes what/when ZoneFlow waters. Options are whole months,
+# stored as strings because a select entity's options are strings.
+FERTILIZING_INTERVAL_OPTIONS = [str(m) for m in range(1, 13)]
+DEFAULT_FERTILIZING_INTERVAL = "3"
+
 # Growth-stage auto-ramp (optional, off by default -- see controller.py's
 # growth_ramp_fraction()). "off" means the weekly-target math behaves
 # exactly as it always has; any other profile scales the weekly target by

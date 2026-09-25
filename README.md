@@ -150,7 +150,9 @@ verification test pulse run before it calls the job done.
   the raw timestamps yourself.
 - **Health journal**: a per-zone `select` (Excellent / Good / Poor / Sick)
   plus a free-text notes field, purely for you to record how the plant's
-  actually doing over time. Nothing in ZoneFlow reads either one back -- it
+  actually doing over time, along with a Last Fertilizing date and a Next
+  Fertilizing In dropdown (1-12 months). Nothing in ZoneFlow reads any of
+  them back -- it
   never changes scheduling or watering amounts -- it's just a place to keep
   that context next to the zone instead of in a separate notebook.
 - **Snooze Today button**: skip whichever of today's scheduled cycles (deep

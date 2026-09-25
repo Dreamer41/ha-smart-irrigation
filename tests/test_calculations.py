@@ -8,6 +8,8 @@ import math
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "custom_components" / "zoneflow"))
 
 import calculations as calc  # noqa: E402
@@ -215,3 +217,44 @@ def test_adjust_drydown_days_clamps_at_minimum():
 def test_adjust_drydown_days_clamps_at_maximum():
     assert calc.adjust_drydown_days(9.8, 0.5, 1.0, 10.0) == 10.0
     assert calc.adjust_drydown_days(10.0, 0.5, 1.0, 10.0) == 10.0
+
+
+# --- Hargreaves-Samani ET0 ------------------------------------------------
+
+def test_extraterrestrial_radiation_matches_fao56_example_8():
+    """FAO-56 Example 8: 20 deg S on 3 September (day 246) -> Ra = 32.2
+    MJ/m2/day. The function returns mm/day, i.e. x0.408."""
+    ra_mm = calc.extraterrestrial_radiation_mm(-20.0, 246)
+    assert ra_mm / calc.MJ_M2_TO_MM_WATER == pytest.approx(32.2, abs=0.1)
+
+
+def test_extraterrestrial_radiation_survives_polar_day_and_night():
+    assert calc.extraterrestrial_radiation_mm(80.0, 172) > 0  # midsummer sun
+    assert calc.extraterrestrial_radiation_mm(80.0, 355) == 0.0  # polar night
+
+
+def test_hargreaves_et0_matches_hand_calculation():
+    ra = calc.extraterrestrial_radiation_mm(9.5, 268)
+    expected = 0.0023 * (28.5 + 17.8) * (32.0 - 25.0) ** 0.5 * ra
+    assert calc.hargreaves_et0(25.0, 32.0, 9.5, 268) == pytest.approx(expected)
+    # A tropical day like that lands in the usual 4-5 mm/day band.
+    assert 4.0 < calc.hargreaves_et0(25.0, 32.0, 9.5, 268) < 5.5
+
+
+def test_hargreaves_et0_rises_with_heat_and_temperature_range():
+    base = calc.hargreaves_et0(25.0, 32.0, 9.5, 268)
+    assert calc.hargreaves_et0(25.0, 35.0, 9.5, 268) > base
+    assert calc.hargreaves_et0(28.0, 32.0, 9.5, 268) < base
+
+
+@pytest.mark.parametrize(
+    "t_min,t_max",
+    [(None, 30.0), (20.0, None), (31.0, 30.0), (-60.0, 10.0), (10.0, 75.0)],
+)
+def test_hargreaves_et0_returns_none_for_unusable_pairs(t_min, t_max):
+    assert calc.hargreaves_et0(t_min, t_max, 9.5, 268) is None
+
+
+def test_average_et0_drops_missing_days_and_never_invents_a_value():
+    assert calc.average_et0([4.0, None, 5.0]) == 4.5
+    assert calc.average_et0([None, None, None]) is None

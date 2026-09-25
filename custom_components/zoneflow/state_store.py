@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass, field
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import DEFAULT_HEALTH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
+from .const import DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
 from .rain_tracker import RainWindowTracker
 
 
@@ -28,10 +28,16 @@ class IrrigationState:
     rain_day_history_mm: list[float] = field(default_factory=lambda: [0.0] * RAIN_HISTORY_DEPTH_DAYS)
     # outdoor_peak_day_1 (yesterday) .. outdoor_peak_day_3
     peak_temp_day_history_c: list[float | None] = field(default_factory=lambda: [None, None, None])
+    # Matching daily-minimum register (same shift timing, same depth), added
+    # for the Hargreaves ET0 estimate. Unlike the peak register it never
+    # carries a fallback value forward -- a day with no readings stays None
+    # and is simply left out of the ET0 average.
+    min_temp_day_history_c: list[float | None] = field(default_factory=lambda: [None, None, None])
 
     # Today's in-progress bookkeeping (reset at local midnight)
     today_date_iso: str | None = None
     today_peak_temp_c: float | None = None
+    today_min_temp_c: float | None = None
     rain_midnight_baseline_mm: float = 0.0
 
     # Mutex / safety
@@ -96,6 +102,12 @@ class IrrigationState:
     # doing, with no effect on scheduling or watering amounts.
     health_status: str = DEFAULT_HEALTH_STATUS
     health_notes: str = ""
+
+    # Fertilizing journal -- same pure-journal rule as the health fields
+    # directly above (see const.py's FERTILIZING_INTERVAL_OPTIONS comment).
+    # last_fertilizing_ts is None until someone records a feed.
+    last_fertilizing_ts: float | None = None
+    fertilizing_interval_months: str = DEFAULT_FERTILIZING_INTERVAL
 
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None

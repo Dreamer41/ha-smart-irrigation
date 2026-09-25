@@ -31,6 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     ]
     entities += [
         ZoneFlowAvgPeakTempSensor(entry, controller),
+        ZoneFlowReferenceEt0Sensor(entry, controller),
         ZoneFlowNextIrrigationSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
@@ -79,6 +80,42 @@ class ZoneFlowAvgPeakTempSensor(_Base):
     @property
     def native_value(self) -> float:
         return self._controller.avg_peak_temp()
+
+
+class ZoneFlowReferenceEt0Sensor(_Base):
+    """3-day average reference evapotranspiration (Hargreaves-Samani, see
+    calculations.py). Display-only for now: nothing in the watering math
+    reads it yet. Shows "unknown" until at least one full day of daily
+    min/max temperature has been recorded."""
+
+    _attr_native_unit_of_measurement = "mm/d"
+    _attr_icon = "mdi:water-thermometer-outline"
+    _attr_suggested_display_precision = 2
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_reference_et0_3d"
+        self._attr_translation_key = "reference_et0_3d"
+
+    @property
+    def native_value(self) -> float | None:
+        return self._controller.avg_et0()
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        state = self._controller.store.state
+        daily = self._controller.et0_daily_history()
+        today = self._controller.today_et0_so_far()
+        return {
+            "method": "Hargreaves-Samani (FAO-56)",
+            "latitude": self._controller.hass.config.latitude,
+            "daily_et0_mm": [round(v, 2) if v is not None else None for v in daily],
+            "daily_min_temp_c": list(state.min_temp_day_history_c),
+            "daily_max_temp_c": list(state.peak_temp_day_history_c),
+            "today_min_temp_c": state.today_min_temp_c,
+            "today_max_temp_c": state.today_peak_temp_c,
+            "today_et0_so_far_mm": round(today, 2) if today is not None else None,
+        }
 
 
 class ZoneFlowNextIrrigationSensor(_Base):

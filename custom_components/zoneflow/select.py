@@ -34,7 +34,11 @@ on the planting date (growth stage):
   who tends the zone) to record their own observation, paired with the
   free-text notes field in text.py.
 
-Both persist through IrrigationState (state_store.py), the same Store
+- ZoneFlowFertilizingIntervalSelect: "Next Fertilizing In" 1-12 months,
+  paired with datetime.py's "Last Fertilizing" date -- the same kind of
+  pure journal field as Health, with no effect on watering at all.
+
+All of them persist through IrrigationState (state_store.py), the same Store
 already used for the planting date etc., so a value set here survives an
 HA restart exactly like everything else that store holds.
 """
@@ -48,6 +52,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     DOMAIN,
+    FERTILIZING_INTERVAL_OPTIONS,
     GROWTH_RAMP_PROFILE_OPTIONS,
     GROWTH_STAGE_MODE_AUTO,
     GROWTH_STAGE_PRESETS,
@@ -65,6 +70,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowGrowthStageSelect(entry, controller),
             ZoneFlowGrowthRampProfileSelect(entry, controller),
             ZoneFlowHealthSelect(entry, controller),
+            ZoneFlowFertilizingIntervalSelect(entry, controller),
         ]
     )
 
@@ -186,5 +192,28 @@ class ZoneFlowHealthSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.health_status = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowFertilizingIntervalSelect(_Base):
+    """Pure journal field -- how many months after the last feed (see
+    datetime.py's "Last Fertilizing") the next one is planned. Same as
+    ZoneFlowHealthSelect: nothing in the controller reads it."""
+
+    _attr_icon = "mdi:calendar-refresh"
+    _attr_options = FERTILIZING_INTERVAL_OPTIONS
+    _attr_translation_key = "fertilizing_interval"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_fertilizing_interval_select"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.store.state.fertilizing_interval_months
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.fertilizing_interval_months = option
         await self._controller.store.async_save()
         self.async_write_ha_state()

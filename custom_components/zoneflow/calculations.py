@@ -89,6 +89,71 @@ def three_day_average_peak_temp(day_values: list[float | None]) -> float:
     return jinja_round(sum(valid) / len(valid), 2)
 
 
+# ----------------------------------------------------------------------
+# Reference evapotranspiration (ET0) -- Hargreaves-Samani
+# ----------------------------------------------------------------------
+# Not a port of anything in the original YAML: this is the temperature-only
+# ET0 method from FAO Irrigation & Drainage Paper 56 (eq. 52), chosen
+# because it needs nothing beyond the outdoor temperature sensor every zone
+# already has, plus latitude and the date. Penman-Monteith (the FAO
+# reference method) would need humidity, wind and solar-radiation sensors.
+# For now this is display-only -- nothing in the watering math reads it
+# yet.
+
+SOLAR_CONSTANT_MJ_M2_MIN = 0.0820
+MJ_M2_TO_MM_WATER = 0.408  # latent heat conversion, FAO-56 eq. 20
+
+
+def extraterrestrial_radiation_mm(latitude_deg: float, day_of_year: int) -> float:
+    """Ra, top-of-atmosphere solar radiation for one day, expressed as mm/day
+    of evaporation-equivalent (FAO-56 eqs. 21-25, then x0.408).
+
+    Clamps the sunset-hour-angle argument to [-1, 1] so polar day/night
+    latitudes give 24h/0h of sun instead of a math domain error."""
+    phi = math.radians(latitude_deg)
+    angle = 2 * math.pi * day_of_year / 365
+    dr = 1 + 0.033 * math.cos(angle)
+    decl = 0.409 * math.sin(angle - 1.39)
+    ws = math.acos(max(-1.0, min(1.0, -math.tan(phi) * math.tan(decl))))
+    ra_mj = (
+        (24 * 60 / math.pi)
+        * SOLAR_CONSTANT_MJ_M2_MIN
+        * dr
+        * (ws * math.sin(phi) * math.sin(decl) + math.cos(phi) * math.cos(decl) * math.sin(ws))
+    )
+    return max(ra_mj, 0.0) * MJ_M2_TO_MM_WATER
+
+
+def hargreaves_et0(
+    t_min_c: float | None, t_max_c: float | None, latitude_deg: float, day_of_year: int
+) -> float | None:
+    """Daily reference ET0 in mm/day (FAO-56 eq. 52):
+
+        ET0 = 0.0023 * (Tmean + 17.8) * sqrt(Tmax - Tmin) * Ra
+
+    Returns None -- "no usable reading for that day", never a guessed
+    number -- when either temperature is missing, outside a physically
+    plausible range (-40..60C), or Tmin > Tmax (a corrupt pair)."""
+    if t_min_c is None or t_max_c is None:
+        return None
+    if not (-40.0 <= t_min_c <= 60.0 and -40.0 <= t_max_c <= 60.0) or t_min_c > t_max_c:
+        return None
+    t_mean = (t_max_c + t_min_c) / 2
+    ra = extraterrestrial_radiation_mm(latitude_deg, day_of_year)
+    return max(0.0023 * (t_mean + 17.8) * math.sqrt(t_max_c - t_min_c) * ra, 0.0)
+
+
+def average_et0(daily_values: list[float | None]) -> float | None:
+    """Mean of the days that produced a usable ET0, or None if none did --
+    same drop-the-bad-days approach as three_day_average_peak_temp, but
+    with no invented fallback number, since a made-up ET0 would look like
+    a real measurement on the dashboard."""
+    valid = [v for v in daily_values if v is not None]
+    if not valid:
+        return None
+    return jinja_round(sum(valid) / len(valid), 2)
+
+
 @dataclass
 class DeepSoakPlan:
     target_mm: float
