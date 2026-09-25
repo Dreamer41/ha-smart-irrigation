@@ -44,6 +44,19 @@ def make_entry(hass, **overrides):
     return entry
 
 
+def schedule_clear_of_now():
+    """Deep soak / routine times that just passed today, so the next
+    scheduled run is ~24 h away. For tests that move the clock hours ahead
+    (watchdogs): with the fixed 05:00 / 05:30 defaults, whether a real,
+    uncompressed cycle started mid-test depended on the time of day the
+    suite ran."""
+    from datetime import timedelta
+    import homeassistant.util.dt as dt_util
+
+    passed = (dt_util.now() - timedelta(minutes=2)).strftime("%H:%M:%S")
+    return {CONF_DEEP_SOAK_TIME: passed, CONF_ROUTINE_TIME: passed}
+
+
 async def _seed_source_entities(hass):
     hass.states.async_set(VALVE, "off")
     hass.states.async_set(PUMP, "0")

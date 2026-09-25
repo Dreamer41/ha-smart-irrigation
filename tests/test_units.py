@@ -102,7 +102,7 @@ async def test_switching_units_never_changes_a_setting(hass, fake_valve_services
     await hass.async_block_till_done()
     c2 = hass.data[DOMAIN][entry.entry_id]
     assert c2.number("target_weekly_mm") == pytest.approx(38.1)
-    assert c2.number("hot_temp_threshold") == pytest.approx(32.222, abs=0.001)
+    assert c2.number("hot_temp_threshold") == pytest.approx(32.222, abs=0.005)  # within a tenth of the step
     st = _state(hass, "routine_normal_weekly_target")
     assert (st.attributes["unit_of_measurement"], float(st.state)) == ("mm", pytest.approx(38.1))
 
@@ -267,3 +267,15 @@ async def test_a_unit_the_person_picked_for_a_sensor_is_kept(hass, fake_valve_se
     assert await hass.config_entries.async_reload(entry.entry_id)
     await hass.async_block_till_done()
     assert hass.states.get(rain).attributes["unit_of_measurement"] == "cm"
+
+
+@pytest.mark.asyncio
+async def test_a_value_typed_in_inches_reads_cleanly_after_switching_to_metric(hass, fake_valve_services, tmp_path):
+    entry, c = await _zone(hass, tmp_path, ha_units=US_CUSTOMARY_SYSTEM)
+    await _set(hass, "routine_normal_weekly_target", 1.181)  # what 30 mm shows as
+    hass.config_entries.async_update_entry(entry, options={**entry.options, CONF_UNIT_SYSTEM: "metric"})
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert float(_state(hass, "routine_normal_weekly_target").state) == 30.0
+    # Restored from what was displayed: within a tenth of the step either way.
+    assert hass.data[DOMAIN][entry.entry_id].number("target_weekly_mm") == pytest.approx(30.0, abs=0.05)

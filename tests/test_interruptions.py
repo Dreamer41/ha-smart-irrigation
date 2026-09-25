@@ -28,7 +28,7 @@ from custom_components.zoneflow import controller as controller_module
 from custom_components.zoneflow.const import CONF_VALVE_ENTITY, DOMAIN
 
 from .test_scenarios_cycles import _history, _set, _zone
-from .test_smoke_setup import PUMP, RAIN_COUNTER, VALVE
+from .test_smoke_setup import PUMP, RAIN_COUNTER, VALVE, schedule_clear_of_now
 
 
 async def _due_routine_zone(hass, monkeypatch, tmp_path):
@@ -245,7 +245,8 @@ async def test_a_reload_during_a_long_pump_postamble_keeps_the_finished_run(
 async def test_a_run_still_checking_its_gates_during_a_reload_starts_nothing_and_raises_no_false_alarm(
     hass, fake_valve_services, monkeypatch, tmp_path
 ):
-    controller, clock, events = await _due_routine_zone(hass, monkeypatch, tmp_path)
+    controller, clock, events = await _zone(hass, monkeypatch, tmp_path, **schedule_clear_of_now())
+    _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
 
     async def slow_forecast(cycle):
         # e.g. weather.get_forecasts takes a moment while the zone is saved

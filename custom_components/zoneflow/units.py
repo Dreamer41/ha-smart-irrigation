@@ -105,11 +105,13 @@ def display_range(key: str, metric_min: float, metric_max: float, metric_step: f
 
 def display_value(key: str, metric_value: float, metric_step: float, imperial: bool) -> float:
     """Value shown on the slider: converted, rounded one digit finer than
-    the step so it reads cleanly without hiding the stored precision."""
+    the step so it reads cleanly without hiding the stored precision. In
+    metric too -- a value once typed in inches (1.181 in) is stored as
+    29.9974 mm and should read 30.0 mm, not the conversion noise."""
     value = to_display(key, metric_value, imperial)
-    if not imperial or kind(key) is None:
+    if kind(key) is None:
         return value
-    return round(value, _decimals(step(key, metric_step, True)) + 1)
+    return round(value, _decimals(step(key, metric_step, imperial)) + 1)
 
 
 def metric_from_saved(key: str, value: float, saved_unit: str | None) -> float:

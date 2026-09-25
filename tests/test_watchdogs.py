@@ -13,12 +13,12 @@ from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.zoneflow.const import DOMAIN
 
-from .test_smoke_setup import VALVE, _seed_source_entities, make_entry
+from .test_smoke_setup import VALVE, _seed_source_entities, make_entry, schedule_clear_of_now
 
 
 async def _setup(hass):
     await _seed_source_entities(hass)
-    entry = make_entry(hass)
+    entry = make_entry(hass, **schedule_clear_of_now())
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     return entry
@@ -119,7 +119,7 @@ async def test_stale_lock_on_startup_clears_lock_and_forces_valve_off(hass, fake
     if HA restarts mid-cycle, the persisted lock from before the restart
     must not permanently block future runs."""
     await _seed_source_entities(hass)
-    entry = make_entry(hass)
+    entry = make_entry(hass, **schedule_clear_of_now())
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
@@ -147,7 +147,7 @@ async def test_valve_already_open_at_startup_still_gets_the_stuck_valve_cutoff(h
     await _seed_source_entities(hass)
     hass.states.async_set(VALVE, "on")
     await hass.async_block_till_done()
-    entry = make_entry(hass)
+    entry = make_entry(hass, **schedule_clear_of_now())
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
