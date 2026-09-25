@@ -34,8 +34,8 @@ from homeassistant.helpers.event import (
     async_track_time_change,
 )
 import homeassistant.util.dt as dt_util
-from homeassistant.const import UnitOfTemperature
-from homeassistant.util.unit_conversion import TemperatureConverter
+from homeassistant.const import UnitOfTemperature, UnitOfVolume
+from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, units
 from .const import (
@@ -542,7 +542,7 @@ class ZoneFlowController:
                     runtime=0,
                     notify_phone=True,
                     phone_title="🌧️ Heavy Rain Event",
-                    phone_msg=f"Heavy rain recorded (24h: {r24:.1f}mm). Dry-down timers updated.",
+                    phone_msg=f"Heavy rain recorded (24h: {units.depth_text(r24, self.imperial)}). Dry-down timers updated.",
                     extra_log=f"Heavy rain recorded (24h: {r24:.1f}mm, 4d: {r4d:.1f}mm, 7d: {r7d:.1f}mm). Dry-down timer updated.",
                 )
             )
@@ -992,9 +992,20 @@ class ZoneFlowController:
             return None
         state = self.hass.states.get(entity_id)
         try:
-            return float(state.state) if state else None
+            value = float(state.state) if state else None
         except (TypeError, ValueError):
             return None
+        if value is None:
+            return None
+        # Internally litres; a meter reporting gallons, m³, ft³ etc. is
+        # converted from its own unit (no unit is taken as litres).
+        unit = state.attributes.get("unit_of_measurement")
+        if unit and unit != UnitOfVolume.LITERS:
+            try:
+                return VolumeConverter.convert(value, unit, UnitOfVolume.LITERS)
+            except Exception:  # noqa: BLE001 - an unknown unit: use the number as-is
+                return value
+        return value
 
     async def _soil_moisture_pct(self) -> float | None:
         """Current soil-moisture reading (%), or None if no soil-moisture
@@ -1405,7 +1416,7 @@ class ZoneFlowController:
             phone_title="",
             phone_msg="",
             extra_log=(
-                f"Skipping {cycle} run: {precip_mm:.1f}mm rain forecast"
+                f"Skipping {cycle} run: {units.depth_text(precip_mm, self.imperial)} rain forecast"
                 + (f" ({prob_pct:.0f}% probability)" if prob_pct is not None else "")
                 + f". Will override after {override_days:.0f} dry day(s) with no measured rain."
             ),
@@ -1493,7 +1504,7 @@ class ZoneFlowController:
                 runtime=0,
                 notify_phone=True,
                 phone_title="🌧️ Deep Soak Cancelled",
-                phone_msg=f"Cancelled: {rain_30min:.1f}mm fell in the last 30 minutes.",
+                phone_msg=f"Cancelled: {units.depth_text(rain_30min, self.imperial)} fell in the last 30 minutes.",
             )
             return
 
@@ -1526,7 +1537,7 @@ class ZoneFlowController:
             runtime=plan.total_runtime_minutes,
             notify_phone=True,
             phone_title="🚿 Deep Soak Completed",
-            phone_msg=f"DEEP SOAK COMPLETED: {plan.target_mm}mm applied over {plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min).",
+            phone_msg=f"DEEP SOAK COMPLETED: {units.depth_text(plan.target_mm, self.imperial)} applied over {plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min).",
         )
 
     async def run_routine_irrigation(self, manual: bool = False) -> None:
@@ -1675,7 +1686,7 @@ class ZoneFlowController:
                 runtime=0,
                 notify_phone=False,
                 phone_title="🌧️ Routine Irrigation Skipped",
-                phone_msg=f"Rain credit ({round(plan.eff_rain_mm, 1)}mm) already covers target ({round(plan.interval_target_mm, 1)}mm) — no watering needed.",
+                phone_msg=f"Rain credit ({units.depth_text(plan.eff_rain_mm, self.imperial)}) already covers target ({units.depth_text(plan.interval_target_mm, self.imperial)}) — no watering needed.",
             )
             return
 
@@ -1689,7 +1700,7 @@ class ZoneFlowController:
                 runtime=0,
                 notify_phone=True,
                 phone_title="🌧️ Routine Irrigation Cancelled",
-                phone_msg=f"Cancelled: {rain_30min:.1f}mm fell in the last 30 minutes.",
+                phone_msg=f"Cancelled: {units.depth_text(rain_30min, self.imperial)} fell in the last 30 minutes.",
             )
             return
 
@@ -1729,7 +1740,7 @@ class ZoneFlowController:
             runtime=plan.calc_runtime_minutes,
             notify_phone=True,
             phone_title="🚿 Routine Irrigation Completed",
-            phone_msg=f"Applied {plan.calc_runtime_minutes} min (Target: {round(plan.interval_target_mm, 1)}mm, Rain Deducted: {round(plan.eff_rain_mm, 1)}mm).",
+            phone_msg=f"Applied {plan.calc_runtime_minutes} min (Target: {units.depth_text(plan.interval_target_mm, self.imperial)}, Rain Deducted: {units.depth_text(plan.eff_rain_mm, self.imperial)}).",
         )
 
     async def test_pulse(self, seconds: int) -> None:

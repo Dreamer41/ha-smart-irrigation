@@ -10,7 +10,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
-from . import calculations as calc
+from . import calculations as calc, units
 from .const import DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -52,8 +52,42 @@ class _Base(SensorEntity):
         self._controller = controller
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
 
+    # Sensors with a unit set _unit_kind (see units.SENSOR_UNITS) and
+    # implement metric_native_value(); display units follow the zone's
+    # Units option. Everything is still calculated in metric.
+    _unit_kind: str | None = None
+
+    def metric_native_value(self):
+        return None
+
+    @property
+    def native_value(self):
+        value = self.metric_native_value()
+        if self._unit_kind is None or not isinstance(value, (int, float)):
+            return value
+        return units.sensor_value(self._unit_kind, value, self._controller.imperial)
+
+    @property
+    def native_unit_of_measurement(self):
+        if self._unit_kind is None:
+            return getattr(self, "_attr_native_unit_of_measurement", None)
+        return units.sensor_unit(self._unit_kind, self._controller.imperial)
+
+    @property
+    def suggested_unit_of_measurement(self):
+        # So a newly created entity shows the zone's units rather than
+        # whatever Home Assistant's own system would pick.
+        return self.native_unit_of_measurement if self._unit_kind is not None else None
+
+    @property
+    def suggested_display_precision(self):
+        if self._unit_kind is not None and self._controller.imperial:
+            return units.SENSOR_UNITS[self._unit_kind][2]
+        return getattr(self, "_attr_suggested_display_precision", None)
+
 
 class ZoneFlowRainWindowSensor(_Base):
+    _unit_kind = "depth"
     # Precipitation device class on every rain sensor (not just Rain Today),
     # so an HA set to imperial shows them all in the same unit, with a
     # sensible number of decimals instead of raw conversion noise.
@@ -68,12 +102,12 @@ class ZoneFlowRainWindowSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_rain_past_{window}"
         self._attr_translation_key = f"rain_past_{window}"
 
-    @property
-    def native_value(self) -> float:
+    def metric_native_value(self) -> float:
         return round(self._controller.rain_windows()[self._window], 2)
 
 
 class ZoneFlowAvgPeakTempSensor(_Base):
+    _unit_kind = "temp"
     _attr_native_unit_of_measurement = "°C"
     _attr_icon = "mdi:thermometer"
     _attr_device_class = "temperature"
@@ -83,12 +117,13 @@ class ZoneFlowAvgPeakTempSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_avg_peak_temp_3d"
         self._attr_translation_key = "avg_peak_temp_3d"
 
-    @property
-    def native_value(self) -> float:
+    def metric_native_value(self) -> float:
         return self._controller.avg_peak_temp()
 
 
 class ZoneFlowReferenceEt0Sensor(_Base):
+    _unit_kind = "rate"
+    _attr_device_class = "precipitation_intensity"
     """3-day average reference evapotranspiration (Hargreaves-Samani, see
     calculations.py). Display-only for now: nothing in the watering math
     reads it yet. Shows "unknown" until at least one full day of daily
@@ -103,8 +138,7 @@ class ZoneFlowReferenceEt0Sensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_reference_et0_3d"
         self._attr_translation_key = "reference_et0_3d"
 
-    @property
-    def native_value(self) -> float | None:
+    def metric_native_value(self) -> float | None:
         return self._controller.avg_et0()
 
     @property
@@ -125,6 +159,8 @@ class ZoneFlowReferenceEt0Sensor(_Base):
 
 
 class ZoneFlowWeeklyTargetSensor(_Base):
+    _unit_kind = "depth"
+    _attr_device_class = "precipitation"
     """The routine weekly target a cycle would use right now, including the
     growth ramp, and which model produced it -- so switching a zone to the
     ET curve (or it falling back to the tiers) is visible on the dashboard
@@ -148,8 +184,7 @@ class ZoneFlowWeeklyTargetSensor(_Base):
             return tier, "temperature_tiers_fallback"
         return tier, "temperature_tiers"
 
-    @property
-    def native_value(self) -> float:
+    def metric_native_value(self) -> float:
         target, _ = self._source()
         return round(target * self._controller.growth_ramp_fraction(), 2)
 
@@ -273,6 +308,8 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
 
 
 class ZoneFlowLastWaterDeliveredSensor(_Base):
+    _unit_kind = "depth"
+    _attr_device_class = "precipitation"
     _attr_native_unit_of_measurement = "mm"
     _attr_icon = "mdi:water-gauge"
 
@@ -281,8 +318,7 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_last_water_delivered"
         self._attr_translation_key = "last_water_delivered"
 
-    @property
-    def native_value(self) -> float:
+    def metric_native_value(self) -> float:
         return calc.estimate_last_water_delivered_mm(
             avg_peak_temp=self._controller.effective_avg_peak_temp(),
             hot_threshold=self._controller.number("hot_temp_threshold"),
@@ -295,6 +331,7 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
 
 
 class ZoneFlowTodayRainSensor(_Base):
+    _unit_kind = "depth"
     _attr_native_unit_of_measurement = "mm"
     _attr_icon = "mdi:weather-rainy"
     _attr_device_class = "precipitation"
@@ -305,8 +342,7 @@ class ZoneFlowTodayRainSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_rain_today"
         self._attr_translation_key = "rain_today"
 
-    @property
-    def native_value(self) -> float:
+    def metric_native_value(self) -> float:
         return round(self._controller.today_rain_mm(), 2)
 
 
@@ -386,6 +422,8 @@ class ZoneFlowGrowthRampSensor(_Base):
 
 
 class ZoneFlowLastCycleWaterSensor(_Base):
+    _unit_kind = "volume"
+    _attr_device_class = "water"
     """Measured (not estimated) water delivered by the most recently
     completed cycle, from the optional flow-meter entity -- distinct from
     ZoneFlowLastWaterDeliveredSensor above, which is always a target-based
@@ -401,6 +439,5 @@ class ZoneFlowLastCycleWaterSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_last_cycle_water_liters"
         self._attr_translation_key = "last_cycle_water_liters"
 
-    @property
-    def native_value(self) -> float | None:
+    def metric_native_value(self) -> float | None:
         return self._controller.store.state.last_cycle_water_liters

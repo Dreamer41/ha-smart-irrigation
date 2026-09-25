@@ -119,3 +119,35 @@ def metric_from_saved(key: str, value: float, saved_unit: str | None) -> float:
     if k is not None and saved_unit == IMPERIAL_UNIT[k]:
         return to_metric(key, value, True)
     return value
+
+
+# --- sensors ---------------------------------------------------------------
+LITERS_PER_GALLON = 3.785411784
+
+# kind -> (metric unit, imperial unit, imperial display precision)
+SENSOR_UNITS = {
+    "depth": ("mm", "in", 2),
+    "rate": ("mm/d", "in/d", 2),
+    "temp": ("°C", "°F", 1),
+    "volume": ("L", "gal", 1),
+}
+
+
+def sensor_value(sensor_kind: str, metric_value: float | None, imperial: bool) -> float | None:
+    if metric_value is None or not imperial:
+        return metric_value
+    if sensor_kind in ("depth", "rate"):
+        return metric_value / MM_PER_INCH
+    if sensor_kind == "temp":
+        return metric_value * 9 / 5 + 32
+    return metric_value / LITERS_PER_GALLON
+
+
+def sensor_unit(sensor_kind: str, imperial: bool) -> str:
+    metric_unit, imperial_unit, _ = SENSOR_UNITS[sensor_kind]
+    return imperial_unit if imperial else metric_unit
+
+
+def depth_text(mm: float, imperial: bool) -> str:
+    """An amount of water for log/phone text, in the zone's units."""
+    return f"{mm / MM_PER_INCH:.2f} in" if imperial else f"{mm:.1f} mm"
