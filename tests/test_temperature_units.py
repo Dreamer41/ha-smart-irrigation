@@ -70,3 +70,11 @@ async def test_midnight_seed_is_converted_too(hass, fake_valve_services):
 
     assert controller.store.state.today_peak_temp_c == pytest.approx(25.0)
     assert controller.store.state.today_min_temp_c == pytest.approx(25.0)
+
+
+@pytest.mark.asyncio
+async def test_converted_readings_are_rounded(hass, fake_valve_services):
+    controller = await _setup(hass)
+    hass.states.async_set(OUTDOOR_TEMP, "78.8", {"unit_of_measurement": "°F"})
+    await hass.async_block_till_done()
+    assert controller.store.state.today_min_temp_c == 26.0

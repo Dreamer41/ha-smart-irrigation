@@ -118,7 +118,8 @@ def _state_temp_c(state: State | None) -> float | None:
         return None
     unit = state.attributes.get("unit_of_measurement")
     if unit in (UnitOfTemperature.FAHRENHEIT, UnitOfTemperature.KELVIN):
-        return TemperatureConverter.convert(value, unit, UnitOfTemperature.CELSIUS)
+        # Rounded so 78.8F shows as 26.0, not 25.999999999999996.
+        return round(TemperatureConverter.convert(value, unit, UnitOfTemperature.CELSIUS), 2)
     return value
 
 _LOGGER = logging.getLogger(__name__)
