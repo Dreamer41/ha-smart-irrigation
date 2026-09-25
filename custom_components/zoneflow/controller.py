@@ -155,6 +155,7 @@ class ZoneFlowController:
         # from a valve that failed to close (see VALVE_STUCK_MARGIN_MINUTES).
         self._expected_pulse_minutes: float | None = None
         self._startup_unsub = None
+        self._setup_ts = 0.0
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -341,6 +342,10 @@ class ZoneFlowController:
     # Lifecycle
     # ------------------------------------------------------------------
     async def async_setup(self) -> None:
+        # When this zone started up -- the restart safety check must only
+        # ever clear a lock that was set BEFORE this, i.e. left over from
+        # before the restart (see _on_startup).
+        self._setup_ts = dt_util.utcnow().timestamp()
         await self.store.async_load()
         state = self.store.state
 
@@ -949,7 +954,14 @@ class ZoneFlowController:
     async def _on_startup(self, event) -> None:
         """Merged port of avocado_stale_lock_on_startup + avocado_startup_lock_reset."""
         await asyncio.sleep(STARTUP_GRACE_SECONDS)
-        if not self.store.state.lock_on:
+        state = self.store.state
+        if not state.lock_on:
+            return
+        # A lock taken after startup belongs to a cycle running right now
+        # (e.g. a scheduled run that began during the grace period) -- not
+        # stale. Clearing it would close that valve mid-pulse and let a
+        # second cycle start while the first is still running.
+        if state.lock_set_ts is not None and state.lock_set_ts >= self._setup_ts:
             return
         await self._set_lock(False)
         await self._set_abort(False)

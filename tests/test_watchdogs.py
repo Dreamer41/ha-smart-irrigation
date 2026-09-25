@@ -127,6 +127,7 @@ async def test_stale_lock_on_startup_clears_lock_and_forces_valve_off(hass, fake
     # Simulate "HA restarted while a cycle was running": lock left on, valve
     # left on, from before this (simulated) restart.
     await controller._set_lock(True)
+    controller.store.state.lock_set_ts = controller._setup_ts - 600  # taken before the restart
     hass.states.async_set(VALVE, "on")
     await hass.async_block_till_done()
 
@@ -186,3 +187,24 @@ async def test_a_manually_opened_valve_keeps_the_plain_150_minute_limit(hass, fa
     async_fire_time_changed(hass, dt_util.utcnow() + timedelta(minutes=151))
     await hass.async_block_till_done()
     assert hass.states.get(VALVE).state == "off"
+
+
+
+@pytest.mark.asyncio
+async def test_startup_check_leaves_a_cycle_that_began_after_startup_alone(hass, fake_valve_services):
+    """Regression (seen live in the sandbox): a cycle started within the
+    2-minute startup grace period had its lock treated as stale -- the check
+    closed the valve 13 s into the run and dropped the lock while the cycle
+    carried on. A lock taken after startup must be left alone."""
+    entry = await _setup(hass)
+    controller = hass.data[DOMAIN][entry.entry_id]
+
+    await controller._set_lock(True)  # a cycle starting now, after setup
+    hass.states.async_set(VALVE, "on")
+    await hass.async_block_till_done()
+
+    await controller._on_startup(None)
+    await hass.async_block_till_done()
+
+    assert controller.store.state.lock_on is True
+    assert hass.states.get(VALVE).state == "on"
