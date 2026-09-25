@@ -74,3 +74,15 @@ async def test_significant_rain_fires_once_on_threshold_crossing(hass):
     assert controller.store.state.last_significant_rain_ts == first_ts, (
         "the significant-rain event re-fired while already above threshold instead of only on the rising edge"
     )
+
+
+@pytest.mark.asyncio
+async def test_a_saved_state_with_an_unknown_key_still_loads(hass):
+    """A key this version doesn't know (e.g. after a downgrade) must be
+    ignored, not stop the zone from loading."""
+    from custom_components.zoneflow.state_store import IrrigationStateStore
+
+    store = IrrigationStateStore(hass, "unknown_key_test")
+    await store._store.async_save({"last_routine_ts": 123.0, "some_future_field": 1})
+    loaded = await store.async_load()
+    assert loaded.last_routine_ts == 123.0

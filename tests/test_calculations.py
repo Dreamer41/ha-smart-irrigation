@@ -78,7 +78,9 @@ def test_plan_deep_soak_matches_yaml_formula():
     # target 25mm / flow 0.24 mm/min = 104.166 -> round -> 104
     plan = calc.plan_deep_soak(target_mm=25.0, flow_rate=0.24)
     assert plan.total_runtime_minutes == round(25.0 / 0.24)
-    assert plan.pulse_runtime_minutes == max(round(plan.total_runtime_minutes / 3), 5)
+    # Split exactly: 3 pulses that add up to the logged 104 minutes.
+    assert plan.pulse_count == 3
+    assert plan.pulse_runtime_minutes * plan.pulse_count == pytest.approx(plan.total_runtime_minutes)
 
 
 def test_plan_deep_soak_pulse_floor_is_5_minutes():
@@ -295,3 +297,99 @@ def test_last_water_delivered_follows_the_override_target():
     args = (30.5, 31.5, 30.0, 35.0, 45.0, 25.0)
     assert calc.estimate_last_water_delivered_mm(*args) == 17.5
     assert calc.estimate_last_water_delivered_mm(*args, weekly_target_override_mm=28.0) == 14.0
+
+
+# --- exact pulse split -------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "total,count,floor,expected",
+    [
+        (3, 2, 1, (2, 1.5)),      # the live sandbox case: used to become 2 + 2 = 4 min
+        (84, 3, 1, (3, 28.0)),
+        (83, 3, 1, (3, 83 / 3)),  # no longer rounded per pulse
+        (2, 3, 1, (2, 1.0)),      # too small for 3 one-minute pulses -> 2 pulses
+        (1, 3, 1, (1, 1.0)),
+        (12, 3, 5, (2, 6.0)),     # deep soak: 5-min floor -> 2 pulses of 6
+        (3, 3, 5, (1, 5.0)),      # below one minimum pulse: the single floor pulse remains
+        (0, 3, 1, (3, 0.0)),
+    ],
+)
+def test_split_pulses_delivers_exactly_the_planned_minutes(total, count, floor, expected):
+    got = calc.split_pulses(total, count, floor)
+    assert got[0] == expected[0]
+    assert got[1] == pytest.approx(expected[1])
+    if total >= floor:
+        assert got[0] * got[1] == pytest.approx(total)
+
+
+# --- rain counter: resets vs glitches ---------------------------------------
+
+def _feed(readings, start=0.0, step=60.0):
+    """Feed raw counter readings a minute apart; return the tip total after each."""
+    total = last = drop_from = drop_ts = None
+    since = 0.0
+    out = []
+    for i, tips in enumerate(readings):
+        total, last, drop_from, drop_ts, since = calc.track_tip_total(
+            total, last, drop_from, drop_ts, since, tips, start + i * step
+        )
+        out.append(total)
+    return out
+
+
+def test_tip_total_counts_up_normally():
+    assert _feed([100, 101, 102, 110]) == [100, 101, 102, 110]
+
+
+def test_a_real_reset_keeps_old_rain_and_counts_new_tips():
+    assert _feed([20, 0, 1, 2, 3])[-1] == 23
+
+
+def test_a_brief_drop_to_zero_and_back_adds_no_fake_rain():
+    """The reviewer's case: a template briefly reporting 0 while its source
+    is unavailable, then the real 1500 again."""
+    assert _feed([1500, 0, 1500]) == [1500, 1500, 1500]
+
+
+def test_a_brief_drop_with_a_tip_counted_in_between_is_taken_back():
+    assert _feed([1500, 0, 1, 1500])[-1] == 1500
+
+
+def test_coming_back_above_the_old_level_counts_only_the_new_tips():
+    assert _feed([1500, 0, 1503])[-1] == 1503
+
+
+def test_a_one_tip_debounce_correction_costs_at_most_one_tip():
+    assert _feed([1500, 1499, 1500])[-1] in (1500, 1501)
+
+
+def test_a_small_counter_reset_that_climbs_back_tip_by_tip_is_real_rain():
+    # 5 tips, reset, then 6 real tips one at a time within the hour.
+    assert _feed([5, 0, 1, 2, 3, 4, 5, 6])[-1] == 11
+
+
+def test_a_glitch_lasting_hours_still_adds_no_fake_rain():
+    """Reviewer's case: a sleeping device reads 0 for two hours overnight."""
+    assert _feed([1500, 0, 1500], step=2 * 3600) == [1500, 1500, 1500]
+
+
+def test_a_glitch_with_a_little_rain_meanwhile_counts_just_that_rain():
+    assert _feed([1500, 0, 1503])[-1] == 1503
+
+
+def test_a_small_daily_reset_counter_never_loses_its_next_batch():
+    # 3 tips yesterday, reset at midnight, gauge polls and reports 5 at once.
+    assert _feed([3, 0, 5])[-1] == 8
+
+
+def test_a_big_daily_reset_counter_keeps_a_bigger_next_day():
+    # 200 tips yesterday, reset, next day a batch of 260 -- not "back where it was".
+    assert _feed([200, 0, 120, 260])[-1] == 460
+
+
+def test_a_jump_back_after_a_week_is_real_rain():
+    total = last = drop_from = drop_ts = None
+    since = 0.0
+    for tips, t in ((1500, 0), (0, 60), (1500, 60 + 8 * 86400)):
+        total, last, drop_from, drop_ts, since = calc.track_tip_total(total, last, drop_from, drop_ts, since, tips, t)
+    assert total == 3000

@@ -136,3 +136,53 @@ async def test_stale_lock_on_startup_clears_lock_and_forces_valve_off(hass, fake
     assert controller.store.state.lock_on is False
     assert controller.store.state.abort_on is False
     assert hass.states.get(VALVE).state == "off"
+
+
+@pytest.mark.asyncio
+async def test_valve_already_open_at_startup_still_gets_the_stuck_valve_cutoff(hass, fake_valve_services):
+    """Regression: after a restart mid-cycle the valve is restored "on"
+    before ZoneFlow starts listening, so no "turned on" event ever arrives.
+    The stuck-valve watchdog must be armed at setup anyway."""
+    await _seed_source_entities(hass)
+    hass.states.async_set(VALVE, "on")
+    await hass.async_block_till_done()
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(minutes=151))
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "off"
+
+
+@pytest.mark.asyncio
+async def test_a_planned_long_pulse_is_not_cut_off_but_a_stuck_one_still_is(hass, fake_valve_services):
+    """A slow drip with 1 pulse can legitimately need more than 150 minutes.
+    While ZoneFlow itself runs that pulse, the limit is the pulse + 30 min
+    margin; a valve that then fails to close is still forced off."""
+    entry = await _setup(hass)
+    controller = hass.data[DOMAIN][entry.entry_id]
+
+    controller._expected_pulse_minutes = 200  # what _execute_pulses sets before opening
+    hass.states.async_set(VALVE, "on")
+    await hass.async_block_till_done()
+
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(minutes=151))
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "on"  # still inside its planned pulse
+
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(minutes=231))
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "off"  # 200 + 30 exceeded -> stuck
+
+
+@pytest.mark.asyncio
+async def test_a_manually_opened_valve_keeps_the_plain_150_minute_limit(hass, fake_valve_services):
+    entry = await _setup(hass)
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller._expected_pulse_minutes is None
+    hass.states.async_set(VALVE, "on")
+    await hass.async_block_till_done()
+    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(minutes=151))
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "off"

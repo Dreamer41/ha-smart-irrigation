@@ -256,6 +256,12 @@ RAIN_HISTORY_DEPTH_DAYS = 10  # rain_day_1..10
 PUMP_POWER_WAIT_TIMEOUT_SECONDS = 45  # wait_template timeout before "low pump power" audit
 
 VALVE_STUCK_ON_MINUTES = 150
+# While ZoneFlow itself has the valve open for a planned pulse longer than
+# VALVE_STUCK_ON_MINUTES (a slow drip with few pulses can legitimately need
+# that), the stuck-valve limit becomes that pulse plus this margin instead,
+# so the watchdog still catches a valve that fails to close but never kills
+# a cycle that is simply doing what it was asked to.
+VALVE_STUCK_MARGIN_MINUTES = 30
 STALE_LOCK_MINUTES = 180
 POWER_LOSS_GRACE_MINUTES = 10
 STARTUP_GRACE_SECONDS = 120  # "delay: 00:02:00" before checking stale lock on startup

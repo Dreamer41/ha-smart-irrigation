@@ -52,10 +52,29 @@ async def test_days_until_next_run_matches_the_routine_interval(hass, fake_valve
 
     now_ts = dt_util.utcnow().timestamp()
     controller.store.state.last_routine_ts = now_ts
+    controller.store.state.last_deep_soak_ts = now_ts  # deep soak 14 days away, so routine is next
     controller.store.state.last_significant_rain_ts = 0.0
 
     sensor = ZoneFlowDaysUntilNextRunSensor(entry, controller)
     assert 3.9 <= sensor.native_value <= 4.1
+    assert sensor.extra_state_attributes["next_cycle"] == "routine"
+
+
+@pytest.mark.asyncio
+async def test_a_zone_that_never_deep_soaked_shows_deep_soak_due_now(hass, fake_valve_services):
+    """Deep soak enabled but never run (e.g. a migrated zone): it's due at
+    the next scheduled time, so the countdown reads 0 and says so."""
+    await _seed(hass)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    controller.store.state.last_routine_ts = dt_util.utcnow().timestamp()
+    controller.store.state.last_deep_soak_ts = None
+
+    sensor = ZoneFlowDaysUntilNextRunSensor(entry, controller)
+    assert sensor.native_value == 0.0
+    assert sensor.extra_state_attributes["next_cycle"] == "deep_soak"
 
 
 @pytest.mark.asyncio

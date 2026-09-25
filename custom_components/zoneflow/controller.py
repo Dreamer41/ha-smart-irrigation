@@ -97,9 +97,15 @@ from .const import (
     SUN_MODE_FIXED,
     DEFAULT_SUN_MODE,
     DEFAULT_SUN_OFFSET_MINUTES,
+    VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
 )
 from .state_store import IrrigationStateStore
+
+SIGNIFICANT_RAIN_ALERT_QUIET_SECONDS = 24 * 3600
+
+# Weather forecasts report precipitation in the weather entity's own unit.
+PRECIP_UNIT_TO_MM = {"mm": 1.0, "cm": 10.0, "in": 25.4}
 
 
 def _state_temp_c(state: State | None) -> float | None:
@@ -143,6 +149,11 @@ class ZoneFlowController:
         self._power_loss_cancel = None
         self._lock_stale_cancel = None
         self._abort_event = asyncio.Event()
+        # Length (minutes) of the pulse ZoneFlow itself is running right now,
+        # or None -- lets the stuck-valve watchdog tell a planned long pulse
+        # from a valve that failed to close (see VALVE_STUCK_MARGIN_MINUTES).
+        self._expected_pulse_minutes: float | None = None
+        self._startup_unsub = None
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -360,6 +371,13 @@ class ZoneFlowController:
         self._unsubs.append(
             async_track_state_change_event(self.hass, [self.valve_entity], self._on_valve_state_change)
         )
+        # A valve that is already open when ZoneFlow starts (restored "on"
+        # after a restart mid-cycle) never produces an "on" state change for
+        # the listener above to see, so arm the stuck-valve watchdog for it
+        # here, from when it actually turned on.
+        valve_now = self.hass.states.get(self.valve_entity)
+        if valve_now is not None and valve_now.state == "on":
+            self._arm_valve_stuck_watchdog(valve_now.last_changed)
         if self.rain_counter_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -390,7 +408,17 @@ class ZoneFlowController:
         # working exactly as before but explicitly outside that wait, and
         # also auto-cancels it if the entry is unloaded before the grace
         # period elapses.
+        #
+        # It must be a @callback: HA runs a plain (non-callback) sync
+        # listener in a worker thread, where creating the task fails with
+        # "loop is not the running loop" -- on a normal boot (ZoneFlow set up
+        # before HA has started) that silently dropped this whole check.
+        @callback
         def _schedule_on_startup(event=None) -> None:
+            # A one-time listener removes itself when it fires; forget our
+            # handle so unload doesn't try to remove it a second time (HA
+            # logs "Unable to remove unknown job listener" if it does).
+            self._startup_unsub = None
             self.entry.async_create_background_task(
                 self.hass, self._on_startup(event), name=f"{DOMAIN}_on_startup_{self.entry.entry_id}"
             )
@@ -398,9 +426,12 @@ class ZoneFlowController:
         if self.hass.is_running:
             _schedule_on_startup()
         else:
-            self._unsubs.append(self.hass.bus.async_listen_once("homeassistant_start", _schedule_on_startup))
+            self._startup_unsub = self.hass.bus.async_listen_once("homeassistant_start", _schedule_on_startup)
 
     async def async_unload(self) -> None:
+        if self._startup_unsub is not None:
+            self._startup_unsub()
+            self._startup_unsub = None
         for unsub in self._unsubs:
             unsub()
         self._unsubs.clear()
@@ -420,7 +451,24 @@ class ZoneFlowController:
             tips = float(new_state.state)
         except (TypeError, ValueError):
             return
-        cumulative_mm = tips * self.number("rain_mm_per_tip")
+        # The rain windows assume an ever-growing total; see
+        # calc.track_tip_total for how resets and glitches are told apart.
+        (
+            state.rain_counter_total_tips,
+            state.rain_counter_last_tips,
+            state.rain_counter_drop_from,
+            state.rain_counter_drop_ts,
+            state.rain_counter_since_drop_tips,
+        ) = calc.track_tip_total(
+            state.rain_counter_total_tips,
+            state.rain_counter_last_tips,
+            state.rain_counter_drop_from,
+            state.rain_counter_drop_ts,
+            state.rain_counter_since_drop_tips,
+            tips,
+            dt_util.utcnow().timestamp(),
+        )
+        cumulative_mm = state.rain_counter_total_tips * self.number("rain_mm_per_tip")
         tracker = state.rain_tracker()
         if not seed_only:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
@@ -455,7 +503,19 @@ class ZoneFlowController:
             if is_above and not was_above:
                 fired = True
         if fired:
+            # Every threshold crossing restarts the drydown holdoff from now,
+            # but one storm crossing several thresholds (24h, then 4-day,
+            # then 7-day) only alerts once: no second log/phone message
+            # within 24 hours of the last ALERT (timed from the alert itself,
+            # so suppressed crossings can't keep extending the quiet period,
+            # and editing the Last Significant Rain date can't hide one).
             state.last_significant_rain_ts = now_ts
+            last_alert = state.last_significant_rain_alert_ts
+            if last_alert is not None and now_ts - last_alert < SIGNIFICANT_RAIN_ALERT_QUIET_SECONDS:
+                self.hass.async_create_task(self.store.async_save())
+                _LOGGER.info("ZoneFlow: another heavy-rain threshold crossed in the same storm; holdoff restarted, no second alert")
+                return
+            state.last_significant_rain_alert_ts = now_ts
             self.hass.async_create_task(self.store.async_save())
             r24 = checks["24h"][0]
             r4d = checks["4d"][0]
@@ -788,8 +848,7 @@ class ZoneFlowController:
         # slow test/CI run), and anchoring to "now" at execution time lets
         # that gap silently steal minutes from the watchdog window.
         if new_state.state == "on":
-            fire_at = new_state.last_changed + timedelta(minutes=VALVE_STUCK_ON_MINUTES)
-            self._valve_stuck_cancel = async_track_point_in_time(self.hass, self._on_valve_stuck, fire_at)
+            self._arm_valve_stuck_watchdog(new_state.last_changed)
         elif new_state.state == "unavailable":
             fire_at = new_state.last_changed + timedelta(minutes=POWER_LOSS_GRACE_MINUTES)
             self._power_loss_cancel = async_track_point_in_time(self.hass, self._on_power_loss, fire_at)
@@ -797,12 +856,27 @@ class ZoneFlowController:
         if old_state is not None and old_state.state == "unavailable" and new_state.state != "unavailable":
             self.hass.async_create_task(self._on_power_restore(new_state))
 
+    def _valve_stuck_limit_minutes(self) -> float:
+        expected = self._expected_pulse_minutes
+        if expected is None:
+            return VALVE_STUCK_ON_MINUTES
+        return max(VALVE_STUCK_ON_MINUTES, expected + VALVE_STUCK_MARGIN_MINUTES)
+
+    @callback
+    def _arm_valve_stuck_watchdog(self, turned_on_at) -> None:
+        if self._valve_stuck_cancel:
+            self._valve_stuck_cancel()
+        self._valve_stuck_limit_armed = self._valve_stuck_limit_minutes()
+        fire_at = turned_on_at + timedelta(minutes=self._valve_stuck_limit_armed)
+        self._valve_stuck_cancel = async_track_point_in_time(self.hass, self._on_valve_stuck, fire_at)
+
     @callback
     def _on_valve_stuck(self, now) -> None:
         """Port of avocado_valve_safety_watchdog (150min stuck ON)."""
         self.hass.async_create_task(self._fire_valve_stuck())
 
     async def _fire_valve_stuck(self) -> None:
+        limit = getattr(self, "_valve_stuck_limit_armed", VALVE_STUCK_ON_MINUTES)
         await self.hass.services.async_call(
             "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
         )
@@ -813,10 +887,10 @@ class ZoneFlowController:
             status="CRITICAL",
             target_mm=0.0,
             deducted_mm=0.0,
-            runtime=150,
+            runtime=int(limit),
             notify_phone=True,
             phone_title="🚨 EMERGENCY: Valve Watchdog Fired",
-            phone_msg="Valve stayed ON for 150 minutes continuously! Emergency shutdown executed to protect trees.",
+            phone_msg=f"Valve stayed ON for {limit:.0f} minutes continuously! Emergency shutdown executed to protect the plants.",
         )
 
     @callback
@@ -1045,11 +1119,41 @@ class ZoneFlowController:
         """Runs `count` on/wait/off pulses. Returns True if completed without
         an abort, False if aborted partway (mirrors the repeat: block in both
         avocado_deep_soak and avocado_routine_irrigation)."""
+        try:
+            return await self._execute_pulse_loop(
+                count=count,
+                pulse_minutes=pulse_minutes,
+                rest_minutes=rest_minutes,
+                min_pump_watts=min_pump_watts,
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            )
+        finally:
+            # However a pulse ends (normally, aborted, or an error), a stale
+            # pulse length must never stretch the stuck-valve limit for a
+            # later, unrelated valve-on.
+            self._expected_pulse_minutes = None
+
+    async def _execute_pulse_loop(
+        self,
+        *,
+        count: int,
+        pulse_minutes: float,
+        rest_minutes: int,
+        min_pump_watts: float,
+        kind: str,
+        target_mm_for_log: float,
+        deducted_mm_for_log: float,
+        runtime_for_log: int,
+    ) -> bool:
         for index in range(1, count + 1):
             if self.store.state.abort_on:
                 _LOGGER.warning("%s: aborted by power-loss watchdog before pulse %d", kind, index)
                 return False
 
+            self._expected_pulse_minutes = pulse_minutes
             await self.hass.services.async_call(
                 "switch", "turn_on", {"entity_id": self.valve_entity}, blocking=True
             )
@@ -1083,6 +1187,7 @@ class ZoneFlowController:
                 await asyncio.wait_for(self._abort_event.wait(), timeout=pulse_minutes * 60)
 
             if self.store.state.abort_on:
+                self._expected_pulse_minutes = None
                 valve_state = self.hass.states.get(self.valve_entity)
                 if valve_state is not None and valve_state.state != "unavailable":
                     await self.hass.services.async_call(
@@ -1091,6 +1196,7 @@ class ZoneFlowController:
                 _LOGGER.warning("%s: aborted by power-loss watchdog during pulse %d", kind, index)
                 return False
 
+            self._expected_pulse_minutes = None
             await self.hass.services.async_call(
                 "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
             )
@@ -1209,7 +1315,11 @@ class ZoneFlowController:
         if precip is None:
             return None
         prob = today.get("precipitation_probability")
-        return float(precip), (float(prob) if prob is not None else None)
+        # Forecasts come in the weather entity's own unit -- inches on an HA
+        # set to imperial. The thresholds are mm, so convert first.
+        unit = state.attributes.get("precipitation_unit")
+        precip_mm = float(precip) * PRECIP_UNIT_TO_MM.get(unit, 1.0)
+        return precip_mm, (float(prob) if prob is not None else None)
 
     async def _forecast_gate_allows_run(self, cycle: str) -> bool:
         """`cycle` is "deep_soak" or "routine" -- they run on independent
@@ -1378,7 +1488,7 @@ class ZoneFlowController:
         await self._set_abort(False)
 
         completed = await self._run_pulses(
-            count=deep_soak_pulse_count,
+            count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
             rest_minutes=int(round(self.number("deep_soak_pulse_rest_minutes"))),
             min_pump_watts=self.number("pump_min_watts"),
@@ -1403,7 +1513,7 @@ class ZoneFlowController:
             runtime=plan.total_runtime_minutes,
             notify_phone=True,
             phone_title="🚿 Deep Soak Completed",
-            phone_msg=f"DEEP SOAK COMPLETED: {plan.target_mm}mm applied over 3 pulses ({plan.total_runtime_minutes} min).",
+            phone_msg=f"DEEP SOAK COMPLETED: {plan.target_mm}mm applied over {plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min).",
         )
 
     async def run_routine_irrigation(self, manual: bool = False) -> None:
@@ -1497,7 +1607,9 @@ class ZoneFlowController:
             weekly_target_override_mm=(et_weekly * ramp) if et_weekly is not None else None,
         )
 
-        if days_elapsed > 10:
+        # Only a zone that HAS watered before can be overdue -- a brand-new
+        # one would otherwise measure its gap from 1970 (~20,000 days).
+        if state.last_routine_ts is not None and days_elapsed > 10:
             await self._log_event(
                 event_type="Irrigation Overdue",
                 status="WARNING",
@@ -1572,7 +1684,7 @@ class ZoneFlowController:
         await self._set_abort(False)
 
         completed = await self._run_pulses(
-            count=routine_pulse_count,
+            count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
             rest_minutes=int(round(self.number("routine_pulse_rest_minutes"))),
             min_pump_watts=self.number("pump_min_watts"),

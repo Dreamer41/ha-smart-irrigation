@@ -232,22 +232,49 @@ async def test_pulse_count_splits_the_same_water_evenly(hass, fake_valve_service
 
 
 @pytest.mark.asyncio
-async def test_small_need_over_delivery_is_bounded_by_the_1_minute_pulse_floor(hass, fake_valve_services, monkeypatch, tmp_path):
-    """Needing only ~1 minute of water still runs every pulse for its 1-minute
-    minimum. Documents the size of that over-delivery: at most
-    (pulse_count - 1) extra minutes of flow."""
+async def test_a_small_need_uses_fewer_pulses_and_delivers_exactly_the_logged_minutes(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Regression: a tiny need used to run every pulse at its 1-minute
+    minimum (up to 3x the water asked for), and pulses were rounded to whole
+    minutes each, so the valve could be open longer than the log said."""
     controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
     _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
-    # 19.5 mm of credit against a 20 mm target -> ~0.5 mm (2 min) needed.
+    # 19.5 mm of credit against a 20 mm target -> 0.5 mm -> 2 minutes needed.
     controller.store.state.rain_day_history_mm = [19.5] + [0.0] * 9
     await _set(controller, rain_eff_mid=1.0, rain_eff_high=1.0)
+    runtimes = []
+    real_log = controller._log_event
 
+    async def capture(**kw):
+        runtimes.append(kw["runtime"])
+        await real_log(**kw)
+
+    monkeypatch.setattr(controller, "_log_event", capture)
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
 
-    needed = 20.0 - 19.5
-    over = _delivered_mm(clock, controller) - needed
-    assert 0 <= over <= (3 - 1 + 0.5) * controller.number("flow_rate_mm_per_min")
+    assert clock.pulses_for(VALVE) == [1.0, 1.0]  # 2 one-minute pulses, not 3
+    assert clock.valve_minutes(VALVE) == runtimes[-1] == 2
+
+
+@pytest.mark.asyncio
+async def test_open_valve_minutes_always_equal_the_logged_runtime(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
+    runtimes = []
+    real_log = controller._log_event
+
+    async def capture(**kw):
+        runtimes.append((kw["event_type"], kw["runtime"]))
+        await real_log(**kw)
+
+    monkeypatch.setattr(controller, "_log_event", capture)
+    for count in (1, 2, 3, 4, 7):
+        clock.reset()
+        _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
+        await _set(controller, routine_pulse_count=count)
+        await controller.run_routine_irrigation()
+        await hass.async_block_till_done()
+        assert runtimes[-1][0] == "Routine Irrigation Completed"
+        assert clock.valve_minutes(VALVE) == pytest.approx(runtimes[-1][1])
 
 
 # ---------------------------------------------------------------------------
@@ -457,22 +484,34 @@ async def test_deep_soak_and_routine_never_run_their_valve_at_the_same_time(hass
 
 
 # ---------------------------------------------------------------------------
-# Known issues found by these scenarios (xfail until decided/fixed)
+# Regressions for issues these scenarios found
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: a legitimate single pulse longer than the 150-min stuck-valve "
-    "watchdog (slow drip + pulse count 1, allowed by the 900-min caps) gets "
-    "killed mid-cycle every time and is never recorded as done."
-))
-async def test_every_allowed_pulse_fits_inside_the_stuck_valve_watchdog(hass, fake_valve_services, monkeypatch, tmp_path):
-    controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
+async def test_a_long_slow_drip_pulse_runs_whole_and_its_watchdog_limit_covers_it(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Regression: a legitimate single pulse longer than 150 min (slow drip,
+    pulse count 1, allowed by the 900-min caps) used to be killed by the
+    stuck-valve watchdog every time. The limit now stretches to the planned
+    pulse + 30 min while ZoneFlow runs it."""
+    controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
     _history(controller, last_deep_days_ago=14)
-    await _set(controller, flow_rate_mm_per_min=0.1, deep_soak_pulse_count=1, deep_soak_max_runtime_minutes=300)
+    await _set(
+        controller,
+        flow_rate_mm_per_min=0.1,
+        deep_soak_pulse_count=1,
+        deep_soak_max_runtime_minutes=300,
+        max_daily_runtime_minutes=300,  # the 240-min default daily cap would (correctly) refuse 250 min
+    )
+    limits = []
 
+    async def note_limit(index):
+        limits.append(controller._valve_stuck_limit_minutes())
+
+    clock.on_pulse = note_limit
     await controller.run_deep_soak()
     await hass.async_block_till_done()
 
-    from custom_components.zoneflow.const import VALVE_STUCK_ON_MINUTES
-    assert max(clock.pulses_for(VALVE)) <= VALVE_STUCK_ON_MINUTES
+    assert clock.pulses_for(VALVE) == [250.0]  # 25 mm / 0.1 mm/min in one pulse
+    assert limits == [280.0]
+    assert events[-1] == "Deep Soak Completed"
+    assert controller._expected_pulse_minutes is None  # cleared once the valve closed

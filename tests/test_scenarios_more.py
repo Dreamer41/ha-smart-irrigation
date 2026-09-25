@@ -60,17 +60,11 @@ async def test_rain_tips_flow_through_windows_daily_history_and_credit(hass, fak
 
 
 @pytest.mark.asyncio
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: the rain tracker assumes the tip counter never goes down. If it "
-    "resets to 0 (counter helper reset, or a gauge that forgets its count on "
-    "reboot), rain from before the reset vanishes from every window and "
-    "later windows under-count by that amount for up to 14 days -- less rain "
-    "credit and possibly a missed heavy-rain holdoff."
-))
 async def test_rain_counter_reset_to_zero_is_not_negative_rain_or_a_storm(hass, fake_valve_services, monkeypatch, tmp_path):
-    """A counter helper being reset (or the gauge's battery swapped) drops
-    the raw count back to 0. That must read as "no new rain", not a
-    negative amount -- and the next real tips must count normally."""
+    """Regression (seen live in the sandbox): a counter helper being reset,
+    or a gauge that forgets its count on reboot, drops the raw count back to
+    0. Rain already recorded must stay in every window, and the next real
+    tips must add on top."""
     controller, _, events = await _zone(hass, monkeypatch, tmp_path)
     for tips in ("20", "0", "4"):
         hass.states.async_set(RAIN_COUNTER, tips)
@@ -83,19 +77,39 @@ async def test_rain_counter_reset_to_zero_is_not_negative_rain_or_a_storm(hass, 
 
 
 @pytest.mark.asyncio
-async def test_significant_rain_fires_once_per_threshold_crossed_not_per_tip(hass, fake_valve_services, monkeypatch, tmp_path):
-    """One storm logs once per threshold it crosses (24h 35 mm, 4-day 50 mm,
-    7-day 100 mm) -- faithful to the original automation's three triggers --
-    and never again on every further tip. Each crossing restarts the
-    drydown holdoff from that moment."""
+async def test_one_storm_sends_one_heavy_rain_alert_but_every_crossing_restarts_the_holdoff(
+    hass, fake_valve_services, monkeypatch, tmp_path
+):
+    """A storm that crosses both the 24h (35 mm) and 4-day (50 mm) lines used
+    to log and phone-alert twice. Now: one alert, while each crossing still
+    moves the drydown holdoff to that moment."""
     controller, _, events = await _zone(hass, monkeypatch, tmp_path)
     stamps = []
-    for tips in range(100, 200, 10):  # 30 mm -> 57 mm: crosses 35 (24h) then 50 (4d)
+    for tips in range(100, 200, 10):  # 30 mm -> 57 mm
         hass.states.async_set(RAIN_COUNTER, str(tips))
         await hass.async_block_till_done()
         stamps.append(controller.store.state.last_significant_rain_ts)
+    assert events.count("Significant Rain") == 1
+    assert len({t for t in stamps if t is not None}) == 2
+
+
+@pytest.mark.asyncio
+async def test_a_new_storm_a_day_later_alerts_again(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _, events = await _zone(hass, monkeypatch, tmp_path)
+    hass.states.async_set(RAIN_COUNTER, "120")  # 36 mm -> alert
+    await hass.async_block_till_done()
+    assert events.count("Significant Rain") == 1
+
+    # A day and a half later the first storm has left the 24h window...
+    s = controller.store.state
+    s.rain_samples = [[ts - 36 * 3600, mm] for ts, mm in s.rain_samples]
+    s.last_significant_rain_ts -= 36 * 3600
+    s.last_significant_rain_alert_ts -= 36 * 3600
+    hass.states.async_set(RAIN_COUNTER, "121")  # 24h window drops below 35 -> flag resets
+    await hass.async_block_till_done()
+    hass.states.async_set(RAIN_COUNTER, "250")  # a fresh 38.7 mm storm
+    await hass.async_block_till_done()
     assert events.count("Significant Rain") == 2
-    assert len({t for t in stamps if t is not None}) == 2  # holdoff anchor moved once per crossing
 
 
 # ---------------------------------------------------------------------------
@@ -136,15 +150,11 @@ async def test_next_run_estimate_includes_the_rain_holdoff(hass, fake_valve_serv
 
 
 @pytest.mark.asyncio
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: the next-run estimate uses the plain 3-day peak average, but "
-    "the real cycle uses the dropout-aware one -- with a dead temperature "
-    "sensor and hot history on record, the dashboard says 3 days while the "
-    "zone actually waits 4."
-))
 async def test_next_run_estimate_agrees_with_the_cycle_when_the_temp_sensor_is_dead(
     hass, fake_valve_services, monkeypatch, tmp_path
 ):
+    """Regression: the estimate used the plain peak average while the real
+    cycle uses the dropout-aware one (dashboard said 3 days, zone waited 4)."""
     controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
     _history(controller, last_routine_days_ago=0, peaks=(34.0, 34.0, 34.0))
     hass.states.async_set(OUTDOOR_TEMP, "unavailable")
@@ -154,12 +164,9 @@ async def test_next_run_estimate_agrees_with_the_cycle_when_the_temp_sensor_is_d
 
 
 @pytest.mark.asyncio
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: README says Days Until Next Run counts down to whichever comes "
-    "first, the next routine cycle or the next deep soak -- the sensor only "
-    "looks at the routine cycle."
-))
 async def test_days_until_next_run_counts_a_sooner_deep_soak(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Regression: README promises whichever comes first, routine or deep
+    soak -- the sensor used to look at routine only."""
     controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
     _history(controller, last_routine_days_ago=1, last_deep_days_ago=13, peaks=(30.5, 30.5, 30.5))
     # Routine next in 3 days, deep soak next in 1 day.
@@ -330,16 +337,13 @@ async def test_test_pulse_waters_briefly_but_does_not_count_as_a_routine_run(has
 
 
 @pytest.mark.asyncio
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING (safety): on a normal HA boot ZoneFlow loads before HA has "
-    "started, so the restart safety check is scheduled from the "
-    "homeassistant_start event -- but through a plain (non-@callback) "
-    "function, which HA runs in a worker thread, where creating the task "
-    "fails ('loop is not the running loop'). The check never runs: a lock "
-    "and an open valve left by a mid-cycle restart stay until the 150/180-"
-    "minute backstop watchdogs. Seen live in the sandbox log on every restart."
-))
 async def test_restart_safety_check_runs_when_zoneflow_loads_before_ha_has_started(hass, fake_valve_services):
+    """Regression (found live in the sandbox): on a normal HA boot ZoneFlow
+    is set up before HA has started, so the restart safety check is
+    scheduled from the homeassistant_start event. That listener used to be
+    a plain function, which HA runs in a worker thread, where creating the
+    task failed -- the check never ran, and a lock plus an open valve from
+    a mid-cycle restart were left in place."""
     from homeassistant.const import EVENT_HOMEASSISTANT_START
     from homeassistant.core import CoreState
 
@@ -378,15 +382,124 @@ async def test_restart_safety_check_runs_when_zoneflow_loads_before_ha_has_start
 
 
 @pytest.mark.asyncio
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: a brand-new zone (never watered) measures its gap from 1970, "
-    "so its very first routine run logs and phone-notifies 'Irrigation "
-    "Overdue: ~20,000 days since last watering'. Seen live in the sandbox."
-))
 async def test_a_brand_new_zones_first_run_is_not_reported_as_overdue(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Regression (seen live in the sandbox): a never-watered zone measured
+    its gap from 1970 and phone-alerted "~20,000 days overdue"."""
     controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
     controller.store.state.last_routine_ts = None  # never watered
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
     assert clock.valve_minutes(VALVE) > 0
     assert "Irrigation Overdue" not in events
+
+
+@pytest.mark.asyncio
+async def test_rain_counter_that_reset_while_ha_was_down_keeps_its_rain(hass, fake_valve_services, monkeypatch, tmp_path):
+    """The gauge rebooted (count back to 0) while HA itself was restarting:
+    ZoneFlow first sees the lower count at setup. The rain recorded before
+    must survive the reload, and new tips must add on top."""
+    controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
+    for tips in ("10", "20"):
+        hass.states.async_set(RAIN_COUNTER, tips)
+        await hass.async_block_till_done()
+    assert controller.rain_windows()["24h"] == pytest.approx(6.0)
+    await controller.store.async_save()
+
+    hass.states.async_set(RAIN_COUNTER, "0")  # reset happens "while HA is down"...
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+    await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    reloaded = hass.data[DOMAIN][entry.entry_id]
+    assert reloaded.rain_windows()["24h"] == pytest.approx(6.0)
+
+    hass.states.async_set(RAIN_COUNTER, "3")
+    await hass.async_block_till_done()
+    assert reloaded.rain_windows()["24h"] == pytest.approx(6.0 + 0.9)
+
+
+@pytest.mark.asyncio
+async def test_all_rain_sensors_are_precipitation_with_sensible_rounding(hass, fake_valve_services, monkeypatch, tmp_path):
+    """On an HA set to imperial, Rain Today used to show raw conversion
+    noise (0.12992125984252 in) while the other rain sensors stayed in mm.
+    Now every rain sensor is a precipitation sensor in the same unit, with
+    a display precision so the dashboard rounds it."""
+    from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM
+
+    hass.config.units = US_CUSTOMARY_SYSTEM
+    controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
+    hass.states.async_set(RAIN_COUNTER, "11")  # 3.3 mm
+    await hass.async_block_till_done()
+
+    rain_sensors = [s for s in hass.states.async_all("sensor") if s.entity_id.startswith("sensor.test_zone_rain_")]
+    assert len(rain_sensors) == 6  # 5 windows + today
+    for st in rain_sensors:
+        ent = next(e for e in hass.data["sensor"].entities if e.entity_id == st.entity_id)
+        ent.async_write_ha_state()
+    await hass.async_block_till_done()
+    from homeassistant.helpers import entity_registry as er
+
+    registry = er.async_get(hass)
+    for st in (hass.states.get(s.entity_id) for s in rain_sensors):
+        assert st.attributes["device_class"] == "precipitation", st.entity_id
+        assert st.attributes["unit_of_measurement"] == "in", st.entity_id
+        # The dashboard rounds to the registry's display precision (HA adds
+        # decimals itself for the mm -> in conversion); without one it
+        # showed every digit.
+        options = registry.async_get(st.entity_id).options.get("sensor", {})
+        assert options.get("suggested_display_precision") is not None, st.entity_id
+    assert float(hass.states.get(_sensor(hass, "rain_today")).state) == pytest.approx(3.3 / 25.4, abs=0.001)
+
+
+@pytest.mark.asyncio
+async def test_a_rain_counter_glitch_to_zero_and_back_adds_no_fake_rain(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _, events = await _zone(hass, monkeypatch, tmp_path)
+    hass.states.async_set(RAIN_COUNTER, "1500")
+    await hass.async_block_till_done()
+    controller.store.state.rain_samples = [[ts - 3 * DAY, mm] for ts, mm in controller.store.state.rain_samples]
+    events.clear()  # the setup jump 0 -> 1500 was (correctly) a big "storm" three days ago
+    for tips in ("0", "1500"):
+        hass.states.async_set(RAIN_COUNTER, tips)
+        await hass.async_block_till_done()
+    assert controller.rain_windows()["24h"] == pytest.approx(0.0)
+    assert "Significant Rain" not in events
+
+
+@pytest.mark.asyncio
+async def test_suppressed_crossings_do_not_stretch_the_alert_quiet_period(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Alert at t0, a crossing at t0+20h stays quiet, but a new storm at
+    t0+40h alerts: the 24h quiet period runs from the last ALERT."""
+    controller, _, events = await _zone(hass, monkeypatch, tmp_path)
+    s = controller.store.state
+    now = dt_util.utcnow().timestamp()
+    s.last_significant_rain_alert_ts = now - 40 * 3600  # alert at t0
+    s.last_significant_rain_ts = now - 20 * 3600        # quiet crossing at t0+20h
+    hass.states.async_set(RAIN_COUNTER, "130")  # a new 39 mm storm now
+    await hass.async_block_till_done()
+    assert events.count("Significant Rain") == 1
+
+
+@pytest.mark.asyncio
+async def test_pulse_length_is_cleared_even_if_a_pulse_errors(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
+
+    async def boom(index):
+        assert controller._expected_pulse_minutes is not None
+        raise RuntimeError("switch integration fell over")
+
+    clock.on_pulse = boom
+    with pytest.raises(RuntimeError):
+        await controller.run_routine_irrigation()
+    assert controller._expected_pulse_minutes is None
+    assert controller._valve_stuck_limit_minutes() == 150
+
+
+@pytest.mark.asyncio
+async def test_countdown_skips_a_deep_soak_held_back_by_a_wet_fortnight(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=1, last_deep_days_ago=20, peaks=(30.5, 30.5, 30.5))
+    now = dt_util.utcnow().timestamp()
+    controller.store.state.rain_samples = [[now - 10 * DAY, 0.0], [now - 5 * DAY, 45.0]]  # 45 mm >= 40 mm ceiling
+    assert _sensor_value(hass, "days_until_next_run") == pytest.approx(3.0, abs=0.1)  # routine, not a stuck 0

@@ -54,7 +54,12 @@ class CompressedTime:
     async def _wait_for(self, aw, timeout=None):
         if timeout is not None and timeout != PUMP_POWER_WAIT_TIMEOUT_SECONDS:
             if self.on_pulse is not None:
-                await self.on_pulse(len(self.pulses))
+                try:
+                    await self.on_pulse(len(self.pulses))
+                except BaseException:
+                    if asyncio.iscoroutine(aw):
+                        aw.close()  # the pulse's wait never started; don't leak it
+                    raise
             # A valve-open pulse: record which valve(s) are open right now.
             open_valves = [
                 v for v in self.valve_entities if (s := self.hass.states.get(v)) is not None and s.state == "on"

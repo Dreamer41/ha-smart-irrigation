@@ -77,6 +77,62 @@ def rain_deduction_mm(
     return jinja_round(total, 2)
 
 
+RAIN_COUNTER_GLITCH_WINDOW_SECONDS = 7 * 86400
+# A glitch brings the count back to where it was, plus at most a few tips
+# of rain that fell meanwhile.
+RAIN_COUNTER_GLITCH_RETURN_TOLERANCE_TIPS = 5
+# Below this many tips, any drop is treated as a real reset: getting a tiny
+# counter wrong costs a few mm at most, while treating a small daily-reset
+# counter's next reading as a "glitch" would drop real rain every day.
+RAIN_COUNTER_GLITCH_MIN_TIPS = 20
+
+
+def track_tip_total(
+    total: float | None,
+    last: float | None,
+    drop_from: float | None,
+    drop_ts: float | None,
+    since_drop: float,
+    tips: float,
+    now_ts: float,
+) -> tuple[float, float, float | None, float | None, float]:
+    """Turn a raw rain-gauge tip count into an ever-growing total, surviving
+    both real resets and glitches. Returns the new
+    (total, last, drop_from, drop_ts, since_drop).
+
+    - Counting up: the increase is added to the total.
+    - The count going DOWN is either a real reset (a counter helper reset,
+      a gauge that forgets its count on reboot, a daily-reset counter) or a
+      glitch (a template reporting 0 while its source is unavailable,
+      perhaps for hours). Nothing is added or removed at the drop; later
+      tips count normally from the new, lower number.
+    - A glitch ends with the count jumping back (more than one tip in a
+      single reading) to where it was before the drop -- give or take a
+      few tips of rain that fell meanwhile -- within a week. When that
+      happens, whatever was counted since the drop is taken back and only
+      the tips beyond the old level are added. Real rain landing a reset
+      counter back on exactly its old total in one jump is not a realistic
+      event, so a genuine reset isn't mistaken for this; counters below
+      RAIN_COUNTER_GLITCH_MIN_TIPS are always treated as real resets.
+    """
+    if total is None or last is None:
+        return tips, tips, None, None, 0.0
+    if drop_from is not None and drop_ts is not None and now_ts - drop_ts > RAIN_COUNTER_GLITCH_WINDOW_SECONDS:
+        drop_from, drop_ts, since_drop = None, None, 0.0
+    if (
+        drop_from is not None
+        and drop_from <= tips <= drop_from + RAIN_COUNTER_GLITCH_RETURN_TOLERANCE_TIPS
+        and tips - last > 1
+    ):
+        return total - since_drop + (tips - drop_from), tips, None, None, 0.0
+    if tips >= last:
+        increase = tips - last
+        return total + increase, tips, drop_from, drop_ts, (since_drop + increase if drop_from is not None else 0.0)
+    if drop_from is None and last >= RAIN_COUNTER_GLITCH_MIN_TIPS:
+        return total, tips, last, now_ts, 0.0
+    return total, tips, drop_from, drop_ts, since_drop
+
+
 def three_day_average_peak_temp(day_values: list[float | None]) -> float:
     """Port of the `sensor.3_day_average_peak_temperature` template.
 
@@ -165,7 +221,25 @@ class DeepSoakPlan:
     target_mm: float
     flow_rate: float
     total_runtime_minutes: int
-    pulse_runtime_minutes: int
+    pulse_runtime_minutes: float
+    pulse_count: int = 3
+
+
+def split_pulses(total_minutes: int, pulse_count: int, min_pulse_minutes: float) -> tuple[int, float]:
+    """Split a cycle's whole-minute runtime into (pulses, minutes per pulse)
+    so the valve is open for exactly total_minutes -- the same number the
+    log records -- instead of rounding each pulse to whole minutes (3 min
+    over 2 pulses used to become 2 + 2 = 4 min). When the need is too small
+    for every pulse to reach its minimum length, fewer pulses are used
+    rather than running each one at the minimum (which used to deliver up
+    to pulse_count times what was asked for). Only a need shorter than one
+    minimum-length pulse still runs that one minimum pulse."""
+    count = max(int(pulse_count), 1)
+    if total_minutes <= 0:
+        return count, 0.0
+    if total_minutes < count * min_pulse_minutes:
+        count = max(int(total_minutes // min_pulse_minutes), 1)
+    return count, max(total_minutes / count, min_pulse_minutes)
 
 
 def plan_deep_soak(
@@ -173,8 +247,8 @@ def plan_deep_soak(
 ) -> DeepSoakPlan:
     """Port of the variables block in avocado_deep_soak.
 
-    total_runtime = round(target_mm / flow_rate)
-    pulse_runtime = max(round(total_runtime / pulse_count), min_pulse_minutes)
+    total_runtime = round(target_mm / flow_rate)   (whole minutes, as logged)
+    pulses        = split_pulses(total_runtime, ...) (exact split, see above)
 
     pulse_count and min_pulse_minutes default to the original fixed values
     (3 pulses, 5-min floor) so an existing call site that doesn't pass them
@@ -183,8 +257,8 @@ def plan_deep_soak(
     ZoneFlowController.run_deep_soak -- chosen based on drainage (slow-
     draining soil generally wants more, shorter pulses)."""
     total_runtime = int(jinja_round(target_mm / flow_rate, 0))
-    pulse_runtime = max(int(jinja_round(total_runtime / pulse_count, 0)), min_pulse_minutes)
-    return DeepSoakPlan(target_mm, flow_rate, total_runtime, pulse_runtime)
+    count, pulse_runtime = split_pulses(total_runtime, pulse_count, min_pulse_minutes)
+    return DeepSoakPlan(target_mm, flow_rate, total_runtime, pulse_runtime, count)
 
 
 @dataclass
@@ -195,7 +269,8 @@ class RoutinePlan:
     eff_rain_mm: float
     needed_mm: float
     calc_runtime_minutes: int
-    pulse_runtime_minutes: int
+    pulse_runtime_minutes: float
+    pulse_count: int = 3
 
 
 def routine_interval_days(avg_peak_temp: float | None, hot_threshold: float) -> int:
@@ -282,7 +357,7 @@ def plan_routine_irrigation(
     )
     needed_mm = max(interval_target_mm - eff_rain, 0.0)
     calc_runtime = int(jinja_round(needed_mm / flow_rate, 0))
-    pulse_runtime = max(int(jinja_round(calc_runtime / pulse_count, 0)), min_pulse_minutes)
+    count, pulse_runtime = split_pulses(calc_runtime, pulse_count, min_pulse_minutes)
     return RoutinePlan(
         interval_days=interval_days,
         target_weekly_mm=target_weekly_mm,
@@ -291,6 +366,7 @@ def plan_routine_irrigation(
         needed_mm=needed_mm,
         calc_runtime_minutes=calc_runtime,
         pulse_runtime_minutes=pulse_runtime,
+        pulse_count=count,
     )
 
 
@@ -373,7 +449,7 @@ class NextIrrigationEstimate:
 def estimate_next_irrigation(
     last_routine_ts: float,
     last_significant_rain_ts: float,
-    avg_peak_temp: float,
+    avg_peak_temp: float | None,
     hot_threshold: float,
     routine_drydown_days: float,
 ) -> NextIrrigationEstimate:
@@ -382,6 +458,22 @@ def estimate_next_irrigation(
     routine_next = last_routine_ts + interval_days * 86400
     rain_next = last_significant_rain_ts + routine_drydown_days * 86400
     return NextIrrigationEstimate(routine_next, rain_next, max(routine_next, rain_next))
+
+
+def estimate_next_deep_soak(
+    last_deep_soak_ts: float | None,
+    interval_days: float,
+    last_significant_rain_ts: float | None,
+    drydown_days: float,
+    now_ts: float,
+) -> float:
+    """When the next deep soak is expected: the later of its interval and
+    its subsoil drydown after significant rain. A zone that has never
+    deep-soaked is due now. (Like the routine estimate, this models the
+    time gates only, not the 14-day rain ceiling or the forecast.)"""
+    interval_next = (last_deep_soak_ts + interval_days * 86400) if last_deep_soak_ts is not None else now_ts
+    rain_next = (last_significant_rain_ts or 0.0) + drydown_days * 86400
+    return max(interval_next, rain_next)
 
 
 def growth_ramp_fraction(days_since_planting: float, curve: list[tuple[int, float]]) -> float:

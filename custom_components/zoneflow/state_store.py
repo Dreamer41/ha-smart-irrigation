@@ -23,6 +23,8 @@ class IrrigationState:
     last_deep_soak_ts: float | None = None
     last_routine_ts: float | None = None
     last_significant_rain_ts: float | None = None
+    # When the last heavy-rain alert was actually sent (one per storm).
+    last_significant_rain_alert_ts: float | None = None
 
     # rain_day_1 (yesterday) .. rain_day_10, shifted at 23:59:50
     rain_day_history_mm: list[float] = field(default_factory=lambda: [0.0] * RAIN_HISTORY_DEPTH_DAYS)
@@ -39,6 +41,16 @@ class IrrigationState:
     today_peak_temp_c: float | None = None
     today_min_temp_c: float | None = None
     rain_midnight_baseline_mm: float = 0.0
+
+    # Rain counter reset/glitch handling (calculations.track_tip_total):
+    # an ever-growing tip total built from the raw counter, the last raw
+    # count seen, and -- after the count went down -- where it was before
+    # and when, so a quick jump back can be recognised as a glitch.
+    rain_counter_total_tips: float | None = None
+    rain_counter_last_tips: float | None = None
+    rain_counter_drop_from: float | None = None
+    rain_counter_drop_ts: float | None = None
+    rain_counter_since_drop_tips: float = 0.0
 
     # Mutex / safety
     lock_on: bool = False
@@ -147,9 +159,12 @@ class IrrigationStateStore:
         raw = await self._store.async_load()
         if raw:
             # Merge to tolerate future fields being added without migration.
-            defaults = asdict(IrrigationState())
-            defaults.update(raw)
-            self.state = IrrigationState(**{k: v for k, v in defaults.items() if k in defaults})
+            # Merge onto the defaults so fields added later need no
+            # migration, and drop keys this version doesn't know (e.g. after
+            # a downgrade) instead of failing to load the zone.
+            merged = asdict(IrrigationState())
+            merged.update({k: v for k, v in raw.items() if k in merged})
+            self.state = IrrigationState(**merged)
         return self.state
 
     async def async_save(self) -> None:

@@ -54,8 +54,13 @@ class _Base(SensorEntity):
 
 
 class ZoneFlowRainWindowSensor(_Base):
+    # Precipitation device class on every rain sensor (not just Rain Today),
+    # so an HA set to imperial shows them all in the same unit, with a
+    # sensible number of decimals instead of raw conversion noise.
     _attr_native_unit_of_measurement = "mm"
     _attr_icon = "mdi:weather-pouring"
+    _attr_device_class = "precipitation"
+    _attr_suggested_display_precision = 1
 
     def __init__(self, entry: ConfigEntry, controller, window: str) -> None:
         super().__init__(entry, controller)
@@ -185,7 +190,7 @@ class ZoneFlowNextIrrigationSensor(_Base):
         est = calc.estimate_next_irrigation(
             last_routine_ts=state.last_routine_ts,
             last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
-            avg_peak_temp=self._controller.avg_peak_temp(),
+            avg_peak_temp=self._controller.effective_avg_peak_temp(),
             hot_threshold=self._controller.number("hot_temp_threshold"),
             routine_drydown_days=self._controller.number("routine_drydown_days"),
         )
@@ -193,20 +198,16 @@ class ZoneFlowNextIrrigationSensor(_Base):
 
 
 class ZoneFlowDaysUntilNextRunSensor(_Base):
-    """A friendly "how many days until the next scheduled run" readout,
-    derived from the same estimate_next_irrigation() math as
-    ZoneFlowNextIrrigationSensor above -- this is just that same timestamp
-    expressed as a countdown instead of a calendar date, for a dashboard
-    or cheat-sheet reader who'd rather see "in 2.5 days" than do date math
-    in their head. Inherits the same known limitation as the timestamp
-    sensor: it models the interval/drydown gates only, not the rain-credit
-    calculation, so it can occasionally under-count when a recent rain
-    credit would push the real next run further out. Clamped to 0 rather
-    than showing a negative countdown when the modeled estimate has
-    already passed but the gates haven't actually fired yet (e.g. still
-    waiting on the rain-credit calc) -- "0 days" reads as "due any time
-    now", which is accurate, where a negative number would just look like
-    a bug to whoever's reading the dashboard."""
+    """A friendly "how many days until this zone next waters" countdown:
+    whichever comes first, the next routine cycle (same estimate as
+    ZoneFlowNextIrrigationSensor above) or the next deep soak (skipped when
+    deep soak is turned off for this zone). Models the time gates only --
+    interval, drydown after heavy rain -- not rain credit, the forecast or
+    soil moisture, so the real run can come later. A deep soak that is due
+    but held back by a wet fortnight (its 14-day rain ceiling) is left out
+    until it can run, instead of pinning the countdown at 0. Clamped
+    to 0 rather than going negative once a cycle is due: "0 days" reads
+    as "due any time now"."""
 
     _attr_native_unit_of_measurement = "d"
     _attr_icon = "mdi:calendar-arrow-right"
@@ -217,20 +218,58 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_days_until_next_run"
         self._attr_translation_key = "days_until_next_run"
 
+    def _next_times(self) -> tuple[float | None, float | None]:
+        c = self._controller
+        state = c.store.state
+        now_ts = dt_util.utcnow().timestamp()
+        routine_next = None
+        if state.last_routine_ts is not None:
+            routine_next = calc.estimate_next_irrigation(
+                last_routine_ts=state.last_routine_ts,
+                last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
+                avg_peak_temp=c.effective_avg_peak_temp(),
+                hot_threshold=c.number("hot_temp_threshold"),
+                routine_drydown_days=c.number("routine_drydown_days"),
+            ).next_ts
+        deep_next = None
+        if c.deep_soak_enabled and (state.last_deep_soak_ts is not None or state.last_routine_ts is not None):
+            deep_next = calc.estimate_next_deep_soak(
+                state.last_deep_soak_ts,
+                c.number("deep_soak_interval_days"),
+                state.last_significant_rain_ts,
+                c.number("deep_soak_drydown_days"),
+                now_ts,
+            )
+            # Due, but held back because the last 14 days were already wet:
+            # it runs once the subsoil has dried, which can't be dated --
+            # leave it out rather than pinning the countdown at 0 all
+            # through a wet spell.
+            if deep_next <= now_ts and c.rain_windows()["14d"] >= c.number("deep_soak_rain_threshold"):
+                deep_next = None
+        return routine_next, deep_next
+
+    @staticmethod
+    def _days(ts: float | None) -> float | None:
+        if ts is None:
+            return None
+        return round(max(ts - dt_util.utcnow().timestamp(), 0.0) / 86400, 1)
+
     @property
     def native_value(self) -> float | None:
-        state = self._controller.store.state
-        if state.last_routine_ts is None:
-            return None
-        est = calc.estimate_next_irrigation(
-            last_routine_ts=state.last_routine_ts,
-            last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
-            avg_peak_temp=self._controller.avg_peak_temp(),
-            hot_threshold=self._controller.number("hot_temp_threshold"),
-            routine_drydown_days=self._controller.number("routine_drydown_days"),
-        )
-        seconds_until = est.next_ts - dt_util.utcnow().timestamp()
-        return round(max(seconds_until, 0.0) / 86400, 1)
+        known = [t for t in self._next_times() if t is not None]
+        return self._days(min(known)) if known else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        routine_next, deep_next = self._next_times()
+        next_cycle = None
+        if routine_next is not None or deep_next is not None:
+            next_cycle = "deep_soak" if (deep_next is not None and (routine_next is None or deep_next < routine_next)) else "routine"
+        return {
+            "routine_days": self._days(routine_next),
+            "deep_soak_days": self._days(deep_next),
+            "next_cycle": next_cycle,
+        }
 
 
 class ZoneFlowLastWaterDeliveredSensor(_Base):
@@ -245,7 +284,7 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
     @property
     def native_value(self) -> float:
         return calc.estimate_last_water_delivered_mm(
-            avg_peak_temp=self._controller.avg_peak_temp(),
+            avg_peak_temp=self._controller.effective_avg_peak_temp(),
             hot_threshold=self._controller.number("hot_temp_threshold"),
             cool_threshold=self._controller.number("cool_temp_threshold"),
             normal_weekly_mm=self._controller.number("target_weekly_mm"),
@@ -259,6 +298,7 @@ class ZoneFlowTodayRainSensor(_Base):
     _attr_native_unit_of_measurement = "mm"
     _attr_icon = "mdi:weather-rainy"
     _attr_device_class = "precipitation"
+    _attr_suggested_display_precision = 1
 
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)

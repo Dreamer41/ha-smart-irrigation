@@ -1222,6 +1222,11 @@ action needed:
 - **Rain gauge drops out:** unreadable readings are simply ignored, not
   recorded as "it stopped raining" — the rolling rain window keeps its last
   good value rather than resetting.
+- **Rain gauge count resets or glitches:** a counter helper being reset, or
+  a gauge that forgets its count when it reboots, doesn't lose the rain
+  already recorded — ZoneFlow keeps its own running total. A reading that
+  briefly drops (e.g. a template showing 0 while its source is offline) and
+  then comes back to where it was isn't counted as new rain either.
 - **Pump-power sensor drops out:** treated the same as a genuine low-power
   reading — it warns (if notifications are on), but the cycle still
   completes; a dead sensor never blocks the actual watering.
