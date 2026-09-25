@@ -917,7 +917,8 @@ weather — adjust from here rather than treating these as exact):
 
 These are reasonable starting points, not agronomy guarantees — say so if
 the person asks, and suggest they watch the diagnostic sensors (§8) for the
-first couple of weeks and adjust the weekly target up/down from there.
+first couple of weeks and adjust the weekly target up/down from there —
+and tell them what to watch on the plants themselves (§7.9).
 
 ## 6. Growth-stage auto-ramp (optional, off by default)
 
@@ -1289,9 +1290,41 @@ outdoor temperature sensor. It's opt-in per zone and changes nothing until
 selected. Leave it off for a zone with no temperature sensor — it would
 just fall back to the tiers every cycle.
 
-Setting the crop factor (`..._crop_factor_kc`, default 0.8). Starting
-points for a mature, full-size plant in its main growing season — adjust
-from here:
+Setting the crop factor (`..._crop_factor_kc`, default 0.8). Don't just
+leave the default or pick from memory — work out a real value for this
+person's plant and place, the same way §5 reasons about weekly targets:
+
+1. **Ask** (skip anything they already told you in §1): the exact crop,
+   and variety if they know it; roughly how old and how big the plant is
+   (for a tree, how much of the ground under it the canopy shades);
+   where they are and what the climate's like (humid tropics, dry
+   Mediterranean summer, temperate, arid); and whether the soil under it
+   is bare, mulched, or covered by grass or other plants.
+2. **Look it up** if you have web access. Search for the published crop
+   coefficient for that crop — FAO Irrigation and Drainage Paper 56
+   (Table 12, the "mid-season" value for perennials and the
+   full-canopy value for annuals) is the standard reference, and a local
+   agricultural extension service or university for their region is
+   better still when one publishes figures, since it already reflects
+   local conditions. Tell the person the number you found and where it
+   came from, in one line.
+3. **Adjust it for their situation**, and say why in plain words:
+   - Humid climate (the tropics, a humid coastal summer): the Hargreaves
+     ET₀ this zone uses tends to read somewhat high there, so go toward
+     the low end of the published range.
+   - Hot, dry, windy climate: toward the high end.
+   - Young or small plant, or a tree shading only part of the ground:
+     keep Kc at the grown-plant value and let the growth-stage ramp (§6)
+     scale it down, so the number stays right as the plant grows. Only
+     lower Kc itself for a plant that will stay small or sparse.
+   - Drip on mostly bare or mulched soil (only the root zone is wetted):
+     a little lower, typically 0.05-0.1, since less surface evaporation
+     happens than the published figures assume.
+4. **No web access?** Use the starting points below, say plainly that
+   they're general starting points rather than a looked-up value, and
+   suggest the person check with a local nursery or extension service.
+
+Starting points for a mature, full-size plant in its main growing season:
 - Warm-season lawn: 0.6-0.8; cool-season lawn: 0.8-0.95
 - Tomatoes, peppers, pumpkins and other vegetables at full canopy: 1.0-1.15
 - Strawberries: 0.85-1.0
@@ -1299,12 +1332,9 @@ from here:
 - Cherry and other stone fruit in season: 0.9-1.0
 - Succulents / drought-tolerant natives: 0.3-0.5
 
-For young plants, use the growth-stage ramp (§6) rather than a lower Kc,
-so the factor stays right once the plant is grown. In humid climates the
-Hargreaves formula tends to read somewhat high, so start at the low end
-of the range there. These are starting points, not agronomy guarantees —
-same advice as the weekly targets in §5: watch the zone for a couple of
-weeks and nudge Kc up or down.
+Whatever you set, it's a starting point, not an agronomy guarantee. Finish
+by telling the person what to watch on this specific plant so they know
+when to nudge Kc up or down later (§7.9).
 
 What to show them: the zone's **Routine Weekly Target** sensor shows the
 target a routine cycle would use right now (including the growth ramp),
@@ -1312,6 +1342,68 @@ and its `source` attribute says which model produced it (`et_curve`,
 `temperature_tiers`, or `temperature_tiers_fallback`). The ET₀ sensor
 reads "unknown" until one full day of min/max temperature has been
 recorded, and the zone uses the tiers until then.
+
+### 7.9 Tell the person what to watch on their plants
+Every number in this setup — weekly targets (§5) or the crop factor
+(§7.8) — is a starting estimate, and the plant itself is the real test.
+Before you finish, tell the person in a few plain sentences what to look
+for on **their** crop, when to look, and which number to change:
+
+**How to check:**
+- Look at the plants in the **early morning**, before the day's heat.
+  Many plants (pumpkins, squash, tomatoes) droop in hot afternoon sun even
+  when well watered and recover by evening — that's normal. Drooping that
+  is still there first thing in the morning means too dry.
+- Feel the soil at root depth a day or two after a watering, not just the
+  surface: push a finger or a trowel in 5-10 cm for vegetables, 15-20 cm
+  for trees. Moist but not soggy is right. Dry at that depth means too
+  little water; still wet and cold means too much.
+- Give each change a week or two before judging it, and change one thing
+  at a time.
+
+**Signs by plant type** (pick the ones for their crop, don't read out the
+whole list):
+- **Avocado:** very sensitive to waterlogging (root rot) — yellowing
+  leaves, dieback, soil that stays wet for days means too much. Wilting
+  or drooping new growth and brown, crispy leaf edges mean too little
+  (brown tips can also be salt build-up — worth mentioning).
+- **Citrus:** leaves curling inward lengthwise = too dry; yellowing
+  leaves and leaf drop with damp soil = too wet.
+- **Olive:** drought tolerant, so overwatering is the more common
+  mistake — yellowing and dropping leaves. Shrivelled fruit while it's
+  developing = too dry.
+- **Tomatoes:** fruit cracking or splitting after a big watering that
+  follows a dry spell, and blossom-end rot (dark sunken patch at the
+  bottom of the fruit) both point to watering that's too uneven —
+  usually too little between cycles. Yellowing lower leaves with wet
+  soil = too much.
+- **Chilis / peppers:** flowers dropping before setting fruit in hot, dry
+  weather = too dry; yellowing lower leaves and wet soil = too much.
+- **Pumpkins / squash / melons:** judge by morning wilting only (see
+  above). Small fruit that stops growing = too dry.
+- **Strawberries:** shallow roots dry out fast — small, dry or seedy
+  fruit and crispy leaf edges = too dry; grey mould on fruit or a soft,
+  rotting crown = too wet.
+- **Cherry / stone fruit:** fruit splitting near harvest often follows a
+  sudden large watering after dry weather — keep watering steady in the
+  last weeks before harvest.
+- **Lawn:** a blue-grey tint and footprints that stay pressed down = too
+  dry; spongy turf, moss or mushrooms = too wet.
+- **Succulents / drought-tolerant natives:** wrinkled, shrivelled leaves
+  = too dry; soft, mushy or see-through leaves = too wet (the much more
+  common problem).
+- For any other crop, look up its typical over- and under-watering signs
+  the same way you looked up its crop factor, and tell them the two or
+  three that matter most.
+
+**What to change:**
+- Consistently too dry: raise the zone's **Crop Factor (Kc)** by 0.05 if
+  it's on the ET curve, or its routine weekly target(s) by about 10% if
+  it's on the temperature tiers.
+- Consistently too wet: lower the same number by the same step.
+- Suggest they note what they see in the zone's **Health** and **Health
+  Notes** fields, so there's a record to look back on the next time
+  someone adjusts it.
 
 ## 8. Verify before you're done
 
@@ -1352,7 +1444,8 @@ Do not consider setup finished until these are confirmed for each zone:
    the person unattended (`zoneflow.reset_lock` clears a stuck lock, but
    find out why it was stuck first).
 4. Tell the person plainly what will happen next (which zones water at
-   which times) and remind them the `test_pulse` service bypasses every
+   which times), and what to watch on each zone's plants over the next
+   couple of weeks (§7.9) and remind them the `test_pulse` service bypasses every
    safety/rain gate on purpose, so it's not representative of a real run —
    don't leave them thinking a successful test pulse alone proves the rain
    logic works.
@@ -1744,7 +1837,12 @@ format is required, but cover:
    should have, point them at the **Reset Irrigation Lock** button and
    suggest they mention it to whoever set this up (or paste it back to an
    AI) rather than guessing at a fix themselves.
-4. **Skip anything that requires understanding a number's meaning** to act
+4. **What to watch on the plants** — the two or three signs from §7.9
+   that matter for this crop, in one or two sentences ("if the leaves are
+   still drooping first thing in the morning, it needs more water — tell
+   whoever set this up"). Leave out which number to change; that's for
+   whoever tunes it.
+5. **Skip anything that requires understanding a number's meaning** to act
    on — weekly water targets, thresholds, calibration numbers, etc. belong
    on the dashboard (§9) or in the full docs, not this cheat sheet. The
    goal here is confident day-to-day use by someone who never opens the
