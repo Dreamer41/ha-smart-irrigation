@@ -429,6 +429,64 @@ def routine_due_with_soil_moisture(
     return interval_due
 
 
+def soil_moisture_status(moisture_pct: float | None, dry_pct: float, wet_pct: float) -> str:
+    """What a soil-moisture reading means for the next routine run, in the
+    same order routine_due_with_soil_moisture decides it: "wet" (the run is
+    skipped even if the schedule says due), "dry" (it waters even if the
+    schedule says not yet), "in_range" (the schedule decides), or "offline"
+    (no usable reading -- the schedule decides)."""
+    if moisture_pct is None:
+        return "offline"
+    if moisture_pct >= wet_pct:
+        return "wet"
+    if moisture_pct <= dry_pct:
+        return "dry"
+    return "in_range"
+
+
+DEFICIT_MIN_PCT = 50.0
+DEFICIT_MAX_PCT = 100.0
+
+
+def deficit_factor(
+    *,
+    enabled: bool,
+    water_pct: float,
+    until_ts: float | None,
+    now_ts: float,
+    avg_peak_temp: float | None,
+    hot_threshold: float,
+    moisture_pct: float | None,
+    dry_pct: float,
+    growth_ramp: float = 1.0,
+    temp_unavailable: bool = False,
+) -> tuple[float, str]:
+    """Deficit mode (regulated deficit irrigation): the share of the normal
+    routine dose to give, and why. Guardrails give the full dose while the
+    plant is still on its growth ramp (establishment is the worst time to
+    stress a plant -- needs a ramp profile and planting date), in the hot
+    tier (3-day average of daily peaks), while a configured temperature
+    sensor is offline, and when a soil-moisture sensor reads at or below
+    its Dry threshold (checked at each run); an end date that has passed
+    switches it off. Clamped to 50-100%: a deeper cut is well past "mild
+    stress" for any crop this is meant for."""
+    if not enabled:
+        return 1.0, "off"
+    if until_ts is not None and now_ts >= until_ts:
+        return 1.0, "ended"
+    if growth_ramp < 1.0:
+        return 1.0, "full_dose_young_plant"
+    if temp_unavailable:
+        # The heat guard can't see the weather: don't cut water blind.
+        return 1.0, "full_dose_no_temp"
+    if avg_peak_temp is not None and avg_peak_temp >= hot_threshold:
+        return 1.0, "full_dose_hot"
+    if moisture_pct is not None and moisture_pct <= dry_pct:
+        return 1.0, "full_dose_soil_dry"
+    pct = min(max(water_pct, DEFICIT_MIN_PCT), DEFICIT_MAX_PCT)
+    return pct / 100.0, "active"
+
+
 def adjust_drydown_days(current_days: float, step_days: float, min_days: float, max_days: float) -> float:
     """Nudge current_days by step_days (positive to extend, negative to
     shrink), clamped to [min_days, max_days] -- see

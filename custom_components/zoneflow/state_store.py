@@ -128,6 +128,11 @@ class IrrigationState:
     # Which routine weekly-target model this zone uses -- see const.py's
     # DEMAND_MODEL_* comment. Defaults to the original temperature tiers.
     demand_model: str = DEFAULT_DEMAND_MODEL
+    # Deficit mode (regulated deficit irrigation) -- a runtime toggle like
+    # the demand model, plus an optional end date after which it switches
+    # itself off.
+    deficit_enabled: bool = False
+    deficit_until_ts: float | None = None
 
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None

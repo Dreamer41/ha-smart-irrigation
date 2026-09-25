@@ -41,7 +41,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowSoilProfileSensor(entry, controller),
         ZoneFlowGrowthRampSensor(entry, controller),
         ZoneFlowLastCycleWaterSensor(entry, controller),
+        ZoneFlowDeficitStatusSensor(entry, controller),
     ]
+    if controller.soil_moisture_entity:
+        entities += [
+            ZoneFlowSoilMoistureSensor(entry, controller),
+            ZoneFlowSoilMoistureStatusSensor(entry, controller),
+        ]
     async_add_entities(entities, update_before_add=False)
 
 
@@ -210,7 +216,7 @@ class ZoneFlowWeeklyTargetSensor(_Base):
 
     def metric_native_value(self) -> float:
         target, _ = self._source()
-        return round(target * self._controller.growth_ramp_fraction(), 2)
+        return round(target * self._controller.routine_target_scale(), 2)
 
     @property
     def extra_state_attributes(self) -> dict:
@@ -221,6 +227,7 @@ class ZoneFlowWeeklyTargetSensor(_Base):
             "source": source,
             "full_strength_target_mm": round(target, 2),
             "growth_ramp_pct": round(self._controller.growth_ramp_fraction() * 100, 0),
+            "deficit_pct": round(self._controller.deficit()[0] * 100, 0),
             "avg_et0_mm_per_day": round(et0, 2) if et0 is not None else None,
             "crop_coefficient": self._controller.number("crop_coefficient"),
         }
@@ -237,23 +244,15 @@ class ZoneFlowNextIrrigationSensor(_Base):
 
     @property
     def native_value(self):
-        state = self._controller.store.state
-        if state.last_routine_ts is None:
-            # Never watered yet (a brand-new zone) -- there's no real last-run
-            # time to project a next-run estimate from. Falling back to epoch
-            # (0.0) here used to compute a "next irrigation" date decades in
-            # the past ("56 years ago" in the UI) instead of an honest
-            # "unknown". Once the first routine cycle actually runs, this
-            # starts producing a real estimate.
-            return None
-        est = calc.estimate_next_irrigation(
-            last_routine_ts=state.last_routine_ts,
-            last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
-            avg_peak_temp=self._controller.effective_avg_peak_temp(),
-            hot_threshold=self._controller.number("hot_temp_threshold"),
-            routine_drydown_days=self._controller.number("routine_drydown_days"),
-        )
-        return dt_util.utc_from_timestamp(est.next_ts)
+        # Unknown for a zone that has never watered (nothing to project from
+        # -- epoch would read "56 years ago") and while wet soil holds the
+        # routine back (can't be dated); a dry reading brings it forward.
+        next_ts, _ = self._controller.routine_next_estimate()
+        return dt_util.utc_from_timestamp(next_ts) if next_ts is not None else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"decided_by": self._controller.routine_next_estimate()[1]}
 
 
 class ZoneFlowDaysUntilNextRunSensor(_Base):
@@ -261,8 +260,9 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
     whichever comes first, the next routine cycle (same estimate as
     ZoneFlowNextIrrigationSensor above) or the next deep soak (skipped when
     deep soak is turned off for this zone). Models the time gates only --
-    interval, drydown after heavy rain -- not rain credit, the forecast or
-    soil moisture, so the real run can come later. A deep soak that is due
+    interval, drydown after heavy rain, and soil moisture (a dry reading
+    brings the routine forward; wet soil holds it back undated) -- not rain
+    credit or the forecast, so the real run can come later. A deep soak that is due
     but held back by a wet fortnight (its 14-day rain ceiling) is left out
     until it can run, instead of pinning the countdown at 0. Clamped
     to 0 rather than going negative once a cycle is due: "0 days" reads
@@ -281,15 +281,7 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
         c = self._controller
         state = c.store.state
         now_ts = dt_util.utcnow().timestamp()
-        routine_next = None
-        if state.last_routine_ts is not None:
-            routine_next = calc.estimate_next_irrigation(
-                last_routine_ts=state.last_routine_ts,
-                last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
-                avg_peak_temp=c.effective_avg_peak_temp(),
-                hot_threshold=c.number("hot_temp_threshold"),
-                routine_drydown_days=c.number("routine_drydown_days"),
-            ).next_ts
+        routine_next, _ = c.routine_next_estimate()
         deep_next = None
         if c.deep_soak_enabled and (state.last_deep_soak_ts is not None or state.last_routine_ts is not None):
             deep_next = calc.estimate_next_deep_soak(
@@ -465,3 +457,84 @@ class ZoneFlowLastCycleWaterSensor(_Base):
 
     def metric_native_value(self) -> float | None:
         return self._controller.store.state.last_cycle_water_liters
+
+
+class ZoneFlowSoilMoistureSensor(_Base):
+    """The zone's soil-moisture reading, on the zone itself -- next to the
+    thresholds and status it's judged against. Only created when the zone
+    has a soil-moisture sensor."""
+
+    _attr_native_unit_of_measurement = "%"
+    _attr_device_class = "moisture"
+    _attr_state_class = "measurement"
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_soil_moisture"
+        self._attr_translation_key = "soil_moisture"
+
+    @property
+    def native_value(self) -> float | None:
+        return self._controller.soil_moisture_reading()
+
+
+class ZoneFlowSoilMoistureStatusSensor(_Base):
+    """What the soil moisture means for the next routine run: dry (waters
+    at the next scheduled time even if not due), wet (skips even if due),
+    in range or offline (the schedule decides)."""
+
+    _attr_device_class = "enum"
+    _attr_options = ["dry", "wet", "in_range", "offline"]
+    _attr_icon = "mdi:water-percent"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_soil_moisture_status"
+        self._attr_translation_key = "soil_moisture_status"
+
+    @property
+    def native_value(self) -> str | None:
+        return self._controller.soil_moisture_status()
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        c = self._controller
+        return {
+            "moisture_pct": c.soil_moisture_reading(),
+            "dry_threshold_pct": c.number("soil_moisture_dry_pct"),
+            "wet_threshold_pct": c.number("soil_moisture_wet_pct"),
+        }
+
+
+class ZoneFlowDeficitStatusSensor(_Base):
+    """Deficit mode at a glance: off, active (reduced dose), a full dose
+    today because of a guardrail, or ended."""
+
+    _attr_device_class = "enum"
+    _attr_options = [
+        "off", "active", "full_dose_young_plant", "full_dose_no_temp", "full_dose_hot", "full_dose_soil_dry", "ended",
+    ]
+    _attr_icon = "mdi:water-minus"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_deficit_status"
+        self._attr_translation_key = "deficit_status"
+
+    @property
+    def native_value(self) -> str:
+        return self._controller.deficit()[1]
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        c = self._controller
+        share, _ = c.deficit()
+        until = c.store.state.deficit_until_ts
+        return {
+            "dose_pct": round(share * 100, 0),
+            "water_pct_setting": c.number("deficit_water_pct"),
+            "ends": dt_util.utc_from_timestamp(until).isoformat() if until is not None else None,
+            # Without a temperature sensor there's no hot-day guard.
+            "heat_guard": bool(c.outdoor_temp_entity),
+        }

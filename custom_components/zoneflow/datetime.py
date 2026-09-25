@@ -34,7 +34,7 @@ from .const import DOMAIN
 # that already happened. A future one would silently hold a gate shut (a
 # "last routine" next month means no watering until then), so it's refused.
 # A few minutes of slack covers a browser clock slightly ahead of HA's.
-FUTURE_ALLOWED_FIELDS = {"planting_date_ts"}
+FUTURE_ALLOWED_FIELDS = {"planting_date_ts", "deficit_until_ts"}
 FUTURE_SLACK_SECONDS = 300
 
 # (state field on IrrigationState, display name)
@@ -52,6 +52,9 @@ LAST_EVENT_FIELDS: list[tuple[str, str]] = [
     # dropdown) -- unlike the entries above, nothing in the controller ever
     # reads this one; it's just where a person records the last feed.
     ("last_fertilizing_ts", "Last Fertilizing"),
+    # When deficit mode switches itself off (see calculations.deficit_factor)
+    # -- a planned date, so it may be in the future.
+    ("deficit_until_ts", "Deficit Mode Ends"),
 ]
 
 

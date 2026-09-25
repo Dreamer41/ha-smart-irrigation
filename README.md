@@ -182,6 +182,14 @@ verification test pulse run before it calls the job done.
   soak, routine, or both) hasn't run yet, without touching the schedule,
   targets, or any other gate -- everything's back to normal starting
   tomorrow with no further action needed.
+- **Deficit mode (controlled water stress), optional**: a per-zone switch
+  that trims every routine dose to a set share (50-100%) until an end date,
+  for crops that can gain flavour, sweetness or pungency from mild stress
+  after fruit set -- the garden version of regulated deficit irrigation.
+  Guardrails keep it gentle: full dose in the hot tier (and if the
+  temperature sensor is offline), while the plant is still on its growth
+  ramp, and whenever a soil-moisture sensor reads dry at run time; deep
+  soak is never touched. A status sensor shows what it did today.
 - **Optional soil-moisture input**: point a zone at a `sensor.*` soil
   moisture entity (with adjustable dry/wet % thresholds) and it becomes the
   direct decider for routine irrigation at the extremes -- dry soil waters
@@ -189,7 +197,10 @@ verification test pulse run before it calls the job done.
   overdue. In the ambiguous middle band, or if the sensor is unconfigured or
   currently unreadable, it defers entirely to the existing modeled schedule
   -- this is a pure addition, never a replacement, and fully inert if you
-  don't set it up.
+  don't set it up. With a sensor set, the zone shows the reading and a
+  status that says what it means for the next run ("Dry - watering brought
+  forward", "Wet - skipping"...), the next-run countdown follows it, and a run
+  skipped for wet soil is logged instead of skipped silently.
 - **Self-tuning routine interval**: ZoneFlow quietly learns from how you use
   the manual controls. Press "Run Routine Irrigation Now" three times in a
   row while the model still thinks it isn't due yet, and it shortens the

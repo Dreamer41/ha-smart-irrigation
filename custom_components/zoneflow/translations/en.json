@@ -253,6 +253,9 @@
       },
       "crop_coefficient": {
         "name": "Crop Factor (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Deficit Mode Water"
       }
     },
     "datetime": {
@@ -270,6 +273,9 @@
       },
       "last_fertilizing": {
         "name": "Last Fertilizing"
+      },
+      "deficit_until": {
+        "name": "Deficit Mode Ends"
       }
     },
     "button": {
@@ -297,6 +303,9 @@
     "switch": {
       "deep_soak_enabled": {
         "name": "Deep Soak Enabled"
+      },
+      "deficit_mode": {
+        "name": "Deficit Mode"
       }
     },
     "sensor": {
@@ -344,6 +353,30 @@
       },
       "routine_weekly_target": {
         "name": "Routine Weekly Target"
+      },
+      "soil_moisture": {
+        "name": "Soil Moisture"
+      },
+      "soil_moisture_status": {
+        "name": "Soil Moisture Status",
+        "state": {
+          "dry": "Dry - watering brought forward",
+          "wet": "Wet - skipping",
+          "in_range": "In range - following schedule",
+          "offline": "Sensor offline - following schedule"
+        }
+      },
+      "deficit_status": {
+        "name": "Deficit Mode Status",
+        "state": {
+          "off": "Off",
+          "active": "Active - reduced dose",
+          "full_dose_hot": "Full dose today (hot weather)",
+          "full_dose_soil_dry": "Full dose today (soil dry)",
+          "ended": "Ended",
+          "full_dose_young_plant": "Full dose (young plant)",
+          "full_dose_no_temp": "Full dose today (temperature sensor offline)"
+        }
       }
     },
     "select": {

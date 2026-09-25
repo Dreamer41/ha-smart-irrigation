@@ -699,6 +699,7 @@ class ZoneFlowController:
             seed = _state_temp_c(self.hass.states.get(self.outdoor_temp_entity))
         self._start_new_day(seed_temp=seed)
         self.hass.async_create_task(self.store.async_save())
+        self.hass.async_create_task(self._check_deficit_end())
 
     @callback
     def _on_outdoor_temp_change(self, event: Event) -> None:
@@ -1165,6 +1166,10 @@ class ZoneFlowController:
         either numeric guess could force a wrong decision in either
         direction, where deferring to the existing time-interval schedule
         is always a safe, previously-correct fallback."""
+        return self.soil_moisture_reading()
+
+    def soil_moisture_reading(self) -> float | None:
+        """Synchronous form of _soil_moisture_pct, for sensors."""
         entity_id = self.soil_moisture_entity
         if not entity_id:
             return None
@@ -1173,6 +1178,85 @@ class ZoneFlowController:
             return float(state.state) if state else None
         except (TypeError, ValueError):
             return None
+
+    def soil_moisture_status(self) -> str | None:
+        """What the soil-moisture sensor means for the next routine run
+        (see calc.soil_moisture_status), or None when the zone has none."""
+        if not self.soil_moisture_entity:
+            return None
+        return calc.soil_moisture_status(
+            self.soil_moisture_reading(),
+            self.number("soil_moisture_dry_pct"),
+            self.number("soil_moisture_wet_pct"),
+        )
+
+    def deficit(self) -> tuple[float, str]:
+        """Deficit mode's share of the routine dose right now, and why --
+        see calc.deficit_factor."""
+        state = self.store.state
+        return calc.deficit_factor(
+            enabled=state.deficit_enabled,
+            water_pct=self.number("deficit_water_pct"),
+            until_ts=state.deficit_until_ts,
+            now_ts=dt_util.utcnow().timestamp(),
+            avg_peak_temp=self.effective_avg_peak_temp(),
+            hot_threshold=self.number("hot_temp_threshold"),
+            moisture_pct=self.soil_moisture_reading(),
+            dry_pct=self.number("soil_moisture_dry_pct"),
+            growth_ramp=self.growth_ramp_fraction(),
+            temp_unavailable=bool(self.outdoor_temp_entity) and self.effective_avg_peak_temp() is None,
+        )
+
+    def routine_target_scale(self) -> float:
+        """Everything that scales the routine weekly target: the growth
+        ramp and deficit mode."""
+        return self.growth_ramp_fraction() * self.deficit()[0]
+
+    def routine_next_estimate(self) -> tuple[float | None, str]:
+        """When the next routine run is expected, and what decides it:
+        "schedule" (interval and rain dry-down), "soil_dry" (a dry reading
+        waters at the next scheduled time, once any rain dry-down is over),
+        "soil_wet" (held until the soil dries -- can't be dated), or
+        "never_run" (no history to project from)."""
+        state = self.store.state
+        if state.last_routine_ts is None:
+            return None, "never_run"
+        status = self.soil_moisture_status()
+        if status == "wet":
+            return None, "soil_wet"
+        est = calc.estimate_next_irrigation(
+            last_routine_ts=state.last_routine_ts,
+            last_significant_rain_ts=state.last_significant_rain_ts or 0.0,
+            avg_peak_temp=self.effective_avg_peak_temp(),
+            hot_threshold=self.number("hot_temp_threshold"),
+            routine_drydown_days=self.number("routine_drydown_days"),
+        ).next_ts
+        if status == "dry":
+            now_ts = dt_util.utcnow().timestamp()
+            drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
+            return max(now_ts, drydown_end), "soil_dry"
+        return est, "schedule"
+
+    async def _check_deficit_end(self) -> None:
+        """Deficit mode switches itself off once its end date has passed."""
+        state = self.store.state
+        if not state.deficit_enabled or state.deficit_until_ts is None:
+            return
+        if dt_util.utcnow().timestamp() < state.deficit_until_ts:
+            return
+        state.deficit_enabled = False
+        state.deficit_until_ts = None
+        await self.store.async_save()
+        await self._log_event(
+            event_type="Deficit Mode Ended",
+            status="Info",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            phone_title="🌶️ Deficit Mode Ended",
+            phone_msg="Its end date passed -- routine watering is back to the full dose.",
+        )
 
     @property
     def _pump_lock_key(self) -> str:
@@ -1959,6 +2043,7 @@ class ZoneFlowController:
             return
         if self._is_snoozed_today():
             return
+        await self._check_deficit_end()
 
         # effective_avg_peak_temp() (not avg_peak_temp()) is what must drive
         # this decision -- it returns None, an explicit "use normal tier"
@@ -1988,6 +2073,20 @@ class ZoneFlowController:
             # signal, independent of whether anything actually gets watered.
             if manual and not interval_due:
                 await self._register_self_tune_signal("early")
+            if interval_due:
+                # Due by the schedule, but the soil is wet: say so, instead
+                # of skipping silently.
+                await self._log_event(
+                    event_type="Routine Skipped (Soil Wet)",
+                    status="Skipped",
+                    target_mm=0.0,
+                    deducted_mm=0.0,
+                    runtime=0,
+                    notify_phone=False,
+                    phone_title="",
+                    phone_msg="",
+                    extra_log=f"Soil moisture {moisture_pct:.0f}% is at or above the wet threshold.",
+                )
             return
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("routine_drydown_days")
@@ -2003,6 +2102,9 @@ class ZoneFlowController:
         # deep soak's job (root-zone penetration depth) doesn't scale the
         # same way with plant age.
         ramp = self.growth_ramp_fraction()
+        deficit_share, deficit_reason = self.deficit()
+        # The routine dose scales with the growth ramp and deficit mode alike.
+        scale = ramp * deficit_share
         et_weekly = self.et_weekly_target_mm()
         routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
         days_elapsed = int(elapsed_seconds / 86400)
@@ -2010,9 +2112,9 @@ class ZoneFlowController:
             avg_peak_temp=avg_peak_temp,
             hot_threshold=hot_threshold,
             cool_threshold=self.number("cool_temp_threshold"),
-            normal_weekly_mm=self.number("target_weekly_mm") * ramp,
-            hot_weekly_mm=self.number("target_weekly_hot_mm") * ramp,
-            cool_weekly_mm=self.number("target_weekly_cool_mm") * ramp,
+            normal_weekly_mm=self.number("target_weekly_mm") * scale,
+            hot_weekly_mm=self.number("target_weekly_hot_mm") * scale,
+            cool_weekly_mm=self.number("target_weekly_cool_mm") * scale,
             flow_rate=self.number("flow_rate_mm_per_min"),
             days_elapsed=days_elapsed,
             today_rain_mm=self.today_rain_mm(),
@@ -2022,7 +2124,7 @@ class ZoneFlowController:
             rain_eff_high=self.number("rain_eff_high"),
             pulse_count=routine_pulse_count,
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
-            weekly_target_override_mm=(et_weekly * ramp) if et_weekly is not None else None,
+            weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
         )
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
@@ -2134,8 +2236,31 @@ class ZoneFlowController:
             runtime=plan.calc_runtime_minutes,
             notify_phone=True,
             phone_title="🚿 Routine Irrigation Completed",
-            phone_msg=f"Applied {plan.calc_runtime_minutes} min (Target: {units.depth_text(plan.interval_target_mm, self.imperial)}, Rain Deducted: {units.depth_text(plan.eff_rain_mm, self.imperial)}).",
+            phone_msg=(
+                f"Applied {plan.calc_runtime_minutes} min (Target: {units.depth_text(plan.interval_target_mm, self.imperial)}, "
+                f"Rain Deducted: {units.depth_text(plan.eff_rain_mm, self.imperial)})."
+                + self._routine_notes(interval_due, moisture_pct, deficit_share, deficit_reason)
+            ),
         )
+
+    def _routine_notes(
+        self, interval_due: bool, moisture_pct: float | None, deficit_share: float, deficit_reason: str
+    ) -> str:
+        """What moisture and deficit mode did to this run, for the message."""
+        notes = []
+        if not interval_due and moisture_pct is not None:
+            notes.append(f"Soil moisture {moisture_pct:.0f}% (dry) -- watered before the schedule was due.")
+        if deficit_reason == "active":
+            notes.append(f"Deficit mode: {deficit_share * 100:.0f}% dose.")
+        elif deficit_reason == "full_dose_hot":
+            notes.append("Deficit mode: full dose today (hot weather).")
+        elif deficit_reason == "full_dose_soil_dry":
+            notes.append("Deficit mode: full dose today (soil at the dry threshold).")
+        elif deficit_reason == "full_dose_no_temp":
+            notes.append("Deficit mode: full dose (temperature sensor offline).")
+        elif deficit_reason == "full_dose_young_plant":
+            notes.append("Deficit mode: full dose (plant still on its growth ramp).")
+        return "".join(" " + n for n in notes)
 
     @_tracked_run
     async def test_pulse(self, seconds: int) -> None:

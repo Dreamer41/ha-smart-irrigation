@@ -1291,6 +1291,18 @@ Requires a `sensor.*` entity reporting moisture as a percentage.
    above the wet threshold, it skips even if the interval says overdue; in
    between, it defers entirely to the plain modeled schedule, same as
    before this was configured. A dropout degrades the same way (§7.6).
+4. What they'll see once it's set: the zone gets a **Soil Moisture**
+   sensor (the reading, on the zone itself) and a **Soil Moisture Status**
+   sensor that says what the reading means for the next routine run --
+   "Dry - watering brought forward" (it waters at the next scheduled time
+   even if the schedule says not yet -- a rain dry-down still applies),
+   "Wet - skipping", "In range - following schedule" or "Sensor offline -
+   following schedule". The next-run
+   countdown follows it too (a dry reading brings the routine forward; wet
+   soil shows no date, because nobody can date when it will dry), a
+   scheduled run skipped for wet soil gets a "Routine Skipped (Soil Wet)"
+   row in the CSV log, and a run the soil forced early says so in its
+   phone message. Include the Soil Moisture card in the dashboard (§9).
 
 ### 7.8 Optional ET curve (evapotranspiration-based weekly target)
 By default a zone's routine weekly target comes from three fixed tiers —
@@ -1438,6 +1450,86 @@ whole list):
 - Suggest they note what they see in the zone's **Health** and **Health
   Notes** fields, so there's a record to look back on the next time
   someone adjusts it.
+- If deficit mode is on (§7.10), add its own watch-list: morning wilting,
+  dropping flowers or young fruit, blossom-end rot or cracking mean stop
+  it or raise its %.
+
+### 7.10 Optional deficit mode (controlled water stress)
+Deficit mode trims every routine dose to a set share (the zone's **Deficit
+Mode Water** slider, 50-100%, default 70%) until an end date, then switches
+itself off. It's the garden version of *regulated deficit irrigation*, a
+real agricultural practice: growers of processing tomatoes, wine grapes and
+olives cut water in a chosen growth stage to trade a little yield for
+flavour, sugar or oil quality. Deep soak is never touched.
+
+**Built-in guardrails** (tell the person these exist, so the mode doesn't
+feel reckless -- and what each one needs):
+- Full dose in hot weather -- the hot tier, judged by the 3-day average of
+  daily peaks, so the first day or two of a heatwave may still get the
+  cut. Needs a temperature sensor; if that sensor goes offline, it gives
+  the full dose rather than cutting blind. With no temperature sensor at
+  all there is no heat guard -- say so.
+- Full dose while the plant is still on its growth ramp -- only if a
+  growth-ramp profile and planting date are set (§6). Otherwise nothing
+  stops it on a young plant, which is one more reason to only switch it
+  on after fruit set.
+- Full dose whenever a soil-moisture sensor reads at or below its Dry
+  threshold -- checked at each run, so the soil can still dry a little
+  further between runs. Needs a moisture sensor (§7.7).
+- Never below 50%, and it ends on its own at the **Deficit Mode Ends** date.
+
+**When to bring it up yourself:** only when the person's crop is one that
+can gain from it, and only once -- a short suggestion, not a pitch:
+- **Chilis / hot peppers** -- many growers believe stress makes them
+  hotter. Say honestly that the research is mixed: some *C. annuum*
+  varieties did get hotter under water stress, others (a *C. chinense*
+  "Naga" in one study) got *less* hot and dropped flowers, and a Thai study
+  at 80% and 60% water found no significant rise in capsaicin but fewer and
+  smaller fruit. Worth trying mildly (80%) after fruit has set, and judging
+  by taste.
+- **Tomatoes, especially paste/sauce types** -- a cut in the last 5-6 weeks
+  before harvest, after fruit set, gives sweeter, more concentrated fruit
+  for a small yield loss. The risk is blossom-end rot and cracking if
+  watering swings, which is why this mode trims every dose evenly instead
+  of skipping days.
+- **Olives, grapes, stone fruit (e.g. cherry after harvest), almonds** --
+  the classic deficit-irrigation crops; a mild cut in the right stage
+  (olives: during pit hardening in summer; wine grapes: between fruit set
+  and colour change (veraison) -- after colour change is riskier in warm
+  climates; cherries: after harvest) saves water with little or no harm. If you're
+  unsure of the right stage for their variety or region, look it up the
+  same way you looked up the crop factor.
+
+**Don't suggest it for:** seedlings or new transplants, anything while it
+is flowering or setting fruit, strawberries, leafy greens, young trees,
+or a zone whose soil is very sandy in hot weather. (A lawn can take a mild
+cut, around 80%, to save water in a dry spell -- a normal practice, but a
+water-saving choice, not a flavour one.) If the person
+asks for it anyway, explain the risk once and then respect their choice.
+
+**Good and bad, in plain words:** it can improve flavour, sweetness or
+pungency and saves water; it costs some yield (fewer or smaller fruit), and
+getting the timing wrong (during flowering or fruit set) can cost a lot
+more -- dropped flowers, blossom-end rot, cracked fruit.
+
+**How to set it:**
+1. Turn on the zone's **Deficit Mode** switch.
+2. Set **Deficit Mode Water**: start mild, 80%. Go to 70% only if the
+   plants show no stress signs after a week or two; 50-60% is for the
+   classic deficit crops above.
+3. Always set **Deficit Mode Ends** -- the end of the ripening period or the
+   harvest date. Without it the mode stays on until someone turns it off.
+4. The **Deficit Mode Status** sensor shows what it's doing each day
+   (active, or full dose today and why).
+
+**Tell them to watch the plants** (this is the most important part --
+add it to what you say for §7.9): some afternoon wilting that has
+recovered by the next morning is the expected, mild stress. Stop, or raise
+the % by 10, if they see any of: wilting that's still there in the
+morning, flowers or young fruit dropping, blossom-end rot (a dark sunken
+patch at the bottom of the fruit), fruit cracking, or scorched leaf edges.
+Suggest noting the start date and what they see in the zone's **Health
+Notes**, so they can compare next season.
 
 ## 8. Verify before you're done
 
@@ -1675,10 +1767,45 @@ views:
         title: Soil Moisture (Optional)
         show_header_toggle: false
         entities:
+          - entity: <sensor.zone_soil_moisture_status_if_sensor_configured>
+            name: What it means
+          - entity: <sensor.zone_soil_moisture_if_sensor_configured>
+            name: Reading
           - entity: <number.zone_soil_moisture_dry_threshold_if_sensor_configured>
             name: Dry Threshold %
           - entity: <number.zone_soil_moisture_wet_threshold_if_sensor_configured>
             name: Wet Threshold %
+
+      - type: history-graph
+        title: Soil Moisture, last 7 days
+        hours_to_show: 168
+        entities:
+          - entity: <sensor.zone_soil_moisture_if_sensor_configured>
+            name: Reading
+          - entity: <number.zone_soil_moisture_dry_threshold_if_sensor_configured>
+            name: Dry
+          - entity: <number.zone_soil_moisture_wet_threshold_if_sensor_configured>
+            name: Wet
+
+      - type: entities
+        title: Deficit Mode (controlled stress)
+        show_header_toggle: false
+        entities:
+          - entity: <switch.zone_deficit_mode>
+          - entity: <sensor.zone_deficit_mode_status>
+            name: Today
+          - entity: <number.zone_deficit_mode_water>
+            name: Water %
+          - entity: <datetime.zone_deficit_mode_ends>
+            name: Ends
+
+      - type: markdown
+        content: >
+          **Watch the plants while deficit mode is on.** Afternoon wilting
+          that's gone by morning is the expected mild stress. Stop it, or
+          raise Water % by 10, if you see morning wilting, dropping flowers
+          or young fruit, blossom-end rot or cracked fruit. Only use it after
+          fruit has set, and always set an end date.
 
       - type: entities
         title: Deep Soak
@@ -1745,8 +1872,13 @@ confusing clutter rather than a genuinely-existing-but-irrelevant row (the
 same "only include what actually applies to this zone" rule as any other
 optional entity).
 
-**Drop the "Soil Moisture (Optional)" card** for a zone with no
-soil-moisture sensor configured (§7.7), for the same reason. **Keep the
+**Drop the "Soil Moisture (Optional)" card and the moisture history
+graph** for a zone with no soil-moisture sensor configured (§7.7), for the
+same reason (the moisture sensors don't even exist without one). **Drop the
+"Deficit Mode" card and its watch note** for crops §7.10 says not to stress
+(strawberries, seedlings, young trees...) unless the person asked for
+deficit mode anyway; keep them for crops that can benefit, even if it's off
+for now, so the switch is there when the right stage comes. **Keep the
 "Water Demand" card for every zone that has an outdoor temperature
 sensor**, even if they're staying on the temperature tiers for now — the
 Water Demand Model dropdown is how they switch that zone between the old

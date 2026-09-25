@@ -355,6 +355,9 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # occurs, which is harmless, not broken.
     "soil_moisture_dry_pct": ("Soil Moisture Dry Threshold", 0.0, 100.0, 1.0, "%"),
     "soil_moisture_wet_pct": ("Soil Moisture Wet Threshold", 0.0, 100.0, 1.0, "%"),
+    # Deficit mode (regulated deficit irrigation): share of the normal
+    # routine dose while it's on -- see calculations.deficit_factor.
+    "deficit_water_pct": ("Deficit Mode Water", 50.0, 100.0, 5.0, "%"),
     # Split-cycle watering: how many on/soak/on pulses a cycle is broken
     # into, and how long the soak gap between pulses is. Slow-draining
     # soil (clay) generally wants MORE pulses and a LONGER soak so water
@@ -431,6 +434,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "forecast_dry_override_days": 2.0,
     "soil_moisture_dry_pct": 20.0,
     "soil_moisture_wet_pct": 60.0,
+    "deficit_water_pct": 70.0,
     "routine_pulse_count": 3.0,
     "routine_pulse_rest_minutes": 20.0,
     "deep_soak_pulse_count": 3.0,
