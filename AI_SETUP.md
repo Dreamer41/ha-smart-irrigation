@@ -678,6 +678,17 @@ while they're already on that screen for §4a/§5 — not as a separate ask
 later. Either way, hold onto this list; §9 uses it directly instead of
 looking anything up again.
 
+**Units.** The config flow (and later **Configure**) has a **Units** field:
+**Follow Home Assistant** (the default — leave it unless they ask), Metric,
+or Imperial. With imperial, the zone's water sliders show inches, the
+emitter rate shows in/h, the hot/cool thresholds show °F, and the sensors
+show inches, in/day, °F and gallons. Give every number you recommend in
+the units the zone actually shows (1 in = 25.4 mm; 1 mm/min = 2.36 in/h),
+and say which units you mean. Switching later is safe: every setting keeps
+its value, just shown in the other unit. One Home Assistant limit worth
+mentioning if they switch an existing zone: a sensor keeps the unit it was
+created with until they change it in that sensor's own settings.
+
 ### 4a. Seed the zone's history if it isn't actually brand-new
 
 **Never assume Home Assistant already has this history, and never phrase
@@ -910,12 +921,13 @@ its factory default.
 | `..._soil_moisture_dry_threshold` (%) / `..._soil_moisture_wet_threshold` (%) | only relevant if a soil-moisture sensor was set (§7.7) | see §7.7 |
 | `..._crop_factor_kc` | how much water this plant uses relative to reference ET₀ | only read when the zone's **Water Demand Model** is set to the ET curve — see §7.8; leave at the 0.8 default otherwise |
 
-**Quick weekly-water-target starting points by crop type** (mm/week, normal
-weather — adjust from here rather than treating these as exact):
-- Lawn / turf: 25-35mm
-- Vegetable beds, herbs (shallow roots, frequent light watering preferred): 20-30mm, and prefer a lower routine interval logic — this integration adapts the interval automatically via temperature, so you mainly need the weekly target right
-- Established trees / avocado / fruit trees: 25-45mm routine **plus** rely on the deep-soak cycle (20-30mm depth) for root-zone penetration
-- Succulents / drought-tolerant natives: 10-20mm, and set the dry-down holdoffs and forecast dry-spell override (if used) higher
+**Quick weekly-water-target starting points by crop type** (per week, normal
+weather — adjust from here rather than treating these as exact; use the
+units the zone shows):
+- Lawn / turf: 25-35mm (1.0-1.4 in)
+- Vegetable beds, herbs (shallow roots, frequent light watering preferred): 20-30mm (0.8-1.2 in), and prefer a lower routine interval logic — this integration adapts the interval automatically via temperature, so you mainly need the weekly target right
+- Established trees / avocado / fruit trees: 25-45mm (1.0-1.8 in) routine **plus** rely on the deep-soak cycle (20-30mm / 0.8-1.2 in depth) for root-zone penetration
+- Succulents / drought-tolerant natives: 10-20mm (0.4-0.8 in), and set the dry-down holdoffs and forecast dry-spell override (if used) higher
 
 These are reasonable starting points, not agronomy guarantees — say so if
 the person asks, and suggest they watch the diagnostic sensors (§8) for the
@@ -1243,11 +1255,12 @@ action needed:
   again. The Routine Weekly Target sensor's `source` attribute reads
   `temperature_tiers_fallback` while this is happening.
 
-Temperatures are always handled in °C internally. If the person's Home
-Assistant is set to Fahrenheit, ZoneFlow converts the sensor's readings
-automatically — but the threshold numbers themselves (hot/cool
-thresholds) are always entered in °C, so convert for them if they think
-in °F.
+Units: each zone shows its sliders and sensors in metric or imperial
+according to its **Units** option (§4) — by default whatever Home
+Assistant itself is set to. Sensor readings in °F, inches or gallons are
+converted automatically too. ZoneFlow calculates in metric internally, so
+the choice only changes what the person sees and types, never how much it
+waters.
 
 ### 7.7 Optional soil-moisture sensor
 Only set this up if the person has an actual soil-moisture probe already

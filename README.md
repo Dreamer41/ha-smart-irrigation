@@ -52,6 +52,11 @@ verification test pulse run before it calls the job done.
 - **Temperature-aware**: a 3-day average peak temperature shifts both the
   watering interval and the weekly water target between "cool", "normal",
   and "hot" tiers. Works whether Home Assistant is set to °C or °F.
+- **Metric or imperial**: each zone shows its sliders and sensors in mm/°C
+  or inches/°F/gallons -- by default whatever Home Assistant is set to, or
+  forced per zone in its options. ZoneFlow calculates in metric internally,
+  so the choice never changes how much it waters, and switching keeps every
+  setting's value.
 - **ET curve, optional**: switch a zone's Water Demand Model to the ET
   curve and its weekly target follows the weather continuously instead of
   jumping between three tiers -- reference evapotranspiration (ET₀,
