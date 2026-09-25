@@ -1474,6 +1474,8 @@ views:
             name: Last Cycle Water Delivered
           - entity: <sensor.zone_next_irrigation_estimate>
             name: Next Run Estimate
+          - entity: <sensor.zone_days_until_next_run>
+            name: Days Until Next Run
 
       - type: entities
         title: Manual Controls
@@ -1492,6 +1494,22 @@ views:
               - entity: <button.zone_reset_irrigation_lock>
                 name: Reset Lock
                 icon: mdi:lock-open-variant
+              - entity: <button.zone_snooze_today>
+                name: Snooze Today
+                icon: mdi:sleep
+
+      - type: entities
+        title: Health Journal
+        show_header_toggle: false
+        entities:
+          - entity: <select.zone_health>
+            name: Health
+          - entity: <text.zone_health_notes>
+            name: Notes
+          - entity: <datetime.zone_last_fertilizing>
+            name: Last Fertilizing
+          - entity: <select.zone_next_fertilizing_in>
+            name: Next Fertilizing In
 
       - type: entities
         title: Site & Growth Profile
@@ -1500,6 +1518,19 @@ views:
           - entity: <sensor.zone_soil_profile>
           - entity: <sensor.zone_growth_stage_ramp_if_enabled>
           - entity: <datetime.zone_planting_transplant_date_if_enabled>
+
+      - type: entities
+        title: Water Demand
+        show_header_toggle: false
+        entities:
+          - entity: <select.zone_water_demand_model>
+            name: Water Demand Model
+          - entity: <sensor.zone_routine_weekly_target>
+            name: Weekly Target (in effect now)
+          - entity: <sensor.zone_reference_et0_3_day_avg_if_temp_sensor_configured>
+            name: Reference ET0 (3-day avg)
+          - entity: <number.zone_crop_factor_kc>
+            name: Crop Factor Kc (ET curve only)
 
       - type: entities
         title: Routine Irrigation
@@ -1514,9 +1545,20 @@ views:
           - entity: <number.zone_routine_soak_interval_between_pulses>
 
       - type: entities
-        title: Deep Soak (14-Day)
+        title: Soil Moisture (Optional)
         show_header_toggle: false
         entities:
+          - entity: <number.zone_soil_moisture_dry_threshold_if_sensor_configured>
+            name: Dry Threshold %
+          - entity: <number.zone_soil_moisture_wet_threshold_if_sensor_configured>
+            name: Wet Threshold %
+
+      - type: entities
+        title: Deep Soak
+        show_header_toggle: false
+        entities:
+          - entity: <number.zone_deep_soak_interval>
+            name: Interval (Days)
           - entity: <number.zone_deep_soak_target_depth>
           - entity: <number.zone_deep_soak_rain_ceiling_14d>
           - entity: <number.zone_deep_soak_subsoil_dry_down_holdoff>
@@ -1569,12 +1611,22 @@ views:
           {% endif %}
 ```
 
-**Drop the entire "Deep Soak (14-Day)" card** for a zone that has the deep
+**Drop the entire "Deep Soak" card** for a zone that has the deep
 soak cycle turned off (§6a) — every entity in it still technically exists,
 but none of it does anything meaningful, so including it would just be
 confusing clutter rather than a genuinely-existing-but-irrelevant row (the
 same "only include what actually applies to this zone" rule as any other
 optional entity).
+
+**Drop the "Soil Moisture (Optional)" card** for a zone with no
+soil-moisture sensor configured (§7.7), for the same reason. **Keep the
+"Water Demand" card for every zone that has an outdoor temperature
+sensor**, even if they're staying on the temperature tiers for now — the
+Water Demand Model dropdown is how they switch that zone between the old
+way and the ET curve later (§7.8), so they shouldn't have to come back and
+edit the dashboard just to find that switch. For a zone with no
+temperature sensor, drop the Reference ET0 and Crop Factor rows but keep
+the Weekly Target row.
 
 If the person has multiple zones, add another entry to the same top-level
 `views:` list (one tab per zone) rather than stacking every zone's cards
@@ -1582,6 +1634,81 @@ into a single long page — mirrors how the entities themselves are already
 split one config entry per zone. If they're pasting this into raw
 configuration alongside views that already exist, add these entries into
 their existing `views:` list rather than replacing it wholesale.
+
+**With two or more zones, also add an "All Zones" tab at the end** so they
+can switch every zone between the old way and the ET curve in one tap
+instead of zone by zone. List every zone's real
+`select.<zone>_water_demand_model` entity in both buttons and in the
+per-zone list (same confirmed-ID rule as above). The buttons ask for
+confirmation first, since they change how every zone waters:
+
+```yaml
+  - title: All Zones
+    path: all-zones
+    icon: mdi:sprinkler-variant
+    cards:
+      - type: heading
+        heading: All Zones
+        heading_style: title
+        icon: mdi:sprinkler-variant
+
+      - type: horizontal-stack
+        cards:
+          - type: button
+            name: "All zones: old way (temperature tiers)"
+            icon: mdi:thermometer-lines
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: select.select_option
+              target:
+                entity_id:
+                  - <select.zone1_water_demand_model>
+                  - <select.zone2_water_demand_model>
+              data:
+                option: temperature_tiers
+              confirmation:
+                text: Switch ALL zones to the temperature tiers (old way)?
+          - type: button
+            name: "All zones: ET curve"
+            icon: mdi:chart-bell-curve
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: select.select_option
+              target:
+                entity_id:
+                  - <select.zone1_water_demand_model>
+                  - <select.zone2_water_demand_model>
+              data:
+                option: et_curve
+              confirmation:
+                text: Switch ALL zones to the ET curve?
+
+      - type: entities
+        title: Water Demand Model per zone
+        show_header_toggle: false
+        entities:
+          - entity: <select.zone1_water_demand_model>
+            name: <Zone 1 Name>
+          - entity: <select.zone2_water_demand_model>
+            name: <Zone 2 Name>
+
+      - type: entities
+        title: Weekly Target in effect now
+        show_header_toggle: false
+        entities:
+          - entity: <sensor.zone1_routine_weekly_target>
+            name: <Zone 1 Name>
+          - entity: <sensor.zone2_routine_weekly_target>
+            name: <Zone 2 Name>
+```
+
+Leave out any zone with no outdoor temperature sensor from the "ET curve"
+button's list, since it could only ever fall back to the tiers anyway.
+There's deliberately no single on/off toggle for this: zones can be mixed
+(some on the ET curve, some not), and one toggle would show the wrong
+state whenever they are.
 
 One honest caveat to pass on to the person: this is plain built-in HA
 cards, chosen deliberately so nothing extra needs installing. It won't look
