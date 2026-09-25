@@ -17,12 +17,22 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import units
-from .const import DOMAIN, NUMBER_DEFAULTS, NUMBER_DEFS
+from .const import DOMAIN, MOISTURE_ONLY_NUMBERS, NUMBER_DEFAULTS, NUMBER_DEFS
+from .entity_cleanup import remove_entities
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     controller = hass.data[DOMAIN][entry.entry_id]
-    entities = [ZoneFlowNumber(entry, controller, key) for key in NUMBER_DEFS]
+    has_probe = bool(controller.soil_moisture_entity)
+    if not has_probe:
+        # The moisture thresholds do nothing without a probe: don't create
+        # them, and drop them if the probe was removed from this zone.
+        remove_entities(hass, entry, "number", list(MOISTURE_ONLY_NUMBERS))
+    entities = [
+        ZoneFlowNumber(entry, controller, key)
+        for key in NUMBER_DEFS
+        if has_probe or key not in MOISTURE_ONLY_NUMBERS
+    ]
     async_add_entities(entities)
 
 

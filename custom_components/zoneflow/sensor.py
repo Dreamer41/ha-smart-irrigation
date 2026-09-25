@@ -13,6 +13,7 @@ import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
 from .const import DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
 
@@ -48,6 +49,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowSoilMoistureSensor(entry, controller),
             ZoneFlowSoilMoistureStatusSensor(entry, controller),
         ]
+    else:
+        # The probe was removed from this zone (or never set): no leftovers.
+        remove_entities(hass, entry, "sensor", ["soil_moisture", "soil_moisture_status"])
     async_add_entities(entities, update_before_add=False)
 
 

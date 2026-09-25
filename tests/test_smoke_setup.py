@@ -74,9 +74,11 @@ async def test_setup_creates_all_expected_entities(hass):
     await hass.async_block_till_done()
 
     # every tunable number entity
-    from custom_components.zoneflow.const import NUMBER_DEFS
+    from custom_components.zoneflow.const import MOISTURE_ONLY_NUMBERS, NUMBER_DEFS
 
     for key, (name, *_rest) in NUMBER_DEFS.items():
+        if key in MOISTURE_ONLY_NUMBERS:
+            continue  # only for a zone with a soil-moisture probe (test_moisture_and_deficit.py)
         entity_id = None
         for state in hass.states.async_all("number"):
             if state.attributes.get("friendly_name", "").endswith(name):

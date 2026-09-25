@@ -466,3 +466,7 @@ VALVE_CLOSE_CONFIRM_SECONDS = 10
 # Home Assistant gives shutdown jobs 20 s in all; stay well inside it.
 SHUTDOWN_STOP_TIMEOUT_SECONDS = 12
 SHUTDOWN_CONFIRM_SECONDS = 3
+
+# Sliders that only mean something for a zone with a soil-moisture probe --
+# only created for such a zone (the controller falls back to the defaults).
+MOISTURE_ONLY_NUMBERS = ("soil_moisture_dry_pct", "soil_moisture_wet_pct")

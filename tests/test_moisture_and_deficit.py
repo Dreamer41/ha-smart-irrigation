@@ -47,11 +47,42 @@ async def _refresh(hass):
 # Soil moisture: visible
 # ---------------------------------------------------------------------------
 
+def _moisture_entities(hass):
+    return sorted(
+        s.entity_id for d in ("sensor", "number") for s in hass.states.async_all(d) if "soil_moisture" in s.entity_id
+    )
+
+
 @pytest.mark.asyncio
-async def test_moisture_sensors_exist_only_for_a_zone_with_a_probe(hass, fake_valve_services, monkeypatch, tmp_path):
-    await _zone(hass, monkeypatch, tmp_path)
-    ids = [s.entity_id for s in hass.states.async_all("sensor")]
-    assert not any("soil_moisture" in i for i in ids)
+async def test_moisture_entities_exist_only_for_a_zone_with_a_probe(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
+    assert _moisture_entities(hass) == []
+    # Without the sliders the thresholds still have their defaults.
+    assert controller.number("soil_moisture_dry_pct") == 20.0
+    assert controller.number("soil_moisture_wet_pct") == 60.0
+
+
+@pytest.mark.asyncio
+async def test_adding_and_removing_a_probe_adds_and_removes_its_entities(
+    hass, fake_valve_services, monkeypatch, tmp_path
+):
+    from homeassistant.helpers import entity_registry as er
+
+    controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
+    entry = controller.entry
+    hass.states.async_set(SOIL, "40")
+
+    hass.config_entries.async_update_entry(entry, options={**entry.options, "soil_moisture_entity": SOIL})
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert len(_moisture_entities(hass)) == 4  # reading, status, dry and wet thresholds
+
+    hass.config_entries.async_update_entry(entry, options={**entry.options, "soil_moisture_entity": None})
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert _moisture_entities(hass) == []
+    registry = er.async_get(hass)
+    assert not [e for e in er.async_entries_for_config_entry(registry, entry.entry_id) if "soil_moisture" in e.unique_id]
 
 
 @pytest.mark.asyncio

@@ -922,7 +922,7 @@ its factory default.
 | `..._deep_soak_interval_days` (days, default 14) | how many days between deep-soak cycles | shallow-rooted/frequent-deep-soak crops: lower (7-10d); deep-rooted trees needing infrequent deep watering: higher (18-30d). Same category as the target depth above — suggest from crop/root-depth reasoning, let the person override |
 | `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§7.2) | leave at 0 for a single-zone/independent-pump setup |
 | `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§7.4) | see §7.4 |
-| `..._soil_moisture_dry_threshold` (%) / `..._soil_moisture_wet_threshold` (%) | only relevant if a soil-moisture sensor was set (§7.7) | see §7.7 |
+| `..._soil_moisture_dry_threshold` (%) / `..._soil_moisture_wet_threshold` (%) | only exist for a zone with a soil-moisture sensor (§7.7) -- skip them otherwise | see §7.7 |
 | `..._crop_factor_kc` | how much water this plant uses relative to reference ET₀ | only read when the zone's **Water Demand Model** is set to the ET curve — see §7.8; leave at the 0.8 default otherwise |
 
 **Quick weekly-water-target starting points by crop type** (per week, normal
@@ -1275,7 +1275,10 @@ Requires a `sensor.*` entity reporting moisture as a percentage.
 1. Set the zone's "Soil Moisture Sensor" field to that entity (config flow,
    or later via **Options**).
 2. Ask about the two threshold numbers, `..._soil_moisture_dry_threshold`
-   (default 20%) and `..._soil_moisture_wet_threshold` (default 60%):
+   (default 20%) and `..._soil_moisture_wet_threshold` (default 60%). They
+   (and the moisture reading/status sensors) only appear once the zone has
+   a sensor set, and disappear again if it's removed -- adding one back
+   later starts them from the defaults:
    - Sandy/fast-draining soil dries out at a higher raw percentage than clay
      holding the same practical moisture — if the person knows their
      sensor's typical dry/wet readings for their soil, use those instead of
