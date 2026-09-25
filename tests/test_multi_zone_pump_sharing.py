@@ -194,8 +194,8 @@ async def test_pump_preamble_and_postamble_delay_the_next_queued_zone(hass, fake
     controller_a = hass.data[DOMAIN][entry_a.entry_id]
     controller_b = hass.data[DOMAIN][entry_b.entry_id]
     # Small values to keep the test fast, but big enough to reliably measure.
-    controller_a.numbers["pump_postamble_seconds"]._attr_native_value = 0.3
-    controller_b.numbers["pump_preamble_seconds"]._attr_native_value = 0.0
+    controller_a.numbers["pump_postamble_seconds"].metric_value = 0.3
+    controller_b.numbers["pump_preamble_seconds"].metric_value = 0.0
 
     loop = asyncio.get_event_loop()
     timestamps: dict[tuple[str, str], float] = {}

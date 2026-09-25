@@ -37,8 +37,9 @@ import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature
 from homeassistant.util.unit_conversion import TemperatureConverter
 
-from . import calculations as calc
+from . import calculations as calc, units
 from .const import (
+    CONF_UNIT_SYSTEM,
     CONF_CSV_PATH,
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
@@ -315,10 +316,22 @@ class ZoneFlowController:
             )
         )
 
+    @property
+    def imperial(self) -> bool:
+        """Whether this zone shows imperial units (see units.py) -- its own
+        Units option, or Home Assistant's unit system when set to follow it."""
+        choice = self.entry.options.get(CONF_UNIT_SYSTEM, self.entry.data.get(CONF_UNIT_SYSTEM, units.UNIT_SYSTEM_AUTO))
+        if choice == units.UNIT_SYSTEM_IMPERIAL:
+            return True
+        if choice == units.UNIT_SYSTEM_METRIC:
+            return False
+        return self.hass.config.units.temperature_unit == UnitOfTemperature.FAHRENHEIT
+
     def number(self, key: str) -> float:
         entity = self.numbers.get(key)
-        if entity is not None and entity.native_value is not None:
-            return float(entity.native_value)
+        value = getattr(entity, "metric_value", None) if entity is not None else None
+        if value is not None:
+            return float(value)
         return NUMBER_DEFAULTS[key]
 
     def register_number(self, key: str, entity: Any) -> None:

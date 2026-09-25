@@ -63,6 +63,7 @@ CONF_SOIL_MOISTURE_ENTITY = "soil_moisture_entity"
 CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
 CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
 CONF_CSV_PATH = "csv_path"
+CONF_UNIT_SYSTEM = "unit_system"  # "auto" (follow Home Assistant) / "metric" / "imperial" -- display only, see units.py
 # Off-switch for the whole deep-soak cycle -- some plants/setups (shallow-
 # rooted crops, containers, frequent-drip greenhouse zones) genuinely don't
 # benefit from an infrequent deep soak on top of routine irrigation. Default

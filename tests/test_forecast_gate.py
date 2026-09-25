@@ -110,7 +110,7 @@ async def test_dry_spell_override_fires_after_the_configured_days_with_no_rain(h
     _register_forecast_service(hass, precipitation=10.0)
     controller = await _make_zone(hass)
     # Make this zone's crop override quickly (e.g. a thirsty vegetable bed).
-    controller.numbers["forecast_dry_override_days"]._attr_native_value = 1.0
+    controller.numbers["forecast_dry_override_days"].metric_value = 1.0
 
     # First check: forecast blocks, streak starts now.
     assert await controller._forecast_gate_allows_run("routine") is False
@@ -133,7 +133,7 @@ async def test_dry_spell_override_does_not_fire_if_rain_actually_fell(hass, fake
     await _seed(hass)
     _register_forecast_service(hass, precipitation=10.0)
     controller = await _make_zone(hass)
-    controller.numbers["forecast_dry_override_days"]._attr_native_value = 1.0
+    controller.numbers["forecast_dry_override_days"].metric_value = 1.0
 
     assert await controller._forecast_gate_allows_run("routine") is False
     start_ts = controller.store.state.forecast_routine_skip_start_ts
@@ -160,8 +160,8 @@ async def test_a_less_drought_tolerant_crop_can_be_configured_to_override_sooner
     _register_forecast_service(hass, precipitation=10.0)
     thirsty = await _make_zone(hass, zone_name="Thirsty Veggies", valve_entity="switch.watering2")
     hardy = await _make_zone(hass, zone_name="Hardy Succulents", pump_power_entity="sensor.other_pump")
-    thirsty.numbers["forecast_dry_override_days"]._attr_native_value = 1.0
-    hardy.numbers["forecast_dry_override_days"]._attr_native_value = 5.0
+    thirsty.numbers["forecast_dry_override_days"].metric_value = 1.0
+    hardy.numbers["forecast_dry_override_days"].metric_value = 5.0
 
     for controller in (thirsty, hardy):
         assert await controller._forecast_gate_allows_run("routine") is False

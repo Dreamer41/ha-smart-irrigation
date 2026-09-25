@@ -17,6 +17,8 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
+from . import units
+
 from .const import (
     CONF_CSV_PATH,
     CONF_DEEP_SOAK_ENABLED,
@@ -27,6 +29,7 @@ from .const import (
     CONF_FLOW_METER_ENTITY,
     CONF_GROWTH_RAMP_PROFILE,
     CONF_IRRIGATION_METHOD,
+    CONF_UNIT_SYSTEM,
     CONF_NOTIFY_ENTITY,
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_PUMP_ID,
@@ -115,6 +118,11 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             # directly. "unknown"/"flat"/"drip" are always valid answers,
             # so these are vol.Required only in the sense that the field
             # always has SOME value, never in the sense of blocking setup.
+            vol.Required(
+                CONF_UNIT_SYSTEM, default=defaults.get(CONF_UNIT_SYSTEM, units.UNIT_SYSTEM_AUTO)
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=units.UNIT_SYSTEM_OPTIONS, translation_key="unit_system")
+            ),
             vol.Required(CONF_SOIL_TYPE, default=defaults.get(CONF_SOIL_TYPE, DEFAULT_SOIL_TYPE)): selector.SelectSelector(
                 selector.SelectSelectorConfig(options=SOIL_TYPE_OPTIONS, translation_key="soil_type")
             ),

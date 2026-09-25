@@ -5,7 +5,8 @@
         "title": "ZoneFlow Irrigation",
         "description": "Give this irrigation zone a short name (e.g. \"Front Lawn\", \"Avocado Tree\"). To add more zones later, add this integration again.",
         "data": {
-          "zone_name": "Zone name"
+          "zone_name": "Zone name",
+          "unit_system": "Units"
         }
       },
       "entities": {
@@ -66,7 +67,8 @@
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
-          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)",
+          "unit_system": "Units"
         }
       }
     }
@@ -123,6 +125,13 @@
         "slow_fruiting": "Slow fruiting crop (e.g. tomatoes, peppers)",
         "established_perennial": "Establishing perennial (e.g. a young tree or shrub)",
         "custom": "Custom (set your own curve)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Follow Home Assistant",
+        "metric": "Metric (mm, °C)",
+        "imperial": "Imperial (inches, °F)"
       }
     }
   },
