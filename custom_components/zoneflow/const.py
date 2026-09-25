@@ -453,3 +453,12 @@ NUMBER_DEFAULTS: dict[str, float] = {
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"
+
+# A reload or shutdown waits this long for a running cycle to close its valve
+# and wind down before cancelling it (it closes the valve on the way out).
+CYCLE_STOP_TIMEOUT_SECONDS = 30
+# How long to wait for a valve told to close to report "off".
+VALVE_CLOSE_CONFIRM_SECONDS = 10
+# Home Assistant gives shutdown jobs 20 s in all; stay well inside it.
+SHUTDOWN_STOP_TIMEOUT_SECONDS = 12
+SHUTDOWN_CONFIRM_SECONDS = 3

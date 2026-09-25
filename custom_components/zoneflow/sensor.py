@@ -5,7 +5,8 @@ from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
@@ -78,6 +79,29 @@ class _Base(SensorEntity):
         # So a newly created entity shows the zone's units rather than
         # whatever Home Assistant's own system would pick.
         return self.native_unit_of_measurement if self._unit_kind is not None else None
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self._follow_zone_units()
+
+    @callback
+    def _follow_zone_units(self) -> None:
+        """Home Assistant fixes a sensor's display unit when the entity is
+        first created, so after the zone's Units option (or HA's own unit
+        system) changes, an existing sensor would keep showing the old unit
+        next to sliders in the new one. Move that fixed unit along -- unless
+        the person picked a unit for this sensor themselves."""
+        entry = self.registry_entry
+        if self._unit_kind is None or entry is None:
+            return
+        if (entry.options.get("sensor") or {}).get("unit_of_measurement"):
+            return
+        private = dict(entry.options.get("sensor.private") or {})
+        wanted = self.native_unit_of_measurement
+        if private.get("suggested_unit_of_measurement") in (None, wanted):
+            return
+        private["suggested_unit_of_measurement"] = wanted
+        er.async_get(self.hass).async_update_entity_options(entry.entity_id, "sensor.private", private)
 
     @property
     def suggested_display_precision(self):

@@ -21,11 +21,12 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import csv
+import functools
 import logging
 from datetime import time as dt_time, timedelta
 from typing import Any
 
-from homeassistant.core import Event, HomeAssistant, State, callback
+from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
 from homeassistant.helpers.event import (
     async_track_point_in_time,
     async_track_state_change_event,
@@ -39,6 +40,10 @@ from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConve
 
 from . import calculations as calc, units
 from .const import (
+    CYCLE_STOP_TIMEOUT_SECONDS,
+    SHUTDOWN_CONFIRM_SECONDS,
+    SHUTDOWN_STOP_TIMEOUT_SECONDS,
+    VALVE_CLOSE_CONFIRM_SECONDS,
     CONF_UNIT_SYSTEM,
     CONF_CSV_PATH,
     CONF_DEEP_SOAK_ENABLED,
@@ -137,6 +142,47 @@ def _parse_hms(value: str) -> dt_time:
     return dt_time(hour=h, minute=m, second=s)
 
 
+# How a pulse loop ended (see _execute_pulses).
+_DONE = "done"
+_ABORTED = "aborted"
+_RAIN = "rain"
+_STOPPED = "stopped"
+
+
+def _tracked_run(func):
+    """Marks a public run (deep soak, routine, test pulse) as in progress,
+    so a reload or shutdown can wait for it to wind down; refuses to start
+    one once the zone is stopping."""
+
+    @functools.wraps(func)
+    async def wrapper(self, *args, **kwargs):
+        if self._stopping:
+            return None
+        task = asyncio.current_task()
+        self._runs.add(task)
+        self._idle.clear()
+        try:
+            return await func(self, *args, **kwargs)
+        except asyncio.CancelledError:
+            # Cancelled anywhere in the run (queued on the pump, preamble,
+            # mid-pulse...): the pulse loop has already closed its valve;
+            # free the lock this run took, once the valve is confirmed
+            # closed, rather than blocking the zone for 3 hours.
+            if (
+                self.store.state.lock_on
+                and self._lock_owner is task
+                and await self._valve_confirmed_closed(self.store.state.lock_valve or self.valve_entity)
+            ):
+                await self._set_lock(False)
+            raise
+        finally:
+            self._runs.discard(task)
+            if not self._runs:
+                self._idle.set()
+
+    return wrapper
+
+
 class ZoneFlowController:
     """Owns all scheduling, safety watchdogs, and irrigation state."""
 
@@ -156,6 +202,23 @@ class ZoneFlowController:
         self._expected_pulse_minutes: float | None = None
         self._startup_unsub = None
         self._setup_ts = 0.0
+        # Runs in progress (run_deep_soak / run_routine_irrigation /
+        # test_pulse, tracked by @_tracked_run) -- a reload or shutdown
+        # waits for them to wind down before this zone lets go. _stopping
+        # is set once, when the zone is unloaded or Home Assistant shuts
+        # down; nothing new starts after that.
+        self._stopping = False
+        self._runs: set[asyncio.Task] = set()
+        self._idle = asyncio.Event()
+        self._idle.set()
+        # The cycle currently running: its kind, the valve it opened (a
+        # reload can change the zone's valve setting mid-cycle), the
+        # minutes it has given so far, and when the open pulse started.
+        self._cycle_kind = ""
+        self._cycle_valve: str | None = None
+        self._delivered_minutes = 0.0
+        self._pulse_started_ts: float | None = None
+        self._lock_owner: asyncio.Task | None = None
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -411,6 +474,10 @@ class ZoneFlowController:
         self._unsubs.append(
             async_track_time_change(self.hass, self._on_midnight, hour=0, minute=0, second=0)
         )
+        # Stop a running cycle when Home Assistant shuts down. A shutdown job
+        # runs first thing, while the valve's own integration (Zigbee, MQTT,
+        # ESPHome...) is still connected and can still close it.
+        self._unsubs.append(self.hass.async_add_shutdown_job(HassJob(self._on_shutdown, "zoneflow shutdown")))
 
         # _on_startup deliberately sleeps for STARTUP_GRACE_SECONDS (2 minutes)
         # before doing anything, so Home Assistant's config entries are almost
@@ -447,11 +514,17 @@ class ZoneFlowController:
             self._startup_unsub = self.hass.bus.async_listen_once("homeassistant_start", _schedule_on_startup)
 
     async def async_unload(self) -> None:
+        # A reload (saving the zone's settings, flipping its Deep Soak
+        # switch, an update) or removal mid-cycle: stop the cycle here, with
+        # the valve closed and the lock released, so the reloaded zone
+        # starts clean instead of racing an unsupervised old cycle.
+        await self._interrupt_cycle("the zone was reloaded")
         if self._startup_unsub is not None:
             self._startup_unsub()
             self._startup_unsub = None
         for unsub in self._unsubs:
-            unsub()
+            with contextlib.suppress(ValueError):  # a shutdown job that already ran
+                unsub()
         self._unsubs.clear()
         if self._valve_stuck_cancel:
             self._valve_stuck_cancel()
@@ -459,6 +532,59 @@ class ZoneFlowController:
             self._power_loss_cancel()
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
+        # Anything the old cycle does from here on must not overwrite the
+        # state the reloaded zone has just loaded.
+        self.store.closed = True
+
+    async def _on_shutdown(self) -> None:
+        # Home Assistant gives shutdown jobs 20 s in all, so a tighter budget.
+        await self._interrupt_cycle(
+            "Home Assistant is shutting down",
+            wait_seconds=SHUTDOWN_STOP_TIMEOUT_SECONDS,
+            confirm_seconds=SHUTDOWN_CONFIRM_SECONDS,
+        )
+
+    async def _interrupt_cycle(
+        self,
+        reason: str,
+        *,
+        wait_seconds: float = CYCLE_STOP_TIMEOUT_SECONDS,
+        confirm_seconds: float = VALVE_CLOSE_CONFIRM_SECONDS,
+    ) -> None:
+        """Stops this zone for good (unload/reload or Home Assistant
+        shutdown). A running cycle notices at once (the abort event wakes
+        every wait inside it), closes its own valve while it still holds the
+        pump, logs "<kind> Interrupted", and is not counted as a run -- the
+        next scheduled run decides again. This waits for that, and for any
+        other run still evaluating its gates, before the zone lets go, so
+        nothing is left running unsupervised beside a reloaded zone.
+
+        The lock is released only once the valve is confirmed closed. If it
+        isn't, the lock stays, so the restart safety check (or, after a
+        reload, the reloaded zone's) forces the valve off."""
+        self._stopping = True
+        self._abort_event.set()
+        if self._runs:
+            _LOGGER.warning("%s: stopping a running cycle because %s", self.entry.title, reason)
+            if not await self._wait_idle(wait_seconds):
+                # Stuck somewhere that doesn't wake (e.g. a valve service
+                # call that never returns): cancel -- the cycle still closes
+                # its valve on the way out.
+                for task in list(self._runs):
+                    task.cancel()
+                await self._wait_idle(confirm_seconds)
+        if self.store.state.lock_on and await self._valve_confirmed_closed(
+            self.store.state.lock_valve or self.valve_entity, confirm_seconds
+        ):
+            await self._set_lock(False)
+
+    async def _wait_idle(self, seconds: float) -> bool:
+        try:
+            async with asyncio.timeout(seconds):
+                await self._idle.wait()
+        except TimeoutError:
+            return False
+        return True
 
     # ------------------------------------------------------------------
     # Rain / temperature tracking
@@ -800,9 +926,14 @@ class ZoneFlowController:
     # Lock / abort helpers
     # ------------------------------------------------------------------
     async def _set_lock(self, on: bool) -> None:
+        if on and self._stopping:
+            return  # nothing new starts once this zone is stopping
         state = self.store.state
         state.lock_on = on
         state.lock_set_ts = dt_util.utcnow().timestamp() if on else None
+        state.lock_valve = self.valve_entity if on else None
+        # Which run took the lock, so a cancelled run frees only its own.
+        self._lock_owner = asyncio.current_task() if on else None
         await self.store.async_save()
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
@@ -963,13 +1094,17 @@ class ZoneFlowController:
         # second cycle start while the first is still running.
         if state.lock_set_ts is not None and state.lock_set_ts >= self._setup_ts:
             return
+        lock_valve = state.lock_valve
         await self._set_lock(False)
         await self._set_abort(False)
-        valve_state = self.hass.states.get(self.valve_entity)
-        if valve_state is not None and valve_state.state not in ("unavailable", "off"):
-            await self.hass.services.async_call(
-                "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-            )
+        # The valve the lock was taken for, which a changed valve setting
+        # may no longer name, and the zone's current valve.
+        for valve in dict.fromkeys(v for v in (lock_valve, self.valve_entity) if v):
+            valve_state = self.hass.states.get(valve)
+            if valve_state is not None and valve_state.state not in ("unavailable", "off"):
+                await self.hass.services.async_call(
+                    "switch", "turn_off", {"entity_id": valve}, blocking=True
+                )
         await self._log_event(
             event_type="Stale Lock Cleared On Startup",
             status="ABORTED",
@@ -1088,16 +1223,16 @@ class ZoneFlowController:
         mid-cycle on a shared pump, running immediately if the pump is
         independent or free), applies the pump preamble/postamble delays,
         and runs the actual pulses. See `_execute_pulses` for the pulse
-        loop itself."""
+        loop itself. Returns True only for a cycle that ran to the end."""
+        if self._stopping:
+            return False
         pump_lock = self._get_pump_lock()
-        async with pump_lock:
-            preamble = self.number("pump_preamble_seconds")
-            if preamble > 0:
-                await asyncio.sleep(preamble)
-
-            flow_start = await self._flow_meter_reading()
-
-            completed = await self._execute_pulses(
+        if not await self._acquire_pump(pump_lock):
+            return False
+        try:
+            if self._stopping:
+                return False
+            return await self._run_pulses_holding_pump(
                 count=count,
                 pulse_minutes=pulse_minutes,
                 rest_minutes=rest_minutes,
@@ -1107,38 +1242,100 @@ class ZoneFlowController:
                 deducted_mm_for_log=deducted_mm_for_log,
                 runtime_for_log=runtime_for_log,
             )
+        finally:
+            pump_lock.release()
 
-            flow_end = await self._flow_meter_reading()
-            if flow_start is not None and flow_end is not None:
-                delta_liters = max(flow_end - flow_start, 0.0)
-                self.store.state.last_cycle_water_liters = delta_liters
-                await self.store.async_save()
-                # Only meaningful for a cycle that actually ran to
-                # completion -- an aborted cycle legitimately may not have
-                # moved any water, and that's not a flow-meter problem.
-                if completed and delta_liters <= 0.0:
-                    await self._log_event(
-                        event_type="No Flow Detected",
-                        status="WARNING",
-                        target_mm=target_mm_for_log,
-                        deducted_mm=deducted_mm_for_log,
-                        runtime=runtime_for_log,
-                        notify_phone=True,
-                        phone_title=f"⚠️ {kind.upper()}: No Water Flow Detected",
-                        phone_msg=(
-                            "Cycle completed but the flow meter shows no water delivered. "
-                            "Check the valve/pump/flow-meter wiring."
-                        ),
-                    )
+    async def _acquire_pump(self, pump_lock: asyncio.Lock) -> bool:
+        """Takes the (possibly shared) pump lock. While queued behind another
+        zone, an abort, reload or shutdown of THIS zone gives up the place
+        in the queue instead of waiting out the other zone's whole cycle.
+        Always queued this way -- even an apparently free lock may already
+        be promised to a woken waiter."""
+        acquire = asyncio.ensure_future(pump_lock.acquire())
+        waker = asyncio.ensure_future(self._abort_event.wait())
+        try:
+            await asyncio.wait({acquire, waker}, return_when=asyncio.FIRST_COMPLETED)
+        except asyncio.CancelledError:
+            # Cancelled right as the pump came free: hand it back, or it
+            # would stay locked for every zone on this pump for good.
+            if acquire.done() and not acquire.cancelled() and acquire.exception() is None:
+                pump_lock.release()
+            else:
+                acquire.cancel()
+            raise
+        finally:
+            waker.cancel()
+        if not acquire.done():
+            acquire.cancel()
+            return False
+        if acquire.cancelled() or acquire.exception() is not None:
+            return False
+        if self._stopping or self.store.state.abort_on:
+            pump_lock.release()
+            return False
+        return True
 
-            postamble = self.number("pump_postamble_seconds")
-            if postamble > 0:
-                # Runs whether or not the cycle completed cleanly -- the
-                # valve is already closed either way, and the point is
-                # letting pressure settle before the next zone queued on
-                # this same pump opens its own valve.
-                await asyncio.sleep(postamble)
-            return completed
+    async def _run_pulses_holding_pump(
+        self,
+        *,
+        count: int,
+        pulse_minutes: float,
+        rest_minutes: int,
+        min_pump_watts: float,
+        kind: str,
+        target_mm_for_log: float,
+        deducted_mm_for_log: float,
+        runtime_for_log: int,
+    ) -> bool:
+        preamble = self.number("pump_preamble_seconds")
+        if preamble > 0:
+            await self._pause(preamble)
+
+        flow_start = await self._flow_meter_reading()
+
+        completed = await self._execute_pulses(
+            count=count,
+            pulse_minutes=pulse_minutes,
+            rest_minutes=rest_minutes,
+            min_pump_watts=min_pump_watts,
+            kind=kind,
+            target_mm_for_log=target_mm_for_log,
+            deducted_mm_for_log=deducted_mm_for_log,
+            runtime_for_log=runtime_for_log,
+        )
+
+        flow_end = await self._flow_meter_reading()
+        if flow_start is not None and flow_end is not None:
+            delta_liters = max(flow_end - flow_start, 0.0)
+            self.store.state.last_cycle_water_liters = delta_liters
+            await self.store.async_save()
+            # Only meaningful for a cycle that actually ran to
+            # completion -- an aborted cycle legitimately may not have
+            # moved any water, and that's not a flow-meter problem.
+            if completed and delta_liters <= 0.0:
+                await self._log_event(
+                    event_type="No Flow Detected",
+                    status="WARNING",
+                    target_mm=target_mm_for_log,
+                    deducted_mm=deducted_mm_for_log,
+                    runtime=runtime_for_log,
+                    notify_phone=True,
+                    phone_title=f"⚠️ {kind.upper()}: No Water Flow Detected",
+                    phone_msg=(
+                        "Cycle completed but the flow meter shows no water delivered. "
+                        "Check the valve/pump/flow-meter wiring."
+                    ),
+                )
+
+        postamble = self.number("pump_postamble_seconds")
+        if postamble > 0 and not self._stopping:
+            # Runs whether or not the cycle completed cleanly -- the
+            # valve is already closed either way, and the point is
+            # letting pressure settle before the next zone queued on
+            # this same pump opens its own valve. A reload or shutdown cuts
+            # it short, so a finished cycle is still recorded as finished.
+            await self._pause(postamble)
+        return completed
 
     async def _execute_pulses(
         self,
@@ -1152,11 +1349,20 @@ class ZoneFlowController:
         deducted_mm_for_log: float,
         runtime_for_log: int,
     ) -> bool:
-        """Runs `count` on/wait/off pulses. Returns True if completed without
-        an abort, False if aborted partway (mirrors the repeat: block in both
-        avocado_deep_soak and avocado_routine_irrigation)."""
+        """Runs `count` on/wait/off pulses. Returns True if completed, False
+        if it ended early -- and however it ends early (power-loss abort,
+        rain, a reload or shutdown, an error, a cancel) the valve that was
+        opened is closed here, while this zone still holds the pump, and
+        the minutes already given count toward today's safety cap."""
+        # The valve this cycle opens. A reload can change the zone's valve
+        # setting mid-cycle; it's still THIS valve that must be closed.
+        self._cycle_valve = self.store.state.lock_valve or self.valve_entity
+        self._cycle_kind = kind
+        self._delivered_minutes = 0.0
+        self._pulse_started_ts = None
+        outcome = None
         try:
-            return await self._execute_pulse_loop(
+            outcome = await self._execute_pulse_loop(
                 count=count,
                 pulse_minutes=pulse_minutes,
                 rest_minutes=rest_minutes,
@@ -1166,11 +1372,65 @@ class ZoneFlowController:
                 deducted_mm_for_log=deducted_mm_for_log,
                 runtime_for_log=runtime_for_log,
             )
+        except asyncio.CancelledError:
+            # Torn down from outside mid-cycle (e.g. an automation in
+            # restart mode, a stopped script): never leave the valve open.
+            # The lock is dealt with in _tracked_run.
+            await self._close_cycle_valve()
+            self._count_partial_run()
+            await self.store.async_save()
+            raise
+        except Exception as err:  # noqa: BLE001 - e.g. the valve switch is offline
+            _LOGGER.exception("%s: %s stopped by an error", self.entry.title, kind)
+            closed = await self._close_cycle_valve()
+            self._count_partial_run()
+            if closed:
+                # Free the lock now rather than blocking every run for 3
+                # hours; not counted as a run, so the next one tries again.
+                await self._set_lock(False)
+            else:
+                # The valve may still be open: keep the lock, so the
+                # stuck-valve and stale-lock watchdogs stay in charge.
+                await self.store.async_save()
+            await self._log_event(
+                event_type=f"{kind} Error",
+                status="ERROR",
+                target_mm=target_mm_for_log,
+                deducted_mm=deducted_mm_for_log,
+                runtime=int(round(self._delivered_minutes)),
+                notify_phone=True,
+                phone_title=f"⚠️ {kind.upper()}: Stopped By An Error",
+                phone_msg=(
+                    f"Stopped: {err}. "
+                    + (
+                        "The valve is closed; the next scheduled run will try again."
+                        if closed
+                        else f"{self._cycle_valve} may still be OPEN -- check it now."
+                    )
+                ),
+            )
+            return False
         finally:
-            # However a pulse ends (normally, aborted, or an error), a stale
-            # pulse length must never stretch the stuck-valve limit for a
-            # later, unrelated valve-on.
+            # However a pulse ends, a stale pulse length must never stretch
+            # the stuck-valve limit for a later, unrelated valve-on.
             self._expected_pulse_minutes = None
+
+        if outcome == _DONE:
+            return True
+        self._count_partial_run()
+        await self.store.async_save()
+        if outcome == _STOPPED:
+            await self._log_event(
+                event_type=f"{kind} Interrupted",
+                status="Interrupted",
+                target_mm=target_mm_for_log,
+                deducted_mm=deducted_mm_for_log,
+                runtime=int(round(self._delivered_minutes)),
+                notify_phone=False,
+                phone_title="",
+                phone_msg="",
+            )
+        return False
 
     async def _execute_pulse_loop(
         self,
@@ -1183,16 +1443,25 @@ class ZoneFlowController:
         target_mm_for_log: float,
         deducted_mm_for_log: float,
         runtime_for_log: int,
-    ) -> bool:
+    ) -> str:
+        valve = self._cycle_valve
         for index in range(1, count + 1):
+            if self._stopping:
+                return _STOPPED
             if self.store.state.abort_on:
                 _LOGGER.warning("%s: aborted by power-loss watchdog before pulse %d", kind, index)
-                return False
+                return _ABORTED
+            if index > 1 and await self._stopped_by_rain(
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            ):
+                return _RAIN
 
             self._expected_pulse_minutes = pulse_minutes
-            await self.hass.services.async_call(
-                "switch", "turn_on", {"entity_id": self.valve_entity}, blocking=True
-            )
+            self._pulse_started_ts = dt_util.utcnow().timestamp()
+            await self.hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
 
             # The pump-power audit only makes sense when a pump-power
             # sensor is actually configured -- without one, _pump_watts()
@@ -1200,13 +1469,17 @@ class ZoneFlowController:
             # single pulse about a "low" reading that was never real to
             # begin with. Skipping cleanly here (not by making the
             # threshold trivially pass) means no wasted 45s wait either.
-            if self.pump_power_entity:
+            if self.pump_power_entity and not self._stopping and not self.store.state.abort_on:
                 # wait_template pump-power check, timeout 45s, continue_on_timeout
                 with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(
-                        self._wait_for_pump_watts(min_pump_watts), timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS
+                        self._wait_for_pump_watts_or_abort(min_pump_watts), timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS
                     )
-                if await self._pump_watts() < min_pump_watts:
+                if (
+                    not self._stopping
+                    and not self.store.state.abort_on
+                    and await self._pump_watts() < min_pump_watts
+                ):
                     await self._log_event(
                         event_type="Low Pump Power Audit",
                         status="WARNING",
@@ -1219,27 +1492,134 @@ class ZoneFlowController:
                     )
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
-            with contextlib.suppress(asyncio.TimeoutError):
-                await asyncio.wait_for(self._abort_event.wait(), timeout=pulse_minutes * 60)
+            if not self._stopping and not self.store.state.abort_on:
+                with contextlib.suppress(asyncio.TimeoutError):
+                    await asyncio.wait_for(self._abort_event.wait(), timeout=pulse_minutes * 60)
 
-            if self.store.state.abort_on:
+            if self._stopping or self.store.state.abort_on:
                 self._expected_pulse_minutes = None
-                valve_state = self.hass.states.get(self.valve_entity)
-                if valve_state is not None and valve_state.state != "unavailable":
-                    await self.hass.services.async_call(
-                        "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-                    )
+                await self._close_cycle_valve()
+                self._end_pulse(pulse_minutes, full=False)
+                if self._stopping:
+                    return _STOPPED
                 _LOGGER.warning("%s: aborted by power-loss watchdog during pulse %d", kind, index)
-                return False
+                return _ABORTED
 
             self._expected_pulse_minutes = None
-            await self.hass.services.async_call(
-                "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-            )
+            await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+            self._end_pulse(pulse_minutes, full=True)
 
             if index < count:
-                await asyncio.sleep(rest_minutes * 60)
+                await self._pause(rest_minutes * 60)
+        return _DONE
+
+    def _end_pulse(self, pulse_minutes: float, *, full: bool) -> None:
+        """Adds the pulse just ended to the minutes this cycle has given."""
+        if self._pulse_started_ts is None:
+            return
+        if full:
+            given = pulse_minutes
+        else:
+            elapsed = (dt_util.utcnow().timestamp() - self._pulse_started_ts) / 60.0
+            given = min(max(elapsed, 0.0), pulse_minutes)
+        self._delivered_minutes += given
+        self._pulse_started_ts = None
+
+    def _count_partial_run(self) -> None:
+        """A cycle that ended early isn't counted as a run (the next one
+        decides again), but the water it did give counts toward today's
+        daily safety cap -- otherwise an early stop plus a re-run could go
+        past it. Counted once; the caller saves."""
+        if self._pulse_started_ts is not None:
+            # Ended mid-pulse by an exception or cancel.
+            elapsed = (dt_util.utcnow().timestamp() - self._pulse_started_ts) / 60.0
+            self._delivered_minutes += max(elapsed, 0.0)
+            self._pulse_started_ts = None
+        self.store.state.today_runtime_minutes += self._delivered_minutes
+
+    async def _close_cycle_valve(self) -> bool:
+        """Best-effort close of the valve this cycle opened, for every early
+        exit. Sends turn_off even if the valve already reports "off" -- a
+        real device can report its state a moment after the command, so
+        "off" right after a turn_on may simply not have caught up yet.
+        Returns True once the valve is confirmed not open; if even this
+        fails, the stuck-valve watchdog is still armed for it."""
+        valve = self._cycle_valve or self.valve_entity
+        state = self.hass.states.get(valve)
+        if state is None or state.state == "unavailable":
+            return state is None
+        try:
+            await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+        except Exception:  # noqa: BLE001 - last line of defence, must not raise
+            _LOGGER.exception("%s: could not close valve %s", self.entry.title, valve)
+            return False
+        return await self._valve_confirmed_closed(valve)
+
+    async def _valve_confirmed_closed(self, valve: str, seconds: float = VALVE_CLOSE_CONFIRM_SECONDS) -> bool:
+        """Waits briefly for a valve that was just told to close to report
+        it -- some devices take a few seconds to confirm."""
+        for _ in range(int(seconds * 2)):
+            state = self.hass.states.get(valve)
+            if state is None or state.state != "on":
+                return True
+            await asyncio.sleep(0.5)
+        state = self.hass.states.get(valve)
+        return state is None or state.state != "on"
+
+    async def _pause(self, seconds: float) -> None:
+        """A wait inside a cycle (soak gap between pulses, pump preamble),
+        cut short by an abort, reload or shutdown -- a stopped cycle mustn't
+        sit on a shared pump for the rest of a long gap."""
+        sleeper = asyncio.ensure_future(asyncio.sleep(seconds))
+        waker = asyncio.ensure_future(self._abort_event.wait())
+        try:
+            await asyncio.wait({sleeper, waker}, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            sleeper.cancel()
+            waker.cancel()
+
+    async def _stopped_by_rain(
+        self,
+        *,
+        kind: str,
+        target_mm_for_log: float,
+        deducted_mm_for_log: float,
+        runtime_for_log: int,
+    ) -> bool:
+        """Before each later pulse: the same 30-minute rain check that can
+        cancel a cycle before it starts. Rain that arrives mid-cycle stops
+        the rest of it. Not counted as a run -- the next scheduled run
+        decides again with this rain taken into account."""
+        rain_30min = self.rain_windows()["30min"]
+        if rain_30min <= self.number("preirrigation_rain_threshold_mm"):
+            return False
+        given = int(round(self._delivered_minutes))
+        await self._set_lock(False)
+        await self._log_event(
+            event_type=f"{kind} Stopped By Rain",
+            status="Stopped",
+            target_mm=target_mm_for_log,
+            deducted_mm=deducted_mm_for_log,
+            runtime=given,
+            notify_phone=True,
+            phone_title=f"🌧️ {kind} Stopped By Rain",
+            phone_msg=(
+                f"Stopped after {given} of {runtime_for_log} min: "
+                f"{units.depth_text(rain_30min, self.imperial)} fell in the last 30 minutes. "
+                "The next scheduled run decides again, taking this rain into account."
+            ),
+        )
         return True
+
+    async def _wait_for_pump_watts_or_abort(self, min_pump_watts: float) -> None:
+        """The pump-power wait, cut short by an abort, reload or shutdown."""
+        pump = asyncio.ensure_future(self._wait_for_pump_watts(min_pump_watts))
+        waker = asyncio.ensure_future(self._abort_event.wait())
+        try:
+            await asyncio.wait({pump, waker}, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            pump.cancel()
+            waker.cancel()
 
     async def _wait_for_pump_watts(self, min_pump_watts: float) -> None:
         """Waits until the pump-power reading reaches min_pump_watts.
@@ -1435,6 +1815,7 @@ class ZoneFlowController:
         )
         return False
 
+    @_tracked_run
     async def run_deep_soak(self) -> None:
         """Port of avocado_deep_soak. Called by the 05:00 trigger and by the
         manual 'Run Deep Soak Now' button/service — same code, same gates."""
@@ -1552,6 +1933,7 @@ class ZoneFlowController:
             phone_msg=f"DEEP SOAK COMPLETED: {units.depth_text(plan.target_mm, self.imperial)} applied over {plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min).",
         )
 
+    @_tracked_run
     async def run_routine_irrigation(self, manual: bool = False) -> None:
         """Port of avocado_routine_irrigation. Called by the 05:30 trigger and
         by the manual 'Run Routine Irrigation Now' button/service.
@@ -1755,6 +2137,7 @@ class ZoneFlowController:
             phone_msg=f"Applied {plan.calc_runtime_minutes} min (Target: {units.depth_text(plan.interval_target_mm, self.imperial)}, Rain Deducted: {units.depth_text(plan.eff_rain_mm, self.imperial)}).",
         )
 
+    @_tracked_run
     async def test_pulse(self, seconds: int) -> None:
         """Bench-test helper: one short valve pulse bypassing every schedule/
         dry-down/rain gate, so the physical valve + pump-power audit path can
@@ -1765,7 +2148,7 @@ class ZoneFlowController:
             return
         await self._set_lock(True)
         await self._set_abort(False)
-        await self._run_pulses(
+        completed = await self._run_pulses(
             count=1,
             pulse_minutes=max(seconds / 60, 1 / 60),
             rest_minutes=0,
@@ -1775,6 +2158,8 @@ class ZoneFlowController:
             deducted_mm_for_log=0.0,
             runtime_for_log=0,
         )
+        if not completed:
+            return  # aborted, stopped or failed -- already handled and logged
         await self._set_lock(False)
         await self._log_event(
             event_type="Manual Test Pulse",

@@ -55,6 +55,10 @@ class IrrigationState:
     # Mutex / safety
     lock_on: bool = False
     lock_set_ts: float | None = None
+    # The valve the lock was taken for. If a cycle's valve can't be confirmed
+    # closed the lock is kept, and the restart safety check closes THIS valve
+    # -- even if the zone's valve setting has changed since.
+    lock_valve: str | None = None
     abort_on: bool = False
 
     # Rolling rain window tracker (own dataclass, serialized separately)
@@ -154,6 +158,9 @@ class IrrigationStateStore:
     def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
         self._store: Store = Store(hass, STORAGE_VERSION, f"{DOMAIN}_{entry_id}")
         self.state = IrrigationState()
+        # Set when the zone unloads: a reloaded zone has its own store, and a
+        # leftover task of the old one must never overwrite what it loaded.
+        self.closed = False
 
     async def async_load(self) -> IrrigationState:
         raw = await self._store.async_load()
@@ -168,4 +175,6 @@ class IrrigationStateStore:
         return self.state
 
     async def async_save(self) -> None:
+        if self.closed:
+            return
         await self._store.async_save(asdict(self.state))

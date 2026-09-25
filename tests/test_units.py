@@ -215,3 +215,55 @@ async def test_phone_messages_use_the_zones_units(hass, fake_valve_services, mon
     assert any(f"Target: {expected}" in m for m in sent), sent
     # The CSV log stays metric either way, so its history never mixes units.
     assert ",20.0," in (tmp_path / "u.csv").read_text()
+
+
+def _sensor_units(hass):
+    wanted = ("rain_past_24h", "routine_weekly_target", "3_day_average_peak_temperature",
+              "reference_et0_3_day_avg", "last_cycle_water")
+    return {
+        next(w for w in wanted if w in s.entity_id): s.attributes.get("unit_of_measurement")
+        for s in hass.states.async_all("sensor")
+        if any(w in s.entity_id for w in wanted)
+    }
+
+
+METRIC_SENSOR_UNITS = {"rain_past_24h": "mm", "routine_weekly_target": "mm", "3_day_average_peak_temperature": "°C",
+                       "reference_et0_3_day_avg": "mm/d", "last_cycle_water": "L"}
+IMPERIAL_SENSOR_UNITS = {"rain_past_24h": "in", "routine_weekly_target": "in", "3_day_average_peak_temperature": "°F",
+                         "reference_et0_3_day_avg": "in/d", "last_cycle_water": "gal"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "ha_units,flip,before,after",
+    [
+        (US_CUSTOMARY_SYSTEM, "metric", IMPERIAL_SENSOR_UNITS, METRIC_SENSOR_UNITS),
+        (METRIC_SYSTEM, "imperial", METRIC_SENSOR_UNITS, IMPERIAL_SENSOR_UNITS),
+    ],
+)
+async def test_switching_an_existing_zones_units_moves_its_sensors_too(
+    hass, fake_valve_services, tmp_path, ha_units, flip, before, after
+):
+    """Home Assistant fixes a sensor's unit when it is first created; an
+    existing zone switched to other units must not end up with sliders in
+    one system and sensors in the other."""
+    entry, _ = await _zone(hass, tmp_path, ha_units=ha_units)
+    assert _sensor_units(hass) == before
+    hass.config_entries.async_update_entry(entry, options={**entry.options, CONF_UNIT_SYSTEM: flip})
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert _sensor_units(hass) == after
+
+
+@pytest.mark.asyncio
+async def test_a_unit_the_person_picked_for_a_sensor_is_kept(hass, fake_valve_services, tmp_path):
+    from homeassistant.helpers import entity_registry as er
+
+    entry, _ = await _zone(hass, tmp_path, ha_units=METRIC_SYSTEM)
+    rain = next(s.entity_id for s in hass.states.async_all("sensor") if "rain_past_24h" in s.entity_id)
+    er.async_get(hass).async_update_entity_options(rain, "sensor", {"unit_of_measurement": "cm"})
+    await hass.async_block_till_done()
+    hass.config_entries.async_update_entry(entry, options={**entry.options, CONF_UNIT_SYSTEM: "imperial"})
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.states.get(rain).attributes["unit_of_measurement"] == "cm"

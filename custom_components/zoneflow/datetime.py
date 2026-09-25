@@ -23,11 +23,19 @@ from datetime import datetime
 from homeassistant.components.datetime import DateTimeEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from .const import DOMAIN
+
+# A planting date may be planned ahead; every other date records something
+# that already happened. A future one would silently hold a gate shut (a
+# "last routine" next month means no watering until then), so it's refused.
+# A few minutes of slack covers a browser clock slightly ahead of HA's.
+FUTURE_ALLOWED_FIELDS = {"planting_date_ts"}
+FUTURE_SLACK_SECONDS = 300
 
 # (state field on IrrigationState, display name)
 LAST_EVENT_FIELDS: list[tuple[str, str]] = [
@@ -78,6 +86,15 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
         return dt_util.utc_from_timestamp(ts) if ts is not None else None
 
     async def async_set_value(self, value: datetime) -> None:
-        setattr(self._controller.store.state, self._state_field, dt_util.as_utc(value).timestamp())
+        ts = dt_util.as_utc(value).timestamp()
+        if (
+            self._state_field not in FUTURE_ALLOWED_FIELDS
+            and ts > dt_util.utcnow().timestamp() + FUTURE_SLACK_SECONDS
+        ):
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="date_in_future",
+            )
+        setattr(self._controller.store.state, self._state_field, ts)
         await self._controller.store.async_save()
         self.async_write_ha_state()

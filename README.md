@@ -48,7 +48,9 @@ verification test pulse run before it calls the job done.
 - **Rain-aware**: tracks rolling rain windows (30min through 14 days) from a
   tipping-bucket counter, deducts recent rainfall from how much a routine
   cycle needs to apply, and holds off entirely during a configurable
-  dry-down period after significant rain.
+  dry-down period after significant rain. Rain that starts while a cycle is
+  running stops the rest of it (the same 30-minute threshold that can cancel
+  a cycle before it starts).
 - **Temperature-aware**: a 3-day average peak temperature shifts both the
   watering interval and the weekly water target between "cool", "normal",
   and "hot" tiers. Works whether Home Assistant is set to °C or °F.
@@ -56,7 +58,8 @@ verification test pulse run before it calls the job done.
   or inches/°F/gallons -- by default whatever Home Assistant is set to, or
   forced per zone in its options. ZoneFlow calculates in metric internally,
   so the choice never changes how much it waters, and switching keeps every
-  setting's value.
+  setting's value -- sliders and existing sensors both move to the new
+  units (a unit you picked yourself for a sensor is left alone).
 - **ET curve, optional**: switch a zone's Water Demand Model to the ET
   curve and its weekly target follows the weather continuously instead of
   jumping between three tiers -- reference evapotranspiration (ET₀,
@@ -67,7 +70,12 @@ verification test pulse run before it calls the job done.
   effect.
 - **Safety watchdogs, not just a scheduler**: a stuck-valve force-off, a
   power-loss mid-cycle abort, a pump-power audit per pulse, and a stale-lock
-  auto-recovery on Home Assistant restart. All of it — scheduled runs and
+  auto-recovery on Home Assistant restart. A cycle that gets interrupted —
+  you save the zone's settings mid-run, Home Assistant restarts or shuts
+  down, an automation cancels it, or the valve switch stops responding —
+  always ends with its valve closed (with a phone alert for a valve error).
+  It isn't counted as a finished run, but the water it gave counts toward
+  the daily safety cap. All of it — scheduled runs and
   manual button/service calls alike — goes through the exact same code path,
   so a manual run can never drift from what the schedule would have done.
 - **Tunable, not hardcoded**: every threshold (weekly mm targets, flow rate,
@@ -105,7 +113,9 @@ verification test pulse run before it calls the job done.
   them) so an already-established plant doesn't get double-watered just
   because you're migrating it onto ZoneFlow. Leave them unset for a genuinely
   brand-new setup; the corresponding gate then behaves exactly as if it's
-  never happened.
+  never happened. These dates can't be set in the future (only the planting
+  date can be planned ahead) -- a typo'd "last routine" next month would
+  otherwise silently keep the zone dry until then.
 
 ## Installation
 

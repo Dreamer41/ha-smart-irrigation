@@ -102,3 +102,39 @@ async def test_seeding_last_deep_soak_prevents_an_immediate_unwanted_run(hass, f
 
     # Freshly "deep soaked" -- the 14-day interval isn't up, so no pulses ran.
     assert "on" not in valve_events
+
+
+@pytest.mark.asyncio
+async def test_a_future_date_is_refused_except_a_planned_planting_date(hass, fake_valve_services):
+    """A typo'd "last routine" next month would silently hold the zone dry
+    until then, so dates that record the past refuse the future. A planting
+    date may be planned ahead."""
+    from datetime import timedelta
+    from homeassistant.exceptions import ServiceValidationError
+
+    await _seed(hass)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+
+    def entity(fragment):
+        return next(s.entity_id for s in hass.states.async_all("datetime") if s.entity_id.endswith(fragment))
+
+    async def set_dt(fragment, when):
+        await hass.services.async_call(
+            "datetime", "set_value", {"entity_id": entity(fragment), "datetime": when}, blocking=True
+        )
+
+    next_month = dt_util.now() + timedelta(days=30)
+    for fragment in ("last_routine_irrigation", "last_deep_soak", "last_significant_rain", "last_fertilizing"):
+        with pytest.raises(ServiceValidationError):
+            await set_dt(fragment, next_month)
+    assert controller.store.state.last_routine_ts is None
+
+    # A clock a minute or two ahead of Home Assistant's is still fine.
+    await set_dt("last_routine_irrigation", dt_util.now() + timedelta(minutes=2))
+    assert controller.store.state.last_routine_ts is not None
+
+    await set_dt("planting_transplant_date", next_month)
+    assert controller.store.state.planting_date_ts == pytest.approx(next_month.timestamp(), abs=1)

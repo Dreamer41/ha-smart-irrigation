@@ -738,7 +738,11 @@ Setting these via the `datetime.set_value` service (or the UI date/time
 picker) immediately changes the gating math — e.g. seeding "Last Deep Soak"
 to today correctly makes the zone *not* due for another ~14 days. Leave any
 of these unset ("unknown") if the person genuinely doesn't know or it
-really hasn't happened yet; that's the honest default and gates behave as
+really hasn't happened yet; that's the honest default. These dates can't
+be set in the future (ZoneFlow refuses them -- a future "last" date would
+silently hold the zone dry until it passed); if a set fails, double-check
+the date with the person. Only the Planting / Transplant Date may be set
+ahead and gates behave as
 if it's simply never occurred (for the growth ramp specifically: leaving
 planting date unset while the ramp is "on" is safe by design — it just
 means the full weekly target applies until a date is set, never a reduced

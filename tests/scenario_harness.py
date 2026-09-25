@@ -43,6 +43,13 @@ class CompressedTime:
     # the 0-based index of that pulse -- lets a test inject an event (abort,
     # a second trigger, a sensor change) at an exact point mid-cycle.
     on_pulse: object = None
+    # Real seconds a valve-open pulse / a sleep actually waits (default:
+    # next to nothing). Interruption tests raise these so another task -- a
+    # reload, a shutdown -- can act while the cycle sits in a pulse or a
+    # soak gap, as it would in real life; an abort still wakes them at once.
+    pulse_real_seconds: float = 0.001
+    sleep_real_seconds: float = 0.0
+    pump_wait_real_seconds: float = 0.001
 
     def install(self, monkeypatch) -> "CompressedTime":
         proxy = types.SimpleNamespace(**{k: getattr(asyncio, k) for k in dir(asyncio) if not k.startswith("__")})
@@ -67,11 +74,15 @@ class CompressedTime:
             for valve in open_valves or ["<none open>"]:
                 state = self.hass.states.get(valve)
                 self.pulses.append(Pulse(valve, timeout / 60.0, state.state if state else "missing"))
-        return await _real_wait_for(aw, timeout=0.001 if timeout is not None else None)
+        if timeout is None:
+            return await _real_wait_for(aw, timeout=None)
+        if timeout == PUMP_POWER_WAIT_TIMEOUT_SECONDS:
+            return await _real_wait_for(aw, timeout=self.pump_wait_real_seconds)
+        return await _real_wait_for(aw, timeout=self.pulse_real_seconds)
 
     async def _sleep(self, seconds, *args, **kwargs):
         self.sleeps_seconds.append(seconds)
-        await _real_sleep(0)
+        await _real_sleep(min(seconds, self.sleep_real_seconds) if self.sleep_real_seconds else 0)
 
     # --- convenience -------------------------------------------------
     def pulses_for(self, valve: str) -> list[float]:

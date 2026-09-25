@@ -495,5 +495,10 @@
         }
       }
     }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "This date can't be in the future: it records something that already happened. Only the Planting / Transplant Date may be set ahead."
+    }
   }
 }

@@ -490,8 +490,7 @@ async def test_pulse_length_is_cleared_even_if_a_pulse_errors(hass, fake_valve_s
         raise RuntimeError("switch integration fell over")
 
     clock.on_pulse = boom
-    with pytest.raises(RuntimeError):
-        await controller.run_routine_irrigation()
+    await controller.run_routine_irrigation()  # handled now, see test_interruptions.py
     assert controller._expected_pulse_minutes is None
     assert controller._valve_stuck_limit_minutes() == 150
 
