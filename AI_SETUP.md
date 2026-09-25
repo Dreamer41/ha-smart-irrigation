@@ -1445,7 +1445,7 @@ Do not consider setup finished until these are confirmed for each zone:
    find out why it was stuck first).
 4. Tell the person plainly what will happen next (which zones water at
    which times), and what to watch on each zone's plants over the next
-   couple of weeks (§7.9) and remind them the `test_pulse` service bypasses every
+   couple of weeks (§7.9). Also remind them the `test_pulse` service bypasses every
    safety/rain gate on purpose, so it's not representative of a real run —
    don't leave them thinking a successful test pulse alone proves the rain
    logic works.
