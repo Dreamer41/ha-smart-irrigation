@@ -65,15 +65,28 @@ from .const import (
 )
 
 
+# Every genuinely optional entity field -- all but the valve.
+OPTIONAL_ENTITY_KEYS = (
+    CONF_PUMP_POWER_ENTITY,
+    CONF_RAIN_COUNTER_ENTITY,
+    CONF_OUTDOOR_TEMP_ENTITY,
+    CONF_FLOW_METER_ENTITY,
+    CONF_SOIL_MOISTURE_ENTITY,
+    CONF_NOTIFY_ENTITY,
+    CONF_WEATHER_ENTITY,
+)
+
+
 def _optional_entity_key(defaults: dict[str, Any], conf_key: str):
-    """Shared pattern for every genuinely-optional entity field: passing
-    default=None into vol.Optional() for an EntitySelector makes the
-    frontend try to validate the literal string "None" as an entity ID/UUID
-    ("Entity None is neither a valid entity ID nor a valid UUID") -- so only
-    attach a default when one actually exists; otherwise leave the key
-    truly unset and let the marker default to nothing selected."""
+    """Shared pattern for every genuinely-optional entity field. The current
+    entity is a *suggested* value, not a default: with default=, clearing
+    the field in the form just brought the old entity back, so a sensor,
+    once set, could never be removed. (default=None isn't an option either
+    -- the frontend then validates the literal "None" as an entity ID.)"""
     value = defaults.get(conf_key)
-    return vol.Optional(conf_key, default=value) if value else vol.Optional(conf_key)
+    if value:
+        return vol.Optional(conf_key, description={"suggested_value": value})
+    return vol.Optional(conf_key)
 
 
 def _schema(defaults: dict[str, Any]) -> vol.Schema:
@@ -246,6 +259,11 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
                 if len(user_input[key].split(":")) == 2:
                     user_input[key] = f"{user_input[key]}:00"
+            # A cleared optional sensor is left out of the form's answer;
+            # store it as None, or the zone would fall back to the one
+            # chosen at first setup (options override the setup data).
+            for key in OPTIONAL_ENTITY_KEYS:
+                user_input.setdefault(key, None)
             return self.async_create_entry(title="", data=user_input)
         defaults = {**self._config_entry.data, **self._config_entry.options}
         return self.async_show_form(step_id="init", data_schema=_schema(defaults))

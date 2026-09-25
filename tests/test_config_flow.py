@@ -5,6 +5,7 @@ descriptive soil/site + growth-ramp selectors -- is actually verified end
 to end, the way a person clicking through the UI would hit it.
 """
 import pytest
+import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
 
@@ -185,3 +186,58 @@ async def test_options_flow_prefills_current_soil_profile_and_can_change_it(hass
     # live when the test ends, not a half-finished reload racing teardown's
     # own automatic entry unload.
     await hass.async_block_till_done()
+
+
+@pytest.mark.asyncio
+async def test_options_flow_can_remove_optional_sensors(hass):
+    """Every sensor but the valve is optional -- and must stay optional
+    after setup: clearing one in Options removes it, instead of the old
+    one coming back (as a form default, or from the first-setup data)."""
+    from custom_components.zoneflow.const import (
+        CONF_OUTDOOR_TEMP_ENTITY,
+        CONF_RAIN_COUNTER_ENTITY,
+        CONF_SOIL_MOISTURE_ENTITY,
+        CONF_WEATHER_ENTITY,
+    )
+
+    sensors = {
+        CONF_RAIN_COUNTER_ENTITY: "counter.rain",
+        CONF_OUTDOOR_TEMP_ENTITY: "sensor.outdoor_temp",
+        CONF_SOIL_MOISTURE_ENTITY: "sensor.soil",
+        CONF_WEATHER_ENTITY: "weather.home",
+    }
+    hass.states.async_set("sensor.outdoor_temp", "25", {"device_class": "temperature"})
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Beds"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input(**sensors))
+    entry = result["result"]
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller.soil_moisture_entity == "sensor.soil"
+
+    options_result = await hass.config_entries.options.async_init(entry.entry_id)
+    schema = options_result["data_schema"].schema
+    soil_field = next(k for k in schema if k == CONF_SOIL_MOISTURE_ENTITY)
+    # Pre-filled as a suggestion, not a default the form puts back.
+    assert soil_field.description == {"suggested_value": "sensor.soil"}
+    assert soil_field.default is vol.UNDEFINED
+
+    # Keep the rain gauge, clear the other three (the form leaves them out).
+    await hass.config_entries.options.async_configure(
+        options_result["flow_id"], _minimal_entities_input(**{CONF_RAIN_COUNTER_ENTITY: "counter.rain"})
+    )
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller.soil_moisture_entity is None
+    assert controller.outdoor_temp_entity is None
+    assert controller.weather_entity is None
+    assert controller.rain_counter_entity == "counter.rain"
+
+    # And one can be added back later.
+    options_result = await hass.config_entries.options.async_init(entry.entry_id)
+    await hass.config_entries.options.async_configure(
+        options_result["flow_id"],
+        _minimal_entities_input(**{CONF_RAIN_COUNTER_ENTITY: "counter.rain", CONF_WEATHER_ENTITY: "weather.home"}),
+    )
+    await hass.async_block_till_done()
+    assert hass.data[DOMAIN][entry.entry_id].weather_entity == "weather.home"
