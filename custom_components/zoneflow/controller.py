@@ -34,6 +34,8 @@ from homeassistant.helpers.event import (
     async_track_time_change,
 )
 import homeassistant.util.dt as dt_util
+from homeassistant.const import UnitOfTemperature
+from homeassistant.util.unit_conversion import TemperatureConverter
 
 from . import calculations as calc
 from .const import (
@@ -68,6 +70,7 @@ from .const import (
     DEFAULT_IRRIGATION_METHOD,
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
+    DEMAND_MODEL_ET,
     DOMAIN,
     EVENT_LOG,
     GROWTH_RAMP_CURVES,
@@ -97,6 +100,26 @@ from .const import (
     VALVE_STUCK_ON_MINUTES,
 )
 from .state_store import IrrigationStateStore
+
+
+def _state_temp_c(state: State | None) -> float | None:
+    """A temperature entity's current reading in degC, or None if it isn't
+    a number. Everything inside ZoneFlow (thresholds, the peak/min
+    registers, ET0) is in degC, but Home Assistant reports a temperature
+    sensor in the instance's own unit system -- so an HA set to Fahrenheit
+    hands over 89.6 for a 32C afternoon. The sensor's unit_of_measurement
+    decides the conversion; no unit at all is treated as degC, which is
+    what ZoneFlow always assumed before this existed."""
+    if state is None:
+        return None
+    try:
+        value = float(state.state)
+    except (TypeError, ValueError):
+        return None
+    unit = state.attributes.get("unit_of_measurement")
+    if unit in (UnitOfTemperature.FAHRENHEIT, UnitOfTemperature.KELVIN):
+        return TemperatureConverter.convert(value, unit, UnitOfTemperature.CELSIUS)
+    return value
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -468,12 +491,7 @@ class ZoneFlowController:
     def _on_midnight(self, now) -> None:
         seed = None
         if self.outdoor_temp_entity:
-            temp_state = self.hass.states.get(self.outdoor_temp_entity)
-            if temp_state is not None:
-                try:
-                    seed = float(temp_state.state)
-                except (TypeError, ValueError):
-                    seed = None
+            seed = _state_temp_c(self.hass.states.get(self.outdoor_temp_entity))
         self._start_new_day(seed_temp=seed)
         self.hass.async_create_task(self.store.async_save())
 
@@ -482,9 +500,8 @@ class ZoneFlowController:
         new_state: State | None = event.data.get("new_state")
         if new_state is None:
             return
-        try:
-            temp = float(new_state.state)
-        except (TypeError, ValueError):
+        temp = _state_temp_c(new_state)
+        if temp is None:
             return
         state = self.store.state
         today_iso = dt_util.now().date().isoformat()
@@ -570,6 +587,48 @@ class ZoneFlowController:
             state.today_peak_temp_c,
             self.hass.config.latitude,
             dt_util.now().date().timetuple().tm_yday,
+        )
+
+    def effective_avg_et0(self) -> float | None:
+        """avg_et0() gated the same way as effective_avg_peak_temp(): None
+        whenever the temperature sensor is unconfigured or CURRENTLY
+        unavailable/unknown, so a dead sensor can't keep steering the ET
+        demand model off stale history -- the zone drops to the tier target
+        (itself the normal tier on a dead sensor) and recovers on its own."""
+        entity_id = self.outdoor_temp_entity
+        if not entity_id:
+            return None
+        temp_state = self.hass.states.get(entity_id)
+        if temp_state is None or temp_state.state in ("unavailable", "unknown"):
+            return None
+        return self.avg_et0()
+
+    @property
+    def demand_model(self) -> str:
+        return self.store.state.demand_model
+
+    def et_weekly_target_mm(self) -> float | None:
+        """The ET demand model's full-strength weekly target (before the
+        growth ramp), or None when this zone uses temperature tiers, or
+        uses the ET curve but ET0 isn't available right now -- None always
+        means "use the tier target", see const.py's DEMAND_MODEL_*."""
+        if self.demand_model != DEMAND_MODEL_ET:
+            return None
+        et0 = self.effective_avg_et0()
+        if et0 is None:
+            return None
+        return calc.et_weekly_target_mm(et0, self.number("crop_coefficient"))
+
+    def tier_weekly_target_mm(self) -> float:
+        """The original temperature-tier weekly target (before the growth
+        ramp), from the same inputs the routine cycle uses."""
+        return calc.routine_target_weekly_mm(
+            self.effective_avg_peak_temp(),
+            self.number("hot_temp_threshold"),
+            self.number("cool_temp_threshold"),
+            self.number("target_weekly_mm"),
+            self.number("target_weekly_hot_mm"),
+            self.number("target_weekly_cool_mm"),
         )
 
     def effective_avg_peak_temp(self) -> float | None:
@@ -1415,6 +1474,7 @@ class ZoneFlowController:
         # deep soak's job (root-zone penetration depth) doesn't scale the
         # same way with plant age.
         ramp = self.growth_ramp_fraction()
+        et_weekly = self.et_weekly_target_mm()
         routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
         days_elapsed = int(elapsed_seconds / 86400)
         plan = calc.plan_routine_irrigation(
@@ -1433,6 +1493,7 @@ class ZoneFlowController:
             rain_eff_high=self.number("rain_eff_high"),
             pulse_count=routine_pulse_count,
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
+            weekly_target_override_mm=(et_weekly * ramp) if et_weekly is not None else None,
         )
 
         if days_elapsed > 10:

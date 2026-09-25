@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
-from .const import DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
 
@@ -32,6 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     entities += [
         ZoneFlowAvgPeakTempSensor(entry, controller),
         ZoneFlowReferenceEt0Sensor(entry, controller),
+        ZoneFlowWeeklyTargetSensor(entry, controller),
         ZoneFlowNextIrrigationSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
@@ -115,6 +116,49 @@ class ZoneFlowReferenceEt0Sensor(_Base):
             "today_min_temp_c": state.today_min_temp_c,
             "today_max_temp_c": state.today_peak_temp_c,
             "today_et0_so_far_mm": round(today, 2) if today is not None else None,
+        }
+
+
+class ZoneFlowWeeklyTargetSensor(_Base):
+    """The routine weekly target a cycle would use right now, including the
+    growth ramp, and which model produced it -- so switching a zone to the
+    ET curve (or it falling back to the tiers) is visible on the dashboard
+    rather than only in the CSV log."""
+
+    _attr_native_unit_of_measurement = "mm"
+    _attr_icon = "mdi:target"
+    _attr_suggested_display_precision = 1
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_routine_weekly_target"
+        self._attr_translation_key = "routine_weekly_target"
+
+    def _source(self) -> tuple[float, str]:
+        et_weekly = self._controller.et_weekly_target_mm()
+        if et_weekly is not None:
+            return et_weekly, "et_curve"
+        tier = self._controller.tier_weekly_target_mm()
+        if self._controller.demand_model == DEMAND_MODEL_ET:
+            return tier, "temperature_tiers_fallback"
+        return tier, "temperature_tiers"
+
+    @property
+    def native_value(self) -> float:
+        target, _ = self._source()
+        return round(target * self._controller.growth_ramp_fraction(), 2)
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        target, source = self._source()
+        et0 = self._controller.effective_avg_et0()
+        return {
+            "demand_model": self._controller.demand_model,
+            "source": source,
+            "full_strength_target_mm": round(target, 2),
+            "growth_ramp_pct": round(self._controller.growth_ramp_fraction() * 100, 0),
+            "avg_et0_mm_per_day": round(et0, 2) if et0 is not None else None,
+            "crop_coefficient": self._controller.number("crop_coefficient"),
         }
 
 
@@ -207,6 +251,7 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
             normal_weekly_mm=self._controller.number("target_weekly_mm"),
             hot_weekly_mm=self._controller.number("target_weekly_hot_mm"),
             cool_weekly_mm=self._controller.number("target_weekly_cool_mm"),
+            weekly_target_override_mm=self._controller.et_weekly_target_mm(),
         )
 
 

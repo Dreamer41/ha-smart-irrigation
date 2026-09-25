@@ -51,7 +51,15 @@ verification test pulse run before it calls the job done.
   dry-down period after significant rain.
 - **Temperature-aware**: a 3-day average peak temperature shifts both the
   watering interval and the weekly water target between "cool", "normal",
-  and "hot" tiers.
+  and "hot" tiers. Works whether Home Assistant is set to °C or °F.
+- **ET curve, optional**: switch a zone's Water Demand Model to the ET
+  curve and its weekly target follows the weather continuously instead of
+  jumping between three tiers -- reference evapotranspiration (ET₀,
+  Hargreaves-Samani, from the daily min/max temperature and your home
+  latitude) x 7 x a per-zone crop factor. No extra sensors needed, off by
+  default, and it falls back to the tiers on its own if the temperature
+  sensor drops out. A Routine Weekly Target sensor shows which model is in
+  effect.
 - **Safety watchdogs, not just a scheduler**: a stuck-valve force-off, a
   power-loss mid-cycle abort, a pump-power audit per pulse, and a stale-lock
   auto-recovery on Home Assistant restart. All of it — scheduled runs and

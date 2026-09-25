@@ -258,3 +258,40 @@ def test_hargreaves_et0_returns_none_for_unusable_pairs(t_min, t_max):
 def test_average_et0_drops_missing_days_and_never_invents_a_value():
     assert calc.average_et0([4.0, None, 5.0]) == 4.5
     assert calc.average_et0([None, None, None]) is None
+
+
+def test_et_weekly_target_is_et0_times_seven_times_kc():
+    assert calc.et_weekly_target_mm(4.0, 0.8) == 22.4
+    assert calc.et_weekly_target_mm(5.0, 1.0) == 35.0
+    assert calc.et_weekly_target_mm(-1.0, 0.8) == 0.0
+
+
+def test_plan_routine_irrigation_uses_the_override_target_when_given():
+    common = dict(
+        avg_peak_temp=35.0,  # hot tier on its own
+        hot_threshold=31.5,
+        cool_threshold=30.0,
+        normal_weekly_mm=35.0,
+        hot_weekly_mm=45.0,
+        cool_weekly_mm=25.0,
+        flow_rate=0.24,
+        days_elapsed=3,
+        today_rain_mm=0.0,
+        rain_day_history_mm=[0.0] * 10,
+        rain_eff_low=0.2,
+        rain_eff_mid=0.6,
+        rain_eff_high=1.0,
+    )
+    tiers = calc.plan_routine_irrigation(**common)
+    et = calc.plan_routine_irrigation(**common, weekly_target_override_mm=21.0)
+    assert tiers.target_weekly_mm == 45.0
+    assert et.target_weekly_mm == 21.0
+    # The interval still follows the hot threshold under the ET model.
+    assert et.interval_days == tiers.interval_days == 3
+    assert et.interval_target_mm == pytest.approx(21.0 / 7 * 3)
+
+
+def test_last_water_delivered_follows_the_override_target():
+    args = (30.5, 31.5, 30.0, 35.0, 45.0, 25.0)
+    assert calc.estimate_last_water_delivered_mm(*args) == 17.5
+    assert calc.estimate_last_water_delivered_mm(*args, weekly_target_override_mm=28.0) == 14.0

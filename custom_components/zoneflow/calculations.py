@@ -154,6 +154,12 @@ def average_et0(daily_values: list[float | None]) -> float | None:
     return jinja_round(sum(valid) / len(valid), 2)
 
 
+def et_weekly_target_mm(avg_et0_mm_per_day: float, crop_coefficient: float) -> float:
+    """ET demand model's weekly target: ET0 (mm/day) x 7 days x crop factor.
+    See const.py's DEMAND_MODEL_* comment."""
+    return jinja_round(max(avg_et0_mm_per_day, 0.0) * 7.0 * max(crop_coefficient, 0.0), 2)
+
+
 @dataclass
 class DeepSoakPlan:
     target_mm: float
@@ -245,6 +251,7 @@ def plan_routine_irrigation(
     rain_eff_high: float,
     pulse_count: int = 3,
     min_pulse_minutes: int = 1,
+    weekly_target_override_mm: float | None = None,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -254,9 +261,15 @@ def plan_routine_irrigation(
     plan_deep_soak above -- a zone's real pulse_count comes from its
     "Routine Pulse Count (Split-Cycle)" number entity."""
     interval_days = routine_interval_days(avg_peak_temp, hot_threshold)
-    target_weekly_mm = routine_target_weekly_mm(
-        avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
-    )
+    # weekly_target_override_mm is the ET demand model's target (see
+    # et_weekly_target_mm) when a zone uses it and ET0 is available; None
+    # means the original temperature-tier target, exactly as before.
+    if weekly_target_override_mm is not None:
+        target_weekly_mm = weekly_target_override_mm
+    else:
+        target_weekly_mm = routine_target_weekly_mm(
+            avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
+        )
     interval_target_mm = (target_weekly_mm / 7.0) * interval_days
     eff_rain = rain_deduction_mm(
         today_rain_mm,
@@ -404,10 +417,15 @@ def estimate_last_water_delivered_mm(
     normal_weekly_mm: float,
     hot_weekly_mm: float,
     cool_weekly_mm: float,
+    weekly_target_override_mm: float | None = None,
 ) -> float:
     """Port of `sensor.last_avocado_water_delivered` (per-session estimate,
-    i.e. half the applicable weekly target)."""
-    target = routine_target_weekly_mm(
-        avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
-    )
+    i.e. half the applicable weekly target). weekly_target_override_mm:
+    same meaning as in plan_routine_irrigation."""
+    if weekly_target_override_mm is not None:
+        target = weekly_target_override_mm
+    else:
+        target = routine_target_weekly_mm(
+            avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
+        )
     return jinja_round(target / 2, 1)

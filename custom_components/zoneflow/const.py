@@ -114,6 +114,21 @@ DEFAULT_HEALTH_STATUS = "good"
 FERTILIZING_INTERVAL_OPTIONS = [str(m) for m in range(1, 13)]
 DEFAULT_FERTILIZING_INTERVAL = "3"
 
+# Routine weekly-target model (select.py's ZoneFlowDemandModelSelect).
+# "temperature_tiers" is the original hot/normal/cool slider system and the
+# default, so upgrading never changes how an existing zone waters.
+# "et_curve" replaces the tier target with a continuous one:
+#     weekly target = 3-day avg Hargreaves ET0 x 7 x crop factor (Kc)
+# Only the weekly TARGET changes -- the 3/4-day interval still follows the
+# hot threshold, and rain credit, growth ramp, runtime caps etc. all apply
+# exactly as before. Whenever ET0 can't be computed (no full day of
+# min/max recorded yet, or the temperature sensor is currently
+# unavailable) the zone falls back to the tier target for that cycle.
+DEMAND_MODEL_TIERS = "temperature_tiers"
+DEMAND_MODEL_ET = "et_curve"
+DEMAND_MODEL_OPTIONS = [DEMAND_MODEL_TIERS, DEMAND_MODEL_ET]
+DEFAULT_DEMAND_MODEL = DEMAND_MODEL_TIERS
+
 # Growth-stage auto-ramp (optional, off by default -- see controller.py's
 # growth_ramp_fraction()). "off" means the weekly-target math behaves
 # exactly as it always has; any other profile scales the weekly target by
@@ -375,6 +390,11 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "growth_ramp_custom_point2_day": ("Custom Ramp: Midpoint 2 Day", 0.0, 365.0, 1.0, "d"),
     "growth_ramp_custom_point2_pct": ("Custom Ramp: Midpoint 2 %", 0.0, 100.0, 1.0, "%"),
     "growth_ramp_custom_full_day": ("Custom Ramp: Day Reaching 100%", 0.0, 365.0, 1.0, "d"),
+    # ET demand model's crop factor (Kc): how much water this zone's plant
+    # uses relative to the Hargreaves reference ET0 (a reference grass
+    # surface). Only read while the zone's "Water Demand Model" select is
+    # set to the ET curve -- see DEMAND_MODEL_* below.
+    "crop_coefficient": ("Crop Factor (Kc)", 0.1, 1.5, 0.05, None),
 }
 
 NUMBER_DEFAULTS: dict[str, float] = {
@@ -420,6 +440,9 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "growth_ramp_custom_point2_day": 35.0,
     "growth_ramp_custom_point2_pct": 85.0,
     "growth_ramp_custom_full_day": 60.0,
+    # Middle of the usual 0.6-1.0 range for established trees and most
+    # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
+    "crop_coefficient": 0.8,
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"

@@ -38,6 +38,11 @@ on the planting date (growth stage):
   paired with datetime.py's "Last Fertilizing" date -- the same kind of
   pure journal field as Health, with no effect on watering at all.
 
+- ZoneFlowDemandModelSelect: which routine weekly-target model the zone
+  uses -- the original temperature tiers (default) or the Hargreaves ET
+  curve. Unlike the journal fields this one DOES change watering; see
+  const.py's DEMAND_MODEL_* comment.
+
 All of them persist through IrrigationState (state_store.py), the same Store
 already used for the planting date etc., so a value set here survives an
 HA restart exactly like everything else that store holds.
@@ -51,6 +56,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
+    DEMAND_MODEL_OPTIONS,
     DOMAIN,
     FERTILIZING_INTERVAL_OPTIONS,
     GROWTH_RAMP_PROFILE_OPTIONS,
@@ -71,6 +77,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowGrowthRampProfileSelect(entry, controller),
             ZoneFlowHealthSelect(entry, controller),
             ZoneFlowFertilizingIntervalSelect(entry, controller),
+            ZoneFlowDemandModelSelect(entry, controller),
         ]
     )
 
@@ -215,5 +222,28 @@ class ZoneFlowFertilizingIntervalSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.fertilizing_interval_months = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowDemandModelSelect(_Base):
+    """Routine weekly-target model -- see const.py's DEMAND_MODEL_* comment.
+    Read by ZoneFlowController.et_weekly_target_mm() at each routine cycle,
+    so a change applies from the next cycle with no reload."""
+
+    _attr_icon = "mdi:chart-bell-curve"
+    _attr_options = DEMAND_MODEL_OPTIONS
+    _attr_translation_key = "demand_model"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_demand_model_select"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.store.state.demand_model
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.demand_model = option
         await self._controller.store.async_save()
         self.async_write_ha_state()

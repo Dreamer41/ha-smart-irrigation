@@ -241,6 +241,9 @@
       },
       "growth_ramp_custom_full_day": {
         "name": "Custom Ramp: Day Reaching 100%"
+      },
+      "crop_coefficient": {
+        "name": "Crop Factor (Kc)"
       }
     },
     "datetime": {
@@ -329,6 +332,9 @@
       },
       "reference_et0_3d": {
         "name": "Reference ET₀ (3-Day Avg)"
+      },
+      "routine_weekly_target": {
+        "name": "Routine Weekly Target"
       }
     },
     "select": {
@@ -389,6 +395,13 @@
           "10": "10 months",
           "11": "11 months",
           "12": "12 months"
+        }
+      },
+      "demand_model": {
+        "name": "Water Demand Model",
+        "state": {
+          "temperature_tiers": "Temperature tiers",
+          "et_curve": "ET curve (Hargreaves)"
         }
       }
     },

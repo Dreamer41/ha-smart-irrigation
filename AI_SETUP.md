@@ -906,6 +906,7 @@ its factory default.
 | `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§7.2) | leave at 0 for a single-zone/independent-pump setup |
 | `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§7.4) | see §7.4 |
 | `..._soil_moisture_dry_threshold` (%) / `..._soil_moisture_wet_threshold` (%) | only relevant if a soil-moisture sensor was set (§7.7) | see §7.7 |
+| `..._crop_factor_kc` | how much water this plant uses relative to reference ET₀ | only read when the zone's **Water Demand Model** is set to the ET curve — see §7.8; leave at the 0.8 default otherwise |
 
 **Quick weekly-water-target starting points by crop type** (mm/week, normal
 weather — adjust from here rather than treating these as exact):
@@ -1227,6 +1228,18 @@ action needed:
 - **Soil moisture sensor drops out (§7.7):** the routine-irrigation decision
   falls back to the plain modeled interval, exactly as if no soil-moisture
   sensor had ever been configured, until it reports a real reading again.
+- **Outdoor temperature drops out on a zone using the ET curve (§7.8):**
+  that zone's weekly target falls back to the temperature-tier target
+  (itself the normal tier while the sensor is dead) for as long as the
+  sensor is out, and goes back to the ET curve on its own once it reports
+  again. The Routine Weekly Target sensor's `source` attribute reads
+  `temperature_tiers_fallback` while this is happening.
+
+Temperatures are always handled in °C internally. If the person's Home
+Assistant is set to Fahrenheit, ZoneFlow converts the sensor's readings
+automatically — but the threshold numbers themselves (hot/cool
+thresholds) are always entered in °C, so convert for them if they think
+in °F.
 
 ### 7.7 Optional soil-moisture sensor
 Only set this up if the person has an actual soil-moisture probe already
@@ -1254,6 +1267,52 @@ Requires a `sensor.*` entity reporting moisture as a percentage.
    between, it defers entirely to the plain modeled schedule, same as
    before this was configured. A dropout degrades the same way (§7.6).
 
+### 7.8 Optional ET curve (evapotranspiration-based weekly target)
+By default a zone's routine weekly target comes from three fixed tiers —
+cool, normal, hot — picked by the 3-day average peak temperature. Each
+zone can instead use a continuous curve: set its **Water Demand Model**
+select to **ET curve (Hargreaves)**, and the weekly target becomes
+
+    weekly target = 3-day average reference ET₀ (mm/day) × 7 × crop factor (Kc)
+
+ET₀ comes from the zone's own **Reference ET₀ (3-Day Avg)** sensor
+(Hargreaves-Samani, from the daily min and max temperature plus the
+latitude set in Home Assistant's own settings, so check that Home
+Assistant's home location is roughly right). Only the weekly **target**
+changes: the 3-or-4-day interval still follows the hot threshold, and
+rain credit, the growth-stage ramp (§6), runtime caps and every other gate
+apply exactly as with the tiers.
+
+When to suggest it: someone who wants the target to track the weather
+smoothly instead of jumping between three values, and who has a working
+outdoor temperature sensor. It's opt-in per zone and changes nothing until
+selected. Leave it off for a zone with no temperature sensor — it would
+just fall back to the tiers every cycle.
+
+Setting the crop factor (`..._crop_factor_kc`, default 0.8). Starting
+points for a mature, full-size plant in its main growing season — adjust
+from here:
+- Warm-season lawn: 0.6-0.8; cool-season lawn: 0.8-0.95
+- Tomatoes, peppers, pumpkins and other vegetables at full canopy: 1.0-1.15
+- Strawberries: 0.85-1.0
+- Avocado: 0.75-0.85; citrus: 0.65-0.7; olive: 0.6-0.7
+- Cherry and other stone fruit in season: 0.9-1.0
+- Succulents / drought-tolerant natives: 0.3-0.5
+
+For young plants, use the growth-stage ramp (§6) rather than a lower Kc,
+so the factor stays right once the plant is grown. In humid climates the
+Hargreaves formula tends to read somewhat high, so start at the low end
+of the range there. These are starting points, not agronomy guarantees —
+same advice as the weekly targets in §5: watch the zone for a couple of
+weeks and nudge Kc up or down.
+
+What to show them: the zone's **Routine Weekly Target** sensor shows the
+target a routine cycle would use right now (including the growth ramp),
+and its `source` attribute says which model produced it (`et_curve`,
+`temperature_tiers`, or `temperature_tiers_fallback`). The ET₀ sensor
+reads "unknown" until one full day of min/max temperature has been
+recorded, and the zone uses the tiers until then.
+
 ## 8. Verify before you're done
 
 Do not consider setup finished until these are confirmed for each zone:
@@ -1280,7 +1339,10 @@ Do not consider setup finished until these are confirmed for each zone:
    sensor picks up a plausible non-zero value after the pulse.
 2. Check the zone's diagnostic sensors exist and show sane values: rain
    past 24h/3d/7d/14d (if a rain gauge is configured), 3-day average peak
-   temperature (if a temp sensor is configured), next-irrigation estimate,
+   temperature (if a temp sensor is configured), Reference ET₀ (normal to
+   read "unknown" on day one, see §7.8), Routine Weekly Target (should
+   match the zone's normal weekly target unless the ET curve is selected),
+   next-irrigation estimate,
    Days Until Next Run, Soil Profile (should reflect what was set in §4),
    and Growth Stage Ramp (only meaningfully non-100% if that feature is on
    — §6). Also confirm the `switch.<zone>_deep_soak_enabled` entity exists

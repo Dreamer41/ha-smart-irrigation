@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass, field
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
+from .const import DEFAULT_DEMAND_MODEL, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
 from .rain_tracker import RainWindowTracker
 
 
@@ -108,6 +108,10 @@ class IrrigationState:
     # last_fertilizing_ts is None until someone records a feed.
     last_fertilizing_ts: float | None = None
     fertilizing_interval_months: str = DEFAULT_FERTILIZING_INTERVAL
+
+    # Which routine weekly-target model this zone uses -- see const.py's
+    # DEMAND_MODEL_* comment. Defaults to the original temperature tiers.
+    demand_model: str = DEFAULT_DEMAND_MODEL
 
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
