@@ -10,6 +10,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
+from . import visibility
 from .const import DOMAIN, PLATFORMS
 from .controller import ZoneFlowController
 
@@ -105,6 +106,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await controller.async_setup()
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    # Hide what this zone doesn't use (see visibility.py).
+    await visibility.async_apply(hass, entry, controller)
 
     # Register the domain services exactly once, the first time any zone
     # sets up -- not once per zone (see _resolve_controller's docstring for

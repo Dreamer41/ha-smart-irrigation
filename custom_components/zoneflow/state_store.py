@@ -142,6 +142,10 @@ class IrrigationState:
     wet_hold_alerted: bool = False
     wet_hold_frozen_alerted: bool = False
 
+    # The (platform, translation key) pairs this zone hid last time, so it
+    # only hides/unhides on a change -- see visibility.py.
+    auto_hidden: list[list[str]] = field(default_factory=list)
+
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
     # when not snoozed. Compared against the local date at each cycle's

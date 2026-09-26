@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
@@ -121,6 +122,7 @@ class _Base(SensorEntity):
 
 
 class ZoneFlowRainWindowSensor(_Base):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _unit_kind = "depth"
     # Precipitation device class on every rain sensor (not just Rain Today),
     # so an HA set to imperial shows them all in the same unit, with a
@@ -173,6 +175,7 @@ class ZoneFlowAvgPeakTempSensor(_Base):
 
 
 class ZoneFlowReferenceEt0Sensor(_Base):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _unit_kind = "rate"
     _attr_device_class = "precipitation_intensity"
     """3-day average reference evapotranspiration (Hargreaves-Samani, see
@@ -345,6 +348,7 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
 
 
 class ZoneFlowLastWaterDeliveredSensor(_Base):
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _unit_kind = "depth"
     _attr_device_class = "precipitation"
     _attr_native_unit_of_measurement = "mm"
@@ -389,6 +393,8 @@ class ZoneFlowSoilProfileSensor(_Base):
     sensor never feeds back into any scheduling decision. Its state is the
     soil type; drainage/slope/irrigation method ride along as attributes so
     the whole profile is visible at a glance on one entity."""
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     _attr_icon = "mdi:layers-outline"
 

@@ -116,6 +116,12 @@ and both zones get less water than their calibrated runtime assumes.
 
 ## More features
 
+- **Tidy device page**: settings sit under *Configuration*, technical
+  sensors under *Diagnostic*, and anything a zone can't use (forecast
+  sliders without a weather entity, rain sliders without a gauge, deep-soak
+  sliders with deep soak off…) is hidden — still working, still keeping its
+  value, back by itself when you set that feature up. A **Download
+  diagnostics** button gives everything needed for a bug report.
 - **Tunable live**: every threshold is a `number` entity with a sensible
   default — weekly targets per tier, hot/cool thresholds, emitter flow
   rate, pulse count and soak time per cadence, dry-down days, deep-soak

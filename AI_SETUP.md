@@ -821,6 +821,21 @@ one).
 
 ## 5. Set the tunable numbers for this zone/crop
 
+**Where they are:** a zone's sliders are under **Configuration** on its
+device page. Sliders the zone can't use right now are **hidden** (not
+removed): the forecast sliders without a weather entity, rain sliders
+without a rain gauge, the pump-power warning without a pump-power sensor,
+the crop factor without a temperature sensor, deep-soak sliders with deep
+soak off, the growth-ramp sliders with the ramp off (custom-curve points
+only for the "custom" profile), the pump delays when nothing points to a
+shared pump (no pump ID, no pump-power sensor, both still 0), and the three
+rain-efficiency sliders (fine-tuning). Hidden sliders keep working and
+keep their value; setting one through the API works as normal — target
+the slider's own `entity_id`: Home Assistant skips configuration and
+hidden entities when a service call targets a whole device or area. If the
+person needs one on screen, it's under the device page's "hidden
+entities" — or it comes back by itself once the feature is set up.
+
 **Before suggesting any values, make sure you have four things: what's
 being watered (the crop/plant type), roughly where in the world this is,
 what kind of soil it's planted in, and the site description already

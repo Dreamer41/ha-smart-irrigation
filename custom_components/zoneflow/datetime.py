@@ -22,6 +22,7 @@ from datetime import datetime
 
 from homeassistant.components.datetime import DateTimeEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity import DeviceInfo
@@ -82,6 +83,10 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
         # the state field with its "_ts" suffix dropped (e.g. "last_routine").
         self._attr_translation_key = state_field.removesuffix("_ts")
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+        # History dates and planned dates are settings; the fertilizing date
+        # is part of the plant journal, shown with the everyday entities.
+        if state_field != "last_fertilizing_ts":
+            self._attr_entity_category = EntityCategory.CONFIG
 
     @property
     def native_value(self) -> datetime | None:

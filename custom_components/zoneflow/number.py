@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from homeassistant.components.number import RestoreNumber
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity import DeviceInfo
@@ -40,6 +41,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class ZoneFlowNumber(RestoreNumber):
     """Always holds its value in metric (`metric_value`, what the controller
     reads); shows and accepts it in the zone's display units (units.py)."""
+
+    _attr_entity_category = EntityCategory.CONFIG
 
     _attr_has_entity_name = True
 

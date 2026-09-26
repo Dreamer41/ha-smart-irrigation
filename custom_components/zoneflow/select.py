@@ -51,10 +51,12 @@ from __future__ import annotations
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from . import visibility
 from .const import (
     DEMAND_MODEL_OPTIONS,
     DOMAIN,
@@ -100,6 +102,8 @@ class ZoneFlowSoilTypeSelect(_Base):
     reload), and is exactly the same value ZoneFlowSoilProfileSensor
     (sensor.py) and every internal soil_type read return afterward."""
 
+    _attr_entity_category = EntityCategory.CONFIG
+
     _attr_icon = "mdi:layers-outline"
     _attr_options = SOIL_TYPE_OPTIONS
     _attr_translation_key = "soil_type"
@@ -127,6 +131,8 @@ class ZoneFlowGrowthStageSelect(_Base):
     dropdown back (there is no single preset name for an arbitrary
     percentage) -- reselecting "Manual" is the honest way to represent
     "using the slider's current value" once it's been hand-tuned."""
+
+    _attr_entity_category = EntityCategory.CONFIG
 
     _attr_icon = "mdi:sprout-outline"
     _attr_options = GROWTH_STAGE_SELECT_OPTIONS
@@ -162,6 +168,8 @@ class ZoneFlowGrowthRampProfileSelect(_Base):
     including their untouched defaults from const.py) -- set those
     separately on the zone's "Custom Ramp: ..." number entities."""
 
+    _attr_entity_category = EntityCategory.CONFIG
+
     _attr_icon = "mdi:chart-bell-curve-cumulative"
     _attr_options = GROWTH_RAMP_PROFILE_OPTIONS
     _attr_translation_key = "growth_ramp_profile"
@@ -178,6 +186,8 @@ class ZoneFlowGrowthRampProfileSelect(_Base):
         self._controller.store.state.growth_ramp_profile_override = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
+        # Show or hide the ramp's own settings to match (see visibility.py).
+        await visibility.async_apply(self.hass, self._controller.entry, self._controller)
 
 
 class ZoneFlowHealthSelect(_Base):
@@ -230,6 +240,8 @@ class ZoneFlowDemandModelSelect(_Base):
     """Routine weekly-target model -- see const.py's DEMAND_MODEL_* comment.
     Read by ZoneFlowController.et_weekly_target_mm() at each routine cycle,
     so a change applies from the next cycle with no reload."""
+
+    _attr_entity_category = EntityCategory.CONFIG
 
     _attr_icon = "mdi:chart-bell-curve"
     _attr_options = DEMAND_MODEL_OPTIONS
