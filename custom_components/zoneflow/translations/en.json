@@ -284,6 +284,9 @@
       },
       "fallback_temp": {
         "name": "Fallback / Manual Temperature"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Service Mode Auto-Off"
       }
     },
     "datetime": {
@@ -318,6 +321,15 @@
       },
       "snooze_today": {
         "name": "Snooze Today"
+      },
+      "service_run_1_min": {
+        "name": "Service Run 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Service Run 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Service Run 10 min"
       }
     },
     "binary_sensor": {
@@ -334,6 +346,9 @@
       },
       "deficit_mode": {
         "name": "Deficit Mode"
+      },
+      "service_mode": {
+        "name": "Service Mode"
       }
     },
     "sensor": {
@@ -565,6 +580,15 @@
     },
     "cool_not_below_hot": {
       "message": "The cool weather threshold has to stay below the hot weather threshold. To move both down, lower the cool one first; to move both up, raise the hot one first."
+    },
+    "zone_busy": {
+      "message": "This zone is busy (watering or already running a service run). Try again when it's finished."
+    },
+    "pump_busy": {
+      "message": "The pump this zone shares is in use by another zone right now. Try again when that zone has finished."
+    },
+    "daily_cap_reached": {
+      "message": "This zone has reached today's maximum runtime safety cap, so no service run can start until tomorrow (or raise the Max Daily Irrigation Runtime cap)."
     }
   }
 }

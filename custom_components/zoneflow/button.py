@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import DOMAIN, SERVICE_RUN_BUTTON_MINUTES
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
@@ -28,6 +28,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ),
             ZoneFlowButton(entry, controller, "reset_lock", "Reset Irrigation Lock", controller.reset_lock),
             ZoneFlowButton(entry, controller, "snooze_today", "Snooze Today", controller.snooze_today),
+            # Service / check runs: never counted as watering (see
+            # controller.start_service_run).
+            *(
+                ZoneFlowButton(
+                    entry,
+                    controller,
+                    f"service_run_{minutes}_min",
+                    f"Service Run {minutes} min",
+                    (lambda m=minutes: controller.start_service_run(m)),
+                )
+                for minutes in SERVICE_RUN_BUTTON_MINUTES
+            ),
         ]
     )
 

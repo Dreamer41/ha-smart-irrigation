@@ -32,7 +32,9 @@ reference for every setting.
 ## How it decides
 
 Each zone runs two cadences: an infrequent **deep soak** (for deep roots)
-and a lighter, frequent **routine irrigation**. Every run, scheduled or
+and a lighter, frequent **routine irrigation**. A completed deep soak also
+counts as the routine watering, so the routine interval restarts from it
+— no full routine dose the morning after a soak. Every run, scheduled or
 manual, goes through the same pipeline:
 
 1. **Plant and site** — crop, soil type, drainage, slope and irrigation
@@ -135,6 +137,14 @@ and both zones get less water than their calibrated runtime assumes.
 - **History you can seed**: Last Routine / Last Deep Soak / Last Significant
   Rain dates, so a migrated plant isn't treated as overdue. Past dates only
   (a typo'd future date would silently keep the zone dry).
+- **Service runs for checks and maintenance**: every zone has **Service
+  Run 1 / 5 / 10 min** buttons and a **Service Mode** switch (valve on until
+  you switch it off, with an automatic switch-off after 30 minutes by
+  default and a phone alert). For checking drippers, flushing lines or
+  finding leaks — they go through the same safety path as a real cycle
+  (lock, shared pump, watchdogs) but never count as watering, so the
+  schedule doesn't move. Their minutes do count toward the daily safety
+  cap.
 - **Snooze Today**, a **deep-soak on/off switch**, and **self-tuning**: three
   "water now" presses in a row while the model says not yet shorten the
   routine dry-down a notch; three snoozes lengthen it.
@@ -176,9 +186,10 @@ The AI setup guide builds a page like this for each of your zones.
    zone's units.
 
 Then, before leaving it to run: set the emitter flow rate (the one number
-that must be right), seed the Last Routine / Deep Soak dates if the plant
-already has a watering history, and run `zoneflow.test_pulse` to confirm
-the valve, pump and log. Add further zones the same way; sensors can be
+that must be right — a **Service Run 5 min** press is an easy way to
+measure it), seed the Last Routine / Deep Soak dates if the plant already
+has a watering history, and press **Service Run 1 min** to confirm the
+valve, pump and log. Add further zones the same way; sensors can be
 added or removed later under **Configure**.
 
 ## Recommended cutover
@@ -187,10 +198,11 @@ If you're replacing an existing YAML-based irrigation automation:
 
 1. **Install alongside your existing automations — don't disable them
    yet.**
-2. **Bench-test the wiring** with `zoneflow.test_pulse` (seconds: 10). It
-   bypasses every schedule and rain gate on purpose — the one place that
-   does — so you can confirm the valve switches, the pump-power sensor or
-   flow meter reads, and a CSV row lands in the log.
+2. **Bench-test the wiring** with the zone's **Service Run 1 min** button
+   (or `zoneflow.test_pulse`, seconds: 10). Both bypass every schedule and
+   rain gate on purpose and never count as watering, so you can confirm the
+   valve switches, the pump-power sensor or flow meter reads, and a CSV row
+   lands in the log.
 3. **Compare the diagnostic sensors** (rain windows, 3-day average peak
    temperature, next-irrigation estimate) with your old setup for a few
    days.

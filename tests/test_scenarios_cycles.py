@@ -307,6 +307,9 @@ async def test_daily_cap_counts_the_deep_soak_that_already_ran_today(hass, fake_
     assert deep_minutes > 0
     clock.reset()
 
+    # A completed deep soak also counts as the routine watering, so put the
+    # routine back to "due" to reach the cap check at all.
+    controller.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 4 * DAY
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
 
@@ -480,7 +483,9 @@ async def test_deep_soak_and_routine_never_run_their_valve_at_the_same_time(hass
 
     assert routine_during_soak == [True]  # routine was attempted mid-soak and added no pulse
     assert len(clock.pulses_for(VALVE)) == 3
-    assert controller.store.state.last_routine_ts < dt_util.utcnow().timestamp() - DAY  # routine not recorded
+    # The mid-soak routine attempt recorded nothing; the only update is the
+    # completed soak itself counting as the routine watering.
+    assert controller.store.state.last_routine_ts == controller.store.state.last_deep_soak_ts
 
 
 # ---------------------------------------------------------------------------
@@ -515,3 +520,54 @@ async def test_a_long_slow_drip_pulse_runs_whole_and_its_watchdog_limit_covers_i
     assert limits == [280.0]
     assert events[-1] == "Deep Soak Completed"
     assert controller._expected_pulse_minutes is None  # cleared once the valve closed
+
+
+# ---------------------------------------------------------------------------
+# A completed deep soak also counts as the routine watering
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_completed_deep_soak_counts_as_routine_watering(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Regression (production, 26 Sep): deep soak at 05:00 with the last
+    routine 4 days earlier, and the routine ran again the next morning --
+    ~48 mm in two days. A completed deep soak restarts the routine clock."""
+    controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=4, last_deep_days_ago=14, peaks=(30.5, 30.5, 30.5))
+    await controller.run_deep_soak()
+    await hass.async_block_till_done()
+    assert events[-1] == "Deep Soak Completed"
+    state = controller.store.state
+    assert state.last_routine_ts == state.last_deep_soak_ts
+    assert state.last_routine_ts == pytest.approx(dt_util.utcnow().timestamp(), abs=60)
+
+    # The routine due by the old clock no longer runs...
+    clock.reset()
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert clock.pulses == []
+
+    # ...and the estimate counts one routine interval (4 days) from the soak.
+    next_ts, source = controller.routine_next_estimate()
+    assert source == "schedule"
+    assert next_ts == pytest.approx(state.last_deep_soak_ts + 4 * DAY, abs=60)
+
+
+@pytest.mark.asyncio
+async def test_unfinished_deep_soak_does_not_count_as_routine(hass, fake_valve_services, monkeypatch, tmp_path):
+    """Only a completed soak counts: an aborted or interrupted one leaves the
+    routine clock alone, so the routine still runs when due."""
+    from unittest.mock import AsyncMock
+
+    controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=4, last_deep_days_ago=14, peaks=(30.5, 30.5, 30.5))
+    before = controller.store.state.last_routine_ts
+    real = controller._run_pulses
+    controller._run_pulses = AsyncMock(return_value=False)
+    await controller.run_deep_soak()
+    await hass.async_block_till_done()
+    assert controller.store.state.last_routine_ts == before
+    controller._run_pulses = real
+    await controller._set_lock(False)
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert clock.valve_minutes(VALVE) > 0

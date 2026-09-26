@@ -296,13 +296,16 @@ climate, temperature thresholds):
    `{"entity_id": "number.<zone>_<field>", "value": <float>}`. Confirm
    afterwards by reading the entity's state back
    (`GET /api/states/<entity_id>`) rather than assuming the call worked.
-7. To run the verification pulse from §8: `POST /api/services/zoneflow/test_pulse`
-   with `{"entity_id": "<any entity belonging to that zone's device>", "seconds": 10}`
+7. To run the verification pulse from §8: press the zone's **Service Run
+   1 min** button — `POST /api/services/button/press` with
+   `{"entity_id": "button.<zone>_service_run_1_min"}` — or, for a shorter
+   check, `POST /api/services/zoneflow/test_pulse` with
+   `{"entity_id": "<any entity belonging to that zone's device>", "seconds": 10}`
    (or however your tool's service-call helper targets a specific config
    entry/device — some MCP servers want a device_id instead of an
    entity_id; check your tool's own parameters rather than assuming this
-   shape). Then read back the valve (and pump-power/flow-meter states, if
-   configured) to confirm the pulse actually happened.
+   shape). Neither counts as watering. Then read back the valve (and
+   pump-power/flow-meter states, if configured) to confirm it actually ran.
 
 If your tool access is a higher-level MCP for Home Assistant rather than
 raw REST, look for whatever it calls "start config flow" / "add
@@ -954,7 +957,9 @@ is built on (`runtime = needed_mm / flow_rate_mm_per_min`), and it's the
 one you must never guess. Ask outright: "do you know your drip/sprinkler
 system's actual flow rate?" If yes, use it. If not, walk them through
 measuring it now rather than leaving the factory default in place and
-moving on: run `zoneflow.test_pulse` for a known number of minutes, then
+moving on: press the zone's **Service Run 5 min** (or 10 min) button —
+it keeps the valve open for that long (plus the few seconds the pump takes
+to get going) and doesn't count as watering — then
 either read the flow meter's delta (if one is configured) or have them
 measure the water depth/volume actually delivered, and divide. Only fall
 back to a generic assumption for the irrigation method (e.g. a typical
@@ -978,12 +983,13 @@ its factory default.
 | `..._hot_weather_temp_threshold` (°C) | 3-day avg of daily highs that counts as "hot" | already set from the climate at setup (§4, screen 4) — only change it if the person's summers are unusual; range 15-45°C |
 | `..._cool_weather_temp_threshold` (°C) | 3-day avg of daily highs below which it's "cool" | same — usually 6-10°C below the hot threshold; range 5-40°C, and it must stay below hot (to move both down, lower cool first; to move both up, raise hot first) |
 | `..._fallback_manual_temperature` (°C) | the temperature used when there's no real reading | **a zone with no temperature sensor:** this is how the person tells it about the weather — tell them to raise it above hot for a heat wave and drop it below cool for a cold spell, then put it back. **With a sensor:** used only once 3 days in a row have no reading at all; leave it in the normal band |
-| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: run `zoneflow.test_pulse` for a known number of minutes, measure water depth/volume delivered (or read the flow meter's delta, if configured), divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
+| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: press the zone's Service Run 5 or 10 min button, measure water depth/volume delivered (or read the flow meter's delta, if configured), divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
 | `..._rain_gauge_mm_per_tip_calibration` (mm) | **only relevant if a rain gauge is configured** — how much rainfall one tip of the bucket represents, which the whole rain-aware gate is built on | see §2a — ask if they already know it; if not, look up the gauge's model spec as a starting point, or offer the pour-and-count measurement for a precise value. Skip this row entirely for a zone with no rain gauge. |
 | `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise see "Root depth" above, suggest first from crop/region/soil, let the person override |
 | `..._routine_pulse_count_split_cycle` / `..._routine_soak_interval_between_pulses` (split-cycle for routine) | how many on/soak/on pulses a routine cycle breaks into, and the soak gap between them | soil-driven — see the soil-type guidance above (more/longer-soak for clay, fewer/shorter for sand); factory default (3 pulses, 20min rest) is a loam-tuned middle ground |
 | `..._deep_soak_pulse_count_split_cycle` / `..._deep_soak_soak_interval_between_pulses` (split-cycle for deep soak) | same, for the deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise same soil-driven guidance; deep soak's larger total depth often benefits from leaning slightly higher on pulse count for clay than the routine cycle does |
 | `..._deep_soak_max_safety_runtime_cap` / `..._routine_max_safety_runtime_cap` (min) | hard abort ceiling for a single cycle — if the calculated runtime exceeds this, that cycle is aborted rather than run, since it usually means a miscalibration | **check this for very low-flow drip emitters** (below roughly 0.1mm/min): the calculated runtime for a full target can genuinely run into several hundred minutes, and the factory default caps (124min / 103min) will wrongly abort a perfectly correct, just-slow cycle. Raise the cap (up to 900min) to comfortably cover `target_mm / flow_rate_mm_per_min` for this zone's real numbers — don't just raise it blindly to max "to be safe," since its whole job is catching a genuine miscalibration. The deep-soak cap is moot if deep soak is disabled (§6a). |
+| `..._service_mode_auto_off` (min) | how long the **Service Mode** switch keeps the valve open before switching itself off (with a phone alert) | default 30 min is right for most checks; raise it only if they flush long lines or do long leak hunts (5–120). Service runs never count as watering, but their minutes do count toward the daily safety cap below |
 | `..._max_daily_irrigation_runtime_safety_cap` (min) | hard ceiling on TOTAL runtime across both cycles in a rolling day — catches a mis-set schedule firing more often than intended, separate from the per-cycle caps above | factory default (240min) is generous; only worth lowering for a genuinely water-restricted setup, and worth checking it comfortably covers deep soak + routine's realistic combined runtime for this zone before lowering it |
 | `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | **only relevant if a pump-power sensor is configured** — ask for the pump's rated running wattage, set ~20-30% below it; skip this row entirely for a zone with no pump-power sensor |
 | `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes; also the number the **self-tuning** feature (below) nudges automatically | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d). Note this one can drift 0.5d at a time on its own over time based on how the person actually uses the manual/snooze buttons — that's expected, not a bug, and they can always move it back by hand |
@@ -1092,6 +1098,14 @@ tuning (§5's table already flags each one that stops mattering here).
 genuinely deep-rooted plants in real ground — anything where infrequent,
 thorough soaking actually reaches and encourages deeper root growth versus
 frequent shallow watering keeping roots shallow.
+
+**A completed deep soak also counts as the routine watering.** The routine
+interval restarts from it — no full routine dose the morning after a soak
+— and the next-run estimate and Days Until Next Run follow. It works in
+that direction only: the deep soak keeps its own 14-day (or whatever you
+set) clock, so a soak can still come a day or two after a routine. Mention
+this if the person asks why the routine didn't run after a soak — it's
+intended.
 
 **Use your crop research from §1, not just this quick split** — if you
 looked up the specific plant's typical root system when you first learned
@@ -1654,14 +1668,18 @@ Do not consider setup finished until these are confirmed for each zone:
    Mode B this step is naturally already gated, since the person is the
    one clicking it.
 
-   Once confirmed, run **Developer Tools → Actions → `zoneflow.test_pulse`**
-   with `seconds: 10` (targeting that zone's device, since each zone is its
-   own config entry/service target if the person has multiple). Confirm:
+   Once confirmed, press the zone's **Service Run 1 min** button (on its
+   device page, or on the dashboard's Manual Controls card). It runs the
+   valve for one minute through the same safety path as a real cycle, and
+   doesn't count as watering — the schedule doesn't move. (For a
+   10-second check instead: **Developer Tools → Actions →
+   `zoneflow.test_pulse`** with `seconds: 10`, targeting that zone's
+   device.) Confirm:
    the valve entity actually switches on then off, and a new row appears in
    the configured CSV log file. If a pump-power sensor is configured, also
    confirm it reads a plausible non-zero value while the valve is on. If a
    flow meter is configured, confirm its "Last Cycle Water Delivered"
-   sensor picks up a plausible non-zero value after the pulse.
+   sensor picks up a plausible non-zero value after the run.
 2. Check the zone's diagnostic sensors exist and show sane values: rain
    past 24h/3d/7d/14d (if a rain gauge is configured), 3-day average peak
    temperature (if a temp sensor is configured), Reference ET₀ (normal to
@@ -1678,10 +1696,10 @@ Do not consider setup finished until these are confirmed for each zone:
    find out why it was stuck first).
 4. Tell the person plainly what will happen next (which zones water at
    which times), and what to watch on each zone's plants over the next
-   couple of weeks (§7.9). Also remind them the `test_pulse` service bypasses every
-   safety/rain gate on purpose, so it's not representative of a real run —
-   don't leave them thinking a successful test pulse alone proves the rain
-   logic works.
+   couple of weeks (§7.9). Also remind them that service runs and the
+   test pulse bypass every schedule and rain gate on purpose, so they're
+   not representative of a real run — don't leave them thinking a
+   successful check alone proves the rain logic works.
 5. **Check whether they said yes to a dashboard card and/or a cheat sheet
    back in §1's item 6.** For whichever one(s) they said yes to, setup is
    *not* finished until §9 and/or §9a are actually done and the person has
@@ -1827,6 +1845,21 @@ views:
               - entity: <button.zone_snooze_today>
                 name: Snooze Today
                 icon: mdi:sleep
+          - type: section
+            label: Service / check (not counted as watering)
+          - entity: <switch.zone_service_mode>
+            name: Service Mode (valve on until switched off)
+          - type: buttons
+            entities:
+              - entity: <button.zone_service_run_1_min>
+                name: 1 min
+                icon: mdi:timer-outline
+              - entity: <button.zone_service_run_5_min>
+                name: 5 min
+                icon: mdi:timer-outline
+              - entity: <button.zone_service_run_10_min>
+                name: 10 min
+                icon: mdi:timer-outline
 
       - type: entities
         title: Health Journal
@@ -2112,17 +2145,22 @@ format is required, but cover:
    [zone name] → click **Run Routine Irrigation** ." Only include
    controls that exist for this zone (skip deep-soak buttons if that
    cycle is disabled per §6a).
-3. **What to do if something looks stuck or wrong** — in plain terms: if
+3. **Checking the drippers or looking for a leak** — "to run the water
+   without it counting as a watering: press **Service Run 1 min**, **5
+   min** or **10 min**, or turn on **Service Mode** and turn it off when
+   you're done (it switches itself off after 30 minutes if you forget)."
+   Say plainly that these never change when the zone next waters.
+4. **What to do if something looks stuck or wrong** — in plain terms: if
    the valve seems to be running forever, or hasn't run in a long time and
    should have, point them at the **Reset Irrigation Lock** button and
    suggest they mention it to whoever set this up (or paste it back to an
    AI) rather than guessing at a fix themselves.
-4. **What to watch on the plants** — the two or three signs from §7.9
+5. **What to watch on the plants** — the two or three signs from §7.9
    that matter for this crop, in one or two sentences ("if the leaves are
    still drooping first thing in the morning, it needs more water — tell
    whoever set this up"). Leave out which number to change; that's for
    whoever tunes it.
-5. **Skip anything that requires understanding a number's meaning** to act
+6. **Skip anything that requires understanding a number's meaning** to act
    on — weekly water targets, thresholds, calibration numbers, etc. belong
    on the dashboard (§9) or in the full docs, not this cheat sheet. The
    goal here is confident day-to-day use by someone who never opens the
@@ -2130,6 +2168,16 @@ format is required, but cover:
 
 Keep it short — a few sentences and a short list of click-paths, not a
 restated version of this whole guide.
+
+## 9b. Updating an existing dashboard after a ZoneFlow update
+
+If the person already has a ZoneFlow dashboard and has just updated
+ZoneFlow, check the release notes for that version (GitHub → Releases): each
+one has an **"Update your dashboard"** section listing any new entities and
+the card they belong on. Add those entities to their existing cards — using
+the same layout as the §9 template above — rather than rebuilding the
+dashboard from scratch, and keep everything they customised. If they're
+several versions behind, go through each version's notes in order.
 
 ## 10. Ground rules while you do this
 

@@ -27,6 +27,7 @@ from datetime import time as dt_time, timedelta
 from typing import Any
 
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.event import (
     async_track_point_in_time,
     async_track_state_change_event,
@@ -149,6 +150,11 @@ _DONE = "done"
 _ABORTED = "aborted"
 _RAIN = "rain"
 _STOPPED = "stopped"
+# A service run ended by the person (Service Mode switched off).
+_USER_STOPPED = "user_stopped"
+
+# Service / check runs: never counted as watering (see start_service_run).
+SERVICE_RUN_KIND = "Service Run"
 
 
 def _tracked_run(func):
@@ -221,6 +227,12 @@ class ZoneFlowController:
         self._delivered_minutes = 0.0
         self._pulse_started_ts: float | None = None
         self._lock_owner: asyncio.Task | None = None
+        self._last_outcome: str | None = None
+        # Service / check runs (buttons and the Service Mode switch): whether
+        # one is running, the person's "stop" for it, and entities to tell.
+        self._service_active = False
+        self._service_stop = asyncio.Event()
+        self._service_listeners: list[Any] = []
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -1565,6 +1577,7 @@ class ZoneFlowController:
         self._cycle_kind = kind
         self._delivered_minutes = 0.0
         self._pulse_started_ts = None
+        self._last_outcome = None
         outcome = None
         try:
             outcome = await self._execute_pulse_loop(
@@ -1620,6 +1633,7 @@ class ZoneFlowController:
             # the stuck-valve limit for a later, unrelated valve-on.
             self._expected_pulse_minutes = None
 
+        self._last_outcome = outcome
         if outcome == _DONE:
             return True
         self._count_partial_run()
@@ -1664,6 +1678,8 @@ class ZoneFlowController:
             ):
                 return _RAIN
 
+            if kind == SERVICE_RUN_KIND and self._service_stop.is_set():
+                return _USER_STOPPED
             self._expected_pulse_minutes = pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
             await self.hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
@@ -1678,11 +1694,13 @@ class ZoneFlowController:
                 # wait_template pump-power check, timeout 45s, continue_on_timeout
                 with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(
-                        self._wait_for_pump_watts_or_abort(min_pump_watts), timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS
+                        self._wait_for_pump_watts_or_abort(min_pump_watts, service=kind == SERVICE_RUN_KIND),
+                        timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS,
                     )
                 if (
                     not self._stopping
                     and not self.store.state.abort_on
+                    and not (kind == SERVICE_RUN_KIND and self._service_stop.is_set())
                     and await self._pump_watts() < min_pump_watts
                 ):
                     await self._log_event(
@@ -1698,8 +1716,19 @@ class ZoneFlowController:
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
             if not self._stopping and not self.store.state.abort_on:
-                with contextlib.suppress(asyncio.TimeoutError):
-                    await asyncio.wait_for(self._abort_event.wait(), timeout=pulse_minutes * 60)
+                await self._wait_pulse(pulse_minutes * 60, service=kind == SERVICE_RUN_KIND)
+
+            if kind == SERVICE_RUN_KIND and self._service_stop.is_set() and not (
+                self._stopping or self.store.state.abort_on
+            ):
+                # Switched off by the person: a normal end for a service run --
+                # once the valve confirms it's closed. If it doesn't, this is
+                # an error (keeps the lock, alerts), not a clean stop.
+                self._expected_pulse_minutes = None
+                if not await self._close_cycle_valve():
+                    raise HomeAssistantError(f"{valve} did not confirm it closed")
+                self._end_pulse(pulse_minutes, full=False)
+                return _USER_STOPPED
 
             if self._stopping or self.store.state.abort_on:
                 self._expected_pulse_minutes = None
@@ -1717,6 +1746,28 @@ class ZoneFlowController:
             if index < count:
                 await self._pause(rest_minutes * 60)
         return _DONE
+
+    async def _wait_pulse(self, seconds: float, *, service: bool) -> None:
+        """The open-valve wait of a pulse: ends early on an abort, a reload
+        or shutdown, or -- for a service run -- the person switching it off.
+        (Kept as one wait_for with the pulse length as its timeout, like
+        every pulse wait.)"""
+        with contextlib.suppress(asyncio.TimeoutError):
+            await asyncio.wait_for(self._abort_or_service_stop(service), timeout=seconds)
+
+    async def _abort_or_service_stop(self, service: bool) -> None:
+        if not service:
+            await self._abort_event.wait()
+            return
+        waiters = {
+            asyncio.ensure_future(self._abort_event.wait()),
+            asyncio.ensure_future(self._service_stop.wait()),
+        }
+        try:
+            await asyncio.wait(waiters, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            for waiter in waiters:
+                waiter.cancel()
 
     def _end_pulse(self, pulse_minutes: float, *, full: bool) -> None:
         """Adds the pulse just ended to the minutes this cycle has given."""
@@ -1816,15 +1867,19 @@ class ZoneFlowController:
         )
         return True
 
-    async def _wait_for_pump_watts_or_abort(self, min_pump_watts: float) -> None:
-        """The pump-power wait, cut short by an abort, reload or shutdown."""
+    async def _wait_for_pump_watts_or_abort(self, min_pump_watts: float, service: bool = False) -> None:
+        """The pump-power wait, cut short by an abort, reload or shutdown --
+        or, for a service run, the person switching it off."""
         pump = asyncio.ensure_future(self._wait_for_pump_watts(min_pump_watts))
-        waker = asyncio.ensure_future(self._abort_event.wait())
+        wakers = {asyncio.ensure_future(self._abort_event.wait())}
+        if service:
+            wakers.add(asyncio.ensure_future(self._service_stop.wait()))
         try:
-            await asyncio.wait({pump, waker}, return_when=asyncio.FIRST_COMPLETED)
+            await asyncio.wait({pump, *wakers}, return_when=asyncio.FIRST_COMPLETED)
         finally:
             pump.cancel()
-            waker.cancel()
+            for waker in wakers:
+                waker.cancel()
 
     async def _wait_for_pump_watts(self, min_pump_watts: float) -> None:
         """Waits until the pump-power reading reaches min_pump_watts.
@@ -2035,6 +2090,12 @@ class ZoneFlowController:
         now_ts = dt_util.utcnow().timestamp()
 
         if state.lock_on:
+            if self._service_active and calc.deep_soak_due(
+                now_ts - (state.last_deep_soak_ts or 0.0),
+                self.number("deep_soak_interval_days"),
+                DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+            ):
+                await self._log_skipped_for_service("Deep Soak")
             return
         if self._is_snoozed_today():
             return
@@ -2106,6 +2167,9 @@ class ZoneFlowController:
             )
             return
 
+        if state.lock_on or self._service_active:
+            # Something took the zone while this cycle was checking its gates.
+            return
         await self._set_lock(True)
         await self._set_abort(False)
 
@@ -2123,10 +2187,25 @@ class ZoneFlowController:
         if not completed or state.abort_on:
             return
 
-        state.last_deep_soak_ts = dt_util.utcnow().timestamp()
+        done_ts = dt_util.utcnow().timestamp()
+        state.last_deep_soak_ts = done_ts
+        # A deep soak also satisfies the routine watering: without this the
+        # routine ran on its own clock and could add a full dose the very
+        # next morning. Everything keyed on the last routine follows from
+        # here -- the routine interval, the rain-credit window, the
+        # next-run estimate and Days Until Next Run. Only a completed soak
+        # counts (an aborted or interrupted one returned above).
+        state.last_routine_ts = done_ts
         state.today_runtime_minutes += plan.total_runtime_minutes
         await self.store.async_save()
+        await self._end_wet_hold()  # the zone has just been watered
         await self._set_lock(False)
+        next_ts, _ = self.routine_next_estimate()
+        next_text = (
+            f" Next routine: {dt_util.as_local(dt_util.utc_from_timestamp(next_ts)).strftime('%a %d %b %H:%M')}."
+            if next_ts is not None
+            else ""
+        )
         await self._log_event(
             event_type="Deep Soak Completed",
             status="Completed",
@@ -2135,7 +2214,12 @@ class ZoneFlowController:
             runtime=plan.total_runtime_minutes,
             notify_phone=True,
             phone_title="🚿 Deep Soak Completed",
-            phone_msg=f"DEEP SOAK COMPLETED: {units.depth_text(plan.target_mm, self.imperial)} applied over {plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min).",
+            phone_msg=(
+                f"DEEP SOAK COMPLETED: {units.depth_text(plan.target_mm, self.imperial)} applied over "
+                f"{plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min). Counts as routine "
+                f"watering too.{next_text}"
+            ),
+            extra_log="Counts as routine watering: routine interval restarts from now.",
         )
 
     @_tracked_run
@@ -2161,6 +2245,12 @@ class ZoneFlowController:
         elapsed_seconds = now_ts - last_run_ts
 
         if state.lock_on:
+            if self._service_active and calc.routine_due(
+                elapsed_seconds,
+                calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+                ROUTINE_INTERVAL_BUFFER_SECONDS,
+            ):
+                await self._log_skipped_for_service("Routine Irrigation")
             return
         if self._is_snoozed_today():
             return
@@ -2324,6 +2414,9 @@ class ZoneFlowController:
             )
             return
 
+        if state.lock_on or self._service_active:
+            # Something took the zone while this cycle was checking its gates.
+            return
         await self._end_wet_hold()  # watering is actually starting
         await self._set_lock(True)
         await self._set_abort(False)
@@ -2473,7 +2566,7 @@ class ZoneFlowController:
         dry-down/rain gate, so the physical valve + pump-power audit path can
         be verified before the real schedule runs unattended. Still goes
         through the mutex lock and the same watchdogs as a real cycle."""
-        if self.store.state.lock_on:
+        if self.store.state.lock_on or self._service_active:
             _LOGGER.warning("ZoneFlow: test pulse skipped, lock already held")
             return
         await self._set_lock(True)
@@ -2502,8 +2595,136 @@ class ZoneFlowController:
             phone_msg="",
         )
 
+    # ------------------------------------------------------------------
+    # Service / check runs
+    # ------------------------------------------------------------------
+    @property
+    def service_active(self) -> bool:
+        return self._service_active
+
+    def add_service_listener(self, listener) -> Any:
+        """Called when a service run starts or ends (the Service Mode
+        switch shows it). Returns the remover."""
+        self._service_listeners.append(listener)
+        return lambda: self._service_listeners.remove(listener)
+
+    def _notify_service_listeners(self) -> None:
+        for listener in list(self._service_listeners):
+            listener()
+
+    async def start_service_run(self, minutes: float, *, from_switch: bool = False) -> None:
+        """Run the valve for `minutes` to check emitters, flush a line or
+        find a leak -- the 1/5/10 min buttons and the Service Mode switch.
+
+        Never counted as watering: it doesn't set Last Routine / Last Deep
+        Soak, move the schedule or feed self-tuning. It does take the zone
+        lock and the shared pump and run the same pump audit, watchdogs and
+        confirmed valve close as a real cycle, and its minutes count toward
+        the daily runtime safety cap. Refused (with a message) while the
+        zone or its shared pump is busy, or when the daily cap has no room
+        left; a run longer than the room left is shortened to fit.
+
+        Returns once the run has started; the run itself carries on in the
+        background so a button press or switch doesn't hang."""
+        state = self.store.state
+        if self._stopping:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
+        # _runs: a cycle may still be checking its gates before it takes the
+        # lock -- it must not end up running alongside a service run.
+        if self._service_active or state.lock_on or self._runs:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
+        pump_lock = self._get_pump_lock()
+        if pump_lock.locked() or getattr(pump_lock, "_waiters", None):
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="pump_busy")
+        room = self.number("max_daily_runtime_minutes") - state.today_runtime_minutes
+        if room < 1:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="daily_cap_reached")
+        shortened = float(minutes) > room
+        minutes = min(float(minutes), room)
+        self._service_active = True
+        self._service_stop.clear()
+        self._notify_service_listeners()
+        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened))
+
+    async def _service_task(self, minutes: float, from_switch: bool, shortened: bool) -> None:
+        """Owns the service-run flags, so they're cleared however the run
+        ends -- including a zone that started stopping before it began."""
+        try:
+            await self._service_run(minutes, from_switch, shortened)
+        finally:
+            self._service_active = False
+            self._service_stop.clear()
+            self._notify_service_listeners()
+
+    async def stop_service_run(self) -> None:
+        """The Service Mode switch turned off: end the service run now."""
+        if self._service_active:
+            self._service_stop.set()
+
+    @_tracked_run
+    async def _service_run(self, minutes: float, from_switch: bool, shortened: bool) -> None:
+        state = self.store.state
+        if state.lock_on:
+            return
+        await self._set_lock(True)
+        await self._set_abort(False)
+        self._last_outcome = None
+        completed = await self._run_pulses(
+            count=1,
+            pulse_minutes=minutes,
+            rest_minutes=0,
+            min_pump_watts=self.number("pump_min_watts"),
+            kind=SERVICE_RUN_KIND,
+            target_mm_for_log=0.0,
+            deducted_mm_for_log=0.0,
+            runtime_for_log=int(round(minutes)),
+        )
+        stopped_by_person = self._last_outcome == _USER_STOPPED
+        if not completed and not stopped_by_person:
+            return  # aborted, interrupted or failed -- already handled and logged
+        if completed:
+            # A finished pulse isn't counted by the pulse loop (a watering
+            # cycle adds its planned minutes itself); a stopped one was.
+            state.today_runtime_minutes += minutes
+        await self.store.async_save()
+        await self._set_lock(False)
+        ran = self._delivered_minutes
+        auto_off = completed and from_switch
+        cap_note = " (shortened to fit today's runtime safety cap)" if shortened else ""
+        await self._log_event(
+            event_type=SERVICE_RUN_KIND,
+            status="Auto-Off" if auto_off else ("Completed" if completed else "Stopped"),
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=int(round(ran)),
+            notify_phone=auto_off,
+            phone_title="🔧 Service Mode switched off",
+            phone_msg=(
+                f"Service Mode ran for {ran:.0f} min and switched itself off"
+                + (cap_note + "." if shortened else " (the auto-off time).")
+            ),
+            extra_log=f"Service run: {ran:.1f} min, not counted as watering{cap_note}.",
+        )
+
+    async def _log_skipped_for_service(self, kind: str) -> None:
+        """A scheduled cycle found a service run holding the zone: say so
+        (it runs at its next scheduled time instead)."""
+        await self._log_event(
+            event_type=f"{kind} Skipped (Service Run)",
+            status="Skipped",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+        )
+
     async def reset_lock(self) -> None:
-        """Manual emergency reset (button/service), not time-gated."""
+        """Manual emergency reset (button/service), not time-gated. Also
+        ends a service run, so the valve doesn't keep running unlocked."""
+        if self._service_active:
+            self._service_stop.set()
         await self._set_lock(False)
         await self._set_abort(False)
         await self._log_event(

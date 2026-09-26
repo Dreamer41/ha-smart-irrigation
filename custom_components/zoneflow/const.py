@@ -409,6 +409,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # surface). Only read while the zone's "Water Demand Model" select is
     # set to the ET curve -- see DEMAND_MODEL_* below.
     "crop_coefficient": ("Crop Factor (Kc)", 0.1, 1.5, 0.05, None),
+    # How long the Service Mode switch keeps the valve open before switching
+    # itself off (with a phone alert) -- so a forgotten switch can't water
+    # for hours. See controller.start_service_run.
+    "service_mode_auto_off_minutes": ("Service Mode Auto-Off", 5.0, 120.0, 5.0, "min"),
 }
 
 NUMBER_DEFAULTS: dict[str, float] = {
@@ -462,6 +466,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # Middle of the usual 0.6-1.0 range for established trees and most
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
+    "service_mode_auto_off_minutes": 30.0,
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"
@@ -505,3 +510,6 @@ SOIL_MOISTURE_STALE_SECONDS = 24 * 3600
 # Wet readings holding back a due routine run for longer than this many of
 # the zone's routine intervals send one "check the probe" alert.
 SOIL_WET_HOLD_ALERT_INTERVALS = 2
+
+# The quick service/check run buttons on every zone, in minutes.
+SERVICE_RUN_BUTTON_MINUTES = (1, 5, 10)

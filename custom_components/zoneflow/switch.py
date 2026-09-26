@@ -24,7 +24,46 @@ from .controller import ZoneFlowController
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     controller: ZoneFlowController = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([ZoneFlowDeepSoakEnabledSwitch(entry, controller), ZoneFlowDeficitModeSwitch(entry, controller)])
+    async_add_entities(
+        [
+            ZoneFlowDeepSoakEnabledSwitch(entry, controller),
+            ZoneFlowDeficitModeSwitch(entry, controller),
+            ZoneFlowServiceModeSwitch(entry, controller),
+        ]
+    )
+
+
+class ZoneFlowServiceModeSwitch(SwitchEntity):
+    """Manual valve on/off for checking and servicing the zone. On while any
+    service run is going (the 1/5/10 min buttons too); turning it on runs the
+    valve until it's turned off or the Service Mode Auto-Off time is up.
+    Never counted as watering -- see controller.start_service_run."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:wrench-clock"
+    _attr_should_poll = False
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_service_mode"
+        self._attr_translation_key = "service_mode"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_service_listener(self.async_write_ha_state))
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.service_active
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._controller.start_service_run(
+            self._controller.number("service_mode_auto_off_minutes"), from_switch=True
+        )
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._controller.stop_service_run()
 
 
 class ZoneFlowDeficitModeSwitch(SwitchEntity):
