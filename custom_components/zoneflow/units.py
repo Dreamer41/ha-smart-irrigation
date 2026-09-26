@@ -125,6 +125,7 @@ def metric_from_saved(key: str, value: float, saved_unit: str | None) -> float:
 
 # --- sensors ---------------------------------------------------------------
 LITERS_PER_GALLON = 3.785411784
+M2_PER_FT2 = 0.09290304
 
 # kind -> (metric unit, imperial unit, imperial display precision)
 SENSOR_UNITS = {

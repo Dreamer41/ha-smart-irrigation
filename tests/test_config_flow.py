@@ -72,6 +72,13 @@ def _minimal_entities_input(**overrides):
     return data
 
 
+async def _options_settings(hass, entry):
+    """Configure opens a menu; the zone's settings are its first item."""
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert result["type"] == FlowResultType.MENU
+    return await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "settings"})
+
+
 async def _through_climate(hass, result, climate="temperate", temps=None):
     """The two steps after the entities: pick a climate, then accept (or
     change) the temperature sliders it pre-filled."""
@@ -188,7 +195,7 @@ async def test_options_flow_prefills_current_soil_profile_and_can_change_it(hass
     result = await _through_climate(hass, result)
     entry = result["result"]
 
-    options_result = await hass.config_entries.options.async_init(entry.entry_id)
+    options_result = await _options_settings(hass, entry)
     assert options_result["type"] == FlowResultType.FORM
     schema = options_result["data_schema"].schema
     # The current value round-trips back as the field's default.
@@ -236,7 +243,7 @@ async def test_options_flow_can_remove_optional_sensors(hass):
     controller = hass.data[DOMAIN][entry.entry_id]
     assert controller.soil_moisture_entity == "sensor.soil"
 
-    options_result = await hass.config_entries.options.async_init(entry.entry_id)
+    options_result = await _options_settings(hass, entry)
     schema = options_result["data_schema"].schema
     soil_field = next(k for k in schema if k == CONF_SOIL_MOISTURE_ENTITY)
     # Pre-filled as a suggestion, not a default the form puts back.
@@ -255,7 +262,7 @@ async def test_options_flow_can_remove_optional_sensors(hass):
     assert controller.rain_counter_entity == "counter.rain"
 
     # And one can be added back later.
-    options_result = await hass.config_entries.options.async_init(entry.entry_id)
+    options_result = await _options_settings(hass, entry)
     await hass.config_entries.options.async_configure(
         options_result["flow_id"],
         _minimal_entities_input(**{CONF_RAIN_COUNTER_ENTITY: "counter.rain", CONF_WEATHER_ENTITY: "weather.home"}),

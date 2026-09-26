@@ -553,3 +553,72 @@ REPAIR_SENSOR_OFFLINE_SECONDS = 3 * 86400
 REPAIR_NOTIFY_MISSING_SECONDS = 86400
 REPAIR_CHECK_INTERVAL_SECONDS = 3600
 REPAIR_FIRST_CHECK_SECONDS = 300
+
+# Plant presets at setup (config flow's first step): starting values for a
+# kind of planting -- weekly targets (normal / hot / cool), crop factor,
+# pulses, deep soak on/off and the growth ramp. All of them stay ordinary
+# settings afterwards. Rough, widely used horticultural figures meant to be
+# tuned; AI_SETUP.md has per-crop guidance.
+CONF_PLANT = "plant"
+PLANT_CUSTOM = "custom"
+PLANT_PRESETS: dict[str, dict] = {
+    "tomatoes": {
+        "numbers": {"target_weekly_mm": 30.0, "target_weekly_hot_mm": 40.0, "target_weekly_cool_mm": 20.0,
+                    "crop_coefficient": 1.05, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "fast_annual",
+    },
+    "chilis": {
+        "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 15.0,
+                    "crop_coefficient": 0.95, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "slow_fruiting",
+    },
+    "leafy_vegetables": {
+        "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 18.0,
+                    "crop_coefficient": 1.0, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "fast_annual",
+    },
+    "herbs": {
+        "numbers": {"target_weekly_mm": 15.0, "target_weekly_hot_mm": 22.0, "target_weekly_cool_mm": 10.0,
+                    "crop_coefficient": 0.7, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "off",
+    },
+    "strawberries": {
+        "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 18.0,
+                    "crop_coefficient": 0.85, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "off",
+    },
+    "flowers": {
+        "numbers": {"target_weekly_mm": 22.0, "target_weekly_hot_mm": 30.0, "target_weekly_cool_mm": 15.0,
+                    "crop_coefficient": 0.9, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "fast_annual",
+    },
+    "lawn": {
+        "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 15.0,
+                    "crop_coefficient": 0.8, "routine_pulse_count": 2.0},
+        "deep_soak": False, "ramp": "off",
+    },
+    "shrubs": {
+        "numbers": {"target_weekly_mm": 15.0, "target_weekly_hot_mm": 25.0, "target_weekly_cool_mm": 10.0,
+                    "crop_coefficient": 0.6, "routine_pulse_count": 2.0},
+        "deep_soak": True, "ramp": "off",
+    },
+    "young_tree": {
+        "numbers": {"target_weekly_mm": 20.0, "target_weekly_hot_mm": 30.0, "target_weekly_cool_mm": 12.0,
+                    "crop_coefficient": 0.6, "routine_pulse_count": 3.0},
+        "deep_soak": True, "ramp": "established_perennial",
+    },
+    "fruit_tree": {
+        "numbers": {"target_weekly_mm": 30.0, "target_weekly_hot_mm": 45.0, "target_weekly_cool_mm": 20.0,
+                    "crop_coefficient": 0.8, "routine_pulse_count": 3.0},
+        "deep_soak": True, "ramp": "off",
+    },
+}
+PLANT_OPTIONS = [PLANT_CUSTOM, *PLANT_PRESETS]
+
+# Flow-rate measurement with a flow meter (options -> Flow rate): a service
+# run this long, then litres / area / minutes.
+FLOW_MEASURE_MINUTES = 10
+# ...and at least this long (or 80% of it, if the daily cap shortened it),
+# and the meter's last report waited for up to this long.
+FLOW_MEASURE_MIN_MINUTES = 5
+FLOW_METER_SETTLE_SECONDS = 60

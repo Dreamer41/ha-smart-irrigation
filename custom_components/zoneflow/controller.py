@@ -27,6 +27,7 @@ from datetime import datetime, time as dt_time, timedelta
 from typing import Any
 
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
+from homeassistant.components import persistent_notification
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.event import (
     async_call_later,
@@ -44,6 +45,9 @@ from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConve
 
 from . import calculations as calc, issues, messages, units
 from .const import (
+    FLOW_MEASURE_MIN_MINUTES,
+    FLOW_METER_SETTLE_SECONDS,
+    FLOW_MEASURE_MINUTES,
     REPAIR_CHECK_INTERVAL_SECONDS,
     REPAIR_FIRST_CHECK_SECONDS,
     FROST_TEMP_MAX_AGE_SECONDS,
@@ -286,6 +290,13 @@ class ZoneFlowController:
         # A "run now" press is being evaluated (not counted as a held-back
         # day in the weekly summary).
         self._manual_press = False
+        # Flow-rate measurement (options -> Flow rate): whether the service
+        # run now is one, the litres the last run moved, and how long its
+        # valve was really open (seconds).
+        self._measuring = False
+        self._run_liters: float | None = None
+        self._open_seconds = 0.0
+        self._pump_check_seconds = 0.0
         # Frost guard: the cycles waiting for it to warm up (deep soak is
         # always re-checked before the routine), the pending hourly
         # re-check, how many re-checks this wait has had, whether one is
@@ -1882,6 +1893,7 @@ class ZoneFlowController:
             await self._pause(preamble)
 
         flow_start = await self._flow_meter_reading()
+        self._run_liters = None
 
         completed = await self._execute_pulses(
             count=count,
@@ -1894,16 +1906,22 @@ class ZoneFlowController:
             runtime_for_log=runtime_for_log,
         )
 
+        if self._measuring and flow_start is not None and not self._stopping:
+            # A meter that reports every so often may not have counted the
+            # last of the water yet: wait for its next report (up to a minute).
+            await self._wait_for_state_change(self.flow_meter_entity, FLOW_METER_SETTLE_SECONDS)
         flow_end = await self._flow_meter_reading()
         if flow_start is not None and flow_end is not None:
             delta_liters = max(flow_end - flow_start, 0.0)
+            self._run_liters = delta_liters
             self.store.state.last_cycle_water_liters = delta_liters
-            self.store.state.summary_liters += delta_liters
+            if kind in ("Deep Soak", "Routine Irrigation"):
+                self.store.state.summary_liters += delta_liters  # watering, not service water
             await self.store.async_save()
             # Only meaningful for a cycle that actually ran to
             # completion -- an aborted cycle legitimately may not have
             # moved any water, and that's not a flow-meter problem.
-            if completed and delta_liters <= 0.0:
+            if completed and delta_liters <= 0.0 and not self._measuring:  # (a measurement says so itself)
                 await self._log_event(
                     event_type="No Flow Detected",
                     status="WARNING",
@@ -1948,6 +1966,8 @@ class ZoneFlowController:
         self._cycle_valve = self.store.state.lock_valve or self.valve_entity
         self._cycle_kind = kind
         self._delivered_minutes = 0.0
+        self._open_seconds = 0.0
+        self._pump_check_seconds = 0.0
         self._pulse_started_ts = None
         self._last_outcome = None
         outcome = None
@@ -2069,11 +2089,13 @@ class ZoneFlowController:
             # threshold trivially pass) means no wasted 45s wait either.
             if self.pump_power_entity and not self._stopping and not self.store.state.abort_on:
                 # wait_template pump-power check, timeout 45s, continue_on_timeout
+                check_started = dt_util.utcnow().timestamp()
                 with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(
                         self._wait_for_pump_watts_or_abort(min_pump_watts, service=kind == SERVICE_RUN_KIND),
                         timeout=PUMP_POWER_WAIT_TIMEOUT_SECONDS,
                     )
+                self._pump_check_seconds = max(dt_util.utcnow().timestamp() - check_started, 0.0)
                 if (
                     not self._stopping
                     and not self.store.state.abort_on
@@ -2183,6 +2205,13 @@ class ZoneFlowController:
         if self._pulse_started_ts is None:
             return
         if full:
+            # The pulse itself plus the pump-power check before it, when
+            # the valve was already open.
+            self._open_seconds += pulse_minutes * 60 + self._pump_check_seconds
+        else:
+            self._open_seconds += max(dt_util.utcnow().timestamp() - self._pulse_started_ts, 0.0)
+        self._pump_check_seconds = 0.0
+        if full:
             given = pulse_minutes
         else:
             elapsed = (dt_util.utcnow().timestamp() - self._pulse_started_ts) / 60.0
@@ -2230,6 +2259,26 @@ class ZoneFlowController:
             await asyncio.sleep(0.5)
         state = self.hass.states.get(valve)
         return state is None or state.state != "on"
+
+    async def _wait_for_state_change(self, entity_id: str | None, seconds: float) -> None:
+        """Until `entity_id` reports a new state, or `seconds` pass."""
+        if not entity_id:
+            return
+        changed = asyncio.Event()
+
+        @callback
+        def _changed(_event) -> None:
+            changed.set()
+
+        unsub = async_track_state_change_event(self.hass, [entity_id], _changed)
+        sleeper = asyncio.ensure_future(asyncio.sleep(seconds))
+        waiter = asyncio.ensure_future(changed.wait())
+        try:
+            await asyncio.wait({sleeper, waiter}, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            sleeper.cancel()
+            waiter.cancel()
+            unsub()
 
     async def _pause(self, seconds: float) -> None:
         """A wait inside a cycle (soak gap between pulses, pump preamble),
@@ -3078,7 +3127,9 @@ class ZoneFlowController:
             listener()
         self._notify_status()
 
-    async def start_service_run(self, minutes: float, *, from_switch: bool = False) -> None:
+    async def start_service_run(
+        self, minutes: float, *, from_switch: bool = False, measure_area: float | None = None
+    ) -> None:
         """Run the valve for `minutes` to check emitters, flush a line or
         find a leak -- the 1/5/10 min buttons and the Service Mode switch.
 
@@ -3110,14 +3161,18 @@ class ZoneFlowController:
         self._service_active = True
         self._service_stop.clear()
         self._notify_service_listeners()
-        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened))
+        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area))
 
-    async def _service_task(self, minutes: float, from_switch: bool, shortened: bool) -> None:
+    async def _service_task(
+        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None
+    ) -> None:
         """Owns the service-run flags, so they're cleared however the run
         ends -- including a zone that started stopping before it began."""
+        self._measuring = measure_area is not None
         try:
-            await self._service_run(minutes, from_switch, shortened)
+            await self._service_run(minutes, from_switch, shortened, measure_area)
         finally:
+            self._measuring = False
             self._service_active = False
             self._service_stop.clear()
             self._notify_service_listeners()
@@ -3128,7 +3183,9 @@ class ZoneFlowController:
             self._service_stop.set()
 
     @_tracked_run
-    async def _service_run(self, minutes: float, from_switch: bool, shortened: bool) -> None:
+    async def _service_run(
+        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None
+    ) -> None:
         state = self.store.state
         if state.lock_on:
             return
@@ -3147,6 +3204,8 @@ class ZoneFlowController:
         )
         stopped_by_person = self._last_outcome == _USER_STOPPED
         if not completed and not stopped_by_person:
+            if measure_area is not None:
+                await self._log_flow_measurement("Failed", "flow_measure_failed", minutes=self._open_seconds / 60)
             return  # aborted, interrupted or failed -- already handled and logged
         if completed:
             # A finished pulse isn't counted by the pulse loop (a watering
@@ -3169,6 +3228,73 @@ class ZoneFlowController:
             level=LEVEL_WARNING,
             extra_log=f"Service run: {ran:.1f} min, not counted as watering{cap_note}.",
         )
+        if measure_area is not None:
+            await self._finish_flow_measurement(measure_area, minutes, stopped_by_person)
+
+    async def start_flow_measurement(self, area_m2: float) -> None:
+        """Measure the emitter flow rate with the flow meter: a service run
+        of FLOW_MEASURE_MINUTES, then litres / area / minutes. Refused (like
+        any service run) while the zone or its pump is busy."""
+        await self.start_service_run(FLOW_MEASURE_MINUTES, measure_area=area_m2)
+
+    async def _finish_flow_measurement(self, area_m2: float, planned: float, stopped_by_person: bool) -> None:
+        minutes = self._open_seconds / 60  # how long the valve was really open
+        if stopped_by_person:
+            await self._log_flow_measurement("Cancelled", None, minutes=minutes)
+            return
+        liters = self._run_liters
+        lo, hi = NUMBER_DEFS["flow_rate_mm_per_min"][1:3]
+        long_enough = minutes >= min(FLOW_MEASURE_MIN_MINUTES, 0.8 * planned) and minutes >= 1
+        rate = liters / area_m2 / minutes if liters and long_enough else None
+        number = self.numbers.get("flow_rate_mm_per_min")
+        if rate is None or not lo <= rate <= hi or number is None:
+            await self._log_flow_measurement("Failed", "flow_measure_failed", minutes=minutes, liters=liters)
+            return
+        await number.async_set_metric_value(round(rate, 3))
+        shown = units.to_display("flow_rate_mm_per_min", rate, self.imperial)
+        await self._log_flow_measurement(
+            "Completed",
+            "flow_measured",
+            minutes=minutes,
+            liters=liters,
+            rate=f"{shown:.2f} {'in/h' if self.imperial else 'mm/min'}",
+            extra=f"Flow rate measured: {rate:.3f} mm/min ({liters:.1f} L over {area_m2:.2f} m2 in {minutes:.1f} min).",
+        )
+
+    async def _log_flow_measurement(
+        self,
+        status: str,
+        message: str | None,
+        *,
+        minutes: float,
+        liters: float | None = None,
+        rate: str = "",
+        extra: str | None = None,
+    ) -> None:
+        """The measurement's result was asked for: it goes to the phone
+        whatever the Notifications setting -- or, with no notify target, to
+        Home Assistant's notifications."""
+        params = {"volume": units.volume_text(liters or 0.0, self.imperial), "minutes": f"{minutes:.0f}", "rate": rate}
+        await self._log_event(
+            event_type="Flow Rate Measurement",
+            status=status,
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=int(round(minutes)),
+            notify_phone=message is not None,
+            message="flow_measured" if message == "flow_measured" else "flow_measure_failed",
+            params=params,
+            level=LEVEL_WARNING if status == "Failed" else LEVEL_INFO,
+            always_notify=True,
+            extra_log=extra,
+        )
+        if message is not None and not self.notify_entity:
+            persistent_notification.async_create(
+                self.hass,
+                self._msg(f"notify.{message}.message", **params),
+                title=f"{self.entry.title}: {self._msg(f'notify.{message}.title', **params)}",
+                notification_id=f"{DOMAIN}_{self.entry.entry_id}_flow_measurement",
+            )
 
     async def _log_skipped_for_service(self, kind: str) -> None:
         """A scheduled cycle found a service run holding the zone: say so
@@ -3309,6 +3435,7 @@ class ZoneFlowController:
         params: dict[str, Any] | None = None,
         level: str = LEVEL_INFO,
         extra_log: str | None = None,
+        always_notify: bool = False,
     ) -> None:
         """One CSV row (English, for a stable log), and -- if asked for and
         the zone's notification level allows it -- a phone notification.
@@ -3332,7 +3459,7 @@ class ZoneFlowController:
         if extra_log:
             _LOGGER.info(extra_log)
 
-        if notify_phone and self.notify_entity and self._notify_allowed(level):
+        if notify_phone and self.notify_entity and (always_notify or self._notify_allowed(level)):
             try:
                 await self.hass.services.async_call(
                     "notify",

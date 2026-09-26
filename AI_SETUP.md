@@ -273,7 +273,10 @@ climate, temperature thresholds):
    includes a `flow_id` and the first form's `data_schema` (the zone-name
    step).
 2. `POST /api/config/config_entries/flow/<flow_id>` with body
-   `{"zone_name": "<the name you agreed on>"}`. The response is the second
+   `{"zone_name": "<the name you agreed on>", "plant": "<preset>"}` — the
+   preset is one of `custom` (no preset), `tomatoes`, `chilis`,
+   `leafy_vegetables`, `herbs`, `strawberries`, `flowers`, `lawn`,
+   `shrubs`, `young_tree`, `fruit_tree` (see Screen 1 below). The response is the second
    step's form — read its `data_schema` to confirm you're matching field
    names/types exactly (don't hardcode them from this doc if the schema
    response disagrees; the live response is ground truth — this matters
@@ -655,10 +658,16 @@ screen, not just this step.
 In Home Assistant: **Settings → Devices & Services → Add Integration →
 "ZoneFlow Irrigation"**. It's four screens:
 
-**Screen 1 — zone name.** One field, `Zone name`: a short, human name (e.g.
-"Front Lawn", "Avocado Tree", "Herb Bed"). This becomes the device name in
-the HA UI and the default CSV log filename, so it must be distinct from any
-other zone's name.
+**Screen 1 — zone name and what's planted.** `Zone name`: a short, human
+name (e.g. "Front Lawn", "Avocado Tree", "Herb Bed"). This becomes the
+device name in the HA UI and the default CSV log filename, so it must be
+distinct from any other zone's name. `What's planted`: pick the preset
+closest to the crop you researched (Tomatoes, Chilis / peppers, Leafy
+vegetables, Herbs, Strawberries, Flower bed, Lawn, Shrubs, Young tree,
+Established fruit tree) or "Something else". A preset pre-fills the weekly
+targets (normal / hot / cool), crop factor, routine pulse count, deep soak
+on/off and growth ramp — as a starting point. Your §5 research still
+decides the final numbers; change them on the device page after setup.
 
 **Screen 2 — entities, site description, and schedule.** Fields, in the
 order they appear:
@@ -977,9 +986,12 @@ soak.
 another table row.** This is the one number the whole runtime calculation
 is built on (`runtime = needed_mm / flow_rate_mm_per_min`), and it's the
 one you must never guess. Ask outright: "do you know your drip/sprinkler
-system's actual flow rate?" If yes, use it. If not, walk them through
-measuring it now rather than leaving the factory default in place and
-moving on: press the zone's **Service Run 5 min** (or 10 min) button —
+system's actual flow rate?" If yes, use it. If not, the zone's
+**Configure → Flow rate** helper is the quickest route: it works the rate
+out from the emitters (how many, litres per hour each, the area they water),
+or — with a flow meter — measures it with a 10-minute service run and sets
+it. Otherwise walk them through measuring it now rather than leaving the
+factory default in place and moving on: press the zone's **Service Run 5 min** (or 10 min) button —
 it keeps the valve open for that long (plus the few seconds the pump takes
 to get going) and doesn't count as watering — then
 either read the flow meter's delta (if one is configured) or have them
@@ -1005,7 +1017,7 @@ its factory default.
 | `..._hot_weather_temp_threshold` (°C) | 3-day avg of daily highs that counts as "hot" | already set from the climate at setup (§4, screen 4) — only change it if the person's summers are unusual; range 15-45°C |
 | `..._cool_weather_temp_threshold` (°C) | 3-day avg of daily highs below which it's "cool" | same — usually 6-10°C below the hot threshold; range 5-40°C, and it must stay below hot (to move both down, lower cool first; to move both up, raise hot first) |
 | `..._fallback_manual_temperature` (°C) | the temperature used when there's no real reading | **a zone with no temperature sensor:** this is how the person tells it about the weather — tell them to raise it above hot for a heat wave and drop it below cool for a cold spell, then put it back. **With a sensor:** used only once 3 days in a row have no reading at all; leave it in the normal band |
-| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: press the zone's Service Run 5 or 10 min button, measure water depth/volume delivered (or read the flow meter's delta, if configured), divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
+| `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or have them use the zone's **Configure → Flow rate** helper: "work it out from the emitters" (number of emitters × litres/hour each ÷ the area they water — 1 L on 1 m² = 1 mm) or, with a flow meter, "measure it with the flow meter" (a 10-minute service run; the result arrives as a phone message and is set automatically). Without either, press the zone's Service Run 5 or 10 min button, measure the water delivered, and divide. Do not guess this one; a wrong value makes every runtime calculation wrong (a Repairs item stays up while it's the untouched default). |
 | `..._rain_gauge_mm_per_tip_calibration` (mm) | **only relevant if a rain gauge is configured** — how much rainfall one tip of the bucket represents, which the whole rain-aware gate is built on | see §2a — ask if they already know it; if not, look up the gauge's model spec as a starting point, or offer the pour-and-count measurement for a precise value. Skip this row entirely for a zone with no rain gauge. |
 | `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise see "Root depth" above, suggest first from crop/region/soil, let the person override |
 | `..._routine_pulse_count_split_cycle` / `..._routine_soak_interval_between_pulses` (split-cycle for routine) | how many on/soak/on pulses a routine cycle breaks into, and the soak gap between them | soil-driven — see the soil-type guidance above (more/longer-soak for clay, fewer/shorter for sand); factory default (3 pulses, 20min rest) is a loam-tuned middle ground |

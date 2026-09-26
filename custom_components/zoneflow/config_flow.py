@@ -18,6 +18,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
@@ -30,6 +31,11 @@ from .const import (
     CONF_CLIMATE,
     CONF_CSV_PATH,
     CONF_INITIAL_NUMBERS,
+    CONF_PLANT,
+    FLOW_MEASURE_MINUTES,
+    PLANT_CUSTOM,
+    PLANT_OPTIONS,
+    PLANT_PRESETS,
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
     CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
@@ -222,6 +228,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         self._zone_name: str | None = None
+        self._plant: str = PLANT_CUSTOM
         self._data: dict[str, Any] = {}
         self._climate: str = DEFAULT_CLIMATE
 
@@ -233,10 +240,20 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "zone_name_required"
             else:
                 self._zone_name = zone_name
+                self._plant = user_input.get(CONF_PLANT, PLANT_CUSTOM)
                 return await self.async_step_entities()
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema({vol.Required(CONF_ZONE_NAME, default=self._zone_name or ""): str}),
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_ZONE_NAME, default=self._zone_name or ""): str,
+                    # What's planted: pre-fills targets, crop factor,
+                    # pulses, deep soak and growth ramp (PLANT_PRESETS).
+                    vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
+                    ),
+                }
+            ),
             errors=errors,
         )
 
@@ -252,9 +269,13 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Default CSV path is zone-specific so two zones never silently
         # write into the same log file if the user just accepts defaults.
         default_csv = f"/config/zoneflow_{slugify(self._zone_name)}.csv"
+        defaults: dict[str, Any] = {CONF_CSV_PATH: default_csv}
+        if (preset := PLANT_PRESETS.get(self._plant)) is not None:
+            defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
+            defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
         return self.async_show_form(
             step_id="entities",
-            data_schema=_schema({CONF_CSV_PATH: default_csv}),
+            data_schema=_schema(defaults),
             errors=errors,
         )
 
@@ -294,7 +315,13 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if metric["cool_temp_threshold"] >= metric["hot_temp_threshold"] - 0.01:
                 errors["base"] = "cool_not_below_hot"
             else:
-                data = {**self._data, CONF_CLIMATE: self._climate, CONF_INITIAL_NUMBERS: metric}
+                plant_numbers = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
+                data = {
+                    **self._data,
+                    CONF_PLANT: self._plant,
+                    CONF_CLIMATE: self._climate,
+                    CONF_INITIAL_NUMBERS: {**plant_numbers, **metric},
+                }
                 return self.async_create_entry(title=self._zone_name, data=data)
         preset = CLIMATE_PRESETS[self._climate]
         schema = {}
@@ -326,10 +353,107 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
+    """Configure: the zone's settings, or the flow-rate helper."""
+
     def __init__(self, config_entry) -> None:
         self._config_entry = config_entry
 
+    def _controller(self):
+        return self.hass.data.get(DOMAIN, {}).get(self._config_entry.entry_id)
+
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        options = ["settings", "flow_rate"]
+        controller = self._controller()
+        if controller is not None and controller.flow_meter_entity:
+            options.append("flow_measure")
+        return self.async_show_menu(step_id="init", menu_options=options)
+
+    async def async_step_flow_rate(self, user_input: dict[str, Any] | None = None):
+        """Work the emitter flow rate out from the emitters: how many, how
+        much each gives, over how big an area. 1 litre on 1 m² is 1 mm."""
+        controller = self._controller()
+        if controller is None:
+            return self.async_abort(reason="zone_not_loaded")
+        imperial = controller.imperial
+        if user_input is not None:
+            per_emitter_l_h = float(user_input["emitter_flow"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
+            area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
+            mm_per_min = round(float(user_input["emitters"])) * per_emitter_l_h / area_m2 / 60
+            return await self._apply_flow_rate(controller, mm_per_min)
+        return self.async_show_form(
+            step_id="flow_rate",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("emitters", default=4): selector.NumberSelector(
+                        selector.NumberSelectorConfig(min=1, max=2000, step=1, mode=selector.NumberSelectorMode.BOX)
+                    ),
+                    vol.Required("emitter_flow", default=0.5 if imperial else 2.0): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.05, max=200, step=0.05, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="gal/h" if imperial else "L/h",
+                        )
+                    ),
+                    vol.Required("area", default=10.0 if imperial else 1.0): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1, max=100000, step=0.1, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="ft²" if imperial else "m²",
+                        )
+                    ),
+                }
+            ),
+        )
+
+    async def _apply_flow_rate(self, controller, mm_per_min: float):
+        _name, lo, hi, _step, _unit = NUMBER_DEFS["flow_rate_mm_per_min"]
+
+        def shown(value: float) -> str:
+            if controller.imperial:
+                return f"{units.to_display('flow_rate_mm_per_min', value, True):.3f} in/h"
+            return f"{value:.3f} mm/min"
+
+        if not lo <= mm_per_min <= hi:
+            return self.async_abort(
+                reason="flow_rate_out_of_range",
+                description_placeholders={"rate": shown(mm_per_min), "low": shown(lo), "high": shown(hi)},
+            )
+        number = controller.numbers.get("flow_rate_mm_per_min")
+        if number is None:  # the setting's entity is disabled
+            return self.async_abort(reason="flow_rate_disabled")
+        await number.async_set_metric_value(round(mm_per_min, 3))
+        return self.async_abort(reason="flow_rate_set", description_placeholders={"rate": shown(mm_per_min)})
+
+    async def async_step_flow_measure(self, user_input: dict[str, Any] | None = None):
+        """With a flow meter: a service run measures the litres, and the
+        flow rate is worked out when it ends (with a phone message)."""
+        controller = self._controller()
+        if controller is None or not controller.flow_meter_entity:
+            return self.async_abort(reason="zone_not_loaded")
+        if "flow_rate_mm_per_min" not in controller.numbers:
+            return self.async_abort(reason="flow_rate_disabled")
+        imperial = controller.imperial
+        if user_input is not None:
+            area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
+            try:
+                await controller.start_flow_measurement(area_m2)
+            except HomeAssistantError:
+                return self.async_abort(reason="zone_busy")
+            return self.async_abort(reason="measuring", description_placeholders={"minutes": str(FLOW_MEASURE_MINUTES)})
+        return self.async_show_form(
+            step_id="flow_measure",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("area", default=10.0 if imperial else 1.0): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1, max=100000, step=0.1, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="ft²" if imperial else "m²",
+                        )
+                    ),
+                }
+            ),
+            description_placeholders={"minutes": str(FLOW_MEASURE_MINUTES)},
+        )
+
+    async def async_step_settings(self, user_input: dict[str, Any] | None = None):
         if user_input is not None:
             for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
                 if len(user_input[key].split(":")) == 2:
@@ -341,4 +465,4 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
                 user_input.setdefault(key, None)
             return self.async_create_entry(title="", data=user_input)
         defaults = {**self._config_entry.data, **self._config_entry.options}
-        return self.async_show_form(step_id="init", data_schema=_schema(defaults))
+        return self.async_show_form(step_id="settings", data_schema=_schema(defaults))

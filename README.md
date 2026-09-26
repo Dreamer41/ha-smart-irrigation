@@ -207,7 +207,11 @@ The AI setup guide builds a page like this for each of your zones.
 **Add a zone:** Settings → Devices & Services → Add Integration →
 **ZoneFlow Irrigation**. Four short screens:
 
-1. **Zone name** (becomes the device name and default CSV file name).
+1. **Zone name** (becomes the device name and default CSV file name) and
+   **what's planted** — Tomatoes, Chilis, Leafy vegetables, Herbs,
+   Strawberries, Flower bed, Lawn, Shrubs, Young tree, Fruit tree, or your
+   own. A preset pre-fills the weekly targets, crop factor, pulses, deep
+   soak and growth ramp; every value stays adjustable.
 2. **Entities and schedule** — the valve, any optional sensors from the
    table above, the Shared pump ID if the pump is shared, units, soil/site
    description, growth ramp, CSV path, deep-soak on/off and both schedules.
@@ -216,8 +220,10 @@ The AI setup guide builds a page like this for each of your zones.
    zone's units.
 
 Then, before leaving it to run: set the emitter flow rate (the one number
-that must be right — a **Service Run 5 min** press is an easy way to
-measure it), seed the Last Routine / Deep Soak dates if the plant already
+that must be right). **Configure → Flow rate** works it out from your
+emitters (how many, litres per hour each, the area they water) — or, with a
+flow meter, measures it with a 10-minute service run. Until it's set,
+Settings → Repairs reminds you. seed the Last Routine / Deep Soak dates if the plant already
 has a watering history, and press **Service Run 1 min** to confirm the
 valve, pump and log. Add further zones the same way; sensors can be
 added or removed later under **Configure**.

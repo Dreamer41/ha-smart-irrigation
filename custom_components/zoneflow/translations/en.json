@@ -6,7 +6,8 @@
         "description": "Give this irrigation zone a short name (e.g. \"Front Lawn\", \"Avocado Tree\"). To add more zones later, add this integration again.",
         "data": {
           "zone_name": "Zone name",
-          "unit_system": "Units"
+          "unit_system": "Units",
+          "plant": "What's planted (pre-fills targets and settings; all can be changed later)"
         }
       },
       "entities": {
@@ -62,6 +63,14 @@
   "options": {
     "step": {
       "init": {
+        "title": "Configure",
+        "menu_options": {
+          "settings": "Zone settings (entities, soil, schedule…)",
+          "flow_rate": "Flow rate: work it out from the emitters",
+          "flow_measure": "Flow rate: measure it with the flow meter"
+        }
+      },
+      "settings": {
         "data": {
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
@@ -87,7 +96,31 @@
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
           "unit_system": "Units"
         }
+      },
+      "flow_rate": {
+        "title": "Emitter flow rate",
+        "description": "How much water the zone's emitters put on the area they wet. 1 litre on 1 m² is 1 mm. For drippers at single plants, use the area around them that actually gets wet. The result replaces the zone's Emitter Flow Rate Calibration.",
+        "data": {
+          "emitters": "Number of emitters (drippers, sprayers) in the zone",
+          "emitter_flow": "Flow of one emitter",
+          "area": "Area they water"
+        }
+      },
+      "flow_measure": {
+        "title": "Measure the flow rate",
+        "description": "Runs the valve for {minutes} minutes as a service run (not counted as watering, but its minutes count toward today's runtime safety cap) and works the flow rate out from the flow meter's litres. The meter must only measure this zone's water while it runs. The result comes as a phone message and is set automatically; switching Service Mode off cancels it.",
+        "data": {
+          "area": "Area the zone's emitters water"
+        }
       }
+    },
+    "abort": {
+      "flow_rate_set": "Emitter flow rate set to {rate}.",
+      "flow_rate_out_of_range": "That works out to {rate}, outside what the setting allows ({low} to {high}). Check the numbers -- for drippers spaced around single plants, use the area they actually wet, not the whole bed.",
+      "measuring": "Measuring: the valve runs for about {minutes} minutes. The result comes as a phone message (or in Home Assistant's notifications if the zone has no phone target) and is set automatically.",
+      "zone_not_loaded": "This zone isn't running right now, so this can't be done.",
+      "zone_busy": "The zone (or its pump) is busy, or today's runtime safety cap is used up. Try again later.",
+      "flow_rate_disabled": "The zone's Emitter Flow Rate Calibration entity is disabled. Enable it (the zone's device page → its entities) and try again."
     }
   },
   "selector": {
@@ -157,6 +190,21 @@
         "hot_dry": "Hot summers (Mediterranean, desert, southern US)",
         "temperate": "Temperate (most of Europe, northern US)",
         "cool": "Cool summers (Nordics, UK, coastal north)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Something else (I'll set it up myself)",
+        "tomatoes": "Tomatoes",
+        "chilis": "Chilis / peppers",
+        "leafy_vegetables": "Leafy vegetables / salad",
+        "herbs": "Herbs (Mediterranean)",
+        "strawberries": "Strawberries",
+        "flowers": "Flower bed",
+        "lawn": "Lawn",
+        "shrubs": "Shrubs / hedge",
+        "young_tree": "Young tree (first years)",
+        "fruit_tree": "Established fruit tree"
       }
     }
   },

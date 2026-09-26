@@ -124,6 +124,14 @@
     "frost": {
       "title": "❄️ {cycle} waiting: frost",
       "message": "It's {temp}, below the frost guard of {limit}. It checks again every hour for up to {hours} hours, then waits for its next scheduled time."
+    },
+    "flow_measured": {
+      "title": "💧 Flow rate measured",
+      "message": "{volume} in {minutes} min: the emitter flow rate is now {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Flow rate not measured",
+      "message": "The flow meter counted {volume} in {minutes} min, which doesn't give a usable flow rate. Check the meter and the area, or work it out from the emitters instead (Configure → Flow rate)."
     }
   },
   "notes": {
