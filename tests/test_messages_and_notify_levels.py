@@ -236,3 +236,53 @@ async def test_a_language_change_reloads_once(hass, monkeypatch):
         messages.text(hass, "cycle.routine")
     await hass.async_block_till_done()
     assert reads.count("nl") == 1
+
+
+def _walk(node, prefix=""):
+    for key, value in node.items():
+        path = f"{prefix}{key}"
+        if isinstance(value, dict):
+            yield from _walk(value, path + ".")
+        else:
+            yield path, value
+
+
+LANGUAGES = ("de", "nl", "fr", "es", "it", "fi", "sv", "pl", "pt")
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_every_language_is_complete(language):
+    """Home Assistant's translation file, the message catalog and the card's
+    texts: nothing missing, nothing extra, the same placeholders."""
+    for folder in ("translations", "messages"):
+        english = dict(_walk(json.loads((ROOT / folder / "en.json").read_text(encoding="utf-8"))))
+        local = dict(_walk(json.loads((ROOT / folder / f"{language}.json").read_text(encoding="utf-8"))))
+        assert local.keys() == english.keys(), (folder, sorted(local.keys() ^ english.keys())[:5])
+        for path, text in english.items():
+            if not path.startswith("formats."):
+                assert _placeholders(local[path]) == _placeholders(text), (folder, path)
+    card = (ROOT / "frontend" / "zoneflow-card.js").read_text(encoding="utf-8")
+    i18n = json.loads(card[card.index("const I18N = ") + len("const I18N = "): card.index("\n};\n") + 2])
+    assert dict(_walk(i18n[language])).keys() == dict(_walk(i18n["en"])).keys()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("language", LANGUAGES)
+async def test_dates_in_every_language(hass, language):
+    from datetime import datetime
+
+    hass.config.language = language
+    await messages.async_setup(hass)
+    catalog = json.loads((ROOT / "messages" / f"{language}.json").read_text(encoding="utf-8"))
+    monday = datetime(2026, 9, 28, 5, 30)
+    text = messages.when(hass, monday, "weekday_time")
+    assert catalog["formats"]["days"].split(",")[0] in text and ("05" in text or "5" in text)
+    assert "Mon" not in text or language == "en"
+
+
+@pytest.mark.parametrize(("regional", "base"), [("pt-BR", "pt"), ("es-419", "es"), ("de-CH", "de")])
+def test_regional_copies_match(regional, base):
+    """Home Assistant doesn't fall back from a regional language to its base
+    for integration texts: those files are copies, kept identical."""
+    folder = ROOT / "translations"
+    assert (folder / f"{regional}.json").read_text(encoding="utf-8") == (folder / f"{base}.json").read_text(encoding="utf-8")

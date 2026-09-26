@@ -1,4 +1,4 @@
-# All four services below are domain-level (not entity-platform) services.
+# The services below are domain-level (not entity-platform) services.
 # With only one ZoneFlow zone configured, targeting is optional -- the
 # single zone is used automatically. With two or more zones, pass one
 # zone's device_id (or one of its entity_ids) so the call goes to the

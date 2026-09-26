@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d.%m. klo %H.%M",
+    "weekday_time": "%a klo %H.%M",
+    "date": "%a %d.%m.",
+    "time": "%H.%M",
+    "days": "ma,ti,ke,to,pe,la,su",
+    "months": "tammi,helmi,maalis,huhti,touko,kesä,heinä,elo,syys,loka,marras,joulu"
+  },
+  "cycle": {
+    "deep_soak": "Syväkastelu",
+    "routine": "Peruskastelu",
+    "service_run": "Huoltoajo",
+    "test_pulse": "Testijakso"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Rankkasade",
+      "message": "Rankkasade kirjattu (24 h: {rain_24h}). Kuivumisajat päivitetty."
+    },
+    "stale_lock": {
+      "title": "⚠️ Kastelulukko nollattu",
+      "message": "Kastelulukko oli jumissa yli 3 tuntia. Se nollattiin, jotta seuraavat kastelut eivät esty."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Venttiilin vahti laukesi",
+      "message": "Venttiili oli auki {minutes} min yhtäjaksoisesti. Se suljettiin kasvien suojaamiseksi."
+    },
+    "power_loss": {
+      "title": "🚨 Sähkökatko kastelun aikana",
+      "message": "Venttiili tai pumppu oli ilman virtaa yli 10 min kesken kastelun. Kastelu keskeytettiin ja lukko vapautettiin; seuraava ajastettu kastelu yrittää uudelleen."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Venttiili auki sähköjen palattua",
+      "message": "Venttiili ilmoitti olevansa auki, kun sähköt palasivat — se suljettiin väkisin. Tarkista rele ja johdotus."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Uudelleenkäynnistys keskeytti kastelun",
+      "message": "Home Assistant käynnistyi uudelleen kesken kastelun. Lukko vapautettiin ja venttiili suljettiin, jos siihen saatiin yhteys; seuraava ajastettu kastelu yrittää uudelleen."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Vajaakastelu päättyi",
+      "message": "Sen päättymispäivä on ohi — peruskastelu palasi täyteen annokseen."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: ei vesivirtausta",
+      "message": "Kastelu päättyi, mutta virtausmittari ei näytä lainkaan vettä. Tarkista venttiili, pumppu ja virtausmittarin johdotus."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: keskeytyi virheeseen",
+      "message": "Keskeytyi: {error}. Venttiili on kiinni; seuraava ajastettu kastelu yrittää uudelleen."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: keskeytyi virheeseen",
+      "message": "Keskeytyi: {error}. {valve} voi olla yhä AUKI — tarkista heti."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: pumpun teho alhainen",
+      "message": "Jakso {pulse} on käynnissä, mutta pumpun teho on {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle} keskeytyi sateen vuoksi",
+      "message": "Keskeytyi, kun {given}/{planned} min oli kasteltu: viimeisen 30 minuutin aikana satoi {rain}. Seuraava ajastettu kastelu päättää uudelleen ja huomioi tämän sateen."
+    },
+    "forecast_override": {
+      "title": "⏱️ Kastellaan ennusteesta huolimatta",
+      "message": "Sadetta on ennustettu toistuvasti, mutta sitä ei ole tullut {days} päivään (vyöhykkeen raja: {limit} pv) — kastellaan silti."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Syväkastelu jäi väliin: kestoraja",
+      "message": "Laskettu kesto ({minutes} min) ylittää vyöhykkeen syväkastelun turvarajan. Kastelu peruttu — tarkista virtaama ja tavoitesyvyys."
+    },
+    "routine_cap": {
+      "title": "⚠️ Peruskastelu jäi väliin: kestoraja",
+      "message": "Laskettu kesto ({minutes} min) ylittää vyöhykkeen peruskastelun turvarajan ({cap} min). Kastelu peruttu — tarkista virtaama ja viikkotavoitteet."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} ohitettu: päivän kestoraja",
+      "message": "Tänään jo {used} min; tämä kastelu ({minutes} min) ylittäisi päivärajan {cap} min. Yritetään uudelleen, kun on aika."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle} peruttu",
+      "message": "Peruttu: viimeisen 30 minuutin aikana satoi {rain}."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Syväkastelu valmis",
+      "message": "Annettu {amount} {pulses} jaksossa ({minutes} min). Lasketaan myös peruskasteluksi.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Seuraava peruskastelu: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Kastelu myöhässä",
+      "message": "Edellisestä kastelusta on {days} päivää — epätavallisen pitkä tauko, järjestelmä kannattaa tarkistaa."
+    },
+    "routine_done": {
+      "title": "🚿 Peruskastelu valmis",
+      "message": "Kasteltu {minutes} min (tavoite {target}, sadetta vähennetty {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Tarkista kosteusanturi",
+      "message": "Märän maan lukemat ({pct} %) ovat pidättäneet peruskastelua {days} päivän ajan. Jos ei ole juuri satanut, tarkista anturi (sijainti, paristo, lukema) — sitä noudatetaan edelleen."
+    },
+    "probe_frozen": {
+      "title": "🌱 Kosteusanturi näyttää jumittuneen",
+      "message": "Kosteusanturi on näyttänyt märkää ({pct} %) {days} päivän ajan ilman uutta lukemaa 24 tuntiin, joten kastelu noudattaa taas aikataulua. Tarkista anturi (paristo, yhteys)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Huoltotila kytkeytyi pois",
+      "message": "Huoltotila oli päällä {minutes} min ja kytkeytyi itse pois (automaattisen sammutuksen aika)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Huoltotila kytkeytyi pois",
+      "message": "Huoltotila oli päällä {minutes} min ja kytkeytyi itse pois (lyhennetty, jotta päivän käyntiajan turvaraja ei ylity)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Itsesäätö",
+      "message": "Peruskastelun kuivumisaika lyhennetty {days} päivään, koska olet viime aikoina kastellut etuajassa."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Itsesäätö",
+      "message": "Peruskastelun kuivumisaika pidennetty {days} päivään, koska olet viime aikoina ohittanut kasteluja."
+    },
+    "frost": {
+      "title": "❄️ {cycle} odottaa: hallaa",
+      "message": "Lämpötila {temp} on alle hallasuojan rajan {limit}. Tarkistetaan tunnin välein enintään {hours} tunnin ajan, sitten odotetaan seuraavaa ajastettua aikaa."
+    },
+    "flow_measured": {
+      "title": "💧 Virtaama mitattu",
+      "message": "{volume} {minutes} minuutissa: suuttimien virtaama on nyt {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Virtaamaa ei mitattu",
+      "message": "Virtausmittari laski {volume} {minutes} minuutissa, mistä ei saa käyttökelpoista virtaamaa. Tarkista mittari ja pinta-ala, tai laske virtaama suuttimista (Määritä → Virtaama)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Maan kosteus {pct} % (kuiva) — kasteltu ennen aikataulua.",
+    "deficit_active": " Vajaakastelu: {pct} % annos.",
+    "deficit_hot": " Vajaakastelu: täysi annos tänään (helle).",
+    "deficit_soil_dry": " Vajaakastelu: täysi annos tänään (maa kuivarajalla).",
+    "deficit_no_temp": " Vajaakastelu: täysi annos (ei lämpötilalukemaa).",
+    "deficit_young": " Vajaakastelu: täysi annos (kasvi vielä kasvukäyrällä)."
+  },
+  "status": {
+    "watering": "Kastelee nyt: {cycle}",
+    "service_run": "Huoltoajo käynnissä",
+    "lock_held": "Pidossa: aiempi kastelu jäi kesken (vyöhyke lukittu)",
+    "snoozed": "Ohitettu tältä päivältä",
+    "done": "{cycle} valmis klo {time}: {amount} {minutes} minuutissa",
+    "skipped_soil_wet": "{cycle} ohitettu klo {time}: maa on märkä ({pct} %)",
+    "skipped_drydown": "{cycle} ohitettu klo {time}: maa kuivuu sateen jälkeen {until} asti",
+    "skipped_forecast": "{cycle} ohitettu klo {time}: ennusteessa sadetta {rain}",
+    "skipped_rain_credit": "{cycle} ohitettu klo {time}: viimeaikainen sade ({rain}) kattaa tarpeen ({target})",
+    "skipped_wet_fortnight": "{cycle} pidätetty klo {time}: 14 päivässä satanut {rain}",
+    "skipped_service": "{cycle} ohitettu klo {time}: huoltoajo käytti venttiiliä",
+    "cancelled_rain": "{cycle} peruttu klo {time}: satoi ({rain} / 30 min)",
+    "refused_runtime_cap": "{cycle} jäi väliin klo {time}: tarve {minutes} min, yli kestorajan {cap} min",
+    "refused_deep_soak_cap": "{cycle} jäi väliin klo {time}: tarve {minutes} min, yli kestorajan",
+    "refused_daily_cap": "{cycle} jäi väliin klo {time}: ylittäisi päivän turvarajan {cap} min",
+    "interrupted": "{cycle} keskeytyi klo {time} ennen loppua",
+    "waiting_soil_wet": "Odottaa maan kuivumista ({pct} %)",
+    "waiting_drydown": "Maa kuivuu sateen jälkeen {until} asti",
+    "next": "Seuraava kastelu {when}",
+    "next_deep_soak": "Seuraavaksi: syväkastelu {when}",
+    "first_run": "Ensimmäinen kastelu {when}",
+    "idle": "Ei ajastettuja kasteluja",
+    "with_next": "{status} · seuraava {when}",
+    "waiting_pump": "Odottaa yhteistä pumppua: {cycle}",
+    "with_next_deep_soak": "{status} · syväkastelu {when}",
+    "first_run_deep_soak": "Ensimmäinen kastelu: syväkastelu {when}",
+    "paused": "Tauolla: ei kastelua, ennen kuin Tauko kytketään pois",
+    "skipped_frost": "{cycle} ohitettu klo {time}: {temp}, alle hallarajan ({limit})",
+    "waiting_frost": "{cycle} odottaa klo {time} alkaen: {temp}, alle hallarajan ({limit}); tarkistetaan tunnin välein",
+    "waiting_deep_soak": "{cycle} odottaa klo {time} alkaen: syväkastelu ajetaan ensin, kun on tarpeeksi lämmintä",
+    "paused_until": "Tauolla {until} asti"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: viikkosi",
+    "zone": "{zone}: kasteltu {runs}× — {water} {minutes} minuutissa",
+    "measured": " (mitattu {volume})",
+    "rain": " · sade (7 pv) {rain}",
+    "held_back": " · pidätetty {days} päivänä",
+    "paused": " · tauolla",
+    "next": " · seuraava {when}",
+    "zone_none": "{zone}: ei kastelua"
+  }
+}

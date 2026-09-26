@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d %b %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d %b",
+    "time": "%H:%M",
+    "days": "lun.,mar.,mer.,jeu.,ven.,sam.,dim.",
+    "months": "janv.,févr.,mars,avr.,mai,juin,juil.,août,sept.,oct.,nov.,déc."
+  },
+  "cycle": {
+    "deep_soak": "Arrosage profond",
+    "routine": "Arrosage régulier",
+    "service_run": "Test de maintenance",
+    "test_pulse": "Test de vanne"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Forte pluie",
+      "message": "Forte pluie enregistrée (24 h : {rain_24h}). Délais de ressuyage mis à jour."
+    },
+    "stale_lock": {
+      "title": "⚠️ Verrou d'arrosage réinitialisé",
+      "message": "Le verrou d'arrosage était bloqué depuis plus de 3 heures. Il a été réinitialisé pour ne pas bloquer les prochains arrosages."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Sécurité de la vanne déclenchée",
+      "message": "La vanne est restée ouverte {minutes} minutes d'affilée. Elle a été fermée pour protéger les plantes."
+    },
+    "power_loss": {
+      "title": "🚨 Coupure de courant pendant l'arrosage",
+      "message": "La vanne ou la pompe a perdu le courant pendant plus de 10 minutes en plein cycle. L'arrosage est arrêté et le verrou libéré ; le prochain arrosage programmé réessaiera."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Vanne ouverte au retour du courant",
+      "message": "La vanne s'est signalée ouverte au retour du courant — elle a été fermée de force. Vérifiez le relais et le câblage."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Arrosage interrompu par un redémarrage",
+      "message": "Home Assistant a redémarré en plein cycle. Le verrou a été libéré et la vanne fermée de force si possible ; le prochain arrosage programmé réessaiera."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Arrosage réduit terminé",
+      "message": "Sa date de fin est passée — l'arrosage régulier revient à la dose complète."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle} : aucun débit",
+      "message": "Le cycle est terminé mais le débitmètre n'indique aucune eau apportée. Vérifiez la vanne, la pompe et le câblage du débitmètre."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle} : arrêté par une erreur",
+      "message": "Arrêté : {error}. La vanne est fermée ; le prochain arrosage programmé réessaiera."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle} : arrêté par une erreur",
+      "message": "Arrêté : {error}. La vanne {valve} est peut-être encore OUVERTE — vérifiez-la maintenant."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle} : pompe en faible puissance",
+      "message": "Passage {pulse} en cours mais la pompe n'indique que {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle} arrêté par la pluie",
+      "message": "Arrêté après {given} min sur {planned} : {rain} tombés ces 30 dernières minutes. Le prochain arrosage programmé décidera à nouveau en tenant compte de cette pluie."
+    },
+    "forecast_override": {
+      "title": "⏱️ Arrosage malgré la prévision",
+      "message": "De la pluie était sans cesse annoncée mais rien n'est tombé depuis {days} jours (limite de cette zone : {limit} jours) — arrosage quand même."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Arrosage profond non lancé : durée max",
+      "message": "La durée calculée ({minutes} min) dépasse la durée max de sécurité de l'arrosage profond de cette zone. Arrosage annulé — vérifiez le débit et la dose cible."
+    },
+    "routine_cap": {
+      "title": "⚠️ Arrosage régulier non lancé : durée max",
+      "message": "La durée calculée ({minutes} min) dépasse la durée max de sécurité de l'arrosage régulier de cette zone ({cap} min). Arrosage annulé — vérifiez le débit et les objectifs hebdo."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} sauté : durée max par jour",
+      "message": "Déjà {used} min aujourd'hui ; ce cycle ({minutes} min) dépasserait le plafond de {cap} min par jour. Nouvel essai à la prochaine échéance."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle} annulé",
+      "message": "Annulé : {rain} tombés ces 30 dernières minutes."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Arrosage profond terminé",
+      "message": "{amount} apportés en {pulses} passage(s) ({minutes} min). Compte aussi comme arrosage régulier.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Prochain arrosage régulier : {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Arrosage en retard",
+      "message": "{days} jours depuis le dernier arrosage — un écart inhabituel, vérifiez le système."
+    },
+    "routine_done": {
+      "title": "🚿 Arrosage régulier terminé",
+      "message": "Arrosé {minutes} min (objectif {target}, pluie déduite {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Vérifiez la sonde de sol",
+      "message": "Des mesures de sol humide ({pct}%) retiennent l'arrosage régulier depuis {days} jours. S'il a peu plu, vérifiez la sonde (emplacement, pile, mesure) — elle est toujours suivie."
+    },
+    "probe_frozen": {
+      "title": "🌱 La sonde de sol semble bloquée",
+      "message": "La sonde indique un sol humide ({pct}%) depuis {days} jours sans nouvelle mesure en 24 h, l'arrosage suit donc à nouveau le programme. Vérifiez la sonde (pile, connexion)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Mode maintenance désactivé",
+      "message": "Le mode maintenance a fonctionné {minutes} min et s'est désactivé tout seul (délai d'arrêt auto)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Mode maintenance désactivé",
+      "message": "Le mode maintenance a fonctionné {minutes} min et s'est désactivé tout seul (raccourci pour respecter le plafond de sécurité du jour)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Réglage automatique",
+      "message": "Délai de ressuyage de l'arrosage régulier raccourci à {days} jours, d'après vos récents arrosages lancés en avance."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Réglage automatique",
+      "message": "Délai de ressuyage de l'arrosage régulier allongé à {days} jours, d'après vos récents arrosages sautés."
+    },
+    "frost": {
+      "title": "❄️ {cycle} en attente : gel",
+      "message": "Il fait {temp}, sous le seuil antigel de {limit}. Nouvelle vérification toutes les heures pendant {hours} heures au plus, puis attente du prochain horaire programmé."
+    },
+    "flow_measured": {
+      "title": "💧 Débit mesuré",
+      "message": "{volume} en {minutes} min : le débit des goutteurs est maintenant de {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Débit non mesuré",
+      "message": "Le débitmètre a compté {volume} en {minutes} min, ce qui ne donne pas de débit exploitable. Vérifiez le compteur et la surface, ou calculez plutôt le débit à partir des goutteurs (Configurer → Débit)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Humidité du sol {pct}% (sec) — arrosé avant l'heure prévue.",
+    "deficit_active": " Arrosage réduit : dose à {pct}%.",
+    "deficit_hot": " Arrosage réduit : dose complète aujourd'hui (temps chaud).",
+    "deficit_soil_dry": " Arrosage réduit : dose complète aujourd'hui (sol au seuil sec).",
+    "deficit_no_temp": " Arrosage réduit : dose complète (aucune température enregistrée).",
+    "deficit_young": " Arrosage réduit : dose complète (plante encore en phase de croissance)."
+  },
+  "status": {
+    "watering": "Arrosage en cours : {cycle}",
+    "service_run": "Test de maintenance en cours",
+    "lock_held": "En attente : un arrosage précédent n'a pas fini (zone verrouillée)",
+    "snoozed": "Arrosage sauté aujourd'hui",
+    "done": "{cycle} terminé à {time} : {amount} en {minutes} min",
+    "skipped_soil_wet": "{cycle} sauté à {time} : sol humide ({pct}%)",
+    "skipped_drydown": "{cycle} sauté à {time} : ressuyage après la pluie jusqu'au {until}",
+    "skipped_forecast": "{cycle} sauté à {time} : {rain} de pluie prévus",
+    "skipped_rain_credit": "{cycle} sauté à {time} : la pluie récente ({rain}) couvre les {target} nécessaires",
+    "skipped_wet_fortnight": "{cycle} non lancé à {time} : {rain} de pluie sur 14 jours",
+    "skipped_service": "{cycle} sauté à {time} : un test de maintenance utilisait la vanne",
+    "cancelled_rain": "{cycle} annulé à {time} : il pleuvait ({rain} en 30 min)",
+    "refused_runtime_cap": "{cycle} non lancé à {time} : {minutes} min nécessaires, au-delà du plafond de {cap} min par cycle",
+    "refused_deep_soak_cap": "{cycle} non lancé à {time} : {minutes} min nécessaires, au-delà de son plafond",
+    "refused_daily_cap": "{cycle} non lancé à {time} : il dépasserait le plafond de sécurité de {cap} min du jour",
+    "interrupted": "{cycle} arrêté à {time} avant la fin",
+    "waiting_soil_wet": "En attente que le sol sèche ({pct}%)",
+    "waiting_drydown": "Ressuyage après la pluie jusqu'au {until}",
+    "next": "Prochain arrosage {when}",
+    "next_deep_soak": "Prochain : arrosage profond {when}",
+    "first_run": "Premier arrosage {when}",
+    "idle": "Rien de prévu",
+    "with_next": "{status} · prochain {when}",
+    "waiting_pump": "En attente de la pompe partagée : {cycle}",
+    "with_next_deep_soak": "{status} · arrosage profond {when}",
+    "first_run_deep_soak": "Premier arrosage : arrosage profond {when}",
+    "paused": "En pause : aucun arrosage tant que Pause est activé",
+    "skipped_frost": "{cycle} sauté à {time} : {temp}, sous le seuil antigel ({limit})",
+    "waiting_frost": "{cycle} en attente à {time} : {temp}, sous le seuil antigel ({limit}) ; nouvel essai toutes les heures",
+    "waiting_deep_soak": "{cycle} en attente depuis {time} : l'arrosage profond passe d'abord dès qu'il fait assez chaud",
+    "paused_until": "En pause jusqu'au {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow : votre semaine",
+    "zone": "{zone} : arrosé {runs}× — {water} en {minutes} min",
+    "measured": " (mesuré {volume})",
+    "rain": " · pluie (7 jours) {rain}",
+    "held_back": " · arrosage retenu {days} jour(s)",
+    "paused": " · en pause",
+    "next": " · prochain {when}",
+    "zone_none": "{zone} : aucun arrosage"
+  }
+}

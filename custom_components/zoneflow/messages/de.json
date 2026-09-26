@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d. %b %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d. %b",
+    "time": "%H:%M",
+    "days": "Mo,Di,Mi,Do,Fr,Sa,So",
+    "months": "Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez"
+  },
+  "cycle": {
+    "deep_soak": "Tiefenbewässerung",
+    "routine": "Routinebewässerung",
+    "service_run": "Wartungslauf",
+    "test_pulse": "Testimpuls"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Starkregen",
+      "message": "Starkregen gemessen (24 h: {rain_24h}). Abtrockenzeiten aktualisiert."
+    },
+    "stale_lock": {
+      "title": "⚠️ Bewässerungssperre zurückgesetzt",
+      "message": "Die Bewässerungssperre hing über 3 Stunden fest. Sie wurde zurückgesetzt, damit künftige Läufe nicht blockiert werden."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Ventilwächter ausgelöst",
+      "message": "Das Ventil war {minutes} Minuten am Stück offen. Es wurde zum Schutz der Pflanzen geschlossen."
+    },
+    "power_loss": {
+      "title": "🚨 Stromausfall beim Bewässern",
+      "message": "Ventil oder Pumpe waren mitten im Lauf 10+ Minuten ohne Strom. Die Bewässerung wurde beendet und die Sperre aufgehoben; der nächste geplante Lauf versucht es erneut."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Ventil nach Stromrückkehr offen",
+      "message": "Das Ventil meldete „an“, als der Strom zurückkam – es wurde zwangsweise geschlossen. Prüfe Relais und Verkabelung."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Bewässerung durch Neustart unterbrochen",
+      "message": "Home Assistant wurde mitten im Lauf neu gestartet. Die Sperre wurde aufgehoben und das Ventil, falls erreichbar, geschlossen; der nächste geplante Lauf versucht es erneut."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Defizitmodus beendet",
+      "message": "Sein Enddatum ist erreicht – die Routinebewässerung gibt wieder die volle Menge."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: kein Wasserdurchfluss",
+      "message": "Der Lauf ist beendet, aber der Durchflussmesser zeigt kein Wasser. Prüfe Ventil, Pumpe und die Verkabelung des Durchflussmessers."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: durch Fehler gestoppt",
+      "message": "Gestoppt: {error}. Das Ventil ist zu; der nächste geplante Lauf versucht es erneut."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: durch Fehler gestoppt",
+      "message": "Gestoppt: {error}. {valve} ist evtl. noch OFFEN – bitte sofort prüfen."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: geringe Pumpenleistung",
+      "message": "Durchgang {pulse} läuft, aber die Pumpe zeigt {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle} wegen Regen gestoppt",
+      "message": "Gestoppt nach {given} von {planned} min: In den letzten 30 Minuten fielen {rain}. Der nächste geplante Lauf entscheidet neu und berücksichtigt diesen Regen."
+    },
+    "forecast_override": {
+      "title": "⏱️ Bewässerung trotz Vorhersage",
+      "message": "Es war immer wieder Regen angesagt, aber seit {days} Tagen fiel keiner (Grenze dieser Zone: {limit} Tage) – es wird trotzdem gegossen."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Tiefenbewässerung nicht gestartet: Laufzeitlimit",
+      "message": "Die berechnete Laufzeit ({minutes} min) liegt über dem Sicherheitslimit dieser Zone für die Tiefenbewässerung. Bewässerung abgebrochen – prüfe Durchflussrate und Zieltiefe."
+    },
+    "routine_cap": {
+      "title": "⚠️ Routinebewässerung nicht gestartet: Laufzeitlimit",
+      "message": "Die berechnete Laufzeit ({minutes} min) liegt über dem Routine-Sicherheitslimit dieser Zone ({cap} min). Bewässerung abgebrochen – prüfe Durchflussrate und Wochenziele."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} übersprungen: Tageslimit",
+      "message": "Heute schon {used} min; dieser Lauf ({minutes} min) würde das Tageslimit von {cap} min überschreiten. Neuer Versuch, sobald er wieder fällig ist."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle} abgesagt",
+      "message": "Abgesagt: In den letzten 30 Minuten fielen {rain}."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Tiefenbewässerung abgeschlossen",
+      "message": "{amount} gegeben ({minutes} min, Durchgänge: {pulses}). Zählt auch als Routinebewässerung.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Nächste Routine: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Bewässerung überfällig",
+      "message": "{days} Tage seit der letzten Bewässerung – ungewöhnlich lange, prüfe am besten die Anlage."
+    },
+    "routine_done": {
+      "title": "🚿 Routinebewässerung abgeschlossen",
+      "message": "{minutes} min gegossen (Ziel {target}, Regen abgezogen {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Bodenfühler prüfen",
+      "message": "Nasse Bodenwerte ({pct} %) halten die Routinebewässerung seit {days} Tagen zurück. Falls es kaum geregnet hat, prüfe den Fühler (Position, Batterie, Messwert) – er wird weiterhin befolgt."
+    },
+    "probe_frozen": {
+      "title": "🌱 Bodenfühler scheint zu hängen",
+      "message": "Der Bodenfühler zeigt seit {days} Tagen nass ({pct} %), ohne neue Meldung in 24 h, daher folgt die Bewässerung wieder dem Zeitplan. Prüfe den Fühler (Batterie, Verbindung)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Wartungsmodus ausgeschaltet",
+      "message": "Der Wartungsmodus lief {minutes} min und hat sich selbst ausgeschaltet (Auto-Aus-Zeit)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Wartungsmodus ausgeschaltet",
+      "message": "Der Wartungsmodus lief {minutes} min und hat sich selbst ausgeschaltet (gekürzt, um das heutige Laufzeit-Sicherheitslimit einzuhalten)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Selbstanpassung",
+      "message": "Abtrockenzeit der Routine auf {days} Tage verkürzt, weil du zuletzt öfter früher gegossen hast."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Selbstanpassung",
+      "message": "Abtrockenzeit der Routine auf {days} Tage verlängert, weil du zuletzt öfter ausgesetzt hast."
+    },
+    "frost": {
+      "title": "❄️ {cycle} wartet: Frost",
+      "message": "Es sind {temp}, unter dem Frostschutz von {limit}. Bis zu {hours} Stunden wird stündlich neu geprüft, danach wartet der Lauf auf seinen nächsten geplanten Termin."
+    },
+    "flow_measured": {
+      "title": "💧 Durchflussrate gemessen",
+      "message": "{volume} in {minutes} min: Die Tropfer-Durchflussrate ist jetzt {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Durchflussrate nicht gemessen",
+      "message": "Der Durchflussmesser zählte {volume} in {minutes} min, daraus ergibt sich keine brauchbare Durchflussrate. Prüfe Zähler und Fläche, oder berechne sie stattdessen aus den Tropfern (Konfigurieren → Durchflussrate)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Bodenfeuchte {pct} % (trocken) – vor dem geplanten Termin gegossen.",
+    "deficit_active": " Defizitmodus: {pct} % der Menge.",
+    "deficit_hot": " Defizitmodus: heute volle Menge (heißes Wetter).",
+    "deficit_soil_dry": " Defizitmodus: heute volle Menge (Boden an der Trocken-Schwelle).",
+    "deficit_no_temp": " Defizitmodus: volle Menge (kein Temperaturwert vorhanden).",
+    "deficit_young": " Defizitmodus: volle Menge (Pflanze noch in der Wachstumskurve)."
+  },
+  "status": {
+    "watering": "Gießt gerade: {cycle}",
+    "service_run": "Wartungslauf läuft",
+    "lock_held": "Angehalten: Ein früherer Lauf wurde nicht beendet (Zone gesperrt)",
+    "snoozed": "Heute ausgesetzt",
+    "done": "{cycle} fertig um {time}: {amount} in {minutes} min",
+    "skipped_soil_wet": "{cycle} um {time} übersprungen: Boden ist nass ({pct} %)",
+    "skipped_drydown": "{cycle} um {time} übersprungen: Abtrocknen nach Regen bis {until}",
+    "skipped_forecast": "{cycle} um {time} übersprungen: {rain} Regen vorhergesagt",
+    "skipped_rain_credit": "{cycle} um {time} übersprungen: Der Regen der letzten Tage ({rain}) deckt die nötigen {target}",
+    "skipped_wet_fortnight": "{cycle} um {time} zurückgestellt: {rain} Regen in den letzten 14 Tagen",
+    "skipped_service": "{cycle} um {time} übersprungen: Ein Wartungslauf nutzte das Ventil",
+    "cancelled_rain": "{cycle} um {time} abgesagt: Es regnete ({rain} in 30 min)",
+    "refused_runtime_cap": "{cycle} um {time} nicht gestartet: {minutes} min nötig, über dem Limit von {cap} min",
+    "refused_deep_soak_cap": "{cycle} um {time} nicht gestartet: {minutes} min nötig, über dem Limit",
+    "refused_daily_cap": "{cycle} um {time} nicht gestartet: würde das heutige Sicherheitslimit von {cap} min überschreiten",
+    "interrupted": "{cycle} um {time} vorzeitig gestoppt",
+    "waiting_soil_wet": "Wartet, bis der Boden abtrocknet ({pct} %)",
+    "waiting_drydown": "Abtrocknen nach Regen bis {until}",
+    "next": "Nächste Bewässerung: {when}",
+    "next_deep_soak": "Als Nächstes: Tiefenbewässerung {when}",
+    "first_run": "Erste Bewässerung: {when}",
+    "idle": "Nichts geplant",
+    "with_next": "{status} · nächste: {when}",
+    "waiting_pump": "Wartet auf die gemeinsame Pumpe: {cycle}",
+    "with_next_deep_soak": "{status} · Tiefenbewässerung {when}",
+    "first_run_deep_soak": "Erste Bewässerung: Tiefenbewässerung {when}",
+    "paused": "Pausiert: keine Bewässerung, bis Pause ausgeschaltet wird",
+    "skipped_frost": "{cycle} um {time} übersprungen: {temp}, unter dem Frostschutz ({limit})",
+    "waiting_frost": "{cycle} um {time} angehalten: {temp}, unter dem Frostschutz ({limit}); stündliche Neuprüfung",
+    "waiting_deep_soak": "{cycle} wartet seit {time}: Die Tiefenbewässerung kommt zuerst, sobald es warm genug ist",
+    "paused_until": "Pausiert bis {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: deine Woche",
+    "zone": "{zone}: {runs}× gegossen – {water} in {minutes} min",
+    "measured": " (gemessen {volume})",
+    "rain": " · Regen (7 Tage) {rain}",
+    "held_back": " · an {days} Tag(en) zurückgehalten",
+    "paused": " · pausiert",
+    "next": " · nächste: {when}",
+    "zone_none": "{zone}: keine Bewässerung"
+  }
+}

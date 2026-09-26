@@ -67,3 +67,30 @@ async def test_a_card_problem_never_stops_setup(hass, monkeypatch):
     hass.config.components.add("frontend")
     await frontend.async_register(hass)  # logged, not raised
     assert not hass.data.get("zoneflow_frontend_registered")  # tried again next time
+
+
+@pytest.mark.asyncio
+async def test_zones_starting_together_register_once(hass, monkeypatch):
+    import asyncio
+
+    added = []
+    monkeypatch.setattr(
+        "homeassistant.components.frontend.add_extra_js_url", lambda _hass, url, es5=False: added.append(url)
+    )
+    registered = []
+
+    class Http:
+        def register_static_path(self, url, *args):
+            if url in registered:
+                raise RuntimeError("method GET is already registered")
+            registered.append(url)
+
+        async def async_register_static_paths(self, configs):
+            await asyncio.sleep(0)
+            for config in configs:
+                self.register_static_path(config.url_path)
+
+    hass.http = Http()
+    hass.config.components.add("frontend")
+    await asyncio.gather(*(frontend.async_register(hass) for _ in range(6)))
+    assert registered == ["/zoneflow_static/zoneflow-card.js"] and len(added) == 1

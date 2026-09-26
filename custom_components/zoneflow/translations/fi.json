@@ -1,0 +1,709 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow-kastelu",
+        "description": "Anna tälle kasteluvyöhykkeelle lyhyt nimi (esim. \"Etunurmikko\", \"Avokadopuu\"). Lisää vyöhykkeitä myöhemmin lisäämällä tämä integraatio uudelleen.",
+        "data": {
+          "zone_name": "Vyöhykkeen nimi",
+          "unit_system": "Yksiköt",
+          "plant": "Mitä on istutettu (esitäyttää tavoitteet ja asetukset; kaikkia voi muuttaa myöhemmin)"
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow-kastelu",
+        "description": "Valitse tähän olemassa olevat entiteettisi. Integraatio ei luo omia fyysisiä entiteettejä. Vain venttiilin kytkin on pakollinen -- vyöhyke toimii myös ilman muita alla olevia, jos jätät ne tyhjiksi.",
+        "data": {
+          "valve_entity": "Venttiilin kytkin",
+          "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
+          "pump_id": "Yhteisen pumpun tunnus (valinnainen, esim. \"Pumppu A\" -- tarvitaan vain, jos vyöhyke jakaa fyysisen pumpun toisen vyöhykkeen kanssa)",
+          "rain_counter_entity": "Sademittarin kippauslaskuri (valinnainen)",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
+          "flow_meter_entity": "Virtausmittari (valinnainen)",
+          "soil_moisture_entity": "Maan kosteusanturi (valinnainen, % -- ohjaa peruskastelua suoraan laskennallisen aikataulun sijaan)",
+          "notify_entity": "Puhelimen ilmoituskohde (valinnainen)",
+          "weather_entity": "Sääennusteen lähde (valinnainen)",
+          "soil_type": "Maalaji",
+          "drainage": "Vedenläpäisy",
+          "slope": "Kaltevuus",
+          "irrigation_method": "Kastelutapa",
+          "growth_ramp_profile": "Automaattinen kasvukäyrä",
+          "csv_path": "CSV-lokitiedoston polku",
+          "deep_soak_enabled": "Ota syväkastelu käyttöön",
+          "deep_soak_time": "Syväkastelun kellonaika",
+          "routine_time": "Peruskastelun kellonaika",
+          "deep_soak_sun_mode": "Syväkastelun ajoitus",
+          "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
+          "routine_sun_mode": "Peruskastelun ajoitus",
+          "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)"
+        }
+      },
+      "climate": {
+        "title": "Ilmasto",
+        "description": "Millainen kasvukausi on siellä, missä tämä vyöhyke on? Tämä vain esitäyttää seuraavan sivun lämpötilasäätimet -- voit muuttaa jokaista arvoa siellä ja myöhemmin vyöhykkeen laitesivulla.",
+        "data": {
+          "climate": "Ilmasto"
+        }
+      },
+      "temperatures": {
+        "title": "Lämpötilarajat",
+        "description": "ZoneFlow laskee kolmen viime päivän YLIMPIEN lämpötilojen keskiarvon. Kun se on kuuman sään rajalla tai yli, kastellaan useammin (3 päivän välein) kuuman sään viikkotavoitteella; viileän sään rajan alla käytetään viileän sään viikkotavoitetta; niiden välissä normaalia.\n\nVaralämpötilaa käytetään, kun todellista lukemaa ei ole: ilman lämpötila-anturia se on käsisäätösi (nosta helleaallon ajaksi, laske kylmän jakson ajaksi); anturin kanssa sitä käytetään vain, kunnes anturi on kirjannut ensimmäisen kokonaisen päivän, sekä jos lukemia ei ole tullut 3 päivään.",
+        "data": {
+          "hot_temp_threshold": "Kuuman sään raja",
+          "cool_temp_threshold": "Viileän sään raja",
+          "fallback_temp": "Vara- / käsisäätölämpötila"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Vyöhykkeen nimi ei voi olla tyhjä.",
+      "cool_not_below_hot": "Viileän sään rajan on oltava kuuman sään rajaa alempi."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Määritä",
+        "menu_options": {
+          "settings": "Vyöhykkeen asetukset (entiteetit, maa, aikataulu…)",
+          "flow_rate": "Virtaama: laske suuttimista",
+          "flow_measure": "Virtaama: mittaa virtausmittarilla"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Venttiilin kytkin",
+          "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
+          "pump_id": "Yhteisen pumpun tunnus (valinnainen, esim. \"Pumppu A\" -- tarvitaan vain, jos vyöhyke jakaa fyysisen pumpun toisen vyöhykkeen kanssa)",
+          "rain_counter_entity": "Sademittarin kippauslaskuri (valinnainen)",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
+          "flow_meter_entity": "Virtausmittari (valinnainen)",
+          "soil_moisture_entity": "Maan kosteusanturi (valinnainen, % -- ohjaa peruskastelua suoraan laskennallisen aikataulun sijaan)",
+          "notify_entity": "Puhelimen ilmoituskohde (valinnainen)",
+          "weather_entity": "Sääennusteen lähde (valinnainen)",
+          "soil_type": "Maalaji",
+          "drainage": "Vedenläpäisy",
+          "slope": "Kaltevuus",
+          "irrigation_method": "Kastelutapa",
+          "growth_ramp_profile": "Automaattinen kasvukäyrä",
+          "csv_path": "CSV-lokitiedoston polku",
+          "deep_soak_enabled": "Ota syväkastelu käyttöön",
+          "deep_soak_time": "Syväkastelun kellonaika",
+          "routine_time": "Peruskastelun kellonaika",
+          "deep_soak_sun_mode": "Syväkastelun ajoitus",
+          "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
+          "routine_sun_mode": "Peruskastelun ajoitus",
+          "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
+          "unit_system": "Yksiköt"
+        }
+      },
+      "flow_rate": {
+        "title": "Suuttimien virtaama",
+        "description": "Kuinka paljon vettä vyöhykkeen suuttimet antavat kastelemalleen alalle. 1 litra 1 m²:lle on 1 mm. Jos tippusuuttimet ovat yksittäisten kasvien juurella, käytä sitä alaa, joka oikeasti kastuu. Tulos korvaa vyöhykkeen asetuksen Suuttimien virtaama (kalibrointi).",
+        "data": {
+          "emitters": "Suuttimien (tippusuuttimet, sumuttimet) määrä vyöhykkeellä",
+          "emitter_flow": "Yhden suuttimen virtaama",
+          "area": "Kasteltava ala"
+        }
+      },
+      "flow_measure": {
+        "title": "Mittaa virtaama",
+        "description": "Pitää venttiiliä auki {minutes} min huoltoajona (ei lasketa kasteluksi, mutta minuutit lasketaan päivän käyntiajan turvarajaan) ja laskee virtaaman virtausmittarin litroista. Mittarin on mitattava ajon aikana vain tämän vyöhykkeen vettä. Tulos tulee puhelinviestinä ja asetetaan automaattisesti; Huoltotilan kytkeminen pois peruu mittauksen.",
+        "data": {
+          "area": "Vyöhykkeen suuttimien kastelema ala"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Suuttimien virtaamaksi asetettiin {rate}.",
+      "flow_rate_out_of_range": "Tulokseksi tulee {rate}, mikä on sallitun alueen ({low}–{high}) ulkopuolella. Tarkista luvut -- jos tippusuuttimet ovat yksittäisten kasvien ympärillä, käytä alaa, jonka ne oikeasti kastelevat, älä koko penkkiä.",
+      "measuring": "Mittaus käynnissä: venttiili on auki noin {minutes} min. Tulos tulee puhelinviestinä (tai Home Assistantin ilmoituksiin, jos vyöhykkeellä ei ole puhelinkohdetta) ja asetetaan automaattisesti.",
+      "zone_not_loaded": "Tämä vyöhyke ei ole nyt käynnissä, joten tätä ei voi tehdä.",
+      "zone_busy": "Vyöhyke (tai sen pumppu) on varattu, tai päivän käyntiajan turvaraja on käytetty. Yritä myöhemmin uudelleen.",
+      "flow_rate_disabled": "Vyöhykkeen entiteetti Suuttimien virtaama (kalibrointi) on poistettu käytöstä. Ota se käyttöön (vyöhykkeen laitesivu → sen entiteetit) ja yritä uudelleen."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Käytä yllä olevaa kellonaikaa",
+        "before_sunrise": "Ennen auringonnousua",
+        "after_sunrise": "Auringonnousun jälkeen",
+        "before_sunset": "Ennen auringonlaskua",
+        "after_sunset": "Auringonlaskun jälkeen"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "En tiedä / sekalainen",
+        "sandy": "Hiekkamaa",
+        "sandy_loam": "Hiekkainen multa",
+        "loam": "Multamaa",
+        "clay_loam": "Savinen multa",
+        "clay": "Savimaa"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "En tiedä",
+        "fast": "Läpäisee nopeasti",
+        "medium": "Keskinkertainen",
+        "slow": "Läpäisee hitaasti"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Tasainen",
+        "slight": "Loiva rinne",
+        "moderate": "Kohtalainen rinne",
+        "steep": "Jyrkkä rinne"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Tippuletku / tippusuuttimet",
+        "micro_sprinkler": "Mikrosadetin",
+        "sprinkler": "Sadetin",
+        "soaker_hose": "Tihkuletku",
+        "other": "Muu"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Pois (aina täysi viikkotavoite)",
+        "fast_annual": "Nopeakasvuinen yksivuotinen (esim. useimmat vihannekset)",
+        "slow_fruiting": "Hitaasti satoa tekevä (esim. tomaatti, paprika)",
+        "established_perennial": "Juurtuva monivuotinen (esim. nuori puu tai pensas)",
+        "custom": "Oma (määritä oma käyrä)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Seuraa Home Assistantia",
+        "metric": "Metrinen (mm, °C)",
+        "imperial": "Imperiaalinen (tuumat, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Trooppinen (kuuma ympäri vuoden, esim. Kaakkois-Aasia)",
+        "hot_dry": "Kuumat kesät (Välimeri, aavikot, Etelä-Yhdysvallat)",
+        "temperate": "Lauhkea (suurin osa Eurooppaa, Pohjois-Yhdysvallat)",
+        "cool": "Viileät kesät (Pohjoismaat, Iso-Britannia, pohjoiset rannikot)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Jotain muuta (määritän itse)",
+        "tomatoes": "Tomaatit",
+        "chilis": "Chilit / paprikat",
+        "leafy_vegetables": "Lehtivihannekset / salaatti",
+        "herbs": "Yrtit (Välimeren)",
+        "strawberries": "Mansikat",
+        "flowers": "Kukkapenkki",
+        "lawn": "Nurmikko",
+        "shrubs": "Pensaat / pensasaita",
+        "young_tree": "Nuori puu (ensimmäiset vuodet)",
+        "fruit_tree": "Vakiintunut hedelmäpuu"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Viikkotavoite: normaali"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Viikkotavoite: kuuma sää"
+      },
+      "hot_temp_threshold": {
+        "name": "Kuuman sään lämpöraja"
+      },
+      "cool_temp_threshold": {
+        "name": "Viileän sään lämpöraja"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Viikkotavoite: viileä sää"
+      },
+      "rain_eff_low": {
+        "name": "Sateen hyöty - vähäinen (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Sateen hyöty - kohtalainen (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Sateen hyöty - runsas (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Suuttimien virtaama (kalibrointi)"
+      },
+      "deep_soak_target_mm": {
+        "name": "Syväkastelun tavoitesyvyys"
+      },
+      "pump_min_watts": {
+        "name": "Pumpun alhaisen tehon varoitusraja"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Syväkastelun enimmäiskesto (turvaraja)"
+      },
+      "max_runtime_minutes": {
+        "name": "Peruskastelun enimmäiskesto (turvaraja)"
+      },
+      "routine_drydown_days": {
+        "name": "Peruskastelun kuivumisaika"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Syväkastelun pohjamaan kuivumisaika"
+      },
+      "deep_soak_interval_days": {
+        "name": "Syväkastelun väli"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Syväkastelun sadekatto (14 pv)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Sademittarin mm/kippaus (kalibrointi)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Sateen peruutusraja ennen kastelua (30 min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pumpun esikäynti (lämmittelyviive)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pumpun jälkikäynti (tasaantumisviive)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Ennustetun sateen ohitusraja"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Ennustetun sateen todennäköisyysraja"
+      },
+      "forecast_dry_override_days": {
+        "name": "Ennusteen ohitus poutajaksolla"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Maan kosteuden kuivaraja"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Maan kosteuden märkäraja"
+      },
+      "routine_pulse_count": {
+        "name": "Peruskastelun jaksot (jaettu kastelu)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Peruskastelun imeytystauko jaksojen välillä"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Syväkastelun jaksot (jaettu kastelu)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Syväkastelun imeytystauko jaksojen välillä"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Päivän enimmäiskastelukesto (turvaraja)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Kasvuvaiheen käsisäätö"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Oma käyrä: aloitus-% päivänä 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Oma käyrä: välipisteen 1 päivä"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Oma käyrä: välipisteen 1 %"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Oma käyrä: välipisteen 2 päivä"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Oma käyrä: välipisteen 2 %"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Oma käyrä: 100 % saavutetaan päivänä"
+      },
+      "crop_coefficient": {
+        "name": "Kasvikerroin (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Vajaakastelun vesimäärä"
+      },
+      "fallback_temp": {
+        "name": "Vara- / käsisäätölämpötila"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Huoltotilan automaattinen sammutus"
+      },
+      "frost_guard_temp": {
+        "name": "Hallasuojan lämpötila"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Viimeisin peruskastelu"
+      },
+      "last_deep_soak": {
+        "name": "Viimeisin syväkastelu"
+      },
+      "last_significant_rain": {
+        "name": "Viimeisin merkittävä sade"
+      },
+      "planting_date": {
+        "name": "Istutus- / siirtopäivä"
+      },
+      "last_fertilizing": {
+        "name": "Viimeisin lannoitus"
+      },
+      "deficit_until": {
+        "name": "Vajaakastelu päättyy"
+      },
+      "paused_until": {
+        "name": "Tauko päättyy"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Käynnistä syväkastelu nyt"
+      },
+      "run_routine": {
+        "name": "Käynnistä peruskastelu nyt"
+      },
+      "reset_lock": {
+        "name": "Nollaa kastelulukko"
+      },
+      "snooze_today": {
+        "name": "Ohita tänään"
+      },
+      "service_run_1_min": {
+        "name": "Huoltoajo 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Huoltoajo 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Huoltoajo 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Kastelu käynnissä"
+      },
+      "irrigation_abort": {
+        "name": "Kastelun keskeytysmerkintä"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Syväkastelu käytössä"
+      },
+      "deficit_mode": {
+        "name": "Vajaakastelu"
+      },
+      "service_mode": {
+        "name": "Huoltotila"
+      },
+      "pause": {
+        "name": "Tauko"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Sade (30 min)"
+      },
+      "rain_past_24h": {
+        "name": "Sade (24 h)"
+      },
+      "rain_past_3d": {
+        "name": "Sade (3 pv)"
+      },
+      "rain_past_7d": {
+        "name": "Sade (7 pv)"
+      },
+      "rain_past_14d": {
+        "name": "Sade (14 pv)"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Ylin lämpötila (3 pv keskiarvo)"
+      },
+      "next_irrigation_estimate": {
+        "name": "Seuraava kastelu (arvio)"
+      },
+      "days_until_next_run": {
+        "name": "Päiviä seuraavaan kasteluun"
+      },
+      "last_water_delivered": {
+        "name": "Viimeisin vesimäärä (arvio)"
+      },
+      "rain_today": {
+        "name": "Sade tänään"
+      },
+      "soil_profile": {
+        "name": "Maaprofiili"
+      },
+      "growth_ramp_pct": {
+        "name": "Kasvukäyrän taso"
+      },
+      "last_cycle_water_liters": {
+        "name": "Viimeisin vesimäärä (mitattu)"
+      },
+      "reference_et0_3d": {
+        "name": "Vertailuhaihdunta ET₀ (3 pv keskiarvo)"
+      },
+      "routine_weekly_target": {
+        "name": "Viikkotavoite"
+      },
+      "soil_moisture": {
+        "name": "Maan kosteus"
+      },
+      "soil_moisture_status": {
+        "name": "Maan kosteuden tila",
+        "state": {
+          "dry": "Kuiva - kastelu aikaistettu",
+          "wet": "Märkä - ohitetaan",
+          "in_range": "Sopiva - aikataulun mukaan",
+          "offline": "Anturi ei yhteydessä - aikataulun mukaan",
+          "stale": "Ei uutta lukemaa 24 h - aikataulun mukaan",
+          "implausible": "Mahdoton lukema - aikataulun mukaan"
+        }
+      },
+      "deficit_status": {
+        "name": "Vajaakastelun tila",
+        "state": {
+          "off": "Pois",
+          "active": "Käytössä - pienennetty annos",
+          "full_dose_hot": "Täysi annos tänään (helle)",
+          "full_dose_soil_dry": "Täysi annos tänään (maa kuiva)",
+          "ended": "Päättynyt",
+          "full_dose_young_plant": "Täysi annos (nuori kasvi)",
+          "full_dose_no_temp": "Täysi annos tänään (ei lämpötilalukemaa)"
+        }
+      },
+      "status": {
+        "name": "Tila"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Maalaji",
+        "state": {
+          "unknown": "En tiedä / sekalainen",
+          "sandy": "Hiekkamaa",
+          "sandy_loam": "Hiekkainen multa",
+          "loam": "Multamaa",
+          "clay_loam": "Savinen multa",
+          "clay": "Savimaa"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Kasvuvaihe",
+        "state": {
+          "auto": "Automaattinen (istutuspäivän mukaan)",
+          "seedling": "Taimi",
+          "establishing": "Juurtuminen",
+          "vegetative": "Lehtikasvu",
+          "near_fruiting": "Lähellä satoa",
+          "mature": "Täysikasvuinen",
+          "manual": "Käsisäätö (liukusäädin)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Kasvukäyrä",
+        "state": {
+          "off": "Pois (aina täysi viikkotavoite)",
+          "fast_annual": "Nopeakasvuinen yksivuotinen (esim. useimmat vihannekset)",
+          "slow_fruiting": "Hitaasti satoa tekevä (esim. tomaatti, paprika)",
+          "established_perennial": "Juurtuva monivuotinen (esim. nuori puu tai pensas)",
+          "custom": "Oma (määritä oma käyrä)"
+        }
+      },
+      "health_status": {
+        "name": "Kunto",
+        "state": {
+          "excellent": "Erinomainen",
+          "good": "Hyvä",
+          "poor": "Heikko",
+          "sick": "Sairas"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Seuraava lannoitus",
+        "state": {
+          "1": "1 kuukauden päästä",
+          "2": "2 kuukauden päästä",
+          "3": "3 kuukauden päästä",
+          "4": "4 kuukauden päästä",
+          "5": "5 kuukauden päästä",
+          "6": "6 kuukauden päästä",
+          "7": "7 kuukauden päästä",
+          "8": "8 kuukauden päästä",
+          "9": "9 kuukauden päästä",
+          "10": "10 kuukauden päästä",
+          "11": "11 kuukauden päästä",
+          "12": "12 kuukauden päästä"
+        }
+      },
+      "demand_model": {
+        "name": "Vedentarvemalli",
+        "state": {
+          "temperature_tiers": "Lämpötilaportaat",
+          "et_curve": "ET-käyrä (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Ilmoitukset",
+        "state": {
+          "all": "Kaikki",
+          "warnings": "Vain varoitukset",
+          "none": "Ei mitään"
+        }
+      },
+      "weekly_summary": {
+        "name": "Viikkoyhteenveto",
+        "state": {
+          "off": "Pois",
+          "mon": "Maanantai",
+          "tue": "Tiistai",
+          "wed": "Keskiviikko",
+          "thu": "Torstai",
+          "fri": "Perjantai",
+          "sat": "Lauantai",
+          "sun": "Sunnuntai"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Kuntomuistiinpanot"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Käynnistä syväkastelu",
+      "description": "Käynnistää syväkastelun nyt, jos (ja vain jos) samat ehdot kuin klo 05.00 ajastuksessa täyttyvät (lukko vapaa, 14 päivän väli ja kuivumisaika kulunut, 14 päivän sadekatto ei ylity). Sama koodipolku kuin ajastetussa kastelussa.",
+      "fields": {
+        "device_id": {
+          "name": "Vyöhykkeen laite",
+          "description": "Vyöhykkeen laite. Tarvitaan vain, jos vyöhykkeitä on 2 tai enemmän."
+        },
+        "entity_id": {
+          "name": "Vyöhykkeen entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Käynnistä peruskastelu",
+      "description": "Käynnistää peruskastelun nyt, jos (ja vain jos) samat ehdot kuin klo 05.30 ajastuksessa täyttyvät. Sama koodipolku kuin ajastetussa kastelussa.",
+      "fields": {
+        "device_id": {
+          "name": "Vyöhykkeen laite",
+          "description": "Vyöhykkeen laite. Tarvitaan vain, jos vyöhykkeitä on 2 tai enemmän."
+        },
+        "entity_id": {
+          "name": "Vyöhykkeen entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Nollaa kastelulukko",
+      "description": "Poistaa väkisin kastelulukon ja keskeytysmerkinnän. Vain hätätilanteisiin.",
+      "fields": {
+        "device_id": {
+          "name": "Vyöhykkeen laite",
+          "description": "Vyöhykkeen laite. Tarvitaan vain, jos vyöhykkeitä on 2 tai enemmän."
+        },
+        "entity_id": {
+          "name": "Vyöhykkeen entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Ohita tänään",
+      "description": "Ohittaa ne tämän vyöhykkeen ajastetut kastelut (syväkastelu, peruskastelu tai molemmat), joita ei ole vielä tänään ajettu, muuttamatta muita asetuksia. Normaali aikataulu jatkuu automaattisesti huomisesta alkaen.",
+      "fields": {
+        "device_id": {
+          "name": "Vyöhykkeen laite",
+          "description": "Vyöhykkeen laite. Tarvitaan vain, jos vyöhykkeitä on 2 tai enemmän."
+        },
+        "entity_id": {
+          "name": "Vyöhykkeen entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Testijakso",
+      "description": "Ohittaa kaikki aikataulu-, kuivumis- ja sade-ehdot ja avaa venttiilin yhdeksi lyhyeksi jaksoksi, jotta venttiilin ja pumpun kytkennät voi testata ennen varsinaista aikataulua. Kastelulukkoa ja turvavalvontaa noudatetaan silti.",
+      "fields": {
+        "device_id": {
+          "name": "Vyöhykkeen laite",
+          "description": "Vyöhykkeen laite. Tarvitaan vain, jos vyöhykkeitä on 2 tai enemmän."
+        },
+        "entity_id": {
+          "name": "Vyöhykkeen entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
+        },
+        "seconds": {
+          "name": "Sekuntia",
+          "description": "Jakson kesto sekunteina (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Lähetä viikkoyhteenveto nyt",
+      "description": "Lähettää viikkoyhteenvedon nyt jokaiseen puhelimeen, jolla on vyöhyke, jolle on asetettu viikkoyhteenvedon päivä -- esikatselu; viikon laskurit jatkuvat ajastettuun yhteenvetoon asti."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Tämä päivämäärä ei voi olla tulevaisuudessa: se kirjaa jotain jo tapahtunutta. Vain istutus- / siirtopäivän voi asettaa etukäteen."
+    },
+    "cool_not_below_hot": {
+      "message": "Viileän sään rajan on pysyttävä kuuman sään rajaa alempana. Jos lasket molempia, laske ensin viileän sään rajaa; jos nostat molempia, nosta ensin kuuman sään rajaa."
+    },
+    "zone_busy": {
+      "message": "Vyöhyke on varattu (kastelee tai huoltoajo on jo käynnissä). Yritä uudelleen, kun se on valmis."
+    },
+    "pump_busy": {
+      "message": "Tämän vyöhykkeen yhteinen pumppu on juuri nyt toisen vyöhykkeen käytössä. Yritä uudelleen, kun se vyöhyke on valmis."
+    },
+    "daily_cap_reached": {
+      "message": "Vyöhyke on saavuttanut päivän käyntiajan turvarajan, joten huoltoajoa ei voi aloittaa ennen huomista (tai nosta rajaa Päivän enimmäiskastelukesto)."
+    },
+    "zone_paused": {
+      "message": "Vyöhyke on tauolla. Kytke Tauko pois, jotta se kastelee."
+    },
+    "pause_until_past": {
+      "message": "Valitse tauon päättymiseksi tuleva päivä ja kellonaika."
+    },
+    "no_weekly_summary": {
+      "message": "Millekään vyöhykkeelle ei ole asetettu sekä viikkoyhteenvedon päivää että puhelimen ilmoituskohdetta, joten lähetettävää ei ole."
+    },
+    "summary_send_failed": {
+      "message": "Viikkoyhteenvetoa ei voitu lähettää: ilmoitus puhelimeen epäonnistui. Tarkista vyöhykkeen ilmoituskohde."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: venttiili ei käytettävissä",
+      "description": "Vyöhyke {zone}: venttiili ({entity}) on ollut poissa käytöstä yli tunnin, joten vyöhyke ei voi kastella. Tarkista venttiilin laite ja sen integraatio. Tämä poistuu itsestään, kun venttiili toimii taas."
+    },
+    "sensor_offline": {
+      "title": "{zone}: anturi ei ole raportoinut {days} päivään",
+      "description": "Vyöhyke {zone}: sen käyttämä {entity} ei ole raportoinut {days} päivään. Vyöhyke jatkaa ilman sitä (katso README:stä, mitä se tarkoittaa), mutta tarkista laite -- tai poista se vyöhykkeeltä kohdassa Määritä. Tämä poistuu itsestään, kun anturi raportoi taas."
+    },
+    "notify_missing": {
+      "title": "{zone}: puhelimen ilmoituskohde puuttuu",
+      "description": "Vyöhyke {zone}: puhelinilmoitusten kohde {entity} ei ole enää olemassa Home Assistantissa, joten ilmoituksia ei tule. Valitse nykyinen ilmoituskohde vyöhykkeen kohdasta Määritä. Tämä poistuu itsestään, kun kohde on taas olemassa."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: kalibroi suuttimien virtaama",
+      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen vesimittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä."
+    }
+  }
+}

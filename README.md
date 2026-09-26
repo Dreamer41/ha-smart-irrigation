@@ -67,11 +67,11 @@ manual, goes through the same pipeline:
 |---|---|---|
 | `switch.*` valve | — | **required** |
 | Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains |
-| Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
+| Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard, frost guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
 | Soil-moisture probe (`sensor.*`, %) | dry soil waters early, wet soil skips | the modeled schedule alone |
 | Pump power sensor | per-pulse "is the pump really running" audit | no low-power warning |
 | Flow meter (cumulative volume) | measured water per cycle, "pump ran but no water moved" alert | no measured delivery, no no-flow check |
-| `weather.*` forecast | holds off before forecast rain, with a dry-spell override | forecast never blocks |
+| `weather.*` forecast | holds off before forecast rain, with a dry-spell override; its current temperature feeds the frost guard when there's no temperature sensor | forecast never blocks |
 | `notify.*` target | phone alerts for faults and notable events | log only |
 
 Sensors can be shared between zones (one rain gauge or weather entity for
@@ -128,7 +128,8 @@ and both zones get less water than their calibrated runtime assumes.
   (72%)", "Skipped: 8 mm of rain forecast". Its `code` attribute is the
   same thing as a stable key for automations.
 - **Notifications your way**: per zone, all phone notifications, warnings
-  only (faults and anything that needs a look) or none. Notifications and
+  only (faults and anything that needs a look) or none — except an alert
+  that a valve may still be open, which always comes through. Notifications and
   the status follow Home Assistant's language; the CSV log stays in
   English.
 - **Tunable live**: every threshold is a `number` entity with a sensible
@@ -199,6 +200,8 @@ title: Chili bed                 # optional: instead of the zone's name
 icon: mdi:chili-hot              # optional
 ```
 
+<img src="docs/screenshots/card.png" width="380" alt="The ZoneFlow card: status sentence, valve, soil moisture, next watering, controls and service runs">
+
 It shows the zone's Status sentence up top, then the valve, soil moisture
 and next watering, the controls (water now, snooze, pause), service runs,
 and the settings folded away in groups. It finds the zone's entities
@@ -210,6 +213,15 @@ A hand-built page per zone (what the AI setup guide made before the card
 existed) looks like this:
 
 <img src="docs/screenshots/dashboard-zone.png" width="100%" alt="ZoneFlow zone dashboard: status with soil moisture, manual controls, health journal and growth profile">
+
+## Languages
+
+ZoneFlow follows Home Assistant's language: English, German, Dutch, French,
+Spanish, Italian, Finnish, Swedish, Polish and Portuguese — entity names,
+setup screens, the Status sentence, phone notifications, the weekly
+summary and the card. The CSV log stays in English, so its history reads
+the same whatever the language. Corrections from native speakers are very
+welcome (`custom_components/zoneflow/translations/` and `messages/`).
 
 ## Installation
 
@@ -243,7 +255,7 @@ Then, before leaving it to run: set the emitter flow rate (the one number
 that must be right). **Configure → Flow rate** works it out from your
 emitters (how many, litres per hour each, the area they water) — or, with a
 flow meter, measures it with a 10-minute service run. Until it's set,
-Settings → Repairs reminds you. seed the Last Routine / Deep Soak dates if the plant already
+Settings → Repairs reminds you. Seed the Last Routine / Deep Soak dates if the plant already
 has a watering history, and press **Service Run 1 min** to confirm the
 valve, pump and log. Add further zones the same way; sensors can be
 added or removed later under **Configure**.
@@ -270,14 +282,18 @@ If you're replacing an existing YAML-based irrigation automation:
 
 ## Services
 
-Each targets a zone (any of its entities or its device).
+The zone services target a zone (any of its entities or its device).
 
 - `zoneflow.run_deep_soak` / `zoneflow.run_routine_irrigation` — run now,
-  through the same gates as the schedule.
+  through the same gates as the schedule. Refused with a message while the
+  zone is paused.
 - `zoneflow.snooze_today` — skip today's remaining cycles.
 - `zoneflow.reset_lock` — emergency clear of a stuck in-progress lock.
 - `zoneflow.test_pulse` (seconds, default 10) — bench test; bypasses all
   gates.
+- `zoneflow.send_weekly_summary` — sends the weekly summary now to every
+  phone with a zone that has a Weekly Summary day (a preview: the week's
+  counts carry on). No target.
 
 ## Testing
 

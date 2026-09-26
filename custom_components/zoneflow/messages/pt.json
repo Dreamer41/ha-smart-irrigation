@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d %b %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d %b",
+    "time": "%H:%M",
+    "days": "seg,ter,qua,qui,sex,sáb,dom",
+    "months": "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
+  },
+  "cycle": {
+    "deep_soak": "Rega profunda",
+    "routine": "Rega de rotina",
+    "service_run": "Ciclo de manutenção",
+    "test_pulse": "Pulso de teste"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Chuva forte",
+      "message": "Chuva forte medida (24 h: {rain_24h}). Tempos de secagem atualizados."
+    },
+    "stale_lock": {
+      "title": "⚠️ Rega desbloqueada",
+      "message": "O bloqueio de rega ficou ativo mais de 3 horas. Foi desfeito para não impedir as próximas regas."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Proteção da válvula ativada",
+      "message": "A válvula ficou aberta {minutes} minutos seguidos. Foi fechada para proteger as plantas."
+    },
+    "power_loss": {
+      "title": "🚨 Falha de energia durante a rega",
+      "message": "A válvula ou a bomba ficou sem energia mais de 10 minutos no meio do ciclo. A rega parou e o bloqueio foi desfeito; a próxima rega agendada tenta novamente."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Válvula aberta quando a energia voltou",
+      "message": "A válvula indicava aberta quando a energia voltou — foi fechada à força. Verifique o relé e as ligações elétricas."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Rega interrompida por um reinício",
+      "message": "O Home Assistant reiniciou no meio do ciclo. O bloqueio foi desfeito e a válvula fechada à força, se acessível; a próxima rega agendada tenta novamente."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Fim da rega deficitária",
+      "message": "A data de fim já passou — a rega de rotina volta à dose completa."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: sem fluxo de água",
+      "message": "O ciclo terminou, mas o medidor de fluxo não mostra água. Verifique a válvula, a bomba e as ligações do medidor de fluxo."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: parou por um erro",
+      "message": "Parou: {error}. A válvula está fechada; a próxima rega agendada tenta novamente."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: parou por um erro",
+      "message": "Parou: {error}. ATENÇÃO: {valve} pode não ter fechado — verifique já."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: potência baixa da bomba",
+      "message": "O pulso {pulse} está em curso, mas a bomba indica {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle}: parou por chuva",
+      "message": "Parou após {given} de {planned} min: caíram {rain} nos últimos 30 minutos. A próxima rega agendada decide de novo, contando com esta chuva."
+    },
+    "forecast_override": {
+      "title": "⏱️ Rega apesar da previsão",
+      "message": "A previsão continua a dar chuva, mas não chove há {days} dias (o limite desta zona é {limit} dias) — rega mesmo assim."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Rega profunda não feita: limite de tempo",
+      "message": "O tempo calculado ({minutes} min) passa o limite de segurança da rega profunda desta zona. Rega cancelada — verifique o fluxo e a quantidade alvo."
+    },
+    "routine_cap": {
+      "title": "⚠️ Rega de rotina não feita: limite de tempo",
+      "message": "O tempo calculado ({minutes} min) passa o limite de segurança da rotina desta zona ({cap} min). Rega cancelada — verifique o fluxo e as metas semanais."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle}: limite diário atingido",
+      "message": "Já foram {used} min hoje; esta rega ({minutes} min) passaria o limite diário de {cap} min. Tenta novamente quando for a hora."
+    },
+    "rain_cancel": {
+      "title": "🌧️ Cancelamento por chuva: {cycle}",
+      "message": "Caíram {rain} nos últimos 30 minutos, por isso não regou."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Rega profunda concluída",
+      "message": "{amount} aplicados em {pulses} pulso(s) ({minutes} min). Também conta como rega de rotina.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Próxima rotina: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Rega em atraso",
+      "message": "{days} dias desde a última rega — um intervalo anormalmente longo, convém verificar o sistema."
+    },
+    "routine_done": {
+      "title": "🚿 Rega de rotina concluída",
+      "message": "Regou {minutes} min (meta {target}, menos {rain} de chuva).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Verifique a sonda do solo",
+      "message": "Leituras de solo molhado ({pct}%) adiam a rega de rotina há {days} dias. Se não choveu muito, verifique a sonda (posição, bateria, leitura) — a rega continua a segui-la."
+    },
+    "probe_frozen": {
+      "title": "🌱 A sonda do solo parece parada",
+      "message": "A sonda do solo indica molhado ({pct}%) há {days} dias, sem nova leitura em 24 h, por isso a rega volta a seguir o horário. Verifique a sonda (bateria, ligação)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Modo de manutenção desligado",
+      "message": "O Modo de manutenção esteve ligado {minutes} min e desligou automaticamente (tempo de desligar automático)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Modo de manutenção desligado",
+      "message": "O Modo de manutenção esteve ligado {minutes} min e desligou automaticamente (encurtado para caber no limite de segurança diário)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Ajuste automático",
+      "message": "Espera de secagem da rotina reduzida para {days} dias, com base nas suas regas antecipadas recentes."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Ajuste automático",
+      "message": "Espera de secagem da rotina aumentada para {days} dias, com base nas vezes recentes em que usou Não regar hoje."
+    },
+    "frost": {
+      "title": "❄️ {cycle} aguarda: geada",
+      "message": "Temperatura de {temp}, abaixo da proteção contra geada de {limit}. Verifica de novo a cada hora, até {hours} horas, e depois espera pela próxima hora agendada."
+    },
+    "flow_measured": {
+      "title": "💧 Fluxo medido",
+      "message": "{volume} em {minutes} min: o fluxo dos emissores é agora {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Fluxo não medido",
+      "message": "O medidor de fluxo contou {volume} em {minutes} min, o que não dá um fluxo utilizável. Verifique o medidor e a área, ou calcule-o a partir dos emissores (Configurar → Fluxo)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Humidade do solo {pct}% (seco) — regou antes da hora prevista.",
+    "deficit_active": " Rega deficitária: dose de {pct}%.",
+    "deficit_hot": " Rega deficitária: dose completa hoje (calor).",
+    "deficit_soil_dry": " Rega deficitária: dose completa hoje (solo no limite seco).",
+    "deficit_no_temp": " Rega deficitária: dose completa (sem dados de temperatura).",
+    "deficit_young": " Rega deficitária: dose completa (planta ainda na rampa de crescimento)."
+  },
+  "status": {
+    "watering": "Rega em curso: {cycle}",
+    "service_run": "Ciclo de manutenção em curso",
+    "lock_held": "Em espera: uma rega anterior não terminou (zona bloqueada)",
+    "snoozed": "Sem rega hoje",
+    "done": "{cycle} às {time}: {amount} em {minutes} min",
+    "skipped_soil_wet": "{cycle} dispensada às {time}: o solo está molhado ({pct}%)",
+    "skipped_drydown": "{cycle} dispensada às {time}: em secagem após a chuva até {until}",
+    "skipped_forecast": "{cycle} dispensada às {time}: previsão de {rain} de chuva",
+    "skipped_rain_credit": "{cycle} dispensada às {time}: a chuva recente ({rain}) cobre os {target} necessários",
+    "skipped_wet_fortnight": "{cycle} em espera às {time}: {rain} de chuva nos últimos 14 dias",
+    "skipped_service": "{cycle} dispensada às {time}: um ciclo de manutenção usava a válvula",
+    "cancelled_rain": "{cycle} cancelada às {time}: choveu {rain} em 30 min",
+    "refused_runtime_cap": "{cycle} não feita às {time}: precisava de {minutes} min, acima do limite de {cap} min por ciclo",
+    "refused_deep_soak_cap": "{cycle} não feita às {time}: precisava de {minutes} min, acima do limite",
+    "refused_daily_cap": "{cycle} não feita às {time}: passaria o limite de segurança de {cap} min de hoje",
+    "interrupted": "{cycle} parou às {time} antes de terminar",
+    "waiting_soil_wet": "Em espera até o solo secar ({pct}%)",
+    "waiting_drydown": "Em secagem após a chuva até {until}",
+    "next": "Próxima rega {when}",
+    "next_deep_soak": "Próxima: rega profunda {when}",
+    "first_run": "Primeira rega {when}",
+    "idle": "Nada agendado",
+    "with_next": "{status} · próxima {when}",
+    "waiting_pump": "Aguarda a bomba partilhada: {cycle}",
+    "with_next_deep_soak": "{status} · rega profunda {when}",
+    "first_run_deep_soak": "Primeira rega: rega profunda {when}",
+    "paused": "Em pausa: sem rega até desligar a Pausa",
+    "skipped_frost": "{cycle} dispensada às {time}: {temp}, abaixo da proteção contra geada ({limit})",
+    "waiting_frost": "{cycle} em espera às {time}: {temp}, abaixo da proteção contra geada ({limit}); verifica de novo a cada hora",
+    "waiting_deep_soak": "{cycle} em espera desde as {time}: a rega profunda vai primeiro, quando aquecer o suficiente",
+    "paused_until": "Em pausa até {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: a sua semana",
+    "zone": "{zone}: regou {runs}× — {water} em {minutes} min",
+    "measured": " (medido {volume})",
+    "rain": " · chuva (7 dias) {rain}",
+    "held_back": " · rega adiada em {days} dia(s)",
+    "paused": " · em pausa",
+    "next": " · próxima {when}",
+    "zone_none": "{zone}: sem rega"
+  }
+}

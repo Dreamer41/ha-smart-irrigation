@@ -536,7 +536,7 @@ FROST_RETRY_SECONDS = 3600
 FROST_RETRY_COUNT = 6
 # A temperature reading older than this, or below this, is not trusted to
 # hold watering back (a sensor stuck on a cold reading, an error value).
-FROST_TEMP_MAX_AGE_SECONDS = 3 * 3600
+FROST_TEMP_MAX_AGE_SECONDS = 6 * 3600
 FROST_TEMP_MIN_PLAUSIBLE_C = -60.0
 
 # Weekly summary (summary.py): sent at this local hour on each zone's

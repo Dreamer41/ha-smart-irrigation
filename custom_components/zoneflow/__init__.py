@@ -5,7 +5,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.exceptions import ServiceValidationError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -151,8 +151,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         async def _handle_send_weekly_summary(call: ServiceCall) -> None:
             # Now, to every phone with a zone that has a weekly summary set --
             # a preview; the weekly counts carry on until the real one.
-            if not await summary.async_send(hass, day=None, reset=False):
+            if not summary.has_recipients(hass):
                 raise ServiceValidationError(translation_domain=DOMAIN, translation_key="no_weekly_summary")
+            if not await summary.async_send(hass, day=None, reset=False):
+                raise HomeAssistantError(translation_domain=DOMAIN, translation_key="summary_send_failed")
 
         hass.services.async_register(DOMAIN, SERVICE_SEND_WEEKLY_SUMMARY, _handle_send_weekly_summary)
 

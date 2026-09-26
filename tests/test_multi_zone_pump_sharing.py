@@ -16,6 +16,7 @@ import asyncio
 
 import pytest
 from homeassistant.config_entries import ConfigEntryState
+from homeassistant.core import callback
 
 from custom_components.zoneflow.const import DOMAIN
 
@@ -156,6 +157,7 @@ async def test_shared_pump_serializes_valve_pulses_instead_of_overlapping(hass, 
 
     events: list[tuple[str, str]] = []  # (entity_id, new_state)
 
+    @callback
     def _record(event):
         entity_id = event.data.get("entity_id")
         if entity_id in (VALVE, VALVE_B):
@@ -200,6 +202,7 @@ async def test_pump_preamble_and_postamble_delay_the_next_queued_zone(hass, fake
     loop = asyncio.get_event_loop()
     timestamps: dict[tuple[str, str], float] = {}
 
+    @callback
     def _record(event):
         entity_id = event.data.get("entity_id")
         if entity_id in (VALVE, VALVE_B):
@@ -260,6 +263,7 @@ async def test_shared_pump_second_zone_waits_out_first_zones_full_split_cycle(ha
     loop = asyncio.get_event_loop()
     events: list[tuple[str, str, float]] = []  # (entity_id, new_state, timestamp)
 
+    @callback
     def _record(event):
         entity_id = event.data.get("entity_id")
         if entity_id in (VALVE, VALVE_B):

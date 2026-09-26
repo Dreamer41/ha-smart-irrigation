@@ -71,6 +71,9 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
     state = asdict(controller.store.state)
     if state.get("health_notes"):
         state["health_notes"] = "**REDACTED**"
+    notify = controller.notify_entity
+    if notify and notify in state.get("offline_since", {}):
+        state["offline_since"]["**REDACTED**"] = state["offline_since"].pop(notify)
     samples = state.pop("rain_samples", [])
     state["rain_samples_summary"] = {
         "count": len(samples),

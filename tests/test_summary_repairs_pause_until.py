@@ -320,3 +320,32 @@ async def test_turning_pause_on_again_keeps_the_date(hass, fake_valve_services, 
     await zone.set_paused(True, until_ts=until_ts)
     await zone.set_paused(True)
     assert zone.store.state.pause_until_ts == until_ts and zone._resume_cancel is not None
+
+
+@pytest.mark.asyncio
+async def test_a_paused_zone_raises_no_offline_repairs(hass, fake_valve_services, monkeypatch, tmp_path):
+    await _seed(hass)
+    zone = await _zone(hass, tmp_path, "Chilis")
+    await zone.set_paused(True)
+    hass.states.async_set(VALVE, "unavailable")
+    later = dt_util.utcnow() + timedelta(days=4)
+    monkeypatch.setattr(issues, "dt_util", SimpleNamespace(utcnow=lambda: later))
+    issues.async_check(zone)
+    assert _issue(hass, zone, "valve_unavailable") is None
+
+
+@pytest.mark.asyncio
+async def test_an_open_valve_alert_comes_through_with_notifications_off(hass, fake_valve_services, tmp_path, sent):
+    await _seed(hass)
+    zone = await _zone(hass, tmp_path, "Chilis", notify_entity="notify.phone")
+    zone.store.state.notify_level = "none"
+    await zone._log_event(
+        event_type="Test", status="ERROR", target_mm=0.0, deducted_mm=0.0, runtime=0, notify_phone=True,
+        message="cycle_error_open", params={"cycle": "x", "error": "y", "valve": VALVE}, level="warning",
+        always_notify=True,
+    )
+    await zone._log_event(
+        event_type="Test", status="Info", target_mm=0.0, deducted_mm=0.0, runtime=0, notify_phone=True,
+        message="deficit_ended",
+    )
+    assert len(sent) == 1 and "OPEN" in sent[0]["message"]

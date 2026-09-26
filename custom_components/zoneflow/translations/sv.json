@@ -1,0 +1,709 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow bevattning",
+        "description": "Ge den här bevattningszonen ett kort namn (t.ex. ”Gräsmattan”, ”Avokadoträdet”). Vill du lägga till fler zoner senare lägger du till den här integrationen igen.",
+        "data": {
+          "zone_name": "Zonnamn",
+          "unit_system": "Enheter",
+          "plant": "Vad som växer här (fyller i mål och inställningar; allt kan ändras senare)"
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow bevattning",
+        "description": "Peka ut dina riktiga entiteter. Inga nya fysiska entiteter skapas. Bara ventilbrytaren krävs – allt annat nedan klarar sig utan om du lämnar det tomt.",
+        "data": {
+          "valve_entity": "Ventilbrytare",
+          "pump_power_entity": "Pumpens effektsensor (valfritt)",
+          "pump_id": "Delat pump-ID (valfritt, t.ex. ”Pump A” – behövs bara om zonen delar en fysisk pump med en annan zon)",
+          "rain_counter_entity": "Regnmätarens vippräknare (valfritt)",
+          "outdoor_temp_entity": "Utetemperatursensor (valfritt)",
+          "flow_meter_entity": "Flödesmätare (valfritt)",
+          "soil_moisture_entity": "Jordfuktighetssensor (valfritt, % – om vald styr den rutinvattningen direkt i stället för det beräknade schemat)",
+          "notify_entity": "Mobil för aviseringar (valfritt)",
+          "weather_entity": "Källa för väderprognos (valfritt)",
+          "soil_type": "Jordart",
+          "drainage": "Dränering",
+          "slope": "Lutning",
+          "irrigation_method": "Bevattningsmetod",
+          "growth_ramp_profile": "Automatisk upptrappning efter tillväxtfas",
+          "csv_path": "Sökväg till CSV-loggfil",
+          "deep_soak_enabled": "Aktivera djupvattning",
+          "deep_soak_time": "Schemalagd tid för djupvattning",
+          "routine_time": "Schemalagd tid för rutinvattning",
+          "deep_soak_sun_mode": "Start för djupvattning",
+          "deep_soak_sun_offset_minutes": "Djupvattning: förskjutning mot solen (minuter)",
+          "routine_sun_mode": "Start för rutinvattning",
+          "routine_sun_offset_minutes": "Rutinvattning: förskjutning mot solen (minuter)"
+        }
+      },
+      "climate": {
+        "title": "Klimat",
+        "description": "Hur är växtsäsongen där zonen ligger? Det här fyller bara i temperaturreglagen på nästa sida – du kan ändra alla värden där, och senare på zonens enhetssida.",
+        "data": {
+          "climate": "Klimat"
+        }
+      },
+      "temperatures": {
+        "title": "Temperaturgränser",
+        "description": "ZoneFlow tar medelvärdet av dagens HÖGSTA temperatur de senaste 3 dagarna. Vid eller över Varmt vattnar den oftare (var 3:e dag) med veckomålet för varmt väder; under Svalt används veckomålet för svalt väder; däremellan gäller normalt.\n\nReservtemperaturen används när det inte finns något riktigt värde att gå på: utan temperatursensor är den din manuella styrning (höj den vid värmebölja, sänk den vid köldknäpp); med sensor används den bara tills sensorn har registrerat sitt första hela dygn, och efter 3 dagar utan ett enda värde.",
+        "data": {
+          "hot_temp_threshold": "Gräns för varmt väder",
+          "cool_temp_threshold": "Gräns för svalt väder",
+          "fallback_temp": "Reserv-/manuell temperatur"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Zonnamnet får inte vara tomt.",
+      "cool_not_below_hot": "Gränsen för svalt måste vara lägre än gränsen för varmt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurera",
+        "menu_options": {
+          "settings": "Zoninställningar (entiteter, jord, schema…)",
+          "flow_rate": "Flödestakt: räkna ut från dropparna",
+          "flow_measure": "Flödestakt: mät med flödesmätaren"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Ventilbrytare",
+          "pump_power_entity": "Pumpens effektsensor (valfritt)",
+          "pump_id": "Delat pump-ID (valfritt, t.ex. ”Pump A” – behövs bara om zonen delar en fysisk pump med en annan zon)",
+          "rain_counter_entity": "Regnmätarens vippräknare (valfritt)",
+          "outdoor_temp_entity": "Utetemperatursensor (valfritt)",
+          "flow_meter_entity": "Flödesmätare (valfritt)",
+          "soil_moisture_entity": "Jordfuktighetssensor (valfritt, % – om vald styr den rutinvattningen direkt i stället för det beräknade schemat)",
+          "notify_entity": "Mobil för aviseringar (valfritt)",
+          "weather_entity": "Källa för väderprognos (valfritt)",
+          "soil_type": "Jordart",
+          "drainage": "Dränering",
+          "slope": "Lutning",
+          "irrigation_method": "Bevattningsmetod",
+          "growth_ramp_profile": "Automatisk upptrappning efter tillväxtfas",
+          "csv_path": "Sökväg till CSV-loggfil",
+          "deep_soak_enabled": "Aktivera djupvattning",
+          "deep_soak_time": "Schemalagd tid för djupvattning",
+          "routine_time": "Schemalagd tid för rutinvattning",
+          "deep_soak_sun_mode": "Start för djupvattning",
+          "deep_soak_sun_offset_minutes": "Djupvattning: förskjutning mot solen (minuter)",
+          "routine_sun_mode": "Start för rutinvattning",
+          "routine_sun_offset_minutes": "Rutinvattning: förskjutning mot solen (minuter)",
+          "unit_system": "Enheter"
+        }
+      },
+      "flow_rate": {
+        "title": "Droppares flödestakt",
+        "description": "Hur mycket vatten zonens droppare ger på ytan de väter. 1 liter på 1 m² är 1 mm. För droppare vid enskilda plantor, använd ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Kalibrering av flödestakt.",
+        "data": {
+          "emitters": "Antal droppare (eller spridare) i zonen",
+          "emitter_flow": "Flöde per droppare",
+          "area": "Yta som vattnas"
+        }
+      },
+      "flow_measure": {
+        "title": "Mät flödestakten",
+        "description": "Kör ventilen i {minutes} minuter som servicekörning (räknas inte som vattning, men minuterna räknas mot dagens säkerhetsgräns för körtid) och räknar ut flödestakten från flödesmätarens liter. Mätaren får bara mäta den här zonens vatten under körningen. Resultatet kommer som ett mobilmeddelande och ställs in automatiskt; stänger du av Serviceläge avbryts mätningen.",
+        "data": {
+          "area": "Yta som zonens droppare vattnar"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Flödestakten är nu {rate}.",
+      "flow_rate_out_of_range": "Det blir {rate}, utanför vad inställningen tillåter ({low} till {high}). Kontrollera siffrorna – för droppare vid enskilda plantor, använd ytan de faktiskt väter, inte hela bädden.",
+      "measuring": "Mäter: ventilen går i cirka {minutes} minuter. Resultatet kommer som ett mobilmeddelande (eller i Home Assistants aviseringar om zonen saknar mobil) och ställs in automatiskt.",
+      "zone_not_loaded": "Zonen körs inte just nu, så det här går inte att göra.",
+      "zone_busy": "Zonen (eller dess pump) är upptagen, eller så är dagens säkerhetsgräns för körtid förbrukad. Försök igen senare.",
+      "flow_rate_disabled": "Zonens entitet Kalibrering av flödestakt är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Använd den fasta klocktiden ovan",
+        "before_sunrise": "Före soluppgång",
+        "after_sunrise": "Efter soluppgång",
+        "before_sunset": "Före solnedgång",
+        "after_sunset": "Efter solnedgång"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Vet inte / blandad",
+        "sandy": "Sandjord",
+        "sandy_loam": "Sandig mojord",
+        "loam": "Mojord",
+        "clay_loam": "Lerig mojord",
+        "clay": "Lerjord"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Vet inte",
+        "fast": "Dränerar snabbt",
+        "medium": "Medel",
+        "slow": "Dränerar långsamt"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Plant",
+        "slight": "Svag lutning",
+        "moderate": "Måttlig lutning",
+        "steep": "Brant lutning"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Droppslang / droppare",
+        "micro_sprinkler": "Mikrospridare",
+        "sprinkler": "Vattenspridare",
+        "soaker_hose": "Svettslang",
+        "other": "Annat"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Av (använd alltid hela veckomålet)",
+        "fast_annual": "Snabbväxande ettårig (t.ex. de flesta grönsaker)",
+        "slow_fruiting": "Långsam fruktbärande gröda (t.ex. tomat, paprika)",
+        "established_perennial": "Flerårig som etablerar sig (t.ex. ungt träd eller buske)",
+        "custom": "Egen (ställ in din egen kurva)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Följ Home Assistant",
+        "metric": "Metriskt (mm, °C)",
+        "imperial": "Brittiskt (tum, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropiskt (varmt året runt, t.ex. Sydostasien)",
+        "hot_dry": "Heta somrar (Medelhavet, öken, södra USA)",
+        "temperate": "Tempererat (större delen av Europa, norra USA)",
+        "cool": "Svala somrar (Norden, Storbritannien, nordliga kuster)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Något annat (jag ställer in det själv)",
+        "tomatoes": "Tomater",
+        "chilis": "Chili / paprika",
+        "leafy_vegetables": "Bladgrönsaker / sallat",
+        "herbs": "Kryddväxter (medelhavsörter)",
+        "strawberries": "Jordgubbar",
+        "flowers": "Rabatt",
+        "lawn": "Gräsmatta",
+        "shrubs": "Buskar / häck",
+        "young_tree": "Ungt träd (första åren)",
+        "fruit_tree": "Etablerat fruktträd"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Rutin: normalt veckomål"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Rutin: veckomål vid värme"
+      },
+      "hot_temp_threshold": {
+        "name": "Temperaturgräns varmt väder"
+      },
+      "cool_temp_threshold": {
+        "name": "Temperaturgräns svalt väder"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Rutin: veckomål vid svalka"
+      },
+      "rain_eff_low": {
+        "name": "Regnets nytta - lätt (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Regnets nytta - måttligt (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Regnets nytta - kraftigt (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Kalibrering av flödestakt"
+      },
+      "deep_soak_target_mm": {
+        "name": "Djupvattning: måldjup"
+      },
+      "pump_min_watts": {
+        "name": "Pump: varningsgräns låg effekt"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Djupvattning: max körtid (säkerhet)"
+      },
+      "max_runtime_minutes": {
+        "name": "Rutin: max körtid (säkerhet)"
+      },
+      "routine_drydown_days": {
+        "name": "Rutin: upptorkningspaus"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Djupvattning: upptorkningspaus (alv)"
+      },
+      "deep_soak_interval_days": {
+        "name": "Djupvattning: intervall"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Djupvattning: regntak (14d)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Regnmätare mm per vipp (kalibrering)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Regngräns för att avbryta (30min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pump: förkörning (startfördröjning)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pump: efterkörning (utjämning)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Prognos: regngräns för att hoppa över"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Prognos: gräns för regnsannolikhet"
+      },
+      "forecast_dry_override_days": {
+        "name": "Prognos: vattna ändå efter torka"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Jordfuktighet: torrgräns"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Jordfuktighet: blötgräns"
+      },
+      "routine_pulse_count": {
+        "name": "Rutin: antal pulser (uppdelad)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Rutin: paus mellan pulser"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Djupvattning: antal pulser (uppdelad)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Djupvattning: paus mellan pulser"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Max bevattningstid per dag (säkerhet)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Tillväxtfas: manuell nivå"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Egen upptrappning: start-% dag 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Egen upptrappning: punkt 1 dag"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Egen upptrappning: punkt 1 %"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Egen upptrappning: punkt 2 dag"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Egen upptrappning: punkt 2 %"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Egen upptrappning: dag för 100%"
+      },
+      "crop_coefficient": {
+        "name": "Växtfaktor (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Sparläge: vattenmängd"
+      },
+      "fallback_temp": {
+        "name": "Reserv-/manuell temperatur"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Serviceläge: stängs av efter"
+      },
+      "frost_guard_temp": {
+        "name": "Frostskydd: temperatur"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Senaste rutinvattning"
+      },
+      "last_deep_soak": {
+        "name": "Senaste djupvattning"
+      },
+      "last_significant_rain": {
+        "name": "Senaste rejäla regn"
+      },
+      "planting_date": {
+        "name": "Planterings-/utplanteringsdatum"
+      },
+      "last_fertilizing": {
+        "name": "Senaste gödsling"
+      },
+      "deficit_until": {
+        "name": "Sparläget slutar"
+      },
+      "paused_until": {
+        "name": "Pausad till"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Djupvattna nu"
+      },
+      "run_routine": {
+        "name": "Kör rutinvattning nu"
+      },
+      "reset_lock": {
+        "name": "Återställ bevattningslås"
+      },
+      "snooze_today": {
+        "name": "Hoppa över idag"
+      },
+      "service_run_1_min": {
+        "name": "Servicekörning 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Servicekörning 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Servicekörning 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Bevattning pågår"
+      },
+      "irrigation_abort": {
+        "name": "Avbrottsflagga"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Djupvattning aktiverad"
+      },
+      "deficit_mode": {
+        "name": "Sparläge"
+      },
+      "service_mode": {
+        "name": "Serviceläge"
+      },
+      "pause": {
+        "name": "Paus"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Regn senaste 30min"
+      },
+      "rain_past_24h": {
+        "name": "Regn senaste 24h"
+      },
+      "rain_past_3d": {
+        "name": "Regn senaste 3d"
+      },
+      "rain_past_7d": {
+        "name": "Regn senaste 7d"
+      },
+      "rain_past_14d": {
+        "name": "Regn senaste 14d"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Medel av dagens högsta, 3 dagar"
+      },
+      "next_irrigation_estimate": {
+        "name": "Nästa bevattning (uppskattning)"
+      },
+      "days_until_next_run": {
+        "name": "Dagar till nästa vattning"
+      },
+      "last_water_delivered": {
+        "name": "Senaste vattenmängd (uppskattad)"
+      },
+      "rain_today": {
+        "name": "Regn idag"
+      },
+      "soil_profile": {
+        "name": "Jordprofil"
+      },
+      "growth_ramp_pct": {
+        "name": "Tillväxtupptrappning"
+      },
+      "last_cycle_water_liters": {
+        "name": "Senaste vattenmängd (uppmätt)"
+      },
+      "reference_et0_3d": {
+        "name": "Referens-ET₀ (medel 3 dagar)"
+      },
+      "routine_weekly_target": {
+        "name": "Rutin: veckomål"
+      },
+      "soil_moisture": {
+        "name": "Jordfuktighet"
+      },
+      "soil_moisture_status": {
+        "name": "Jordfuktighetsstatus",
+        "state": {
+          "dry": "Torr - vattnar tidigare",
+          "wet": "Blöt - hoppar över",
+          "in_range": "Lagom - följer schemat",
+          "offline": "Sensor offline - följer schemat",
+          "stale": "Inget nytt värde på 24 h - följer schemat",
+          "implausible": "Omöjligt värde - följer schemat"
+        }
+      },
+      "deficit_status": {
+        "name": "Sparlägesstatus",
+        "state": {
+          "off": "Av",
+          "active": "Aktivt - minskad giva",
+          "full_dose_hot": "Full giva idag (varmt väder)",
+          "full_dose_soil_dry": "Full giva idag (torr jord)",
+          "ended": "Avslutat",
+          "full_dose_young_plant": "Full giva (ung planta)",
+          "full_dose_no_temp": "Full giva idag (inget temperaturvärde registrerat)"
+        }
+      },
+      "status": {
+        "name": "Status"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Jordart",
+        "state": {
+          "unknown": "Vet inte / blandad",
+          "sandy": "Sandjord",
+          "sandy_loam": "Sandig mojord",
+          "loam": "Mojord",
+          "clay_loam": "Lerig mojord",
+          "clay": "Lerjord"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Tillväxtfas",
+        "state": {
+          "auto": "Auto (efter planteringsdatum)",
+          "seedling": "Groddplanta",
+          "establishing": "Etablering",
+          "vegetative": "Bladtillväxt",
+          "near_fruiting": "Nära fruktsättning",
+          "mature": "Fullvuxen",
+          "manual": "Manuell (använd reglaget)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Upptrappningsprofil",
+        "state": {
+          "off": "Av (använd alltid hela veckomålet)",
+          "fast_annual": "Snabbväxande ettårig (t.ex. de flesta grönsaker)",
+          "slow_fruiting": "Långsam fruktbärande gröda (t.ex. tomat, paprika)",
+          "established_perennial": "Flerårig som etablerar sig (t.ex. ungt träd eller buske)",
+          "custom": "Egen (ställ in din egen kurva)"
+        }
+      },
+      "health_status": {
+        "name": "Hälsa",
+        "state": {
+          "excellent": "Utmärkt",
+          "good": "Bra",
+          "poor": "Dålig",
+          "sick": "Sjuk"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Nästa gödsling om",
+        "state": {
+          "1": "1 månad",
+          "2": "2 månader",
+          "3": "3 månader",
+          "4": "4 månader",
+          "5": "5 månader",
+          "6": "6 månader",
+          "7": "7 månader",
+          "8": "8 månader",
+          "9": "9 månader",
+          "10": "10 månader",
+          "11": "11 månader",
+          "12": "12 månader"
+        }
+      },
+      "demand_model": {
+        "name": "Modell för vattenbehov",
+        "state": {
+          "temperature_tiers": "Temperaturnivåer",
+          "et_curve": "ET-kurva (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Aviseringar",
+        "state": {
+          "all": "Alla",
+          "warnings": "Endast varningar",
+          "none": "Inga"
+        }
+      },
+      "weekly_summary": {
+        "name": "Veckosammanfattning",
+        "state": {
+          "off": "Av",
+          "mon": "Måndag",
+          "tue": "Tisdag",
+          "wed": "Onsdag",
+          "thu": "Torsdag",
+          "fri": "Fredag",
+          "sat": "Lördag",
+          "sun": "Söndag"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Hälsoanteckningar"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Kör djupvattning",
+      "description": "Kör djupvattningen nu om (och bara om) samma villkor som för schemat kl. 05:00 är uppfyllda (låset ledigt, 14-dagarsintervall och upptorkning uppfyllda, regntaket för 14 dagar inte överskridet). Samma kod som den schemalagda körningen.",
+      "fields": {
+        "device_id": {
+          "name": "Zonens enhet",
+          "description": "Zonens enhet. Behövs bara om du har 2 eller fler zoner."
+        },
+        "entity_id": {
+          "name": "Zonens entitet",
+          "description": "Valfri entitet som hör till zonens enhet (alternativ till Zonens enhet)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Kör rutinvattning",
+      "description": "Kör rutinvattningen nu om (och bara om) samma villkor som för schemat kl. 05:30 är uppfyllda. Samma kod som den schemalagda körningen.",
+      "fields": {
+        "device_id": {
+          "name": "Zonens enhet",
+          "description": "Zonens enhet. Behövs bara om du har 2 eller fler zoner."
+        },
+        "entity_id": {
+          "name": "Zonens entitet",
+          "description": "Valfri entitet som hör till zonens enhet (alternativ till Zonens enhet)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Återställ bevattningslås",
+      "description": "Tvångsrensar låset och avbrottsflaggan. Endast för nödfall.",
+      "fields": {
+        "device_id": {
+          "name": "Zonens enhet",
+          "description": "Zonens enhet. Behövs bara om du har 2 eller fler zoner."
+        },
+        "entity_id": {
+          "name": "Zonens entitet",
+          "description": "Valfri entitet som hör till zonens enhet (alternativ till Zonens enhet)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Hoppa över idag",
+      "description": "Hoppar över de av zonens schemalagda cykler (djupvattning, rutin eller båda) som inte redan har körts idag, utan att ändra någon annan inställning. Schemat fortsätter som vanligt automatiskt från i morgon.",
+      "fields": {
+        "device_id": {
+          "name": "Zonens enhet",
+          "description": "Zonens enhet. Behövs bara om du har 2 eller fler zoner."
+        },
+        "entity_id": {
+          "name": "Zonens entitet",
+          "description": "Valfri entitet som hör till zonens enhet (alternativ till Zonens enhet)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Testpuls",
+      "description": "Kringgår alla villkor för schema, upptorkning och regn och kör en kort puls med ventilen, för att testa kopplingen av ventil och pump innan du litar på det riktiga schemat. Respekterar fortfarande låset och säkerhetsvakterna.",
+      "fields": {
+        "device_id": {
+          "name": "Zonens enhet",
+          "description": "Zonens enhet. Behövs bara om du har 2 eller fler zoner."
+        },
+        "entity_id": {
+          "name": "Zonens entitet",
+          "description": "Valfri entitet som hör till zonens enhet (alternativ till Zonens enhet)."
+        },
+        "seconds": {
+          "name": "Sekunder",
+          "description": "Pulsens längd i sekunder (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Skicka veckosammanfattning nu",
+      "description": "Skickar veckosammanfattningen nu till varje mobil som har en zon med en dag för Veckosammanfattning vald – en förhandsvisning; veckans siffror fortsätter räknas fram till den schemalagda."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Det här datumet kan inte ligga i framtiden: det anger något som redan har hänt. Bara Planterings-/utplanteringsdatum får sättas framåt."
+    },
+    "cool_not_below_hot": {
+      "message": "Gränsen för svalt väder måste vara lägre än gränsen för varmt väder. Vill du sänka båda, sänk den svala först; vill du höja båda, höj den varma först."
+    },
+    "zone_busy": {
+      "message": "Zonen är upptagen (vattnar eller kör redan en servicekörning). Försök igen när den är klar."
+    },
+    "pump_busy": {
+      "message": "Pumpen som zonen delar används av en annan zon just nu. Försök igen när den zonen är klar."
+    },
+    "daily_cap_reached": {
+      "message": "Zonen har nått dagens säkerhetsgräns för körtid, så ingen servicekörning kan starta förrän i morgon (eller höj Max bevattningstid per dag)."
+    },
+    "zone_paused": {
+      "message": "Zonen är pausad. Stäng av Paus för att vattna."
+    },
+    "pause_until_past": {
+      "message": "Välj ett datum och en tid i framtiden att pausa till."
+    },
+    "no_weekly_summary": {
+      "message": "Ingen zon har både en dag för Veckosammanfattning och en mobil för aviseringar, så det finns inget att skicka."
+    },
+    "summary_send_failed": {
+      "message": "Veckosammanfattningen kunde inte skickas: aviseringen till telefonen misslyckades. Kontrollera zonens aviseringsmål."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: ventilen otillgänglig",
+      "description": "Ventilen för zonen {zone} ({entity}) har varit otillgänglig i över en timme, så zonen kan inte vattna. Kontrollera ventilens enhet och dess integration. Det här försvinner av sig självt när ventilen är tillbaka."
+    },
+    "sensor_offline": {
+      "title": "{zone}: sensor offline i {days} dagar",
+      "description": "{entity}, som zonen {zone} använder, har varit offline i {days} dagar. Zonen fortsätter utan den (vad det innebär står i README), men kontrollera enheten – eller ta bort den från zonen under Konfigurera. Det här försvinner av sig självt när sensorn rapporterar igen."
+    },
+    "notify_missing": {
+      "title": "{zone}: mobil för aviseringar saknas",
+      "description": "Zonen {zone} skickar sina mobilaviseringar till {entity}, som inte längre finns i Home Assistant, så inga aviseringar kommer fram. Välj den aktuella mottagaren under zonens Konfigurera. Det här försvinner av sig självt när den finns igen."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: kalibrera flödestakten",
+      "description": "Zonen {zone} använder fortfarande standardvärdet för Kalibrering av flödestakt (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flödestakt räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här."
+    }
+  }
+}

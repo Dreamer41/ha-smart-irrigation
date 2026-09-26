@@ -93,7 +93,10 @@ def async_check(controller: ZoneFlowController) -> None:
     hass = controller.hass
     zone = controller.entry.title
 
-    offline = _offline_for(controller, controller.valve_entity) if controller.valve_entity else None
+    # A paused zone isn't watering: a valve or sensor switched off for the
+    # winter isn't a problem to report.
+    paused = controller.paused
+    offline = _offline_for(controller, controller.valve_entity) if controller.valve_entity and not paused else None
     _set(
         hass,
         controller,
@@ -105,7 +108,7 @@ def async_check(controller: ZoneFlowController) -> None:
     )
 
     for role, entity_id in _sensors(controller).items():
-        offline = _offline_for(controller, entity_id) if entity_id else None
+        offline = _offline_for(controller, entity_id) if entity_id and not paused else None
         _set(
             hass,
             controller,

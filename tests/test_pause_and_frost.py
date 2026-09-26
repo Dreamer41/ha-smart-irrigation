@@ -271,7 +271,7 @@ async def test_a_stale_or_impossible_reading_never_holds_watering(hass, fake_val
     hass.states.async_set(OUTDOOR_TEMP, "-127")
     assert await controller._frost_blocks("routine") is False
     hass.states.async_set(OUTDOOR_TEMP, "-1")
-    later = dt_util.utcnow() + timedelta(hours=4)
+    later = dt_util.utcnow() + timedelta(hours=7)
     monkeypatch.setattr(dt_util, "utcnow", lambda: later)
     assert await controller._frost_blocks("routine") is False
 

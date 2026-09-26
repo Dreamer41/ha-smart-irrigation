@@ -683,6 +683,9 @@
     },
     "no_weekly_summary": {
       "message": "No zone has a Weekly Summary day and a phone notify target set, so there's nothing to send."
+    },
+    "summary_send_failed": {
+      "message": "The weekly summary couldn't be sent: the phone notification failed. Check the zone's notify target."
     }
   },
   "issues": {
@@ -700,7 +703,7 @@
     },
     "flow_rate_default": {
       "title": "{zone}: calibrate the emitter flow rate",
-      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: press Service Run 5 min and see how much water a plant got. If 0.24 mm/min really is right for this zone, ignore this."
+      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this."
     }
   }
 }

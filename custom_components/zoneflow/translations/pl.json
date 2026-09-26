@@ -1,0 +1,709 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Nawadnianie ZoneFlow",
+        "description": "Nadaj tej strefie nawadniania krótką nazwę (np. „Trawnik przed domem”, „Awokado”). Aby dodać kolejne strefy, dodaj tę integrację ponownie.",
+        "data": {
+          "zone_name": "Nazwa strefy",
+          "unit_system": "Jednostki",
+          "plant": "Co tu rośnie (wstępnie ustawia dawki i ustawienia; wszystko można później zmienić)"
+        }
+      },
+      "entities": {
+        "title": "Nawadnianie ZoneFlow",
+        "description": "Wskaż swoje istniejące encje. Integracja nigdy nie tworzy własnych encji fizycznych. Wymagany jest tylko przełącznik zaworu – wszystko inne poniżej można pominąć, strefa poradzi sobie bez tego.",
+        "data": {
+          "valve_entity": "Przełącznik zaworu",
+          "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
+          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie, np. „Pompa A” – tylko gdy ta strefa dzieli fizyczną pompę z inną strefą)",
+          "rain_counter_entity": "Licznik przechyleń deszczomierza (opcjonalnie)",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
+          "flow_meter_entity": "Przepływomierz (opcjonalnie)",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie, % – jeśli ustawiony, to on decyduje o regularnym podlewaniu zamiast wyliczonego harmonogramu)",
+          "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
+          "weather_entity": "Źródło prognozy pogody (opcjonalnie)",
+          "soil_type": "Rodzaj gleby",
+          "drainage": "Przepuszczalność gleby",
+          "slope": "Nachylenie",
+          "irrigation_method": "Sposób nawadniania",
+          "growth_ramp_profile": "Narastanie dawki wg fazy wzrostu",
+          "csv_path": "Ścieżka pliku dziennika CSV",
+          "deep_soak_enabled": "Włącz głębokie podlewanie",
+          "deep_soak_time": "Godzina głębokiego podlewania",
+          "routine_time": "Godzina regularnego podlewania",
+          "deep_soak_sun_mode": "Wyzwalacz głębokiego podlewania",
+          "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
+          "routine_sun_mode": "Wyzwalacz regularnego podlewania",
+          "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)"
+        }
+      },
+      "climate": {
+        "title": "Klimat",
+        "description": "Jak wygląda sezon wegetacyjny tam, gdzie jest ta strefa? To tylko wstępnie ustawia suwaki temperatur na następnej stronie – każdą wartość możesz tam zmienić, a później także na stronie urządzenia strefy.",
+        "data": {
+          "climate": "Klimat"
+        }
+      },
+      "temperatures": {
+        "title": "Progi temperatury",
+        "description": "ZoneFlow uśrednia NAJWYŻSZĄ dzienną temperaturę z ostatnich 3 dni. Gdy średnia osiąga próg upału lub go przekracza, podlewa częściej (co 3 dni) z tygodniową dawką na upał; poniżej progu chłodu stosuje tygodniową dawkę na chłód; pomiędzy – normalną.\n\nTemperatura zastępcza jest używana, gdy brak prawdziwego odczytu: bez czujnika temperatury to Twoje ręczne sterowanie (podnieś ją na czas upałów, obniż na czas chłodów); z czujnikiem jest używana tylko do czasu, aż czujnik zapisze pierwszy pełny dzień, oraz po 3 dniach bez żadnego odczytu.",
+        "data": {
+          "hot_temp_threshold": "Próg upału",
+          "cool_temp_threshold": "Próg chłodu",
+          "fallback_temp": "Temperatura zastępcza / ręczna"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Nazwa strefy nie może być pusta.",
+      "cool_not_below_hot": "Próg chłodu musi być niższy niż próg upału."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfiguracja",
+        "menu_options": {
+          "settings": "Ustawienia strefy (encje, gleba, harmonogram…)",
+          "flow_rate": "Wydajność: oblicz na podstawie emiterów",
+          "flow_measure": "Wydajność: zmierz przepływomierzem"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Przełącznik zaworu",
+          "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
+          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie, np. „Pompa A” – tylko gdy ta strefa dzieli fizyczną pompę z inną strefą)",
+          "rain_counter_entity": "Licznik przechyleń deszczomierza (opcjonalnie)",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
+          "flow_meter_entity": "Przepływomierz (opcjonalnie)",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie, % – jeśli ustawiony, to on decyduje o regularnym podlewaniu zamiast wyliczonego harmonogramu)",
+          "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
+          "weather_entity": "Źródło prognozy pogody (opcjonalnie)",
+          "soil_type": "Rodzaj gleby",
+          "drainage": "Przepuszczalność gleby",
+          "slope": "Nachylenie",
+          "irrigation_method": "Sposób nawadniania",
+          "growth_ramp_profile": "Narastanie dawki wg fazy wzrostu",
+          "csv_path": "Ścieżka pliku dziennika CSV",
+          "deep_soak_enabled": "Włącz głębokie podlewanie",
+          "deep_soak_time": "Godzina głębokiego podlewania",
+          "routine_time": "Godzina regularnego podlewania",
+          "deep_soak_sun_mode": "Wyzwalacz głębokiego podlewania",
+          "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
+          "routine_sun_mode": "Wyzwalacz regularnego podlewania",
+          "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)",
+          "unit_system": "Jednostki"
+        }
+      },
+      "flow_rate": {
+        "title": "Wydajność emiterów",
+        "description": "Ile wody emitery strefy dają na powierzchnię, którą zwilżają. 1 litr na 1 m² to 1 mm. Przy kroplownikach pod pojedynczymi roślinami podaj powierzchnię wokół nich, która faktycznie jest mokra. Wynik zastąpi wartość „Kalibracja wydajności emiterów” tej strefy.",
+        "data": {
+          "emitters": "Liczba emiterów (kroplowników, zraszaczy) w strefie",
+          "emitter_flow": "Wydajność jednego emitera",
+          "area": "Powierzchnia, którą podlewają"
+        }
+      },
+      "flow_measure": {
+        "title": "Zmierz wydajność",
+        "description": "Otwiera zawór na {minutes} min jako uruchomienie serwisowe (nie liczy się jako podlewanie, ale jego minuty wliczają się do dzisiejszego limitu czasu pracy) i oblicza wydajność z litrów zmierzonych przez przepływomierz. W tym czasie przepływomierz musi mierzyć wyłącznie wodę tej strefy. Wynik przyjdzie jako wiadomość na telefon i zostanie ustawiony automatycznie; wyłączenie trybu serwisowego przerywa pomiar.",
+        "data": {
+          "area": "Powierzchnia podlewana przez emitery strefy"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Ustawiono wydajność emiterów: {rate}.",
+      "flow_rate_out_of_range": "Wychodzi {rate}, poza zakresem dozwolonym przez ustawienie ({low} – {high}). Sprawdź liczby – przy kroplownikach wokół pojedynczych roślin podaj powierzchnię faktycznie zwilżaną, a nie całą grządkę.",
+      "measuring": "Pomiar: zawór będzie otwarty ok. {minutes} min. Wynik przyjdzie jako wiadomość na telefon (albo w powiadomieniach Home Assistant, jeśli strefa nie ma celu powiadomień) i zostanie ustawiony automatycznie.",
+      "zone_not_loaded": "Ta strefa w tej chwili nie działa, więc nie można tego zrobić.",
+      "zone_busy": "Strefa (lub jej pompa) jest zajęta albo dzisiejszy limit czasu pracy został wyczerpany. Spróbuj później.",
+      "flow_rate_disabled": "Encja „Kalibracja wydajności emiterów” tej strefy jest wyłączona. Włącz ją (strona urządzenia strefy → encje) i spróbuj ponownie."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Stała godzina podana wyżej",
+        "before_sunrise": "Przed wschodem słońca",
+        "after_sunrise": "Po wschodzie słońca",
+        "before_sunset": "Przed zachodem słońca",
+        "after_sunset": "Po zachodzie słońca"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Nie wiem / mieszana",
+        "sandy": "Piaszczysta",
+        "sandy_loam": "Piaszczysto-gliniasta",
+        "loam": "Gliniasta",
+        "clay_loam": "Gliniasto-ilasta",
+        "clay": "Ilasta (ciężka)"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Nie wiem",
+        "fast": "Wysoka (woda szybko wsiąka)",
+        "medium": "Średnia",
+        "slow": "Niska (woda długo stoi)"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Płaski teren",
+        "slight": "Lekkie nachylenie",
+        "moderate": "Umiarkowane nachylenie",
+        "steep": "Duże nachylenie"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Linia kroplująca / emitery",
+        "micro_sprinkler": "Mikrozraszacz",
+        "sprinkler": "Zraszacz",
+        "soaker_hose": "Wąż pocący",
+        "other": "Inne"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Brak (zawsze pełna dawka tygodniowa)",
+        "fast_annual": "Jednoroczne, szybko rosnące (np. większość warzyw)",
+        "slow_fruiting": "Owocujące, wolno rosnące (np. pomidory, papryka)",
+        "established_perennial": "Wieloletnie w trakcie ukorzeniania (np. młode drzewo lub krzew)",
+        "custom": "Własna krzywa (ustaw samodzielnie)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Jak w Home Assistant",
+        "metric": "Metryczne (mm, °C)",
+        "imperial": "Imperialne (cale, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropikalny (gorąco cały rok, np. Azja Płd.-Wsch.)",
+        "hot_dry": "Gorące lata (śródziemnomorski, pustynny, południe USA)",
+        "temperate": "Umiarkowany (większość Europy, północ USA)",
+        "cool": "Chłodne lata (kraje nordyckie, Wlk. Brytania, północne wybrzeża)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Coś innego (ustawię samodzielnie)",
+        "tomatoes": "Pomidory",
+        "chilis": "Chili / papryka",
+        "leafy_vegetables": "Warzywa liściowe / sałata",
+        "herbs": "Zioła (śródziemnomorskie)",
+        "strawberries": "Truskawki",
+        "flowers": "Rabata kwiatowa",
+        "lawn": "Trawnik",
+        "shrubs": "Krzewy / żywopłot",
+        "young_tree": "Młode drzewo (pierwsze lata)",
+        "fruit_tree": "Dorosłe drzewo owocowe"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Dawka tygodniowa – normalnie"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Dawka tygodniowa – upał"
+      },
+      "hot_temp_threshold": {
+        "name": "Próg upału"
+      },
+      "cool_temp_threshold": {
+        "name": "Próg chłodu"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Dawka tygodniowa – chłód"
+      },
+      "rain_eff_low": {
+        "name": "Efektywność deszczu – słaby (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Efektywność deszczu – umiarkowany (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Efektywność deszczu – ulewny (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Kalibracja wydajności emiterów"
+      },
+      "deep_soak_target_mm": {
+        "name": "Dawka głębokiego podlewania"
+      },
+      "pump_min_watts": {
+        "name": "Próg ostrzeżenia o niskiej mocy pompy"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Limit czasu pracy – głębokie"
+      },
+      "max_runtime_minutes": {
+        "name": "Limit czasu pracy – regularne"
+      },
+      "routine_drydown_days": {
+        "name": "Przerwa na przeschnięcie – regularne"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Przeschnięcie podglebia – głębokie"
+      },
+      "deep_soak_interval_days": {
+        "name": "Odstęp głębokiego podlewania"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Pułap deszczu (14 dni) – głębokie"
+      },
+      "rain_mm_per_tip": {
+        "name": "Deszczomierz: mm na przechył (kalibracja)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Próg odwołania przez deszcz (30 min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pompa: opóźnienie przed startem"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pompa: opóźnienie po zakończeniu"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Prognoza: próg deszczu do pominięcia"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Prognoza: próg prawdopodobieństwa deszczu"
+      },
+      "forecast_dry_override_days": {
+        "name": "Prognoza: podlej mimo to po suszy"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Wilgotność gleby: próg „sucha”"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Wilgotność gleby: próg „mokra”"
+      },
+      "routine_pulse_count": {
+        "name": "Liczba porcji – regularne"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Przerwa między porcjami – regularne"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Liczba porcji – głębokie"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Przerwa między porcjami – głębokie"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Maks. dzienny czas podlewania (limit)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Faza wzrostu – ręczna korekta"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Własna krzywa: % w dniu 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Własna krzywa: punkt 1 – dzień"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Własna krzywa: punkt 1 – %"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Własna krzywa: punkt 2 – dzień"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Własna krzywa: punkt 2 – %"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Własna krzywa: dzień osiągnięcia 100%"
+      },
+      "crop_coefficient": {
+        "name": "Współczynnik roślinny (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Dawka w trybie deficytowym"
+      },
+      "fallback_temp": {
+        "name": "Temperatura zastępcza / ręczna"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Auto-wyłączenie trybu serwisowego"
+      },
+      "frost_guard_temp": {
+        "name": "Próg przymrozkowy"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Ostatnie regularne podlewanie"
+      },
+      "last_deep_soak": {
+        "name": "Ostatnie głębokie podlewanie"
+      },
+      "last_significant_rain": {
+        "name": "Ostatni obfity deszcz"
+      },
+      "planting_date": {
+        "name": "Data sadzenia / przesadzenia"
+      },
+      "last_fertilizing": {
+        "name": "Ostatnie nawożenie"
+      },
+      "deficit_until": {
+        "name": "Koniec trybu deficytowego"
+      },
+      "paused_until": {
+        "name": "Wstrzymane do"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Uruchom głębokie podlewanie"
+      },
+      "run_routine": {
+        "name": "Uruchom podlewanie regularne"
+      },
+      "reset_lock": {
+        "name": "Zresetuj blokadę nawadniania"
+      },
+      "snooze_today": {
+        "name": "Pomiń dzisiaj"
+      },
+      "service_run_1_min": {
+        "name": "Uruchom serwisowo 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Uruchom serwisowo 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Uruchom serwisowo 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Trwa podlewanie"
+      },
+      "irrigation_abort": {
+        "name": "Flaga przerwania podlewania"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Głębokie podlewanie włączone"
+      },
+      "deficit_mode": {
+        "name": "Tryb deficytowy"
+      },
+      "service_mode": {
+        "name": "Tryb serwisowy"
+      },
+      "pause": {
+        "name": "Pauza"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Deszcz z ostatnich 30 min"
+      },
+      "rain_past_24h": {
+        "name": "Deszcz z ostatnich 24 h"
+      },
+      "rain_past_3d": {
+        "name": "Deszcz z ostatnich 3 dni"
+      },
+      "rain_past_7d": {
+        "name": "Deszcz z ostatnich 7 dni"
+      },
+      "rain_past_14d": {
+        "name": "Deszcz z ostatnich 14 dni"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Średnia temp. maksymalna (3 dni)"
+      },
+      "next_irrigation_estimate": {
+        "name": "Następne podlewanie (szacunkowo)"
+      },
+      "days_until_next_run": {
+        "name": "Dni do następnego podlewania"
+      },
+      "last_water_delivered": {
+        "name": "Ostatnia dawka wody (szacunek)"
+      },
+      "rain_today": {
+        "name": "Deszcz dzisiaj"
+      },
+      "soil_profile": {
+        "name": "Profil gleby"
+      },
+      "growth_ramp_pct": {
+        "name": "Narastanie dawki (faza wzrostu)"
+      },
+      "last_cycle_water_liters": {
+        "name": "Ostatnia dawka wody (zmierzona)"
+      },
+      "reference_et0_3d": {
+        "name": "ET₀ wzorcowa (średnia 3 dni)"
+      },
+      "routine_weekly_target": {
+        "name": "Bieżąca dawka tygodniowa"
+      },
+      "soil_moisture": {
+        "name": "Wilgotność gleby"
+      },
+      "soil_moisture_status": {
+        "name": "Stan wilgotności gleby",
+        "state": {
+          "dry": "Sucho – podlewanie wcześniej",
+          "wet": "Mokro – pominięte",
+          "in_range": "W normie – wg harmonogramu",
+          "offline": "Czujnik offline – wg harmonogramu",
+          "stale": "Brak odczytu od 24 h – wg harmonogramu",
+          "implausible": "Niemożliwy odczyt – wg harmonogramu"
+        }
+      },
+      "deficit_status": {
+        "name": "Stan trybu deficytowego",
+        "state": {
+          "off": "Wyłączony",
+          "active": "Aktywny – mniejsza dawka",
+          "full_dose_hot": "Dziś pełna dawka (upał)",
+          "full_dose_soil_dry": "Dziś pełna dawka (sucha gleba)",
+          "ended": "Zakończony",
+          "full_dose_young_plant": "Pełna dawka (młoda roślina)",
+          "full_dose_no_temp": "Dziś pełna dawka (brak odczytu temperatury)"
+        }
+      },
+      "status": {
+        "name": "Stan"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Rodzaj gleby",
+        "state": {
+          "unknown": "Nie wiem / mieszana",
+          "sandy": "Piaszczysta",
+          "sandy_loam": "Piaszczysto-gliniasta",
+          "loam": "Gliniasta",
+          "clay_loam": "Gliniasto-ilasta",
+          "clay": "Ilasta (ciężka)"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Faza wzrostu",
+        "state": {
+          "auto": "Auto (wg daty sadzenia)",
+          "seedling": "Siewka / rozsada",
+          "establishing": "Ukorzenianie",
+          "vegetative": "Wzrost wegetatywny",
+          "near_fruiting": "Przed owocowaniem",
+          "mature": "Pełna dojrzałość",
+          "manual": "Ręcznie (suwak)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Profil narastania dawki",
+        "state": {
+          "off": "Brak (zawsze pełna dawka tygodniowa)",
+          "fast_annual": "Jednoroczne, szybko rosnące (np. większość warzyw)",
+          "slow_fruiting": "Owocujące, wolno rosnące (np. pomidory, papryka)",
+          "established_perennial": "Wieloletnie w trakcie ukorzeniania (np. młode drzewo lub krzew)",
+          "custom": "Własna krzywa (ustaw samodzielnie)"
+        }
+      },
+      "health_status": {
+        "name": "Kondycja",
+        "state": {
+          "excellent": "Doskonała",
+          "good": "Dobra",
+          "poor": "Słaba",
+          "sick": "Chora"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Następne nawożenie za",
+        "state": {
+          "1": "1 miesiąc",
+          "2": "2 miesiące",
+          "3": "3 miesiące",
+          "4": "4 miesiące",
+          "5": "5 miesięcy",
+          "6": "6 miesięcy",
+          "7": "7 miesięcy",
+          "8": "8 miesięcy",
+          "9": "9 miesięcy",
+          "10": "10 miesięcy",
+          "11": "11 miesięcy",
+          "12": "12 miesięcy"
+        }
+      },
+      "demand_model": {
+        "name": "Model zapotrzebowania na wodę",
+        "state": {
+          "temperature_tiers": "Progi temperatury",
+          "et_curve": "Krzywa ET (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Powiadomienia",
+        "state": {
+          "all": "Wszystkie",
+          "warnings": "Tylko ostrzeżenia",
+          "none": "Brak"
+        }
+      },
+      "weekly_summary": {
+        "name": "Podsumowanie tygodnia",
+        "state": {
+          "off": "Wyłączone",
+          "mon": "Poniedziałek",
+          "tue": "Wtorek",
+          "wed": "Środa",
+          "thu": "Czwartek",
+          "fri": "Piątek",
+          "sat": "Sobota",
+          "sun": "Niedziela"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Notatki o kondycji"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Uruchom głębokie podlewanie",
+      "description": "Uruchamia teraz głębokie podlewanie, jeśli (i tylko jeśli) spełnione są te same warunki, których używa harmonogram o 05:00 (blokada wolna, minął 14-dniowy odstęp i czas na przeschnięcie, nie przekroczono 14-dniowego pułapu deszczu). Ta sama ścieżka kodu co przy zaplanowanym uruchomieniu.",
+      "fields": {
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Urządzenie strefy. Potrzebne tylko przy 2 lub więcej strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Uruchom podlewanie regularne",
+      "description": "Uruchamia teraz regularne podlewanie, jeśli (i tylko jeśli) spełnione są te same warunki, których używa harmonogram o 05:30. Ta sama ścieżka kodu co przy zaplanowanym uruchomieniu.",
+      "fields": {
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Urządzenie strefy. Potrzebne tylko przy 2 lub więcej strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Zresetuj blokadę nawadniania",
+      "description": "Wymusza zdjęcie blokady i flagi przerwania. Tylko w sytuacjach awaryjnych.",
+      "fields": {
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Urządzenie strefy. Potrzebne tylko przy 2 lub więcej strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Pomiń dzisiaj",
+      "description": "Pomija te zaplanowane cykle tej strefy (głębokie, regularne lub oba), które jeszcze dziś się nie odbyły, bez zmiany innych ustawień. Normalny harmonogram wraca automatycznie od jutra.",
+      "fields": {
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Urządzenie strefy. Potrzebne tylko przy 2 lub więcej strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Impuls testowy",
+      "description": "Pomija wszystkie warunki harmonogramu, przeschnięcia i deszczu i otwiera zawór na jeden krótki impuls – do sprawdzenia podłączenia zaworu/pompy, zanim zaufasz prawdziwemu harmonogramowi. Nadal respektuje blokadę i zabezpieczenia.",
+      "fields": {
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Urządzenie strefy. Potrzebne tylko przy 2 lub więcej strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
+        },
+        "seconds": {
+          "name": "Sekundy",
+          "description": "Czas trwania impulsu w sekundach (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Wyślij teraz podsumowanie tygodnia",
+      "description": "Wysyła teraz podsumowanie tygodnia na każdy telefon, który ma strefę z ustawionym dniem podsumowania – jako podgląd; liczniki tygodnia biegną dalej aż do zaplanowanego podsumowania."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Ta data nie może być w przyszłości: zapisuje coś, co już się wydarzyło. Tylko „Data sadzenia / przesadzenia” może być ustawiona z wyprzedzeniem."
+    },
+    "cool_not_below_hot": {
+      "message": "Próg chłodu musi pozostać niższy niż próg upału. Aby obniżyć oba, najpierw obniż próg chłodu; aby podnieść oba, najpierw podnieś próg upału."
+    },
+    "zone_busy": {
+      "message": "Ta strefa jest zajęta (podlewa albo trwa uruchomienie serwisowe). Spróbuj ponownie, gdy skończy."
+    },
+    "pump_busy": {
+      "message": "Pompa, którą dzieli ta strefa, jest teraz używana przez inną strefę. Spróbuj ponownie, gdy tamta strefa skończy."
+    },
+    "daily_cap_reached": {
+      "message": "Ta strefa osiągnęła dzisiejszy limit czasu pracy, więc żadne uruchomienie serwisowe nie wystartuje do jutra (albo zwiększ „Maks. dzienny czas podlewania”)."
+    },
+    "zone_paused": {
+      "message": "Ta strefa jest wstrzymana. Wyłącz „Pauza”, aby ją podlać."
+    },
+    "pause_until_past": {
+      "message": "Wybierz datę i godzinę w przyszłości, do której ma trwać wstrzymanie."
+    },
+    "no_weekly_summary": {
+      "message": "Żadna strefa nie ma ustawionego dnia podsumowania tygodnia i celu powiadomień na telefon, więc nie ma czego wysłać."
+    },
+    "summary_send_failed": {
+      "message": "Nie udało się wysłać podsumowania tygodnia: powiadomienie na telefon nie powiodło się. Sprawdź cel powiadomień strefy."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: zawór niedostępny",
+      "description": "Zawór strefy {zone} ({entity}) jest niedostępny od ponad godziny, więc strefa nie może podlewać. Sprawdź urządzenie zaworu i jego integrację. To zgłoszenie zniknie samo, gdy zawór wróci."
+    },
+    "sensor_offline": {
+      "title": "{zone}: czujnik offline (dni: {days})",
+      "description": "Encja {entity}, używana przez strefę {zone}, jest offline (dni: {days}). Strefa działa dalej bez niej (co to oznacza – zob. README), ale sprawdź urządzenie – albo usuń je ze strefy w „Konfiguruj”. To zgłoszenie zniknie samo, gdy czujnik znów zacznie raportować."
+    },
+    "notify_missing": {
+      "title": "{zone}: brak celu powiadomień na telefon",
+      "description": "Strefa {zone} wysyła powiadomienia na telefon do celu {entity}, który już nie istnieje w Home Assistant, więc powiadomienia nie docierają. Wybierz aktualny cel powiadomień w „Konfiguruj” strefy. To zgłoszenie zniknie samo, gdy cel znów będzie istniał."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: skalibruj wydajność emiterów",
+      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy wodomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to."
+    }
+  }
+}

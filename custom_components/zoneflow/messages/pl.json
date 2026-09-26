@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d %b, %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d %b",
+    "time": "%H:%M",
+    "days": "pon.,wt.,śr.,czw.,pt.,sob.,niedz.",
+    "months": "sty,lut,mar,kwi,maj,cze,lip,sie,wrz,paź,lis,gru"
+  },
+  "cycle": {
+    "deep_soak": "Głębokie podlewanie",
+    "routine": "Podlewanie regularne",
+    "service_run": "Uruchomienie serwisowe",
+    "test_pulse": "Impuls testowy"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Ulewny deszcz",
+      "message": "Zanotowano ulewny deszcz (24 h: {rain_24h}). Odliczanie przeschnięcia gleby zaktualizowane."
+    },
+    "stale_lock": {
+      "title": "⚠️ Zresetowano blokadę nawadniania",
+      "message": "Blokada nawadniania była włączona ponad 3 godziny. Zresetowano ją, żeby nie blokowała kolejnych podlewań."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Zadziałało zabezpieczenie zaworu",
+      "message": "Zawór był otwarty przez {minutes} min bez przerwy. Zamknięto go, aby chronić rośliny."
+    },
+    "power_loss": {
+      "title": "🚨 Zanik zasilania podczas podlewania",
+      "message": "Zawór lub pompa straciły zasilanie na ponad 10 minut w trakcie cyklu. Podlewanie przerwano i zdjęto blokadę; następne zaplanowane podlewanie spróbuje ponownie."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Zawór otwarty po powrocie zasilania",
+      "message": "Po powrocie zasilania zawór zgłosił, że jest otwarty — wymuszono zamknięcie. Sprawdź przekaźnik i okablowanie."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Podlewanie przerwane przez restart",
+      "message": "Home Assistant uruchomił się ponownie w trakcie cyklu. Blokadę zdjęto, a zawór zamknięto (jeśli był osiągalny); następne zaplanowane podlewanie spróbuje ponownie."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Koniec trybu deficytowego",
+      "message": "Minęła data zakończenia — regularne podlewanie wraca do pełnej dawki."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: brak przepływu wody",
+      "message": "Cykl się zakończył, ale przepływomierz nie pokazuje żadnej podanej wody. Sprawdź zawór, pompę i podłączenie przepływomierza."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: przerwano z powodu błędu",
+      "message": "Przerwano: {error}. Zawór jest zamknięty; następne zaplanowane podlewanie spróbuje ponownie."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: przerwano z powodu błędu",
+      "message": "Przerwano: {error}. Zawór {valve} może być nadal OTWARTY — sprawdź go teraz."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: niska moc pompy",
+      "message": "Trwa porcja {pulse}, ale pompa pokazuje {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle}: przerwano z powodu deszczu",
+      "message": "Przerwano po {given} z {planned} min: w ostatnich 30 minutach spadło {rain}. Następne zaplanowane podlewanie zdecyduje ponownie, uwzględniając ten deszcz."
+    },
+    "forecast_override": {
+      "title": "⏱️ Podlewanie mimo prognozy",
+      "message": "Prognoza wciąż zapowiadała deszcz, ale nie padało (dni bez deszczu: {days}, limit tej strefy: {limit}) — podlewam mimo to."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Głębokie podlewanie pominięte: limit czasu",
+      "message": "Wyliczony czas pracy ({minutes} min) przekracza limit bezpieczeństwa głębokiego podlewania tej strefy. Podlewanie anulowane — sprawdź wydajność i docelową dawkę."
+    },
+    "routine_cap": {
+      "title": "⚠️ Podlewanie regularne pominięte: limit czasu",
+      "message": "Wyliczony czas pracy ({minutes} min) przekracza limit bezpieczeństwa regularnego podlewania tej strefy ({cap} min). Podlewanie anulowane — sprawdź wydajność i dawki tygodniowe."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle}: pominięto – dzienny limit czasu",
+      "message": "Dziś już {used} min; to uruchomienie ({minutes} min) przekroczyłoby dzienny limit {cap} min. Kolejna próba w następnym terminie."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle}: anulowano",
+      "message": "Anulowano: w ostatnich 30 minutach spadło {rain}."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Głębokie podlewanie zakończone",
+      "message": "Podano {amount}, liczba porcji: {pulses} ({minutes} min). Liczy się też jako regularne podlewanie.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Następne regularne: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Zaległe podlewanie",
+      "message": "Od ostatniego podlewania minęło {days} dni — to wyjątkowo długa przerwa, warto sprawdzić system."
+    },
+    "routine_done": {
+      "title": "🚿 Podlewanie regularne zakończone",
+      "message": "Podlewano {minutes} min (dawka {target}, odliczony deszcz {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Sprawdź czujnik glebowy",
+      "message": "Odczyty mokrej gleby ({pct}%) wstrzymują regularne podlewanie (dni: {days}). Jeśli nie padało dużo, sprawdź czujnik (umiejscowienie, baterię, odczyt) — jego wskazania są nadal brane pod uwagę."
+    },
+    "probe_frozen": {
+      "title": "🌱 Czujnik glebowy chyba się zawiesił",
+      "message": "Czujnik glebowy pokazuje mokro ({pct}%) od dłuższego czasu (dni: {days}), bez nowego odczytu od 24 h, więc podlewanie znów idzie według harmonogramu. Sprawdź czujnik (bateria, połączenie)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Tryb serwisowy wyłączony",
+      "message": "Tryb serwisowy działał {minutes} min i wyłączył się sam (czas automatycznego wyłączenia)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Tryb serwisowy wyłączony",
+      "message": "Tryb serwisowy działał {minutes} min i wyłączył się sam (skrócono, by zmieścić się w dzisiejszym limicie czasu pracy)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Automatyczne dostrojenie",
+      "message": "Przerwę na przeschnięcie przed regularnym podlewaniem skrócono (dni: {days}) na podstawie Twoich ostatnich podlewań przed terminem."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Automatyczne dostrojenie",
+      "message": "Przerwę na przeschnięcie przed regularnym podlewaniem wydłużono (dni: {days}) na podstawie Twoich ostatnich pominięć."
+    },
+    "frost": {
+      "title": "❄️ {cycle}: czeka – przymrozek",
+      "message": "Jest {temp}, poniżej progu przymrozkowego {limit}. Sprawdzanie co godzinę przez maks. {hours} h, potem czeka na następny zaplanowany termin."
+    },
+    "flow_measured": {
+      "title": "💧 Zmierzono wydajność",
+      "message": "{volume} w {minutes} min: wydajność emiterów wynosi teraz {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Nie zmierzono wydajności",
+      "message": "Przepływomierz zliczył {volume} w {minutes} min, co nie daje użytecznej wydajności. Sprawdź przepływomierz i powierzchnię albo oblicz wydajność na podstawie emiterów (Konfiguruj → Wydajność)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Wilgotność gleby {pct}% (sucho) — podlano przed terminem z harmonogramu.",
+    "deficit_active": " Tryb deficytowy: dawka {pct}%.",
+    "deficit_hot": " Tryb deficytowy: dziś pełna dawka (upał).",
+    "deficit_soil_dry": " Tryb deficytowy: dziś pełna dawka (gleba na progu suchości).",
+    "deficit_no_temp": " Tryb deficytowy: pełna dawka (brak odczytu temperatury).",
+    "deficit_young": " Tryb deficytowy: pełna dawka (dawka rośliny wciąż narasta z fazą wzrostu)."
+  },
+  "status": {
+    "watering": "Trwa: {cycle}",
+    "service_run": "Trwa uruchomienie serwisowe",
+    "lock_held": "Wstrzymane: poprzednie podlewanie się nie zakończyło (strefa zablokowana)",
+    "snoozed": "Pominięte na dziś",
+    "done": "{cycle}: zakończono o {time} – {amount} w {minutes} min",
+    "skipped_soil_wet": "{cycle}: pominięto o {time} – gleba jest mokra ({pct}%)",
+    "skipped_drydown": "{cycle}: pominięto o {time} – gleba przesycha po deszczu do {until}",
+    "skipped_forecast": "{cycle}: pominięto o {time} – prognoza deszczu {rain}",
+    "skipped_rain_credit": "{cycle}: pominięto o {time} – niedawny deszcz ({rain}) pokrywa potrzebne {target}",
+    "skipped_wet_fortnight": "{cycle}: wstrzymano o {time} – deszcz w ostatnich 14 dniach: {rain}",
+    "skipped_service": "{cycle}: pominięto o {time} – zawór był zajęty przez uruchomienie serwisowe",
+    "cancelled_rain": "{cycle}: anulowano o {time} – padał deszcz ({rain} w 30 min)",
+    "refused_runtime_cap": "{cycle}: nie uruchomiono o {time} – potrzeba {minutes} min, ponad limit cyklu {cap} min",
+    "refused_deep_soak_cap": "{cycle}: nie uruchomiono o {time} – potrzeba {minutes} min, ponad limit",
+    "refused_daily_cap": "{cycle}: nie uruchomiono o {time} – przekroczyłoby dzisiejszy limit {cap} min",
+    "interrupted": "{cycle}: przerwano o {time} przed końcem",
+    "waiting_soil_wet": "Czeka, aż gleba przeschnie ({pct}%)",
+    "waiting_drydown": "Gleba przesycha po deszczu do {until}",
+    "next": "Następne podlewanie: {when}",
+    "next_deep_soak": "Następne: głębokie podlewanie {when}",
+    "first_run": "Pierwsze podlewanie: {when}",
+    "idle": "Nic nie zaplanowano",
+    "with_next": "{status} · następne {when}",
+    "waiting_pump": "Czeka na wspólną pompę: {cycle}",
+    "with_next_deep_soak": "{status} · głębokie podlewanie {when}",
+    "first_run_deep_soak": "Pierwsze: głębokie podlewanie {when}",
+    "paused": "Wstrzymane: brak podlewania, dopóki „Pauza” jest włączona",
+    "skipped_frost": "{cycle}: pominięto o {time} – {temp}, poniżej progu przymrozkowego ({limit})",
+    "waiting_frost": "{cycle}: wstrzymano o {time} – {temp}, poniżej progu przymrozkowego ({limit}); sprawdzanie co godzinę",
+    "waiting_deep_soak": "{cycle}: czeka od {time} – najpierw głębokie podlewanie, gdy zrobi się dość ciepło",
+    "paused_until": "Wstrzymane do {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: Twój tydzień",
+    "zone": "{zone}: podlano {runs}× — {water} w {minutes} min",
+    "measured": " (zmierzono {volume})",
+    "rain": " · deszcz (7 dni) {rain}",
+    "held_back": " · wstrzymane (dni: {days})",
+    "paused": " · pauza",
+    "next": " · następne {when}",
+    "zone_none": "{zone}: bez podlewania"
+  }
+}

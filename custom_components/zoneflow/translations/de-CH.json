@@ -1,0 +1,709 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow Bewässerung",
+        "description": "Gib dieser Bewässerungszone einen kurzen Namen (z. B. „Rasen vorne“, „Avocadobaum“). Für weitere Zonen füge diese Integration später einfach erneut hinzu.",
+        "data": {
+          "zone_name": "Zonenname",
+          "unit_system": "Einheiten",
+          "plant": "Was hier wächst (füllt Zielwerte und Einstellungen vor; alles später änderbar)"
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow Bewässerung",
+        "description": "Wähle hier deine echten Entitäten. Es werden keine eigenen physischen Entitäten angelegt. Nur der Ventilschalter ist Pflicht – alles andere darf leer bleiben, die Zone kommt dann auch ohne aus.",
+        "data": {
+          "valve_entity": "Ventilschalter",
+          "pump_power_entity": "Pumpen-Leistungssensor (optional)",
+          "pump_id": "Gemeinsame Pumpen-ID (optional, z. B. „Pumpe A“ – nur nötig, wenn diese Zone eine Pumpe mit einer anderen Zone teilt)",
+          "rain_counter_entity": "Kippzähler des Regenmessers (optional)",
+          "outdoor_temp_entity": "Außentemperatursensor (optional)",
+          "flow_meter_entity": "Durchflussmesser (optional)",
+          "soil_moisture_entity": "Bodenfeuchtesensor (optional, % – wenn gesetzt, entscheidet er direkt über die Routinebewässerung statt des berechneten Plans)",
+          "notify_entity": "Handy-Benachrichtigungsziel (optional)",
+          "weather_entity": "Quelle für Wettervorhersage (optional)",
+          "soil_type": "Bodenart",
+          "drainage": "Versickerung",
+          "slope": "Hangneigung",
+          "irrigation_method": "Bewässerungsart",
+          "growth_ramp_profile": "Automatische Wachstumskurve",
+          "csv_path": "Pfad der CSV-Logdatei",
+          "deep_soak_enabled": "Tiefenbewässerung aktivieren",
+          "deep_soak_time": "Uhrzeit der Tiefenbewässerung",
+          "routine_time": "Uhrzeit der Routinebewässerung",
+          "deep_soak_sun_mode": "Auslöser Tiefenbewässerung",
+          "deep_soak_sun_offset_minutes": "Sonnenversatz Tiefenbewässerung (Minuten)",
+          "routine_sun_mode": "Auslöser Routinebewässerung",
+          "routine_sun_offset_minutes": "Sonnenversatz Routinebewässerung (Minuten)"
+        }
+      },
+      "climate": {
+        "title": "Klima",
+        "description": "Wie ist die Wachstumszeit dort, wo diese Zone liegt? Das füllt nur die Temperaturregler auf der nächsten Seite vor – du kannst dort jeden Wert ändern, und später auch auf der Geräteseite der Zone.",
+        "data": {
+          "climate": "Klima"
+        }
+      },
+      "temperatures": {
+        "title": "Temperaturschwellen",
+        "description": "ZoneFlow mittelt die tägliche HÖCHSTtemperatur der letzten 3 Tage. Ab der Heiß-Schwelle wird öfter gegossen (alle 3 Tage), mit dem Wochenziel für heißes Wetter; unter der Kühl-Schwelle gilt das Wochenziel für kühles Wetter; dazwischen das normale.\n\nDie Ersatztemperatur gilt, wenn es keinen echten Messwert gibt: Ohne Temperatursensor ist sie deine manuelle Steuerung (bei Hitzewelle erhöhen, bei Kälteeinbruch senken); mit Sensor gilt sie nur, bis der Sensor seinen ersten vollen Tag aufgezeichnet hat, und nach 3 Tagen ganz ohne Messwert.",
+        "data": {
+          "hot_temp_threshold": "Schwelle für heißes Wetter",
+          "cool_temp_threshold": "Schwelle für kühles Wetter",
+          "fallback_temp": "Ersatz-/manuelle Temperatur"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Der Zonenname darf nicht leer sein.",
+      "cool_not_below_hot": "Die Kühl-Schwelle muss unter der Heiß-Schwelle liegen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurieren",
+        "menu_options": {
+          "settings": "Zoneneinstellungen (Entitäten, Boden, Zeitplan …)",
+          "flow_rate": "Durchflussrate: aus den Tropfern berechnen",
+          "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Ventilschalter",
+          "pump_power_entity": "Pumpen-Leistungssensor (optional)",
+          "pump_id": "Gemeinsame Pumpen-ID (optional, z. B. „Pumpe A“ – nur nötig, wenn diese Zone eine Pumpe mit einer anderen Zone teilt)",
+          "rain_counter_entity": "Kippzähler des Regenmessers (optional)",
+          "outdoor_temp_entity": "Außentemperatursensor (optional)",
+          "flow_meter_entity": "Durchflussmesser (optional)",
+          "soil_moisture_entity": "Bodenfeuchtesensor (optional, % – wenn gesetzt, entscheidet er direkt über die Routinebewässerung statt des berechneten Plans)",
+          "notify_entity": "Handy-Benachrichtigungsziel (optional)",
+          "weather_entity": "Quelle für Wettervorhersage (optional)",
+          "soil_type": "Bodenart",
+          "drainage": "Versickerung",
+          "slope": "Hangneigung",
+          "irrigation_method": "Bewässerungsart",
+          "growth_ramp_profile": "Automatische Wachstumskurve",
+          "csv_path": "Pfad der CSV-Logdatei",
+          "deep_soak_enabled": "Tiefenbewässerung aktivieren",
+          "deep_soak_time": "Uhrzeit der Tiefenbewässerung",
+          "routine_time": "Uhrzeit der Routinebewässerung",
+          "deep_soak_sun_mode": "Auslöser Tiefenbewässerung",
+          "deep_soak_sun_offset_minutes": "Sonnenversatz Tiefenbewässerung (Minuten)",
+          "routine_sun_mode": "Auslöser Routinebewässerung",
+          "routine_sun_offset_minutes": "Sonnenversatz Routinebewässerung (Minuten)",
+          "unit_system": "Einheiten"
+        }
+      },
+      "flow_rate": {
+        "title": "Durchflussrate der Tropfer",
+        "description": "Wie viel Wasser die Tropfer der Zone auf die Fläche bringen, die sie benetzen. 1 Liter auf 1 m² sind 1 mm. Bei Tropfern an Einzelpflanzen nimm die Fläche um sie herum, die wirklich nass wird. Das Ergebnis ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone.",
+        "data": {
+          "emitters": "Anzahl Tropfer bzw. Sprüher in der Zone",
+          "emitter_flow": "Durchfluss eines Tropfers",
+          "area": "Bewässerte Fläche"
+        }
+      },
+      "flow_measure": {
+        "title": "Durchflussrate messen",
+        "description": "Öffnet das Ventil {minutes} Minuten lang als Wartungslauf (zählt nicht als Bewässerung, die Minuten zählen aber zum heutigen Laufzeit-Sicherheitslimit) und berechnet die Durchflussrate aus den Litern des Durchflussmessers. Der Zähler darf dabei nur das Wasser dieser Zone messen. Das Ergebnis kommt als Handy-Nachricht und wird automatisch übernommen; Ausschalten des Wartungsmodus bricht die Messung ab.",
+        "data": {
+          "area": "Von den Tropfern bewässerte Fläche"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Tropfer-Durchflussrate auf {rate} gesetzt.",
+      "flow_rate_out_of_range": "Das ergibt {rate}, außerhalb des erlaubten Bereichs ({low} bis {high}). Prüfe die Zahlen – bei Tropfern an Einzelpflanzen nimm die Fläche, die sie wirklich benetzen, nicht das ganze Beet.",
+      "measuring": "Messung läuft: Das Ventil ist etwa {minutes} Minuten offen. Das Ergebnis kommt als Handy-Nachricht (oder in den Home Assistant-Benachrichtigungen, falls die Zone kein Handy-Ziel hat) und wird automatisch übernommen.",
+      "zone_not_loaded": "Diese Zone läuft gerade nicht, daher geht das jetzt nicht.",
+      "zone_busy": "Die Zone (oder ihre Pumpe) ist beschäftigt, oder das heutige Laufzeit-Sicherheitslimit ist ausgeschöpft. Versuche es später erneut.",
+      "flow_rate_disabled": "Die Entität „Tropfer-Durchflussrate (Kalibrierung)“ der Zone ist deaktiviert. Aktiviere sie (Geräteseite der Zone → Entitäten) und versuche es erneut."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Feste Uhrzeit oben verwenden",
+        "before_sunrise": "Vor Sonnenaufgang",
+        "after_sunrise": "Nach Sonnenaufgang",
+        "before_sunset": "Vor Sonnenuntergang",
+        "after_sunset": "Nach Sonnenuntergang"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Unsicher / gemischt",
+        "sandy": "Sandboden",
+        "sandy_loam": "Lehmiger Sand",
+        "loam": "Lehmboden",
+        "clay_loam": "Toniger Lehm",
+        "clay": "Tonboden"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Unsicher",
+        "fast": "Versickert schnell",
+        "medium": "Mittel",
+        "slow": "Versickert langsam"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Eben",
+        "slight": "Leicht geneigt",
+        "moderate": "Mäßig geneigt",
+        "steep": "Steil"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Tropfschlauch / Tropfer",
+        "micro_sprinkler": "Mikro-Sprüher",
+        "sprinkler": "Regner",
+        "soaker_hose": "Perlschlauch",
+        "other": "Sonstiges"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Aus (immer volles Wochenziel)",
+        "fast_annual": "Einjährig, schnellwachsend (z. B. die meisten Gemüse)",
+        "slow_fruiting": "Fruchtgemüse, langsam (z. B. Tomaten, Paprika)",
+        "established_perennial": "Mehrjährig, im Anwachsen (z. B. junger Baum oder Strauch)",
+        "custom": "Eigene Kurve (selbst festlegen)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Wie Home Assistant",
+        "metric": "Metrisch (mm, °C)",
+        "imperial": "Imperial (Zoll, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropisch (ganzjährig heiß, z. B. Südostasien)",
+        "hot_dry": "Heiße Sommer (Mittelmeer, Wüste, Süden der USA)",
+        "temperate": "Gemäßigt (großer Teil Europas, Norden der USA)",
+        "cool": "Kühle Sommer (Nordeuropa, UK, nördliche Küsten)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Etwas anderes (richte ich selbst ein)",
+        "tomatoes": "Tomaten",
+        "chilis": "Chili / Paprika",
+        "leafy_vegetables": "Blattgemüse / Salat",
+        "herbs": "Kräuter (mediterran)",
+        "strawberries": "Erdbeeren",
+        "flowers": "Blumenbeet",
+        "lawn": "Rasen",
+        "shrubs": "Sträucher / Hecke",
+        "young_tree": "Junger Baum (erste Jahre)",
+        "fruit_tree": "Eingewachsener Obstbaum"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Routine: Wochenziel normal"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Routine: Wochenziel heiß"
+      },
+      "hot_temp_threshold": {
+        "name": "Temperaturschwelle heiß"
+      },
+      "cool_temp_threshold": {
+        "name": "Temperaturschwelle kühl"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Routine: Wochenziel kühl"
+      },
+      "rain_eff_low": {
+        "name": "Regenwirksamkeit – leicht (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Regenwirksamkeit – mäßig (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Regenwirksamkeit – stark (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Tropfer-Durchflussrate (Kalibrierung)"
+      },
+      "deep_soak_target_mm": {
+        "name": "Tiefenbewässerung: Zieltiefe"
+      },
+      "pump_min_watts": {
+        "name": "Pumpe: Warnschwelle geringe Leistung"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Tiefenbewässerung: max. Laufzeit (Sicherheit)"
+      },
+      "max_runtime_minutes": {
+        "name": "Routine: max. Laufzeit (Sicherheit)"
+      },
+      "routine_drydown_days": {
+        "name": "Routine: Abtrockenzeit"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Tiefenbewässerung: Abtrockenzeit Unterboden"
+      },
+      "deep_soak_interval_days": {
+        "name": "Tiefenbewässerung: Intervall"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Tiefenbewässerung: Regenobergrenze (14 Tage)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Regenmesser mm pro Kippung (Kalibrierung)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Regen-Abbruchschwelle vorab (30 min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pumpen-Vorlauf (Anlaufzeit)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pumpen-Nachlauf (Beruhigungszeit)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Vorhersage: Regenmenge zum Aussetzen"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Vorhersage: Schwelle Regenwahrscheinlichkeit"
+      },
+      "forecast_dry_override_days": {
+        "name": "Vorhersage: Übersteuern bei Trockenheit"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Bodenfeuchte: Schwelle trocken"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Bodenfeuchte: Schwelle nass"
+      },
+      "routine_pulse_count": {
+        "name": "Routine: Anzahl Durchgänge (aufgeteilt)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Routine: Einsickerpause zwischen Durchgängen"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Tiefenbewässerung: Anzahl Durchgänge (aufgeteilt)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Tiefenbewässerung: Einsickerpause zwischen Durchgängen"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Max. tägliche Bewässerungszeit (Sicherheit)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Wachstumsphase: manueller Wert"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Eigene Kurve: Start-% an Tag 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Eigene Kurve: Tag Zwischenpunkt 1"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Eigene Kurve: % Zwischenpunkt 1"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Eigene Kurve: Tag Zwischenpunkt 2"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Eigene Kurve: % Zwischenpunkt 2"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Eigene Kurve: Tag mit 100%"
+      },
+      "crop_coefficient": {
+        "name": "Pflanzenfaktor (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Defizitmodus: Wassermenge"
+      },
+      "fallback_temp": {
+        "name": "Ersatz-/manuelle Temperatur"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Wartungsmodus: Auto-Aus"
+      },
+      "frost_guard_temp": {
+        "name": "Frostschutz-Temperatur"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Letzte Routinebewässerung"
+      },
+      "last_deep_soak": {
+        "name": "Letzte Tiefenbewässerung"
+      },
+      "last_significant_rain": {
+        "name": "Letzter ergiebiger Regen"
+      },
+      "planting_date": {
+        "name": "Pflanz-/Umpflanzdatum"
+      },
+      "last_fertilizing": {
+        "name": "Letzte Düngung"
+      },
+      "deficit_until": {
+        "name": "Defizitmodus endet"
+      },
+      "paused_until": {
+        "name": "Pausiert bis"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Tiefenbewässerung jetzt starten"
+      },
+      "run_routine": {
+        "name": "Routinebewässerung jetzt starten"
+      },
+      "reset_lock": {
+        "name": "Bewässerungssperre zurücksetzen"
+      },
+      "snooze_today": {
+        "name": "Heute aussetzen"
+      },
+      "service_run_1_min": {
+        "name": "Wartungslauf 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Wartungslauf 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Wartungslauf 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Bewässerung läuft"
+      },
+      "irrigation_abort": {
+        "name": "Abbruch-Markierung Bewässerung"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Tiefenbewässerung aktiv"
+      },
+      "deficit_mode": {
+        "name": "Defizitmodus"
+      },
+      "service_mode": {
+        "name": "Wartungsmodus"
+      },
+      "pause": {
+        "name": "Pause"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Regen letzte 30 min"
+      },
+      "rain_past_24h": {
+        "name": "Regen letzte 24 h"
+      },
+      "rain_past_3d": {
+        "name": "Regen letzte 3 Tage"
+      },
+      "rain_past_7d": {
+        "name": "Regen letzte 7 Tage"
+      },
+      "rain_past_14d": {
+        "name": "Regen letzte 14 Tage"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Höchsttemperatur (3-Tage-Mittel)"
+      },
+      "next_irrigation_estimate": {
+        "name": "Nächste Bewässerung (Schätzung)"
+      },
+      "days_until_next_run": {
+        "name": "Tage bis zur nächsten Bewässerung"
+      },
+      "last_water_delivered": {
+        "name": "Letzte Wassermenge (geschätzt)"
+      },
+      "rain_today": {
+        "name": "Regen heute"
+      },
+      "soil_profile": {
+        "name": "Bodenprofil"
+      },
+      "growth_ramp_pct": {
+        "name": "Wachstumskurve"
+      },
+      "last_cycle_water_liters": {
+        "name": "Letzte Wassermenge (gemessen)"
+      },
+      "reference_et0_3d": {
+        "name": "Referenz-ET₀ (3-Tage-Mittel)"
+      },
+      "routine_weekly_target": {
+        "name": "Routine: Wochenziel"
+      },
+      "soil_moisture": {
+        "name": "Bodenfeuchte"
+      },
+      "soil_moisture_status": {
+        "name": "Bodenfeuchte-Status",
+        "state": {
+          "dry": "Trocken – Bewässerung vorgezogen",
+          "wet": "Nass – wird ausgesetzt",
+          "in_range": "Im Bereich – nach Zeitplan",
+          "offline": "Sensor offline – nach Zeitplan",
+          "stale": "Seit 24 h kein neuer Wert – nach Zeitplan",
+          "implausible": "Unmöglicher Wert – nach Zeitplan"
+        }
+      },
+      "deficit_status": {
+        "name": "Defizitmodus-Status",
+        "state": {
+          "off": "Aus",
+          "active": "Aktiv – reduzierte Menge",
+          "full_dose_hot": "Heute volle Menge (heißes Wetter)",
+          "full_dose_soil_dry": "Heute volle Menge (Boden trocken)",
+          "ended": "Beendet",
+          "full_dose_young_plant": "Volle Menge (junge Pflanze)",
+          "full_dose_no_temp": "Heute volle Menge (kein Temperaturwert vorhanden)"
+        }
+      },
+      "status": {
+        "name": "Status"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Bodenart",
+        "state": {
+          "unknown": "Unsicher / gemischt",
+          "sandy": "Sandboden",
+          "sandy_loam": "Lehmiger Sand",
+          "loam": "Lehmboden",
+          "clay_loam": "Toniger Lehm",
+          "clay": "Tonboden"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Wachstumsphase",
+        "state": {
+          "auto": "Auto (nach Pflanzdatum)",
+          "seedling": "Sämling",
+          "establishing": "Anwachsen",
+          "vegetative": "Blattwachstum",
+          "near_fruiting": "Kurz vor Fruchtansatz",
+          "mature": "Ausgewachsen",
+          "manual": "Manuell (Schieberegler)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Wachstumskurven-Profil",
+        "state": {
+          "off": "Aus (immer volles Wochenziel)",
+          "fast_annual": "Einjährig, schnellwachsend (z. B. die meisten Gemüse)",
+          "slow_fruiting": "Fruchtgemüse, langsam (z. B. Tomaten, Paprika)",
+          "established_perennial": "Mehrjährig, im Anwachsen (z. B. junger Baum oder Strauch)",
+          "custom": "Eigene Kurve (selbst festlegen)"
+        }
+      },
+      "health_status": {
+        "name": "Gesundheit",
+        "state": {
+          "excellent": "Ausgezeichnet",
+          "good": "Gut",
+          "poor": "Schlecht",
+          "sick": "Krank"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Nächste Düngung",
+        "state": {
+          "1": "in 1 Monat",
+          "2": "in 2 Monaten",
+          "3": "in 3 Monaten",
+          "4": "in 4 Monaten",
+          "5": "in 5 Monaten",
+          "6": "in 6 Monaten",
+          "7": "in 7 Monaten",
+          "8": "in 8 Monaten",
+          "9": "in 9 Monaten",
+          "10": "in 10 Monaten",
+          "11": "in 11 Monaten",
+          "12": "in 12 Monaten"
+        }
+      },
+      "demand_model": {
+        "name": "Wasserbedarfsmodell",
+        "state": {
+          "temperature_tiers": "Temperaturstufen",
+          "et_curve": "ET-Kurve (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Benachrichtigungen",
+        "state": {
+          "all": "Alle",
+          "warnings": "Nur Warnungen",
+          "none": "Keine"
+        }
+      },
+      "weekly_summary": {
+        "name": "Wochenübersicht",
+        "state": {
+          "off": "Aus",
+          "mon": "Montag",
+          "tue": "Dienstag",
+          "wed": "Mittwoch",
+          "thu": "Donnerstag",
+          "fri": "Freitag",
+          "sat": "Samstag",
+          "sun": "Sonntag"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Gesundheitsnotizen"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Tiefenbewässerung starten",
+      "description": "Startet die Tiefenbewässerung jetzt, sofern (und nur wenn) dieselben Bedingungen wie beim 05:00-Zeitplan erfüllt sind (Sperre frei, 14-Tage-Intervall und Abtrockenzeit erreicht, 14-Tage-Regenobergrenze nicht überschritten). Gleicher Ablauf wie beim geplanten Lauf.",
+      "fields": {
+        "device_id": {
+          "name": "Zonen-Gerät",
+          "description": "Das Gerät der Zone. Nur nötig, wenn 2 oder mehr Zonen eingerichtet sind."
+        },
+        "entity_id": {
+          "name": "Zonen-Entität",
+          "description": "Eine beliebige Entität des Zonen-Geräts (Alternative zum Zonen-Gerät)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Routinebewässerung starten",
+      "description": "Startet die Routinebewässerung jetzt, sofern (und nur wenn) dieselben Bedingungen wie beim 05:30-Zeitplan erfüllt sind. Gleicher Ablauf wie beim geplanten Lauf.",
+      "fields": {
+        "device_id": {
+          "name": "Zonen-Gerät",
+          "description": "Das Gerät der Zone. Nur nötig, wenn 2 oder mehr Zonen eingerichtet sind."
+        },
+        "entity_id": {
+          "name": "Zonen-Entität",
+          "description": "Eine beliebige Entität des Zonen-Geräts (Alternative zum Zonen-Gerät)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Bewässerungssperre zurücksetzen",
+      "description": "Hebt die Sperre und die Abbruch-Markierung zwangsweise auf. Nur für Notfälle.",
+      "fields": {
+        "device_id": {
+          "name": "Zonen-Gerät",
+          "description": "Das Gerät der Zone. Nur nötig, wenn 2 oder mehr Zonen eingerichtet sind."
+        },
+        "entity_id": {
+          "name": "Zonen-Entität",
+          "description": "Eine beliebige Entität des Zonen-Geräts (Alternative zum Zonen-Gerät)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Heute aussetzen",
+      "description": "Überspringt die geplanten Bewässerungen dieser Zone (Tiefenbewässerung, Routine oder beide), die heute noch nicht gelaufen sind, ohne andere Einstellungen zu ändern. Ab morgen geht es automatisch normal weiter.",
+      "fields": {
+        "device_id": {
+          "name": "Zonen-Gerät",
+          "description": "Das Gerät der Zone. Nur nötig, wenn 2 oder mehr Zonen eingerichtet sind."
+        },
+        "entity_id": {
+          "name": "Zonen-Entität",
+          "description": "Eine beliebige Entität des Zonen-Geräts (Alternative zum Zonen-Gerät)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Testimpuls",
+      "description": "Umgeht alle Zeitplan-, Abtrocken- und Regenbedingungen und öffnet das Ventil einmal kurz – zum Testen der Ventil-/Pumpenverkabelung, bevor du dich auf den echten Zeitplan verlässt. Sperre und Sicherheitswächter gelten weiterhin.",
+      "fields": {
+        "device_id": {
+          "name": "Zonen-Gerät",
+          "description": "Das Gerät der Zone. Nur nötig, wenn 2 oder mehr Zonen eingerichtet sind."
+        },
+        "entity_id": {
+          "name": "Zonen-Entität",
+          "description": "Eine beliebige Entität des Zonen-Geräts (Alternative zum Zonen-Gerät)."
+        },
+        "seconds": {
+          "name": "Sekunden",
+          "description": "Impulsdauer in Sekunden (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Wochenübersicht jetzt senden",
+      "description": "Sendet die Wochenübersicht jetzt an jedes Handy mit einer Zone, für die ein Wochenübersicht-Tag eingestellt ist – als Vorschau; die Zahlen der Woche laufen bis zur geplanten Übersicht weiter."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Dieses Datum darf nicht in der Zukunft liegen: Es hält etwas fest, das schon passiert ist. Nur das Pflanz-/Umpflanzdatum darf vorausliegen."
+    },
+    "cool_not_below_hot": {
+      "message": "Die Schwelle für kühles Wetter muss unter der für heißes Wetter bleiben. Um beide zu senken, zuerst die kühle senken; um beide anzuheben, zuerst die heiße anheben."
+    },
+    "zone_busy": {
+      "message": "Diese Zone ist beschäftigt (sie gießt oder ein Wartungslauf läuft). Versuche es erneut, wenn sie fertig ist."
+    },
+    "pump_busy": {
+      "message": "Die gemeinsam genutzte Pumpe dieser Zone wird gerade von einer anderen Zone verwendet. Versuche es erneut, wenn diese fertig ist."
+    },
+    "daily_cap_reached": {
+      "message": "Diese Zone hat ihr heutiges Laufzeit-Sicherheitslimit erreicht, daher kann bis morgen kein Wartungslauf starten (oder erhöhe „Max. tägliche Bewässerungszeit (Sicherheit)“)."
+    },
+    "zone_paused": {
+      "message": "Diese Zone ist pausiert. Schalte Pause aus, um sie zu bewässern."
+    },
+    "pause_until_past": {
+      "message": "Wähle ein Datum und eine Uhrzeit in der Zukunft für das Pausenende."
+    },
+    "no_weekly_summary": {
+      "message": "Keine Zone hat einen Wochenübersicht-Tag und ein Handy-Benachrichtigungsziel eingestellt, daher gibt es nichts zu senden."
+    },
+    "summary_send_failed": {
+      "message": "Die Wochenübersicht konnte nicht gesendet werden: Die Benachrichtigung ans Handy ist fehlgeschlagen. Prüfe das Benachrichtigungsziel der Zone."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: Ventil nicht verfügbar",
+      "description": "Das Ventil der Zone {zone} ({entity}) ist seit über einer Stunde nicht verfügbar, daher kann die Zone nicht bewässern. Prüfe das Gerät des Ventils und seine Integration. Dieser Hinweis verschwindet von selbst, sobald das Ventil wieder da ist."
+    },
+    "sensor_offline": {
+      "title": "{zone}: Sensor seit {days} Tagen offline",
+      "description": "{entity}, genutzt von Zone {zone}, ist seit {days} Tagen offline. Die Zone arbeitet ohne ihn weiter (was das bedeutet, steht in der README), aber prüfe das Gerät – oder entferne ihn unter „Konfigurieren“ aus der Zone. Dieser Hinweis verschwindet von selbst, sobald der Sensor wieder meldet."
+    },
+    "notify_missing": {
+      "title": "{zone}: Handy-Benachrichtigungsziel fehlt",
+      "description": "Zone {zone} sendet ihre Handy-Benachrichtigungen an {entity}, das es in Home Assistant nicht mehr gibt, daher kommen keine Benachrichtigungen an. Wähle unter „Konfigurieren“ der Zone das aktuelle Benachrichtigungsziel. Dieser Hinweis verschwindet von selbst, sobald es wieder existiert."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: Tropfer-Durchflussrate kalibrieren",
+      "description": "Zone {zone} nutzt noch den Standardwert der Tropfer-Durchflussrate (Kalibrierung) (0,24 mm/min). Genau diese Zahl bestimmt, wie viel Wasser jeder Lauf gibt – miss sie also für deine Tropfer: „Konfigurieren → Durchflussrate“ der Zone berechnet sie aus deinen Tropfern oder misst sie mit einem Durchflussmesser. Wenn 0,24 mm/min für diese Zone wirklich stimmt, ignoriere diesen Hinweis."
+    }
+  }
+}

@@ -1,0 +1,709 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Riego ZoneFlow",
+        "description": "Dale a esta zona de riego un nombre corto (p. ej., \"Césped delantero\", \"Aguacate\"). Para añadir más zonas después, vuelve a añadir esta integración.",
+        "data": {
+          "zone_name": "Nombre de la zona",
+          "unit_system": "Unidades",
+          "plant": "Qué hay plantado (rellena objetivos y ajustes; todo se puede cambiar después)"
+        }
+      },
+      "entities": {
+        "title": "Riego ZoneFlow",
+        "description": "Elige tus entidades reales. ZoneFlow nunca crea entidades físicas propias. Solo el interruptor de la válvula es obligatorio; todo lo demás sigue funcionando, con menos funciones, si se deja vacío.",
+        "data": {
+          "valve_entity": "Interruptor de la válvula",
+          "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
+          "pump_id": "ID de bomba compartida (opcional, p. ej., \"Bomba A\"; solo si esta zona comparte una bomba física con otra zona)",
+          "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
+          "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
+          "flow_meter_entity": "Caudalímetro (opcional)",
+          "soil_moisture_entity": "Sensor de humedad del suelo (opcional, %; si se define, decide el riego habitual directamente en lugar de la programación calculada)",
+          "notify_entity": "Destino de notificaciones del teléfono (opcional)",
+          "weather_entity": "Fuente de previsión meteorológica (opcional)",
+          "soil_type": "Tipo de suelo",
+          "drainage": "Drenaje",
+          "slope": "Pendiente",
+          "irrigation_method": "Método de riego",
+          "growth_ramp_profile": "Rampa automática por fase de crecimiento",
+          "csv_path": "Ruta del archivo de registro CSV",
+          "deep_soak_enabled": "Activar el ciclo de riego profundo",
+          "deep_soak_time": "Hora del riego profundo",
+          "routine_time": "Hora del riego habitual",
+          "deep_soak_sun_mode": "Inicio del riego profundo",
+          "deep_soak_sun_offset_minutes": "Desfase solar del riego profundo (minutos)",
+          "routine_sun_mode": "Inicio del riego habitual",
+          "routine_sun_offset_minutes": "Desfase solar del riego habitual (minutos)"
+        }
+      },
+      "climate": {
+        "title": "Clima",
+        "description": "¿Cómo es la temporada de cultivo donde está esta zona? Esto solo rellena los controles de temperatura de la página siguiente; puedes cambiar cada valor allí y, más adelante, en la página del dispositivo de la zona.",
+        "data": {
+          "climate": "Clima"
+        }
+      },
+      "temperatures": {
+        "title": "Umbrales de temperatura",
+        "description": "ZoneFlow promedia la temperatura MÁXIMA diaria de los últimos 3 días. Si está en el umbral de calor o por encima, riega más a menudo (cada 3 días) con el objetivo semanal de calor; por debajo del umbral de fresco usa el objetivo semanal de fresco; entre ambos, el normal.\n\nLa temperatura de respaldo se usa cuando no hay una lectura real: sin sensor de temperatura es tu control manual (súbela en una ola de calor, bájala en una racha de frío); con sensor solo se usa hasta que el sensor haya registrado su primer día completo, y tras 3 días sin ninguna lectura.",
+        "data": {
+          "hot_temp_threshold": "Umbral de tiempo caluroso",
+          "cool_temp_threshold": "Umbral de tiempo fresco",
+          "fallback_temp": "Temperatura de respaldo / manual"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "El nombre de la zona no puede estar vacío.",
+      "cool_not_below_hot": "El umbral de fresco tiene que estar por debajo del umbral de calor."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurar",
+        "menu_options": {
+          "settings": "Ajustes de la zona (entidades, suelo, programación…)",
+          "flow_rate": "Caudal: calcularlo a partir de los emisores",
+          "flow_measure": "Caudal: medirlo con el caudalímetro"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Interruptor de la válvula",
+          "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
+          "pump_id": "ID de bomba compartida (opcional, p. ej., \"Bomba A\"; solo si esta zona comparte una bomba física con otra zona)",
+          "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
+          "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
+          "flow_meter_entity": "Caudalímetro (opcional)",
+          "soil_moisture_entity": "Sensor de humedad del suelo (opcional, %; si se define, decide el riego habitual directamente en lugar de la programación calculada)",
+          "notify_entity": "Destino de notificaciones del teléfono (opcional)",
+          "weather_entity": "Fuente de previsión meteorológica (opcional)",
+          "soil_type": "Tipo de suelo",
+          "drainage": "Drenaje",
+          "slope": "Pendiente",
+          "irrigation_method": "Método de riego",
+          "growth_ramp_profile": "Rampa automática por fase de crecimiento",
+          "csv_path": "Ruta del archivo de registro CSV",
+          "deep_soak_enabled": "Activar el ciclo de riego profundo",
+          "deep_soak_time": "Hora del riego profundo",
+          "routine_time": "Hora del riego habitual",
+          "deep_soak_sun_mode": "Inicio del riego profundo",
+          "deep_soak_sun_offset_minutes": "Desfase solar del riego profundo (minutos)",
+          "routine_sun_mode": "Inicio del riego habitual",
+          "routine_sun_offset_minutes": "Desfase solar del riego habitual (minutos)",
+          "unit_system": "Unidades"
+        }
+      },
+      "flow_rate": {
+        "title": "Caudal de los emisores",
+        "description": "Cuánta agua aportan los emisores de la zona sobre la superficie que mojan. 1 litro sobre 1 m² equivale a 1 mm. Para goteros en plantas sueltas, usa la superficie a su alrededor que realmente se moja. El resultado sustituye la Calibración del caudal de emisores de la zona.",
+        "data": {
+          "emitters": "Número de emisores (goteros, difusores) en la zona",
+          "emitter_flow": "Caudal de un emisor",
+          "area": "Superficie que riegan"
+        }
+      },
+      "flow_measure": {
+        "title": "Medir el caudal",
+        "description": "Abre la válvula durante {minutes} minutos como ejecución de mantenimiento (no cuenta como riego, pero sus minutos sí cuentan para el límite de seguridad de tiempo diario) y calcula el caudal a partir de los litros del caudalímetro. Mientras funciona, el medidor solo debe medir el agua de esta zona. El resultado llega como mensaje al teléfono y se aplica automáticamente; si desactivas el Modo mantenimiento, se cancela.",
+        "data": {
+          "area": "Superficie que riegan los emisores de la zona"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Caudal de emisores ajustado a {rate}.",
+      "flow_rate_out_of_range": "Eso da {rate}, fuera de lo que permite el ajuste ({low} a {high}). Revisa los números: para goteros repartidos entre plantas sueltas, usa la superficie que realmente mojan, no todo el bancal.",
+      "measuring": "Midiendo: la válvula se abre durante unos {minutes} minutos. El resultado llega como mensaje al teléfono (o en las notificaciones de Home Assistant si la zona no tiene destino de teléfono) y se aplica automáticamente.",
+      "zone_not_loaded": "Esta zona no está en marcha ahora mismo, así que no se puede hacer esto.",
+      "zone_busy": "La zona (o su bomba) está ocupada, o ya se agotó el límite de seguridad de tiempo de hoy. Inténtalo más tarde.",
+      "flow_rate_disabled": "La entidad Calibración del caudal de emisores de la zona está deshabilitada. Habilítala (página del dispositivo de la zona → sus entidades) e inténtalo de nuevo."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Usar la hora fija de arriba",
+        "before_sunrise": "Antes del amanecer",
+        "after_sunrise": "Después del amanecer",
+        "before_sunset": "Antes del atardecer",
+        "after_sunset": "Después del atardecer"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "No lo sé / mixto",
+        "sandy": "Arenoso",
+        "sandy_loam": "Franco arenoso",
+        "loam": "Franco",
+        "clay_loam": "Franco arcilloso",
+        "clay": "Arcilloso"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "No lo sé",
+        "fast": "Drena rápido",
+        "medium": "Medio",
+        "slow": "Drena lento"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Llano",
+        "slight": "Pendiente suave",
+        "moderate": "Pendiente moderada",
+        "steep": "Pendiente pronunciada"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Línea de goteo / goteros",
+        "micro_sprinkler": "Microaspersor",
+        "sprinkler": "Aspersor",
+        "soaker_hose": "Manguera exudante",
+        "other": "Otro"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Desactivada (usar siempre el objetivo semanal completo)",
+        "fast_annual": "Anual de crecimiento rápido (p. ej., casi todas las hortalizas)",
+        "slow_fruiting": "Cultivo de fruto lento (p. ej., tomates, pimientos)",
+        "established_perennial": "Perenne en arraigo (p. ej., un árbol o arbusto joven)",
+        "custom": "Personalizada (define tu propia curva)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Igual que Home Assistant",
+        "metric": "Métrico (mm, °C)",
+        "imperial": "Imperial (pulgadas, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropical (calor todo el año, p. ej., Sudeste Asiático)",
+        "hot_dry": "Veranos calurosos (mediterráneo, desierto, sur de EE. UU.)",
+        "temperate": "Templado (casi toda Europa, norte de EE. UU.)",
+        "cool": "Veranos frescos (países nórdicos, Reino Unido, costa norte)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Otra cosa (lo configuro yo)",
+        "tomatoes": "Tomates",
+        "chilis": "Chiles / pimientos",
+        "leafy_vegetables": "Hortalizas de hoja / ensalada",
+        "herbs": "Aromáticas (mediterráneas)",
+        "strawberries": "Fresas",
+        "flowers": "Macizo de flores",
+        "lawn": "Césped",
+        "shrubs": "Arbustos / seto",
+        "young_tree": "Árbol joven (primeros años)",
+        "fruit_tree": "Frutal ya establecido"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Objetivo semanal normal"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Objetivo semanal con calor"
+      },
+      "hot_temp_threshold": {
+        "name": "Umbral de tiempo caluroso"
+      },
+      "cool_temp_threshold": {
+        "name": "Umbral de tiempo fresco"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Objetivo semanal con fresco"
+      },
+      "rain_eff_low": {
+        "name": "Lluvia efectiva - ligera (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Lluvia efectiva - moderada (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Lluvia efectiva - fuerte (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Calibración del caudal de emisores"
+      },
+      "deep_soak_target_mm": {
+        "name": "Objetivo del riego profundo"
+      },
+      "pump_min_watts": {
+        "name": "Bomba: aviso de baja potencia"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Riego profundo: tiempo máximo de seguridad"
+      },
+      "max_runtime_minutes": {
+        "name": "Riego habitual: tiempo máximo de seguridad"
+      },
+      "routine_drydown_days": {
+        "name": "Riego habitual: espera de secado"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Riego profundo: espera de secado del subsuelo"
+      },
+      "deep_soak_interval_days": {
+        "name": "Intervalo del riego profundo"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Riego profundo: tope de lluvia (14d)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Pluviómetro: mm por vuelco (calibración)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Lluvia que cancela el riego (30min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Bomba: espera previa (arranque)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Bomba: espera posterior (asentamiento)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Previsión: lluvia para omitir el riego"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Previsión: probabilidad de lluvia mínima"
+      },
+      "forecast_dry_override_days": {
+        "name": "Previsión: regar igual tras días secos"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Humedad del suelo: umbral seco"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Humedad del suelo: umbral húmedo"
+      },
+      "routine_pulse_count": {
+        "name": "Riego habitual: n.º de pulsos (ciclo dividido)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Riego habitual: pausa entre pulsos"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Riego profundo: n.º de pulsos (ciclo dividido)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Riego profundo: pausa entre pulsos"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Tiempo máximo de riego diario (seguridad)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Fase de crecimiento: ajuste manual"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Rampa personalizada: % inicial (día 0)"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Rampa personalizada: día del punto 1"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Rampa personalizada: % del punto 1"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Rampa personalizada: día del punto 2"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Rampa personalizada: % del punto 2"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Rampa personalizada: día en que llega al 100%"
+      },
+      "crop_coefficient": {
+        "name": "Coeficiente de cultivo (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Agua en modo déficit"
+      },
+      "fallback_temp": {
+        "name": "Temperatura de respaldo / manual"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Apagado automático del modo mantenimiento"
+      },
+      "frost_guard_temp": {
+        "name": "Temperatura de protección antiheladas"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Último riego habitual"
+      },
+      "last_deep_soak": {
+        "name": "Último riego profundo"
+      },
+      "last_significant_rain": {
+        "name": "Última lluvia importante"
+      },
+      "planting_date": {
+        "name": "Fecha de siembra / trasplante"
+      },
+      "last_fertilizing": {
+        "name": "Último abonado"
+      },
+      "deficit_until": {
+        "name": "Fin del modo déficit"
+      },
+      "paused_until": {
+        "name": "En pausa hasta"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Riego profundo ahora"
+      },
+      "run_routine": {
+        "name": "Riego habitual ahora"
+      },
+      "reset_lock": {
+        "name": "Restablecer bloqueo de riego"
+      },
+      "snooze_today": {
+        "name": "Omitir hoy"
+      },
+      "service_run_1_min": {
+        "name": "Mantenimiento 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Mantenimiento 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Mantenimiento 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Riego en curso"
+      },
+      "irrigation_abort": {
+        "name": "Indicador de cancelación del riego"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Riego profundo activado"
+      },
+      "deficit_mode": {
+        "name": "Modo déficit"
+      },
+      "service_mode": {
+        "name": "Modo mantenimiento"
+      },
+      "pause": {
+        "name": "Pausa"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Lluvia últimos 30min"
+      },
+      "rain_past_24h": {
+        "name": "Lluvia últimas 24h"
+      },
+      "rain_past_3d": {
+        "name": "Lluvia últimos 3d"
+      },
+      "rain_past_7d": {
+        "name": "Lluvia últimos 7d"
+      },
+      "rain_past_14d": {
+        "name": "Lluvia últimos 14d"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Temperatura máxima media (3 días)"
+      },
+      "next_irrigation_estimate": {
+        "name": "Próximo riego (estimado)"
+      },
+      "days_until_next_run": {
+        "name": "Días hasta el próximo riego"
+      },
+      "last_water_delivered": {
+        "name": "Último aporte de agua (estimado)"
+      },
+      "rain_today": {
+        "name": "Lluvia hoy"
+      },
+      "soil_profile": {
+        "name": "Perfil del suelo"
+      },
+      "growth_ramp_pct": {
+        "name": "Rampa de crecimiento"
+      },
+      "last_cycle_water_liters": {
+        "name": "Agua del último ciclo (medida)"
+      },
+      "reference_et0_3d": {
+        "name": "ET₀ de referencia (media 3 días)"
+      },
+      "routine_weekly_target": {
+        "name": "Objetivo semanal (riego habitual)"
+      },
+      "soil_moisture": {
+        "name": "Humedad del suelo"
+      },
+      "soil_moisture_status": {
+        "name": "Estado de la humedad del suelo",
+        "state": {
+          "dry": "Seco - riego adelantado",
+          "wet": "Húmedo - se omite",
+          "in_range": "En rango - según programación",
+          "offline": "Sensor desconectado - según programación",
+          "stale": "Sin lecturas en 24 h - según programación",
+          "implausible": "Lectura imposible - según programación"
+        }
+      },
+      "deficit_status": {
+        "name": "Estado del modo déficit",
+        "state": {
+          "off": "Desactivado",
+          "active": "Activo - dosis reducida",
+          "full_dose_hot": "Dosis completa hoy (calor)",
+          "full_dose_soil_dry": "Dosis completa hoy (suelo seco)",
+          "ended": "Finalizado",
+          "full_dose_young_plant": "Dosis completa (planta joven)",
+          "full_dose_no_temp": "Dosis completa hoy (sin lecturas de temperatura registradas)"
+        }
+      },
+      "status": {
+        "name": "Estado"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Tipo de suelo",
+        "state": {
+          "unknown": "No lo sé / mixto",
+          "sandy": "Arenoso",
+          "sandy_loam": "Franco arenoso",
+          "loam": "Franco",
+          "clay_loam": "Franco arcilloso",
+          "clay": "Arcilloso"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Fase de crecimiento",
+        "state": {
+          "auto": "Automática (por fecha de siembra)",
+          "seedling": "Plántula",
+          "establishing": "Arraigando",
+          "vegetative": "Crecimiento vegetativo",
+          "near_fruiting": "Cerca de fructificar",
+          "mature": "Adulta",
+          "manual": "Manual (usar el control deslizante)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Perfil de rampa de crecimiento",
+        "state": {
+          "off": "Desactivada (usar siempre el objetivo semanal completo)",
+          "fast_annual": "Anual de crecimiento rápido (p. ej., casi todas las hortalizas)",
+          "slow_fruiting": "Cultivo de fruto lento (p. ej., tomates, pimientos)",
+          "established_perennial": "Perenne en arraigo (p. ej., un árbol o arbusto joven)",
+          "custom": "Personalizada (define tu propia curva)"
+        }
+      },
+      "health_status": {
+        "name": "Salud",
+        "state": {
+          "excellent": "Excelente",
+          "good": "Buena",
+          "poor": "Débil",
+          "sick": "Enferma"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Próximo abonado en",
+        "state": {
+          "1": "1 mes",
+          "2": "2 meses",
+          "3": "3 meses",
+          "4": "4 meses",
+          "5": "5 meses",
+          "6": "6 meses",
+          "7": "7 meses",
+          "8": "8 meses",
+          "9": "9 meses",
+          "10": "10 meses",
+          "11": "11 meses",
+          "12": "12 meses"
+        }
+      },
+      "demand_model": {
+        "name": "Modelo de demanda de agua",
+        "state": {
+          "temperature_tiers": "Por tramos de temperatura",
+          "et_curve": "Curva ET (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Notificaciones",
+        "state": {
+          "all": "Todas",
+          "warnings": "Solo avisos",
+          "none": "Ninguna"
+        }
+      },
+      "weekly_summary": {
+        "name": "Resumen semanal",
+        "state": {
+          "off": "Desactivado",
+          "mon": "Lunes",
+          "tue": "Martes",
+          "wed": "Miércoles",
+          "thu": "Jueves",
+          "fri": "Viernes",
+          "sat": "Sábado",
+          "sun": "Domingo"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Notas de salud"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Ejecutar riego profundo",
+      "description": "Inicia ahora el ciclo de riego profundo si (y solo si) se cumplen las mismas condiciones que usa la programación de las 05:00 (bloqueo libre, intervalo de 14 días y espera de secado cumplidos, tope de lluvia de 14 días no superado). Mismo código que el riego programado.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo de la zona",
+          "description": "El dispositivo de la zona. Solo hace falta con 2 o más zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidad de la zona",
+          "description": "Cualquier entidad del dispositivo de la zona (alternativa a Dispositivo de la zona)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Ejecutar riego habitual",
+      "description": "Inicia ahora el ciclo de riego habitual si (y solo si) se cumplen las mismas condiciones que usa la programación de las 05:30. Mismo código que el riego programado.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo de la zona",
+          "description": "El dispositivo de la zona. Solo hace falta con 2 o más zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidad de la zona",
+          "description": "Cualquier entidad del dispositivo de la zona (alternativa a Dispositivo de la zona)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Restablecer bloqueo de riego",
+      "description": "Borra a la fuerza el bloqueo y el indicador de cancelación. Solo para emergencias.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo de la zona",
+          "description": "El dispositivo de la zona. Solo hace falta con 2 o más zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidad de la zona",
+          "description": "Cualquier entidad del dispositivo de la zona (alternativa a Dispositivo de la zona)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Omitir hoy",
+      "description": "Omite los ciclos programados de esta zona (riego profundo, habitual o ambos) que aún no se hayan hecho hoy, sin cambiar ningún otro ajuste. La programación normal se reanuda sola a partir de mañana.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo de la zona",
+          "description": "El dispositivo de la zona. Solo hace falta con 2 o más zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidad de la zona",
+          "description": "Cualquier entidad del dispositivo de la zona (alternativa a Dispositivo de la zona)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Pulso de prueba",
+      "description": "Ignora todas las condiciones de programación, secado y lluvia y abre la válvula en un pulso corto, para probar el cableado de la válvula y la bomba antes de confiar en la programación real. Sigue respetando el bloqueo y las vigilancias de seguridad.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo de la zona",
+          "description": "El dispositivo de la zona. Solo hace falta con 2 o más zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidad de la zona",
+          "description": "Cualquier entidad del dispositivo de la zona (alternativa a Dispositivo de la zona)."
+        },
+        "seconds": {
+          "name": "Segundos",
+          "description": "Duración del pulso en segundos (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Enviar resumen semanal ahora",
+      "description": "Envía ahora el resumen semanal a cada teléfono que tenga una zona con día de Resumen semanal definido. Es una vista previa: los recuentos de la semana continúan hasta el envío programado."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Esta fecha no puede estar en el futuro: registra algo que ya ocurrió. Solo la Fecha de siembra / trasplante puede ser posterior a hoy."
+    },
+    "cool_not_below_hot": {
+      "message": "El umbral de tiempo fresco tiene que quedar por debajo del umbral de tiempo caluroso. Para bajar ambos, baja primero el de fresco; para subir ambos, sube primero el de calor."
+    },
+    "zone_busy": {
+      "message": "Esta zona está ocupada (regando o ya en una ejecución de mantenimiento). Inténtalo cuando termine."
+    },
+    "pump_busy": {
+      "message": "La bomba que comparte esta zona la está usando otra zona ahora mismo. Inténtalo cuando esa zona termine."
+    },
+    "daily_cap_reached": {
+      "message": "Esta zona ha alcanzado el tiempo máximo de seguridad de hoy, así que no puede empezar ninguna ejecución de mantenimiento hasta mañana (o sube el Tiempo máximo de riego diario)."
+    },
+    "zone_paused": {
+      "message": "Esta zona está en pausa. Desactiva Pausa para regarla."
+    },
+    "pause_until_past": {
+      "message": "Elige una fecha y hora futuras hasta la que pausar."
+    },
+    "no_weekly_summary": {
+      "message": "Ninguna zona tiene definido un día de Resumen semanal y un destino de notificaciones del teléfono, así que no hay nada que enviar."
+    },
+    "summary_send_failed": {
+      "message": "No se pudo enviar el resumen semanal: falló la notificación al teléfono. Revisa el destino de notificaciones de la zona."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: válvula no disponible",
+      "description": "La válvula de la zona {zone} ({entity}) lleva más de una hora no disponible, así que la zona no puede regar. Revisa el dispositivo de la válvula y su integración. Esto se resuelve solo cuando la válvula vuelva."
+    },
+    "sensor_offline": {
+      "title": "{zone}: sensor desconectado desde hace {days} días",
+      "description": "{entity}, que usa la zona {zone}, lleva {days} días desconectado. La zona sigue funcionando sin él (en el README se explica qué implica), pero revisa el dispositivo, o quítalo de la zona en Configurar. Esto se resuelve solo cuando el sensor vuelva a informar."
+    },
+    "notify_missing": {
+      "title": "{zone}: falta el destino de notificaciones",
+      "description": "La zona {zone} envía sus notificaciones al teléfono a {entity}, que ya no existe en Home Assistant, así que no llega ninguna notificación. Elige el destino actual en Configurar de la zona. Esto se resuelve solo cuando vuelva a existir."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: calibra el caudal de los emisores",
+      "description": "La zona {zone} sigue usando la Calibración del caudal de emisores predeterminada (0.24 mm/min). Es el número que decide cuánta agua da cada riego, así que mídelo para tus emisores: Configurar → Caudal de la zona lo calcula a partir de tus emisores o lo mide con un caudalímetro. Si 0.24 mm/min es realmente correcto para esta zona, ignora este aviso."
+    }
+  }
+}

@@ -1,0 +1,709 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow-bewatering",
+        "description": "Geef deze bewateringszone een korte naam (bv. \"Voortuin\", \"Avocadoboom\"). Wil je later meer zones? Voeg deze integratie dan opnieuw toe.",
+        "data": {
+          "zone_name": "Zonenaam",
+          "unit_system": "Eenheden",
+          "plant": "Wat staat er (vult doelen en instellingen alvast in; alles is later aan te passen)"
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow-bewatering",
+        "description": "Koppel hier je bestaande entiteiten. Er worden nooit eigen fysieke entiteiten aangemaakt. Alleen de klepschakelaar is verplicht -- al het andere hieronder mag leeg blijven; de zone werkt dan met wat er is.",
+        "data": {
+          "valve_entity": "Klepschakelaar",
+          "pump_power_entity": "Vermogenssensor pomp (optioneel)",
+          "pump_id": "ID gedeelde pomp (optioneel, bv. \"Pomp A\" -- alleen nodig als deze zone een pomp deelt met een andere zone)",
+          "rain_counter_entity": "Kiepteller regenmeter (optioneel)",
+          "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
+          "flow_meter_entity": "Watermeter (optioneel)",
+          "soil_moisture_entity": "Bodemvochtsensor (optioneel, % -- indien ingesteld bepaalt die de routinewatergift, niet het berekende schema)",
+          "notify_entity": "Telefoon voor meldingen (optioneel)",
+          "weather_entity": "Bron weersverwachting (optioneel)",
+          "soil_type": "Grondsoort",
+          "drainage": "Afwatering",
+          "slope": "Helling",
+          "irrigation_method": "Bewateringsmethode",
+          "growth_ramp_profile": "Automatische opbouw per groeifase",
+          "csv_path": "Pad CSV-logbestand",
+          "deep_soak_enabled": "Diepe watergift inschakelen",
+          "deep_soak_time": "Tijdstip diepe watergift",
+          "routine_time": "Tijdstip routinewatergift",
+          "deep_soak_sun_mode": "Start diepe watergift",
+          "deep_soak_sun_offset_minutes": "Zonverschuiving diepe watergift (minuten)",
+          "routine_sun_mode": "Start routinewatergift",
+          "routine_sun_offset_minutes": "Zonverschuiving routinewatergift (minuten)"
+        }
+      },
+      "climate": {
+        "title": "Klimaat",
+        "description": "Hoe is het groeiseizoen waar deze zone ligt? Dit vult alleen de temperatuurschuiven op de volgende pagina alvast in -- je kunt daar elke waarde aanpassen, en later ook op de apparaatpagina van de zone.",
+        "data": {
+          "climate": "Klimaat"
+        }
+      },
+      "temperatures": {
+        "title": "Temperatuurgrenzen",
+        "description": "ZoneFlow neemt het gemiddelde van de dagelijkse MAXIMUMtemperatuur over de laatste 3 dagen. Vanaf Warm geeft het vaker water (elke 3 dagen) met het warme weekdoel; onder Koel gebruikt het het koele weekdoel; daartussen is normaal.\n\nDe reservetemperatuur wordt gebruikt als er geen echte meting is: zonder temperatuursensor is het je handmatige knop (hoger bij een hittegolf, lager bij een koude periode); met sensor geldt hij alleen tot de sensor zijn eerste volle dag heeft gemeten, en na 3 dagen zonder één meting.",
+        "data": {
+          "hot_temp_threshold": "Grens warm weer",
+          "cool_temp_threshold": "Grens koel weer",
+          "fallback_temp": "Reserve- / handmatige temperatuur"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Zonenaam mag niet leeg zijn.",
+      "cool_not_below_hot": "De koele grens moet onder de warme grens liggen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configureren",
+        "menu_options": {
+          "settings": "Zone-instellingen (entiteiten, grond, schema…)",
+          "flow_rate": "Afgifte: berekenen uit de druppelaars",
+          "flow_measure": "Afgifte: meten met de watermeter"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Klepschakelaar",
+          "pump_power_entity": "Vermogenssensor pomp (optioneel)",
+          "pump_id": "ID gedeelde pomp (optioneel, bv. \"Pomp A\" -- alleen nodig als deze zone een pomp deelt met een andere zone)",
+          "rain_counter_entity": "Kiepteller regenmeter (optioneel)",
+          "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
+          "flow_meter_entity": "Watermeter (optioneel)",
+          "soil_moisture_entity": "Bodemvochtsensor (optioneel, % -- indien ingesteld bepaalt die de routinewatergift, niet het berekende schema)",
+          "notify_entity": "Telefoon voor meldingen (optioneel)",
+          "weather_entity": "Bron weersverwachting (optioneel)",
+          "soil_type": "Grondsoort",
+          "drainage": "Afwatering",
+          "slope": "Helling",
+          "irrigation_method": "Bewateringsmethode",
+          "growth_ramp_profile": "Automatische opbouw per groeifase",
+          "csv_path": "Pad CSV-logbestand",
+          "deep_soak_enabled": "Diepe watergift inschakelen",
+          "deep_soak_time": "Tijdstip diepe watergift",
+          "routine_time": "Tijdstip routinewatergift",
+          "deep_soak_sun_mode": "Start diepe watergift",
+          "deep_soak_sun_offset_minutes": "Zonverschuiving diepe watergift (minuten)",
+          "routine_sun_mode": "Start routinewatergift",
+          "routine_sun_offset_minutes": "Zonverschuiving routinewatergift (minuten)",
+          "unit_system": "Eenheden"
+        }
+      },
+      "flow_rate": {
+        "title": "Afgifte druppelaars",
+        "description": "Hoeveel water de druppelaars van de zone geven op de oppervlakte die ze nat maken. 1 liter op 1 m² is 1 mm. Bij druppelaars bij losse planten: neem de oppervlakte rond de plant die echt nat wordt. De uitkomst vervangt de Kalibratie afgifte van de zone.",
+        "data": {
+          "emitters": "Aantal druppelaars (of sproeiers) in de zone",
+          "emitter_flow": "Afgifte van één druppelaar",
+          "area": "Oppervlakte die ze bewateren"
+        }
+      },
+      "flow_measure": {
+        "title": "Afgifte meten",
+        "description": "Laat de klep {minutes} minuten proefdraaien (telt niet als watergift, maar de minuten tellen wel mee voor de dagelijkse veiligheidslimiet) en berekent de afgifte uit de liters van de watermeter. De meter mag tijdens het meten alleen het water van deze zone meten. De uitkomst komt als telefoonmelding en wordt automatisch ingesteld; Onderhoudsmodus uitzetten breekt het af.",
+        "data": {
+          "area": "Oppervlakte die de druppelaars bewateren"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Afgifte druppelaars ingesteld op {rate}.",
+      "flow_rate_out_of_range": "Dat komt uit op {rate}, buiten wat de instelling toestaat ({low} tot {high}). Controleer de getallen -- bij druppelaars rond losse planten: neem de oppervlakte die echt nat wordt, niet het hele bed.",
+      "measuring": "Bezig met meten: de klep staat ongeveer {minutes} minuten open. De uitkomst komt als telefoonmelding (of bij de meldingen van Home Assistant als de zone geen telefoon heeft) en wordt automatisch ingesteld.",
+      "zone_not_loaded": "Deze zone draait nu niet, dus dit kan niet.",
+      "zone_busy": "De zone (of de pomp) is bezig, of de dagelijkse veiligheidslimiet is op. Probeer het later opnieuw.",
+      "flow_rate_disabled": "De entiteit Kalibratie afgifte van de zone is uitgeschakeld. Schakel hem in (apparaatpagina van de zone → entiteiten) en probeer het opnieuw."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Vaste kloktijd hierboven gebruiken",
+        "before_sunrise": "Vóór zonsopkomst",
+        "after_sunrise": "Na zonsopkomst",
+        "before_sunset": "Vóór zonsondergang",
+        "after_sunset": "Na zonsondergang"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Weet niet / gemengd",
+        "sandy": "Zand",
+        "sandy_loam": "Zandige leem",
+        "loam": "Leem",
+        "clay_loam": "Kleiige leem",
+        "clay": "Klei"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Weet niet",
+        "fast": "Snel doorlatend",
+        "medium": "Gemiddeld",
+        "slow": "Traag doorlatend"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Vlak",
+        "slight": "Licht hellend",
+        "moderate": "Matig hellend",
+        "steep": "Steil"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Druppelslang / druppelaars",
+        "micro_sprinkler": "Microsproeier",
+        "sprinkler": "Sproeier",
+        "soaker_hose": "Zweetslang",
+        "other": "Anders"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Uit (altijd volledig weekdoel)",
+        "fast_annual": "Snelgroeiende eenjarige (bv. meeste groenten)",
+        "slow_fruiting": "Traag vruchtdragend gewas (bv. tomaat, paprika)",
+        "established_perennial": "Aanslaande vaste plant (bv. jonge boom of heester)",
+        "custom": "Aangepast (eigen curve instellen)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Home Assistant volgen",
+        "metric": "Metrisch (mm, °C)",
+        "imperial": "Imperiaal (inch, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropisch (heel het jaar heet, bv. Zuidoost-Azië)",
+        "hot_dry": "Hete zomers (Middellandse Zee, woestijn, zuiden VS)",
+        "temperate": "Gematigd (groot deel van Europa, noorden VS)",
+        "cool": "Koele zomers (Scandinavië, VK, noordelijke kust)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Iets anders (ik stel het zelf in)",
+        "tomatoes": "Tomaten",
+        "chilis": "Chilipepers / paprika",
+        "leafy_vegetables": "Bladgroenten / sla",
+        "herbs": "Kruiden (mediterraan)",
+        "strawberries": "Aardbeien",
+        "flowers": "Bloemenborder",
+        "lawn": "Gazon",
+        "shrubs": "Heesters / haag",
+        "young_tree": "Jonge boom (eerste jaren)",
+        "fruit_tree": "Volgroeide fruitboom"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Routine: weekdoel normaal"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Routine: weekdoel warm"
+      },
+      "hot_temp_threshold": {
+        "name": "Temperatuurgrens warm weer"
+      },
+      "cool_temp_threshold": {
+        "name": "Temperatuurgrens koel weer"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Routine: weekdoel koel"
+      },
+      "rain_eff_low": {
+        "name": "Regenbenutting - licht (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Regenbenutting - matig (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Regenbenutting - zwaar (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Kalibratie afgifte"
+      },
+      "deep_soak_target_mm": {
+        "name": "Diepe watergift: doeldiepte"
+      },
+      "pump_min_watts": {
+        "name": "Waarschuwingsgrens laag pompvermogen"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Diepe watergift: max. looptijd"
+      },
+      "max_runtime_minutes": {
+        "name": "Routine: max. looptijd"
+      },
+      "routine_drydown_days": {
+        "name": "Routine: opdroogpauze"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Diepe watergift: opdroogpauze ondergrond"
+      },
+      "deep_soak_interval_days": {
+        "name": "Diepe watergift: interval"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Diepe watergift: regenplafond (14d)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Regenmeter mm per kiep (kalibratie)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Annuleergrens regen vooraf (30min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pomp-voorloop (opstartvertraging)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pomp-naloop (uitloopvertraging)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Verwachte regen: overslaangrens"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Verwachte regen: kansgrens"
+      },
+      "forecast_dry_override_days": {
+        "name": "Verwachting negeren na droge dagen"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Bodemvocht: grens droog"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Bodemvocht: grens nat"
+      },
+      "routine_pulse_count": {
+        "name": "Routine: aantal pulsen (gespreid)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Routine: intrekpauze tussen pulsen"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Diepe watergift: aantal pulsen (gespreid)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Diepe watergift: intrekpauze tussen pulsen"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Max. looptijd per dag (veiligheidslimiet)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Groeifase handmatig"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Eigen opbouw: start-% op dag 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Eigen opbouw: dag tussenpunt 1"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Eigen opbouw: % tussenpunt 1"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Eigen opbouw: dag tussenpunt 2"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Eigen opbouw: % tussenpunt 2"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Eigen opbouw: dag waarop 100%"
+      },
+      "crop_coefficient": {
+        "name": "Gewasfactor (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Spaarmodus: waterdosis"
+      },
+      "fallback_temp": {
+        "name": "Reserve- / handmatige temperatuur"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Onderhoudsmodus automatisch uit"
+      },
+      "frost_guard_temp": {
+        "name": "Vorstbeveiliging temperatuur"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Laatste routinewatergift"
+      },
+      "last_deep_soak": {
+        "name": "Laatste diepe watergift"
+      },
+      "last_significant_rain": {
+        "name": "Laatste flinke regenbui"
+      },
+      "planting_date": {
+        "name": "Plant- / verplantdatum"
+      },
+      "last_fertilizing": {
+        "name": "Laatste bemesting"
+      },
+      "deficit_until": {
+        "name": "Spaarmodus eindigt"
+      },
+      "paused_until": {
+        "name": "Gepauzeerd tot"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Nu diepe watergift"
+      },
+      "run_routine": {
+        "name": "Nu routinewatergift"
+      },
+      "reset_lock": {
+        "name": "Bewateringsslot resetten"
+      },
+      "snooze_today": {
+        "name": "Vandaag overslaan"
+      },
+      "service_run_1_min": {
+        "name": "Proefdraaien 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Proefdraaien 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Proefdraaien 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Bewatering bezig"
+      },
+      "irrigation_abort": {
+        "name": "Bewatering afgebroken"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Diepe watergift aan"
+      },
+      "deficit_mode": {
+        "name": "Spaarmodus"
+      },
+      "service_mode": {
+        "name": "Onderhoudsmodus"
+      },
+      "pause": {
+        "name": "Pauze"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Regen afgelopen 30min"
+      },
+      "rain_past_24h": {
+        "name": "Regen afgelopen 24u"
+      },
+      "rain_past_3d": {
+        "name": "Regen afgelopen 3d"
+      },
+      "rain_past_7d": {
+        "name": "Regen afgelopen 7d"
+      },
+      "rain_past_14d": {
+        "name": "Regen afgelopen 14d"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Gem. maximumtemperatuur 3 dagen"
+      },
+      "next_irrigation_estimate": {
+        "name": "Volgende watergift (schatting)"
+      },
+      "days_until_next_run": {
+        "name": "Dagen tot volgende watergift"
+      },
+      "last_water_delivered": {
+        "name": "Laatst gegeven water (schatting)"
+      },
+      "rain_today": {
+        "name": "Regen vandaag"
+      },
+      "soil_profile": {
+        "name": "Bodemprofiel"
+      },
+      "growth_ramp_pct": {
+        "name": "Opbouw groeifase"
+      },
+      "last_cycle_water_liters": {
+        "name": "Laatst gegeven water (gemeten)"
+      },
+      "reference_et0_3d": {
+        "name": "Referentie-ET₀ (gem. 3 dagen)"
+      },
+      "routine_weekly_target": {
+        "name": "Routine: weekdoel"
+      },
+      "soil_moisture": {
+        "name": "Bodemvocht"
+      },
+      "soil_moisture_status": {
+        "name": "Status bodemvocht",
+        "state": {
+          "dry": "Droog - eerder water geven",
+          "wet": "Nat - overslaan",
+          "in_range": "Binnen bereik - volgens schema",
+          "offline": "Sensor offline - volgens schema",
+          "stale": "24 u geen nieuwe meting - volgens schema",
+          "implausible": "Onmogelijke meting - volgens schema"
+        }
+      },
+      "deficit_status": {
+        "name": "Status spaarmodus",
+        "state": {
+          "off": "Uit",
+          "active": "Actief - minder water",
+          "full_dose_hot": "Vandaag volle dosis (warm weer)",
+          "full_dose_soil_dry": "Vandaag volle dosis (grond droog)",
+          "ended": "Beëindigd",
+          "full_dose_young_plant": "Volle dosis (jonge plant)",
+          "full_dose_no_temp": "Vandaag volle dosis (geen temperatuurmeting bekend)"
+        }
+      },
+      "status": {
+        "name": "Status"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Grondsoort",
+        "state": {
+          "unknown": "Weet niet / gemengd",
+          "sandy": "Zand",
+          "sandy_loam": "Zandige leem",
+          "loam": "Leem",
+          "clay_loam": "Kleiige leem",
+          "clay": "Klei"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Groeifase",
+        "state": {
+          "auto": "Auto (op plantdatum)",
+          "seedling": "Zaailing",
+          "establishing": "Aanslaan",
+          "vegetative": "Bladgroei",
+          "near_fruiting": "Bijna vruchtzetting",
+          "mature": "Volgroeid",
+          "manual": "Handmatig (schuif gebruiken)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Opbouwprofiel groei",
+        "state": {
+          "off": "Uit (altijd volledig weekdoel)",
+          "fast_annual": "Snelgroeiende eenjarige (bv. meeste groenten)",
+          "slow_fruiting": "Traag vruchtdragend gewas (bv. tomaat, paprika)",
+          "established_perennial": "Aanslaande vaste plant (bv. jonge boom of heester)",
+          "custom": "Aangepast (eigen curve instellen)"
+        }
+      },
+      "health_status": {
+        "name": "Gezondheid",
+        "state": {
+          "excellent": "Uitstekend",
+          "good": "Goed",
+          "poor": "Matig",
+          "sick": "Ziek"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Volgende bemesting over",
+        "state": {
+          "1": "1 maand",
+          "2": "2 maanden",
+          "3": "3 maanden",
+          "4": "4 maanden",
+          "5": "5 maanden",
+          "6": "6 maanden",
+          "7": "7 maanden",
+          "8": "8 maanden",
+          "9": "9 maanden",
+          "10": "10 maanden",
+          "11": "11 maanden",
+          "12": "12 maanden"
+        }
+      },
+      "demand_model": {
+        "name": "Waterbehoeftemodel",
+        "state": {
+          "temperature_tiers": "Temperatuurtrappen",
+          "et_curve": "ET-curve (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Meldingen",
+        "state": {
+          "all": "Alle",
+          "warnings": "Alleen waarschuwingen",
+          "none": "Geen"
+        }
+      },
+      "weekly_summary": {
+        "name": "Weekoverzicht",
+        "state": {
+          "off": "Uit",
+          "mon": "Maandag",
+          "tue": "Dinsdag",
+          "wed": "Woensdag",
+          "thu": "Donderdag",
+          "fri": "Vrijdag",
+          "sat": "Zaterdag",
+          "sun": "Zondag"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Gezondheidsnotities"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Diepe watergift starten",
+      "description": "Start nu de diepe watergift als (en alleen als) aan dezelfde voorwaarden is voldaan als bij het schema van 05:00 (slot vrij, interval van 14 dagen en opdroogpauze voorbij, regenplafond over 14 dagen niet overschreden). Precies dezelfde code als de geplande beurt.",
+      "fields": {
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "Het apparaat van de zone. Alleen nodig bij 2 of meer zones."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Een willekeurige entiteit van het apparaat van de zone (in plaats van Zone-apparaat)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Routinewatergift starten",
+      "description": "Start nu de routinewatergift als (en alleen als) aan dezelfde voorwaarden is voldaan als bij het schema van 05:30. Precies dezelfde code als de geplande beurt.",
+      "fields": {
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "Het apparaat van de zone. Alleen nodig bij 2 of meer zones."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Een willekeurige entiteit van het apparaat van de zone (in plaats van Zone-apparaat)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Bewateringsslot resetten",
+      "description": "Wist geforceerd het slot en de afbreekvlag. Alleen voor noodgevallen.",
+      "fields": {
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "Het apparaat van de zone. Alleen nodig bij 2 of meer zones."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Een willekeurige entiteit van het apparaat van de zone (in plaats van Zone-apparaat)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Vandaag overslaan",
+      "description": "Slaat de geplande beurten van deze zone over (diepe watergift, routine of beide) die vandaag nog niet zijn gedraaid, zonder andere instellingen te wijzigen. Vanaf morgen gaat het schema automatisch weer verder.",
+      "fields": {
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "Het apparaat van de zone. Alleen nodig bij 2 of meer zones."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Een willekeurige entiteit van het apparaat van de zone (in plaats van Zone-apparaat)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Testpuls",
+      "description": "Negeert alle schema-, opdroog- en regenvoorwaarden en geeft één korte puls met de klep, om de bedrading van klep/pomp te testen voordat je op het echte schema vertrouwt. Het slot en de veiligheidsbewaking blijven wel gelden.",
+      "fields": {
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "Het apparaat van de zone. Alleen nodig bij 2 of meer zones."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Een willekeurige entiteit van het apparaat van de zone (in plaats van Zone-apparaat)."
+        },
+        "seconds": {
+          "name": "Seconden",
+          "description": "Duur van de puls in seconden (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Weekoverzicht nu sturen",
+      "description": "Stuurt het weekoverzicht nu naar elke telefoon met een zone waarvoor een dag voor het Weekoverzicht is ingesteld -- een voorproefje; de tellingen van de week lopen door tot het geplande overzicht."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Deze datum mag niet in de toekomst liggen: hij legt iets vast dat al gebeurd is. Alleen de Plant- / verplantdatum mag vooruit worden gezet."
+    },
+    "cool_not_below_hot": {
+      "message": "De grens voor koel weer moet onder de grens voor warm weer blijven. Wil je beide omlaag, verlaag dan eerst de koele; wil je beide omhoog, verhoog dan eerst de warme."
+    },
+    "zone_busy": {
+      "message": "Deze zone is bezig (geeft water of draait al proef). Probeer het opnieuw als hij klaar is."
+    },
+    "pump_busy": {
+      "message": "De gedeelde pomp van deze zone wordt nu door een andere zone gebruikt. Probeer het opnieuw als die zone klaar is."
+    },
+    "daily_cap_reached": {
+      "message": "Deze zone heeft de maximale looptijd voor vandaag bereikt, dus proefdraaien kan pas morgen weer (of verhoog de limiet Max. looptijd per dag)."
+    },
+    "zone_paused": {
+      "message": "Deze zone is gepauzeerd. Zet Pauze uit om water te geven."
+    },
+    "pause_until_past": {
+      "message": "Kies een datum en tijd in de toekomst om tot te pauzeren."
+    },
+    "no_weekly_summary": {
+      "message": "Geen enkele zone heeft een dag voor het Weekoverzicht én een telefoon voor meldingen ingesteld, dus er valt niets te sturen."
+    },
+    "summary_send_failed": {
+      "message": "Het weekoverzicht kon niet worden verstuurd: de melding naar de telefoon mislukte. Controleer het meldingsdoel van de zone."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: klep niet beschikbaar",
+      "description": "De klep van zone {zone} ({entity}) is al meer dan een uur niet beschikbaar, dus de zone kan geen water geven. Controleer het apparaat van de klep en de integratie ervan. Dit verdwijnt vanzelf zodra de klep terug is."
+    },
+    "sensor_offline": {
+      "title": "{zone}: sensor al {days} dagen offline",
+      "description": "{entity}, gebruikt door zone {zone}, is al {days} dagen offline. De zone werkt zonder verder (wat dat betekent staat in de README), maar controleer het apparaat -- of haal het uit de zone via Configureren. Dit verdwijnt vanzelf zodra de sensor weer meldt."
+    },
+    "notify_missing": {
+      "title": "{zone}: telefoon voor meldingen ontbreekt",
+      "description": "Zone {zone} stuurt zijn telefoonmeldingen naar {entity}, maar die bestaat niet meer in Home Assistant, dus er komen geen meldingen aan. Kies de huidige telefoon via Configureren bij de zone. Dit verdwijnt vanzelf zodra die weer bestaat."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: kalibreer de afgifte van de druppelaars",
+      "description": "Zone {zone} gebruikt nog de standaard Kalibratie afgifte (0.24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0.24 mm/min echt voor deze zone, negeer dit dan."
+    }
+  }
+}

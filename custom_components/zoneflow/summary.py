@@ -77,6 +77,14 @@ def zone_line(controller: ZoneFlowController) -> str:
     return text
 
 
+def has_recipients(hass: HomeAssistant) -> bool:
+    """Whether any zone has a Weekly Summary day and a phone to send to."""
+    return any(
+        c.notify_entity and c.store.state.summary_day != SUMMARY_OFF
+        for c in hass.data.get(DOMAIN, {}).values()
+    )
+
+
 async def async_send(hass: HomeAssistant, *, day: str | None = None, reset: bool = True) -> int:
     """Send the summary for the zones set to `day` (every zone with a
     notify target when None, e.g. from the send_weekly_summary service).

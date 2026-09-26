@@ -1480,6 +1480,7 @@ class ZoneFlowController:
             message="valve_watchdog",
             params={"minutes": f"{limit:.0f}"},
             level=LEVEL_WARNING,
+            always_notify=True,  # water may have run unattended: even with Notifications off
         )
 
     @callback
@@ -1518,6 +1519,7 @@ class ZoneFlowController:
                 notify_phone=True,
                 message="power_restore_anomaly",
                 level=LEVEL_WARNING,
+                always_notify=True,  # a valve found open: even with Notifications off
             )
         else:
             _LOGGER.info("ZoneFlow: valve back online, confirmed %s (safe)", new_state.state)
@@ -2012,6 +2014,7 @@ class ZoneFlowController:
                 message="cycle_error_closed" if closed else "cycle_error_open",
                 params={"cycle": self._cycle_name(kind), "error": str(err), "valve": self._cycle_valve},
                 level=LEVEL_WARNING,
+                always_notify=not closed,  # a valve that may still be open: even with Notifications off
             )
             return False
         finally:
@@ -3495,8 +3498,13 @@ class ZoneFlowController:
         return lambda: self._status_listeners.remove(listener)
 
     def _notify_status(self) -> None:
+        # Called from inside watering cycles: a display problem must never
+        # stop a cycle from finishing its bookkeeping.
         for listener in list(self._status_listeners):
-            listener()
+            try:
+                listener()
+            except Exception:  # noqa: BLE001
+                _LOGGER.exception("ZoneFlow: could not update the status display")
 
     def summary_snapshot(self) -> dict[str, Any]:
         """The weekly counts as they are now (what a summary reports)."""
@@ -3553,9 +3561,10 @@ class ZoneFlowController:
         if code == "done":
             if today in state.summary_skip_days:
                 state.summary_skip_days.remove(today)
-        elif not code.startswith("waiting") and not self._manual_press and not self._stopping:
+        elif not code.startswith("waiting") and not self._manual_press and not self._stopping and not state.paused:
             if today not in state.summary_skip_days:
-                state.summary_skip_days.append(today)
+                # (Only the last few weeks matter, whenever the summary is sent.)
+                state.summary_skip_days = [*state.summary_skip_days[-27:], today]
         self._notify_status()
 
     async def _decide(self, cycle: str, code: str, **params: Any) -> None:

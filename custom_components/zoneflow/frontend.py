@@ -26,12 +26,14 @@ async def async_register(hass: HomeAssistant) -> None:
         return
     if "frontend" not in hass.config.components:
         return  # e.g. a setup without the frontend: nothing to show it in
+    # Zones set up at the same time: the first one does it (the flag is
+    # set before the first await, so the others see it straight away).
+    hass.data[_DONE_KEY] = True
     try:
         await _register(hass)
     except Exception:  # noqa: BLE001
+        hass.data.pop(_DONE_KEY, None)  # try again with the next zone
         _LOGGER.warning("ZoneFlow: could not load the dashboard card", exc_info=True)
-        return
-    hass.data[_DONE_KEY] = True
 
 
 async def _register(hass: HomeAssistant) -> None:
