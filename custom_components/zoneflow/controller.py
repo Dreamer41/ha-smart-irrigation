@@ -31,6 +31,7 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.event import (
     async_call_later,
     async_track_point_in_time,
+    async_track_time_interval,
     async_track_state_change_event,
     async_track_sunrise,
     async_track_sunset,
@@ -41,8 +42,10 @@ import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, messages, units
+from . import calculations as calc, issues, messages, units
 from .const import (
+    REPAIR_CHECK_INTERVAL_SECONDS,
+    REPAIR_FIRST_CHECK_SECONDS,
     FROST_TEMP_MAX_AGE_SECONDS,
     FROST_TEMP_MIN_PLAUSIBLE_C,
     FROST_RETRY_COUNT,
@@ -146,6 +149,23 @@ def _state_temp_c(state: State | None) -> float | None:
         # Rounded so 78.8F shows as 26.0, not 25.999999999999996.
         return round(TemperatureConverter.convert(value, unit, UnitOfTemperature.CELSIUS), 2)
     return value
+
+
+
+def _weather_temp_c(state: State | None) -> float | None:
+    """A weather entity's current temperature in degC (its
+    temperature_unit decides the conversion), or None."""
+    if state is None or state.state in ("unavailable", "unknown"):
+        return None
+    try:
+        value = float(state.attributes.get("temperature"))
+    except (TypeError, ValueError):
+        return None
+    unit = state.attributes.get("temperature_unit")
+    if unit in (UnitOfTemperature.FAHRENHEIT, UnitOfTemperature.KELVIN):
+        return round(TemperatureConverter.convert(value, unit, UnitOfTemperature.CELSIUS), 2)
+    return value
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -262,6 +282,10 @@ class ZoneFlowController:
         # Set while the zone is paused: stops a watering cycle that is
         # already running or queued for the pump (not a service run).
         self._paused_event = asyncio.Event()
+        self._resume_cancel: Any = None  # the Paused Until timer
+        # A "run now" press is being evaluated (not counted as a held-back
+        # day in the weekly summary).
+        self._manual_press = False
         # Frost guard: the cycles waiting for it to warm up (deep soak is
         # always re-checked before the routine), the pending hourly
         # re-check, how many re-checks this wait has had, whether one is
@@ -496,6 +520,16 @@ class ZoneFlowController:
         state = self.store.state
         if state.paused:
             self._paused_event.set()
+            self._schedule_resume()
+        # Repairs: checked hourly, and a few minutes after startup (once
+        # other integrations' entities have had time to appear).
+        self._unsubs.append(
+            async_track_time_interval(
+                self.hass, self._check_issues, timedelta(seconds=REPAIR_CHECK_INTERVAL_SECONDS)
+            )
+        )
+        self._unsubs.append(async_call_later(self.hass, REPAIR_FIRST_CHECK_SECONDS, self._check_issues))
+        issues.async_prune(self)  # e.g. a sensor just removed from the zone
         self._resume_frost_wait()
 
         # Seed the rain window baseline from the counter's current value
@@ -627,6 +661,9 @@ class ZoneFlowController:
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
         self._cancel_frost_wait()
+        if self._resume_cancel is not None:
+            self._resume_cancel()
+            self._resume_cancel = None
         # Anything the old cycle does from here on must not overwrite the
         # state the reloaded zone has just loaded.
         self.store.closed = True
@@ -947,15 +984,28 @@ class ZoneFlowController:
     def paused(self) -> bool:
         return self.store.state.paused
 
-    async def set_paused(self, on: bool) -> None:
+    async def set_paused(self, on: bool, until_ts: float | None = None) -> None:
         """The Pause switch: no deep soak or routine watering -- scheduled
         or "run now" -- until it's switched off (winter, holidays, a
-        repair). Safety watchdogs, service runs and test pulses still work."""
+        repair), or until `until_ts` (the Paused Until date). Safety
+        watchdogs, service runs and test pulses still work."""
         state = self.store.state
+        if on and state.paused:
+            # Already paused: a new end date, if one was given (the switch
+            # being turned on again keeps the date that's set).
+            if until_ts is None or until_ts == state.pause_until_ts:
+                return
+            state.pause_until_ts = until_ts
+            self._schedule_resume()
+            await self.store.async_save()
+            self._notify_status()
+            return
         if state.paused == on:
             return
         now_ts = dt_util.utcnow().timestamp()
         state.paused = on
+        state.pause_until_ts = until_ts if on else None
+        self._schedule_resume()
         if on:
             state.paused_since_ts = now_ts
             # Stops a cycle that's running or queued for the pump (at once,
@@ -976,6 +1026,40 @@ class ZoneFlowController:
             runtime=0,
         )
 
+    @callback
+    def _check_issues(self, _now=None) -> None:
+        if not self._stopping:
+            issues.async_check(self)
+
+    def number_changed(self, key: str) -> None:
+        """A slider was moved (number.py)."""
+        if key == "flow_rate_mm_per_min":
+            self._check_issues()  # a calibrated flow rate clears its repair at once
+
+    def _schedule_resume(self) -> None:
+        """Paused Until: switch Pause off by itself at that time."""
+        if self._resume_cancel is not None:
+            self._resume_cancel()
+            self._resume_cancel = None
+        until = self.store.state.pause_until_ts
+        if not self.store.state.paused or until is None:
+            return
+
+        @callback
+        def _resume(now) -> None:
+            self._resume_cancel = None
+            state = self.store.state
+            if self._stopping or not state.paused or state.pause_until_ts is None:
+                return
+            if state.pause_until_ts > now.timestamp() + 1:
+                self._schedule_resume()  # the date moved on meanwhile
+                return
+            self.hass.async_create_task(self.set_paused(False))
+
+        self._resume_cancel = async_track_point_in_time(
+            self.hass, _resume, dt_util.utc_from_timestamp(max(until, dt_util.utcnow().timestamp() + 1))
+        )
+
     def _refuse_if_paused(self) -> None:
         if self.store.state.paused:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_paused")
@@ -985,18 +1069,27 @@ class ZoneFlowController:
         own code and gates -- but a paused zone says so instead of silently
         doing nothing."""
         self._refuse_if_paused()
-        await self.run_deep_soak()
+        self._manual_press = True
+        try:
+            await self.run_deep_soak()
+        finally:
+            self._manual_press = False
 
     async def run_routine_now(self) -> None:
         """The "Run Routine Irrigation Now" button and service (see
         run_deep_soak_now). manual=True feeds self-tuning's "early" signal."""
         self._refuse_if_paused()
-        await self.run_routine_irrigation(manual=True)
+        self._manual_press = True
+        try:
+            await self.run_routine_irrigation(manual=True)
+        finally:
+            self._manual_press = False
 
     def frost_guard_c(self) -> float | None:
         """The frost guard's limit in degC, or None when it's off (slider at
-        its lowest) or the zone has no temperature sensor to check."""
-        if not self.outdoor_temp_entity:
+        its lowest) or the zone has nothing to read the temperature from (a
+        temperature sensor, or else the weather entity's current reading)."""
+        if not (self.outdoor_temp_entity or self.weather_entity):
             return None
         limit = self.number("frost_guard_temp")
         if limit <= NUMBER_DEFS["frost_guard_temp"][1]:
@@ -1008,9 +1101,14 @@ class ZoneFlowController:
         can't be trusted: unreadable, not updated for FROST_TEMP_MAX_AGE
         (a sensor stuck on a cold night reading) or impossible (e.g. a
         probe's -127 error value). None never blocks watering."""
-        state = self.hass.states.get(self.outdoor_temp_entity) if self.outdoor_temp_entity else None
-        temp = _state_temp_c(state)
-        if temp is None or temp < FROST_TEMP_MIN_PLAUSIBLE_C:
+        if self.outdoor_temp_entity:
+            state = self.hass.states.get(self.outdoor_temp_entity)
+            temp = _state_temp_c(state)
+        else:
+            # No temperature sensor: the weather entity's current reading.
+            state = self.hass.states.get(self.weather_entity) if self.weather_entity else None
+            temp = _weather_temp_c(state)
+        if state is None or temp is None or temp < FROST_TEMP_MIN_PLAUSIBLE_C:
             return None
         seen = getattr(state, "last_reported", None) or state.last_updated
         if (dt_util.utcnow() - seen).total_seconds() > FROST_TEMP_MAX_AGE_SECONDS:
@@ -1800,6 +1898,7 @@ class ZoneFlowController:
         if flow_start is not None and flow_end is not None:
             delta_liters = max(flow_end - flow_start, 0.0)
             self.store.state.last_cycle_water_liters = delta_liters
+            self.store.state.summary_liters += delta_liters
             await self.store.async_save()
             # Only meaningful for a cycle that actually ran to
             # completion -- an aborted cycle legitimately may not have
@@ -2524,6 +2623,7 @@ class ZoneFlowController:
         # counts (an aborted or interrupted one returned above).
         state.last_routine_ts = done_ts
         state.today_runtime_minutes += plan.total_runtime_minutes
+        self._count_for_summary(plan.total_runtime_minutes)
         self._record_decision(
             "deep_soak",
             "done",
@@ -2801,6 +2901,7 @@ class ZoneFlowController:
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
         state.today_runtime_minutes += plan.calc_runtime_minutes
+        self._count_for_summary(plan.calc_runtime_minutes)
         self._record_decision(
             "routine", "done", minutes=plan.calc_runtime_minutes, amount_mm=round(plan.calc_runtime_minutes * self.number("flow_rate_mm_per_min"), 1)
         )
@@ -3270,15 +3371,64 @@ class ZoneFlowController:
         for listener in list(self._status_listeners):
             listener()
 
+    def summary_snapshot(self) -> dict[str, Any]:
+        """The weekly counts as they are now (what a summary reports)."""
+        state = self.store.state
+        return {
+            "runs": state.summary_runs,
+            "minutes": state.summary_minutes,
+            "mm": state.summary_mm,
+            "liters": state.summary_liters,
+            "skip_days": list(state.summary_skip_days),
+        }
+
+    async def reset_summary(self, reported: dict[str, Any] | None = None) -> None:
+        """A weekly summary went out: take what it `reported` off the counts
+        (a watering that finished while it was being sent stays for next
+        week), or start from zero when None."""
+        state = self.store.state
+        state.summary_since_ts = dt_util.utcnow().timestamp()
+        if reported is None:
+            state.summary_runs, state.summary_minutes, state.summary_mm, state.summary_liters = 0, 0.0, 0.0, 0.0
+            state.summary_skip_days = []
+        else:
+            state.summary_runs = max(state.summary_runs - reported["runs"], 0)
+            state.summary_minutes = max(state.summary_minutes - reported["minutes"], 0.0)
+            state.summary_mm = max(state.summary_mm - reported["mm"], 0.0)
+            state.summary_liters = max(state.summary_liters - reported["liters"], 0.0)
+            state.summary_skip_days = [d for d in state.summary_skip_days if d not in reported["skip_days"]]
+        await self.store.async_save()
+
+    def _count_for_summary(self, minutes: float) -> None:
+        """A completed watering, for the weekly summary (see summary.py)."""
+        state = self.store.state
+        state.summary_runs += 1
+        state.summary_minutes += minutes
+        state.summary_mm += minutes * self.number("flow_rate_mm_per_min")
+
     def _record_decision(self, cycle: str, code: str, **params: Any) -> None:
         """What a due cycle decided (`cycle` is "routine" or "deep_soak").
         Raw metric numbers and timestamps are stored, so the sentence
         follows the zone's current units and language when it's shown."""
+        if not isinstance(self.store.state.decisions, dict):
+            self.store.state.decisions = {}
         self.store.state.decisions[cycle] = {
             "code": code,
             "ts": dt_util.utcnow().timestamp(),
             "params": params,
         }
+        # For the weekly summary: the days a due watering was held back and
+        # didn't happen after all (a later watering that day takes the day
+        # off again). Not a "run now" press, and not a run cut short by a
+        # reload or shutdown.
+        state = self.store.state
+        today = dt_util.now().date().isoformat()
+        if code == "done":
+            if today in state.summary_skip_days:
+                state.summary_skip_days.remove(today)
+        elif not code.startswith("waiting") and not self._manual_press and not self._stopping:
+            if today not in state.summary_skip_days:
+                state.summary_skip_days.append(today)
         self._notify_status()
 
     async def _decide(self, cycle: str, code: str, **params: Any) -> None:
@@ -3472,7 +3622,17 @@ class ZoneFlowController:
                 result.update(code="lock_held", text=self._msg("status.lock_held"))
             return result
         if state.paused:
-            result.update(code="paused", next_watering=None, next_cycle=None, text=self._msg("status.paused"))
+            until = state.pause_until_ts
+            result.update(
+                code="paused",
+                next_watering=None,
+                next_cycle=None,
+                text=(
+                    self._msg("status.paused_until", until=self._when(until, "datetime"))
+                    if until is not None
+                    else self._msg("status.paused")
+                ),
+            )
             return result
         if snoozed:
             result.update(code="snoozed", text=with_next(self._msg("status.snoozed")))

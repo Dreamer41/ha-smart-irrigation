@@ -310,6 +310,9 @@
       },
       "deficit_until": {
         "name": "Deficit Mode Ends"
+      },
+      "paused_until": {
+        "name": "Paused Until"
       }
     },
     "button": {
@@ -507,6 +510,19 @@
           "warnings": "Warnings only",
           "none": "None"
         }
+      },
+      "weekly_summary": {
+        "name": "Weekly Summary",
+        "state": {
+          "off": "Off",
+          "mon": "Monday",
+          "tue": "Tuesday",
+          "wed": "Wednesday",
+          "thu": "Thursday",
+          "fri": "Friday",
+          "sat": "Saturday",
+          "sun": "Sunday"
+        }
       }
     },
     "text": {
@@ -589,6 +605,10 @@
           "description": "Pulse duration in seconds (1-120)."
         }
       }
+    },
+    "send_weekly_summary": {
+      "name": "Send Weekly Summary Now",
+      "description": "Sends the weekly summary now to every phone that has a zone with a Weekly Summary day set -- a preview; the week's counts carry on until the scheduled one."
     }
   },
   "exceptions": {
@@ -609,6 +629,30 @@
     },
     "zone_paused": {
       "message": "This zone is paused. Switch Pause off to water it."
+    },
+    "pause_until_past": {
+      "message": "Pick a date and time in the future to pause until."
+    },
+    "no_weekly_summary": {
+      "message": "No zone has a Weekly Summary day and a phone notify target set, so there's nothing to send."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: valve unavailable",
+      "description": "The valve of zone {zone} ({entity}) has been unavailable for over an hour, so the zone can't water. Check the valve's device and its integration. This clears by itself once the valve is back."
+    },
+    "sensor_offline": {
+      "title": "{zone}: sensor offline for {days} days",
+      "description": "{entity}, which zone {zone} uses, has been offline for {days} days. The zone carries on without it (see what that means in the README), but check the device -- or remove it from the zone under Configure. This clears by itself once the sensor reports again."
+    },
+    "notify_missing": {
+      "title": "{zone}: phone notify target missing",
+      "description": "Zone {zone} sends its phone notifications to {entity}, which no longer exists in Home Assistant, so no notifications arrive. Pick the current notify target under the zone's Configure. This clears by itself once it exists again."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: calibrate the emitter flow rate",
+      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: press Service Run 5 min and see how much water a plant got. If 0.24 mm/min really is right for this zone, ignore this."
     }
   }
 }

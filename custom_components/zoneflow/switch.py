@@ -154,14 +154,23 @@ class ZoneFlowPauseSwitch(SwitchEntity):
         self._attr_translation_key = "pause"
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
 
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Also switched by the Paused Until date and its automatic resume.
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
     @property
     def is_on(self) -> bool:
         return self._controller.paused
 
     @property
     def extra_state_attributes(self) -> dict:
-        since = self._controller.store.state.paused_since_ts
-        return {"paused_since": dt_util.utc_from_timestamp(since).isoformat() if since else None}
+        state = self._controller.store.state
+        since, until = state.paused_since_ts, state.pause_until_ts
+        return {
+            "paused_since": dt_util.utc_from_timestamp(since).isoformat() if since else None,
+            "paused_until": dt_util.utc_from_timestamp(until).isoformat() if until and state.paused else None,
+        }
 
     async def async_turn_on(self, **kwargs) -> None:
         await self._controller.set_paused(True)

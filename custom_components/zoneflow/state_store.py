@@ -160,6 +160,24 @@ class IrrigationState:
     paused: bool = False
     paused_since_ts: float | None = None
     pause_ended_ts: float | None = None
+    # The Paused Until date (datetime.py): Pause switches itself off then.
+    pause_until_ts: float | None = None
+
+    # Weekly summary (summary.py): the weekday it's sent ("off", "mon".."sun")
+    # and what happened since the last one.
+    summary_day: str = "off"
+    summary_since_ts: float | None = None
+    summary_runs: int = 0
+    summary_minutes: float = 0.0
+    summary_mm: float = 0.0
+    summary_liters: float = 0.0
+    # Local dates (ISO) a due watering was held back and didn't happen.
+    summary_skip_days: list[str] = field(default_factory=list)
+
+    # Repairs (issues.py): since when (timestamp) each entity this zone uses
+    # has been offline -- kept across restarts, which would otherwise start
+    # the count over.
+    offline_since: dict[str, float] = field(default_factory=dict)
 
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None

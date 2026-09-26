@@ -164,6 +164,17 @@
     "paused": "Paused: no watering until Pause is switched off",
     "skipped_frost": "{cycle} skipped at {time}: {temp}, below the frost guard ({limit})",
     "waiting_frost": "{cycle} on hold at {time}: {temp}, below the frost guard ({limit}); checking again hourly",
-    "waiting_deep_soak": "{cycle} waiting since {time}: the deep soak goes first once it's warm enough"
+    "waiting_deep_soak": "{cycle} waiting since {time}: the deep soak goes first once it's warm enough",
+    "paused_until": "Paused until {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: your week",
+    "zone": "{zone}: watered {runs}× — {water} in {minutes} min",
+    "measured": " (measured {volume})",
+    "rain": " · rain (7 days) {rain}",
+    "held_back": " · held back on {days} day(s)",
+    "paused": " · paused",
+    "next": " · next {when}",
+    "zone_none": "{zone}: no watering"
   }
 }

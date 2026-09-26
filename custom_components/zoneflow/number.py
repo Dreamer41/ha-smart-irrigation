@@ -118,8 +118,10 @@ class ZoneFlowNumber(RestoreNumber):
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="cool_not_below_hot")
         self.metric_value = metric
         self.async_write_ha_state()
+        self._controller.number_changed(self._key)
 
     async def async_set_metric_value(self, value: float) -> None:
         """Set in metric regardless of display units (self-tuning, presets)."""
         self.metric_value = value
         self.async_write_ha_state()
+        self._controller.number_changed(self._key)

@@ -538,3 +538,18 @@ FROST_RETRY_COUNT = 6
 # hold watering back (a sensor stuck on a cold reading, an error value).
 FROST_TEMP_MAX_AGE_SECONDS = 3 * 3600
 FROST_TEMP_MIN_PLAUSIBLE_C = -60.0
+
+# Weekly summary (summary.py): sent at this local hour on each zone's
+# chosen weekday ("off" = never).
+SUMMARY_HOUR = 18
+SUMMARY_OFF = "off"
+SUMMARY_DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+SUMMARY_OPTIONS = [SUMMARY_OFF, *SUMMARY_DAYS]
+
+# Repairs (issues.py): how long something must be offline before it's
+# raised in Settings -> Repairs, and how often zones are checked.
+REPAIR_VALVE_OFFLINE_SECONDS = 3600
+REPAIR_SENSOR_OFFLINE_SECONDS = 3 * 86400
+REPAIR_NOTIFY_MISSING_SECONDS = 86400
+REPAIR_CHECK_INTERVAL_SECONDS = 3600
+REPAIR_FIRST_CHECK_SECONDS = 300

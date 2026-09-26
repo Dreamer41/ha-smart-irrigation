@@ -158,3 +158,8 @@ def temp_text(celsius: float, imperial: bool) -> str:
 def depth_text(mm: float, imperial: bool) -> str:
     """An amount of water for log/phone text, in the zone's units."""
     return f"{mm / MM_PER_INCH:.2f} in" if imperial else f"{mm:.1f} mm"
+
+
+def volume_text(liters: float, imperial: bool) -> str:
+    """A measured volume for phone text, in the zone's units."""
+    return f"{liters / LITERS_PER_GALLON:.1f} gal" if imperial else f"{liters:.0f} L"

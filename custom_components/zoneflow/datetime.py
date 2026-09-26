@@ -62,7 +62,10 @@ LAST_EVENT_FIELDS: list[tuple[str, str]] = [
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     controller = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
-        ZoneFlowLastEventDateTime(entry, controller, field, name) for field, name in LAST_EVENT_FIELDS
+        [
+            *(ZoneFlowLastEventDateTime(entry, controller, field, name) for field, name in LAST_EVENT_FIELDS),
+            ZoneFlowPausedUntilDateTime(entry, controller),
+        ]
     )
 
 
@@ -105,4 +108,37 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
             )
         setattr(self._controller.store.state, self._state_field, ts)
         await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowPausedUntilDateTime(DateTimeEntity):
+    """Pause the zone until a date: setting it switches Pause on and Pause
+    switches itself off then (holidays, a repair). Unknown while the zone
+    isn't paused, or is paused with no end date."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:calendar-lock-outline"
+    _attr_translation_key = "paused_until"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_paused_until"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Follows the Pause switch (and the automatic resume).
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
+    @property
+    def native_value(self) -> datetime | None:
+        state = self._controller.store.state
+        until = state.pause_until_ts if state.paused else None
+        return dt_util.utc_from_timestamp(until) if until is not None else None
+
+    async def async_set_value(self, value: datetime) -> None:
+        ts = dt_util.as_utc(value).timestamp()
+        if ts <= dt_util.utcnow().timestamp():
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="pause_until_past")
+        await self._controller.set_paused(True, until_ts=ts)
         self.async_write_ha_state()

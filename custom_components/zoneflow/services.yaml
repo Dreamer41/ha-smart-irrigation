@@ -120,3 +120,10 @@ test_pulse:
           min: 1
           max: 120
           unit_of_measurement: s
+
+send_weekly_summary:
+  name: Send Weekly Summary Now
+  description: >-
+    Sends the weekly summary now to every phone that has a zone with a
+    Weekly Summary day set -- a preview; the week's counts carry on until
+    the scheduled one.

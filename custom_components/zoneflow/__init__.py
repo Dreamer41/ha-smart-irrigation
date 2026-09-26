@@ -10,7 +10,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from . import visibility
+from . import issues, summary, visibility
 from .const import DOMAIN, PLATFORMS
 from .controller import ZoneFlowController
 
@@ -19,6 +19,7 @@ SERVICE_RUN_ROUTINE = "run_routine_irrigation"
 SERVICE_RESET_LOCK = "reset_lock"
 SERVICE_TEST_PULSE = "test_pulse"
 SERVICE_SNOOZE_TODAY = "snooze_today"
+SERVICE_SEND_WEEKLY_SUMMARY = "send_weekly_summary"
 
 # These five are domain-level services, not entity-platform services, so
 # Home Assistant's automatic area/device -> entity expansion (the thing
@@ -108,6 +109,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # Hide what this zone doesn't use (see visibility.py).
     await visibility.async_apply(hass, entry, controller)
+    summary.async_setup(hass)
 
     # Register the domain services exactly once, the first time any zone
     # sets up -- not once per zone (see _resolve_controller's docstring for
@@ -145,6 +147,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_TEST_PULSE, _handle_test_pulse, schema=TEST_PULSE_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_SNOOZE_TODAY, _handle_snooze_today, schema=ZONE_TARGET_SCHEMA)
 
+        async def _handle_send_weekly_summary(call: ServiceCall) -> None:
+            # Now, to every phone with a zone that has a weekly summary set --
+            # a preview; the weekly counts carry on until the real one.
+            if not await summary.async_send(hass, day=None, reset=False):
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="no_weekly_summary")
+
+        hass.services.async_register(DOMAIN, SERVICE_SEND_WEEKLY_SUMMARY, _handle_send_weekly_summary)
+
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
 
@@ -155,6 +165,8 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unloaded and entry.disabled_by is not None:
+        issues.async_remove(hass, entry.entry_id)  # a disabled zone has nothing to fix
     if unloaded:
         controller: ZoneFlowController = hass.data[DOMAIN].pop(entry.entry_id)
         await controller.async_unload()
@@ -165,6 +177,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_RESET_LOCK,
                 SERVICE_TEST_PULSE,
                 SERVICE_SNOOZE_TODAY,
+                SERVICE_SEND_WEEKLY_SUMMARY,
             ):
                 hass.services.async_remove(DOMAIN, service)
+            summary.async_teardown(hass)
     return unloaded
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """A zone was deleted: clear its Repairs issues."""
+    issues.async_remove(hass, entry.entry_id)

@@ -40,8 +40,9 @@ TEMPERATURE = {
     ("sensor", "reference_et0_3d"),
     ("number", "crop_coefficient"),
     ("select", "demand_model"),
-    ("number", "frost_guard_temp"),
 }
+FROST = {("number", "frost_guard_temp")}
+NOTIFY = {("select", "notifications"), ("select", "weekly_summary")}
 FLOW_METER = {("sensor", "last_cycle_water_liters")}
 DEEP_SOAK = {
     ("number", "deep_soak_target_mm"),
@@ -92,6 +93,10 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= SHARED_PUMP
     if not controller.outdoor_temp_entity:
         hidden |= TEMPERATURE
+    if not controller.outdoor_temp_entity and not controller.weather_entity:
+        hidden |= FROST  # nothing to read the temperature from
+    if not controller.notify_entity:
+        hidden |= NOTIFY
     if not controller.flow_meter_entity:
         hidden |= FLOW_METER
     if not controller.deep_soak_enabled:

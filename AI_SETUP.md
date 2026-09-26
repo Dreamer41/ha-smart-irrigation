@@ -216,7 +216,9 @@ unanswered optional field is not the same as a "no."
    notification, or only warnings (faults and things that need a look —
    not "watering done" or "rain skipped today")? That's the zone's
    **Notifications** setting (all / warnings only / none), set after the
-   config flow on the device page under Configuration.
+   config flow on the device page under Configuration. And would they like
+   a **weekly summary** (one message per phone for all its zones, at 18:00
+   on a weekday they pick — the zone's **Weekly Summary** select)?
 8. **Weather forecast gate?** Point this zone at a `weather.*` entity to
    hold off watering when rain is forecast (§7.4). Do they have one they'd
    like to use here? Skip offering this one at all if question 4 said
@@ -1854,6 +1856,8 @@ views:
         entities:
           - entity: <switch.zone_pause>
             name: Pause (no watering)
+          - entity: <datetime.zone_paused_until>
+            name: Paused Until
           - entity: <switch.zone_deep_soak_enabled>
             name: Deep Soak Enabled
           - type: buttons

@@ -47,6 +47,9 @@ on the planting date (growth stage):
   all, warnings only (faults and anything that needs a look) or none. The
   CSV log always records everything.
 
+- ZoneFlowWeeklySummarySelect: the weekday this zone's weekly summary
+  goes out (off by default) -- see summary.py.
+
 All of them persist through IrrigationState (state_store.py), the same Store
 already used for the planting date etc., so a value set here survives an
 HA restart exactly like everything else that store holds.
@@ -71,6 +74,8 @@ from .const import (
     GROWTH_STAGE_SELECT_OPTIONS,
     HEALTH_STATUS_OPTIONS,
     NOTIFY_LEVEL_OPTIONS,
+    SUMMARY_OFF,
+    SUMMARY_OPTIONS,
     SOIL_TYPE_OPTIONS,
 )
 
@@ -86,6 +91,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowFertilizingIntervalSelect(entry, controller),
             ZoneFlowDemandModelSelect(entry, controller),
             ZoneFlowNotificationsSelect(entry, controller),
+            ZoneFlowWeeklySummarySelect(entry, controller),
         ]
     )
 
@@ -288,5 +294,34 @@ class ZoneFlowNotificationsSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.notify_level = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowWeeklySummarySelect(_Base):
+    """Which weekday the weekly summary is sent (at 18:00), or off. Zones
+    sending to the same phone share one message -- see summary.py."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    _attr_icon = "mdi:calendar-text-outline"
+    _attr_options = SUMMARY_OPTIONS
+    _attr_translation_key = "weekly_summary"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_weekly_summary_select"
+
+    @property
+    def current_option(self) -> str:
+        day = self._controller.store.state.summary_day
+        return day if day in SUMMARY_OPTIONS else SUMMARY_OFF
+
+    async def async_select_option(self, option: str) -> None:
+        state = self._controller.store.state
+        was_off = state.summary_day not in SUMMARY_OPTIONS or state.summary_day == SUMMARY_OFF
+        state.summary_day = option
+        if was_off and option != SUMMARY_OFF:
+            await self._controller.reset_summary()  # the first one covers from now
         await self._controller.store.async_save()
         self.async_write_ha_state()
