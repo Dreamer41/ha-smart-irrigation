@@ -29,6 +29,7 @@ from typing import Any
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers.event import (
+    async_call_later,
     async_track_point_in_time,
     async_track_state_change_event,
     async_track_sunrise,
@@ -42,6 +43,10 @@ from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConve
 
 from . import calculations as calc, messages, units
 from .const import (
+    FROST_TEMP_MAX_AGE_SECONDS,
+    FROST_TEMP_MIN_PLAUSIBLE_C,
+    FROST_RETRY_COUNT,
+    FROST_RETRY_SECONDS,
     LEVEL_INFO,
     LEVEL_WARNING,
     NOTIFY_NONE,
@@ -157,6 +162,8 @@ _RAIN = "rain"
 _STOPPED = "stopped"
 # A service run ended by the person (Service Mode switched off).
 _USER_STOPPED = "user_stopped"
+# A watering cycle stopped because the zone was paused.
+_PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
@@ -252,6 +259,18 @@ class ZoneFlowController:
         self._status_listeners: list[Any] = []
         # A run queued behind another zone on the shared pump: its kind.
         self._waiting_pump_kind: str | None = None
+        # Set while the zone is paused: stops a watering cycle that is
+        # already running or queued for the pump (not a service run).
+        self._paused_event = asyncio.Event()
+        # Frost guard: the cycles waiting for it to warm up (deep soak is
+        # always re-checked before the routine), the pending hourly
+        # re-check, how many re-checks this wait has had, whether one is
+        # running now, and which cycles have already sent their message.
+        self._frost_held: set[str] = set()
+        self._frost_retry_cancel: Any = None
+        self._frost_rechecks = 0
+        self._frost_rechecking = False
+        self._frost_notified: set[str] = set()
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -475,6 +494,9 @@ class ZoneFlowController:
         await messages.async_setup(self.hass)
         await self.store.async_load()
         state = self.store.state
+        if state.paused:
+            self._paused_event.set()
+        self._resume_frost_wait()
 
         # Seed the rain window baseline from the counter's current value
         # *before* anything else touches the tracker, so a fresh install (or
@@ -604,6 +626,7 @@ class ZoneFlowController:
             self._power_loss_cancel()
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
+        self._cancel_frost_wait()
         # Anything the old cycle does from here on must not overwrite the
         # state the reloaded zone has just loaded.
         self.store.closed = True
@@ -916,6 +939,219 @@ class ZoneFlowController:
             self.number("target_weekly_hot_mm"),
             self.number("target_weekly_cool_mm"),
         )
+
+    # ------------------------------------------------------------------
+    # Pause and frost guard
+    # ------------------------------------------------------------------
+    @property
+    def paused(self) -> bool:
+        return self.store.state.paused
+
+    async def set_paused(self, on: bool) -> None:
+        """The Pause switch: no deep soak or routine watering -- scheduled
+        or "run now" -- until it's switched off (winter, holidays, a
+        repair). Safety watchdogs, service runs and test pulses still work."""
+        state = self.store.state
+        if state.paused == on:
+            return
+        now_ts = dt_util.utcnow().timestamp()
+        state.paused = on
+        if on:
+            state.paused_since_ts = now_ts
+            # Stops a cycle that's running or queued for the pump (at once,
+            # valve closed and confirmed); a frost wait ends too.
+            self._paused_event.set()
+            self._cancel_frost_wait()
+        else:
+            state.paused_since_ts = None
+            state.pause_ended_ts = now_ts
+            self._paused_event.clear()
+        await self.store.async_save()
+        self._notify_status()
+        await self._log_event(
+            event_type="Paused" if on else "Resumed",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+        )
+
+    def _refuse_if_paused(self) -> None:
+        if self.store.state.paused:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_paused")
+
+    async def run_deep_soak_now(self) -> None:
+        """The "Run Deep Soak Now" button and service: the scheduled cycle's
+        own code and gates -- but a paused zone says so instead of silently
+        doing nothing."""
+        self._refuse_if_paused()
+        await self.run_deep_soak()
+
+    async def run_routine_now(self) -> None:
+        """The "Run Routine Irrigation Now" button and service (see
+        run_deep_soak_now). manual=True feeds self-tuning's "early" signal."""
+        self._refuse_if_paused()
+        await self.run_routine_irrigation(manual=True)
+
+    def frost_guard_c(self) -> float | None:
+        """The frost guard's limit in degC, or None when it's off (slider at
+        its lowest) or the zone has no temperature sensor to check."""
+        if not self.outdoor_temp_entity:
+            return None
+        limit = self.number("frost_guard_temp")
+        if limit <= NUMBER_DEFS["frost_guard_temp"][1]:
+            return None
+        return limit
+
+    def _frost_temp_c(self) -> float | None:
+        """The outdoor temperature for the frost guard, or None when it
+        can't be trusted: unreadable, not updated for FROST_TEMP_MAX_AGE
+        (a sensor stuck on a cold night reading) or impossible (e.g. a
+        probe's -127 error value). None never blocks watering."""
+        state = self.hass.states.get(self.outdoor_temp_entity) if self.outdoor_temp_entity else None
+        temp = _state_temp_c(state)
+        if temp is None or temp < FROST_TEMP_MIN_PLAUSIBLE_C:
+            return None
+        seen = getattr(state, "last_reported", None) or state.last_updated
+        if (dt_util.utcnow() - seen).total_seconds() > FROST_TEMP_MAX_AGE_SECONDS:
+            return None
+        return temp
+
+    async def _frost_blocks(self, cycle: str) -> bool:
+        """Water freezing in the lines or on leaves does more harm than a
+        missed watering: a due cycle waits while the outdoor temperature is
+        below the frost guard. Cycles usually run early in the morning, the
+        coldest time of day, so the zone checks again every hour, up to
+        FROST_RETRY_COUNT times, before leaving it to the next scheduled
+        time. While the deep soak waits, the routine waits for it too (a
+        finished deep soak counts as the routine watering)."""
+        limit = self.frost_guard_c()
+        temp = self._frost_temp_c() if limit is not None else None
+        cold = temp is not None and limit is not None and temp < limit
+        if not cold:
+            self._frost_held.discard(cycle)
+            if cycle == "routine" and "deep_soak" in self._frost_held:
+                self._frost_held.add(cycle)
+                await self._decide(cycle, "waiting_deep_soak")
+                return True
+            if not self._frost_held:
+                self._cancel_frost_wait()
+            return False
+
+        if not self._frost_held and self._frost_retry_cancel is None and not self._frost_rechecking:
+            # A new frost wait (not a re-check of the current one).
+            self._frost_rechecks = 0
+            self._frost_notified = set()
+        self._frost_held.add(cycle)
+        if self._frost_retry_cancel is None and not self._frost_rechecking and self._frost_rechecks < FROST_RETRY_COUNT:
+            self._schedule_frost_recheck()
+        waiting = self._frost_retry_cancel is not None or (
+            self._frost_rechecking and self._frost_rechecks < FROST_RETRY_COUNT
+        )
+        if not waiting:
+            self._frost_held.discard(cycle)
+        await self._decide(
+            cycle,
+            "waiting_frost" if waiting else "skipped_frost",
+            temp_c=round(temp, 1),
+            limit_c=round(limit, 1),
+            rechecks=self._frost_rechecks,  # so a restart doesn't start the count over
+        )
+        first = cycle not in self._frost_notified
+        self._frost_notified.add(cycle)
+        kind = "Deep Soak" if cycle == "deep_soak" else "Routine Irrigation"
+        await self._log_event(
+            event_type=f"{kind} Skipped (Frost)",
+            status="Skipped",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            # One phone message per cycle and frost wait, not one per re-check.
+            notify_phone=first,
+            message="frost",
+            params={
+                "cycle": self._cycle_name(kind),
+                "temp": units.temp_text(temp, self.imperial),
+                "limit": units.temp_text(limit, self.imperial),
+                "hours": FROST_RETRY_COUNT,
+            },
+            extra_log=(
+                f"Outdoor temperature {temp:.1f} C is below the frost guard ({limit:.1f} C); "
+                + (
+                    "no re-checks left."
+                    if not waiting
+                    else f"re-check {self._frost_rechecks} of {FROST_RETRY_COUNT}."
+                    if self._frost_rechecking
+                    else "checking again in an hour."
+                )
+            ),
+        )
+        return True
+
+    def _schedule_frost_recheck(self) -> None:
+        @callback
+        def _due(_now) -> None:
+            self._frost_retry_cancel = None
+            if self._stopping:
+                return
+            self._frost_rechecks += 1
+            self.hass.async_create_task(self._frost_recheck())
+
+        self._frost_retry_cancel = async_call_later(self.hass, FROST_RETRY_SECONDS, _due)
+
+    async def _frost_recheck(self) -> None:
+        """One hourly frost re-check: the waiting cycles, deep soak first,
+        through all their usual gates."""
+        cycles = [c for c in ("deep_soak", "routine") if c in self._frost_held]
+        self._frost_held.clear()
+        self._frost_rechecking = True
+        try:
+            for cycle in cycles:
+                await (self.run_deep_soak() if cycle == "deep_soak" else self.run_routine_irrigation())
+        finally:
+            self._frost_rechecking = False
+        if self._frost_held and not self._stopping and self._frost_rechecks < FROST_RETRY_COUNT:
+            self._schedule_frost_recheck()
+        else:
+            self._frost_held.clear()
+        self._notify_status()
+
+    def _resume_frost_wait(self) -> None:
+        """After a restart or reload: a frost wait from earlier today picks
+        up again (without a second phone message)."""
+        latest = self._today_decision()
+        decisions = self.store.state.decisions if isinstance(self.store.state.decisions, dict) else {}
+        held = {
+            cycle
+            for cycle, decision in decisions.items()
+            if cycle in ("routine", "deep_soak")
+            and isinstance(decision, dict)
+            and decision.get("code") in ("waiting_frost", "waiting_deep_soak")
+            and latest is not None
+            and isinstance(decision.get("ts"), (int, float))
+            and dt_util.as_local(dt_util.utc_from_timestamp(decision["ts"])).date() == dt_util.now().date()
+        }
+        rechecks = max(
+            (
+                decisions[cycle].get("params", {}).get("rechecks", 0)
+                if isinstance(decisions[cycle].get("params"), dict)
+                else 0
+                for cycle in held
+            ),
+            default=0,
+        )
+        if not held or self.store.state.paused or not isinstance(rechecks, int) or rechecks >= FROST_RETRY_COUNT:
+            return
+        self._frost_rechecks = rechecks
+        self._frost_held = held
+        self._frost_notified = set(held)
+        self._schedule_frost_recheck()
+
+    def _cancel_frost_wait(self) -> None:
+        if self._frost_retry_cancel is not None:
+            self._frost_retry_cancel()
+            self._frost_retry_cancel = None
+        self._frost_held.clear()
 
     def watering_temp(self) -> tuple[float | None, str]:
         """The temperature that picks the hot/cool/normal tier, and where it
@@ -1477,6 +1713,10 @@ class ZoneFlowController:
                 self._waiting_pump_kind = None
                 self._notify_status()
             if not acquired:
+                if self._pause_stops(kind) and self.store.state.lock_on:
+                    # Queued for the pump when Pause went on: the valve never
+                    # opened, so the lock can go straight away.
+                    await self._set_lock(False)
                 return False
             try:
                 if self._stopping:
@@ -1504,7 +1744,7 @@ class ZoneFlowController:
         Always queued this way -- even an apparently free lock may already
         be promised to a woken waiter."""
         acquire = asyncio.ensure_future(pump_lock.acquire())
-        waker = asyncio.ensure_future(self._abort_event.wait())
+        waker = asyncio.ensure_future(self._abort_or_paused(self._watering_cycle))
         try:
             await asyncio.wait({acquire, waker}, return_when=asyncio.FIRST_COMPLETED)
         except asyncio.CancelledError:
@@ -1522,7 +1762,7 @@ class ZoneFlowController:
             return False
         if acquire.cancelled() or acquire.exception() is not None:
             return False
-        if self._stopping or self.store.state.abort_on:
+        if self._stopping or self.store.state.abort_on or self._pause_stops(self._cycle_kind):
             pump_lock.release()
             return False
         return True
@@ -1665,6 +1905,15 @@ class ZoneFlowController:
             return True
         self._count_partial_run()
         await self.store.async_save()
+        if outcome == _PAUSED:
+            await self._set_lock(False)  # the valve is confirmed closed
+            await self._log_event(
+                event_type=f"{kind} Stopped (Paused)",
+                status="Interrupted",
+                target_mm=target_mm_for_log,
+                deducted_mm=deducted_mm_for_log,
+                runtime=int(round(self._delivered_minutes)),
+            )
         if outcome == _STOPPED:
             await self._log_event(
                 event_type=f"{kind} Interrupted",
@@ -1707,6 +1956,8 @@ class ZoneFlowController:
 
             if kind == SERVICE_RUN_KIND and self._service_stop.is_set():
                 return _USER_STOPPED
+            if self._pause_stops(kind):
+                return _PAUSED
             self._expected_pulse_minutes = pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
             await self.hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
@@ -1758,6 +2009,15 @@ class ZoneFlowController:
                 self._end_pulse(pulse_minutes, full=False)
                 return _USER_STOPPED
 
+            if self._pause_stops(kind) and not (self._stopping or self.store.state.abort_on):
+                # Paused mid-pulse: close now. A valve that doesn't confirm
+                # is an error (keeps the lock, alerts), like a service stop.
+                self._expected_pulse_minutes = None
+                if not await self._close_cycle_valve():
+                    raise HomeAssistantError(f"{valve} did not confirm it closed")
+                self._end_pulse(pulse_minutes, full=False)
+                return _PAUSED
+
             if self._stopping or self.store.state.abort_on:
                 self._expected_pulse_minutes = None
                 await self._close_cycle_valve()
@@ -1783,9 +2043,31 @@ class ZoneFlowController:
         with contextlib.suppress(asyncio.TimeoutError):
             await asyncio.wait_for(self._abort_or_service_stop(service), timeout=seconds)
 
+    @property
+    def _watering_cycle(self) -> bool:
+        """The cycle running now is a deep soak or routine (which Pause
+        stops), not a service run or test pulse (which it doesn't)."""
+        return self._cycle_kind in ("Deep Soak", "Routine Irrigation")
+
+    def _pause_stops(self, kind: str) -> bool:
+        """Pause stops watering cycles, never a service run or test pulse."""
+        return self._paused_event.is_set() and kind in ("Deep Soak", "Routine Irrigation")
+
+    async def _abort_or_paused(self, watering: bool) -> None:
+        """Wakes on an abort -- or, for a watering cycle, on Pause."""
+        if not watering:
+            await self._abort_event.wait()
+            return
+        waiters = {asyncio.ensure_future(self._abort_event.wait()), asyncio.ensure_future(self._paused_event.wait())}
+        try:
+            await asyncio.wait(waiters, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            for waiter in waiters:
+                waiter.cancel()
+
     async def _abort_or_service_stop(self, service: bool) -> None:
         if not service:
-            await self._abort_event.wait()
+            await self._abort_or_paused(self._watering_cycle)
             return
         waiters = {
             asyncio.ensure_future(self._abort_event.wait()),
@@ -1855,7 +2137,7 @@ class ZoneFlowController:
         cut short by an abort, reload or shutdown -- a stopped cycle mustn't
         sit on a shared pump for the rest of a long gap."""
         sleeper = asyncio.ensure_future(asyncio.sleep(seconds))
-        waker = asyncio.ensure_future(self._abort_event.wait())
+        waker = asyncio.ensure_future(self._abort_or_paused(self._watering_cycle))
         try:
             await asyncio.wait({sleeper, waker}, return_when=asyncio.FIRST_COMPLETED)
         finally:
@@ -1900,7 +2182,7 @@ class ZoneFlowController:
         """The pump-power wait, cut short by an abort, reload or shutdown --
         or, for a service run, the person switching it off."""
         pump = asyncio.ensure_future(self._wait_for_pump_watts(min_pump_watts))
-        wakers = {asyncio.ensure_future(self._abort_event.wait())}
+        wakers = {asyncio.ensure_future(self._abort_or_paused(self._watering_cycle))}
         if service:
             wakers.add(asyncio.ensure_future(self._service_stop.wait()))
         try:
@@ -2114,6 +2396,8 @@ class ZoneFlowController:
             return
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
+        if state.paused:
+            return  # the Status sensor says so; nothing to log every day
 
         if state.lock_on:
             if self._service_active and calc.deep_soak_due(
@@ -2143,6 +2427,8 @@ class ZoneFlowController:
         rain_14d = self.rain_windows()["14d"]
         if rain_14d >= self.number("deep_soak_rain_threshold"):
             await self._decide("deep_soak", "skipped_wet_fortnight", rain_mm=round(rain_14d, 1))
+            return
+        if await self._frost_blocks("deep_soak"):
             return
         if not await self._forecast_gate_allows_run("deep_soak"):
             return
@@ -2206,8 +2492,9 @@ class ZoneFlowController:
             )
             return
 
-        if state.lock_on or self._service_active:
-            # Something took the zone while this cycle was checking its gates.
+        if state.lock_on or self._service_active or state.paused:
+            # Something took the zone (or it was paused) while this cycle
+            # was checking its gates.
             return
         await self._set_lock(True)
         await self._set_abort(False)
@@ -2293,6 +2580,8 @@ class ZoneFlowController:
         now_ts = dt_util.utcnow().timestamp()
         last_run_ts = state.last_routine_ts or 0.0
         elapsed_seconds = now_ts - last_run_ts
+        if state.paused:
+            return  # the Status sensor says so; nothing to log every day
 
         if state.lock_on:
             if self._service_active and calc.routine_due(
@@ -2362,6 +2651,8 @@ class ZoneFlowController:
                 until_ts=(state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400,
             )
             return
+        if await self._frost_blocks("routine"):
+            return
         if not await self._forecast_gate_allows_run("routine"):
             return
 
@@ -2399,7 +2690,9 @@ class ZoneFlowController:
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
         # one would otherwise measure its gap from 1970 (~20,000 days).
-        if state.last_routine_ts is not None and days_elapsed > 10:
+        # (A pause is deliberate: the gap only counts from when it ended.)
+        overdue_days = int((now_ts - max(last_run_ts, state.pause_ended_ts or 0.0)) / 86400)
+        if state.last_routine_ts is not None and overdue_days > 10:
             await self._log_event(
                 event_type="Irrigation Overdue",
                 status="WARNING",
@@ -2408,7 +2701,7 @@ class ZoneFlowController:
                 runtime=0,
                 notify_phone=True,
                 message="overdue",
-                params={"days": days_elapsed},
+                params={"days": overdue_days},
                 level=LEVEL_WARNING,
             )
 
@@ -2483,12 +2776,13 @@ class ZoneFlowController:
             )
             return
 
-        if state.lock_on or self._service_active:
-            # Something took the zone while this cycle was checking its gates.
+        if state.lock_on or self._service_active or state.paused:
+            # Something took the zone (or it was paused) while this cycle
+            # was checking its gates.
             return
-        await self._end_wet_hold()  # watering is actually starting
         await self._set_lock(True)
         await self._set_abort(False)
+        await self._end_wet_hold()  # watering is actually starting
 
         completed = await self._run_pulses(
             count=plan.pulse_count,
@@ -3058,6 +3352,8 @@ class ZoneFlowController:
                 params[key[:-3]] = units.depth_text(value, self.imperial)
             elif key.endswith("_ts") and isinstance(value, (int, float)):
                 params[key[:-3]] = self._when(value)
+            elif key.endswith("_c") and isinstance(value, (int, float)):
+                params[key[:-2]] = units.temp_text(value, self.imperial)
             else:
                 params[key] = value
         params["cycle"] = self._msg(f"cycle.{cycle}")
@@ -3175,6 +3471,9 @@ class ZoneFlowController:
             else:
                 result.update(code="lock_held", text=self._msg("status.lock_held"))
             return result
+        if state.paused:
+            result.update(code="paused", next_watering=None, next_cycle=None, text=self._msg("status.paused"))
+            return result
         if snoozed:
             result.update(code="snoozed", text=with_next(self._msg("status.snoozed")))
             return result
@@ -3183,12 +3482,19 @@ class ZoneFlowController:
         if latest is not None:
             cycle, decision = latest
             code = decision["code"]
+            if code in ("waiting_frost", "waiting_deep_soak") and cycle not in self._frost_held:
+                # No re-check pending any more (it ended, or after a restart).
+                code = "skipped_frost" if code == "waiting_frost" else None
+            if code is None:
+                latest = None
+        if latest is not None:
             text = self._msg(f"status.{code}", **self._decision_params(cycle, decision))
             result.update(
                 code=code,
                 cycle=cycle,
                 decided_at=dt_util.utc_from_timestamp(decision["ts"]).isoformat(),
-                text=with_next(text),
+                # (a frost re-check comes before any scheduled time)
+                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(text),
             )
             return result
 

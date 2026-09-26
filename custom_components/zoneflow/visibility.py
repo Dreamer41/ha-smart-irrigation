@@ -40,6 +40,7 @@ TEMPERATURE = {
     ("sensor", "reference_et0_3d"),
     ("number", "crop_coefficient"),
     ("select", "demand_model"),
+    ("number", "frost_guard_temp"),
 }
 FLOW_METER = {("sensor", "last_cycle_water_liters")}
 DEEP_SOAK = {

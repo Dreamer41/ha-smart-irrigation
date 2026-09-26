@@ -120,6 +120,10 @@
     "self_tune_longer": {
       "title": "🌱 Self-tuning adjustment",
       "message": "Routine dry-down holdoff extended to {days} days, based on your recent snoozes."
+    },
+    "frost": {
+      "title": "❄️ {cycle} waiting: frost",
+      "message": "It's {temp}, below the frost guard of {limit}. It checks again every hour for up to {hours} hours, then waits for its next scheduled time."
     }
   },
   "notes": {
@@ -156,6 +160,10 @@
     "with_next": "{status} · next {when}",
     "waiting_pump": "Waiting for the shared pump: {cycle}",
     "with_next_deep_soak": "{status} · deep soak {when}",
-    "first_run_deep_soak": "First watering: deep soak {when}"
+    "first_run_deep_soak": "First watering: deep soak {when}",
+    "paused": "Paused: no watering until Pause is switched off",
+    "skipped_frost": "{cycle} skipped at {time}: {temp}, below the frost guard ({limit})",
+    "waiting_frost": "{cycle} on hold at {time}: {temp}, below the frost guard ({limit}); checking again hourly",
+    "waiting_deep_soak": "{cycle} waiting since {time}: the deep soak goes first once it's warm enough"
   }
 }

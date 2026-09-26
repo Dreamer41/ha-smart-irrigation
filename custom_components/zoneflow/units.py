@@ -25,7 +25,7 @@ DEPTH_KEYS = {
 # Emitter application rate: mm/min <-> in/h (the usual drip rating in the US).
 FLOW_KEYS = {"flow_rate_mm_per_min"}
 # Temperature thresholds: °C <-> °F.
-TEMP_KEYS = {"hot_temp_threshold", "cool_temp_threshold", "fallback_temp"}
+TEMP_KEYS = {"hot_temp_threshold", "cool_temp_threshold", "fallback_temp", "frost_guard_temp"}
 
 IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "temp": "°F"}
 IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "temp": 0.5}
@@ -148,6 +148,11 @@ def sensor_value(sensor_kind: str, metric_value: float | None, imperial: bool) -
 def sensor_unit(sensor_kind: str, imperial: bool) -> str:
     metric_unit, imperial_unit, _ = SENSOR_UNITS[sensor_kind]
     return imperial_unit if imperial else metric_unit
+
+
+def temp_text(celsius: float, imperial: bool) -> str:
+    """A temperature for log/phone text, in the zone's units."""
+    return f"{celsius * 9 / 5 + 32:.1f} °F" if imperial else f"{celsius:.1f} °C"
 
 
 def depth_text(mm: float, imperial: bool) -> str:

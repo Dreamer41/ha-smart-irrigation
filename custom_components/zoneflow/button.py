@@ -16,15 +16,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     controller = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         [
-            ZoneFlowButton(entry, controller, "run_deep_soak", "Run Deep Soak Now", controller.run_deep_soak),
+            ZoneFlowButton(entry, controller, "run_deep_soak", "Run Deep Soak Now", controller.run_deep_soak_now),
             ZoneFlowButton(
                 entry,
                 controller,
                 "run_routine",
                 "Run Routine Irrigation Now",
-                # manual=True feeds the self-tuning "early" signal -- see
-                # controller.py's run_routine_irrigation/_register_self_tune_signal.
-                lambda: controller.run_routine_irrigation(manual=True),
+                # Feeds the self-tuning "early" signal -- see controller.py's
+                # run_routine_now/_register_self_tune_signal.
+                controller.run_routine_now,
             ),
             ZoneFlowButton(entry, controller, "reset_lock", "Reset Irrigation Lock", controller.reset_lock),
             ZoneFlowButton(entry, controller, "snooze_today", "Snooze Today", controller.snooze_today),

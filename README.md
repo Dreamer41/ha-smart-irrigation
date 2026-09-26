@@ -160,6 +160,13 @@ and both zones get less water than their calibrated runtime assumes.
   (lock, shared pump, watchdogs) but never count as watering, so the
   schedule doesn't move. Their minutes do count toward the daily safety
   cap.
+- **Pause** switch per zone: no watering, scheduled or "run now", until
+  it's switched off — for winter, a holiday or a repair. Safety watchdogs
+  and service runs keep working, and the paused weeks don't count as
+  "overdue" afterwards.
+- **Frost guard** (with a temperature sensor): a due cycle waits while it's
+  below 2 °C (adjustable), re-checks every hour for a few hours, and only
+  then waits for the next day. Set it to its lowest to switch it off.
 - **Snooze Today**, a **deep-soak on/off switch**, and **self-tuning**: three
   "water now" presses in a row while the model says not yet shorten the
   routine dry-down a notch; three snoozes lengthen it.

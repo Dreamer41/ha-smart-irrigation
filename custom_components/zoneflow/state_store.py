@@ -154,6 +154,13 @@ class IrrigationState:
     # {"code", "ts", "params"} -- the Status sensor's "why".
     decisions: dict[str, dict] = field(default_factory=dict)
 
+    # The Pause switch (switch.py): no watering while on. When it was
+    # switched on, and when a pause last ended (so the "overdue" warning
+    # doesn't count the paused weeks).
+    paused: bool = False
+    paused_since_ts: float | None = None
+    pause_ended_ts: float | None = None
+
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
     # when not snoozed. Compared against the local date at each cycle's

@@ -117,13 +117,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not hass.services.has_service(DOMAIN, SERVICE_RUN_DEEP_SOAK):
 
         async def _handle_run_deep_soak(call: ServiceCall) -> None:
-            await _resolve_controller(hass, call).run_deep_soak()
+            await _resolve_controller(hass, call).run_deep_soak_now()
 
         async def _handle_run_routine(call: ServiceCall) -> None:
             # manual=True feeds the self-tuning "early" signal, same as the
             # button -- a service call is just as much a deliberate human
             # decision as pressing the button.
-            await _resolve_controller(hass, call).run_routine_irrigation(manual=True)
+            await _resolve_controller(hass, call).run_routine_now()
 
         async def _handle_reset_lock(call: ServiceCall) -> None:
             await _resolve_controller(hass, call).reset_lock()

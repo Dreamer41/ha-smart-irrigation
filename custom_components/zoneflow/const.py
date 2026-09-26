@@ -413,6 +413,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # itself off (with a phone alert) -- so a forgotten switch can't water
     # for hours. See controller.start_service_run.
     "service_mode_auto_off_minutes": ("Service Mode Auto-Off", 5.0, 120.0, 5.0, "min"),
+    # Frost guard: a due cycle is skipped while the outdoor temperature is
+    # below this (needs a temperature sensor). At its lowest it's off. See
+    # controller._frost_blocks.
+    "frost_guard_temp": ("Frost Guard Temperature", -10.0, 10.0, 0.5, "°C"),
 }
 
 NUMBER_DEFAULTS: dict[str, float] = {
@@ -467,6 +471,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
     "service_mode_auto_off_minutes": 30.0,
+    "frost_guard_temp": 2.0,
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"
@@ -524,3 +529,12 @@ NOTIFY_ALL = "all"
 NOTIFY_WARNINGS = "warnings"
 NOTIFY_NONE = "none"
 NOTIFY_LEVEL_OPTIONS = [NOTIFY_ALL, NOTIFY_WARNINGS, NOTIFY_NONE]
+
+# Frost guard (controller._frost_blocks): a cycle skipped for frost checks
+# again this often, this many times that day.
+FROST_RETRY_SECONDS = 3600
+FROST_RETRY_COUNT = 6
+# A temperature reading older than this, or below this, is not trusted to
+# hold watering back (a sensor stuck on a cold reading, an error value).
+FROST_TEMP_MAX_AGE_SECONDS = 3 * 3600
+FROST_TEMP_MIN_PLAUSIBLE_C = -60.0

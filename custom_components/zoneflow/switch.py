@@ -2,7 +2,8 @@
 would reasonably want to flip themselves without reopening the
 integration's Options flow every time.
 
-Currently just the deep-soak on/off switch (const.py's CONF_DEEP_SOAK_ENABLED)
+The Pause switch (no watering until it's off), deep soak on/off, deficit
+mode and Service Mode. The deep-soak on/off switch (const.py's CONF_DEEP_SOAK_ENABLED)
 -- see run_deep_soak()'s gate in controller.py for what flipping it does.
 Everything else that's "set once and rarely touched again" (soil type,
 growth-ramp profile, entity selections) stays in the config/options flow;
@@ -30,6 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowDeepSoakEnabledSwitch(entry, controller),
             ZoneFlowDeficitModeSwitch(entry, controller),
             ZoneFlowServiceModeSwitch(entry, controller),
+            ZoneFlowPauseSwitch(entry, controller),
         ]
     )
 
@@ -135,3 +137,36 @@ class ZoneFlowDeepSoakEnabledSwitch(SwitchEntity):
         self.hass.config_entries.async_update_entry(
             self._entry, options={**self._entry.options, CONF_DEEP_SOAK_ENABLED: value}
         )
+
+
+class ZoneFlowPauseSwitch(SwitchEntity):
+    """Pause: no deep soak or routine watering -- scheduled or "run now" --
+    until switched off, e.g. for winter, a holiday with someone else
+    watering, or a repair. Safety watchdogs, service runs and test pulses
+    still work. See controller.set_paused."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:pause-circle-outline"
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_pause"
+        self._attr_translation_key = "pause"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.paused
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        since = self._controller.store.state.paused_since_ts
+        return {"paused_since": dt_util.utc_from_timestamp(since).isoformat() if since else None}
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._controller.set_paused(True)
+        self.async_write_ha_state()
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._controller.set_paused(False)
+        self.async_write_ha_state()

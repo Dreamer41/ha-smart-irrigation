@@ -272,6 +272,8 @@ class ZoneFlowNextIrrigationSensor(_Base):
         # Unknown for a zone that has never watered (nothing to project from
         # -- epoch would read "56 years ago") and while wet soil holds the
         # routine back (can't be dated); a dry reading brings it forward.
+        if self._controller.paused:
+            return None  # nothing is scheduled while the zone is paused
         next_ts, _ = self._controller.routine_next_estimate()
         return dt_util.utc_from_timestamp(next_ts) if next_ts is not None else None
 
@@ -303,6 +305,8 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
         self._attr_translation_key = "days_until_next_run"
 
     def _next_times(self) -> tuple[float | None, float | None]:
+        if self._controller.paused:
+            return None, None  # nothing is scheduled while the zone is paused
         return self._controller.next_watering()
 
     @staticmethod

@@ -287,6 +287,9 @@
       },
       "service_mode_auto_off_minutes": {
         "name": "Service Mode Auto-Off"
+      },
+      "frost_guard_temp": {
+        "name": "Frost Guard Temperature"
       }
     },
     "datetime": {
@@ -349,6 +352,9 @@
       },
       "service_mode": {
         "name": "Service Mode"
+      },
+      "pause": {
+        "name": "Pause"
       }
     },
     "sensor": {
@@ -600,6 +606,9 @@
     },
     "daily_cap_reached": {
       "message": "This zone has reached today's maximum runtime safety cap, so no service run can start until tomorrow (or raise the Max Daily Irrigation Runtime cap)."
+    },
+    "zone_paused": {
+      "message": "This zone is paused. Switch Pause off to water it."
     }
   }
 }
