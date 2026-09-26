@@ -1752,6 +1752,22 @@ This only applies if the person said yes to this back in §1. Everything
 above gets a zone *working* — this step is purely cosmetic, and skip it
 outright if they never asked or said the default device page is fine.
 
+**Start with the built-in ZoneFlow card (1.5.0+).** It ships with the
+integration — no resource to add, no entity IDs to fill in — and keeps
+itself up to date as ZoneFlow adds features, so it's the right default for
+almost everyone. Per zone, add one card:
+
+```yaml
+type: custom:zoneflow-card
+device_id: <the zone's device id>
+```
+
+(or in the UI: edit dashboard → Add card → search "ZoneFlow zone" → pick
+the zone). With tool access, put one card per zone in its own view or
+section, with the view's icon and title set per zone as described below.
+Only build the hand-made layout that follows if the person specifically
+wants a custom arrangement, or is on a ZoneFlow version before 1.5.0.
+
 The goal is a dashboard section that groups this zone's entities the way a
 person actually thinks about them (status, manual controls, targets, safety)
 instead of HA's default alphabetical device-page list. Do **not** hand the
@@ -2211,6 +2227,9 @@ Keep it short — a few sentences and a short list of click-paths, not a
 restated version of this whole guide.
 
 ## 9b. Updating an existing dashboard after a ZoneFlow update
+
+A dashboard using the built-in ZoneFlow card needs nothing: it picks up new
+entities by itself. What follows is for hand-built dashboards.
 
 If the person already has a ZoneFlow dashboard and has just updated
 ZoneFlow, check the release notes for that version (GitHub → Releases): each

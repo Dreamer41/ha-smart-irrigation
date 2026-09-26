@@ -49,3 +49,17 @@ own machine, with fake/simulated valve, pump, rain, and temperature sensors
 you control from sliders in the HA UI -- so you can add the integration,
 push its buttons, and watch it behave in a real dashboard, with zero
 connection to your production HA or real hardware.
+
+## Dashboard card
+
+`scripts/check_card.py` renders the bundled card
+(`custom_components/zoneflow/frontend/zoneflow-card.js`) in headless
+Chromium against a fake Home Assistant and checks which entity lands where,
+what's left out, and that it follows changes (Playwright:
+`pip install playwright && playwright install chromium`):
+
+```
+python scripts/check_card.py --screenshot card.png
+```
+
+For the real thing, add the card to a dashboard in the sandbox.

@@ -185,9 +185,29 @@ and both zones get less water than their calibrated runtime assumes.
 
 ## Dashboard
 
-One zone's page (a chili bed with a soil-moisture probe): live status up
-top, manual controls, the health journal, and every tunable as a slider.
-The AI setup guide builds a page like this for each of your zones.
+**The ZoneFlow card comes with the integration** — nothing to install or
+add as a resource. Edit a dashboard → **Add card** → **ZoneFlow zone** →
+pick the zone. Or in YAML:
+
+```yaml
+type: custom:zoneflow-card
+device_id: <the zone's device>   # picked for you in the card editor
+show_journal: true               # plant journal (folded)
+show_settings: true              # every setting, grouped (folded)
+show_diagnostics: false
+title: Chili bed                 # optional: instead of the zone's name
+icon: mdi:chili-hot              # optional
+```
+
+It shows the zone's Status sentence up top, then the valve, soil moisture
+and next watering, the controls (water now, snooze, pause), service runs,
+and the settings folded away in groups. It finds the zone's entities
+through its device and leaves out whatever the zone doesn't use, so after
+a ZoneFlow update new features appear on it by themselves. Units follow
+the zone. Ordinary Home Assistant cards keep working alongside it.
+
+A hand-built page per zone (what the AI setup guide made before the card
+existed) looks like this:
 
 <img src="docs/screenshots/dashboard-zone.png" width="100%" alt="ZoneFlow zone dashboard: status with soil moisture, manual controls, health journal and growth profile">
 

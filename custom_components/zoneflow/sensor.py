@@ -596,4 +596,7 @@ class ZoneFlowStatusSensor(_Base):
     @property
     def extra_state_attributes(self) -> dict:
         status = self._status or self._controller.status()
-        return {key: value for key, value in status.items() if key != "text"}
+        attributes = {key: value for key, value in status.items() if key != "text"}
+        # For the ZoneFlow card: the valve isn't one of the zone's own entities.
+        attributes["valve"] = self._controller.valve_entity
+        return attributes
