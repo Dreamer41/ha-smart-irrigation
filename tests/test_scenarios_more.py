@@ -154,11 +154,17 @@ async def test_next_run_estimate_agrees_with_the_cycle_when_the_temp_sensor_is_d
     hass, fake_valve_services, monkeypatch, tmp_path
 ):
     """Regression: the estimate used the plain peak average while the real
-    cycle uses the dropout-aware one (dashboard said 3 days, zone waited 4)."""
+    cycle uses the dropout-aware one (dashboard said 3 days, zone waited 4).
+    Both now use watering_temp: real hot days still on record keep the
+    3-day rhythm; with none left, the (unset -> normal) fallback gives 4."""
     controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
     _history(controller, last_routine_days_ago=0, peaks=(34.0, 34.0, 34.0))
     hass.states.async_set(OUTDOOR_TEMP, "unavailable")
     await hass.async_block_till_done()
+    estimate = _sensor_value(hass, "next_irrigation_estimate").timestamp()
+    assert estimate - controller.store.state.last_routine_ts == pytest.approx(3 * DAY, abs=60)
+
+    controller.store.state.peak_temp_day_history_c = [None, None, None]
     estimate = _sensor_value(hass, "next_irrigation_estimate").timestamp()
     assert estimate - controller.store.state.last_routine_ts == pytest.approx(4 * DAY, abs=60)
 

@@ -134,6 +134,14 @@ class IrrigationState:
     deficit_enabled: bool = False
     deficit_until_ts: float | None = None
 
+    # Soil-moisture "wet" holds: when a routine run that was due was first
+    # skipped for wet soil (ended by a fresh not-wet reading, or by a
+    # routine run actually starting), and whether this hold's "check the
+    # probe" / "probe looks frozen" alerts have gone out.
+    wet_hold_since_ts: float | None = None
+    wet_hold_alerted: bool = False
+    wet_hold_frozen_alerted: bool = False
+
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
     # when not snoozed. Compared against the local date at each cycle's

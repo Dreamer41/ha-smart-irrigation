@@ -1,10 +1,14 @@
 # ZoneFlow Irrigation
 
-A native Home Assistant custom integration for drip/valve irrigation, built
-as real Python (config flow, entities, services) rather than a pile of YAML
-automations and helper entities. It drives your existing valve, pump, rain
-gauge, and outdoor temperature sensor directly — it never creates new
-physical entities of its own.
+A native Home Assistant custom integration for drip, sprinkler and valve
+irrigation, written as real Python (config flow, entities, services) rather
+than a pile of YAML automations and helpers. It drives the valve, pump and
+sensors you already have — it never creates physical entities of its own.
+
+**Only a valve switch is required.** Every sensor is optional, each one adds
+a specific capability, and each zone can use a different combination. A
+sensor that goes offline later degrades that capability safely instead of
+breaking the zone.
 
 ## Screenshots
 
@@ -12,252 +16,205 @@ physical entities of its own.
 
 ## 🤖 Let an AI set it up for you
 
-**[AI_SETUP.md](./AI_SETUP.md)** is a step-by-step setup guide written *for
-an AI assistant to follow*, not for you to read. Paste its raw contents (or
-just its link, if your assistant can open it) into Claude, ChatGPT, or any
-other AI assistant along with "help me set up ZoneFlow", and it will
-interview you for your entities and plant/crop details, recommend sensible
-values (including the per-crop numbers like weekly water targets and the
-weather forecast dry-spell override), and get a zone fully configured and
-verified — no need to read any of the documentation below first.
+**[AI_SETUP.md](./AI_SETUP.md)** is a step-by-step guide written *for an AI
+assistant to follow*, not for you to read. Paste it (or its link) into
+Claude, ChatGPT or another assistant with "help me set up ZoneFlow". It
+interviews you — how many zones, what you're growing and where, which
+sensors each zone has, which zones share a pump — researches your crop,
+recommends numbers for your climate and soil with its reasoning, configures
+each zone (itself if it has Home Assistant tool access, or by telling you
+what to click), and runs a test pulse before it calls the job done. It can
+also generate a dashboard card and a plain-language cheat sheet per zone.
 
-It doesn't just plug in generic defaults: it factors in your crop, your
-region/climate (tropical, temperate, arid, etc.), and your soil type to
-recommend realistic weekly water targets and temperature thresholds for
-*your* conditions, explaining its reasoning as it goes rather than handing
-you a number with no justification. It can also, on request, generate a
-ready-to-paste Home Assistant dashboard card for the zone — grouping the
-schedule, live sensors, and manual controls into one clean view.
+The rest of this page is the human overview. AI_SETUP.md is the detailed
+reference for every setting.
 
-Two ways it can do that, and it'll ask you which you want:
-- **It clicks for you** — if it has tool/API access to your Home Assistant
-  instance (an MCP server, a long-lived access token, etc.), it can create
-  the config entry and set every tunable number itself, just narrating what
-  it's doing.
-- **It guides you** — if not (or if you'd rather do the clicking yourself),
-  it tells you exactly what to click and type, one screen at a time.
+## How it decides
 
-Either way you end up in the same place: a working, tuned zone, with a
-verification test pulse run before it calls the job done.
+Each zone runs two cadences: an infrequent **deep soak** (for deep roots)
+and a lighter, frequent **routine irrigation**. Every run, scheduled or
+manual, goes through the same pipeline:
 
-## What it does
+1. **Plant and site** — crop, soil type, drainage, slope and irrigation
+   method (descriptive; they guide the recommended numbers), plus an
+   optional growth-stage ramp from a planting date.
+2. **Demand** — how much water, how often:
+   - temperature tiers (cool / normal / hot) from the 3-day average of daily
+     highs, with thresholds chosen for your climate at setup;
+   - or, optionally, an **ET curve**: Hargreaves ET₀ from daily min/max
+     temperature and your latitude × 7 × a crop factor;
+   - scaled by the **growth ramp** (young plants need less) and optional
+     **deficit mode** (controlled stress after fruit set, with guardrails);
+   - an optional **soil-moisture probe** decides at the extremes: dry soil
+     brings watering forward, wet soil skips it.
+3. **Water already received** — rolling rain windows from a tipping-bucket
+   gauge, rain credit deducted by efficiency band, a dry-down hold after
+   significant rain, an optional **weather forecast gate**, and a
+   30-minute pre-irrigation rain check that also stops a running cycle.
+4. **Physical delivery** — runtime from your calibrated emitter flow rate,
+   split into pulses with soak gaps (so clay can absorb it), optional pump
+   pre/post delays, and serialized access to a **shared pump**.
+5. **Safety** — per-cycle and daily runtime caps, stuck-valve force-off,
+   pump-power audit, no-flow detection, power-loss abort, stale-lock
+   recovery, and interruption handling that always ends with the valve
+   closed and confirmed.
 
-- **Two watering cadences per zone**: an infrequent **deep soak** (encourages
-  deep root growth) and a frequent, lighter **routine irrigation** — each on
-  its own configurable schedule and independently gated.
-- **Rain-aware**: tracks rolling rain windows (30min through 14 days) from a
-  tipping-bucket counter, deducts recent rainfall from how much a routine
-  cycle needs to apply, and holds off entirely during a configurable
-  dry-down period after significant rain. Rain that starts while a cycle is
-  running stops the rest of it (the same 30-minute threshold that can cancel
-  a cycle before it starts).
-- **Temperature-aware**: a 3-day average peak temperature shifts both the
-  watering interval and the weekly water target between "cool", "normal",
-  and "hot" tiers. Works whether Home Assistant is set to °C or °F.
-- **Metric or imperial**: each zone shows its sliders and sensors in mm/°C
-  or inches/°F/gallons -- by default whatever Home Assistant is set to, or
-  forced per zone in its options. ZoneFlow calculates in metric internally,
-  so the choice never changes how much it waters, and switching keeps every
-  setting's value -- sliders and existing sensors both move to the new
-  units (a unit you picked yourself for a sensor is left alone).
-- **ET curve, optional**: switch a zone's Water Demand Model to the ET
-  curve and its weekly target follows the weather continuously instead of
-  jumping between three tiers -- reference evapotranspiration (ET₀,
-  Hargreaves-Samani, from the daily min/max temperature and your home
-  latitude) x 7 x a per-zone crop factor. No extra sensors needed, off by
-  default, and it falls back to the tiers on its own if the temperature
-  sensor drops out. A Routine Weekly Target sensor shows which model is in
-  effect.
-- **Safety watchdogs, not just a scheduler**: a stuck-valve force-off, a
-  power-loss mid-cycle abort, a pump-power audit per pulse, and a stale-lock
-  auto-recovery on Home Assistant restart. A cycle that gets interrupted —
-  you save the zone's settings mid-run, Home Assistant restarts or shuts
-  down, an automation cancels it, or the valve switch stops responding —
-  always ends with its valve closed (with a phone alert for a valve error).
-  It isn't counted as a finished run, but the water it gave counts toward
-  the daily safety cap. All of it — scheduled runs and
-  manual button/service calls alike — goes through the exact same code path,
-  so a manual run can never drift from what the schedule would have done.
-- **Tunable, not hardcoded**: every threshold (weekly mm targets, flow rate,
-  drydown days, safety runtime caps, rain-efficiency curve) is a Home
-  Assistant `number` entity you can adjust live, with sensible defaults.
-- **Multi-zone, any pump topology**: add the integration again for each zone
-  (own name, own valve, own targets) and it just works whether every zone has
-  its own independent pump or several zones share one pump feeding multiple
-  valves. Sharing is auto-detected — if two zones are pointed at the same
-  pump-power sensor, they automatically take turns instead of both trying to
-  run the pump at once; nothing to configure. A pump preamble/postamble delay
-  (spin-up before the valve opens, pressure-settle after it closes) is
-  available per zone for pumps that need a moment to reach pressure.
-- **Sunrise/sunset-relative scheduling, optional**: deep-soak and routine
-  triggers default to a fixed clock time, same as always, but either can
-  instead be set to fire a chosen number of minutes before/after sunrise or
-  sunset — useful across seasons and latitudes where a fixed 05:00 drifts
-  relative to daylight.
-- **Weather forecast gate, optional**: point a zone at any `weather.*` entity
-  and it will pre-emptively hold off a scheduled run when rain is forecast
-  (by mm and/or probability, both adjustable), checking again at the next
-  scheduled run instead of watering into the rain. If the forecast has no
-  weather entity configured, is missing, or is unavailable, this gate never
-  blocks anything — it fails open by design. A **dry-spell override** number,
-  adjustable per zone right in the UI, caps how many days a zone can go
-  un-watered on a forecast that never delivers: once that many days pass with
-  zero rain actually measured, ZoneFlow waters anyway. Set it low for a
-  thirsty seedling bed, higher for a drought-tolerant succulent zone — each
-  zone/crop can have its own tolerance.
-- **Seed a zone's history at setup**: a brand-new zone has no watering
-  history, which correctly (but often unhelpfully) makes it look overdue and
-  fire on the very next scheduled time. Each zone gets three `datetime`
-  entities — Last Routine Irrigation, Last Deep Soak, Last Significant Rain —
-  you can set right after adding the zone (or any time after, to correct
-  them) so an already-established plant doesn't get double-watered just
-  because you're migrating it onto ZoneFlow. Leave them unset for a genuinely
-  brand-new setup; the corresponding gate then behaves exactly as if it's
-  never happened. These dates can't be set in the future (only the planting
-  date can be planned ahead) -- a typo'd "last routine" next month would
-  otherwise silently keep the zone dry until then.
+## What each sensor adds
+
+| Entity | Adds | Without it |
+|---|---|---|
+| `switch.*` valve | — | **required** |
+| Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains |
+| Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
+| Soil-moisture probe (`sensor.*`, %) | dry soil waters early, wet soil skips | the modeled schedule alone |
+| Pump power sensor | per-pulse "is the pump really running" audit | no low-power warning |
+| Flow meter (cumulative volume) | measured water per cycle, "pump ran but no water moved" alert | no measured delivery, no no-flow check |
+| `weather.*` forecast | holds off before forecast rain, with a dry-spell override | forecast never blocks |
+| `notify.*` target | phone alerts for faults and notable events | log only |
+
+Sensors can be shared between zones (one rain gauge or weather entity for
+the whole garden); the valve and a soil probe belong to one zone.
+
+**When a sensor misbehaves:**
+- **Temperature:** a short dropout keeps using the last real days. After 3
+  days with no reading, the fallback slider decides until it recovers.
+- **Rain gauge:** unreadable values are ignored, not recorded as zero, and a
+  counter reset or glitch doesn't lose rain already counted.
+- **Soil moisture:** the schedule decides whenever the reading can't be
+  used — offline, impossible (outside 0–100%), or a dry reading with no
+  report for 24 hours. A wet reading is still trusted (probes often sit at
+  100% in soaked soil), but if wet readings hold watering back for twice
+  the routine interval you get an alert, and if the probe has also stopped
+  reporting, the schedule waters once and the check starts over.
+- **Pump power:** a warning, and the cycle still completes.
+- **Flow meter:** the no-flow check is skipped rather than raising a false
+  alarm.
+- **Weather:** the forecast gate fails open and never blocks a run.
+
+## Multiple zones and shared pumps
+
+Add the integration once per zone — each has its own name, valve, targets
+and schedule, and any mix of sensors.
+
+**Shared pump ID.** If several zones draw from the same physical pump, give
+them the **same "Shared pump ID"** (any label, e.g. `Pump A`) in the setup
+form or the zone's **Configure** options. Zones with the same ID take turns:
+one zone holds the pump for its whole cycle, soak gaps included, and the
+next waits. Zones with a different ID, or none, run independently and can
+overlap. This works with or without a pump-power sensor — ZoneFlow only
+falls back to "same pump-power sensor = same pump" when no ID is set, which
+is how older setups grouped zones, so set the ID explicitly for any shared
+pump. One flow meter in front of several separate pumps can't tell their
+water apart: give those zones the same pump ID too if you want each zone's
+measured water to be its own (they then take turns), or fit a meter per
+pump.
+
+**Shared pump safety** matters: two valves open on one pump split its flow,
+and both zones get less water than their calibrated runtime assumes.
+
+## More features
+
+- **Tunable live**: every threshold is a `number` entity with a sensible
+  default — weekly targets per tier, hot/cool thresholds, emitter flow
+  rate, pulse count and soak time per cadence, dry-down days, deep-soak
+  interval and depth, rain efficiency, forecast thresholds, runtime caps.
+- **Climate at setup**: pick tropical, hot summers, temperate or cool
+  summers, and the hot/cool thresholds and fallback temperature are
+  pre-filled for you (sliders: hot 15–45 °C, cool 5–40 °C).
+- **Growth-stage ramp**: Fast Annual, Slow Fruiting, Established Perennial
+  or your own custom curve, from a planting date — or jump straight to a
+  stage preset from a dropdown.
+- **Sunrise/sunset scheduling**: either cadence can fire a set number of
+  minutes before/after sunrise or sunset instead of at a fixed time.
+- **Metric or imperial per zone**: mm/°C or inches/°F/gallons, following
+  Home Assistant by default. Everything is calculated in metric, so the
+  choice never changes how much it waters.
+- **At-a-glance sensors**: next irrigation estimate, days until next run,
+  weekly target and where it came from, rain windows, reference ET₀,
+  measured last-cycle water, soil-moisture status, deficit-mode status.
+- **History you can seed**: Last Routine / Last Deep Soak / Last Significant
+  Rain dates, so a migrated plant isn't treated as overdue. Past dates only
+  (a typo'd future date would silently keep the zone dry).
+- **Snooze Today**, a **deep-soak on/off switch**, and **self-tuning**: three
+  "water now" presses in a row while the model says not yet shorten the
+  routine dry-down a notch; three snoozes lengthen it.
+- **Health journal**: condition, notes, last/next fertilizing — for you only,
+  never read by the watering logic.
+- **CSV event log** per zone: every run, skip and warning with the numbers
+  behind it.
 
 ## Installation
 
 **Via HACS (recommended):**
 
-1. HACS → ⋮ (top right) → **Custom repositories** → add
-   `https://github.com/Dreamer41/ha-smart-irrigation` as type **Integration**.
-   (Once this repo is accepted into HACS's default store, this manual step
-   won't be needed — you'll be able to just search for "ZoneFlow" in HACS
-   directly.)
-2. Find **ZoneFlow Irrigation** in HACS and click **Download**.
-3. Restart Home Assistant (custom integrations need a full restart to be
-   picked up the first time).
+1. HACS → ⋮ → **Custom repositories** → add
+   `https://github.com/Dreamer41/ha-smart-irrigation` as type
+   **Integration**.
+2. Find **ZoneFlow Irrigation** and click **Download**.
+3. Restart Home Assistant.
 
-**Manual install (alternative):**
+**Manual:** copy `custom_components/zoneflow/` into
+`/config/custom_components/` and restart Home Assistant.
 
-1. Copy `custom_components/zoneflow/` into your HA `/config/custom_components/`.
-2. Restart Home Assistant (custom integrations need a full restart to be
-   picked up the first time).
+**Add a zone:** Settings → Devices & Services → Add Integration →
+**ZoneFlow Irrigation**. Four short screens:
 
-**Then, either way:**
+1. **Zone name** (becomes the device name and default CSV file name).
+2. **Entities and schedule** — the valve, any optional sensors from the
+   table above, the Shared pump ID if the pump is shared, units, soil/site
+   description, growth ramp, CSV path, deep-soak on/off and both schedules.
+3. **Climate** — pre-fills the next screen.
+4. **Temperature thresholds** — hot, cool and fallback temperature, in the
+   zone's units.
 
-3. Settings → Devices & Services → Add Integration → **ZoneFlow Irrigation**.
-4. Give the zone a short name (e.g. "Front Lawn") — this becomes its device
-   name and its default CSV filename, so multiple zones never collide.
-5. Point it at your real entities:
-   - a `switch.*` valve
-   - a `sensor.*` pump power sensor
-   - a `counter.*` or `sensor.*` rain gauge tip counter
-   - a `sensor.*` outdoor temperature sensor (device class `temperature`)
-   - (optional) a `notify.*` entity for phone alerts
-   - (optional) a `weather.*` entity to enable the forecast gate (see above)
-   - a CSV log file path
-   - deep-soak and routine schedule times, or a sunrise/sunset-relative
-     trigger instead (see above)
-6. If this zone's plant already has recent watering/rain history (e.g.
-   you're migrating it from another system), set its Last Routine
-   Irrigation / Last Deep Soak / Last Significant Rain `datetime` entities
-   now, before leaving it to run unattended — otherwise it looks overdue
-   from a blank slate and will water on the very next scheduled time
-   regardless of whether it actually needs it yet.
-7. To add another zone, repeat from step 3 with a different name/entities. If
-   it shares a pump-power sensor with an existing zone, pump-sharing kicks in
-   automatically.
-
-## Also included
-
-- **Deep-soak interval, adjustable**: how many days between deep-soak cycles
-  is its own `number` slider (default 14, 3-30 days) instead of a fixed
-  constant -- tune it per zone right from the dashboard, same as every other
-  threshold.
-- **Days Until Next Run sensor**: a plain-language countdown to whichever
-  comes first, the next routine cycle or the next deep soak, so you can see
-  at a glance whether a zone is about to water without doing the math from
-  the raw timestamps yourself.
-- **Health journal**: a per-zone `select` (Excellent / Good / Poor / Sick)
-  plus a free-text notes field, purely for you to record how the plant's
-  actually doing over time, along with a Last Fertilizing date and a Next
-  Fertilizing In dropdown (1-12 months). Nothing in ZoneFlow reads any of
-  them back -- it
-  never changes scheduling or watering amounts -- it's just a place to keep
-  that context next to the zone instead of in a separate notebook.
-- **Snooze Today button**: skip whichever of today's scheduled cycles (deep
-  soak, routine, or both) hasn't run yet, without touching the schedule,
-  targets, or any other gate -- everything's back to normal starting
-  tomorrow with no further action needed.
-- **Deficit mode (controlled water stress), optional**: a per-zone switch
-  that trims every routine dose to a set share (50-100%) until an end date,
-  for crops that can gain flavour, sweetness or pungency from mild stress
-  after fruit set -- the garden version of regulated deficit irrigation.
-  Guardrails keep it gentle: full dose in the hot tier (and if the
-  temperature sensor is offline), while the plant is still on its growth
-  ramp, and whenever a soil-moisture sensor reads dry at run time; deep
-  soak is never touched. A status sensor shows what it did today.
-- **Optional soil-moisture input**: point a zone at a `sensor.*` soil
-  moisture entity (with adjustable dry/wet % thresholds) and it becomes the
-  direct decider for routine irrigation at the extremes -- dry soil waters
-  even if the modeled interval isn't due yet, wet soil skips even if it's
-  overdue. In the ambiguous middle band, or if the sensor is unconfigured or
-  currently unreadable, it defers entirely to the existing modeled schedule
-  -- this is a pure addition, never a replacement, and fully inert if you
-  don't set it up. With a sensor set, the zone shows the reading and a
-  status that says what it means for the next run ("Dry - watering brought
-  forward", "Wet - skipping"...), the next-run countdown follows it, and a run
-  skipped for wet soil is logged instead of skipped silently.
-- **Self-tuning routine interval**: ZoneFlow quietly learns from how you use
-  the manual controls. Press "Run Routine Irrigation Now" three times in a
-  row while the model still thinks it isn't due yet, and it shortens the
-  Routine Dry-Down Holdoff slider a notch -- you keep telling it the plant
-  needs water sooner than it thinks. Do the same with "Snooze Today" three
-  times running, and it lengthens that same slider instead. Either pattern
-  resets the other, the nudge is clamped to the slider's normal safe range,
-  and you can always override it by hand at any time -- a self-tune nudge is
-  just the same slider move a human could make, nothing more.
+Then, before leaving it to run: set the emitter flow rate (the one number
+that must be right), seed the Last Routine / Deep Soak dates if the plant
+already has a watering history, and run `zoneflow.test_pulse` to confirm
+the valve, pump and log. Add further zones the same way; sensors can be
+added or removed later under **Configure**.
 
 ## Recommended cutover
 
 If you're replacing an existing YAML-based irrigation automation:
 
-1. **Install alongside your existing automations first — don't disable them
-   yet.** Let your tree/lawn keep getting watered on the schedule you trust
-   while you verify this one.
-2. **Bench-test the wiring** at a time when it's fine for the valve to click
-   on for a few seconds, via `Developer Tools → Actions →
-   zoneflow.test_pulse` (seconds: 10). This bypasses every schedule/rain/
-   dry-down gate on purpose — it's the one place in this integration that
-   does — so you can confirm the valve switches, the pump-power sensor reads
-   correctly, and a CSV row lands in your log file.
-3. **Compare the diagnostic sensors** (rolling rain windows, 3-day average
-   peak temperature, next-irrigation estimate) against whatever your old
-   setup reported, for a few days, before letting this integration control
-   the valve on schedule.
-4. **Only once those match**, disable your old automation(s) and let this
-   integration run the actual scheduled cycles.
-5. **Rollback plan**: if anything looks wrong after cutover, re-enable your
-   old automation and disable this integration's config entry (Settings →
-   Devices & Services → ZoneFlow Irrigation → ⋮ → Disable). They read the
-   same physical entities but keep entirely separate internal state, so
-   neither can corrupt the other's bookkeeping.
+1. **Install alongside your existing automations — don't disable them
+   yet.**
+2. **Bench-test the wiring** with `zoneflow.test_pulse` (seconds: 10). It
+   bypasses every schedule and rain gate on purpose — the one place that
+   does — so you can confirm the valve switches, the pump-power sensor or
+   flow meter reads, and a CSV row lands in the log.
+3. **Compare the diagnostic sensors** (rain windows, 3-day average peak
+   temperature, next-irrigation estimate) with your old setup for a few
+   days.
+4. **Only then** disable the old automation(s) and let ZoneFlow run the
+   schedule.
+5. **Rollback**: re-enable the old automation and disable the ZoneFlow
+   entry (Settings → Devices & Services → ZoneFlow Irrigation → ⋮ →
+   Disable). They keep separate state, so neither corrupts the other.
 
 ## Services
 
-- `zoneflow.run_deep_soak` / `run_routine_irrigation` — same gates as the
-  schedule.
-- `zoneflow.reset_lock` — emergency mutex clear.
-- `zoneflow.test_pulse` (seconds, default 10) — bench-test only, bypasses
-  all gates.
+Each targets a zone (any of its entities or its device).
+
+- `zoneflow.run_deep_soak` / `zoneflow.run_routine_irrigation` — run now,
+  through the same gates as the schedule.
+- `zoneflow.snooze_today` — skip today's remaining cycles.
+- `zoneflow.reset_lock` — emergency clear of a stuck in-progress lock.
+- `zoneflow.test_pulse` (seconds, default 10) — bench test; bypasses all
+  gates.
 
 ## Testing
 
-- `tests/` — an automated pytest suite (`pip install -r requirements-test.txt`,
-  then `pytest tests/ -q`) that boots a real Home Assistant core in-process
-  and fast-forwards simulated time to exercise every gate, watchdog, and
-  edge case in milliseconds.
-- `scripts/simulate_season.py` — a fast, pure-Python simulator that runs the
-  same watering-decision math against synthetic weather (dry spell, monsoon
-  burst, mixed season, or random) to sanity-check behaviour over weeks or
-  months in under a second: `python scripts/simulate_season.py --scenario mixed`.
-- `sandbox/` — a Docker Compose setup that runs a real, fully isolated Home
-  Assistant instance with simulated valve/pump/rain/temperature entities you
-  control from sliders, for clicking around the actual UI before touching a
-  real valve.
+- `tests/` — pytest suite (`pip install -r requirements-test.txt`, then
+  `pytest tests/ -q`) that boots a real Home Assistant core in-process and
+  fast-forwards time through every gate, watchdog, interruption, sensor
+  dropout, multi-zone pump handoff and season scenario.
+- `scripts/simulate_season.py` — a fast pure-Python season simulator
+  (`--scenario dry|monsoon|mixed`) for sanity-checking behaviour over weeks
+  or months.
+- `sandbox/` — Docker Compose for a fully isolated Home Assistant with
+  simulated valves, pumps, rain, temperature and soil probes you control
+  from sliders, for trying the real UI before touching a real valve.
 
 ## License
 

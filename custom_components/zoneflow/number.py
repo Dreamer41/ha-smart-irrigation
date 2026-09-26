@@ -13,11 +13,12 @@ from __future__ import annotations
 from homeassistant.components.number import RestoreNumber
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import units
-from .const import DOMAIN, MOISTURE_ONLY_NUMBERS, NUMBER_DEFAULTS, NUMBER_DEFS
+from .const import CONF_INITIAL_NUMBERS, DOMAIN, MOISTURE_ONLY_NUMBERS, NUMBER_DEFAULTS, NUMBER_DEFS
 from .entity_cleanup import remove_entities
 
 
@@ -46,6 +47,7 @@ class ZoneFlowNumber(RestoreNumber):
         name, min_v, max_v, step, unit = NUMBER_DEFS[key]
         self._key = key
         self._controller = controller
+        self._entry = entry
         self._metric_min, self._metric_max, self._metric_step, self._metric_unit = min_v, max_v, step, unit
         self.metric_value: float | None = None
         self._attr_unique_id = f"{entry.entry_id}_{key}"
@@ -63,6 +65,8 @@ class ZoneFlowNumber(RestoreNumber):
     @property
     def native_value(self) -> float | None:
         if self.metric_value is None:
+            # Only the fallback temperature, on a zone with no normal band
+            # to seed it from (see ZoneFlowController._seed_fallback_temp).
             return None
         return units.display_value(self._key, self.metric_value, self._metric_step, self._imperial)
 
@@ -89,11 +93,27 @@ class ZoneFlowNumber(RestoreNumber):
             # Saved in whatever unit it showed then -- convert back to metric.
             self.metric_value = units.metric_from_saved(self._key, last.native_value, last.native_unit_of_measurement)
         else:
-            self.metric_value = NUMBER_DEFAULTS[self._key]
+            # First time: the value chosen at setup (the climate step), else
+            # the default. The fallback temperature of a zone set up before
+            # it existed is seeded by ZoneFlowController._seed_fallback_temp.
+            initial = (self._entry.data.get(CONF_INITIAL_NUMBERS) or {}).get(self._key)
+            if initial is not None:
+                self.metric_value = float(initial)
+            elif self._key == "fallback_temp":
+                self.metric_value = None
+            else:
+                self.metric_value = NUMBER_DEFAULTS[self._key]
         self._controller.register_number(self._key, self)
 
     async def async_set_native_value(self, value: float) -> None:
-        self.metric_value = units.to_metric(self._key, value, self._imperial)
+        metric = units.to_metric(self._key, value, self._imperial)
+        # Cool must stay below hot, or the normal band disappears (and the
+        # hot check, which runs first, would swallow the cool tier).
+        if self._key == "cool_temp_threshold" and metric >= self._controller.number("hot_temp_threshold") - 0.01:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="cool_not_below_hot")
+        if self._key == "hot_temp_threshold" and metric <= self._controller.number("cool_temp_threshold") + 0.01:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="cool_not_below_hot")
+        self.metric_value = metric
         self.async_write_ha_state()
 
     async def async_set_metric_value(self, value: float) -> None:

@@ -289,10 +289,6 @@ SIGNIFICANT_RAIN_24H_MM = 35.0
 SIGNIFICANT_RAIN_4D_MM = 50.0
 SIGNIFICANT_RAIN_7D_MM = 100.0
 
-PEAK_TEMP_VALID_MIN_C = 15.0
-PEAK_TEMP_VALID_MAX_C = 50.0
-PEAK_TEMP_FALLBACK_C = 30.0  # used when all 3 days are corrupt/missing
-
 # NOTE: the rolling rain-window definitions (RAIN_WINDOWS_MINUTES) and the
 # sample-retention window live in rain_tracker.py, not here, so that module
 # has zero dependency on Home Assistant and can be unit-tested standalone.
@@ -304,8 +300,16 @@ PEAK_TEMP_FALLBACK_C = 30.0  # used when all 3 days are corrupt/missing
 NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "target_weekly_mm": ("Routine Normal Weekly Target", 10.0, 60.0, 0.5, "mm"),
     "target_weekly_hot_mm": ("Routine Hot Weekly Target", 15.0, 75.0, 0.5, "mm"),
-    "hot_temp_threshold": ("Hot Weather Temp Threshold", 28.0, 38.0, 0.5, "°C"),
-    "cool_temp_threshold": ("Cool Weather Temp Threshold", 20.0, 33.0, 0.5, "°C"),
+    # Wide enough for any climate (a Nordic summer to a desert one); a
+    # zone's starting values come from its climate choice at setup
+    # (CLIMATE_PRESETS below).
+    "hot_temp_threshold": ("Hot Weather Temp Threshold", 15.0, 45.0, 0.5, "°C"),
+    "cool_temp_threshold": ("Cool Weather Temp Threshold", 5.0, 40.0, 0.5, "°C"),
+    # Used for the watering decision when there is no real temperature to
+    # go on: no sensor on this zone (then it is the manual "it's a hot /
+    # cool spell" control), or the sensor has recorded no real day in the
+    # last 3 (see ZoneFlowController.watering_temp).
+    "fallback_temp": ("Fallback / Manual Temperature", 0.0, 45.0, 0.5, "°C"),
     "target_weekly_cool_mm": ("Routine Cool Weekly Target", 5.0, 40.0, 0.5, "mm"),
     "rain_eff_low": ("Rain Efficiency - Light (3-5mm)", 0.0, 1.0, 0.05, None),
     "rain_eff_mid": ("Rain Efficiency - Moderate (5-10mm)", 0.0, 1.0, 0.05, None),
@@ -412,6 +416,10 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "target_weekly_hot_mm": 45.0,
     "hot_temp_threshold": 31.5,
     "cool_temp_threshold": 30.0,
+    # Placeholder only: never used as a value. A zone gets its fallback from
+    # the climate step at setup, or (older zones) the middle of its own
+    # cool/hot band -- ZoneFlowController._seed_fallback_temp.
+    "fallback_temp": 30.75,
     "target_weekly_cool_mm": 25.0,
     "rain_eff_low": 0.2,
     "rain_eff_mid": 0.6,
@@ -470,3 +478,30 @@ SHUTDOWN_CONFIRM_SECONDS = 3
 # Sliders that only mean something for a zone with a soil-moisture probe --
 # only created for such a zone (the controller falls back to the defaults).
 MOISTURE_ONLY_NUMBERS = ("soil_moisture_dry_pct", "soil_moisture_wet_pct")
+
+# Starting temperature thresholds per climate, picked once at setup (the
+# sliders stay the source of truth afterwards). Daily PEAK temperatures in
+# the growing season, in °C: at or above "hot" is a hot spell, below
+# "cool" a cool one, anything between is normal. "fallback" sits in the
+# normal band. Tropical is the original Koh Samui avocado calibration.
+CONF_CLIMATE = "climate"
+CONF_INITIAL_NUMBERS = "initial_numbers"
+CLIMATE_PRESETS: dict[str, dict[str, float]] = {
+    "tropical": {"hot_temp_threshold": 31.5, "cool_temp_threshold": 30.0, "fallback_temp": 30.5},
+    "hot_dry": {"hot_temp_threshold": 34.0, "cool_temp_threshold": 26.0, "fallback_temp": 30.0},
+    "temperate": {"hot_temp_threshold": 28.0, "cool_temp_threshold": 20.0, "fallback_temp": 24.0},
+    "cool": {"hot_temp_threshold": 24.0, "cool_temp_threshold": 16.0, "fallback_temp": 20.0},
+}
+CLIMATE_OPTIONS = list(CLIMATE_PRESETS)
+DEFAULT_CLIMATE = "temperate"
+CLIMATE_NUMBER_KEYS = ("hot_temp_threshold", "cool_temp_threshold", "fallback_temp")
+
+# A soil-moisture reading not reported for this long counts as offline: many
+# Zigbee/BLE/cloud sensors keep showing their last value for hours or days
+# after a battery dies. Uses Home Assistant's last_reported, which moves on
+# every report even when the value is unchanged, so a steady real reading is
+# fine. 24 h leaves room for sensors that report rarely overnight.
+SOIL_MOISTURE_STALE_SECONDS = 24 * 3600
+# Wet readings holding back a due routine run for longer than this many of
+# the zone's routine intervals send one "check the probe" alert.
+SOIL_WET_HOLD_ALERT_INTERVALS = 2

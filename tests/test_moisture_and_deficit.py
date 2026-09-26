@@ -300,7 +300,25 @@ async def test_deficit_mode_does_not_cut_water_blind_when_the_temp_sensor_is_off
     controller, clock, _, _ = await _deficit_zone(hass, monkeypatch, tmp_path, pct=50)
     hass.states.async_set(OUTDOOR_TEMP, "unavailable")
     await hass.async_block_till_done()
+    # Real, mild days still on record: the heat guard can still see them.
+    assert controller.watering_temp()[1] == "last_known"
+    assert controller.deficit()[1] == "active"
+    # No real day left in the window: only a guess -- full dose.
+    controller.store.state.peak_temp_day_history_c = [None, None, None]
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
     assert controller.deficit()[1] == "full_dose_no_temp"
     assert _delivered_mm(clock, controller) == pytest.approx(20.0, abs=_tolerance_mm(controller, 3))
+
+
+@pytest.mark.asyncio
+async def test_deficit_mode_without_a_temp_sensor_follows_the_manual_temperature(
+    hass, fake_valve_services, monkeypatch, tmp_path
+):
+    """No sensor: the manual temperature is what the person says it is, so
+    the heat guard uses it -- a heat wave set by hand gets the full dose."""
+    controller, _, _, _ = await _deficit_zone(hass, monkeypatch, tmp_path, pct=50, outdoor_temp_entity=None)
+    assert controller.watering_temp()[1] == "manual"
+    assert controller.deficit()[1] == "active"
+    await controller.numbers["fallback_temp"].async_set_native_value(36.0)
+    assert controller.deficit()[1] == "full_dose_hot"

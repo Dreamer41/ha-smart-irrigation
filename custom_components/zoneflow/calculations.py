@@ -133,15 +133,27 @@ def track_tip_total(
     return total, tips, drop_from, drop_ts, since_drop
 
 
-def three_day_average_peak_temp(day_values: list[float | None]) -> float:
-    """Port of the `sensor.3_day_average_peak_temperature` template.
+# Physically plausible outdoor air temperatures. Anything outside is a
+# broken sensor, not weather. (The original YAML used 15-50C, which only
+# holds in the tropics: a 12C afternoon is a normal spring day in most of
+# Europe and must count as a real, cool day.)
+PLAUSIBLE_TEMP_MIN_C = -40.0
+PLAUSIBLE_TEMP_MAX_C = 60.0
 
-    Days with no reading, or outside 15-50C, are dropped as corrupt.
-    Falls back to 30.0 only if all three are corrupt/missing.
-    """
-    valid = [v for v in day_values if v is not None and 15.0 <= v <= 50.0]
+
+def plausible_temp(value: float | None) -> bool:
+    return value is not None and PLAUSIBLE_TEMP_MIN_C <= value <= PLAUSIBLE_TEMP_MAX_C
+
+
+def three_day_average_peak_temp(day_values: list[float | None]) -> float | None:
+    """Average of the recorded daily peaks (newest first).
+
+    Days with no reading, or an impossible one, are dropped. None when no
+    real day is left -- never an invented number, which would look like a
+    real measurement and could pick the wrong watering tier."""
+    valid = [v for v in day_values if plausible_temp(v)]
     if not valid:
-        return 30.0
+        return None
     return jinja_round(sum(valid) / len(valid), 2)
 
 
@@ -192,7 +204,7 @@ def hargreaves_et0(
     plausible range (-40..60C), or Tmin > Tmax (a corrupt pair)."""
     if t_min_c is None or t_max_c is None:
         return None
-    if not (-40.0 <= t_min_c <= 60.0 and -40.0 <= t_max_c <= 60.0) or t_min_c > t_max_c:
+    if not (plausible_temp(t_min_c) and plausible_temp(t_max_c)) or t_min_c > t_max_c:
         return None
     t_mean = (t_max_c + t_min_c) / 2
     ra = extraterrestrial_radiation_mm(latitude_deg, day_of_year)
@@ -276,15 +288,24 @@ class RoutinePlan:
 def routine_interval_days(avg_peak_temp: float | None, hot_threshold: float) -> int:
     """Port of `target_interval_days`: 3 if hot, else 4.
 
-    avg_peak_temp is None when the zone's temperature sensor is either not
-    configured or is currently unavailable/unknown -- see
-    ZoneFlowController.effective_avg_peak_temp(). That is treated as an
-    explicit "use the normal tier" branch, not a numeric coincidence, so a
-    dead sensor can never silently freeze a zone on whatever tier its last
-    real reading happened to imply."""
+    The controller always passes a temperature (real recorded days, or the
+    zone's Fallback / Manual Temperature -- ZoneFlowController.watering_temp);
+    None is still accepted as an explicit "normal tier" for direct callers."""
     if avg_peak_temp is None:
         return 4
     return 3 if avg_peak_temp >= hot_threshold else 4
+
+
+def temperature_tier(avg_peak_temp: float | None, hot_threshold: float, cool_threshold: float) -> str:
+    """"hot", "cool" or "normal" -- the same order routine_target_weekly_mm
+    tests them in."""
+    if avg_peak_temp is None:
+        return "normal"
+    if avg_peak_temp >= hot_threshold:
+        return "hot"
+    if avg_peak_temp < cool_threshold:
+        return "cool"
+    return "normal"
 
 
 def routine_target_weekly_mm(
@@ -298,8 +319,7 @@ def routine_target_weekly_mm(
     """Port of `target_weekly_mm`. Hot is tested before cool so the two
     thresholds can never invert, exactly as the YAML comment states.
 
-    See routine_interval_days for why avg_peak_temp being None explicitly
-    means "normal tier", independent of where cool_threshold happens to sit."""
+    avg_peak_temp None means "normal tier" (see routine_interval_days)."""
     if avg_peak_temp is None:
         return normal_mm
     if avg_peak_temp >= hot_threshold:
@@ -466,7 +486,7 @@ def deficit_factor(
     plant is still on its growth ramp (establishment is the worst time to
     stress a plant -- needs a ramp profile and planting date), in the hot
     tier (3-day average of daily peaks), while a configured temperature
-    sensor is offline, and when a soil-moisture sensor reads at or below
+    sensor has no real reading in the last 3 days, and when a soil-moisture sensor reads at or below
     its Dry threshold (checked at each run); an end date that has passed
     switches it off. Clamped to 50-100%: a deeper cut is well past "mild
     stress" for any crop this is meant for."""
@@ -561,7 +581,7 @@ def growth_ramp_fraction(days_since_planting: float, curve: list[tuple[int, floa
 
 
 def estimate_last_water_delivered_mm(
-    avg_peak_temp: float,
+    avg_peak_temp: float | None,
     hot_threshold: float,
     cool_threshold: float,
     normal_weekly_mm: float,

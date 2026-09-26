@@ -151,8 +151,25 @@ class ZoneFlowAvgPeakTempSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_avg_peak_temp_3d"
         self._attr_translation_key = "avg_peak_temp_3d"
 
-    def metric_native_value(self) -> float:
+    def metric_native_value(self) -> float | None:
+        # The real recorded average only -- unknown without real days, never
+        # the fallback dressed up as a measurement.
         return self._controller.avg_peak_temp()
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        c = self._controller
+        temp, source = c.watering_temp()
+        return {
+            # What the watering decision is using right now, and why (see
+            # ZoneFlowController.watering_temp): sensor, last_known,
+            # fallback or manual.
+            "watering_temperature": round(units.sensor_value("temp", temp, c.imperial), 1) if temp is not None else None,
+            "temperature_source": source,
+            "temperature_tier": calc.temperature_tier(
+                temp, c.number("hot_temp_threshold"), c.number("cool_temp_threshold")
+            ),
+        }
 
 
 class ZoneFlowReferenceEt0Sensor(_Base):
@@ -480,16 +497,19 @@ class ZoneFlowSoilMoistureSensor(_Base):
 
     @property
     def native_value(self) -> float | None:
-        return self._controller.soil_moisture_reading()
+        # Mirrors the probe, even a reading ZoneFlow is ignoring (stale or
+        # impossible) -- the status sensor says whether it's being used.
+        return self._controller.soil_moisture_raw()
 
 
 class ZoneFlowSoilMoistureStatusSensor(_Base):
     """What the soil moisture means for the next routine run: dry (waters
     at the next scheduled time even if not due), wet (skips even if due),
-    in range or offline (the schedule decides)."""
+    in range, or -- the schedule decides -- offline, stale (not reported
+    for 24 h) or implausible (outside 0-100%)."""
 
     _attr_device_class = "enum"
-    _attr_options = ["dry", "wet", "in_range", "offline"]
+    _attr_options = ["dry", "wet", "in_range", "offline", "stale", "implausible"]
     _attr_icon = "mdi:water-percent"
 
     def __init__(self, entry: ConfigEntry, controller) -> None:
@@ -504,10 +524,15 @@ class ZoneFlowSoilMoistureStatusSensor(_Base):
     @property
     def extra_state_attributes(self) -> dict:
         c = self._controller
+        hold_since = c.store.state.wet_hold_since_ts
         return {
-            "moisture_pct": c.soil_moisture_reading(),
+            "moisture_pct": c.soil_moisture_raw(),
+            "reading_used": c.soil_moisture_reading() is not None,
+            "hours_since_report": c.soil_moisture_report_age_hours(),
             "dry_threshold_pct": c.number("soil_moisture_dry_pct"),
             "wet_threshold_pct": c.number("soil_moisture_wet_pct"),
+            # Since when wet readings have been holding a due run back.
+            "wet_hold_since": dt_util.utc_from_timestamp(hold_since).isoformat() if hold_since else None,
         }
 
 

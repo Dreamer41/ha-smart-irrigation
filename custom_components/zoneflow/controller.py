@@ -85,6 +85,8 @@ from .const import (
     GROWTH_STAGE_MODE_AUTO,
     NUMBER_DEFAULTS,
     NUMBER_DEFS,
+    SOIL_MOISTURE_STALE_SECONDS,
+    SOIL_WET_HOLD_ALERT_INTERVALS,
     POWER_LOSS_GRACE_MINUTES,
     PUMP_POWER_WAIT_TIMEOUT_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
@@ -264,9 +266,8 @@ class ZoneFlowController:
 
     @property
     def outdoor_temp_entity(self) -> str | None:
-        """Optional. Without it (or if it's currently unavailable/unknown
-        -- see effective_avg_peak_temp), the hot/cool tier logic falls back
-        to the "normal" tier rather than freezing on stale history."""
+        """Optional. Without it, the "Fallback / Manual Temperature" slider
+        picks the hot/cool/normal tier -- see watering_temp."""
         return self.entry.options.get(CONF_OUTDOOR_TEMP_ENTITY, self.entry.data.get(CONF_OUTDOOR_TEMP_ENTITY))
 
     @property
@@ -398,8 +399,39 @@ class ZoneFlowController:
             return float(value)
         return NUMBER_DEFAULTS[key]
 
+    def fallback_temp(self) -> float | None:
+        """The Fallback / Manual Temperature, or None while it has no value
+        (only on a zone whose cool threshold isn't below its hot one -- see
+        _seed_fallback_temp); None means the normal tier."""
+        entity = self.numbers.get("fallback_temp")
+        value = getattr(entity, "metric_value", None) if entity is not None else None
+        return float(value) if value is not None else None
+
     def register_number(self, key: str, entity: Any) -> None:
         self.numbers[key] = entity
+        # The fallback's own registration happens inside its
+        # async_added_to_hass, whose state is written right after.
+        self._seed_fallback_temp(write_state=key != "fallback_temp")
+
+    def _seed_fallback_temp(self, write_state: bool = True) -> None:
+        """A zone from before the fallback slider existed gets it set once,
+        to the middle of its own cool/hot band -- the normal tier it always
+        fell back to. From then on it is a normal slider value (restored
+        across restarts, not moved by later threshold changes). A zone
+        whose cool threshold isn't below hot has no normal band to aim for:
+        it stays unset, which means the normal tier."""
+        fallback = self.numbers.get("fallback_temp")
+        hot = self.numbers.get("hot_temp_threshold")
+        cool = self.numbers.get("cool_temp_threshold")
+        if fallback is None or hot is None or cool is None or fallback.metric_value is not None:
+            return
+        hot_c = self.number("hot_temp_threshold")
+        cool_c = self.number("cool_temp_threshold")
+        if cool_c >= hot_c:
+            return
+        fallback.metric_value = (hot_c + cool_c) / 2
+        if write_state and getattr(fallback, "hass", None) is not None:
+            fallback.async_write_ha_state()
 
     # ------------------------------------------------------------------
     # Lifecycle
@@ -423,6 +455,14 @@ class ZoneFlowController:
             counter_state = self.hass.states.get(self.rain_counter_entity)
             if counter_state is not None:
                 self._sync_rain_from_counter_state(counter_state, seed_only=True)
+
+        if not self.outdoor_temp_entity and any(v is not None for v in state.peak_temp_day_history_c):
+            # No sensor, so nothing on record is a real reading (before
+            # 1.4.2 missing days were filled with a made-up 30C); clear it so
+            # a sensor added later starts from real data only.
+            state.peak_temp_day_history_c = [None, None, None]
+            state.min_temp_day_history_c = [None, None, None]
+            await self.store.async_save()
 
         if state.today_date_iso != dt_util.now().date().isoformat():
             self._start_new_day()
@@ -736,10 +776,21 @@ class ZoneFlowController:
         (both fire at 23:59:50)."""
         state = self.store.state
         # Peak temp shift register
-        today_max = state.today_peak_temp_c
-        fallback = state.peak_temp_day_history_c[0] if state.peak_temp_day_history_c[0] is not None else 30.0
+        # A day without a single reading is recorded as "no reading", not
+        # as a copy of the day before: a dead sensor's last value then ages
+        # out of the 3-day window instead of being carried forward forever.
+        # A sensor that is working but hasn't CHANGED today (some templates
+        # and slow sensors only report on change; also a day that began
+        # while HA was restarting) still has a real reading: its current
+        # value. Peak only -- one reading says nothing about the day's range,
+        # so the minimum stays None and ET0 skips that day.
+        today_peak = state.today_peak_temp_c
+        if today_peak is None and self.outdoor_temp_entity:
+            current = _state_temp_c(self.hass.states.get(self.outdoor_temp_entity))
+            if calc.plausible_temp(current):
+                today_peak = current
         state.peak_temp_day_history_c = [
-            today_max if today_max is not None else fallback,
+            today_peak,
             state.peak_temp_day_history_c[0],
             state.peak_temp_day_history_c[1],
         ]
@@ -759,7 +810,9 @@ class ZoneFlowController:
         state = self.store.state
         return max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
 
-    def avg_peak_temp(self) -> float:
+    def avg_peak_temp(self) -> float | None:
+        """Average of the real daily peaks recorded in the last 3 days, or
+        None when there are none (new zone, or no readings for 3 days)."""
         state = self.store.state
         return calc.three_day_average_peak_temp(state.peak_temp_day_history_c)
 
@@ -767,8 +820,7 @@ class ZoneFlowController:
         """Hargreaves ET0 (mm/day) for each of the last three completed
         days, newest first, using Home Assistant's own configured home
         latitude. A day is None when it has no real min+max pair on record
-        -- including the peak register's carried-forward fallback days,
-        since those always have a None minimum alongside them."""
+        (a day without readings is recorded as None in both registers)."""
         state = self.store.state
         latitude = self.hass.config.latitude
         today = dt_util.now().date()
@@ -796,16 +848,12 @@ class ZoneFlowController:
         )
 
     def effective_avg_et0(self) -> float | None:
-        """avg_et0() gated the same way as effective_avg_peak_temp(): None
-        whenever the temperature sensor is unconfigured or CURRENTLY
-        unavailable/unknown, so a dead sensor can't keep steering the ET
-        demand model off stale history -- the zone drops to the tier target
-        (itself the normal tier on a dead sensor) and recovers on its own."""
-        entity_id = self.outdoor_temp_entity
-        if not entity_id:
-            return None
-        temp_state = self.hass.states.get(entity_id)
-        if temp_state is None or temp_state.state in ("unavailable", "unknown"):
+        """ET0 for the demand model: the real days in the last 3, the same
+        way watering_temp treats the temperature. A sensor that drops out
+        keeps its last real days until they age out of the window (days
+        without readings are recorded as None, never copied forward); with
+        none left, None -- the zone then uses its tier target."""
+        if not self.outdoor_temp_entity:
             return None
         return self.avg_et0()
 
@@ -837,28 +885,40 @@ class ZoneFlowController:
             self.number("target_weekly_cool_mm"),
         )
 
-    def effective_avg_peak_temp(self) -> float | None:
-        """The rolling 3-day average to use for the routine hot/cool/normal
-        tier DECISION, as opposed to avg_peak_temp() above (which stays a
-        plain historical value, used for display on the diagnostic sensor).
+    def watering_temp(self) -> tuple[float | None, str]:
+        """The temperature that picks the hot/cool/normal tier, and where it
+        came from:
 
-        Returns None -- meaning "use the normal tier", an explicit branch
-        in calculations.routine_interval_days/routine_target_weekly_mm, not
-        a numeric coincidence -- whenever there is no temperature sensor
-        configured at all, OR the configured one is *currently*
-        unavailable/unknown. Without this check, a sensor that goes dead
-        mid-season would silently keep whatever tier its last real reading
-        implied, indefinitely (peak_temp_day_history_c keeps carrying that
-        stale value forward at each daily shift) -- this makes the fallback
-        immediate instead, and it recovers automatically the moment the
-        sensor reports a real value again."""
+        - "sensor": the average of the real daily peaks of the last 3 days.
+        - "last_known": the same, while the sensor is currently offline --
+          its last real days still count until they age out of the window
+          (a day with no reading at all is recorded as none, never copied
+          forward, so a dead sensor can't hold a tier for more than 3 days).
+        - "fallback": a sensor is configured but no real day is on record
+          (a new zone before its first full day, or offline 3+ days): the
+          Fallback / Manual Temperature slider.
+        - "manual": no sensor on this zone: the same slider, which is then
+          how you tell the zone about a hot or cool spell by hand.
+
+        The temperature is None only while the slider has no value (see
+        _seed_fallback_temp) -- the tier functions read that as normal."""
+        fallback = self.fallback_temp()
         entity_id = self.outdoor_temp_entity
         if not entity_id:
-            return None
+            return fallback, "manual"
+        avg = self.avg_peak_temp()
+        if avg is None:
+            return fallback, "fallback"
         state = self.hass.states.get(entity_id)
         if state is None or state.state in ("unavailable", "unknown"):
-            return None
-        return self.avg_peak_temp()
+            return avg, "last_known"
+        return avg, "sensor"
+
+    def effective_avg_peak_temp(self) -> float | None:
+        """The temperature every watering decision uses -- see
+        watering_temp. avg_peak_temp() above is the plain recorded average
+        (None without real data), shown on the diagnostic sensor."""
+        return self.watering_temp()[0]
 
     def growth_ramp_fraction(self) -> float:
         """See const.py's GROWTH_RAMP_CURVES comment. Returns 1.0 (no
@@ -1156,20 +1216,15 @@ class ZoneFlowController:
         return value
 
     async def _soil_moisture_pct(self) -> float | None:
-        """Current soil-moisture reading (%), or None if no soil-moisture
-        sensor is configured for this zone or its reading isn't currently
-        parseable (missing entity, or state "unavailable"/"unknown" --
-        float() raising ValueError on either of those strings is exactly
-        what makes this fail open the same way _flow_meter_reading does).
-        None here always means "no override -- defer to the modeled
-        schedule", never "treat as 0% (bone dry)" or "100% (saturated)" --
-        either numeric guess could force a wrong decision in either
-        direction, where deferring to the existing time-interval schedule
-        is always a safe, previously-correct fallback."""
+        """The soil-moisture reading (%) the watering decision may use, or
+        None -- "no override, defer to the modeled schedule", never a guess
+        of 0% (bone dry) or 100% (saturated), either of which could force a
+        wrong decision. See soil_moisture_check for what counts as usable."""
         return self.soil_moisture_reading()
 
-    def soil_moisture_reading(self) -> float | None:
-        """Synchronous form of _soil_moisture_pct, for sensors."""
+    def soil_moisture_raw(self) -> float | None:
+        """Whatever number the probe shows right now, usable or not (for the
+        Soil Moisture sensor, which mirrors the probe)."""
         entity_id = self.soil_moisture_entity
         if not entity_id:
             return None
@@ -1179,13 +1234,76 @@ class ZoneFlowController:
         except (TypeError, ValueError):
             return None
 
+    def soil_moisture_check(self) -> tuple[float | None, str | None]:
+        """(usable reading, problem). Problem is None for a good reading,
+        else "offline" (missing / unavailable / not a number), "implausible"
+        (outside 0-100%) or "stale"; with a problem the reading is None.
+
+        "Stale" = no new report for SOIL_MOISTURE_STALE_SECONDS. That can be
+        a device that died without going unavailable -- but MQTT
+        (Zigbee2MQTT) and template sensors also never re-report an unchanged
+        value, and a probe in soaked soil often sits pinned at one wet value
+        for days. So a stale reading is handled by what it says:
+        - dry or in range: ignored (a frozen "dry" would force watering at
+          every scheduled time);
+        - wet: still respected, until wet readings have held a due run back
+          for SOIL_WET_HOLD_ALERT_INTERVALS routine intervals -- then the
+          schedule takes over (see run_routine_irrigation), and the hold
+          starts again from scratch."""
+        entity_id = self.soil_moisture_entity
+        if not entity_id:
+            return None, None
+        state = self.hass.states.get(entity_id)
+        value = self.soil_moisture_raw()
+        if state is None or value is None:
+            return None, "offline"
+        if not 0.0 <= value <= 100.0:
+            return None, "implausible"
+        reported = getattr(state, "last_reported", None) or state.last_updated
+        if (dt_util.utcnow() - reported).total_seconds() > SOIL_MOISTURE_STALE_SECONDS:
+            if value >= self.number("soil_moisture_wet_pct") and not self._wet_hold_at_limit():
+                return value, None
+            return None, "stale"
+        return value, None
+
+    def soil_moisture_report_age_hours(self) -> float | None:
+        entity_id = self.soil_moisture_entity
+        state = self.hass.states.get(entity_id) if entity_id else None
+        if state is None:
+            return None
+        reported = getattr(state, "last_reported", None) or state.last_updated
+        return round((dt_util.utcnow() - reported).total_seconds() / 3600, 1)
+
+    def _routine_interval_days(self) -> int:
+        return calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+
+    def _wet_hold_days(self) -> float | None:
+        since = self.store.state.wet_hold_since_ts
+        if since is None:
+            return None
+        return (dt_util.utcnow().timestamp() - since) / 86400
+
+    def _wet_hold_at_limit(self) -> bool:
+        """Wet readings have held a due run back for the alert limit."""
+        held = self._wet_hold_days()
+        return held is not None and held >= SOIL_WET_HOLD_ALERT_INTERVALS * self._routine_interval_days()
+
+    def soil_moisture_reading(self) -> float | None:
+        """The usable reading only -- see soil_moisture_check."""
+        return self.soil_moisture_check()[0]
+
     def soil_moisture_status(self) -> str | None:
         """What the soil-moisture sensor means for the next routine run
-        (see calc.soil_moisture_status), or None when the zone has none."""
+        (see calc.soil_moisture_status) -- or why it's being ignored
+        (offline / stale / implausible, the schedule then decides). None
+        when the zone has no probe."""
         if not self.soil_moisture_entity:
             return None
+        value, problem = self.soil_moisture_check()
+        if problem is not None:
+            return problem
         return calc.soil_moisture_status(
-            self.soil_moisture_reading(),
+            value,
             self.number("soil_moisture_dry_pct"),
             self.number("soil_moisture_wet_pct"),
         )
@@ -1204,7 +1322,10 @@ class ZoneFlowController:
             moisture_pct=self.soil_moisture_reading(),
             dry_pct=self.number("soil_moisture_dry_pct"),
             growth_ramp=self.growth_ramp_fraction(),
-            temp_unavailable=bool(self.outdoor_temp_entity) and self.effective_avg_peak_temp() is None,
+            # A sensor with no real reading on record: the fallback is only
+            # a guess, so the heat guard can't be trusted -- full dose. (A
+            # zone without a sensor uses its manual value as given.)
+            temp_unavailable=self.watering_temp()[1] == "fallback",
         )
 
     def routine_target_scale(self) -> float:
@@ -2045,11 +2166,9 @@ class ZoneFlowController:
             return
         await self._check_deficit_end()
 
-        # effective_avg_peak_temp() (not avg_peak_temp()) is what must drive
-        # this decision -- it returns None, an explicit "use normal tier"
-        # branch, whenever the temp sensor is unconfigured OR currently
-        # unavailable/unknown, rather than silently running whatever tier a
-        # dead sensor's last real reading happened to imply.
+        # effective_avg_peak_temp() (not avg_peak_temp()) drives this: real
+        # recorded days when there are any, otherwise the Fallback / Manual
+        # Temperature slider -- see watering_temp.
         avg_peak_temp = self.effective_avg_peak_temp()
         hot_threshold = self.number("hot_temp_threshold")
         interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
@@ -2076,6 +2195,7 @@ class ZoneFlowController:
             if interval_due:
                 # Due by the schedule, but the soil is wet: say so, instead
                 # of skipping silently.
+                await self._note_wet_hold(now_ts, interval_days, moisture_pct)
                 await self._log_event(
                     event_type="Routine Skipped (Soil Wet)",
                     status="Skipped",
@@ -2087,7 +2207,11 @@ class ZoneFlowController:
                     phone_msg="",
                     extra_log=f"Soil moisture {moisture_pct:.0f}% is at or above the wet threshold.",
                 )
+            else:
+                await self._end_wet_hold_if_not_wet(moisture_pct)
             return
+        await self._end_wet_hold_if_not_wet(moisture_pct)
+        await self._note_frozen_wet_probe()
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("routine_drydown_days")
         ):
@@ -2200,6 +2324,7 @@ class ZoneFlowController:
             )
             return
 
+        await self._end_wet_hold()  # watering is actually starting
         await self._set_lock(True)
         await self._set_abort(False)
 
@@ -2243,6 +2368,86 @@ class ZoneFlowController:
             ),
         )
 
+    async def _note_wet_hold(self, now_ts: float, interval_days: int, moisture_pct: float) -> None:
+        """A due run skipped for wet soil. Soil can stay wet for days after
+        heavy rain, so this never overrides the probe -- but once wet
+        readings have held watering back for SOIL_WET_HOLD_ALERT_INTERVALS
+        routine intervals, send one alert to check it (a probe sitting in a
+        puddle, or reading wrong)."""
+        state = self.store.state
+        if state.wet_hold_since_ts is None:
+            state.wet_hold_since_ts = now_ts
+            state.wet_hold_alerted = False
+            await self.store.async_save()
+            return
+        held_days = (now_ts - state.wet_hold_since_ts) / 86400
+        if state.wet_hold_alerted or held_days < SOIL_WET_HOLD_ALERT_INTERVALS * interval_days:
+            return
+        state.wet_hold_alerted = True
+        await self.store.async_save()
+        await self._log_event(
+            event_type="Soil Probe Check",
+            status="Warning",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            phone_title="🌱 Check the soil probe",
+            phone_msg=(
+                f"Wet soil readings ({moisture_pct:.0f}%) have held routine watering back for "
+                f"{held_days:.0f} days. If it hasn't rained much, check the probe (placement, "
+                f"battery, reading) -- it's still being followed."
+            ),
+            extra_log=f"Wet-soil hold for {held_days:.1f} days (routine interval {interval_days} days).",
+        )
+
+    async def _end_wet_hold_if_not_wet(self, moisture_pct: float | None) -> None:
+        """A fresh reading that isn't wet ends a wet hold. (An unusable
+        reading doesn't: the hold also ends when a routine run starts.)"""
+        state = self.store.state
+        if state.wet_hold_since_ts is None or moisture_pct is None:
+            return
+        if moisture_pct >= self.number("soil_moisture_wet_pct"):
+            return
+        await self._end_wet_hold()
+
+    async def _end_wet_hold(self) -> None:
+        state = self.store.state
+        if state.wet_hold_since_ts is None:
+            return
+        state.wet_hold_since_ts = None
+        state.wet_hold_alerted = False
+        state.wet_hold_frozen_alerted = False
+        await self.store.async_save()
+
+    async def _note_frozen_wet_probe(self) -> None:
+        """The wet hold reached its limit on a probe that hasn't reported for
+        24 h: its (wet) reading is now ignored and the schedule decides.
+        Say so once per hold."""
+        state = self.store.state
+        if state.wet_hold_frozen_alerted or not self._wet_hold_at_limit():
+            return
+        raw = self.soil_moisture_raw()
+        if self.soil_moisture_check()[1] != "stale" or raw is None or raw < self.number("soil_moisture_wet_pct"):
+            return
+        held_days = self._wet_hold_days() or 0.0
+        state.wet_hold_frozen_alerted = True
+        await self.store.async_save()
+        await self._log_event(
+            event_type="Soil Probe Check",
+            status="Warning",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            phone_title="🌱 Soil probe looks frozen",
+            phone_msg=(
+                f"The soil probe has read wet ({raw:.0f}%) for {held_days:.0f} days without a new report "
+                f"in 24 h, so watering follows the schedule again. Check the probe (battery, connection)."
+            ),
+            extra_log=f"Wet-soil hold at {held_days:.1f} days, probe not reporting: schedule decides.",
+        )
+
     def _routine_notes(
         self, interval_due: bool, moisture_pct: float | None, deficit_share: float, deficit_reason: str
     ) -> str:
@@ -2257,7 +2462,7 @@ class ZoneFlowController:
         elif deficit_reason == "full_dose_soil_dry":
             notes.append("Deficit mode: full dose today (soil at the dry threshold).")
         elif deficit_reason == "full_dose_no_temp":
-            notes.append("Deficit mode: full dose (temperature sensor offline).")
+            notes.append("Deficit mode: full dose (no temperature reading on record).")
         elif deficit_reason == "full_dose_young_plant":
             notes.append("Deficit mode: full dose (plant still on its growth ramp).")
         return "".join(" " + n for n in notes)

@@ -24,49 +24,71 @@ async def _seed(hass):
     await hass.async_block_till_done()
 
 
+def _day_without_readings(controller):
+    """A whole day passes with the temperature sensor offline: nothing is
+    tracked, then the 23:59:50 shift records the day."""
+    controller.store.state.today_peak_temp_c = None
+    controller.store.state.today_min_temp_c = None
+    controller._on_daily_shift(None)
+
+
 @pytest.mark.asyncio
-async def test_temp_sensor_dropout_falls_back_to_normal_tier_immediately(hass, fake_valve_services):
-    """A live "hot" reading history must not keep steering routine
-    irrigation to the hot tier once the sensor itself goes dark -- see
-    controller.py's effective_avg_peak_temp(). The gate checks the sensor's
-    CURRENT availability, independent of what its 3-day history says."""
+async def test_temp_sensor_dropout_keeps_last_real_days_then_uses_fallback(hass, fake_valve_services):
+    """A sensor that drops out keeps its last REAL days until they age out
+    of the 3-day window (a day without readings is recorded as none, never
+    copied forward), then the Fallback / Manual Temperature slider takes
+    over -- see controller.watering_temp. A dead sensor can therefore never
+    hold a tier for more than 3 days, and a short blip changes nothing."""
     await _seed(hass)
     entry = make_entry(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
+    hot = controller.number("hot_temp_threshold")
 
-    # Simulate three consecutive hot days already on record.
     controller.store.state.peak_temp_day_history_c = [35.0, 34.0, 36.0]
-
-    # Sensor is currently reporting fine -- hot tier applies.
     hass.states.async_set(OUTDOOR_TEMP, "35.0")
     await hass.async_block_till_done()
-    assert controller.effective_avg_peak_temp() is not None
-    assert controller.effective_avg_peak_temp() >= controller.number("hot_temp_threshold")
+    assert controller.watering_temp() == (35.0, "sensor")
 
-    # The sensor drops out -- even though the recorded history still says
-    # "hot", the current dropout must immediately force the normal tier.
+    # Drops out: the recorded days are still real weather.
     for dead_state in ("unavailable", "unknown"):
         hass.states.async_set(OUTDOOR_TEMP, dead_state)
         await hass.async_block_till_done()
-        assert controller.effective_avg_peak_temp() is None
+        assert controller.watering_temp() == (35.0, "last_known")
 
-    # And it recovers the instant the sensor reports a real value again.
-    hass.states.async_set(OUTDOOR_TEMP, "35.0")
+    # Each day without a reading pushes one real day out of the window.
+    _day_without_readings(controller)
+    assert controller.store.state.peak_temp_day_history_c == [None, 35.0, 34.0]
+    assert controller.watering_temp() == (34.5, "last_known")
+    _day_without_readings(controller)
+    assert controller.watering_temp() == (35.0, "last_known")
+    _day_without_readings(controller)
+    # Nothing real left: the fallback (unset here -> the middle of the
+    # cool/hot band, i.e. the normal tier).
+    temp, source = controller.watering_temp()
+    assert source == "fallback"
+    assert controller.number("cool_temp_threshold") <= temp < hot
+    assert controller.avg_peak_temp() is None
+
+    # The fallback is a slider: set it for a heat wave.
+    await controller.numbers["fallback_temp"].async_set_native_value(36.0)
+    assert controller.watering_temp() == (36.0, "fallback")
+
+    # Back online and a real day recorded: real data again.
+    hass.states.async_set(OUTDOOR_TEMP, "29.0")
     await hass.async_block_till_done()
-    assert controller.effective_avg_peak_temp() is not None
+    controller._on_daily_shift(None)
+    assert controller.watering_temp() == (29.0, "sensor")
 
 
 @pytest.mark.asyncio
-async def test_routine_irrigation_uses_normal_tier_target_when_temp_sensor_is_dead(hass, fake_valve_services):
-    """End-to-end: a dead temp sensor must make a real routine-irrigation
-    run actually calculate against the normal weekly target (35mm/4-day
-    interval by default here), not silently keep whatever tier the last
-    live reading implied. _run_pulses is mocked out (like
-    test_irrigation_gates.py does) purely so this test doesn't have to
-    wait through real multi-minute pulses -- everything up to and
-    including the tier/target calculation still runs for real."""
+async def test_routine_irrigation_uses_last_known_then_fallback_when_temp_sensor_is_dead(hass, fake_valve_services):
+    """End-to-end: what a real routine run calculates with a dead sensor.
+    _run_pulses is mocked out (like test_irrigation_gates.py does) purely so
+    this test doesn't have to wait through real multi-minute pulses --
+    everything up to and including the tier/target calculation runs for
+    real."""
     from unittest.mock import AsyncMock
 
     await _seed(hass)
@@ -74,21 +96,50 @@ async def test_routine_irrigation_uses_normal_tier_target_when_temp_sensor_is_de
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
-    controller.store.state.peak_temp_day_history_c = [35.0, 34.0, 36.0]  # hot history on record
-    hass.states.async_set(OUTDOOR_TEMP, "unavailable")  # but currently dead
+    hass.states.async_set(OUTDOOR_TEMP, "unavailable")
     await hass.async_block_till_done()
 
-    spy = AsyncMock(return_value=True)
-    controller._run_pulses = spy
+    async def run():
+        spy = AsyncMock(return_value=True)
+        controller._run_pulses = spy
+        controller.store.state.last_routine_ts = None
+        await controller.run_routine_irrigation()
+        await hass.async_block_till_done()
+        spy.assert_called_once()
+        return spy.call_args.kwargs["target_mm_for_log"]
 
-    await controller.run_routine_irrigation()
+    # Hot days still on record: hot tier (45 mm/week over 3 days).
+    controller.store.state.peak_temp_day_history_c = [35.0, 34.0, 36.0]
+    assert await run() == pytest.approx(45.0 / 7 * 3, abs=0.05)
+
+    # No real day left: the fallback -- unset, so the normal tier
+    # (35 mm/week over 4 days = 20 mm).
+    controller.store.state.peak_temp_day_history_c = [None, None, None]
+    assert await run() == pytest.approx(20.0)
+
+    # Fallback set below the cool threshold: cool tier (25 mm/week, 4 days).
+    await controller.numbers["fallback_temp"].async_set_native_value(20.0)
+    assert await run() == pytest.approx(25.0 / 7 * 4, abs=0.05)
+
+
+@pytest.mark.asyncio
+async def test_zone_without_temp_sensor_follows_the_manual_temperature(hass, fake_valve_services):
+    """No temperature sensor at all: the Fallback / Manual Temperature is
+    how a person tells the zone about a hot or cool spell."""
+    await _seed(hass)
+    entry = make_entry(hass, outdoor_temp_entity=None)
+    assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller.outdoor_temp_entity is None
 
-    spy.assert_called_once()
-    # Normal tier: target_weekly_mm (35.0) / 7 * 4-day interval = 20.0mm --
-    # NOT the hot-tier weekly target (45.0 -> ~19.3mm/3-day interval) that
-    # the sensor's now-ignored recent history would otherwise have implied.
-    assert spy.call_args.kwargs["target_mm_for_log"] == pytest.approx(20.0)
+    temp, source = controller.watering_temp()
+    assert source == "manual"
+    assert controller.tier_weekly_target_mm() == controller.number("target_weekly_mm")  # normal until told
+
+    await controller.numbers["fallback_temp"].async_set_native_value(35.0)
+    assert controller.watering_temp() == (35.0, "manual")
+    assert controller.tier_weekly_target_mm() == controller.number("target_weekly_hot_mm")
 
 
 @pytest.mark.asyncio

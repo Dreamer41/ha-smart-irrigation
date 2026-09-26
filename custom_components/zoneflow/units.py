@@ -25,7 +25,7 @@ DEPTH_KEYS = {
 # Emitter application rate: mm/min <-> in/h (the usual drip rating in the US).
 FLOW_KEYS = {"flow_rate_mm_per_min"}
 # Temperature thresholds: °C <-> °F.
-TEMP_KEYS = {"hot_temp_threshold", "cool_temp_threshold"}
+TEMP_KEYS = {"hot_temp_threshold", "cool_temp_threshold", "fallback_temp"}
 
 IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "temp": "°F"}
 IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "temp": 0.5}

@@ -258,7 +258,8 @@ If your tool access is via Home Assistant's REST API (directly, or through
 an MCP server that exposes raw HTTP), a config entry is created by starting
 and stepping through a **config flow**, the same state machine the UI form
 walks — there is no "just POST the final data" shortcut, because
-`config_flow.py` is a two-step flow (zone name, then entities/schedule):
+`config_flow.py` is a four-step flow (zone name, entities/schedule,
+climate, temperature thresholds):
 
 1. `POST /api/config/config_entries/flow` with body
    `{"handler": "zoneflow", "show_advanced_options": false}`. The response
@@ -276,17 +277,26 @@ walks — there is no "just POST the final data" shortcut, because
    entities/schedule payload (all the fields from §4's table, keyed exactly
    as the schema names them — **omit a key entirely** for any optional
    entity field the person is skipping; do not send it as `null` or `""`,
-   which the schema rejects). A successful response has
+   which the schema rejects). The response is the climate step's form.
+   An error response has `"type": "form"` with the same step and an
+   `errors` object — fix and resubmit, don't guess blindly at what changed.
+4. `POST /api/config/config_entries/flow/<flow_id>` with
+   `{"climate": "<tropical|hot_dry|temperate|cool>"}` (§4, screen 3). The
+   response is the temperature step's form; its `data_schema` defaults are
+   the chosen climate's starting values, already in the zone's units.
+5. `POST /api/config/config_entries/flow/<flow_id>` with
+   `{"hot_temp_threshold": <n>, "cool_temp_threshold": <n>, "fallback_temp": <n>}`
+   in the units that form showed (§4, screen 4). A successful response has
    `"type": "create_entry"` and includes the new `result` (the config
-   entry). An error response has `"type": "form"` again with an `errors`
-   object — fix and resubmit, don't guess blindly at what changed.
-4. Once created, the zone's `number.*` entities exist with factory
-   defaults. To set one from §5's table, call the `number.set_value`
+   entry); cool at or above hot comes back as the error
+   `cool_not_below_hot`.
+6. Once created, the zone's `number.*` entities exist with factory
+   defaults (the three temperature sliders with what step 5 sent). To set one from §5's table, call the `number.set_value`
    service: `POST /api/services/number/set_value` with
    `{"entity_id": "number.<zone>_<field>", "value": <float>}`. Confirm
    afterwards by reading the entity's state back
    (`GET /api/states/<entity_id>`) rather than assuming the call worked.
-5. To run the verification pulse from §8: `POST /api/services/zoneflow/test_pulse`
+7. To run the verification pulse from §8: `POST /api/services/zoneflow/test_pulse`
    with `{"entity_id": "<any entity belonging to that zone's device>", "seconds": 10}`
    (or however your tool's service-call helper targets a specific config
    entry/device — some MCP servers want a device_id instead of an
@@ -322,7 +332,7 @@ once they've agreed to let you drive.
    switch** is truly required — ZoneFlow cannot irrigate without something
    to open. Everything else is optional, and each one degrades gracefully
    on its own when left unset rather than being blocked or half-broken.
-   Walk through this plainly rather than assuming they need all four before
+   Walk through this plainly rather than assuming they need all of them before
    they can start — someone with just a valve can still get real, working
    automatic irrigation today, add sensors later, and nothing about setup
    has to be redone when they do:
@@ -330,9 +340,22 @@ once they've agreed to let you drive.
    | Sensor | What it's for | What's lost without it |
    |---|---|---|
    | Rain gauge tip counter | rain-aware watering (skip/reduce when it's already rained) | rain-aware gates simply never fire — ZoneFlow waters on a temperature-driven schedule only, same as if it never rains |
-   | Outdoor temperature sensor | hot/cool weekly-target tiers | the hot/cool tier logic falls back to the "normal" tier permanently — one flat weekly target year-round |
+   | Outdoor temperature sensor | hot/cool weekly-target tiers | the tier comes from the Fallback / Manual Temperature slider instead — one normal weekly target unless the person moves that slider for a hot or cool spell |
    | Pump power sensor | confirms the pump is actually drawing current during a pulse (a safety/reliability audit, not a control) | no low-pump-power warning if the pump fails silently mid-cycle |
    | Flow meter (cumulative-volume sensor) | measures actual water delivered per cycle, and can flag "pump ran but no water moved" | no "Last Cycle Water Delivered" reading and no no-flow-detected check |
+   | Soil-moisture probe (`sensor.*` in %, in this zone's soil) | dry soil brings routine watering forward, wet soil skips it (§7.7) | routine watering follows the modeled schedule alone — which is how most zones run |
+
+   Phone notifications and the weather forecast gate were already asked in
+   §1 (questions 7 and 8).
+
+   **Sensors are per zone.** Every zone can have a different combination —
+   one with a soil probe and flow meter, another with just a valve — and
+   nothing clashes. A sensor can also serve several zones (one rain gauge,
+   outdoor temperature sensor or weather entity for the whole garden),
+   while a soil probe only tells you about the bed it's pushed into. So
+   ask the questions below again for every zone, and for a shared sensor
+   just confirm "same rain gauge as the first zone?" rather than searching
+   again.
 
    **Recommend having at least one of pump-power or flow-meter, for
    reliability** — without either, ZoneFlow has no way to notice a pump
@@ -361,7 +384,16 @@ once they've agreed to let you drive.
      indoor zone, "one that reads this specific zone's actual growing-area
      temperature, not the outside air")?
    - **"Do you have a pump power sensor?"**
-   - **"Do you have a flow meter?"**
+   - **"Do you have a flow meter?"** (if it's shared with other zones, ask
+     where it's plumbed — §7.2a)
+   - **"Is there a soil-moisture probe in this zone's soil?"** — if yes,
+     note it for §3/§4 and walk through §7.7's two thresholds once the
+     zone exists. Never suggest buying one just for ZoneFlow.
+   - **From the second zone on: "Does this zone share a pump with a zone
+     you've already set up?"** — work out the full grouping (§7.2) before
+     this zone's config flow, since it fills in the "Shared pump ID" field,
+     and an earlier zone on the same pump needs the same ID set under its
+     **Configure**.
 
    Whichever they say no to is simply left unset in §4 — a normal, fully-
    supported configuration, not a problem to solve before continuing. But
@@ -477,13 +509,16 @@ have one.
   an instantaneous flow-rate reading. If more than one zone will point at
   the same flow meter entity, ask where it's physically plumbed relative
   to those zones' valves and pumps before assuming that's fine as-is —
-  see §7.2a, since a meter shared across genuinely different pumps changes
-  how those specific zones queue.
+  see §7.2a, since a meter shared across genuinely different pumps only
+  measures each zone correctly if those zones also share a pump ID.
 - Notify target: a `notify.*` entity for phone alerts — only look for this
   if they said yes to notifications in §1; skip this search entirely if
   they said no.
 - Weather: a `weather.*` entity for the forecast gate (§7.4) — only look
   for this if they said yes to the forecast gate in §1; skip it if not.
+- Soil moisture (optional): a `sensor.*` in % with device class
+  `moisture` (name hints: "soil", "moisture", the bed or plant name) —
+  make sure it's the probe in *this* zone's soil, not a humidity sensor.
 
 Present your best-guess matches and ask the person to confirm or correct
 each one — never submit an entity ID you're not confident about, and never
@@ -512,7 +547,8 @@ them:
    recognize their own devices in the dropdown by name.
 2. **"I'm not sure — help me find them"** — the easiest no-typing option:
    have them go to **Settings → Devices & Services → Entities**, type a
-   keyword into the search box (`valve`, `pump`, `rain`, `temperature`),
+   keyword into the search box (`valve`, `pump`, `rain`, `temperature`,
+   `soil`, `flow`),
    and either read you back what shows up or take a screenshot and paste
    it — you can read a screenshot's entity names directly.
 3. **"I want one list of everything relevant, in one go"** — the
@@ -565,6 +601,16 @@ just the one entity type at a time instead of everything at once.
 {{ s.entity_id }} — {{ s.name }} ({{ s.state }})
 {% endfor %}
 
+=== Soil moisture sensors (candidate soil probe) ===
+{% for s in states.sensor if s.attributes.get('device_class') == 'moisture' or 'soil' in s.entity_id -%}
+{{ s.entity_id }} — {{ s.name }} ({{ s.state }}{{ s.attributes.get('unit_of_measurement', '') }})
+{% endfor %}
+
+=== Sensors mentioning "flow"/"water"/"meter" (candidate flow meter) ===
+{% for s in states.sensor if s.attributes.get('device_class') in ('water', 'volume') or 'flow' in s.entity_id or 'meter' in s.entity_id -%}
+{{ s.entity_id }} — {{ s.name }} ({{ s.state }}{{ s.attributes.get('unit_of_measurement', '') }})
+{% endfor %}
+
 === Weather entities ===
 {% for s in states.weather -%}
 {{ s.entity_id }} — {{ s.name }}
@@ -597,7 +643,7 @@ screen, not just this step.
 ## 4. Walk through the config flow
 
 In Home Assistant: **Settings → Devices & Services → Add Integration →
-"ZoneFlow Irrigation"**. It's two screens:
+"ZoneFlow Irrigation"**. It's four screens:
 
 **Screen 1 — zone name.** One field, `Zone name`: a short, human name (e.g.
 "Front Lawn", "Avocado Tree", "Herb Bed"). This becomes the device name in
@@ -639,8 +685,30 @@ efficiency); they always have a valid value (even "not sure"/"flat"/"drip"
 as defaults), so they never block submitting this screen. Say this plainly
 if the person asks why an "unknown" answer is fine here.
 
+**Screen 3 — climate.** One dropdown: Tropical (hot all year), Hot summers
+(Mediterranean, desert, southern US), Temperate (most of Europe, northern
+US), Cool summers (Nordics, UK, coastal north). Pick from where the person
+lives — ask if you don't know. It only pre-fills the next screen.
+
+**Screen 4 — temperature thresholds.** Three sliders, in the zone's units,
+pre-filled from the climate. All three are compared with the **3-day
+average of daily HIGH temperatures** (afternoon peaks, not the daily mean):
+
+| Field | Starting values (hot / cool / fallback, °C) | What it does |
+|---|---|---|
+| Hot weather threshold | tropical 31.5, hot summers 34, temperate 28, cool summers 24 | at or above this: hot tier — waters every 3 days with the hot weekly target |
+| Cool weather threshold | tropical 30, hot summers 26, temperate 20, cool summers 16 | below this: cool tier — the cool weekly target; between cool and hot is normal. Must be below hot (the form refuses otherwise) |
+| Fallback / manual temperature | tropical 30.5, hot summers 30, temperate 24, cool summers 20 | used when there is no real reading: **with no temperature sensor it is the person's manual control** (raise it for a heat wave, lower it for a cold spell); with a sensor, only until the sensor has recorded its first full day, and after 3 days without a single reading (§7.6). Leave it in the normal band unless there's a reason not to |
+
+Adjust the starting values if the person's summers are unusual for their
+region — the point is that a typical growing-season afternoon falls in the
+normal band, a heat wave reaches hot, and a cold spell drops below cool.
+These only seed the zone's number entities: afterwards the sliders on the
+device page are what counts (§5), and nothing here needs redoing.
+
 Submitting this screen creates the zone. It starts running on the schedule
-immediately, with every tunable number still at its factory default until
+immediately, with every tunable number except the three temperature
+sliders from screen 4 still at its factory default until
 you set it in §5 — treat the gap between "zone created" and "§5 and §8
 both actually finished" as a real window you should close as fast as
 possible, not just something to be quick about:
@@ -681,7 +749,7 @@ looking anything up again.
 **Units.** The config flow (and later **Configure**) has a **Units** field:
 **Follow Home Assistant** (the default — leave it unless they ask), Metric,
 or Imperial. With imperial, the zone's water sliders show inches, the
-emitter rate shows in/h, the hot/cool thresholds show °F, and the sensors
+emitter rate shows in/h, the hot/cool thresholds and fallback temperature show °F, and the sensors
 show inches, in/day, °F and gallons. Give every number you recommend in
 the units the zone actually shows (1 in = 25.4 mm; 1 mm/min = 2.36 in/h),
 and say which units you mean. Switching later is safe: every setting keeps
@@ -907,8 +975,9 @@ its factory default.
 | `..._routine_normal_weekly_target` (mm) | weekly water target in normal weather | crop water needs — see the quick table below |
 | `..._routine_hot_weekly_target` (mm) | weekly target once it's classified "hot" | usually ~1.3x the normal target |
 | `..._routine_cool_weekly_target` (mm) | weekly target once it's classified "cool" | usually ~0.7x the normal target |
-| `..._hot_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "hot" | local climate — ask, or use ~31°C in the tropics, ~28°C in temperate zones; **only meaningful if an outdoor temperature sensor is configured** — otherwise every cycle uses the normal tier regardless of this number, so don't spend much time tuning it for a zone with no temp sensor |
-| `..._cool_weather_temp_threshold` (°C) | 3-day avg peak temp that counts as "cool" | local climate — usually 5-8°C below the hot threshold; same caveat as above if there's no temp sensor |
+| `..._hot_weather_temp_threshold` (°C) | 3-day avg of daily highs that counts as "hot" | already set from the climate at setup (§4, screen 4) — only change it if the person's summers are unusual; range 15-45°C |
+| `..._cool_weather_temp_threshold` (°C) | 3-day avg of daily highs below which it's "cool" | same — usually 6-10°C below the hot threshold; range 5-40°C, and it must stay below hot (to move both down, lower cool first; to move both up, raise hot first) |
+| `..._fallback_manual_temperature` (°C) | the temperature used when there's no real reading | **a zone with no temperature sensor:** this is how the person tells it about the weather — tell them to raise it above hot for a heat wave and drop it below cool for a cold spell, then put it back. **With a sensor:** used only once 3 days in a row have no reading at all; leave it in the normal band |
 | `..._emitter_flow_rate_calibration` (mm/min) | **critical** — how fast the emitters actually apply water | ask the person for their drip/sprinkler flow rate, or help them calculate it: run `zoneflow.test_pulse` for a known number of minutes, measure water depth/volume delivered (or read the flow meter's delta, if configured), divide. Do not guess this one; a wrong value makes every runtime calculation wrong. |
 | `..._rain_gauge_mm_per_tip_calibration` (mm) | **only relevant if a rain gauge is configured** — how much rainfall one tip of the bucket represents, which the whole rain-aware gate is built on | see §2a — ask if they already know it; if not, look up the gauge's model spec as a starting point, or offer the pour-and-count measurement for a precise value. Skip this row entirely for a zone with no rain gauge. |
 | `..._deep_soak_target_depth` (mm) | depth for the infrequent deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise see "Root depth" above, suggest first from crop/region/soil, let the person override |
@@ -1133,19 +1202,26 @@ it's plumbed relative to the zones — ask about its position, don't assume:
   valve downstream of the meter can ever be open at a time, which two
   simultaneous pumps don't guarantee on their own.
 
-  ZoneFlow handles this automatically the moment two zones are pointed at
-  the **same flow meter entity**, regardless of their "Shared pump ID":
-  it serializes those specific zones' cycles against each other too, the
-  same way pump-sharing zones already take turns. Tell the person plainly
-  what this costs them: those particular zones lose the "different pumps
-  run at the same time" benefit they'd otherwise get, purely because a
-  shared meter can't tell their water apart if it doesn't. If they'd
-  rather keep their independent pumps running fully concurrently, the
-  fix is a separate flow meter per pump (even one meter per pump, shared
-  across that pump's own zones, is enough — it's specifically sharing
-  *across* pumps that forces the trade-off) — mention this as the
-  alternative, but let them decide; plenty of setups are fine giving up a
-  little concurrency for one meter's worth of savings.
+  **ZoneFlow does not detect this on its own** — pointing two zones at the
+  same flow meter entity does not make them take turns; only the "Shared
+  pump ID" does. So for zones on different pumps behind one meter, offer
+  the person two choices and let them decide:
+  - **Give all of those zones the same "Shared pump ID"** (§7.2), even
+    though the pumps are physically separate. They then take turns, each
+    cycle's meter reading belongs to one zone, and "Last Cycle Water
+    Delivered" and the no-flow check stay correct. The cost: those pumps
+    no longer run at the same time, purely because the one meter can't
+    tell their water apart otherwise. Plenty of setups are fine giving up
+    a little concurrency for one meter's worth of savings.
+  - **A separate flow meter per pump** (one per pump, shared across that
+    pump's own zones, is enough — it's only sharing *across* pumps that
+    forces the trade-off) keeps the pumps fully independent.
+
+  If they do neither, the zones still water correctly — the meter only
+  measures, it never decides how much water a zone gets — but a zone's
+  "Last Cycle Water Delivered" can include another zone's water, and a
+  zone whose own water never moved could be missed by the no-flow check
+  while another zone is running. Say this plainly.
 
 ### 7.3 Sunrise/sunset-relative scheduling
 If the person wants watering tied to daylight rather than a fixed clock
@@ -1230,11 +1306,16 @@ Worth mentioning proactively once, rather than waiting for the person to
 notice and worry: if an already-configured optional sensor goes
 unavailable later (dead battery, a Zigbee dropout, a broken template) —
 not "never configured," but "was working, now isn't" — ZoneFlow degrades
-the same safe way as if it had never been set, automatically, with no
-action needed:
-- **Outdoor temperature drops out:** the hot/cool tier logic immediately
-  falls back to the normal tier (not whatever tier the last real reading
-  implied), and recovers automatically the moment the sensor reports again.
+safely and recovers on its own, with no action needed:
+- **Outdoor temperature drops out:** the last real days still count — a
+  short dropout changes nothing. A day with no reading at all is recorded
+  as "no reading" (never a copy of the day before), so those real days age
+  out one per day; after 3 days without a single reading the tier comes
+  from the zone's Fallback / Manual Temperature slider (normal band by
+  default) until the sensor has recorded a real day again. The 3-Day
+  Average Peak Temperature sensor then shows unknown, and its
+  `temperature_source` attribute says what's being used: `sensor`,
+  `last_known`, `fallback`, or `manual` (no sensor on the zone).
 - **Rain gauge drops out:** unreadable readings are simply ignored, not
   recorded as "it stopped raining" — the rolling rain window keeps its last
   good value rather than resetting.
@@ -1252,10 +1333,20 @@ action needed:
 - **Soil moisture sensor drops out (§7.7):** the routine-irrigation decision
   falls back to the plain modeled interval, exactly as if no soil-moisture
   sensor had ever been configured, until it reports a real reading again.
+  The same happens when it reports something **impossible** (outside
+  0–100%). A probe can also **stop reporting without going unavailable**
+  (a dying battery often leaves the last value showing). ZoneFlow can't
+  always tell that apart from a steady real reading — MQTT/Zigbee2MQTT and
+  template sensors don't re-report an unchanged value — so after 24 hours
+  with no new report it goes by what the reading says: a **dry** or
+  in-range reading is ignored (a frozen "dry" would force watering at every
+  scheduled time), a **wet** one is still trusted (probes often sit pinned
+  at 100% in soaked soil) until the wet-hold check in §7.7 steps in.
 - **Outdoor temperature drops out on a zone using the ET curve (§7.8):**
-  that zone's weekly target falls back to the temperature-tier target
-  (itself the normal tier while the sensor is dead) for as long as the
-  sensor is out, and goes back to the ET curve on its own once it reports
+  the same way — the last real days keep the ET curve going; once none is
+  left (3 days without a reading) the weekly target falls back to the
+  temperature-tier target (picked by the fallback temperature), and goes
+  back to the ET curve on its own after the sensor has recorded a full day
   again. The Routine Weekly Target sensor's `source` attribute reads
   `temperature_tiers_fallback` while this is happening.
 
@@ -1299,13 +1390,24 @@ Requires a `sensor.*` entity reporting moisture as a percentage.
    sensor that says what the reading means for the next routine run --
    "Dry - watering brought forward" (it waters at the next scheduled time
    even if the schedule says not yet -- a rain dry-down still applies),
-   "Wet - skipping", "In range - following schedule" or "Sensor offline -
-   following schedule". The next-run
+   "Wet - skipping", "In range - following schedule", or — when the reading
+   is being ignored and the schedule decides — "Sensor offline", "No new
+   reading for 24 h" or "Impossible reading". The next-run
    countdown follows it too (a dry reading brings the routine forward; wet
    soil shows no date, because nobody can date when it will dry), a
    scheduled run skipped for wet soil gets a "Routine Skipped (Soil Wet)"
    row in the CSV log, and a run the soil forced early says so in its
-   phone message. Include the Soil Moisture card in the dashboard (§9).
+   phone message. Wet soil is respected — it can stay wet for days after
+   heavy rain — but once wet readings have held a due run back for twice
+   the routine interval (8 days on the usual 4-day interval), one phone
+   alert goes out: "Check the soil probe" if the probe is still reporting
+   (it keeps being followed — placement in a wet spot or a probe reading
+   high are the usual causes), or "Soil probe looks frozen" if it hasn't
+   reported for 24 hours — then the schedule waters once and the check
+   starts over, so a dead probe can't stop watering for good. The Soil
+   Moisture Status sensor's `wet_hold_since` and `hours_since_report`
+   attributes show where things stand. Include the Soil
+   Moisture card in the dashboard (§9).
 
 ### 7.8 Optional ET curve (evapotranspiration-based weekly target)
 By default a zone's routine weekly target comes from three fixed tiers —
@@ -1469,9 +1571,11 @@ flavour, sugar or oil quality. Deep soak is never touched.
 feel reckless -- and what each one needs):
 - Full dose in hot weather -- the hot tier, judged by the 3-day average of
   daily peaks, so the first day or two of a heatwave may still get the
-  cut. Needs a temperature sensor; if that sensor goes offline, it gives
-  the full dose rather than cutting blind. With no temperature sensor at
-  all there is no heat guard -- say so.
+  cut. With a temperature sensor, a short dropout still uses the last real
+  days; after 3 days with no reading it gives the full dose rather than
+  cutting blind. With no temperature sensor it goes by the Fallback /
+  Manual Temperature -- so the heat guard only works if the person raises
+  that slider in a heat wave. Say so.
 - Full dose while the plant is still on its growth ramp -- only if a
   growth-ramp profile and planting date are set (§6). Otherwise nothing
   stops it on a young plant, which is one more reason to only switch it

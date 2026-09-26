@@ -10,7 +10,10 @@ from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
 
 from custom_components.zoneflow.const import (
+    CLIMATE_PRESETS,
+    CONF_CLIMATE,
     CONF_CSV_PATH,
+    CONF_INITIAL_NUMBERS,
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
     CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
@@ -69,6 +72,19 @@ def _minimal_entities_input(**overrides):
     return data
 
 
+async def _through_climate(hass, result, climate="temperate", temps=None):
+    """The two steps after the entities: pick a climate, then accept (or
+    change) the temperature sliders it pre-filled."""
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "climate"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_CLIMATE: climate})
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "temperatures"
+    if temps is None:
+        temps = {k.schema: k.default() for k in result["data_schema"].schema}
+    return await hass.config_entries.flow.async_configure(result["flow_id"], temps)
+
+
 @pytest.mark.asyncio
 async def test_zone_name_required_shows_error(hass):
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
@@ -93,6 +109,7 @@ async def test_minimal_setup_with_every_optional_entity_skipped(hass):
     assert result["step_id"] == "entities"
 
     result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input())
+    result = await _through_climate(hass, result)
     assert result["type"] == FlowResultType.CREATE_ENTRY
     entry = result["result"]
     assert entry.title == "Bare Zone"
@@ -120,6 +137,7 @@ async def test_deep_soak_can_be_turned_off_for_crops_that_dont_need_it(hass):
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], _minimal_entities_input(**{CONF_DEEP_SOAK_ENABLED: False})
     )
+    result = await _through_climate(hass, result)
     assert result["type"] == FlowResultType.CREATE_ENTRY
     assert result["result"].data[CONF_DEEP_SOAK_ENABLED] is False
 
@@ -150,6 +168,7 @@ async def test_full_setup_with_soil_profile_and_growth_ramp(hass):
             }
         ),
     )
+    result = await _through_climate(hass, result)
     assert result["type"] == FlowResultType.CREATE_ENTRY
     entry = result["result"]
     assert entry.data[CONF_PUMP_POWER_ENTITY] == pump
@@ -166,6 +185,7 @@ async def test_options_flow_prefills_current_soil_profile_and_can_change_it(hass
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], _minimal_entities_input(**{CONF_SOIL_TYPE: "sandy"})
     )
+    result = await _through_climate(hass, result)
     entry = result["result"]
 
     options_result = await hass.config_entries.options.async_init(entry.entry_id)
@@ -210,6 +230,7 @@ async def test_options_flow_can_remove_optional_sensors(hass):
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Beds"})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input(**sensors))
+    result = await _through_climate(hass, result)
     entry = result["result"]
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
@@ -241,3 +262,82 @@ async def test_options_flow_can_remove_optional_sensors(hass):
     )
     await hass.async_block_till_done()
     assert hass.data[DOMAIN][entry.entry_id].weather_entity == "weather.home"
+
+
+@pytest.mark.asyncio
+async def test_climate_step_seeds_the_temperature_sliders(hass):
+    """The climate picked at setup pre-fills the three temperature sliders,
+    the person can change them, and the zone's number entities start at
+    exactly what was entered -- the sliders are then the source of truth."""
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Nordic Beds"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input())
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_CLIMATE: "cool"})
+    assert result["step_id"] == "temperatures"
+    defaults = {k.schema: k.default() for k in result["data_schema"].schema}
+    assert defaults == CLIMATE_PRESETS["cool"]
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"hot_temp_threshold": 23.0, "cool_temp_threshold": 14.5, "fallback_temp": 18.0}
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    entry = result["result"]
+    assert entry.data[CONF_CLIMATE] == "cool"
+    assert entry.data[CONF_INITIAL_NUMBERS] == {
+        "hot_temp_threshold": 23.0,
+        "cool_temp_threshold": 14.5,
+        "fallback_temp": 18.0,
+    }
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller.number("hot_temp_threshold") == 23.0
+    assert controller.number("cool_temp_threshold") == 14.5
+    assert controller.number("fallback_temp") == 18.0
+    # No temperature sensor: the manual value picks the tier (18C with
+    # 14.5/23 -> normal).
+    assert controller.watering_temp() == (18.0, "manual")
+
+
+@pytest.mark.asyncio
+async def test_climate_step_rejects_cool_not_below_hot(hass):
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Upside Down"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input())
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_CLIMATE: "temperate"})
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"hot_temp_threshold": 20.0, "cool_temp_threshold": 20.0, "fallback_temp": 20.0}
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "temperatures"
+    assert result["errors"] == {"base": "cool_not_below_hot"}
+
+
+@pytest.mark.asyncio
+async def test_climate_step_in_fahrenheit_is_stored_in_celsius(hass):
+    """A zone showing imperial units gets the sliders in °F; the zone still
+    stores and calculates in °C."""
+    from custom_components.zoneflow.const import CONF_UNIT_SYSTEM
+
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Texas"})
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], _minimal_entities_input(**{CONF_UNIT_SYSTEM: "imperial"})
+    )
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_CLIMATE: "hot_dry"})
+    fields = {k.schema: k for k in result["data_schema"].schema}
+    # 34C = 93.2F, 26C = 78.8F, 30C = 86F -- offered on the 0.5F slider step
+    assert fields["hot_temp_threshold"].default() == pytest.approx(93.0)
+    assert fields["cool_temp_threshold"].default() == pytest.approx(79.0)
+    assert fields["fallback_temp"].default() == pytest.approx(86.0)
+    config = result["data_schema"].schema[fields["hot_temp_threshold"]].config
+    assert config["unit_of_measurement"] == "°F"
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"hot_temp_threshold": 95.0, "cool_temp_threshold": 77.0, "fallback_temp": 86.0}
+    )
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+    seeds = result["result"].data[CONF_INITIAL_NUMBERS]
+    assert seeds["hot_temp_threshold"] == pytest.approx(35.0)
+    assert seeds["cool_temp_threshold"] == pytest.approx(25.0)
+    assert seeds["fallback_temp"] == pytest.approx(30.0)
+    await hass.async_block_till_done()

@@ -120,18 +120,33 @@ async def test_no_et_history_falls_back_to_the_tier_target(hass, fake_valve_serv
 
 
 @pytest.mark.asyncio
-async def test_dead_temp_sensor_falls_back_immediately_and_recovers(hass, fake_valve_services):
+async def test_dead_temp_sensor_keeps_real_days_then_falls_back_and_recovers(hass, fake_valve_services):
+    """A sensor dropout keeps the ET curve on the real days already recorded
+    until they age out (days without readings are recorded as none); then
+    the zone uses its tier target, picked by the fallback temperature."""
     controller = await _setup(hass)
     controller.store.state.demand_model = DEMAND_MODEL_ET
-    assert controller.et_weekly_target_mm() is not None
+    live = controller.et_weekly_target_mm()
+    assert live is not None
 
     hass.states.async_set(OUTDOOR_TEMP, "unavailable")
     await hass.async_block_till_done()
+    assert controller.et_weekly_target_mm() == live  # a blip changes nothing
+
+    for _ in range(3):
+        controller.store.state.today_peak_temp_c = None
+        controller.store.state.today_min_temp_c = None
+        controller._on_daily_shift(None)
     assert controller.et_weekly_target_mm() is None
+    assert controller.watering_temp()[1] == "fallback"
     assert controller.tier_weekly_target_mm() == controller.number("target_weekly_mm")
 
+    # Back, with a full day on record: the ET curve again.
     hass.states.async_set(OUTDOOR_TEMP, "29.0")
     await hass.async_block_till_done()
+    controller.store.state.today_min_temp_c = 24.0
+    controller.store.state.today_peak_temp_c = 31.0
+    controller._on_daily_shift(None)
     assert controller.et_weekly_target_mm() is not None
 
 

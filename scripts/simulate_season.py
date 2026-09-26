@@ -132,7 +132,7 @@ class DayResult:
     calendar_date: date
     rain_mm: float
     peak_temp_c: float
-    avg_peak_temp_c: float
+    avg_peak_temp_c: float | None
     action: str
     applied_mm: float
     growth_ramp_pct: float = 100.0
@@ -187,6 +187,10 @@ def run_simulation(
         # -- Decisions use *yesterday-and-earlier* history, mirroring the
         # real automation's 05:00/05:30 checks running before today's rain
         # has accumulated. --
+        # No real day on record (the first days): None, which the tier
+        # functions treat as the normal tier (the integration would use the
+        # zone's fallback temperature, which sits in the normal band by
+        # default).
         avg_peak_temp = calc.three_day_average_peak_temp(state.temp_history_c)
         action = "none"
         applied_mm = 0.0
@@ -262,7 +266,7 @@ def run_simulation(
                 calendar_date=date.today() + timedelta(days=d),
                 rain_mm=round(rain_mm, 1),
                 peak_temp_c=round(peak_temp, 1),
-                avg_peak_temp_c=round(avg_peak_temp, 1),
+                avg_peak_temp_c=round(avg_peak_temp, 1) if avg_peak_temp is not None else None,
                 action=action,
                 applied_mm=round(applied_mm, 1),
                 growth_ramp_pct=round(growth_ramp * 100, 0),
@@ -308,7 +312,7 @@ def print_report(results: list[DayResult], show_ramp: bool = False) -> None:
         ramp_field = f"{r.growth_ramp_pct:>4.0f}% " if show_ramp else ""
         print(
             f"{r.calendar_date.isoformat():<11} {r.rain_mm:>5.1f}m {r.peak_temp_c:>5.1f}C "
-            f"{r.avg_peak_temp_c:>5.1f}C  {ramp_field}{r.action:<20} {r.applied_mm:>6.1f}mm  {r.note}{marker}"
+            f"{r.avg_peak_temp_c if r.avg_peak_temp_c is not None else float('nan'):>5.1f}C  {ramp_field}{r.action:<20} {r.applied_mm:>6.1f}mm  {r.note}{marker}"
         )
 
     total_days = len(results)

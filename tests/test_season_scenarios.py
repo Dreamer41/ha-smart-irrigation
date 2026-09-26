@@ -198,14 +198,18 @@ async def test_temp_sensor_outage_mid_season_falls_back_and_recovers(hass, fake_
     await sim.run(weather)
     _check_invariants(sim, c)
 
-    during = [r for r in sim.results[8:16] if r.routine_mm > 0]
+    # The first 3 outage days are recorded as "no reading" one by one; from
+    # day 11 no real day is left and the fallback (unset -> normal tier)
+    # takes over.
+    during = [r for r in sim.results[11:16] if r.routine_mm > 0]
     after = [r for r in sim.results[19:] if r.routine_mm > 0]
     assert during, "zone must keep watering during a sensor outage"
-    # During the outage: tier fallback -> normal tier target (35 mm/week),
-    # 4-day interval (a dead sensor must not keep the hot 3-day rhythm).
+    # Normal tier target (35 mm/week), 4-day interval: a dead sensor must
+    # not keep the hot 3-day rhythm past its last real day.
     assert all(r.target_weekly_used == pytest.approx(35.0) for r in during)
-    during_days = [r.index for r in during]
-    assert all(b - a >= 4 for a, b in zip(during_days, during_days[1:]))
+    during_days = [r.index for r in sim.results[8:16] if r.routine_mm > 0]
+    late = [d for d in during_days if d >= 11]
+    assert all(b - a >= 4 for a, b in zip(late, late[1:]))
     # After it recovers (and has a fresh full day on record) it's back on the ET curve.
     assert after and all(r.target_weekly_used != pytest.approx(35.0) for r in after)
 

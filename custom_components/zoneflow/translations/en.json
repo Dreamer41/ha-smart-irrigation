@@ -36,10 +36,27 @@
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)"
         }
+      },
+      "climate": {
+        "title": "Climate",
+        "description": "What is the growing season like where this zone is? This only pre-fills the temperature sliders on the next page -- you can change every value there, and later on the zone's device page.",
+        "data": {
+          "climate": "Climate"
+        }
+      },
+      "temperatures": {
+        "title": "Temperature thresholds",
+        "description": "ZoneFlow averages the daily HIGH temperature over the last 3 days. At or above Hot it waters more often (every 3 days) with the hot weekly target; below Cool it uses the cool weekly target; in between is normal.\n\nThe fallback temperature is used when there is no real reading to go on: with no temperature sensor it is your manual control (raise it for a heat wave, lower it for a cold spell); with a sensor it is used only until the sensor has recorded its first full day, and after 3 days without a single reading.",
+        "data": {
+          "hot_temp_threshold": "Hot weather threshold",
+          "cool_temp_threshold": "Cool weather threshold",
+          "fallback_temp": "Fallback / manual temperature"
+        }
       }
     },
     "error": {
-      "zone_name_required": "Zone name can't be empty."
+      "zone_name_required": "Zone name can't be empty.",
+      "cool_not_below_hot": "The cool threshold has to be below the hot threshold."
     }
   },
   "options": {
@@ -132,6 +149,14 @@
         "auto": "Follow Home Assistant",
         "metric": "Metric (mm, °C)",
         "imperial": "Imperial (inches, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropical (hot all year, e.g. Southeast Asia)",
+        "hot_dry": "Hot summers (Mediterranean, desert, southern US)",
+        "temperate": "Temperate (most of Europe, northern US)",
+        "cool": "Cool summers (Nordics, UK, coastal north)"
       }
     }
   },
@@ -256,6 +281,9 @@
       },
       "deficit_water_pct": {
         "name": "Deficit Mode Water"
+      },
+      "fallback_temp": {
+        "name": "Fallback / Manual Temperature"
       }
     },
     "datetime": {
@@ -363,7 +391,9 @@
           "dry": "Dry - watering brought forward",
           "wet": "Wet - skipping",
           "in_range": "In range - following schedule",
-          "offline": "Sensor offline - following schedule"
+          "offline": "Sensor offline - following schedule",
+          "stale": "No new reading for 24 h - following schedule",
+          "implausible": "Impossible reading - following schedule"
         }
       },
       "deficit_status": {
@@ -375,7 +405,7 @@
           "full_dose_soil_dry": "Full dose today (soil dry)",
           "ended": "Ended",
           "full_dose_young_plant": "Full dose (young plant)",
-          "full_dose_no_temp": "Full dose today (temperature sensor offline)"
+          "full_dose_no_temp": "Full dose today (no temperature reading on record)"
         }
       }
     },
@@ -532,6 +562,9 @@
   "exceptions": {
     "date_in_future": {
       "message": "This date can't be in the future: it records something that already happened. Only the Planting / Transplant Date may be set ahead."
+    },
+    "cool_not_below_hot": {
+      "message": "The cool weather threshold has to stay below the hot weather threshold. To move both down, lower the cool one first; to move both up, raise the hot one first."
     }
   }
 }

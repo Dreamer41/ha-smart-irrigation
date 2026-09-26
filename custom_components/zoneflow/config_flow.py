@@ -1,10 +1,13 @@
 """Config + options flow.
 
-Setup is two steps: first a short zone name (so multiple zones show up as
+Setup is four steps: a short zone name (so multiple zones show up as
 distinct, distinguishable devices and don't collide on the default CSV
-filename), then the real entities (valve switch, pump power sensor, rain
-tip counter, outdoor temp sensor) -- it never creates new physical entities
-of its own. Adding a second zone is just adding this integration again with
+filename), the real entities (valve switch, pump power sensor, rain tip
+counter, outdoor temp sensor) -- it never creates new physical entities of
+its own -- then the climate, which fills in the last step: the hot/cool
+temperature thresholds and the fallback temperature, as sliders in the
+zone's units. Those only seed the zone's number entities; the sliders on
+the device page are the source of truth afterwards. Adding a second zone is just adding this integration again with
 a different name/entities; each zone is its own independent config entry.
 """
 from __future__ import annotations
@@ -13,6 +16,7 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.const import UnitOfTemperature
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
@@ -20,7 +24,12 @@ from homeassistant.util import slugify
 from . import units
 
 from .const import (
+    CLIMATE_NUMBER_KEYS,
+    CLIMATE_OPTIONS,
+    CLIMATE_PRESETS,
+    CONF_CLIMATE,
     CONF_CSV_PATH,
+    CONF_INITIAL_NUMBERS,
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
     CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
@@ -44,6 +53,7 @@ from .const import (
     CONF_VALVE_ENTITY,
     CONF_WEATHER_ENTITY,
     CONF_ZONE_NAME,
+    DEFAULT_CLIMATE,
     DEFAULT_CSV_PATH,
     DEFAULT_DEEP_SOAK_ENABLED,
     DEFAULT_DEEP_SOAK_TIME,
@@ -59,6 +69,7 @@ from .const import (
     DRAINAGE_OPTIONS,
     GROWTH_RAMP_PROFILE_OPTIONS,
     IRRIGATION_METHOD_OPTIONS,
+    NUMBER_DEFS,
     SLOPE_OPTIONS,
     SOIL_TYPE_OPTIONS,
     SUN_MODE_OPTIONS,
@@ -211,6 +222,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         self._zone_name: str | None = None
+        self._data: dict[str, Any] = {}
+        self._climate: str = DEFAULT_CLIMATE
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         errors: dict[str, str] = {}
@@ -234,7 +247,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 if len(user_input[key].split(":")) == 2:
                     user_input[key] = f"{user_input[key]}:00"
             user_input[CONF_ZONE_NAME] = self._zone_name
-            return self.async_create_entry(title=self._zone_name, data=user_input)
+            self._data = user_input
+            return await self.async_step_climate()
         # Default CSV path is zone-specific so two zones never silently
         # write into the same log file if the user just accepts defaults.
         default_csv = f"/config/zoneflow_{slugify(self._zone_name)}.csv"
@@ -243,6 +257,67 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=_schema({CONF_CSV_PATH: default_csv}),
             errors=errors,
         )
+
+    def _imperial(self) -> bool:
+        """The zone's display units, decided the same way the controller
+        does (units option, else Home Assistant's own unit system)."""
+        choice = self._data.get(CONF_UNIT_SYSTEM, units.UNIT_SYSTEM_AUTO)
+        if choice == units.UNIT_SYSTEM_IMPERIAL:
+            return True
+        if choice == units.UNIT_SYSTEM_METRIC:
+            return False
+        return self.hass.config.units.temperature_unit == UnitOfTemperature.FAHRENHEIT
+
+    async def async_step_climate(self, user_input: dict[str, Any] | None = None):
+        """Pick the climate; it pre-fills the temperature sliders next."""
+        if user_input is not None:
+            self._climate = user_input[CONF_CLIMATE]
+            return await self.async_step_temperatures()
+        return self.async_show_form(
+            step_id="climate",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_CLIMATE, default=self._climate): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=CLIMATE_OPTIONS, translation_key="climate")
+                    )
+                }
+            ),
+        )
+
+    async def async_step_temperatures(self, user_input: dict[str, Any] | None = None):
+        """Hot / cool thresholds and the fallback temperature, shown and
+        entered in the zone's units, stored in °C."""
+        imperial = self._imperial()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            metric = {key: units.to_metric(key, float(user_input[key]), imperial) for key in CLIMATE_NUMBER_KEYS}
+            if metric["cool_temp_threshold"] >= metric["hot_temp_threshold"] - 0.01:
+                errors["base"] = "cool_not_below_hot"
+            else:
+                data = {**self._data, CONF_CLIMATE: self._climate, CONF_INITIAL_NUMBERS: metric}
+                return self.async_create_entry(title=self._zone_name, data=data)
+        preset = CLIMATE_PRESETS[self._climate]
+        schema = {}
+        for key in CLIMATE_NUMBER_KEYS:
+            _name, lo, hi, metric_step, metric_unit = NUMBER_DEFS[key]
+            shown_lo, shown_hi = units.display_range(key, lo, hi, metric_step, imperial)
+            shown_step = units.step(key, metric_step, imperial)
+            # On the slider's own step (31.5C is 88.7F; offer 88.5F).
+            default = (
+                user_input[key]
+                if user_input is not None
+                else round(round(units.to_display(key, preset[key], imperial) / shown_step) * shown_step, 2)
+            )
+            schema[vol.Required(key, default=default)] = selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=shown_lo,
+                    max=shown_hi,
+                    step=shown_step,
+                    unit_of_measurement=units.unit(key, metric_unit, imperial),
+                    mode=selector.NumberSelectorMode.SLIDER,
+                )
+            )
+        return self.async_show_form(step_id="temperatures", data_schema=vol.Schema(schema), errors=errors)
 
     @staticmethod
     @callback

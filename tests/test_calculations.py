@@ -64,14 +64,32 @@ def test_rain_deduction_max_lookback_days_is_overridable():
     assert total_default > 0.0
 
 
-def test_three_day_average_drops_corrupt_days():
-    # One corrupt day (-10) is dropped, not averaged in as 0/garbage.
-    assert calc.three_day_average_peak_temp([30.0, 32.0, -10.0]) == calc.jinja_round((30.0 + 32.0) / 2, 2)
+def test_three_day_average_drops_impossible_days():
+    # An impossible reading (-99, 85) is a broken sensor and is dropped, not
+    # averaged in.
+    assert calc.three_day_average_peak_temp([30.0, 32.0, -99.0]) == calc.jinja_round((30.0 + 32.0) / 2, 2)
+    assert calc.three_day_average_peak_temp([30.0, None, 85.0]) == 30.0
 
 
-def test_three_day_average_all_corrupt_falls_back_to_30():
-    assert calc.three_day_average_peak_temp([None, None, None]) == 30.0
-    assert calc.three_day_average_peak_temp([-99.0, 60.0, 5.0]) == 30.0
+def test_three_day_average_counts_cold_days():
+    # A Nordic spring: 8-14C afternoons are real weather, not corrupt data
+    # (the original YAML dropped anything below 15C).
+    assert calc.three_day_average_peak_temp([12.0, 8.0, 14.0]) == calc.jinja_round(34.0 / 3, 2)
+    assert calc.three_day_average_peak_temp([-5.0, 0.0, 2.0]) == calc.jinja_round(-3.0 / 3, 2)
+
+
+def test_three_day_average_without_real_days_is_none_not_30():
+    assert calc.three_day_average_peak_temp([None, None, None]) is None
+    assert calc.three_day_average_peak_temp([-99.0, 61.0, None]) is None
+
+
+@pytest.mark.parametrize(
+    "temp,tier", [(None, "normal"), (35.0, "hot"), (28.0, "hot"), (27.9, "normal"), (20.0, "normal"), (19.9, "cool"), (5.0, "cool")]
+)
+def test_temperature_tier_temperate_thresholds(temp, tier):
+    assert calc.temperature_tier(temp, 28.0, 20.0) == tier
+    expected_mm = {"hot": 45.0, "cool": 25.0, "normal": 35.0}[tier]
+    assert calc.routine_target_weekly_mm(temp, 28.0, 20.0, 35.0, 45.0, 25.0) == expected_mm
 
 
 def test_plan_deep_soak_matches_yaml_formula():
