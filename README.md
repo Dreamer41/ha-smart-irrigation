@@ -209,6 +209,27 @@ through its device and leaves out whatever the zone doesn't use, so after
 a ZoneFlow update new features appear on it by themselves. Units follow
 the zone. Ordinary Home Assistant cards keep working alongside it.
 
+**All zones at a glance: the ZoneFlow overview card.** Add card →
+**ZoneFlow overview**. It finds every zone by itself and shows one row
+each: status, next watering, last watering and a 💧 water-now button.
+Click a zone to open its full card right there.
+
+<img src="docs/screenshots/overview.png" width="520" alt="The ZoneFlow overview card: every zone with its status, next and last watering and a water-now button">
+
+```yaml
+type: custom:zoneflow-overview-card
+sort: next          # or name (default): soonest watering on top
+title: Garden       # optional
+icons:              # optional, picked per zone in the card editor
+  <device_id>: mdi:chili-hot
+```
+
+A zone set up with a plant preset gets a matching icon by itself (a
+tomato, a chili, a tree…); pick any other in the card editor. Sorted by
+next watering, paused zones and ones with no date go last. On a phone the
+Last column folds away. A good layout: the overview on the first tab, and
+a tab per zone with its ZoneFlow card if you like.
+
 A hand-built page per zone (what the AI setup guide made before the card
 existed) looks like this:
 

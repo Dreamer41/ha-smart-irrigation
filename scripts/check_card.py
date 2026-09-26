@@ -204,9 +204,119 @@ def main() -> int:
         )
         check(counts[0] == counts[1], f"no stray rows after quick reconfiguring ({counts[0]} tracked, {counts[1]} shown)")
         browser.close()
+        check_overview(pw, check, args)
 
     print(f"\n{len(failures)} failed" if failures else "\nall card checks passed")
     return 1 if failures else 0
+
+
+def overview_hass() -> dict:
+    """Three zones: Tomatoes (preset, watered), Chilis (custom icon, rain
+    skip, measured litres), Mango (no preset, paused)."""
+    entities, states, devices = {}, {}, {}
+    zones = [
+        ("tom", "Tomatoes", "tomatoes", "done", "2026-09-28T22:30:00+00:00", "12.0 mm", None),
+        ("chi", "Chilis", None, "cancelled_rain", "2026-09-27T22:30:00+00:00", "8.0 mm", "18"),
+        ("man", "Mango", None, "paused", None, "20.0 mm", None),
+    ]
+    for dev, name, plant, code, next_iso, estimate, liters in zones:
+        devices[dev] = {"id": dev, "name": name, "name_by_user": None}
+        keys = [("sensor", "status", None), ("sensor", "last_water_delivered", "diagnostic"),
+                ("sensor", "last_cycle_water_liters", None), ("button", "run_routine", None)]
+        for domain, key, category in keys:
+            entity_id = f"{domain}.{dev}_{key}"
+            entities[entity_id] = {"entity_id": entity_id, "device_id": dev, "platform": "zoneflow",
+                                   "translation_key": key, "entity_category": category,
+                                   "hidden": key == "last_cycle_water_liters" and liters is None}
+            states[entity_id] = {"entity_id": entity_id, "state": "unknown", "attributes": {"friendly_name": f"{name} {key}"}}
+        states[f"sensor.{dev}_status"] = {"entity_id": f"sensor.{dev}_status", "state": f"{name} status sentence",
+                                          "attributes": {"code": code, "next_watering": next_iso, "plant": plant,
+                                                         "valve": None, "friendly_name": f"{name} Status"}}
+        states[f"sensor.{dev}_last_water_delivered"]["state"] = estimate.split()[0]
+        states[f"sensor.{dev}_last_water_delivered"]["attributes"]["unit_of_measurement"] = "mm"
+        if liters:
+            states[f"sensor.{dev}_last_cycle_water_liters"]["state"] = liters
+            states[f"sensor.{dev}_last_cycle_water_liters"]["attributes"]["unit_of_measurement"] = "L"
+    return {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"},
+            "config": {"time_zone": "UTC"}}
+
+
+JS_OVERVIEW = """() => {
+  const root = document.querySelector('#ov').shadowRoot;
+  return [...root.querySelectorAll('.zone')].map((z) => {
+    const r = z.querySelector('.row');
+    return {
+      name: r.querySelector('.name span').textContent,
+      icon: r.querySelector('.name ha-icon').getAttribute('icon'),
+      status: r.querySelector('.status span').textContent,
+      warn: r.querySelector('.status').classList.contains('warn'),
+      next: r.querySelector('.next').textContent,
+      last: r.querySelector('.last').textContent,
+      water_disabled: !!r.querySelector('ha-icon-button').disabled,
+      open: !z.querySelector('.details').hidden,
+      inner: !!z.querySelector('.details zoneflow-card'),
+    };
+  });
+}"""
+
+
+def check_overview(pw, check, args) -> None:
+    browser = pw.chromium.launch()
+    page = browser.new_page()
+    page.route("http://card.test/", lambda route: route.fulfill(body=HARNESS, content_type="text/html"))
+    page.route("http://card.test/card.js", lambda route: route.fulfill(path=str(CARD), content_type="text/javascript"))
+    page.goto("http://card.test/")
+    page.evaluate("customElements.define('ha-icon-button', class extends HTMLElement {})")
+    hass = overview_hass()
+    page.evaluate(
+        """(hass) => {
+            window._calls = [];
+            hass.callService = async (domain, service, data) => { window._calls.push([domain, service, data]); };
+            const card = document.createElement('zoneflow-overview-card');
+            card.id = 'ov';
+            card.setConfig({icons: {chi: 'mdi:chili-hot'}});
+            card.hass = hass;
+            document.body.appendChild(card);
+            window._ov = card; window._ovHass = hass;
+        }""",
+        hass,
+    )
+    page.wait_for_timeout(200)
+    rows = page.evaluate(JS_OVERVIEW)
+    print(json.dumps(rows, indent=1))
+    check([r["name"] for r in rows] == ["Chilis", "Mango", "Tomatoes"], "overview: every zone, by name")
+    check(rows[2]["icon"] == "mdi:food-apple", "overview: preset gives the icon")
+    check(rows[0]["icon"] == "mdi:chili-hot", "overview: an icon picked in the editor wins")
+    check(rows[1]["icon"] == "mdi:sprinkler-variant", "overview: default icon")
+    check(rows[0]["status"] == "Rain skip" and rows[2]["status"] == "Watered today", "overview: short status labels")
+    check(rows[1]["status"] == "Paused" and rows[1]["next"] == "—" and rows[1]["water_disabled"], "overview: paused zone")
+    check(rows[0]["last"] == "18 L" and rows[2]["last"] == "12.0 mm", "overview: measured litres, else the estimate")
+    check("Mon" in rows[2]["next"] or "Tue" in rows[2]["next"], "overview: next as weekday and time")
+
+    page.evaluate("() => { window._ov.setConfig({sort: 'next', icons: {chi: 'mdi:chili-hot'}}); window._ov.hass = window._ovHass; }")
+    page.wait_for_timeout(100)
+    rows = page.evaluate(JS_OVERVIEW)
+    check([r["name"] for r in rows] == ["Chilis", "Tomatoes", "Mango"], "overview: by next watering, paused last")
+
+    page.evaluate("() => window._ov.shadowRoot.querySelector('.zone .action ha-icon-button').click()")
+    page.wait_for_timeout(50)
+    calls = page.evaluate("() => window._calls")
+    check(calls == [["button", "press", {"entity_id": "button.chi_run_routine"}]], "overview: water now presses the zone's button")
+    check(not page.evaluate(JS_OVERVIEW)[0]["open"], "overview: the water button doesn't open the row")
+
+    page.evaluate("() => window._ov.shadowRoot.querySelector('.zone .row').click()")
+    page.wait_for_timeout(200)
+    rows = page.evaluate(JS_OVERVIEW)
+    check(rows[0]["open"] and rows[0]["inner"], "overview: a click opens the zone's full card")
+    page.evaluate("() => { window._ovHass.states['sensor.chi_status'].attributes.code = 'watering'; window._ov.hass = JSON.parse(JSON.stringify(window._ovHass)); }")
+    page.wait_for_timeout(100)
+    rows = page.evaluate(JS_OVERVIEW)
+    check(rows[0]["open"] and rows[0]["status"] == "Watering now", "overview: stays open and follows changes")
+    if args.screenshot:
+        shot = args.screenshot.with_name(args.screenshot.stem + "-overview" + args.screenshot.suffix)
+        page.locator("#ov").screenshot(path=str(shot))
+        print(f"screenshot: {shot}")
+    browser.close()
 
 
 if __name__ == "__main__":

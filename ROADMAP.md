@@ -18,6 +18,9 @@ Ideas queued for upcoming releases.
   per zone, it finds the zone's entities through its device, shows only
   what the zone uses, follows its units and picks up new features by
   itself.
+- **ZoneFlow overview card**: every zone in one table — status, next and
+  last watering, water now — sorted by name or next watering, an icon per
+  zone; a click opens the zone's full card.
 - **Status sensor** ("why"): one sentence per zone — watering now, what it
   decided today and why, or when it waters next.
 - **Tidy device page**: settings under Configuration, technical sensors

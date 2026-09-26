@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -599,4 +599,6 @@ class ZoneFlowStatusSensor(_Base):
         attributes = {key: value for key, value in status.items() if key != "text"}
         # For the ZoneFlow card: the valve isn't one of the zone's own entities.
         attributes["valve"] = self._controller.valve_entity
+        # For the overview card's default icon (the plant preset at setup).
+        attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
         return attributes
