@@ -44,6 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowGrowthRampSensor(entry, controller),
         ZoneFlowLastCycleWaterSensor(entry, controller),
         ZoneFlowDeficitStatusSensor(entry, controller),
+        ZoneFlowStatusSensor(entry, controller),
     ]
     if controller.soil_moisture_entity:
         entities += [
@@ -302,26 +303,7 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
         self._attr_translation_key = "days_until_next_run"
 
     def _next_times(self) -> tuple[float | None, float | None]:
-        c = self._controller
-        state = c.store.state
-        now_ts = dt_util.utcnow().timestamp()
-        routine_next, _ = c.routine_next_estimate()
-        deep_next = None
-        if c.deep_soak_enabled and (state.last_deep_soak_ts is not None or state.last_routine_ts is not None):
-            deep_next = calc.estimate_next_deep_soak(
-                state.last_deep_soak_ts,
-                c.number("deep_soak_interval_days"),
-                state.last_significant_rain_ts,
-                c.number("deep_soak_drydown_days"),
-                now_ts,
-            )
-            # Due, but held back because the last 14 days were already wet:
-            # it runs once the subsoil has dried, which can't be dated --
-            # leave it out rather than pinning the countdown at 0 all
-            # through a wet spell.
-            if deep_next <= now_ts and c.rain_windows()["14d"] >= c.number("deep_soak_rain_threshold"):
-                deep_next = None
-        return routine_next, deep_next
+        return self._controller.next_watering()
 
     @staticmethod
     def _days(ts: float | None) -> float | None:
@@ -573,3 +555,41 @@ class ZoneFlowDeficitStatusSensor(_Base):
             # Without a temperature sensor there's no hot-day guard.
             "heat_guard": bool(c.outdoor_temp_entity),
         }
+
+
+class ZoneFlowStatusSensor(_Base):
+    """The zone in one sentence, in Home Assistant's language: watering
+    now, or what it decided today and why ("Skipped: the soil is wet
+    (72%) · next Mon 05:30"), or when it waters next. The `code`
+    attribute is the same thing as a stable key for automations and
+    conditional cards. See ZoneFlowController.status()."""
+
+    _attr_icon = "mdi:sprinkler-variant"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_status"
+        self._attr_translation_key = "status"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self._changed))
+
+    @callback
+    def _changed(self) -> None:
+        if self.hass is not None:
+            self.async_write_ha_state()
+
+    _status: dict | None = None
+
+    @property
+    def native_value(self) -> str:
+        # Worked out once per state write: Home Assistant reads the value
+        # first, then the attributes, and both must describe the same moment.
+        self._status = self._controller.status()
+        return self._status["text"][:255]
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        status = self._status or self._controller.status()
+        return {key: value for key, value in status.items() if key != "text"}

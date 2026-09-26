@@ -106,7 +106,7 @@ async def test_service_mode_switches_itself_off_after_the_auto_off_time(hass, fa
 
     async def spy(**kwargs):
         if kwargs.get("notify_phone"):
-            notified.append(kwargs["phone_title"])
+            notified.append(kwargs.get("message"))
         await real_log(**kwargs)
 
     controller._log_event = spy
@@ -119,7 +119,7 @@ async def test_service_mode_switches_itself_off_after_the_auto_off_time(hass, fa
     assert hass.states.get(VALVE).state == "off"
     assert hass.states.get(switch_id).state == "off"
     assert controller.store.state.today_runtime_minutes == pytest.approx(15.0)
-    assert notified == ["🔧 Service Mode switched off"]
+    assert notified == ["service_auto_off"]
 
 
 @pytest.mark.asyncio

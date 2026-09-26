@@ -212,7 +212,7 @@ async def test_phone_messages_use_the_zones_units(hass, fake_valve_services, mon
     await c.run_routine_irrigation()
     await hass.async_block_till_done()
 
-    assert any(f"Target: {expected}" in m for m in sent), sent
+    assert any(f"target {expected}" in m for m in sent), sent
     # The CSV log stays metric either way, so its history never mixes units.
     assert ",20.0," in (tmp_path / "u.csv").read_text()
 

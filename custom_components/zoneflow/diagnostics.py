@@ -100,6 +100,7 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
             "deficit_share": deficit_share,
             "deficit_reason": deficit_reason,
             "service_run_active": controller.service_active,
+            "status": controller.status(),
             "imperial_display": controller.imperial,
         },
     }

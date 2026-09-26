@@ -122,6 +122,15 @@ and both zones get less water than their calibrated runtime assumes.
   sliders with deep soak off…) is hidden — still working, still keeping its
   value, back by itself when you set that feature up. A **Download
   diagnostics** button gives everything needed for a bug report.
+- **Status in plain words**: each zone's **Status** sensor says what it
+  is doing and why, in Home Assistant's language — "Routine watering done
+  at 05:30: 12 mm in 40 min · next Mon 05:30", "Skipped: the soil is wet
+  (72%)", "Skipped: 8 mm of rain forecast". Its `code` attribute is the
+  same thing as a stable key for automations.
+- **Notifications your way**: per zone, all phone notifications, warnings
+  only (faults and anything that needs a look) or none. Notifications and
+  the status follow Home Assistant's language; the CSV log stays in
+  English.
 - **Tunable live**: every threshold is a `number` entity with a sensible
   default — weekly targets per tier, hot/cool thresholds, emitter flow
   rate, pulse count and soak time per cadence, dry-down days, deep-soak

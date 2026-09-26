@@ -1,0 +1,161 @@
+{
+  "formats": {
+    "datetime": "%a %d %b %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d %b",
+    "time": "%H:%M",
+    "days": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+    "months": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"
+  },
+  "cycle": {
+    "deep_soak": "Deep soak",
+    "routine": "Routine watering",
+    "service_run": "Service run",
+    "test_pulse": "Test pulse"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Heavy rain",
+      "message": "Heavy rain recorded (24 h: {rain_24h}). Dry-down timers updated."
+    },
+    "stale_lock": {
+      "title": "⚠️ Irrigation lock reset",
+      "message": "The irrigation lock was stuck on for more than 3 hours. It was reset so future runs aren't blocked."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Valve watchdog fired",
+      "message": "The valve stayed on for {minutes} minutes in a row. It was switched off to protect the plants."
+    },
+    "power_loss": {
+      "title": "🚨 Power loss during watering",
+      "message": "The valve or pump lost power for 10+ minutes mid-cycle. Watering stopped and the lock was cleared; the next scheduled run will try again."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Valve on after power restore",
+      "message": "The valve reported on after power came back — it was forced off. Check the relay and wiring."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Watering interrupted by a restart",
+      "message": "Home Assistant restarted mid-cycle. The lock was cleared and the valve forced off if reachable; the next scheduled run will try again."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Deficit mode ended",
+      "message": "Its end date has passed — routine watering is back to the full dose."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: no water flow",
+      "message": "The cycle finished but the flow meter shows no water delivered. Check the valve, pump and flow-meter wiring."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: stopped by an error",
+      "message": "Stopped: {error}. The valve is closed; the next scheduled run will try again."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: stopped by an error",
+      "message": "Stopped: {error}. {valve} may still be OPEN — check it now."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: low pump power",
+      "message": "Pulse {pulse} is running but the pump reads {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle} stopped by rain",
+      "message": "Stopped after {given} of {planned} min: {rain} fell in the last 30 minutes. The next scheduled run decides again, taking this rain into account."
+    },
+    "forecast_override": {
+      "title": "⏱️ Watering despite the forecast",
+      "message": "Rain kept being forecast but none has fallen in {days} days (this zone's limit is {limit} days) — watering anyway."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Deep soak not run: runtime cap",
+      "message": "The calculated runtime ({minutes} min) is over this zone's deep soak safety cap. Watering cancelled — check the flow rate and target depth."
+    },
+    "routine_cap": {
+      "title": "⚠️ Routine watering not run: runtime cap",
+      "message": "The calculated runtime ({minutes} min) is over this zone's routine safety cap ({cap} min). Watering cancelled — check the flow rate and weekly targets."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} skipped: daily runtime cap",
+      "message": "Already {used} min today; this run ({minutes} min) would go over the {cap} min daily cap. It will try again when due."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle} cancelled",
+      "message": "Cancelled: {rain} fell in the last 30 minutes."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Deep soak completed",
+      "message": "{amount} applied over {pulses} pulse(s) ({minutes} min). Counts as routine watering too.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Next routine: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Watering overdue",
+      "message": "{days} days since the last watering — an unusually long gap, worth checking the system."
+    },
+    "routine_done": {
+      "title": "🚿 Routine watering completed",
+      "message": "Applied {minutes} min (target {target}, rain deducted {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Check the soil probe",
+      "message": "Wet soil readings ({pct}%) have held routine watering back for {days} days. If it hasn't rained much, check the probe (placement, battery, reading) — it's still being followed."
+    },
+    "probe_frozen": {
+      "title": "🌱 Soil probe looks frozen",
+      "message": "The soil probe has read wet ({pct}%) for {days} days without a new report in 24 h, so watering follows the schedule again. Check the probe (battery, connection)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Service Mode switched off",
+      "message": "Service Mode ran for {minutes} min and switched itself off (the auto-off time)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Service Mode switched off",
+      "message": "Service Mode ran for {minutes} min and switched itself off (shortened to fit today's runtime safety cap)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Self-tuning adjustment",
+      "message": "Routine dry-down holdoff shortened to {days} days, based on your recent early runs."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Self-tuning adjustment",
+      "message": "Routine dry-down holdoff extended to {days} days, based on your recent snoozes."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Soil moisture {pct}% (dry) — watered before the schedule was due.",
+    "deficit_active": " Deficit mode: {pct}% dose.",
+    "deficit_hot": " Deficit mode: full dose today (hot weather).",
+    "deficit_soil_dry": " Deficit mode: full dose today (soil at the dry threshold).",
+    "deficit_no_temp": " Deficit mode: full dose (no temperature reading on record).",
+    "deficit_young": " Deficit mode: full dose (plant still on its growth ramp)."
+  },
+  "status": {
+    "watering": "Watering now: {cycle}",
+    "service_run": "Service run in progress",
+    "lock_held": "On hold: an earlier run didn't finish (the zone is locked)",
+    "snoozed": "Snoozed for today",
+    "done": "{cycle} done at {time}: {amount} in {minutes} min",
+    "skipped_soil_wet": "{cycle} skipped at {time}: the soil is wet ({pct}%)",
+    "skipped_drydown": "{cycle} skipped at {time}: drying out after rain until {until}",
+    "skipped_forecast": "{cycle} skipped at {time}: {rain} of rain forecast",
+    "skipped_rain_credit": "{cycle} skipped at {time}: recent rain ({rain}) covers the {target} needed",
+    "skipped_wet_fortnight": "{cycle} held at {time}: {rain} of rain in the last 14 days",
+    "skipped_service": "{cycle} skipped at {time}: a service run was using the valve",
+    "cancelled_rain": "{cycle} cancelled at {time}: it was raining ({rain} in 30 min)",
+    "refused_runtime_cap": "{cycle} not run at {time}: {minutes} min needed, over the {cap} min cycle cap",
+    "refused_deep_soak_cap": "{cycle} not run at {time}: {minutes} min needed, over its cap",
+    "refused_daily_cap": "{cycle} not run at {time}: it would pass today's {cap} min safety cap",
+    "interrupted": "{cycle} stopped at {time} before finishing",
+    "waiting_soil_wet": "Waiting for the soil to dry ({pct}%)",
+    "waiting_drydown": "Drying out after rain until {until}",
+    "next": "Next watering {when}",
+    "next_deep_soak": "Next: deep soak {when}",
+    "first_run": "First watering {when}",
+    "idle": "Nothing scheduled",
+    "with_next": "{status} · next {when}",
+    "waiting_pump": "Waiting for the shared pump: {cycle}",
+    "with_next_deep_soak": "{status} · deep soak {when}",
+    "first_run_deep_soak": "First watering: deep soak {when}"
+  }
+}

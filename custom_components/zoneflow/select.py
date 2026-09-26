@@ -43,6 +43,10 @@ on the planting date (growth stage):
   curve. Unlike the journal fields this one DOES change watering; see
   const.py's DEMAND_MODEL_* comment.
 
+- ZoneFlowNotificationsSelect: which phone notifications the zone sends --
+  all, warnings only (faults and anything that needs a look) or none. The
+  CSV log always records everything.
+
 All of them persist through IrrigationState (state_store.py), the same Store
 already used for the planting date etc., so a value set here survives an
 HA restart exactly like everything else that store holds.
@@ -66,6 +70,7 @@ from .const import (
     GROWTH_STAGE_PRESETS,
     GROWTH_STAGE_SELECT_OPTIONS,
     HEALTH_STATUS_OPTIONS,
+    NOTIFY_LEVEL_OPTIONS,
     SOIL_TYPE_OPTIONS,
 )
 
@@ -80,6 +85,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowHealthSelect(entry, controller),
             ZoneFlowFertilizingIntervalSelect(entry, controller),
             ZoneFlowDemandModelSelect(entry, controller),
+            ZoneFlowNotificationsSelect(entry, controller),
         ]
     )
 
@@ -257,5 +263,30 @@ class ZoneFlowDemandModelSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.demand_model = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowNotificationsSelect(_Base):
+    """Which phone notifications this zone sends -- see module docstring.
+    Read by ZoneFlowController._notify_allowed() for every notification."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    _attr_icon = "mdi:bell-cog-outline"
+    _attr_options = NOTIFY_LEVEL_OPTIONS
+    _attr_translation_key = "notifications"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_notifications_select"
+
+    @property
+    def current_option(self) -> str:
+        level = self._controller.store.state.notify_level
+        return level if level in NOTIFY_LEVEL_OPTIONS else NOTIFY_LEVEL_OPTIONS[0]
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.notify_level = option
         await self._controller.store.async_save()
         self.async_write_ha_state()

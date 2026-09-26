@@ -146,6 +146,14 @@ class IrrigationState:
     # only hides/unhides on a change -- see visibility.py.
     auto_hidden: list[list[str]] = field(default_factory=list)
 
+    # Which phone notifications this zone sends (select.py's Notifications):
+    # "all", "warnings" (only things that need a look) or "none".
+    notify_level: str = "all"
+
+    # What each cycle ("routine", "deep_soak") last decided when it was due:
+    # {"code", "ts", "params"} -- the Status sensor's "why".
+    decisions: dict[str, dict] = field(default_factory=dict)
+
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
     # when not snoozed. Compared against the local date at each cycle's

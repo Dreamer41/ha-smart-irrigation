@@ -212,7 +212,11 @@ unanswered optional field is not the same as a "no."
    HA's UI). Either answer changes what you need to track during §4.
 7. **Phone notifications?** ZoneFlow can alert a `notify.*` target on
    things like a stuck-valve force-off or a low pump-power warning. Do they
-   want this, and if so, which `notify.*` entity?
+   want this, and if so, which `notify.*` entity? If yes: every
+   notification, or only warnings (faults and things that need a look —
+   not "watering done" or "rain skipped today")? That's the zone's
+   **Notifications** setting (all / warnings only / none), set after the
+   config flow on the device page under Configuration.
 8. **Weather forecast gate?** Point this zone at a `weather.*` entity to
    hold off watering when rain is forecast (§7.4). Do they have one they'd
    like to use here? Skip offering this one at all if question 4 said
@@ -245,7 +249,8 @@ as a default "no." Specifically:
   Skip whichever one they didn't ask for, and don't bring it up again
   unless asked.
 - **Notifications = yes** means: collect the `notify.*` entity now, and
-  fill it into §4's "Phone notify target" field. If no, that field stays
+  fill it into §4's "Phone notify target" field; after §4, set the zone's
+  **Notifications** select to what they chose (default: all). If no, that field stays
   blank in §4 — but because they were actually asked, not because you
   defaulted it.
 - **Weather gate = yes** means: collect the `weather.*` entity now, fill it
@@ -1821,6 +1826,8 @@ views:
         title: Status
         show_header_toggle: false
         entities:
+          - entity: <sensor.zone_status>
+            name: Status
           - entity: <switch.valve_entity>
             name: Valve
           - entity: <sensor.zone_soil_moisture_if_sensor_configured>

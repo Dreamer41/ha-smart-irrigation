@@ -23,7 +23,7 @@ import contextlib
 import csv
 import functools
 import logging
-from datetime import time as dt_time, timedelta
+from datetime import datetime, time as dt_time, timedelta
 from typing import Any
 
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
@@ -35,12 +35,17 @@ from homeassistant.helpers.event import (
     async_track_sunset,
     async_track_time_change,
 )
+from homeassistant.helpers.sun import get_astral_event_next
 import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, units
+from . import calculations as calc, messages, units
 from .const import (
+    LEVEL_INFO,
+    LEVEL_WARNING,
+    NOTIFY_NONE,
+    NOTIFY_WARNINGS,
     CYCLE_STOP_TIMEOUT_SECONDS,
     SHUTDOWN_CONFIRM_SECONDS,
     SHUTDOWN_STOP_TIMEOUT_SECONDS,
@@ -156,6 +161,15 @@ _USER_STOPPED = "user_stopped"
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
 
+# Cycle kinds (as logged) -> the keys used by the message catalog and the
+# Status sensor's decisions.
+_CYCLE_KEYS = {
+    "Deep Soak": "deep_soak",
+    "Routine Irrigation": "routine",
+    SERVICE_RUN_KIND: "service_run",
+    "Test Pulse": "test_pulse",
+}
+
 
 def _tracked_run(func):
     """Marks a public run (deep soak, routine, test pulse) as in progress,
@@ -233,6 +247,11 @@ class ZoneFlowController:
         self._service_active = False
         self._service_stop = asyncio.Event()
         self._service_listeners: list[Any] = []
+        # The Status sensor: told when something it shows changes (a
+        # decision, the lock, a service run) so it doesn't wait for a poll.
+        self._status_listeners: list[Any] = []
+        # A run queued behind another zone on the shared pump: its kind.
+        self._waiting_pump_kind: str | None = None
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -453,6 +472,7 @@ class ZoneFlowController:
         # ever clear a lock that was set BEFORE this, i.e. left over from
         # before the restart (see _on_startup).
         self._setup_ts = dt_util.utcnow().timestamp()
+        await messages.async_setup(self.hass)
         await self.store.async_load()
         state = self.store.state
 
@@ -724,8 +744,8 @@ class ZoneFlowController:
                     deducted_mm=0.0,
                     runtime=0,
                     notify_phone=True,
-                    phone_title="🌧️ Heavy Rain Event",
-                    phone_msg=f"Heavy rain recorded (24h: {units.depth_text(r24, self.imperial)}). Dry-down timers updated.",
+                    message="heavy_rain",
+                    params={"rain_24h": units.depth_text(r24, self.imperial)},
                     extra_log=f"Heavy rain recorded (24h: {r24:.1f}mm, 4d: {r4d:.1f}mm, 7d: {r7d:.1f}mm). Dry-down timer updated.",
                 )
             )
@@ -1008,6 +1028,7 @@ class ZoneFlowController:
         # Which run took the lock, so a cancelled run frees only its own.
         self._lock_owner = asyncio.current_task() if on else None
         await self.store.async_save()
+        self._notify_status()
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
             self._lock_stale_cancel = None
@@ -1042,8 +1063,8 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="⚠️ IRRIGATION LOCK RESET",
-            phone_msg="The irrigation lock was stuck ON for >3 hours. Auto-reset performed so future runs aren't blocked.",
+            message="stale_lock",
+            level=LEVEL_WARNING,
         )
 
     # ------------------------------------------------------------------
@@ -1111,8 +1132,9 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=int(limit),
             notify_phone=True,
-            phone_title="🚨 EMERGENCY: Valve Watchdog Fired",
-            phone_msg=f"Valve stayed ON for {limit:.0f} minutes continuously! Emergency shutdown executed to protect the plants.",
+            message="valve_watchdog",
+            params={"minutes": f"{limit:.0f}"},
+            level=LEVEL_WARNING,
         )
 
     @callback
@@ -1132,8 +1154,8 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="🚨 Irrigation Power Loss",
-            phone_msg="Valve/pump lost power for 10+ min mid-cycle. Irrigation aborted, lock cleared, will retry next scheduled cycle.",
+            message="power_loss",
+            level=LEVEL_WARNING,
         )
 
     async def _on_power_restore(self, new_state: State) -> None:
@@ -1149,8 +1171,8 @@ class ZoneFlowController:
                 deducted_mm=0.0,
                 runtime=0,
                 notify_phone=True,
-                phone_title="🚨 Valve Anomaly After Power Restore",
-                phone_msg="Valve reported ON after power restore — forced off. Check relay/wiring.",
+                message="power_restore_anomaly",
+                level=LEVEL_WARNING,
             )
         else:
             _LOGGER.info("ZoneFlow: valve back online, confirmed %s (safe)", new_state.state)
@@ -1185,8 +1207,8 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="🚨 Irrigation Lock Cleared (HA Restart)",
-            phone_msg="HA restarted mid-cycle. Lock cleared, valve forced off if reachable. Will retry next scheduled cycle.",
+            message="restart_lock_cleared",
+            level=LEVEL_WARNING,
         )
 
     # ------------------------------------------------------------------
@@ -1387,8 +1409,7 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="🌶️ Deficit Mode Ended",
-            phone_msg="Its end date passed -- routine watering is back to the full dose.",
+            message="deficit_ended",
         )
 
     @property
@@ -1444,23 +1465,37 @@ class ZoneFlowController:
         if self._stopping:
             return False
         pump_lock = self._get_pump_lock()
-        if not await self._acquire_pump(pump_lock):
-            return False
+        # What's running, for the Status sensor -- from the pump wait until
+        # the run ends, however it ends.
+        self._cycle_kind = kind
+        self._waiting_pump_kind = kind
+        self._notify_status()
         try:
-            if self._stopping:
+            try:
+                acquired = await self._acquire_pump(pump_lock)
+            finally:
+                self._waiting_pump_kind = None
+                self._notify_status()
+            if not acquired:
                 return False
-            return await self._run_pulses_holding_pump(
-                count=count,
-                pulse_minutes=pulse_minutes,
-                rest_minutes=rest_minutes,
-                min_pump_watts=min_pump_watts,
-                kind=kind,
-                target_mm_for_log=target_mm_for_log,
-                deducted_mm_for_log=deducted_mm_for_log,
-                runtime_for_log=runtime_for_log,
-            )
+            try:
+                if self._stopping:
+                    return False
+                return await self._run_pulses_holding_pump(
+                    count=count,
+                    pulse_minutes=pulse_minutes,
+                    rest_minutes=rest_minutes,
+                    min_pump_watts=min_pump_watts,
+                    kind=kind,
+                    target_mm_for_log=target_mm_for_log,
+                    deducted_mm_for_log=deducted_mm_for_log,
+                    runtime_for_log=runtime_for_log,
+                )
+            finally:
+                pump_lock.release()
         finally:
-            pump_lock.release()
+            self._cycle_kind = ""
+            self._notify_status()
 
     async def _acquire_pump(self, pump_lock: asyncio.Lock) -> bool:
         """Takes the (possibly shared) pump lock. While queued behind another
@@ -1537,11 +1572,9 @@ class ZoneFlowController:
                     deducted_mm=deducted_mm_for_log,
                     runtime=runtime_for_log,
                     notify_phone=True,
-                    phone_title=f"⚠️ {kind.upper()}: No Water Flow Detected",
-                    phone_msg=(
-                        "Cycle completed but the flow meter shows no water delivered. "
-                        "Check the valve/pump/flow-meter wiring."
-                    ),
+                    message="no_flow",
+                    params={"cycle": self._cycle_name(kind)},
+                    level=LEVEL_WARNING,
                 )
 
         postamble = self.number("pump_postamble_seconds")
@@ -1617,15 +1650,9 @@ class ZoneFlowController:
                 deducted_mm=deducted_mm_for_log,
                 runtime=int(round(self._delivered_minutes)),
                 notify_phone=True,
-                phone_title=f"⚠️ {kind.upper()}: Stopped By An Error",
-                phone_msg=(
-                    f"Stopped: {err}. "
-                    + (
-                        "The valve is closed; the next scheduled run will try again."
-                        if closed
-                        else f"{self._cycle_valve} may still be OPEN -- check it now."
-                    )
-                ),
+                message="cycle_error_closed" if closed else "cycle_error_open",
+                params={"cycle": self._cycle_name(kind), "error": str(err), "valve": self._cycle_valve},
+                level=LEVEL_WARNING,
             )
             return False
         finally:
@@ -1710,8 +1737,9 @@ class ZoneFlowController:
                         deducted_mm=deducted_mm_for_log,
                         runtime=runtime_for_log,
                         notify_phone=True,
-                        phone_title=f"⚠️ {kind.upper()}: Low Pump Power",
-                        phone_msg=f"Pulse {index} running, pump reads {await self._pump_watts()}W.",
+                        message="low_pump_power",
+                        params={"cycle": self._cycle_name(kind), "pulse": index, "watts": f"{await self._pump_watts():.0f}"},
+                        level=LEVEL_WARNING,
                     )
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
@@ -1858,12 +1886,13 @@ class ZoneFlowController:
             deducted_mm=deducted_mm_for_log,
             runtime=given,
             notify_phone=True,
-            phone_title=f"🌧️ {kind} Stopped By Rain",
-            phone_msg=(
-                f"Stopped after {given} of {runtime_for_log} min: "
-                f"{units.depth_text(rain_30min, self.imperial)} fell in the last 30 minutes. "
-                "The next scheduled run decides again, taking this rain into account."
-            ),
+            message="stopped_by_rain",
+            params={
+                "cycle": self._cycle_name(kind),
+                "given": given,
+                "planned": runtime_for_log,
+                "rain": units.depth_text(rain_30min, self.imperial),
+            },
         )
         return True
 
@@ -2048,16 +2077,13 @@ class ZoneFlowController:
                 deducted_mm=0.0,
                 runtime=0,
                 notify_phone=True,
-                phone_title="⏱️ Forecast Override",
-                phone_msg=(
-                    f"Rain kept being forecast but none has actually fallen in "
-                    f"{days_dry:.1f} days (this zone's limit is {override_days:.0f}d) -- watering anyway."
-                ),
+                message="forecast_override",
+                params={"days": f"{days_dry:.1f}", "limit": f"{override_days:.0f}"},
             )
             return True
 
         setattr(state, count_attr, getattr(state, count_attr) + 1)
-        await self.store.async_save()
+        await self._decide(cycle, "skipped_forecast", rain_mm=round(precip_mm, 2))
         await self._log_event(
             event_type="Forecast Skip",
             status="Skipped",
@@ -2108,8 +2134,15 @@ class ZoneFlowController:
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("deep_soak_drydown_days")
         ):
+            await self._decide(
+                "deep_soak",
+                "skipped_drydown",
+                until_ts=(state.last_significant_rain_ts or 0.0) + self.number("deep_soak_drydown_days") * 86400,
+            )
             return
-        if self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
+        rain_14d = self.rain_windows()["14d"]
+        if rain_14d >= self.number("deep_soak_rain_threshold"):
+            await self._decide("deep_soak", "skipped_wet_fortnight", rain_mm=round(rain_14d, 1))
             return
         if not await self._forecast_gate_allows_run("deep_soak"):
             return
@@ -2123,6 +2156,7 @@ class ZoneFlowController:
         )
 
         if plan.total_runtime_minutes > self.number("deep_soak_max_runtime_minutes"):
+            await self._decide("deep_soak", "refused_deep_soak_cap", minutes=plan.total_runtime_minutes)
             await self._log_event(
                 event_type="Deep Soak Cap Exceeded",
                 status="ABORTED",
@@ -2130,13 +2164,15 @@ class ZoneFlowController:
                 deducted_mm=0.0,
                 runtime=plan.total_runtime_minutes,
                 notify_phone=True,
-                phone_title="⚠️ DEEP SOAK ABORTED",
-                phone_msg=f"Calculated runtime ({plan.total_runtime_minutes} min) exceeded safety cap. Watering cancelled.",
+                message="deep_soak_cap",
+                params={"minutes": plan.total_runtime_minutes},
+                level=LEVEL_WARNING,
             )
             return
 
         max_daily = self.number("max_daily_runtime_minutes")
         if state.today_runtime_minutes + plan.total_runtime_minutes > max_daily:
+            await self._decide("deep_soak", "refused_daily_cap", cap=round(max_daily))
             await self._log_event(
                 event_type="Max Daily Runtime Cap Reached",
                 status="ABORTED",
@@ -2144,17 +2180,20 @@ class ZoneFlowController:
                 deducted_mm=0.0,
                 runtime=plan.total_runtime_minutes,
                 notify_phone=True,
-                phone_title="⚠️ DEEP SOAK SKIPPED: Daily Runtime Cap",
-                phone_msg=(
-                    f"Already applied {state.today_runtime_minutes:.0f} min today; this deep soak "
-                    f"({plan.total_runtime_minutes} min) would exceed the {max_daily:.0f} min daily cap. "
-                    "Skipped -- will retry when due again."
-                ),
+                message="daily_cap",
+                params={
+                    "cycle": self._cycle_name("Deep Soak"),
+                    "used": f"{state.today_runtime_minutes:.0f}",
+                    "minutes": plan.total_runtime_minutes,
+                    "cap": f"{max_daily:.0f}",
+                },
+                level=LEVEL_WARNING,
             )
             return
 
         rain_30min = self.rain_windows()["30min"]
         if rain_30min > self.number("preirrigation_rain_threshold_mm"):
+            await self._decide("deep_soak", "cancelled_rain", rain_mm=round(rain_30min, 1))
             await self._log_event(
                 event_type="Pre-Irrigation Rain Cancellation",
                 status="Cancelled",
@@ -2162,8 +2201,8 @@ class ZoneFlowController:
                 deducted_mm=0.0,
                 runtime=0,
                 notify_phone=True,
-                phone_title="🌧️ Deep Soak Cancelled",
-                phone_msg=f"Cancelled: {units.depth_text(rain_30min, self.imperial)} fell in the last 30 minutes.",
+                message="rain_cancel",
+                params={"cycle": self._cycle_name("Deep Soak"), "rain": units.depth_text(rain_30min, self.imperial)},
             )
             return
 
@@ -2185,6 +2224,7 @@ class ZoneFlowController:
         )
 
         if not completed or state.abort_on:
+            await self._decide("deep_soak", "interrupted")
             return
 
         done_ts = dt_util.utcnow().timestamp()
@@ -2197,12 +2237,21 @@ class ZoneFlowController:
         # counts (an aborted or interrupted one returned above).
         state.last_routine_ts = done_ts
         state.today_runtime_minutes += plan.total_runtime_minutes
+        self._record_decision(
+            "deep_soak",
+            "done",
+            minutes=plan.total_runtime_minutes,
+            amount_mm=round(plan.total_runtime_minutes * self.number("flow_rate_mm_per_min"), 1),
+        )
         await self.store.async_save()
         await self._end_wet_hold()  # the zone has just been watered
         await self._set_lock(False)
         next_ts, _ = self.routine_next_estimate()
         next_text = (
-            f" Next routine: {dt_util.as_local(dt_util.utc_from_timestamp(next_ts)).strftime('%a %d %b %H:%M')}."
+            self._msg(
+                "notify.deep_soak_done_next.message",
+                when=messages.when(self.hass, dt_util.as_local(dt_util.utc_from_timestamp(next_ts))),
+            )
             if next_ts is not None
             else ""
         )
@@ -2213,12 +2262,13 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=plan.total_runtime_minutes,
             notify_phone=True,
-            phone_title="🚿 Deep Soak Completed",
-            phone_msg=(
-                f"DEEP SOAK COMPLETED: {units.depth_text(plan.target_mm, self.imperial)} applied over "
-                f"{plan.pulse_count} pulse(s) ({plan.total_runtime_minutes} min). Counts as routine "
-                f"watering too.{next_text}"
-            ),
+            message="deep_soak_done",
+            params={
+                "amount": units.depth_text(plan.target_mm, self.imperial),
+                "pulses": plan.pulse_count,
+                "minutes": plan.total_runtime_minutes,
+                "next": next_text,
+            },
             extra_log="Counts as routine watering: routine interval restarts from now.",
         )
 
@@ -2286,6 +2336,7 @@ class ZoneFlowController:
                 # Due by the schedule, but the soil is wet: say so, instead
                 # of skipping silently.
                 await self._note_wet_hold(now_ts, interval_days, moisture_pct)
+                await self._decide("routine", "skipped_soil_wet", pct=round(moisture_pct))
                 await self._log_event(
                     event_type="Routine Skipped (Soil Wet)",
                     status="Skipped",
@@ -2305,6 +2356,11 @@ class ZoneFlowController:
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("routine_drydown_days")
         ):
+            await self._decide(
+                "routine",
+                "skipped_drydown",
+                until_ts=(state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400,
+            )
             return
         if not await self._forecast_gate_allows_run("routine"):
             return
@@ -2351,12 +2407,14 @@ class ZoneFlowController:
                 deducted_mm=0.0,
                 runtime=0,
                 notify_phone=True,
-                phone_title="⚠️ Irrigation Overdue",
-                phone_msg=f"{days_elapsed} days since last watering — unusually long gap, worth checking the system.",
+                message="overdue",
+                params={"days": days_elapsed},
+                level=LEVEL_WARNING,
             )
 
         max_runtime = self.number("max_runtime_minutes")
         if plan.calc_runtime_minutes > max_runtime:
+            await self._decide("routine", "refused_runtime_cap", minutes=plan.calc_runtime_minutes, cap=round(max_runtime))
             await self._log_event(
                 event_type="Runtime Cap Exceeded",
                 status="ABORTED",
@@ -2364,13 +2422,15 @@ class ZoneFlowController:
                 deducted_mm=round(plan.eff_rain_mm, 1),
                 runtime=plan.calc_runtime_minutes,
                 notify_phone=True,
-                phone_title="⚠️ ROUTINE IRRIGATION ABORTED",
-                phone_msg=f"Calculated runtime ({plan.calc_runtime_minutes} min) exceeded max safety limit ({max_runtime} min).",
+                message="routine_cap",
+                params={"minutes": plan.calc_runtime_minutes, "cap": f"{max_runtime:.0f}"},
+                level=LEVEL_WARNING,
             )
             return
 
         max_daily = self.number("max_daily_runtime_minutes")
         if state.today_runtime_minutes + plan.calc_runtime_minutes > max_daily:
+            await self._decide("routine", "refused_daily_cap", cap=round(max_daily))
             await self._log_event(
                 event_type="Max Daily Runtime Cap Reached",
                 status="ABORTED",
@@ -2378,30 +2438,36 @@ class ZoneFlowController:
                 deducted_mm=round(plan.eff_rain_mm, 1),
                 runtime=plan.calc_runtime_minutes,
                 notify_phone=True,
-                phone_title="⚠️ ROUTINE IRRIGATION SKIPPED: Daily Runtime Cap",
-                phone_msg=(
-                    f"Already applied {state.today_runtime_minutes:.0f} min today; this cycle "
-                    f"({plan.calc_runtime_minutes} min) would exceed the {max_daily:.0f} min daily cap. "
-                    "Skipped -- will retry when due again."
-                ),
+                message="daily_cap",
+                params={
+                    "cycle": self._cycle_name("Routine Irrigation"),
+                    "used": f"{state.today_runtime_minutes:.0f}",
+                    "minutes": plan.calc_runtime_minutes,
+                    "cap": f"{max_daily:.0f}",
+                },
+                level=LEVEL_WARNING,
             )
             return
 
         if plan.calc_runtime_minutes <= 0:
+            await self._decide(
+                "routine",
+                "skipped_rain_credit",
+                rain_mm=round(plan.eff_rain_mm, 1),
+                target_mm=round(plan.interval_target_mm, 1),
+            )
             await self._log_event(
                 event_type="Rain Credit Sufficient",
                 status="Skipped",
                 target_mm=round(plan.interval_target_mm, 1),
                 deducted_mm=round(plan.eff_rain_mm, 1),
                 runtime=0,
-                notify_phone=False,
-                phone_title="🌧️ Routine Irrigation Skipped",
-                phone_msg=f"Rain credit ({units.depth_text(plan.eff_rain_mm, self.imperial)}) already covers target ({units.depth_text(plan.interval_target_mm, self.imperial)}) — no watering needed.",
             )
             return
 
         rain_30min = self.rain_windows()["30min"]
         if rain_30min > self.number("preirrigation_rain_threshold_mm"):
+            await self._decide("routine", "cancelled_rain", rain_mm=round(rain_30min, 1))
             await self._log_event(
                 event_type="Pre-Irrigation Rain Cancellation",
                 status="Cancelled",
@@ -2409,8 +2475,11 @@ class ZoneFlowController:
                 deducted_mm=round(plan.eff_rain_mm, 1),
                 runtime=0,
                 notify_phone=True,
-                phone_title="🌧️ Routine Irrigation Cancelled",
-                phone_msg=f"Cancelled: {units.depth_text(rain_30min, self.imperial)} fell in the last 30 minutes.",
+                message="rain_cancel",
+                params={
+                    "cycle": self._cycle_name("Routine Irrigation"),
+                    "rain": units.depth_text(rain_30min, self.imperial),
+                },
             )
             return
 
@@ -2433,10 +2502,14 @@ class ZoneFlowController:
         )
 
         if not completed or state.abort_on:
+            await self._decide("routine", "interrupted")
             return
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
         state.today_runtime_minutes += plan.calc_runtime_minutes
+        self._record_decision(
+            "routine", "done", minutes=plan.calc_runtime_minutes, amount_mm=round(plan.calc_runtime_minutes * self.number("flow_rate_mm_per_min"), 1)
+        )
         await self.store.async_save()
         await self._set_lock(False)
         # Reaching completion with interval_due False only happens when a
@@ -2453,12 +2526,13 @@ class ZoneFlowController:
             deducted_mm=round(plan.eff_rain_mm, 1),
             runtime=plan.calc_runtime_minutes,
             notify_phone=True,
-            phone_title="🚿 Routine Irrigation Completed",
-            phone_msg=(
-                f"Applied {plan.calc_runtime_minutes} min (Target: {units.depth_text(plan.interval_target_mm, self.imperial)}, "
-                f"Rain Deducted: {units.depth_text(plan.eff_rain_mm, self.imperial)})."
-                + self._routine_notes(interval_due, moisture_pct, deficit_share, deficit_reason)
-            ),
+            message="routine_done",
+            params={
+                "minutes": plan.calc_runtime_minutes,
+                "target": units.depth_text(plan.interval_target_mm, self.imperial),
+                "rain": units.depth_text(plan.eff_rain_mm, self.imperial),
+                "notes": self._routine_notes(interval_due, moisture_pct, deficit_share, deficit_reason),
+            },
         )
 
     async def _note_wet_hold(self, now_ts: float, interval_days: int, moisture_pct: float) -> None:
@@ -2485,12 +2559,9 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="🌱 Check the soil probe",
-            phone_msg=(
-                f"Wet soil readings ({moisture_pct:.0f}%) have held routine watering back for "
-                f"{held_days:.0f} days. If it hasn't rained much, check the probe (placement, "
-                f"battery, reading) -- it's still being followed."
-            ),
+            message="probe_check",
+            params={"pct": f"{moisture_pct:.0f}", "days": f"{held_days:.0f}"},
+            level=LEVEL_WARNING,
             extra_log=f"Wet-soil hold for {held_days:.1f} days (routine interval {interval_days} days).",
         )
 
@@ -2533,11 +2604,9 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="🌱 Soil probe looks frozen",
-            phone_msg=(
-                f"The soil probe has read wet ({raw:.0f}%) for {held_days:.0f} days without a new report "
-                f"in 24 h, so watering follows the schedule again. Check the probe (battery, connection)."
-            ),
+            message="probe_frozen",
+            params={"pct": f"{raw:.0f}", "days": f"{held_days:.0f}"},
+            level=LEVEL_WARNING,
             extra_log=f"Wet-soil hold at {held_days:.1f} days, probe not reporting: schedule decides.",
         )
 
@@ -2547,18 +2616,19 @@ class ZoneFlowController:
         """What moisture and deficit mode did to this run, for the message."""
         notes = []
         if not interval_due and moisture_pct is not None:
-            notes.append(f"Soil moisture {moisture_pct:.0f}% (dry) -- watered before the schedule was due.")
+            notes.append(self._msg("notes.soil_dry_forced", pct=f"{moisture_pct:.0f}"))
         if deficit_reason == "active":
-            notes.append(f"Deficit mode: {deficit_share * 100:.0f}% dose.")
-        elif deficit_reason == "full_dose_hot":
-            notes.append("Deficit mode: full dose today (hot weather).")
-        elif deficit_reason == "full_dose_soil_dry":
-            notes.append("Deficit mode: full dose today (soil at the dry threshold).")
-        elif deficit_reason == "full_dose_no_temp":
-            notes.append("Deficit mode: full dose (no temperature reading on record).")
-        elif deficit_reason == "full_dose_young_plant":
-            notes.append("Deficit mode: full dose (plant still on its growth ramp).")
-        return "".join(" " + n for n in notes)
+            notes.append(self._msg("notes.deficit_active", pct=f"{deficit_share * 100:.0f}"))
+        else:
+            key = {
+                "full_dose_hot": "deficit_hot",
+                "full_dose_soil_dry": "deficit_soil_dry",
+                "full_dose_no_temp": "deficit_no_temp",
+                "full_dose_young_plant": "deficit_young",
+            }.get(deficit_reason)
+            if key:
+                notes.append(self._msg(f"notes.{key}"))
+        return "".join(notes)
 
     @_tracked_run
     async def test_pulse(self, seconds: int) -> None:
@@ -2611,6 +2681,7 @@ class ZoneFlowController:
     def _notify_service_listeners(self) -> None:
         for listener in list(self._service_listeners):
             listener()
+        self._notify_status()
 
     async def start_service_run(self, minutes: float, *, from_switch: bool = False) -> None:
         """Run the valve for `minutes` to check emitters, flush a line or
@@ -2698,17 +2769,16 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=int(round(ran)),
             notify_phone=auto_off,
-            phone_title="🔧 Service Mode switched off",
-            phone_msg=(
-                f"Service Mode ran for {ran:.0f} min and switched itself off"
-                + (cap_note + "." if shortened else " (the auto-off time).")
-            ),
+            message="service_auto_off_capped" if shortened else "service_auto_off",
+            params={"minutes": f"{ran:.0f}"},
+            level=LEVEL_WARNING,
             extra_log=f"Service run: {ran:.1f} min, not counted as watering{cap_note}.",
         )
 
     async def _log_skipped_for_service(self, kind: str) -> None:
         """A scheduled cycle found a service run holding the zone: say so
         (it runs at its next scheduled time instead)."""
+        await self._decide(_CYCLE_KEYS.get(kind, "routine"), "skipped_service")
         await self._log_event(
             event_type=f"{kind} Skipped (Service Run)",
             status="Skipped",
@@ -2758,6 +2828,7 @@ class ZoneFlowController:
         for the rest of today."""
         self.store.state.snooze_date_iso = dt_util.now().date().isoformat()
         await self.store.async_save()
+        self._notify_status()
         await self._register_self_tune_signal("skip")
         await self._log_event(
             event_type="Manual Snooze Today",
@@ -2821,11 +2892,8 @@ class ZoneFlowController:
             deducted_mm=0.0,
             runtime=0,
             notify_phone=True,
-            phone_title="🌱 Self-Tuning Adjustment",
-            phone_msg=(
-                f"Routine Dry-Down Holdoff {'shortened' if step_days < 0 else 'extended'} to "
-                f"{new_days:g}d, based on your recent {'early runs' if direction == 'early' else 'snoozes'}."
-            ),
+            message="self_tune_shorter" if step_days < 0 else "self_tune_longer",
+            params={"days": f"{new_days:g}"},
         )
 
     # ------------------------------------------------------------------
@@ -2839,11 +2907,21 @@ class ZoneFlowController:
         target_mm: float,
         deducted_mm: float,
         runtime: int,
-        notify_phone: bool,
-        phone_title: str,
-        phone_msg: str,
+        notify_phone: bool = False,
+        phone_title: str = "",
+        phone_msg: str = "",
+        message: str | None = None,
+        params: dict[str, Any] | None = None,
+        level: str = LEVEL_INFO,
         extra_log: str | None = None,
     ) -> None:
+        """One CSV row (English, for a stable log), and -- if asked for and
+        the zone's notification level allows it -- a phone notification.
+        `message` names a text in messages/<language>.json ("notify.<key>")
+        filled with `params`; `level` is LEVEL_INFO or LEVEL_WARNING."""
+        if message is not None:
+            phone_title = messages.text(self.hass, f"notify.{message}.title", **(params or {}))
+            phone_msg = messages.text(self.hass, f"notify.{message}.message", **(params or {}))
         windows = self.rain_windows()
         row = [
             dt_util.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -2859,7 +2937,7 @@ class ZoneFlowController:
         if extra_log:
             _LOGGER.info(extra_log)
 
-        if notify_phone and self.notify_entity:
+        if notify_phone and self.notify_entity and self._notify_allowed(level):
             try:
                 await self.hass.services.async_call(
                     "notify",
@@ -2871,6 +2949,274 @@ class ZoneFlowController:
                 _LOGGER.exception("Failed to send phone notification for %s", event_type)
 
         self.hass.bus.async_fire(EVENT_LOG, {"event_type": event_type, "status": status})
+
+    def _notify_allowed(self, level: str) -> bool:
+        """The zone's Notifications setting: all, warnings only, or none."""
+        setting = self.store.state.notify_level
+        if setting == NOTIFY_NONE:
+            return False
+        if setting == NOTIFY_WARNINGS:
+            return level == LEVEL_WARNING
+        return True
+
+    def _msg(self, path: str, **params: Any) -> str:
+        return messages.text(self.hass, path, **params)
+
+    # ------------------------------------------------------------------
+    # Plain-language status (the Status sensor): what the zone is doing,
+    # and why it did or didn't water
+    # ------------------------------------------------------------------
+    def add_status_listener(self, listener) -> Any:
+        """Called whenever something the Status sensor shows changes.
+        Returns the remover."""
+        self._status_listeners.append(listener)
+        return lambda: self._status_listeners.remove(listener)
+
+    def _notify_status(self) -> None:
+        for listener in list(self._status_listeners):
+            listener()
+
+    def _record_decision(self, cycle: str, code: str, **params: Any) -> None:
+        """What a due cycle decided (`cycle` is "routine" or "deep_soak").
+        Raw metric numbers and timestamps are stored, so the sentence
+        follows the zone's current units and language when it's shown."""
+        self.store.state.decisions[cycle] = {
+            "code": code,
+            "ts": dt_util.utcnow().timestamp(),
+            "params": params,
+        }
+        self._notify_status()
+
+    async def _decide(self, cycle: str, code: str, **params: Any) -> None:
+        self._record_decision(cycle, code, **params)
+        await self.store.async_save()
+
+    def next_watering(self) -> tuple[float | None, float | None]:
+        """(next routine, next deep soak) as timestamps, either None when
+        it can't be dated. Models the time gates only -- interval, rain
+        dry-down and soil moisture -- not rain credit or the forecast. A
+        deep soak that is due but held back by a wet fortnight (its 14-day
+        rain ceiling) is left out until it can run."""
+        state = self.store.state
+        now_ts = dt_util.utcnow().timestamp()
+        routine_next, _ = self.routine_next_estimate()
+        deep_next = None
+        if self.deep_soak_enabled and (state.last_deep_soak_ts is not None or state.last_routine_ts is not None):
+            deep_next = calc.estimate_next_deep_soak(
+                state.last_deep_soak_ts,
+                self.number("deep_soak_interval_days"),
+                state.last_significant_rain_ts,
+                self.number("deep_soak_drydown_days"),
+                now_ts,
+            )
+            if deep_next <= now_ts and self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
+                deep_next = None
+        return routine_next, deep_next
+
+    def next_slot(self, cycle: str, after_ts: float) -> float:
+        """The first time `cycle`'s schedule fires at or after `after_ts`
+        (its fixed clock time, or sunrise/sunset plus the offset) -- a cycle
+        that is due only runs then."""
+        if cycle == "deep_soak":
+            mode, offset, fixed = self.deep_soak_sun_mode, self.deep_soak_sun_offset_minutes, self.deep_soak_time
+        else:
+            mode, offset, fixed = self.routine_sun_mode, self.routine_sun_offset_minutes, self.routine_time
+        after = dt_util.utc_from_timestamp(after_ts)
+        sun = {
+            SUN_MODE_BEFORE_SUNRISE: ("sunrise", -offset),
+            SUN_MODE_AFTER_SUNRISE: ("sunrise", offset),
+            SUN_MODE_BEFORE_SUNSET: ("sunset", -offset),
+            SUN_MODE_AFTER_SUNSET: ("sunset", offset),
+        }.get(mode)
+        if sun is not None:
+            event, minutes = sun
+            shift = timedelta(minutes=minutes)
+            try:
+                return (get_astral_event_next(self.hass, event, after - shift) + shift).timestamp()
+            except (ValueError, TypeError):  # e.g. no sunrise at all (polar day)
+                pass
+        local = dt_util.as_local(after)
+        slot = datetime.combine(local.date(), fixed, tzinfo=local.tzinfo)
+        if slot < local:
+            slot = datetime.combine(local.date() + timedelta(days=1), fixed, tzinfo=local.tzinfo)
+        return dt_util.as_utc(slot).timestamp()
+
+    def _when(self, ts: float, style: str | None = None) -> str:
+        moment = dt_util.as_local(dt_util.utc_from_timestamp(ts))
+        if style is None:
+            within_week = abs(ts - dt_util.utcnow().timestamp()) < 6 * 86400
+            style = "weekday_time" if within_week else "datetime"
+        return messages.when(self.hass, moment, style)
+
+    def _decision_params(self, cycle: str, decision: dict[str, Any]) -> dict[str, Any]:
+        """A stored decision's numbers as text: *_mm in the zone's units,
+        *_ts as a local date/time."""
+        params: dict[str, Any] = {}
+        stored = decision.get("params")
+        for key, value in (stored if isinstance(stored, dict) else {}).items():
+            if key.endswith("_mm") and isinstance(value, (int, float)):
+                params[key[:-3]] = units.depth_text(value, self.imperial)
+            elif key.endswith("_ts") and isinstance(value, (int, float)):
+                params[key[:-3]] = self._when(value)
+            else:
+                params[key] = value
+        params["cycle"] = self._msg(f"cycle.{cycle}")
+        params["time"] = self._when(decision["ts"], "time")
+        return params
+
+    def _scheduled_next(self, not_before: float) -> tuple[float | None, float | None]:
+        """(routine, deep soak): the scheduled run at which each cycle will
+        next be due -- the same due checks the cycles use (interval minus
+        its 6-hour buffer, rain dry-down, soil moisture), moved to the
+        cycle's next scheduled time at or after `not_before`. None when it
+        can't be dated."""
+        state = self.store.state
+        routine_est, source = self.routine_next_estimate()
+        routine = None
+        if routine_est is not None:
+            if source == "schedule":
+                interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+                drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
+                routine_est = max(
+                    (state.last_routine_ts or 0.0) + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS, drydown_end
+                )
+            routine = self.next_slot("routine", max(routine_est, not_before))
+        _, deep_est = self.next_watering()
+        deep = None
+        if deep_est is not None:
+            if state.last_deep_soak_ts is not None:
+                drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("deep_soak_drydown_days") * 86400
+                deep_est = max(
+                    state.last_deep_soak_ts
+                    + self.number("deep_soak_interval_days") * 86400
+                    - DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+                    drydown_end,
+                )
+            deep = self.next_slot("deep_soak", max(deep_est, not_before))
+        return routine, deep
+
+    def _today_decision(self) -> tuple[str, dict[str, Any]] | None:
+        """The latest decision made today, if it can be shown."""
+        decisions = self.store.state.decisions
+        if not isinstance(decisions, dict):
+            return None
+        today = dt_util.now().date()
+        latest: tuple[str, dict[str, Any]] | None = None
+        for cycle, decision in decisions.items():
+            if cycle not in ("routine", "deep_soak") or not isinstance(decision, dict):
+                continue
+            ts, code = decision.get("ts"), decision.get("code")
+            if not isinstance(ts, (int, float)) or not isinstance(code, str):
+                continue
+            if not messages.has(self.hass, f"status.{code}"):
+                continue  # e.g. a code from another version
+            if dt_util.as_local(dt_util.utc_from_timestamp(ts)).date() != today:
+                continue
+            if latest is None or ts > latest[1]["ts"]:
+                latest = (cycle, decision)
+        return latest
+
+    def status(self) -> dict[str, Any]:
+        """The Status sensor: one sentence for people, plus a stable code
+        for automations. In order: running now; snoozed; what a cycle
+        decided today (watered, skipped and why); a hold that is on right
+        now (wet soil, rain dry-down); otherwise when it waters next."""
+        state = self.store.state
+        now_ts = dt_util.utcnow().timestamp()
+        snoozed = self._is_snoozed_today()
+        not_before = now_ts
+        if snoozed:
+            tomorrow = dt_util.start_of_local_day() + timedelta(days=1)
+            not_before = max(now_ts, dt_util.as_utc(tomorrow).timestamp())
+        routine_next, deep_next = self._scheduled_next(not_before)
+        next_ts, next_cycle = routine_next, "routine"
+        if deep_next is not None and (routine_next is None or deep_next < routine_next):
+            next_ts, next_cycle = deep_next, "deep_soak"
+        if next_ts is None and state.last_routine_ts is None:
+            # A new zone: its first due run (the routine, or a deep soak
+            # scheduled earlier) at its next scheduled time.
+            next_ts, next_cycle = self.next_slot("routine", not_before), "routine"
+            if self.deep_soak_enabled:
+                deep_first = self.next_slot("deep_soak", not_before)
+                if deep_first < next_ts:
+                    next_ts, next_cycle = deep_first, "deep_soak"
+        result: dict[str, Any] = {
+            "code": None,
+            "text": "",
+            "cycle": None,
+            "decided_at": None,
+            "next_watering": dt_util.utc_from_timestamp(next_ts).isoformat() if next_ts is not None else None,
+            "next_cycle": next_cycle if next_ts is not None else None,
+        }
+
+        def with_next(text: str) -> str:
+            if next_ts is None:
+                return text
+            key = "with_next_deep_soak" if next_cycle == "deep_soak" else "with_next"
+            return self._msg(f"status.{key}", status=text, when=self._when(next_ts))
+
+        if self._service_active:
+            result.update(code="service_run", text=self._msg("status.service_run"))
+            return result
+        if self._waiting_pump_kind is not None:
+            result.update(
+                code="waiting_pump",
+                cycle=_CYCLE_KEYS.get(self._waiting_pump_kind),
+                text=self._msg("status.waiting_pump", cycle=self._cycle_name(self._waiting_pump_kind)),
+            )
+            return result
+        if state.lock_on:
+            if self._runs and self._cycle_kind:
+                result.update(
+                    code="watering",
+                    cycle=_CYCLE_KEYS.get(self._cycle_kind),
+                    text=self._msg("status.watering", cycle=self._cycle_name(self._cycle_kind)),
+                )
+            else:
+                result.update(code="lock_held", text=self._msg("status.lock_held"))
+            return result
+        if snoozed:
+            result.update(code="snoozed", text=with_next(self._msg("status.snoozed")))
+            return result
+
+        latest = self._today_decision()
+        if latest is not None:
+            cycle, decision = latest
+            code = decision["code"]
+            text = self._msg(f"status.{code}", **self._decision_params(cycle, decision))
+            result.update(
+                code=code,
+                cycle=cycle,
+                decided_at=dt_util.utc_from_timestamp(decision["ts"]).isoformat(),
+                text=with_next(text),
+            )
+            return result
+
+        if self.soil_moisture_status() == "wet":
+            raw = self.soil_moisture_raw()
+            result.update(
+                code="waiting_soil_wet",
+                text=with_next(self._msg("status.waiting_soil_wet", pct=f"{raw:.0f}" if raw is not None else "?")),
+            )
+            return result
+        drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
+        if state.last_significant_rain_ts is not None and drydown_end > now_ts:
+            result.update(code="waiting_drydown", text=self._msg("status.waiting_drydown", until=self._when(drydown_end)))
+            return result
+        if state.last_routine_ts is None and next_ts is not None:
+            key = "first_run_deep_soak" if next_cycle == "deep_soak" else "first_run"
+            result.update(code="first_run", text=self._msg(f"status.{key}", when=self._when(next_ts)))
+            return result
+        if next_ts is not None:
+            key = "next_deep_soak" if next_cycle == "deep_soak" else "next"
+            result.update(code=key, text=self._msg(f"status.{key}", when=self._when(next_ts)))
+            return result
+        result.update(code="idle", text=self._msg("status.idle"))
+        return result
+
+    def _cycle_name(self, kind: str) -> str:
+        key = _CYCLE_KEYS.get(kind)
+        return self._msg(f"cycle.{key}") if key else kind
 
     def _write_csv_row(self, row: list[str]) -> None:
         try:

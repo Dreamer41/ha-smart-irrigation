@@ -422,6 +422,9 @@
           "full_dose_young_plant": "Full dose (young plant)",
           "full_dose_no_temp": "Full dose today (no temperature reading on record)"
         }
+      },
+      "status": {
+        "name": "Status"
       }
     },
     "select": {
@@ -489,6 +492,14 @@
         "state": {
           "temperature_tiers": "Temperature tiers",
           "et_curve": "ET curve (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Notifications",
+        "state": {
+          "all": "All",
+          "warnings": "Warnings only",
+          "none": "None"
         }
       }
     },
