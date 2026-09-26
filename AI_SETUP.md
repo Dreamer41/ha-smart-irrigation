@@ -1790,6 +1790,10 @@ views:
         entities:
           - entity: <switch.valve_entity>
             name: Valve
+          - entity: <sensor.zone_soil_moisture_if_sensor_configured>
+            name: Soil Moisture
+          - entity: <sensor.zone_soil_moisture_status_if_sensor_configured>
+            name: Soil Moisture Means
           - entity: <binary_sensor.zone_irrigation_in_progress>
             name: Lock (In Progress)
           - entity: <binary_sensor.zone_irrigation_abort_flag>
@@ -1979,9 +1983,12 @@ confusing clutter rather than a genuinely-existing-but-irrelevant row (the
 same "only include what actually applies to this zone" rule as any other
 optional entity).
 
-**Drop the "Soil Moisture (Optional)" card and the moisture history
-graph** for a zone with no soil-moisture sensor configured (§7.7), for the
-same reason (the moisture sensors don't even exist without one). **Drop the
+**Drop the "Soil Moisture (Optional)" card, the moisture history graph and
+the two Soil Moisture rows at the top of the Status card** for a zone with
+no soil-moisture sensor configured (§7.7), for the same reason (the
+moisture sensors don't even exist without one). With a probe, keep the
+reading at the top of Status: it's the first thing people look for, and
+the full Soil Moisture card sits further down the page. **Drop the
 "Deficit Mode" card and its watch note** for crops §7.10 says not to stress
 (strawberries, seedlings, young trees...) unless the person asked for
 deficit mode anyway; keep them for crops that can benefit, even if it's off

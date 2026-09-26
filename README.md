@@ -143,6 +143,14 @@ and both zones get less water than their calibrated runtime assumes.
 - **CSV event log** per zone: every run, skip and warning with the numbers
   behind it.
 
+## Dashboard
+
+One zone's page (a chili bed with a soil-moisture probe): live status up
+top, manual controls, the health journal, and every tunable as a slider.
+The AI setup guide builds a page like this for each of your zones.
+
+<img src="docs/screenshots/dashboard-zone.png" width="100%" alt="ZoneFlow zone dashboard: status with soil moisture, manual controls, health journal and growth profile">
+
 ## Installation
 
 **Via HACS (recommended):**
