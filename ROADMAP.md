@@ -30,6 +30,20 @@ Also in this release:
   lock/abort/diagnostic sensors as *diagnostic*, so the zone's device page
   and HA's auto-generated dashboards are tidy.
 
+- **"Why?" status sensor:** one plain sentence per zone at the top of the
+  card — "Next watering Mon 05:30, about 12 mm (3 mm rain credit)",
+  "Skipped today: soil is wet", "Waiting: rain dry-down until Wed". Every
+  gate that holds a run back says so, instead of skipping silently.
+- **Fewer visible settings:** advanced sliders (custom ramp points,
+  forecast thresholds, pump delays, pulse tuning) hidden by default — still
+  there, switched on under the entity's settings. Together with the
+  categories above, a zone's device page goes from ~60 entities to ~15.
+- **Pause switch per zone:** "Paused until…" for holidays, repairs or
+  winter, instead of disabling the integration.
+- **Frost protection:** skip watering when frost is forecast or the
+  temperature is below a set limit (protects pipes and drippers).
+- **Notification levels per zone:** all / warnings only / none.
+
 To work out when building:
 
 - Automated screenshot test of the card in the sandbox (Chromium) — the
@@ -39,6 +53,26 @@ To work out when building:
   YAML template (§9) for people who want to hand-build.
 - Later, optionally: an auto-generated ZoneFlow dashboard ("strategy")
   with a tab per zone, reusing the same card.
+
+## After that (1.6.0) — easier setup
+
+- **Plant presets at setup:** pick Tomatoes / Chilis / Lawn / Fruit tree /
+  Shrubs / Herbs… and the weekly targets, deep soak on/off, growth ramp,
+  crop factor and pulse counts are pre-filled.
+- **Flow-rate helper:** enter drippers per plant, litres/hour per dripper
+  and bed area and it works out the flow rate — or, with a flow meter, run
+  a 10-minute service run and it calculates it.
+- **Weekly summary** (optional): water applied, rain received and next
+  runs per zone, in one message.
+- **Home Assistant Repairs:** problems shown in Settings → Repairs (valve
+  unavailable, a sensor offline for days, flow rate never calibrated).
+- **Diagnostics download** for bug reports.
+- **Translations:** German, Dutch, French, Spanish, Italian, Finnish,
+  Swedish, Polish, Portuguese (first batch — based on where Home Assistant
+  users are). Covers entity names, setup screens and error messages via
+  Home Assistant's translation files; the phone notifications and CSV log
+  text are written in Python today and need their own translation step
+  (following Home Assistant's language setting).
 
 ## Shipped
 
