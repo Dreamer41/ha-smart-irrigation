@@ -356,7 +356,55 @@ def check_overview(pw, check, args) -> None:
         shot = args.screenshot.with_name(args.screenshot.stem + "-overview" + args.screenshot.suffix)
         page.locator("#ov").screenshot(path=str(shot))
         print(f"screenshot: {shot}")
+    check_loader(browser, check)
     browser.close()
+
+
+def check_loader(browser, check) -> None:
+    """The loader in /config/www/zoneflow (frontend.py): on a normal page the
+    card loads once; on a page opened while Home Assistant was starting (no
+    card on it, the card not served yet) the loader keeps trying."""
+    sys.path.insert(0, str(ROOT))
+    from custom_components.zoneflow.frontend import CARD_URL, LOADER_JS, LOADER_URL
+
+    for startup in (False, True):
+        page = browser.new_page()
+        fetched = []
+
+        # (Playwright hands a handler the request as a second argument, so
+        # the loop's values go in through a closure, not default arguments.)
+        def handlers(startup, fetched):
+            def card(route):
+                fetched.append(route.request.url)
+                if startup and len(fetched) < 3:  # ZoneFlow not up yet
+                    route.fulfill(status=404, body="404: Not Found")
+                else:
+                    route.fulfill(path=str(CARD), content_type="text/javascript")
+
+            tag = "" if startup else f'<script type="module" src="{CARD_URL}?v=9"></script>'
+
+            def index(route):
+                route.fulfill(body=f"<html><head>{tag}</head></html>", content_type="text/html")
+
+            return card, index
+
+        card, index = handlers(startup, fetched)
+        page.route("http://ha.test/", index)
+        page.route("http://ha.test/zoneflow_static/**", card)
+        page.route("http://ha.test/local/**", lambda route: route.fulfill(body=LOADER_JS, content_type="text/javascript"))
+        page.goto("http://ha.test/")
+        page.wait_for_timeout(300)
+        page.evaluate(f"() => import('{LOADER_URL}?v=9')")  # the dashboard resource
+        page.wait_for_timeout(4500 if startup else 500)
+        state = page.evaluate(
+            "() => [!!customElements.get('zoneflow-card'), !!customElements.get('zoneflow-overview-card'),"
+            " (window.customCards || []).filter(c => c.type.startsWith('zoneflow')).length]"
+        )
+        if startup:
+            check(state == [True, True, 2] and len(fetched) == 3, "loader: keeps trying while Home Assistant starts")
+        else:
+            check(state == [True, True, 2] and fetched == [f"http://ha.test{CARD_URL}?v=9"], "loader: a normal page loads the card once")
+        page.close()
 
 
 if __name__ == "__main__":

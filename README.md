@@ -215,6 +215,23 @@ through its device and leaves out whatever the zone doesn't use, so after
 a ZoneFlow update new features appear on it by themselves. Units follow
 the zone. Ordinary Home Assistant cards keep working alongside it.
 
+ZoneFlow also adds a small loader, `/local/zoneflow/zoneflow-loader.js`, to
+Settings → Dashboards → Resources (the file lives in `/config/www/zoneflow/`).
+It makes the cards show up on a dashboard opened while Home Assistant is
+still starting; removing ZoneFlow removes both. **Dashboards in YAML mode**
+(`lovelace: mode: yaml`): ZoneFlow can't add the resource for you — add it
+under `lovelace:` in `configuration.yaml` if you like:
+
+```yaml
+lovelace:
+  resources:
+    - url: /local/zoneflow/zoneflow-loader.js
+      type: module
+```
+
+Without it the cards work the same, but right after a Home Assistant
+restart a dashboard may show "Configuration error" until you reload it.
+
 **All zones at a glance: the ZoneFlow overview card.** Add card →
 **ZoneFlow overview**. It finds every zone by itself and shows one row
 each: status, next watering, last watering and a 💧 water-now button.

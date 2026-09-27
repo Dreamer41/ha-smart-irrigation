@@ -33,6 +33,18 @@ _ZONE_TARGET_FIELDS = {
     vol.Optional(ATTR_ENTITY_ID): cv.entity_ids,
 }
 ZONE_TARGET_SCHEMA = vol.Schema(_ZONE_TARGET_FIELDS)
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Serve the dashboard cards as soon as the integration loads, before any
+    zone sets up: Home Assistant shows dashboards while it is still starting,
+    and the sooner the cards are there, the fewer pages open without them
+    (frontend.py has the rest)."""
+    await frontend.async_register(hass)
+    return True
+
+
 TEST_PULSE_SCHEMA = vol.Schema(
     {
         vol.Optional("seconds", default=10): vol.All(int, vol.Range(min=1, max=120)),
@@ -188,5 +200,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """A zone was deleted: clear its Repairs issues."""
+    """A zone was deleted: clear its Repairs issues. The last one also takes
+    the dashboard card's loader away (frontend.py)."""
     issues.async_remove(hass, entry.entry_id)
+    others = [e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id]
+    if not others:
+        await frontend.async_remove_loader(hass)
