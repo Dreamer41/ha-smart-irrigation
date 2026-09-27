@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Flowet kunne ikke måles",
       "message": "Flowmåleren talte {volume} på {minutes} min, hvilket ikke giver et brugbart flow. Tjek måleren og området, eller beregn det ud fra drypperne i stedet (Konfigurer → Flow)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: tid til gødskning",
+      "message": "Planlagt til {date}. Tryk på Gødsket i dag, når det er gjort; næste dato beregnes derfra."
     }
   },
   "notes": {

@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Uruchom serwisowo 10 min"
+      },
+      "fertilized_today": {
+        "name": "Nawożono dzisiaj"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Stan"
+      },
+      "next_fertilizing": {
+        "name": "Następne nawożenie"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Następne nawożenie za",
+        "name": "Odstęp między nawożeniami",
         "state": {
+          "1w": "1 tydzień",
+          "2w": "2 tygodnie",
+          "3w": "3 tygodnie",
           "1": "1 miesiąc",
           "2": "2 miesiące",
           "3": "3 miesiące",

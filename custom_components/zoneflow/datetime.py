@@ -49,9 +49,8 @@ LAST_EVENT_FIELDS: list[tuple[str, str]] = [
     # profile itself defaulting to "off". Setting/updating this later is
     # exactly as valid as setting it at initial setup.
     ("planting_date_ts", "Planting / Transplant Date"),
-    # Pure journal field (paired with select.py's "Next Fertilizing In"
-    # dropdown) -- unlike the entries above, nothing in the controller ever
-    # reads this one; it's just where a person records the last feed.
+    # The last feed (select.py's "Fertilizing Interval" gives the next one,
+    # the "Fertilized Today" button sets it). Never changes the watering.
     ("last_fertilizing_ts", "Last Fertilizing"),
     # When deficit mode switches itself off (see calculations.deficit_factor)
     # -- a planned date, so it may be in the future.
@@ -91,6 +90,11 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
         if state_field != "last_fertilizing_ts":
             self._attr_entity_category = EntityCategory.CONFIG
 
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Dates the zone sets itself (a finished cycle, "Fertilized Today").
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
     @property
     def native_value(self) -> datetime | None:
         ts = getattr(self._controller.store.state, self._state_field)
@@ -109,6 +113,8 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
         setattr(self._controller.store.state, self._state_field, ts)
         await self._controller.store.async_save()
         self.async_write_ha_state()
+        if self._state_field == "last_fertilizing_ts":
+            self._controller._notify_status()  # the Next Fertilizing date
 
 
 class ZoneFlowPausedUntilDateTime(DateTimeEntity):

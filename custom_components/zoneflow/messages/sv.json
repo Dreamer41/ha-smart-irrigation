@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Flödet kunde inte mätas",
       "message": "Flödesmätaren räknade {volume} på {minutes} min, vilket inte ger ett användbart flöde. Kontrollera mätaren och ytan, eller räkna ut flödet från dropparna i stället (Konfigurera → Flöde)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: dags att gödsla",
+      "message": "Planerat till {date}. Tryck på Gödslat idag när det är gjort; nästa datum räknas ut därifrån."
     }
   },
   "notes": {

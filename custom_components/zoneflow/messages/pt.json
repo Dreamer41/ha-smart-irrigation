@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Fluxo não medido",
       "message": "O medidor de fluxo contou {volume} em {minutes} min, o que não dá um fluxo utilizável. Verifique o medidor e a área, ou calcule-o a partir dos emissores (Configurar → Fluxo)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: hora de adubar",
+      "message": "Previsto para {date}. Carregue em Adubado hoje quando terminar; a próxima data é calculada a partir daí."
     }
   },
   "notes": {

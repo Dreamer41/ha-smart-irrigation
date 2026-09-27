@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ A vízhozam mérése nem sikerült",
       "message": "Az átfolyásmérő {volume} mennyiséget számolt {minutes} min alatt, ebből nem jön ki használható vízhozam. Ellenőrizd a mérőt és a területet, vagy számítsd ki inkább a csepegtetőkből (Konfigurálás → Vízhozam)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: ideje a tápanyag-utánpótlásnak",
+      "message": "Esedékes: {date}. Ha megvan, nyomd meg a Mai tápanyag-utánpótlás kész gombot; a következő dátum ettől számolódik."
     }
   },
   "notes": {

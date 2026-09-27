@@ -45,6 +45,7 @@ from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConve
 
 from . import calculations as calc, issues, messages, units
 from .const import (
+    FERTILIZE_REMINDER_HOUR,
     FLOW_MEASURE_MIN_MINUTES,
     FLOW_METER_SETTLE_SECONDS,
     FLOW_MEASURE_MINUTES,
@@ -635,6 +636,11 @@ class ZoneFlowController:
             )
         self._unsubs.append(
             async_track_time_change(self.hass, self._on_midnight, hour=0, minute=0, second=0)
+        )
+        self._unsubs.append(
+            async_track_time_change(
+                self.hass, self._on_fertilize_check, hour=FERTILIZE_REMINDER_HOUR, minute=0, second=0
+            )
         )
         # Stop a running cycle when Home Assistant shuts down. A shutdown job
         # runs first thing, while the valve's own integration (Zigbee, MQTT,
@@ -3388,6 +3394,54 @@ class ZoneFlowController:
             notify_phone=False,
             phone_title="",
             phone_msg="",
+        )
+
+    # ------------------------------------------------------------------
+    # Fertilizing: the next date, the "Fertilized Today" button and the
+    # reminder. Never changes the watering.
+    # ------------------------------------------------------------------
+    def next_fertilizing(self) -> datetime | None:
+        """Last feed + the interval, or None before the first feed is
+        recorded."""
+        state = self.store.state
+        if state.last_fertilizing_ts is None:
+            return None
+        last = dt_util.as_local(dt_util.utc_from_timestamp(state.last_fertilizing_ts))
+        return calc.next_fertilizing(last, state.fertilizing_interval_months)
+
+    def fertilizing_due(self) -> bool:
+        due = self.next_fertilizing()
+        return due is not None and due.date() <= dt_util.now().date()
+
+    async def fertilized_today(self) -> None:
+        """The "Fertilized Today" button: records a feed now."""
+        self.store.state.last_fertilizing_ts = dt_util.utcnow().timestamp()
+        await self.store.async_save()
+        self._notify_status()
+        await self._log_event(
+            event_type="Fertilized", status="INFO", target_mm=0.0, deducted_mm=0.0, runtime=0
+        )
+
+    async def _on_fertilize_check(self, now=None) -> None:
+        """Each morning: on (or after) the due date, one phone reminder per
+        feed -- not while the zone is paused (winter, holidays)."""
+        state = self.store.state
+        if not self.fertilizing_due() or self.paused:
+            return
+        if state.fertilize_reminded_for_ts == state.last_fertilizing_ts:
+            return
+        state.fertilize_reminded_for_ts = state.last_fertilizing_ts
+        await self.store.async_save()
+        due = self.next_fertilizing()
+        await self._log_event(
+            event_type="Fertilizing Due",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="fertilize_due",
+            params={"zone": self.entry.title, "date": messages.when(self.hass, due, "date")},
         )
 
     async def _register_self_tune_signal(self, direction: str) -> None:

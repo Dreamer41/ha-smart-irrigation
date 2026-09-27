@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Servicekörning 10 min"
+      },
+      "fertilized_today": {
+        "name": "Gödslat idag"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Status"
+      },
+      "next_fertilizing": {
+        "name": "Nästa gödsling"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Nästa gödsling om",
+        "name": "Gödslingsintervall",
         "state": {
+          "1w": "1 vecka",
+          "2w": "2 veckor",
+          "3w": "3 veckor",
           "1": "1 månad",
           "2": "2 månader",
           "3": "3 månader",

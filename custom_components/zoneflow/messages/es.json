@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Caudal no medido",
       "message": "El caudalímetro contó {volume} en {minutes} min, lo que no da un caudal utilizable. Revisa el medidor y la superficie, o calcúlalo a partir de los emisores (Configurar → Caudal)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: toca abonar",
+      "message": "Previsto para el {date}. Pulsa Abonado hoy cuando lo hayas hecho; la próxima fecha se calcula a partir de ahí."
     }
   },
   "notes": {

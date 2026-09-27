@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Service Run 10 min"
+      },
+      "fertilized_today": {
+        "name": "Fertilized Today"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Status"
+      },
+      "next_fertilizing": {
+        "name": "Next Fertilizing"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Next Fertilizing In",
+        "name": "Fertilizing Interval",
         "state": {
+          "1w": "1 week",
+          "2w": "2 weeks",
+          "3w": "3 weeks",
           "1": "1 month",
           "2": "2 months",
           "3": "3 months",

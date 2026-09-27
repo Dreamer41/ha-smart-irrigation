@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Flow rate not measured",
       "message": "The flow meter counted {volume} in {minutes} min, which doesn't give a usable flow rate. Check the meter and the area, or work it out from the emitters instead (Configure → Flow rate)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: time to fertilize",
+      "message": "Due {date}. Press Fertilized Today when it's done; the next date is worked out from there."
     }
   },
   "notes": {

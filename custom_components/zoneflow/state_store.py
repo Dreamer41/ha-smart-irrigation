@@ -127,6 +127,9 @@ class IrrigationState:
     # last_fertilizing_ts is None until someone records a feed.
     last_fertilizing_ts: float | None = None
     fertilizing_interval_months: str = DEFAULT_FERTILIZING_INTERVAL
+    # The feed (its last_fertilizing_ts) the due reminder was sent for:
+    # one reminder per feed.
+    fertilize_reminded_for_ts: float | None = None
 
     # Which routine weekly-target model this zone uses -- see const.py's
     # DEMAND_MODEL_* comment. Defaults to the original temperature tiers.

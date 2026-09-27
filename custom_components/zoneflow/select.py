@@ -280,9 +280,9 @@ class ZoneFlowHealthSelect(_Base):
 
 
 class ZoneFlowFertilizingIntervalSelect(_Base):
-    """Pure journal field -- how many months after the last feed (see
-    datetime.py's "Last Fertilizing") the next one is planned. Same as
-    ZoneFlowHealthSelect: nothing in the controller reads it."""
+    """How long after the last feed (datetime.py's "Last Fertilizing") the
+    next one is due: 1-3 weeks or 1-12 months. The Next Fertilizing sensor
+    and the reminder follow it; the watering doesn't."""
 
     _attr_icon = "mdi:calendar-refresh"
     _attr_options = FERTILIZING_INTERVAL_OPTIONS
@@ -300,6 +300,7 @@ class ZoneFlowFertilizingIntervalSelect(_Base):
         self._controller.store.state.fertilizing_interval_months = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
+        self._controller._notify_status()  # the Next Fertilizing date
 
 
 class ZoneFlowDemandModelSelect(_Base):

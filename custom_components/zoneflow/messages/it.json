@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Portata non misurata",
       "message": "Il flussometro ha contato {volume} in {minutes} min, un valore da cui non si ricava una portata utilizzabile. Controlla il flussometro e l'area, oppure calcolala dagli erogatori (Configura → Portata)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: è ora di concimare",
+      "message": "Prevista per il {date}. Premi Concimato oggi quando hai finito; la data successiva viene calcolata da lì."
     }
   },
   "notes": {

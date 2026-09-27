@@ -28,6 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ),
             ZoneFlowButton(entry, controller, "reset_lock", "Reset Irrigation Lock", controller.reset_lock),
             ZoneFlowButton(entry, controller, "snooze_today", "Snooze Today", controller.snooze_today),
+            ZoneFlowButton(entry, controller, "fertilized_today", "Fertilized Today", controller.fertilized_today),
             # Service / check runs: never counted as watering (see
             # controller.start_service_run).
             *(

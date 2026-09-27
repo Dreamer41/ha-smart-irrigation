@@ -108,13 +108,15 @@ DEFAULT_IRRIGATION_METHOD = "drip"
 HEALTH_STATUS_OPTIONS = ["excellent", "good", "poor", "sick"]
 DEFAULT_HEALTH_STATUS = "good"
 
-# Fertilizing journal (datetime.py's "Last Fertilizing" + select.py's
-# ZoneFlowFertilizingIntervalSelect) -- same pure-journal rule as the health
-# fields above: nothing in the controller reads either value, so recording
-# a feed never changes what/when ZoneFlow waters. Options are whole months,
-# stored as strings because a select entity's options are strings.
-FERTILIZING_INTERVAL_OPTIONS = [str(m) for m in range(1, 13)]
+# Fertilizing (datetime.py's "Last Fertilizing" + select.py's "Fertilizing
+# Interval"): the Next Fertilizing sensor is the last date plus the
+# interval, the "Fertilized Today" button records a feed, and a phone
+# reminder goes out on the due date at FERTILIZE_REMINDER_HOUR. None of it
+# changes what/when ZoneFlow waters. Options: "1w".."3w" weeks, "1".."12"
+# months (the month keys are the original ones, so saved choices stay).
+FERTILIZING_INTERVAL_OPTIONS = ["1w", "2w", "3w", *(str(m) for m in range(1, 13))]
 DEFAULT_FERTILIZING_INTERVAL = "3"
+FERTILIZE_REMINDER_HOUR = 9
 
 # Routine weekly-target model (select.py's ZoneFlowDemandModelSelect).
 # "temperature_tiers" is the original hot/normal/cool slider system and the

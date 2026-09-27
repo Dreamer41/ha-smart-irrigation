@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Mantenimiento 10 min"
+      },
+      "fertilized_today": {
+        "name": "Abonado hoy"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Estado"
+      },
+      "next_fertilizing": {
+        "name": "Próximo abonado"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Próximo abonado en",
+        "name": "Intervalo de abonado",
         "state": {
+          "1w": "1 semana",
+          "2w": "2 semanas",
+          "3w": "3 semanas",
           "1": "1 mes",
           "2": "2 meses",
           "3": "3 meses",

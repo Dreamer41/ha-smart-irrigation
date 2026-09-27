@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Débit non mesuré",
       "message": "Le débitmètre a compté {volume} en {minutes} min, ce qui ne donne pas de débit exploitable. Vérifiez le compteur et la surface, ou calculez plutôt le débit à partir des goutteurs (Configurer → Débit)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone} : c'est l'heure de l'engrais",
+      "message": "Prévu le {date}. Appuyez sur Engrais apporté aujourd'hui une fois l'apport fait ; la date suivante sera calculée à partir de ce jour."
     }
   },
   "notes": {

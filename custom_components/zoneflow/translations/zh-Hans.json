@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "维护运行 10 min"
+      },
+      "fertilized_today": {
+        "name": "今天已施肥"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "状态"
+      },
+      "next_fertilizing": {
+        "name": "下次施肥"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "下次施肥间隔",
+        "name": "施肥间隔",
         "state": {
+          "1w": "1 周",
+          "2w": "2 周",
+          "3w": "3 周",
           "1": "1 个月",
           "2": "2 个月",
           "3": "3 个月",

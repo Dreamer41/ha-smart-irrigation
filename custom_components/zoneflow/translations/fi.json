@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Huoltoajo 10 min"
+      },
+      "fertilized_today": {
+        "name": "Lannoitettu tänään"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Tila"
+      },
+      "next_fertilizing": {
+        "name": "Seuraava lannoitus"
       }
     },
     "select": {
@@ -598,20 +604,23 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Seuraava lannoitus",
+        "name": "Lannoitusväli",
         "state": {
-          "1": "1 kuukauden päästä",
-          "2": "2 kuukauden päästä",
-          "3": "3 kuukauden päästä",
-          "4": "4 kuukauden päästä",
-          "5": "5 kuukauden päästä",
-          "6": "6 kuukauden päästä",
-          "7": "7 kuukauden päästä",
-          "8": "8 kuukauden päästä",
-          "9": "9 kuukauden päästä",
-          "10": "10 kuukauden päästä",
-          "11": "11 kuukauden päästä",
-          "12": "12 kuukauden päästä"
+          "1w": "1 viikko",
+          "2w": "2 viikkoa",
+          "3w": "3 viikkoa",
+          "1": "1 kuukausi",
+          "2": "2 kuukautta",
+          "3": "3 kuukautta",
+          "4": "4 kuukautta",
+          "5": "5 kuukautta",
+          "6": "6 kuukautta",
+          "7": "7 kuukautta",
+          "8": "8 kuukautta",
+          "9": "9 kuukautta",
+          "10": "10 kuukautta",
+          "11": "11 kuukautta",
+          "12": "12 kuukautta"
         }
       },
       "demand_model": {

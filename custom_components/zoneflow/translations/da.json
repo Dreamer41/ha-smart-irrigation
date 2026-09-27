@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Servicekørsel 10 min"
+      },
+      "fertilized_today": {
+        "name": "Gødsket i dag"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Status"
+      },
+      "next_fertilizing": {
+        "name": "Næste gødskning"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Næste gødskning om",
+        "name": "Gødskningsinterval",
         "state": {
+          "1w": "1 uge",
+          "2w": "2 uger",
+          "3w": "3 uger",
           "1": "1 måned",
           "2": "2 måneder",
           "3": "3 måneder",

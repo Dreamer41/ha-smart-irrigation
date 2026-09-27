@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Nie zmierzono wydajności",
       "message": "Przepływomierz zliczył {volume} w {minutes} min, co nie daje użytecznej wydajności. Sprawdź przepływomierz i powierzchnię albo oblicz wydajność na podstawie emiterów (Konfiguruj → Wydajność)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: czas na nawożenie",
+      "message": "Termin: {date}. Po nawożeniu naciśnij Nawożono dzisiaj; od tego dnia zostanie wyliczony następny termin."
     }
   },
   "notes": {

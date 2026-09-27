@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Manutenzione 10 min"
+      },
+      "fertilized_today": {
+        "name": "Concimato oggi"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Stato"
+      },
+      "next_fertilizing": {
+        "name": "Prossima concimazione"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Prossima concimazione tra",
+        "name": "Intervallo di concimazione",
         "state": {
+          "1w": "1 settimana",
+          "2w": "2 settimane",
+          "3w": "3 settimane",
           "1": "1 mese",
           "2": "2 mesi",
           "3": "3 mesi",

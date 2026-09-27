@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Szervizfuttatás 10 min"
+      },
+      "fertilized_today": {
+        "name": "Mai tápanyag-utánpótlás kész"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Állapot"
+      },
+      "next_fertilizing": {
+        "name": "Következő tápanyag-utánpótlás"
       }
     },
     "select": {
@@ -598,20 +604,23 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Következő tápanyag-utánpótlás",
+        "name": "Tápanyag-utánpótlás gyakorisága",
         "state": {
-          "1": "1 hónap múlva",
-          "2": "2 hónap múlva",
-          "3": "3 hónap múlva",
-          "4": "4 hónap múlva",
-          "5": "5 hónap múlva",
-          "6": "6 hónap múlva",
-          "7": "7 hónap múlva",
-          "8": "8 hónap múlva",
-          "9": "9 hónap múlva",
-          "10": "10 hónap múlva",
-          "11": "11 hónap múlva",
-          "12": "12 hónap múlva"
+          "1w": "1 hét",
+          "2w": "2 hét",
+          "3w": "3 hét",
+          "1": "1 hónap",
+          "2": "2 hónap",
+          "3": "3 hónap",
+          "4": "4 hónap",
+          "5": "5 hónap",
+          "6": "6 hónap",
+          "7": "7 hónap",
+          "8": "8 hónap",
+          "9": "9 hónap",
+          "10": "10 hónap",
+          "11": "11 hónap",
+          "12": "12 hónap"
         }
       },
       "demand_model": {

@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Servisný chod 10 min"
+      },
+      "fertilized_today": {
+        "name": "Dnes pohnojené"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Stav"
+      },
+      "next_fertilizing": {
+        "name": "Ďalšie hnojenie"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Ďalšie hnojenie o",
+        "name": "Interval hnojenia",
         "state": {
+          "1w": "1 týždeň",
+          "2w": "2 týždne",
+          "3w": "3 týždne",
           "1": "1 mesiac",
           "2": "2 mesiace",
           "3": "3 mesiace",

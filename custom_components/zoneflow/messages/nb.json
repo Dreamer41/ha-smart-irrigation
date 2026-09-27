@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Vannmengde ikke målt",
       "message": "Vannmåleren talte {volume} på {minutes} min, som ikke gir en brukbar vannmengde. Sjekk måleren og arealet, eller regn den ut fra utløpene i stedet (Konfigurer → Vannmengde)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: tid for gjødsling",
+      "message": "Planlagt til {date}. Trykk på Gjødslet i dag når det er gjort; neste dato regnes ut derfra."
     }
   },
   "notes": {

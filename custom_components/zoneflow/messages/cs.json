@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Průtok nezměřen",
       "message": "Průtokoměr naměřil {volume} za {minutes} min, z čehož nelze určit použitelný průtok. Zkontrolujte průtokoměr a plochu, nebo průtok vypočítejte z emitorů (Nastavit → Průtok)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: čas pohnojit",
+      "message": "Termín: {date}. Po pohnojení stiskněte Dnes pohnojeno; další termín se spočítá od toho dne."
     }
   },
   "notes": {

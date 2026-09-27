@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Wartungslauf 10 min"
+      },
+      "fertilized_today": {
+        "name": "Heute gedüngt"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Status"
+      },
+      "next_fertilizing": {
+        "name": "Nächste Düngung"
       }
     },
     "select": {
@@ -598,20 +604,23 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Nächste Düngung",
+        "name": "Düngeintervall",
         "state": {
-          "1": "in 1 Monat",
-          "2": "in 2 Monaten",
-          "3": "in 3 Monaten",
-          "4": "in 4 Monaten",
-          "5": "in 5 Monaten",
-          "6": "in 6 Monaten",
-          "7": "in 7 Monaten",
-          "8": "in 8 Monaten",
-          "9": "in 9 Monaten",
-          "10": "in 10 Monaten",
-          "11": "in 11 Monaten",
-          "12": "in 12 Monaten"
+          "1w": "1 Woche",
+          "2w": "2 Wochen",
+          "3w": "3 Wochen",
+          "1": "1 Monat",
+          "2": "2 Monate",
+          "3": "3 Monate",
+          "4": "4 Monate",
+          "5": "5 Monate",
+          "6": "6 Monate",
+          "7": "7 Monate",
+          "8": "8 Monate",
+          "9": "9 Monate",
+          "10": "10 Monate",
+          "11": "11 Monate",
+          "12": "12 Monate"
         }
       },
       "demand_model": {

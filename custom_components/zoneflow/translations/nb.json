@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Servicekjøring 10 min"
+      },
+      "fertilized_today": {
+        "name": "Gjødslet i dag"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Status"
+      },
+      "next_fertilizing": {
+        "name": "Neste gjødsling"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Neste gjødsling om",
+        "name": "Gjødslingsintervall",
         "state": {
+          "1w": "1 uke",
+          "2w": "2 uker",
+          "3w": "3 uker",
           "1": "1 måned",
           "2": "2 måneder",
           "3": "3 måneder",

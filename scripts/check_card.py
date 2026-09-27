@@ -34,6 +34,7 @@ KEYS = [
     ("number", "brand_new_setting", "config"),  # something a later version adds
     ("select", "health_status", None), ("text", "health_notes", None),
     ("binary_sensor", "irrigation_in_progress", "diagnostic"),
+    ("sensor", "next_fertilizing", None), ("button", "fertilized_today", None),
 ]
 HIDDEN = {"number.rain_eff_low", "button.run_deep_soak"}
 
@@ -152,7 +153,7 @@ def main() -> int:
         check(shown["status"] == "Next watering Tue 05:30", "status sentence at the top")
         check(now[:2] == ["Valve", "soil_moisture"], "valve first, names without the zone prefix")
         check("deficit_status" not in now, "deficit status left out while deficit mode is off")
-        check(controls and controls[0] == "Water now | Snooze today", "run-now buttons; a hidden one left out")
+        check(controls and controls[0] == "Water now | Snooze today | Fertilized", "run-now buttons; a hidden one left out")
         check("pause" in controls and "paused_until" in controls, "pause and paused-until in the controls")
         check(service[0] == "service_mode" and service[1] == "1 min | 5 min | 10 min | Reset lock", "service runs")
         check(settings[:2] == ["flow_rate_mm_per_min", "target_weekly_mm"], "settings grouped, flow rate first")
@@ -160,6 +161,7 @@ def main() -> int:
         check("brand_new_setting" in settings, "a setting added later appears by itself")
         check("notifications" in settings, "notifications among the settings")
         check(popups["Plant journal"]["rows"] == ["health_status", "health_notes"], "plant journal")
+        check("next_fertilizing" in now, "next fertilizing date in Now")
         check("rain_past_24h" in popups["Diagnostics"]["rows"], "diagnostics when asked for")
         check(not any("other_zone" in row for rows in shown["sections"].values() for row in rows), "only this zone")
 
@@ -172,7 +174,7 @@ def main() -> int:
         shown = page.evaluate(JS_SECTIONS)
         check(shown["status"] == "Service run in progress", "status follows changes")
         check("deficit_status" in shown["sections"]["Now"], "deficit status appears when deficit mode is on")
-        check(shown["sections"]["Controls"][0] == "Water now | Deep soak now | Snooze today", "an unhidden entity appears")
+        check(shown["sections"]["Controls"][0] == "Water now | Deep soak now | Snooze today | Fertilized", "an unhidden entity appears")
 
         if args.screenshot:
             page.locator("zoneflow-card").screenshot(path=str(args.screenshot))
@@ -246,7 +248,8 @@ def overview_hass() -> dict:
     for dev, name, plant, code, next_iso, estimate, liters in zones:
         devices[dev] = {"id": dev, "name": name, "name_by_user": None}
         keys = [("sensor", "status", None), ("sensor", "last_water_delivered", "diagnostic"),
-                ("sensor", "last_cycle_water_liters", None), ("button", "run_routine", None)]
+                ("sensor", "last_cycle_water_liters", None), ("button", "run_routine", None),
+                ("sensor", "next_fertilizing", None)]
         for domain, key, category in keys:
             entity_id = f"{domain}.{dev}_{key}"
             entities[entity_id] = {"entity_id": entity_id, "device_id": dev, "platform": "zoneflow",
@@ -258,6 +261,10 @@ def overview_hass() -> dict:
                                                          "valve": None, "friendly_name": f"{name} Status"}}
         states[f"sensor.{dev}_last_water_delivered"]["state"] = estimate.split()[0]
         states[f"sensor.{dev}_last_water_delivered"]["attributes"]["unit_of_measurement"] = "mm"
+        feed = {"tom": ("2026-09-20", True), "chi": ("2026-10-12", False)}.get(dev)
+        if feed:  # Mango: no feed recorded yet
+            states[f"sensor.{dev}_next_fertilizing"]["state"] = feed[0]
+            states[f"sensor.{dev}_next_fertilizing"]["attributes"]["due"] = feed[1]
         if liters:
             states[f"sensor.{dev}_last_cycle_water_liters"]["state"] = liters
             states[f"sensor.{dev}_last_cycle_water_liters"]["attributes"]["unit_of_measurement"] = "L"
@@ -277,6 +284,8 @@ JS_OVERVIEW = """() => {
       next: r.querySelector('.next').textContent,
       last: r.querySelector('.last').textContent,
       water_disabled: !!r.querySelector('ha-icon-button').disabled,
+      feed: r.querySelector('.feed').hidden ? null : r.querySelector('.feed span').textContent,
+      feed_due: r.querySelector('.feed').classList.contains('due'),
       open: !z.querySelector('.details').hidden,
       inner: !!z.querySelector('.details zoneflow-card'),
     };
@@ -312,6 +321,9 @@ def check_overview(pw, check, args) -> None:
     check(rows[2]["icon"] == "mdi:food-apple", "overview: preset gives the icon")
     check(rows[0]["icon"] == "mdi:chili-hot", "overview: an icon picked in the editor wins")
     check(rows[1]["icon"] == "mdi:sprinkler-variant", "overview: default icon")
+    check(rows[2]["feed"] == "Fertilize now" and rows[2]["feed_due"], "overview: fertilizing due shows under the name")
+    check(rows[0]["feed"] == "Mon, Oct 12" and not rows[0]["feed_due"], "overview: next fertilizing date under the name")
+    check(rows[1]["feed"] is None, "overview: nothing before a first feed is recorded")
     check(rows[0]["status"] == "Rain skip" and rows[2]["status"] == "Watered today", "overview: short status labels")
     check(rows[1]["status"] == "Paused" and rows[1]["next"] == "—" and rows[1]["water_disabled"], "overview: paused zone")
     check(rows[0]["last"] == "18 L" and rows[2]["last"] == "12.0 mm", "overview: measured litres, else the estimate")

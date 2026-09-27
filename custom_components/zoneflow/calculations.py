@@ -283,6 +283,21 @@ def split_pulses(total_minutes: int, pulse_count: int, min_pulse_minutes: float)
     return count, max(total_minutes / count, min_pulse_minutes)
 
 
+def next_fertilizing(last, interval: str):
+    """The date the next feed is due: the last one plus the interval ("2w"
+    weeks, "3" months -- a month later on the same day, or the month's
+    last day when it has fewer days). `last` is a local datetime."""
+    from datetime import timedelta
+
+    if interval.endswith("w"):
+        return last + timedelta(weeks=int(interval[:-1]))
+    months = last.month - 1 + int(interval)
+    year, month = last.year + months // 12, months % 12 + 1
+    days_in_month = [31, 29 if year % 4 == 0 and (year % 100 or year % 400 == 0) else 28, 31, 30, 31, 30,
+                     31, 31, 30, 31, 30, 31][month - 1]
+    return last.replace(year=year, month=month, day=min(last.day, days_in_month))
+
+
 def mm_per_pulse(soil: str, drainage: str) -> float:
     """How much water the soil takes in one pulse before it starts to run
     off (the tables at the top of this file have the sources)."""

@@ -37,6 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowReferenceEt0Sensor(entry, controller),
         ZoneFlowWeeklyTargetSensor(entry, controller),
         ZoneFlowNextIrrigationSensor(entry, controller),
+        ZoneFlowNextFertilizingSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
         ZoneFlowTodayRainSensor(entry, controller),
@@ -280,6 +281,34 @@ class ZoneFlowNextIrrigationSensor(_Base):
     @property
     def extra_state_attributes(self) -> dict:
         return {"decided_by": self._controller.routine_next_estimate()[1]}
+
+
+class ZoneFlowNextFertilizingSensor(_Base):
+    """Last Fertilizing + Fertilizing Interval (controller.next_fertilizing).
+    Unknown until the first feed is recorded; `due` is true from the due
+    date until the next feed is recorded."""
+
+    _attr_icon = "mdi:sprout"
+    _attr_device_class = "date"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_next_fertilizing"
+        self._attr_translation_key = "next_fertilizing"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Right away after "Fertilized Today", not at the next poll.
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
+    @property
+    def native_value(self):
+        due = self._controller.next_fertilizing()
+        return due.date() if due is not None else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return {"due": self._controller.fertilizing_due()}
 
 
 class ZoneFlowDaysUntilNextRunSensor(_Base):

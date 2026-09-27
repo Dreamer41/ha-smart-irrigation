@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Proefdraaien 10 min"
+      },
+      "fertilized_today": {
+        "name": "Vandaag bemest"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Status"
+      },
+      "next_fertilizing": {
+        "name": "Volgende bemesting"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Volgende bemesting over",
+        "name": "Bemestingsinterval",
         "state": {
+          "1w": "1 week",
+          "2w": "2 weken",
+          "3w": "3 weken",
           "1": "1 maand",
           "2": "2 maanden",
           "3": "3 maanden",

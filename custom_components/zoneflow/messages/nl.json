@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Debiet niet gemeten",
       "message": "De watermeter telde {volume} in {minutes} min; daar komt geen bruikbaar debiet uit. Controleer de meter en de oppervlakte, of bereken het uit de druppelaars (Configureren → Debiet)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: tijd om te bemesten",
+      "message": "Gepland op {date}. Druk op Vandaag bemest als het klaar is; de volgende datum wordt vanaf dan berekend."
     }
   },
   "notes": {

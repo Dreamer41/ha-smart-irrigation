@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Ciclo de manutenção 10 min"
+      },
+      "fertilized_today": {
+        "name": "Adubado hoje"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "Estado"
+      },
+      "next_fertilizing": {
+        "name": "Próxima adubação"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Próxima adubação daqui a",
+        "name": "Intervalo de adubação",
         "state": {
+          "1w": "1 semana",
+          "2w": "2 semanas",
+          "3w": "3 semanas",
           "1": "1 mês",
           "2": "2 meses",
           "3": "3 meses",

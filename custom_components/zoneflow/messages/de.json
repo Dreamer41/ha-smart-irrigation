@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Durchflussrate nicht gemessen",
       "message": "Der Durchflussmesser zählte {volume} in {minutes} min, daraus ergibt sich keine brauchbare Durchflussrate. Prüfe Zähler und Fläche, oder berechne sie stattdessen aus den Tropfern (Konfigurieren → Durchflussrate)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: Zeit zum Düngen",
+      "message": "Fällig am {date}. Drück nach dem Düngen auf Heute gedüngt – der nächste Termin wird ab dann berechnet."
     }
   },
   "notes": {

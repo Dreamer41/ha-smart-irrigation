@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Vazão não medida",
       "message": "O medidor de vazão contou {volume} em {minutes} min, o que não dá uma vazão utilizável. Verifique o medidor e a área, ou calcule a partir dos emissores (Configurar → Vazão)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: hora de adubar",
+      "message": "Previsto para {date}. Pressione Adubado hoje quando terminar; a próxima data é calculada a partir daí."
     }
   },
   "notes": {

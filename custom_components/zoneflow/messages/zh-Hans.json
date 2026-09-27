@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ 流量未能测得",
       "message": "水表在 {minutes} 分钟内计得 {volume}，无法得出可用的流量。请检查水表和面积，或改为根据灌水器计算（配置 → 流量）。"
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}：该施肥了",
+      "message": "应于 {date} 施肥。完成后请按“今天已施肥”，下次日期将从当天起计算。"
     }
   },
   "notes": {

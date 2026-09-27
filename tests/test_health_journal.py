@@ -97,7 +97,7 @@ async def test_fertilizing_interval_defaults_to_three_months_and_is_settable(has
     entity_id = next(s.entity_id for s in hass.states.async_all("select") if "fertilizing" in s.entity_id)
     state = hass.states.get(entity_id)
     assert state.state == "3"
-    assert state.attributes["options"] == [str(m) for m in range(1, 13)]
+    assert state.attributes["options"] == ["1w", "2w", "3w", *(str(m) for m in range(1, 13))]
 
     await hass.services.async_call(
         "select", "select_option", {"entity_id": entity_id, "option": "6"}, blocking=True

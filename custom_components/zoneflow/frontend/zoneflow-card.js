@@ -81,10 +81,13 @@ const I18N = {
         "deep_soak_first": "Deep soak first"
       },
       "add_zone": "Add zone",
-      "show_add": "Show the Add zone button"
+      "show_add": "Show the Add zone button",
+      "next_feed": "Next fertilizing",
+      "feed_due": "Fertilize now"
     },
     "close": "Close",
-    "device_page": "Open the device page"
+    "device_page": "Open the device page",
+    "fertilized": "Fertilized"
   },
   "de": {
     "now": "Jetzt",
@@ -151,10 +154,13 @@ const I18N = {
         "deep_soak_first": "Erst Tiefenbewässerung"
       },
       "add_zone": "Zone hinzufügen",
-      "show_add": "Schaltfläche „Zone hinzufügen“ anzeigen"
+      "show_add": "Schaltfläche „Zone hinzufügen“ anzeigen",
+      "next_feed": "Nächste Düngung",
+      "feed_due": "Jetzt düngen"
     },
     "close": "Schließen",
-    "device_page": "Geräteseite öffnen"
+    "device_page": "Geräteseite öffnen",
+    "fertilized": "Gedüngt"
   },
   "es": {
     "now": "Ahora",
@@ -221,10 +227,13 @@ const I18N = {
         "deep_soak_first": "Primero riego profundo"
       },
       "add_zone": "Añadir zona",
-      "show_add": "Mostrar el botón Añadir zona"
+      "show_add": "Mostrar el botón Añadir zona",
+      "next_feed": "Próximo abonado",
+      "feed_due": "Abonar ya"
     },
     "close": "Cerrar",
-    "device_page": "Abrir la página del dispositivo"
+    "device_page": "Abrir la página del dispositivo",
+    "fertilized": "Abonado"
   },
   "fi": {
     "now": "Nyt",
@@ -291,10 +300,13 @@ const I18N = {
         "deep_soak_first": "Ensin syväkastelu"
       },
       "add_zone": "Lisää vyöhyke",
-      "show_add": "Näytä Lisää vyöhyke -painike"
+      "show_add": "Näytä Lisää vyöhyke -painike",
+      "next_feed": "Seuraava lannoitus",
+      "feed_due": "Lannoita nyt"
     },
     "close": "Sulje",
-    "device_page": "Avaa laitesivu"
+    "device_page": "Avaa laitesivu",
+    "fertilized": "Lannoitettu"
   },
   "fr": {
     "now": "Maintenant",
@@ -361,10 +373,13 @@ const I18N = {
         "deep_soak_first": "Arrosage profond d'abord"
       },
       "add_zone": "Ajouter une zone",
-      "show_add": "Afficher le bouton Ajouter une zone"
+      "show_add": "Afficher le bouton Ajouter une zone",
+      "next_feed": "Prochain apport d'engrais",
+      "feed_due": "Engrais à apporter"
     },
     "close": "Fermer",
-    "device_page": "Ouvrir la page de l'appareil"
+    "device_page": "Ouvrir la page de l'appareil",
+    "fertilized": "Engrais apporté"
   },
   "it": {
     "now": "Adesso",
@@ -431,10 +446,13 @@ const I18N = {
         "deep_soak_first": "Prima l'irrigazione profonda"
       },
       "add_zone": "Aggiungi zona",
-      "show_add": "Mostra il pulsante Aggiungi zona"
+      "show_add": "Mostra il pulsante Aggiungi zona",
+      "next_feed": "Prossima concimazione",
+      "feed_due": "Concima ora"
     },
     "close": "Chiudi",
-    "device_page": "Apri la pagina del dispositivo"
+    "device_page": "Apri la pagina del dispositivo",
+    "fertilized": "Concimato"
   },
   "nl": {
     "now": "Nu",
@@ -501,10 +519,13 @@ const I18N = {
         "deep_soak_first": "Eerst diepe watergift"
       },
       "add_zone": "Zone toevoegen",
-      "show_add": "Knop Zone toevoegen tonen"
+      "show_add": "Knop Zone toevoegen tonen",
+      "next_feed": "Volgende bemesting",
+      "feed_due": "Nu bemesten"
     },
     "close": "Sluiten",
-    "device_page": "Apparaatpagina openen"
+    "device_page": "Apparaatpagina openen",
+    "fertilized": "Bemest"
   },
   "pl": {
     "now": "Teraz",
@@ -571,10 +592,13 @@ const I18N = {
         "deep_soak_first": "Najpierw głębokie podlewanie"
       },
       "add_zone": "Dodaj strefę",
-      "show_add": "Pokaż przycisk Dodaj strefę"
+      "show_add": "Pokaż przycisk Dodaj strefę",
+      "next_feed": "Następne nawożenie",
+      "feed_due": "Nawieź teraz"
     },
     "close": "Zamknij",
-    "device_page": "Otwórz stronę urządzenia"
+    "device_page": "Otwórz stronę urządzenia",
+    "fertilized": "Nawożono"
   },
   "pt": {
     "now": "Agora",
@@ -641,10 +665,13 @@ const I18N = {
         "deep_soak_first": "Primeiro a rega profunda"
       },
       "add_zone": "Adicionar zona",
-      "show_add": "Mostrar o botão Adicionar zona"
+      "show_add": "Mostrar o botão Adicionar zona",
+      "next_feed": "Próxima adubação",
+      "feed_due": "Adubar agora"
     },
     "close": "Fechar",
-    "device_page": "Abrir a página do dispositivo"
+    "device_page": "Abrir a página do dispositivo",
+    "fertilized": "Adubado"
   },
   "sv": {
     "now": "Nu",
@@ -711,10 +738,13 @@ const I18N = {
         "deep_soak_first": "Djupvattning först"
       },
       "add_zone": "Lägg till zon",
-      "show_add": "Visa knappen Lägg till zon"
+      "show_add": "Visa knappen Lägg till zon",
+      "next_feed": "Nästa gödsling",
+      "feed_due": "Gödsla nu"
     },
     "close": "Stäng",
-    "device_page": "Öppna enhetssidan"
+    "device_page": "Öppna enhetssidan",
+    "fertilized": "Gödslat"
   },
   "cs": {
     "now": "Teď",
@@ -781,10 +811,13 @@ const I18N = {
         "deep_soak_first": "Nejdřív hloubková zálivka"
       },
       "add_zone": "Přidat zónu",
-      "show_add": "Zobrazit tlačítko Přidat zónu"
+      "show_add": "Zobrazit tlačítko Přidat zónu",
+      "next_feed": "Další hnojení",
+      "feed_due": "Pohnojit teď"
     },
     "close": "Zavřít",
-    "device_page": "Otevřít stránku zařízení"
+    "device_page": "Otevřít stránku zařízení",
+    "fertilized": "Pohnojeno"
   },
   "da": {
     "now": "Nu",
@@ -851,10 +884,13 @@ const I18N = {
         "deep_soak_first": "Dybdevanding først"
       },
       "add_zone": "Tilføj zone",
-      "show_add": "Vis knappen Tilføj zone"
+      "show_add": "Vis knappen Tilføj zone",
+      "next_feed": "Næste gødskning",
+      "feed_due": "Gød nu"
     },
     "close": "Luk",
-    "device_page": "Åbn enhedssiden"
+    "device_page": "Åbn enhedssiden",
+    "fertilized": "Gødsket"
   },
   "hu": {
     "now": "Most",
@@ -921,10 +957,13 @@ const I18N = {
         "deep_soak_first": "Előbb mélyöntözés"
       },
       "add_zone": "Zóna hozzáadása",
-      "show_add": "A Zóna hozzáadása gomb megjelenítése"
+      "show_add": "A Zóna hozzáadása gomb megjelenítése",
+      "next_feed": "Következő tápanyag-utánpótlás",
+      "feed_due": "Tápanyag most"
     },
     "close": "Bezárás",
-    "device_page": "Eszközoldal megnyitása"
+    "device_page": "Eszközoldal megnyitása",
+    "fertilized": "Tápanyag pótolva"
   },
   "nb": {
     "now": "Nå",
@@ -991,10 +1030,13 @@ const I18N = {
         "deep_soak_first": "Dypvanning først"
       },
       "add_zone": "Legg til sone",
-      "show_add": "Vis knappen Legg til sone"
+      "show_add": "Vis knappen Legg til sone",
+      "next_feed": "Neste gjødsling",
+      "feed_due": "Gjødsle nå"
     },
     "close": "Lukk",
-    "device_page": "Åpne enhetssiden"
+    "device_page": "Åpne enhetssiden",
+    "fertilized": "Gjødslet"
   },
   "pt-BR": {
     "now": "Agora",
@@ -1061,10 +1103,13 @@ const I18N = {
         "deep_soak_first": "Irrigação profunda primeiro"
       },
       "add_zone": "Adicionar zona",
-      "show_add": "Mostrar o botão Adicionar zona"
+      "show_add": "Mostrar o botão Adicionar zona",
+      "next_feed": "Próxima adubação",
+      "feed_due": "Adubar agora"
     },
     "close": "Fechar",
-    "device_page": "Abrir a página do dispositivo"
+    "device_page": "Abrir a página do dispositivo",
+    "fertilized": "Adubado"
   },
   "ru": {
     "now": "Сейчас",
@@ -1131,10 +1176,13 @@ const I18N = {
         "deep_soak_first": "Сначала глубокий полив"
       },
       "add_zone": "Добавить зону",
-      "show_add": "Показывать кнопку «Добавить зону»"
+      "show_add": "Показывать кнопку «Добавить зону»",
+      "next_feed": "Следующая подкормка",
+      "feed_due": "Подкормить сейчас"
     },
     "close": "Закрыть",
-    "device_page": "Открыть страницу устройства"
+    "device_page": "Открыть страницу устройства",
+    "fertilized": "Подкормлено"
   },
   "sk": {
     "now": "Teraz",
@@ -1201,10 +1249,13 @@ const I18N = {
         "deep_soak_first": "Najprv hĺbková zálievka"
       },
       "add_zone": "Pridať zónu",
-      "show_add": "Zobraziť tlačidlo Pridať zónu"
+      "show_add": "Zobraziť tlačidlo Pridať zónu",
+      "next_feed": "Ďalšie hnojenie",
+      "feed_due": "Pohnojiť teraz"
     },
     "close": "Zavrieť",
-    "device_page": "Otvoriť stránku zariadenia"
+    "device_page": "Otvoriť stránku zariadenia",
+    "fertilized": "Pohnojené"
   },
   "uk": {
     "now": "Зараз",
@@ -1271,10 +1322,13 @@ const I18N = {
         "deep_soak_first": "Спершу глибокий полив"
       },
       "add_zone": "Додати зону",
-      "show_add": "Показувати кнопку «Додати зону»"
+      "show_add": "Показувати кнопку «Додати зону»",
+      "next_feed": "Наступне підживлення",
+      "feed_due": "Підживити зараз"
     },
     "close": "Закрити",
-    "device_page": "Відкрити сторінку пристрою"
+    "device_page": "Відкрити сторінку пристрою",
+    "fertilized": "Підживлено"
   },
   "zh-Hans": {
     "now": "当前",
@@ -1341,10 +1395,13 @@ const I18N = {
         "deep_soak_first": "先深层浇灌"
       },
       "add_zone": "添加区域",
-      "show_add": "显示“添加区域”按钮"
+      "show_add": "显示“添加区域”按钮",
+      "next_feed": "下次施肥",
+      "feed_due": "立即施肥"
     },
     "close": "关闭",
-    "device_page": "打开设备页面"
+    "device_page": "打开设备页面",
+    "fertilized": "已施肥"
   }
 };
 
@@ -1356,6 +1413,7 @@ const NOW = [
   "sensor.soil_moisture_status",
   "sensor.next_irrigation_estimate",
   "sensor.days_until_next_run",
+  "sensor.next_fertilizing",
   "sensor.last_cycle_water_liters",
   "sensor.rain_today",
   "sensor.routine_weekly_target",
@@ -1366,6 +1424,8 @@ const NOW = [
 // Shown only while they say something (deficit mode on).
 const ONLY_WHEN = {
   "sensor.deficit_status": (state) => state && state.state !== "off",
+  // Once a first feed is recorded.
+  "sensor.next_fertilizing": (state) => state && !["unknown", "unavailable"].includes(state.state),
 };
 const CONTROLS = ["switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
@@ -1408,7 +1468,7 @@ const SETTINGS_GROUPS = [
 const HANDLED = new Set([
   "sensor.status", "button.run_routine", "button.run_deep_soak", "button.snooze_today",
   "button.reset_lock", "switch.service_mode", "button.service_run_1_min", "button.service_run_5_min",
-  "button.service_run_10_min",
+  "button.service_run_10_min", "button.fertilized_today",
 ]);
 
 function t(hass, key) {
@@ -1616,6 +1676,7 @@ class ZoneFlowCard extends HTMLElement {
         ["button.run_routine", t(hass, "water_now"), "mdi:watering-can"],
         ["button.run_deep_soak", t(hass, "deep_soak_now"), "mdi:waves"],
         ["button.snooze_today", t(hass, "snooze"), "mdi:sleep"],
+        ["button.fertilized_today", t(hass, "fertilized"), "mdi:sprout"],
       ]),
       ...rows(CONTROLS),
     ];
@@ -1941,6 +2002,19 @@ function formatNext(hass, iso) {
   }
 }
 
+function formatDay(hass, isoDate) {
+  // "2026-10-12" (a date sensor) -> "Mon 12 Oct" in the user's language.
+  const [y, m, d] = String(isoDate).split("-").map(Number);
+  if (!y || !m || !d) return String(isoDate);
+  const lang = hass.locale?.language || hass.language || "en";
+  const options = { weekday: "short", day: "numeric", month: "short" };
+  try {
+    return new Intl.DateTimeFormat(lang, { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d)));
+  } catch (err) {
+    return new Intl.DateTimeFormat(undefined, { ...options, timeZone: "UTC" }).format(new Date(Date.UTC(y, m - 1, d)));
+  }
+}
+
 function formatState(hass, stateObj) {
   if (!stateObj || ["unknown", "unavailable"].includes(stateObj.state)) return "—";
   if (typeof hass.formatEntityState === "function") return hass.formatEntityState(stateObj);
@@ -1987,6 +2061,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const last = measured && !measured.hidden ? measured.entity_id : estimate?.entity_id;
       const button = keyed["button.run_routine"]?.entity_id;
       const plant = status?.attributes?.plant;
+      const feed = hass.states[keyed["sensor.next_fertilizing"]?.entity_id];
       return {
         ...zone,
         icon: this._config.icons?.[zone.device_id] || PLANT_ICONS[plant] || DEFAULT_ZONE_ICON,
@@ -1995,6 +2070,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
         next: status?.attributes?.next_watering,
         last,
         button,
+        feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
+        feedDue: Boolean(feed?.attributes?.due),
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -2051,6 +2128,11 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .name { display: flex; align-items: center; gap: 10px; font-weight: 500; min-width: 0; }
       .name span, .status span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .name ha-icon { color: var(--state-icon-color, var(--primary-color)); flex: none; }
+      .names { display: flex; flex-direction: column; min-width: 0; }
+      .feed { display: flex; align-items: center; gap: 3px; font-weight: 400; color: var(--secondary-text-color); }
+      .feed[hidden] { display: none; }
+      .feed ha-icon { --mdc-icon-size: 14px; color: inherit; }
+      .feed.due { color: var(--warning-color, #ff9800); font-weight: 500; }
       .status { display: flex; align-items: center; gap: 6px; min-width: 0; color: var(--primary-text-color); }
       .status ha-icon { --mdc-icon-size: 18px; flex: none; color: var(--secondary-text-color); }
       .status.warn, .status.warn ha-icon { color: var(--warning-color, #ff9800); }
@@ -2126,7 +2208,17 @@ class ZoneFlowOverviewCard extends HTMLElement {
       icon.setAttribute("icon", zone.icon);
       const label = document.createElement("span");
       label.textContent = zone.name;
-      name.append(icon, label);
+      // Next fertilizing, small under the name (once a feed is recorded).
+      const feed = document.createElement("small");
+      feed.className = "feed";
+      const feedIcon = document.createElement("ha-icon");
+      feedIcon.setAttribute("icon", "mdi:sprout");
+      const feedText = document.createElement("span");
+      feed.append(feedIcon, feedText);
+      const names = document.createElement("div");
+      names.className = "names";
+      names.append(label, feed);
+      name.append(icon, names);
       const status = document.createElement("div");
       status.className = "status";
       const statusIcon = document.createElement("ha-icon");
@@ -2175,7 +2267,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       if (!details.hidden) this._fillDetails(zone, details);
       wrap.append(row, details);
       card.appendChild(wrap);
-      this._rows[zone.device_id] = { status, statusIcon, statusText, next, last, water, details };
+      this._rows[zone.device_id] = { status, statusIcon, statusText, next, last, water, details, feed, feedText };
     }
     addButton();
   }
@@ -2205,6 +2297,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
       row.next.textContent = zone.code === "paused" ? "—" : formatNext(hass, zone.next);
       row.last.textContent = zone.last ? formatState(hass, hass.states[zone.last]) : "—";
       row.water.disabled = !zone.button || zone.code === "paused";
+      row.feed.hidden = !zone.feed;
+      row.feed.classList.toggle("due", zone.feedDue);
+      row.feedText.textContent = zone.feed ? (zone.feedDue ? t(hass, "overview.feed_due") : formatDay(hass, zone.feed)) : "";
+      row.feed.title = zone.feed ? `${t(hass, "overview.next_feed")}: ${formatDay(hass, zone.feed)}` : "";
       if (!row.details.hidden) {
         const inner = row.details.querySelector("zoneflow-card");
         if (inner) inner.hass = hass;

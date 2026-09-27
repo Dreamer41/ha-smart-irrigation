@@ -183,8 +183,13 @@ and both zones get less water than their calibrated runtime assumes.
 - **Snooze Today**, a **deep-soak on/off switch**, and **self-tuning**: three
   "water now" presses in a row while the model says not yet shorten the
   routine dry-down a notch; three snoozes lengthen it.
-- **Health journal**: condition, notes, last/next fertilizing — for you only,
-  never read by the watering logic.
+- **Health journal**: condition and notes — for you only, never read by
+  the watering logic.
+- **Fertilizing reminders**: set the Last Fertilizing date (or press
+  **Fertilized Today**) and a Fertilizing Interval (1–3 weeks or 1–12
+  months); **Next Fertilizing** shows the due date, both cards show it, and
+  a phone message reminds you on the day (not while the zone is paused).
+  Fertilizing never changes the watering.
 - **CSV event log** per zone: every run, skip and warning with the numbers
   behind it.
 

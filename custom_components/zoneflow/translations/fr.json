@@ -454,6 +454,9 @@
       },
       "service_run_10_min": {
         "name": "Maintenance 10 min"
+      },
+      "fertilized_today": {
+        "name": "Engrais apporté aujourd'hui"
       }
     },
     "binary_sensor": {
@@ -552,6 +555,9 @@
       },
       "status": {
         "name": "État"
+      },
+      "next_fertilizing": {
+        "name": "Prochain apport d'engrais"
       }
     },
     "select": {
@@ -598,8 +604,11 @@
         }
       },
       "fertilizing_interval": {
-        "name": "Prochain apport d'engrais dans",
+        "name": "Intervalle d'apport d'engrais",
         "state": {
+          "1w": "1 semaine",
+          "2w": "2 semaines",
+          "3w": "3 semaines",
           "1": "1 mois",
           "2": "2 mois",
           "3": "3 mois",

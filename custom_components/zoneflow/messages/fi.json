@@ -132,6 +132,10 @@
     "flow_measure_failed": {
       "title": "⚠️ Virtaamaa ei mitattu",
       "message": "Virtausmittari laski {volume} {minutes} minuutissa, mistä ei saa käyttökelpoista virtaamaa. Tarkista mittari ja pinta-ala, tai laske virtaama suuttimista (Määritä → Virtaama)."
+    },
+    "fertilize_due": {
+      "title": "🌱 {zone}: lannoituksen aika",
+      "message": "Ajankohta: {date}. Paina Lannoitettu tänään, kun lannoitus on tehty; seuraava päivä lasketaan siitä eteenpäin."
     }
   },
   "notes": {

@@ -1930,8 +1930,13 @@ views:
             name: Notes
           - entity: <datetime.zone_last_fertilizing>
             name: Last Fertilizing
-          - entity: <select.zone_next_fertilizing_in>
-            name: Next Fertilizing In
+          # select.<zone>_next_fertilizing_in on zones set up before 1.5.0
+          - entity: <select.zone_fertilizing_interval>
+            name: Fertilizing Interval
+          - entity: <sensor.zone_next_fertilizing>
+            name: Next Fertilizing
+          - entity: <button.zone_fertilized_today>
+            name: Fertilized Today
 
       - type: entities
         title: Site & Growth Profile
