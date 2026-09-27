@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
-          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, pulsen, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone."
+          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Een bodemvochtsensor (%) bij de wortels van de planten in deze zone. Droge grond haalt de routinewatergift naar voren, natte grond slaat hem over, en daartussen bepaalt het normale schema. De grenzen voor droog en nat staan op de apparaatpagina van de zone.",
           "notify_entity": "De meldingsentiteit van je telefoon uit de Home Assistant Companion-app. ZoneFlow stuurt storingen en belangrijke gebeurtenissen daarheen, en ook het weekoverzicht als je dat aanzet. Zonder telefoon komen ze alleen in het logboek.",
           "weather_entity": "Een weerentiteit met weersverwachting. ZoneFlow stelt een watergift uit als er genoeg regen wordt verwacht (maar niet te veel dagen achter elkaar), en gebruikt de actuele temperatuur voor de vorstbeveiliging als er geen temperatuursensor is.",
-          "soil_type": "Ter informatie: het verandert de watergift niet zelf. Het staat op de sensor Bodemprofiel van de zone en helpt je de pulsen en intrekpauzes op de apparaatpagina te kiezen: klei neemt water langzaam op en wil meer, kortere pulsen met langere intrekpauzes ertussen; zand kan het in minder pulsen aan.",
-          "drainage": "Hoe snel het water verdwijnt na een flinke watergift of regenbui. Net als de grondsoort ter informatie: traag doorlatende grond wil meer, kortere pulsen.",
-          "slope": "Net als de grondsoort ter informatie: op een helling loopt water weg voordat het intrekt, dus meer, kortere pulsen helpen.",
-          "irrigation_method": "Hoe het water wordt gegeven. Net als de grondsoort ter informatie; hoeveel water er komt, bepaalt het debiet (Configureren → Debiet).",
+          "soil_type": "Bepaalt hoe elke watergift in pulsen wordt verdeeld, zodat het water intrekt in plaats van wegloopt: ongeveer 3 mm per puls op klei, 15 mm op leem, 30 mm op zand, met een intrekpauze van 30 minuten tussen de pulsen (een uur op klei en kleiige leem). \"Weet niet\" gebruikt een voorzichtige middenwaarde. Je kunt het later ook wijzigen op de apparaatpagina van de zone.",
+          "drainage": "Traag doorlatende grond (met een harde, verdichte laag eronder) krijgt minder water per puls en een intrekpauze van een uur tussen de pulsen.",
+          "slope": "Op een helling loopt water weg voordat het intrekt: matig hellend voegt één puls toe aan elke watergift, steil twee.",
+          "irrigation_method": "Hoe het water wordt gegeven. Met druppelslang of zweetslang op zand begint een nieuwe zone met minstens twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er komt, bepaalt het debiet (Configureren → Debiet).",
           "growth_ramp_profile": "Geeft jonge planten minder water en bouwt dat op naar het volledige weekdoel naarmate ze ouder worden, gerekend vanaf de Plant- / verplantdatum op de apparaatpagina van de zone. Uit: altijd het volledige doel. Aangepast: stel je eigen curve in op de apparaatpagina.",
           "csv_path": "Een bestand waarin elke watergift, overgeslagen beurt en waarschuwing met de cijfers wordt vastgelegd, om na te kijken wat ZoneFlow deed (opent in elk spreadsheetprogramma). Het voorgestelde bestand in je configuratiemap is prima.",
           "deep_soak_enabled": "Een diepe watergift is een grote, langzame watergift om de paar weken (om te beginnen elke 14 dagen) die de grond diep nat maakt, zodat wortels diep groeien. Goed voor bomen, heesters en vaste planten; zet hem uit voor ondiep wortelende planten zoals sla en kruiden. De routinewatergift draait hoe dan ook.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Een bodemvochtsensor (%) bij de wortels van de planten in deze zone. Droge grond haalt de routinewatergift naar voren, natte grond slaat hem over, en daartussen bepaalt het normale schema. De grenzen voor droog en nat staan op de apparaatpagina van de zone.",
           "notify_entity": "De meldingsentiteit van je telefoon uit de Home Assistant Companion-app. ZoneFlow stuurt storingen en belangrijke gebeurtenissen daarheen, en ook het weekoverzicht als je dat aanzet. Zonder telefoon komen ze alleen in het logboek.",
           "weather_entity": "Een weerentiteit met weersverwachting. ZoneFlow stelt een watergift uit als er genoeg regen wordt verwacht (maar niet te veel dagen achter elkaar), en gebruikt de actuele temperatuur voor de vorstbeveiliging als er geen temperatuursensor is.",
-          "soil_type": "Ter informatie: het verandert de watergift niet zelf. Het staat op de sensor Bodemprofiel van de zone en helpt je de pulsen en intrekpauzes op de apparaatpagina te kiezen: klei neemt water langzaam op en wil meer, kortere pulsen met langere intrekpauzes ertussen; zand kan het in minder pulsen aan.",
-          "drainage": "Hoe snel het water verdwijnt na een flinke watergift of regenbui. Net als de grondsoort ter informatie: traag doorlatende grond wil meer, kortere pulsen.",
-          "slope": "Net als de grondsoort ter informatie: op een helling loopt water weg voordat het intrekt, dus meer, kortere pulsen helpen.",
-          "irrigation_method": "Hoe het water wordt gegeven. Net als de grondsoort ter informatie; hoeveel water er komt, bepaalt het debiet (Configureren → Debiet).",
+          "soil_type": "Bepaalt hoe elke watergift in pulsen wordt verdeeld, zodat het water intrekt in plaats van wegloopt: ongeveer 3 mm per puls op klei, 15 mm op leem, 30 mm op zand, met een intrekpauze van 30 minuten tussen de pulsen (een uur op klei en kleiige leem). \"Weet niet\" gebruikt een voorzichtige middenwaarde. Je kunt het later ook wijzigen op de apparaatpagina van de zone.",
+          "drainage": "Traag doorlatende grond (met een harde, verdichte laag eronder) krijgt minder water per puls en een intrekpauze van een uur tussen de pulsen.",
+          "slope": "Op een helling loopt water weg voordat het intrekt: matig hellend voegt één puls toe aan elke watergift, steil twee.",
+          "irrigation_method": "Hoe het water wordt gegeven. Met druppelslang of zweetslang op zand begint een nieuwe zone met minstens twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er komt, bepaalt het debiet (Configureren → Debiet).",
           "growth_ramp_profile": "Geeft jonge planten minder water en bouwt dat op naar het volledige weekdoel naarmate ze ouder worden, gerekend vanaf de Plant- / verplantdatum op de apparaatpagina van de zone. Uit: altijd het volledige doel. Aangepast: stel je eigen curve in op de apparaatpagina.",
           "csv_path": "Een bestand waarin elke watergift, overgeslagen beurt en waarschuwing met de cijfers wordt vastgelegd, om na te kijken wat ZoneFlow deed (opent in elk spreadsheetprogramma). Het voorgestelde bestand in je configuratiemap is prima.",
           "deep_soak_enabled": "Een diepe watergift is een grote, langzame watergift om de paar weken (om te beginnen elke 14 dagen) die de grond diep nat maakt, zodat wortels diep groeien. Goed voor bomen, heesters en vaste planten; zet hem uit voor ondiep wortelende planten zoals sla en kruiden. De routinewatergift draait hoe dan ook.",
@@ -640,6 +640,24 @@
           "fri": "Vrijdag",
           "sat": "Zaterdag",
           "sun": "Zondag"
+        }
+      },
+      "drainage": {
+        "name": "Drainage",
+        "state": {
+          "unknown": "Weet niet",
+          "fast": "Snel doorlatend",
+          "medium": "Gemiddeld",
+          "slow": "Traag doorlatend"
+        }
+      },
+      "slope": {
+        "name": "Helling",
+        "state": {
+          "flat": "Vlak",
+          "slight": "Licht hellend",
+          "moderate": "Matig hellend",
+          "steep": "Steil"
         }
       }
     },

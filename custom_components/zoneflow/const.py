@@ -99,6 +99,7 @@ DEFAULT_DRAINAGE = "unknown"
 DEFAULT_SLOPE = "flat"
 DEFAULT_IRRIGATION_METHOD = "drip"
 
+
 # A pure human journal entity (select.py's ZoneFlowHealthSelect + text.py's
 # ZoneFlowHealthNotesText) -- nothing in the controller reads either value,
 # they exist purely so a person (or anyone else who tends the zone) has
@@ -564,52 +565,52 @@ PLANT_CUSTOM = "custom"
 PLANT_PRESETS: dict[str, dict] = {
     "tomatoes": {
         "numbers": {"target_weekly_mm": 30.0, "target_weekly_hot_mm": 40.0, "target_weekly_cool_mm": 20.0,
-                    "crop_coefficient": 1.05, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 1.05},
         "deep_soak": False, "ramp": "fast_annual",
     },
     "chilis": {
         "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 15.0,
-                    "crop_coefficient": 0.95, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 0.95},
         "deep_soak": False, "ramp": "slow_fruiting",
     },
     "leafy_vegetables": {
         "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 18.0,
-                    "crop_coefficient": 1.0, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 1.0},
         "deep_soak": False, "ramp": "fast_annual",
     },
     "herbs": {
         "numbers": {"target_weekly_mm": 15.0, "target_weekly_hot_mm": 22.0, "target_weekly_cool_mm": 10.0,
-                    "crop_coefficient": 0.7, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 0.7},
         "deep_soak": False, "ramp": "off",
     },
     "strawberries": {
         "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 18.0,
-                    "crop_coefficient": 0.85, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 0.85},
         "deep_soak": False, "ramp": "off",
     },
     "flowers": {
         "numbers": {"target_weekly_mm": 22.0, "target_weekly_hot_mm": 30.0, "target_weekly_cool_mm": 15.0,
-                    "crop_coefficient": 0.9, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 0.9},
         "deep_soak": False, "ramp": "fast_annual",
     },
     "lawn": {
         "numbers": {"target_weekly_mm": 25.0, "target_weekly_hot_mm": 35.0, "target_weekly_cool_mm": 15.0,
-                    "crop_coefficient": 0.8, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 0.8},
         "deep_soak": False, "ramp": "off",
     },
     "shrubs": {
         "numbers": {"target_weekly_mm": 15.0, "target_weekly_hot_mm": 25.0, "target_weekly_cool_mm": 10.0,
-                    "crop_coefficient": 0.6, "routine_pulse_count": 2.0},
+                    "crop_coefficient": 0.6},
         "deep_soak": True, "ramp": "off",
     },
     "young_tree": {
         "numbers": {"target_weekly_mm": 20.0, "target_weekly_hot_mm": 30.0, "target_weekly_cool_mm": 12.0,
-                    "crop_coefficient": 0.6, "routine_pulse_count": 3.0},
+                    "crop_coefficient": 0.6},
         "deep_soak": True, "ramp": "established_perennial",
     },
     "fruit_tree": {
         "numbers": {"target_weekly_mm": 30.0, "target_weekly_hot_mm": 45.0, "target_weekly_cool_mm": 20.0,
-                    "crop_coefficient": 0.8, "routine_pulse_count": 3.0},
+                    "crop_coefficient": 0.8},
         "deep_soak": True, "ramp": "off",
     },
 }

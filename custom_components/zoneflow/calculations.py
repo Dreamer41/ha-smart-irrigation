@@ -17,6 +17,35 @@ import math
 from dataclasses import dataclass
 
 
+# Cycle and soak: how a watering is split into pulses, from the soil and
+# the slope (soil_pulse_count below). Sources:
+# - Water per pulse: Texas A&M AgriLife, "Preventing Runoff with Cycle and
+#   Soak Irrigation" -- its maximum runtimes per cycle work out to a nearly
+#   constant depth per soil whatever the sprinkler's rate (clay ~3 mm, loam
+#   ~15 mm, sand ~30 mm); sandy loam and clay loam sit between them, in
+#   line with FAO's basic infiltration rates (sandy loam 20-30 mm/h, clay
+#   loam 5-10, clay 1-5).
+# - Slow drainage (a compact subsoil): the USDA table of maximum
+#   application rates allows about 70 % of the same soil without it.
+# - Slope: one extra pulse on a moderate slope, two on a steep one (a
+#   gentle slope rarely runs off).
+# - Soak between pulses: 30 to 60 minutes, at least an hour on heavy clay
+#   (Texas A&M); an hour, too, on slow-draining soil.
+# Unknown soil: a cautious middle value.
+SOIL_MM_PER_PULSE = {"sandy": 30.0, "sandy_loam": 20.0, "loam": 15.0, "clay_loam": 7.0, "clay": 3.0, "unknown": 10.0}
+SLOW_DRAINAGE_FACTOR = 0.7
+SLOPE_EXTRA_PULSES = {"flat": 0, "slight": 0, "moderate": 1, "steep": 2}
+MAX_PULSES = 8  # the pulse-count sliders' own maximum
+SOAK_MINUTES_HEAVY = 60.0  # clay, clay loam, or slow drainage
+SOAK_MINUTES = 30.0
+HEAVY_SOILS = ("clay", "clay_loam")
+# Drip or a soaker hose on light soil: at least two pulses, so the water
+# stays in the root zone instead of draining straight past it (pulse drip
+# irrigation research).
+LIGHT_SOILS = ("sandy", "sandy_loam")
+LOCAL_METHODS = ("drip", "soaker_hose")
+
+
 def jinja_round(value: float, ndigits: int = 0) -> float:
     """Round the way Jinja's default `| round(ndigits)` does (half-up)."""
     factor = 10**ndigits
@@ -254,8 +283,40 @@ def split_pulses(total_minutes: int, pulse_count: int, min_pulse_minutes: float)
     return count, max(total_minutes / count, min_pulse_minutes)
 
 
+def mm_per_pulse(soil: str, drainage: str) -> float:
+    """How much water the soil takes in one pulse before it starts to run
+    off (the tables at the top of this file have the sources)."""
+    mm = SOIL_MM_PER_PULSE.get(soil, SOIL_MM_PER_PULSE["unknown"])
+    return mm * SLOW_DRAINAGE_FACTOR if drainage == "slow" else mm
+
+
+def soil_pulse_count(depth_mm: float, soil: str, drainage: str, slope: str, minimum: int) -> int:
+    """Pulses for one watering of depth_mm: as many as the soil needs to take
+    it in without runoff, one more on a moderate slope and two on a steep
+    one -- never fewer than the zone's own pulse-count setting (minimum),
+    never more than MAX_PULSES."""
+    needed = math.ceil(max(depth_mm, 0.0) / mm_per_pulse(soil, drainage) - 1e-9) if depth_mm > 0 else 1
+    needed = max(needed, 1) + SLOPE_EXTRA_PULSES.get(slope, 0)
+    return min(max(needed, int(minimum), 1), MAX_PULSES)
+
+
+def soak_minutes(soil: str, drainage: str) -> float:
+    """The soak between pulses a soil wants (sources at the top of this file)."""
+    return SOAK_MINUTES_HEAVY if soil in HEAVY_SOILS or drainage == "slow" else SOAK_MINUTES
+
+
+def starting_pulse_count(soil: str, method: str) -> int:
+    """A new zone's pulse-count setting (the minimum): one, or two for drip
+    or a soaker hose on light soil."""
+    return 2 if soil in LIGHT_SOILS and method in LOCAL_METHODS else 1
+
+
 def plan_deep_soak(
-    target_mm: float, flow_rate: float, pulse_count: int = 3, min_pulse_minutes: int = 5
+    target_mm: float,
+    flow_rate: float,
+    pulse_count: int = 3,
+    min_pulse_minutes: int = 5,
+    site: tuple[str, str, str] | None = None,
 ) -> DeepSoakPlan:
     """Port of the variables block in avocado_deep_soak.
 
@@ -269,6 +330,8 @@ def plan_deep_soak(
     ZoneFlowController.run_deep_soak -- chosen based on drainage (slow-
     draining soil generally wants more, shorter pulses)."""
     total_runtime = int(jinja_round(target_mm / flow_rate, 0))
+    if site is not None:  # (soil, drainage, slope): cycle and soak
+        pulse_count = soil_pulse_count(target_mm, *site, minimum=pulse_count)
     count, pulse_runtime = split_pulses(total_runtime, pulse_count, min_pulse_minutes)
     return DeepSoakPlan(target_mm, flow_rate, total_runtime, pulse_runtime, count)
 
@@ -347,6 +410,7 @@ def plan_routine_irrigation(
     pulse_count: int = 3,
     min_pulse_minutes: int = 1,
     weekly_target_override_mm: float | None = None,
+    site: tuple[str, str, str] | None = None,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -377,6 +441,8 @@ def plan_routine_irrigation(
     )
     needed_mm = max(interval_target_mm - eff_rain, 0.0)
     calc_runtime = int(jinja_round(needed_mm / flow_rate, 0))
+    if site is not None:  # (soil, drainage, slope): cycle and soak
+        pulse_count = soil_pulse_count(needed_mm, *site, minimum=pulse_count)
     count, pulse_runtime = split_pulses(calc_runtime, pulse_count, min_pulse_minutes)
     return RoutinePlan(
         interval_days=interval_days,

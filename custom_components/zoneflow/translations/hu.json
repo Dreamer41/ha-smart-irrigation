@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
-          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, szakaszok, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán."
+          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
           "notify_entity": "A telefonod értesítési entitása a Home Assistant Companion alkalmazásból. A ZoneFlow ide küldi a hibákat és a fontosabb eseményeket, és a heti összesítőt, ha bekapcsolod. Nélküle ezek csak a naplóba kerülnek.",
           "weather_entity": "Előrejelzéssel rendelkező időjárás-entitás. A ZoneFlow elhalasztja az öntözést, ha elég eső várható (de nem túl sok napig egymás után), és a jelenlegi hőmérsékletét használja a fagyvédelemhez, ha nincs hőmérséklet-érzékelő.",
-          "soil_type": "Tájékoztató jellegű: magától nem változtat az öntözésen. A zóna Talajprofil érzékelőjén jelenik meg, és segít kiválasztani a szakaszokat és a beszivárgási szüneteket az eszközoldalon: az agyag lassan veszi fel a vizet, ezért több, rövidebb szakasz kell neki, köztük hosszabb szünettel; a homok kevesebb szakaszban is felveszi.",
-          "drainage": "Milyen gyorsan tűnik el a víz egy bő öntözés vagy eső után. Tájékoztató jellegű, mint a talajtípus: a lassan szikkadó talajnak több, rövidebb szakasz kell.",
-          "slope": "Tájékoztató jellegű, mint a talajtípus: lejtőn a víz elfolyik, mielőtt beszivárogna, ezért több, rövidebb szakasz segít.",
-          "irrigation_method": "Hogyan jut ki a víz. Tájékoztató jellegű, mint a talajtípus; hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
+          "soil_type": "Meghatározza, hogyan oszlik szakaszokra minden öntözés, hogy a víz beszivárogjon, ne folyjon el: szakaszonként kb. 3 mm agyagon, 15 mm vályogon, 30 mm homokon, a szakaszok között 30 perc beszivárgási szünettel (agyagon és agyagos vályogon egy órával). A \"Nem tudom\" óvatos, közepes értéket használ. Később a zóna eszközoldalán is módosíthatod.",
+          "drainage": "A lassan szikkadó talaj (alatta kemény, tömör réteggel) szakaszonként kevesebb vizet kap, a szakaszok között pedig egy óra beszivárgási szünetet.",
+          "slope": "Lejtőn a víz elfolyik, mielőtt beszivárogna: a közepes lejtő minden öntözéshez egy szakaszt ad hozzá, a meredek kettőt.",
+          "irrigation_method": "Hogyan jut ki a víz. Csepegtetővel vagy szivárgócsővel homokon egy új zóna legalább két szakasszal indul, hogy a víz a gyökérzónában maradjon. Hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
           "growth_ramp_profile": "A fiatal növények kevesebb vizet kapnak, és ahogy nőnek, ez a teljes heti célig emelkedik, a zóna eszközoldalán megadott Ültetés / átültetés dátumától számítva. Ki: mindig a teljes cél. Egyéni: rajzold meg a saját görbédet az eszközoldalon.",
           "csv_path": "Fájl, amelybe minden öntözés, kihagyás és figyelmeztetés bekerül a számaival, hogy ellenőrizhesd, mit csinált a ZoneFlow (bármilyen táblázatkezelő megnyitja). A konfigurációs mappádban javasolt fájl megfelel.",
           "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés néhány hetente (kezdetben 14 naponta), amely mélyen átnedvesíti a talajt, így a gyökerek mélyre nőnek. Fáknak, cserjéknek és évelőknek jó; sekélyen gyökerező növényeknél, mint a saláta és a fűszernövények, kapcsold ki. A rendszeres öntözés mindenképp fut.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
           "notify_entity": "A telefonod értesítési entitása a Home Assistant Companion alkalmazásból. A ZoneFlow ide küldi a hibákat és a fontosabb eseményeket, és a heti összesítőt, ha bekapcsolod. Nélküle ezek csak a naplóba kerülnek.",
           "weather_entity": "Előrejelzéssel rendelkező időjárás-entitás. A ZoneFlow elhalasztja az öntözést, ha elég eső várható (de nem túl sok napig egymás után), és a jelenlegi hőmérsékletét használja a fagyvédelemhez, ha nincs hőmérséklet-érzékelő.",
-          "soil_type": "Tájékoztató jellegű: magától nem változtat az öntözésen. A zóna Talajprofil érzékelőjén jelenik meg, és segít kiválasztani a szakaszokat és a beszivárgási szüneteket az eszközoldalon: az agyag lassan veszi fel a vizet, ezért több, rövidebb szakasz kell neki, köztük hosszabb szünettel; a homok kevesebb szakaszban is felveszi.",
-          "drainage": "Milyen gyorsan tűnik el a víz egy bő öntözés vagy eső után. Tájékoztató jellegű, mint a talajtípus: a lassan szikkadó talajnak több, rövidebb szakasz kell.",
-          "slope": "Tájékoztató jellegű, mint a talajtípus: lejtőn a víz elfolyik, mielőtt beszivárogna, ezért több, rövidebb szakasz segít.",
-          "irrigation_method": "Hogyan jut ki a víz. Tájékoztató jellegű, mint a talajtípus; hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
+          "soil_type": "Meghatározza, hogyan oszlik szakaszokra minden öntözés, hogy a víz beszivárogjon, ne folyjon el: szakaszonként kb. 3 mm agyagon, 15 mm vályogon, 30 mm homokon, a szakaszok között 30 perc beszivárgási szünettel (agyagon és agyagos vályogon egy órával). A \"Nem tudom\" óvatos, közepes értéket használ. Később a zóna eszközoldalán is módosíthatod.",
+          "drainage": "A lassan szikkadó talaj (alatta kemény, tömör réteggel) szakaszonként kevesebb vizet kap, a szakaszok között pedig egy óra beszivárgási szünetet.",
+          "slope": "Lejtőn a víz elfolyik, mielőtt beszivárogna: a közepes lejtő minden öntözéshez egy szakaszt ad hozzá, a meredek kettőt.",
+          "irrigation_method": "Hogyan jut ki a víz. Csepegtetővel vagy szivárgócsővel homokon egy új zóna legalább két szakasszal indul, hogy a víz a gyökérzónában maradjon. Hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
           "growth_ramp_profile": "A fiatal növények kevesebb vizet kapnak, és ahogy nőnek, ez a teljes heti célig emelkedik, a zóna eszközoldalán megadott Ültetés / átültetés dátumától számítva. Ki: mindig a teljes cél. Egyéni: rajzold meg a saját görbédet az eszközoldalon.",
           "csv_path": "Fájl, amelybe minden öntözés, kihagyás és figyelmeztetés bekerül a számaival, hogy ellenőrizhesd, mit csinált a ZoneFlow (bármilyen táblázatkezelő megnyitja). A konfigurációs mappádban javasolt fájl megfelel.",
           "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés néhány hetente (kezdetben 14 naponta), amely mélyen átnedvesíti a talajt, így a gyökerek mélyre nőnek. Fáknak, cserjéknek és évelőknek jó; sekélyen gyökerező növényeknél, mint a saláta és a fűszernövények, kapcsold ki. A rendszeres öntözés mindenképp fut.",
@@ -640,6 +640,24 @@
           "fri": "Péntek",
           "sat": "Szombat",
           "sun": "Vasárnap"
+        }
+      },
+      "drainage": {
+        "name": "Vízelvezetés",
+        "state": {
+          "unknown": "Nem tudom",
+          "fast": "Gyorsan szikkadó",
+          "medium": "Közepes",
+          "slow": "Lassan szikkadó"
+        }
+      },
+      "slope": {
+        "name": "Lejtés",
+        "state": {
+          "flat": "Sík",
+          "slight": "Enyhe lejtő",
+          "moderate": "Közepes lejtő",
+          "steep": "Meredek lejtő"
         }
       }
     },

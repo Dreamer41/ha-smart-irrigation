@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Bliver zonens enhedsnavn og starten på dens entitetsnavne og vises i beskederne på telefonen. F.eks. \"Tomatbed\", \"Plæne foran\".",
-          "plant": "Udfylder fornuftige startværdier for afgrøden: ugemål for vand, afgrødefaktor, pulser, dybdevanding og vækstoptrapning. \"Noget andet\" starter fra generelle værdier. Du kan ændre dem alle senere på zonens enhedsside."
+          "plant": "Udfylder fornuftige startværdier for afgrøden: ugemål for vand, afgrødefaktor, dybdevanding og vækstoptrapning. \"Noget andet\" starter fra generelle værdier. Du kan ændre dem alle senere på zonens enhedsside."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "En jordfugtighedssensor (%) i zonens rodzone. Tør jord rykker rutinevandingen frem, våd jord springer den over, og midt imellem bestemmer den normale tidsplan. Grænserne for tør og våd finder du på zonens enhedsside.",
           "notify_entity": "Din telefons notifikationsentitet fra Home Assistant Companion-appen. ZoneFlow sender fejl og vigtige hændelser dertil, og ugeoversigten, hvis du slår den til. Uden den havner de kun i loggen.",
           "weather_entity": "En vejrentitet med vejrudsigt. ZoneFlow udsætter en vanding, når der er udsigt til nok regn (men ikke for mange dage i træk), og bruger dens aktuelle temperatur til frostsikringen, når der ikke er nogen temperatursensor.",
-          "soil_type": "Til din orientering: den ændrer ikke selv vandingen. Den vises på zonens Jordprofil-sensor og hjælper dig med at vælge pulser og pauser på enhedssiden: lerjord tager vandet langsomt og vil have flere, kortere pulser med længere pauser imellem; sandjord kan klare sig med færre pulser.",
-          "drainage": "Hvor hurtigt vandet forsvinder efter en kraftig vanding eller regn. Til din orientering, ligesom jordtypen: jord, der dræner langsomt, vil have flere, kortere pulser.",
-          "slope": "Til din orientering, ligesom jordtypen: på skrånende grund løber vandet af, før det siver ned, så flere, kortere pulser hjælper.",
-          "irrigation_method": "Hvordan vandet gives. Til din orientering, ligesom jordtypen; hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow).",
+          "soil_type": "Bestemmer, hvordan hver vanding deles op i pulser, så vandet siver ned i stedet for at løbe af: ca. 3 mm pr. puls på svær lerjord, 15 mm på sandblandet lerjord, 30 mm på sandjord, med 30 minutters pause mellem pulserne (en time på svær lerjord og lerjord). \"Ved ikke\" bruger en forsigtig mellemværdi. Du kan også ændre det senere på zonens enhedsside.",
+          "drainage": "Jord, der dræner langsomt (et hårdt, sammenpresset lag nedenunder), får mindre vand pr. puls og en times pause mellem pulserne.",
+          "slope": "På skrånende grund løber vandet af, før det siver ned: moderat hældning lægger én puls til hver vanding, stejl hældning to.",
+          "irrigation_method": "Hvordan vandet gives. Med drypslange eller sivslange på sandjord starter en ny zone med mindst to pulser, så vandet bliver i rodzonen. Hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow).",
           "growth_ramp_profile": "Giver unge planter mindre vand og øger det op til hele ugemålet, efterhånden som de bliver ældre, regnet fra Plante-/udplantningsdato på zonens enhedsside. Fra: altid hele målet. Brugerdefineret: tegn din egen kurve på enhedssiden.",
           "csv_path": "En fil, hvor hver vanding, overspringning og advarsel skrives med sine tal, så du kan tjekke, hvad ZoneFlow har gjort (kan åbnes i ethvert regneark). Den foreslåede fil i din config-mappe er fin.",
           "deep_soak_enabled": "En dybdevanding er en stor, langsom vanding med nogle ugers mellemrum (14 dage til at starte med), der gør jorden våd langt nede, så rødderne vokser dybt. God til træer, buske og stauder; slå den fra til planter med overfladiske rødder som salat og krydderurter. Rutinevandingen kører under alle omstændigheder.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "En jordfugtighedssensor (%) i zonens rodzone. Tør jord rykker rutinevandingen frem, våd jord springer den over, og midt imellem bestemmer den normale tidsplan. Grænserne for tør og våd finder du på zonens enhedsside.",
           "notify_entity": "Din telefons notifikationsentitet fra Home Assistant Companion-appen. ZoneFlow sender fejl og vigtige hændelser dertil, og ugeoversigten, hvis du slår den til. Uden den havner de kun i loggen.",
           "weather_entity": "En vejrentitet med vejrudsigt. ZoneFlow udsætter en vanding, når der er udsigt til nok regn (men ikke for mange dage i træk), og bruger dens aktuelle temperatur til frostsikringen, når der ikke er nogen temperatursensor.",
-          "soil_type": "Til din orientering: den ændrer ikke selv vandingen. Den vises på zonens Jordprofil-sensor og hjælper dig med at vælge pulser og pauser på enhedssiden: lerjord tager vandet langsomt og vil have flere, kortere pulser med længere pauser imellem; sandjord kan klare sig med færre pulser.",
-          "drainage": "Hvor hurtigt vandet forsvinder efter en kraftig vanding eller regn. Til din orientering, ligesom jordtypen: jord, der dræner langsomt, vil have flere, kortere pulser.",
-          "slope": "Til din orientering, ligesom jordtypen: på skrånende grund løber vandet af, før det siver ned, så flere, kortere pulser hjælper.",
-          "irrigation_method": "Hvordan vandet gives. Til din orientering, ligesom jordtypen; hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow).",
+          "soil_type": "Bestemmer, hvordan hver vanding deles op i pulser, så vandet siver ned i stedet for at løbe af: ca. 3 mm pr. puls på svær lerjord, 15 mm på sandblandet lerjord, 30 mm på sandjord, med 30 minutters pause mellem pulserne (en time på svær lerjord og lerjord). \"Ved ikke\" bruger en forsigtig mellemværdi. Du kan også ændre det senere på zonens enhedsside.",
+          "drainage": "Jord, der dræner langsomt (et hårdt, sammenpresset lag nedenunder), får mindre vand pr. puls og en times pause mellem pulserne.",
+          "slope": "På skrånende grund løber vandet af, før det siver ned: moderat hældning lægger én puls til hver vanding, stejl hældning to.",
+          "irrigation_method": "Hvordan vandet gives. Med drypslange eller sivslange på sandjord starter en ny zone med mindst to pulser, så vandet bliver i rodzonen. Hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow).",
           "growth_ramp_profile": "Giver unge planter mindre vand og øger det op til hele ugemålet, efterhånden som de bliver ældre, regnet fra Plante-/udplantningsdato på zonens enhedsside. Fra: altid hele målet. Brugerdefineret: tegn din egen kurve på enhedssiden.",
           "csv_path": "En fil, hvor hver vanding, overspringning og advarsel skrives med sine tal, så du kan tjekke, hvad ZoneFlow har gjort (kan åbnes i ethvert regneark). Den foreslåede fil i din config-mappe er fin.",
           "deep_soak_enabled": "En dybdevanding er en stor, langsom vanding med nogle ugers mellemrum (14 dage til at starte med), der gør jorden våd langt nede, så rødderne vokser dybt. God til træer, buske og stauder; slå den fra til planter med overfladiske rødder som salat og krydderurter. Rutinevandingen kører under alle omstændigheder.",
@@ -640,6 +640,24 @@
           "fri": "Fredag",
           "sat": "Lørdag",
           "sun": "Søndag"
+        }
+      },
+      "drainage": {
+        "name": "Dræning",
+        "state": {
+          "unknown": "Ved ikke",
+          "fast": "Dræner hurtigt",
+          "medium": "Middel",
+          "slow": "Dræner langsomt"
+        }
+      },
+      "slope": {
+        "name": "Hældning",
+        "state": {
+          "flat": "Flad",
+          "slight": "Let hældning",
+          "moderate": "Moderat hældning",
+          "steep": "Stejl hældning"
         }
       }
     },

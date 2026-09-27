@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Vira o nome do dispositivo da zona e o início dos nomes das entidades, e aparece nas mensagens no celular. Ex.: \"Canteiro de tomates\", \"Gramado da frente\".",
-          "plant": "Preenche valores iniciais adequados para esta cultura: metas semanais de água, coeficiente de cultura, pulsos, irrigação profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Você pode alterar tudo depois na página do dispositivo da zona."
+          "plant": "Preenche valores iniciais adequados para esta cultura: metas semanais de água, coeficiente de cultura, irrigação profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Você pode alterar tudo depois na página do dispositivo da zona."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Um sensor de umidade do solo (%) na região das raízes desta zona. Solo seco antecipa a irrigação de rotina, solo úmido faz ela ser pulada e, entre os dois, quem decide é o horário normal. Os limites de seco e úmido ficam na página do dispositivo da zona.",
           "notify_entity": "A entidade de notificação do seu celular, do aplicativo Home Assistant Companion. O ZoneFlow envia para lá falhas e eventos importantes, e também o resumo semanal, se você ativá-lo. Sem ela, tudo fica só no log.",
           "weather_entity": "Uma entidade de clima com previsão. O ZoneFlow adia a irrigação quando há previsão de chuva suficiente (mas não por dias demais seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
-          "soil_type": "Serve de referência: sozinho, não muda a irrigação. Aparece no sensor Perfil do solo da zona e ajuda você a escolher os pulsos e as pausas na página do dispositivo: solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; solo arenoso aceita menos pulsos.",
-          "drainage": "A rapidez com que a água some depois de uma irrigação forte ou de chuva. Serve de referência, como o tipo de solo: solo com drenagem lenta prefere mais pulsos, mais curtos.",
-          "slope": "Serve de referência, como o tipo de solo: em terreno inclinado, a água escorre antes de infiltrar, então mais pulsos, mais curtos, ajudam.",
-          "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pela vazão (Configurar → Vazão).",
+          "soil_type": "Decide como cada irrigação é dividida em pulsos, para que a água se infiltre em vez de escorrer: cerca de 3 mm por pulso em solo argiloso, 15 mm em franco, 30 mm em arenoso, com uma pausa de 30 minutos entre pulsos (uma hora em argiloso e franco-argiloso). \"Não sei\" usa um valor intermediário cauteloso. Você também pode mudar isso depois na página do dispositivo da zona.",
+          "drainage": "Solo com drenagem lenta (com uma camada dura e compactada embaixo) recebe menos água por pulso e uma pausa de uma hora entre pulsos.",
+          "slope": "Em terreno inclinado, a água escorre antes de infiltrar: um terreno moderadamente inclinado acrescenta um pulso a cada irrigação; um muito inclinado, dois.",
+          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pela vazão (Configurar → Vazão).",
           "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta até a meta semanal completa conforme elas crescem, contando a partir da Data de plantio / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: desenhe sua própria curva na página do dispositivo.",
           "csv_path": "Um arquivo onde cada irrigação, irrigação pulada e aviso é registrado com seus números, para conferir o que o ZoneFlow fez (abre em qualquer planilha). O arquivo sugerido na sua pasta de configuração serve bem.",
           "deep_soak_enabled": "A irrigação profunda é uma irrigação grande e lenta a cada poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desative para plantas de raiz rasa, como alface e ervas. A irrigação de rotina funciona de qualquer forma.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Um sensor de umidade do solo (%) na região das raízes desta zona. Solo seco antecipa a irrigação de rotina, solo úmido faz ela ser pulada e, entre os dois, quem decide é o horário normal. Os limites de seco e úmido ficam na página do dispositivo da zona.",
           "notify_entity": "A entidade de notificação do seu celular, do aplicativo Home Assistant Companion. O ZoneFlow envia para lá falhas e eventos importantes, e também o resumo semanal, se você ativá-lo. Sem ela, tudo fica só no log.",
           "weather_entity": "Uma entidade de clima com previsão. O ZoneFlow adia a irrigação quando há previsão de chuva suficiente (mas não por dias demais seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
-          "soil_type": "Serve de referência: sozinho, não muda a irrigação. Aparece no sensor Perfil do solo da zona e ajuda você a escolher os pulsos e as pausas na página do dispositivo: solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; solo arenoso aceita menos pulsos.",
-          "drainage": "A rapidez com que a água some depois de uma irrigação forte ou de chuva. Serve de referência, como o tipo de solo: solo com drenagem lenta prefere mais pulsos, mais curtos.",
-          "slope": "Serve de referência, como o tipo de solo: em terreno inclinado, a água escorre antes de infiltrar, então mais pulsos, mais curtos, ajudam.",
-          "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pela vazão (Configurar → Vazão).",
+          "soil_type": "Decide como cada irrigação é dividida em pulsos, para que a água se infiltre em vez de escorrer: cerca de 3 mm por pulso em solo argiloso, 15 mm em franco, 30 mm em arenoso, com uma pausa de 30 minutos entre pulsos (uma hora em argiloso e franco-argiloso). \"Não sei\" usa um valor intermediário cauteloso. Você também pode mudar isso depois na página do dispositivo da zona.",
+          "drainage": "Solo com drenagem lenta (com uma camada dura e compactada embaixo) recebe menos água por pulso e uma pausa de uma hora entre pulsos.",
+          "slope": "Em terreno inclinado, a água escorre antes de infiltrar: um terreno moderadamente inclinado acrescenta um pulso a cada irrigação; um muito inclinado, dois.",
+          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pela vazão (Configurar → Vazão).",
           "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta até a meta semanal completa conforme elas crescem, contando a partir da Data de plantio / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: desenhe sua própria curva na página do dispositivo.",
           "csv_path": "Um arquivo onde cada irrigação, irrigação pulada e aviso é registrado com seus números, para conferir o que o ZoneFlow fez (abre em qualquer planilha). O arquivo sugerido na sua pasta de configuração serve bem.",
           "deep_soak_enabled": "A irrigação profunda é uma irrigação grande e lenta a cada poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desative para plantas de raiz rasa, como alface e ervas. A irrigação de rotina funciona de qualquer forma.",
@@ -640,6 +640,24 @@
           "fri": "Sexta-feira",
           "sat": "Sábado",
           "sun": "Domingo"
+        }
+      },
+      "drainage": {
+        "name": "Drenagem",
+        "state": {
+          "unknown": "Não sei",
+          "fast": "Drenagem rápida",
+          "medium": "Média",
+          "slow": "Drenagem lenta"
+        }
+      },
+      "slope": {
+        "name": "Declividade",
+        "state": {
+          "flat": "Plano",
+          "slight": "Pouco inclinado",
+          "moderate": "Moderadamente inclinado",
+          "steep": "Muito inclinado"
         }
       }
     },

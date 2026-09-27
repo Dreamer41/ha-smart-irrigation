@@ -22,7 +22,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import units
+from . import calculations as calc, units
 
 from .const import (
     CLIMATE_NUMBER_KEYS,
@@ -223,6 +223,23 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     )
 
 
+def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
+    """A new zone's cycle-and-soak starting values from its soil, drainage
+    and irrigation method: the pulse-count settings (the minimum; each
+    watering adds what the soil and slope need) and the soak between
+    pulses."""
+    soil = data.get(CONF_SOIL_TYPE, DEFAULT_SOIL_TYPE)
+    drainage = data.get(CONF_DRAINAGE, DEFAULT_DRAINAGE)
+    count = float(calc.starting_pulse_count(soil, data.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)))
+    soak = calc.soak_minutes(soil, drainage)
+    return {
+        "routine_pulse_count": count,
+        "deep_soak_pulse_count": count,
+        "routine_pulse_rest_minutes": soak,
+        "deep_soak_pulse_rest_minutes": soak,
+    }
+
+
 class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
@@ -320,7 +337,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     **self._data,
                     CONF_PLANT: self._plant,
                     CONF_CLIMATE: self._climate,
-                    CONF_INITIAL_NUMBERS: {**plant_numbers, **metric},
+                    CONF_INITIAL_NUMBERS: {**plant_numbers, **_site_numbers(self._data), **metric},
                 }
                 return self.async_create_entry(title=self._zone_name, data=data)
         preset = CLIMATE_PRESETS[self._climate]
@@ -463,6 +480,31 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             # chosen at first setup (options override the setup data).
             for key in OPTIONAL_ENTITY_KEYS:
                 user_input.setdefault(key, None)
+            await self._apply_site(user_input)
             return self.async_create_entry(title="", data=user_input)
         defaults = {**self._config_entry.data, **self._config_entry.options}
+        controller = self.hass.data.get(DOMAIN, {}).get(self._config_entry.entry_id)
+        if controller is not None:
+            # What the zone uses now -- the device page's dropdowns included.
+            defaults.update({CONF_SOIL_TYPE: controller.soil_type, CONF_DRAINAGE: controller.drainage, CONF_SLOPE: controller.slope})
         return self.async_show_form(step_id="settings", data_schema=_schema(defaults))
+
+    async def _apply_site(self, user_input: dict[str, Any]) -> None:
+        """The form's soil, drainage and slope are now the zone's: they
+        replace what the device page's dropdowns had set, and a changed soil
+        or drainage sets the soak between pulses to match (as the dropdowns
+        do)."""
+        controller = self.hass.data.get(DOMAIN, {}).get(self._config_entry.entry_id)
+        if controller is None:
+            return
+        before = (controller.soil_type, controller.drainage)
+        state = controller.store.state
+        state.soil_type_override = state.drainage_override = state.slope_override = None
+        await controller.store.async_save()
+        after = (user_input.get(CONF_SOIL_TYPE, before[0]), user_input.get(CONF_DRAINAGE, before[1]))
+        if after != before:
+            minutes = calc.soak_minutes(*after)
+            for key in ("routine_pulse_rest_minutes", "deep_soak_pulse_rest_minutes"):
+                entity = controller.numbers.get(key)
+                if entity is not None:
+                    await entity.async_set_metric_value(minutes)

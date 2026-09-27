@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Devient le nom de l'appareil de la zone et le début des noms de ses entités, et apparaît dans les messages sur le téléphone. Ex. « Carré de tomates », « Pelouse avant ».",
-          "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, passages, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone."
+          "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Une sonde d'humidité du sol (%) placée au niveau des racines de cette zone. Un sol sec avance l'arrosage régulier, un sol humide le fait sauter, et entre les deux c'est le programme normal qui décide. Les seuils sec et humide se trouvent sur la page de l'appareil de la zone.",
           "notify_entity": "L'entité de notification de votre téléphone, fournie par l'application Home Assistant Companion. ZoneFlow y envoie les pannes et les événements importants, ainsi que le résumé hebdomadaire si vous l'activez. Sans elle, tout reste uniquement dans le journal.",
           "weather_entity": "Une entité météo avec prévisions. ZoneFlow reporte un arrosage quand assez de pluie est prévue (mais pas trop de jours d'affilée), et utilise sa température actuelle pour la protection antigel s'il n'y a pas de capteur de température.",
-          "soil_type": "Pour information : cela ne change pas l'arrosage à lui seul. Il s'affiche sur le capteur Profil du sol de la zone et vous aide à choisir les passages et les pauses entre passages sur la page de l'appareil : un sol argileux absorbe l'eau lentement et préfère des passages plus nombreux et plus courts, avec des pauses plus longues entre eux ; un sol sableux se contente de moins de passages.",
-          "drainage": "La vitesse à laquelle l'eau disparaît après un gros arrosage ou une pluie. Pour information, comme le type de sol : un sol qui draine lentement préfère des passages plus nombreux et plus courts.",
-          "slope": "Pour information, comme le type de sol : sur une pente, l'eau ruisselle avant de s'infiltrer, donc des passages plus nombreux et plus courts aident.",
-          "irrigation_method": "Comment l'eau est apportée. Pour information, comme le type de sol ; la quantité d'eau donnée dépend du débit (Configurer → Débit : le calculer à partir des goutteurs).",
+          "soil_type": "Détermine comment chaque arrosage est découpé en passages, pour que l'eau s'infiltre au lieu de ruisseler : environ 3 mm par passage sur sol argileux, 15 mm en terre franche, 30 mm sur sol sableux, avec une pause de 30 minutes entre passages (une heure en sol argileux et argilo-limoneux). « Je ne sais pas » utilise une valeur moyenne prudente. Vous pouvez aussi le modifier plus tard sur la page de l'appareil de la zone.",
+          "drainage": "Un sol à drainage lent (avec une couche dure et tassée en dessous) reçoit moins d'eau par passage et une pause d'une heure entre passages.",
+          "slope": "Sur une pente, l'eau ruisselle avant de s'infiltrer : une pente moyenne ajoute un passage à chaque arrosage, une pente forte deux.",
+          "irrigation_method": "Comment l'eau est apportée. Avec du goutte-à-goutte ou un tuyau poreux sur sol sableux, une nouvelle zone démarre avec au moins deux passages, pour que l'eau reste dans la zone des racines. La quantité d'eau donnée dépend du débit (Configurer → Débit).",
           "growth_ramp_profile": "Donne moins d'eau aux jeunes plantes, puis augmente jusqu'à l'objectif hebdo complet à mesure qu'elles grandissent, à partir de la Date de plantation / repiquage sur la page de l'appareil de la zone. Désactivé : toujours l'objectif complet. Personnalisé : tracez votre propre courbe sur la page de l'appareil.",
           "csv_path": "Un fichier où sont notés, avec leurs chiffres, chaque arrosage, chaque arrosage sauté et chaque alerte, pour vérifier ce qu'a fait ZoneFlow (il s'ouvre dans n'importe quel tableur). Le fichier proposé dans votre dossier config convient très bien.",
           "deep_soak_enabled": "L'arrosage profond est un arrosage copieux et lent toutes les deux semaines environ (14 jours au départ) qui humidifie le sol en profondeur, pour que les racines descendent. Idéal pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et les aromatiques. L'arrosage régulier fonctionne dans tous les cas.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Une sonde d'humidité du sol (%) placée au niveau des racines de cette zone. Un sol sec avance l'arrosage régulier, un sol humide le fait sauter, et entre les deux c'est le programme normal qui décide. Les seuils sec et humide se trouvent sur la page de l'appareil de la zone.",
           "notify_entity": "L'entité de notification de votre téléphone, fournie par l'application Home Assistant Companion. ZoneFlow y envoie les pannes et les événements importants, ainsi que le résumé hebdomadaire si vous l'activez. Sans elle, tout reste uniquement dans le journal.",
           "weather_entity": "Une entité météo avec prévisions. ZoneFlow reporte un arrosage quand assez de pluie est prévue (mais pas trop de jours d'affilée), et utilise sa température actuelle pour la protection antigel s'il n'y a pas de capteur de température.",
-          "soil_type": "Pour information : cela ne change pas l'arrosage à lui seul. Il s'affiche sur le capteur Profil du sol de la zone et vous aide à choisir les passages et les pauses entre passages sur la page de l'appareil : un sol argileux absorbe l'eau lentement et préfère des passages plus nombreux et plus courts, avec des pauses plus longues entre eux ; un sol sableux se contente de moins de passages.",
-          "drainage": "La vitesse à laquelle l'eau disparaît après un gros arrosage ou une pluie. Pour information, comme le type de sol : un sol qui draine lentement préfère des passages plus nombreux et plus courts.",
-          "slope": "Pour information, comme le type de sol : sur une pente, l'eau ruisselle avant de s'infiltrer, donc des passages plus nombreux et plus courts aident.",
-          "irrigation_method": "Comment l'eau est apportée. Pour information, comme le type de sol ; la quantité d'eau donnée dépend du débit (Configurer → Débit : le calculer à partir des goutteurs).",
+          "soil_type": "Détermine comment chaque arrosage est découpé en passages, pour que l'eau s'infiltre au lieu de ruisseler : environ 3 mm par passage sur sol argileux, 15 mm en terre franche, 30 mm sur sol sableux, avec une pause de 30 minutes entre passages (une heure en sol argileux et argilo-limoneux). « Je ne sais pas » utilise une valeur moyenne prudente. Vous pouvez aussi le modifier plus tard sur la page de l'appareil de la zone.",
+          "drainage": "Un sol à drainage lent (avec une couche dure et tassée en dessous) reçoit moins d'eau par passage et une pause d'une heure entre passages.",
+          "slope": "Sur une pente, l'eau ruisselle avant de s'infiltrer : une pente moyenne ajoute un passage à chaque arrosage, une pente forte deux.",
+          "irrigation_method": "Comment l'eau est apportée. Avec du goutte-à-goutte ou un tuyau poreux sur sol sableux, une nouvelle zone démarre avec au moins deux passages, pour que l'eau reste dans la zone des racines. La quantité d'eau donnée dépend du débit (Configurer → Débit).",
           "growth_ramp_profile": "Donne moins d'eau aux jeunes plantes, puis augmente jusqu'à l'objectif hebdo complet à mesure qu'elles grandissent, à partir de la Date de plantation / repiquage sur la page de l'appareil de la zone. Désactivé : toujours l'objectif complet. Personnalisé : tracez votre propre courbe sur la page de l'appareil.",
           "csv_path": "Un fichier où sont notés, avec leurs chiffres, chaque arrosage, chaque arrosage sauté et chaque alerte, pour vérifier ce qu'a fait ZoneFlow (il s'ouvre dans n'importe quel tableur). Le fichier proposé dans votre dossier config convient très bien.",
           "deep_soak_enabled": "L'arrosage profond est un arrosage copieux et lent toutes les deux semaines environ (14 jours au départ) qui humidifie le sol en profondeur, pour que les racines descendent. Idéal pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et les aromatiques. L'arrosage régulier fonctionne dans tous les cas.",
@@ -640,6 +640,24 @@
           "fri": "Vendredi",
           "sat": "Samedi",
           "sun": "Dimanche"
+        }
+      },
+      "drainage": {
+        "name": "Drainage",
+        "state": {
+          "unknown": "Je ne sais pas",
+          "fast": "Drainage rapide",
+          "medium": "Moyen",
+          "slow": "Drainage lent"
+        }
+      },
+      "slope": {
+        "name": "Pente",
+        "state": {
+          "flat": "Plat",
+          "slight": "Pente légère",
+          "moderate": "Pente moyenne",
+          "steep": "Pente forte"
         }
       }
     },

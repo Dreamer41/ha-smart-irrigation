@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Wird zum Gerätenamen der Zone und zum Anfang ihrer Entitätsnamen und erscheint in Handy-Nachrichten. Z. B. „Tomatenbeet“, „Rasen vorne“.",
-          "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Durchgänge, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern."
+          "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Ein Bodenfeuchtesensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, bei nassem Boden wird sie übersprungen, dazwischen gilt der normale Zeitplan. Die Schwellen für trocken und nass findest du auf der Geräteseite der Zone.",
           "notify_entity": "Die Benachrichtigungs-Entität deines Handys aus der Home Assistant Companion App. ZoneFlow schickt Störungen und wichtige Ereignisse dorthin, und auch die Wochenübersicht, wenn du sie einschaltest. Ohne sie landet alles nur im Log.",
           "weather_entity": "Eine Wetter-Entität mit Vorhersage. ZoneFlow setzt eine Bewässerung aus, wenn genug Regen vorhergesagt ist (aber nicht zu viele Tage hintereinander), und nutzt ihre aktuelle Temperatur für den Frostschutz, wenn kein Temperatursensor da ist.",
-          "soil_type": "Nur zur Orientierung: Die Bewässerung ändert sich dadurch nicht von selbst. Die Bodenart erscheint im Sensor „Bodenprofil“ der Zone und hilft dir, auf der Geräteseite Durchgänge und Einsickerpausen zu wählen: Tonboden nimmt Wasser langsam auf und braucht mehr, kürzere Durchgänge mit längeren Einsickerpausen dazwischen; Sandboden kommt mit weniger Durchgängen aus.",
-          "drainage": "Wie schnell das Wasser nach kräftigem Gießen oder Regen verschwindet. Nur zur Orientierung, wie die Bodenart: Langsam versickernder Boden braucht mehr, kürzere Durchgänge.",
-          "slope": "Nur zur Orientierung, wie die Bodenart: Am Hang läuft Wasser ab, bevor es einsickert – mehr, kürzere Durchgänge helfen.",
-          "irrigation_method": "Wie das Wasser ausgebracht wird. Nur zur Orientierung, wie die Bodenart; wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
+          "soil_type": "Legt fest, wie jede Bewässerung in Durchgänge aufgeteilt wird, damit das Wasser einsickert statt abzulaufen: etwa 3 mm pro Durchgang bei Tonboden, 15 mm bei Lehmboden, 30 mm bei Sandboden, mit 30 Minuten Einsickerpause zwischen den Durchgängen (eine Stunde bei Tonboden und tonigem Lehm). „Weiß nicht“ nimmt einen vorsichtigen mittleren Wert. Du kannst es auch später auf der Geräteseite der Zone ändern.",
+          "drainage": "Langsam versickernder Boden (mit einer harten, verdichteten Schicht darunter) bekommt weniger Wasser pro Durchgang und eine Stunde Einsickerpause zwischen den Durchgängen.",
+          "slope": "Am Hang läuft Wasser ab, bevor es einsickert: Mäßig geneigt fügt jeder Bewässerung einen Durchgang hinzu, steil zwei.",
+          "irrigation_method": "Wie das Wasser ausgebracht wird. Mit Tropfbewässerung oder Perlschlauch auf Sandboden startet eine neue Zone mit mindestens zwei Durchgängen, damit das Wasser im Wurzelbereich bleibt. Wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
           "growth_ramp_profile": "Gibt jungen Pflanzen weniger Wasser und steigert es mit dem Alter bis zum vollen Wochenziel, gerechnet ab dem „Pflanz-/Umpflanzdatum“ auf der Geräteseite der Zone. Aus: immer das volle Ziel. Eigene Kurve: Lege deine Kurve selbst auf der Geräteseite fest.",
           "csv_path": "Eine Datei, in die jede Bewässerung, jedes Überspringen und jede Warnung mit Zahlen geschrieben wird – zum Nachprüfen, was ZoneFlow getan hat (lässt sich in jeder Tabellenkalkulation öffnen). Die vorgeschlagene Datei in deinem config-Ordner passt.",
           "deep_soak_enabled": "Eine Tiefenbewässerung ist ein großes, langsames Gießen alle paar Wochen (anfangs alle 14 Tage), das den Boden tief durchfeuchtet, damit die Wurzeln in die Tiefe wachsen. Gut für Bäume, Sträucher und Stauden; schalte sie für flach wurzelnde Pflanzen wie Salat und Kräuter aus. Die Routinebewässerung läuft so oder so.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Ein Bodenfeuchtesensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, bei nassem Boden wird sie übersprungen, dazwischen gilt der normale Zeitplan. Die Schwellen für trocken und nass findest du auf der Geräteseite der Zone.",
           "notify_entity": "Die Benachrichtigungs-Entität deines Handys aus der Home Assistant Companion App. ZoneFlow schickt Störungen und wichtige Ereignisse dorthin, und auch die Wochenübersicht, wenn du sie einschaltest. Ohne sie landet alles nur im Log.",
           "weather_entity": "Eine Wetter-Entität mit Vorhersage. ZoneFlow setzt eine Bewässerung aus, wenn genug Regen vorhergesagt ist (aber nicht zu viele Tage hintereinander), und nutzt ihre aktuelle Temperatur für den Frostschutz, wenn kein Temperatursensor da ist.",
-          "soil_type": "Nur zur Orientierung: Die Bewässerung ändert sich dadurch nicht von selbst. Die Bodenart erscheint im Sensor „Bodenprofil“ der Zone und hilft dir, auf der Geräteseite Durchgänge und Einsickerpausen zu wählen: Tonboden nimmt Wasser langsam auf und braucht mehr, kürzere Durchgänge mit längeren Einsickerpausen dazwischen; Sandboden kommt mit weniger Durchgängen aus.",
-          "drainage": "Wie schnell das Wasser nach kräftigem Gießen oder Regen verschwindet. Nur zur Orientierung, wie die Bodenart: Langsam versickernder Boden braucht mehr, kürzere Durchgänge.",
-          "slope": "Nur zur Orientierung, wie die Bodenart: Am Hang läuft Wasser ab, bevor es einsickert – mehr, kürzere Durchgänge helfen.",
-          "irrigation_method": "Wie das Wasser ausgebracht wird. Nur zur Orientierung, wie die Bodenart; wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
+          "soil_type": "Legt fest, wie jede Bewässerung in Durchgänge aufgeteilt wird, damit das Wasser einsickert statt abzulaufen: etwa 3 mm pro Durchgang bei Tonboden, 15 mm bei Lehmboden, 30 mm bei Sandboden, mit 30 Minuten Einsickerpause zwischen den Durchgängen (eine Stunde bei Tonboden und tonigem Lehm). „Weiß nicht“ nimmt einen vorsichtigen mittleren Wert. Du kannst es auch später auf der Geräteseite der Zone ändern.",
+          "drainage": "Langsam versickernder Boden (mit einer harten, verdichteten Schicht darunter) bekommt weniger Wasser pro Durchgang und eine Stunde Einsickerpause zwischen den Durchgängen.",
+          "slope": "Am Hang läuft Wasser ab, bevor es einsickert: Mäßig geneigt fügt jeder Bewässerung einen Durchgang hinzu, steil zwei.",
+          "irrigation_method": "Wie das Wasser ausgebracht wird. Mit Tropfbewässerung oder Perlschlauch auf Sandboden startet eine neue Zone mit mindestens zwei Durchgängen, damit das Wasser im Wurzelbereich bleibt. Wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
           "growth_ramp_profile": "Gibt jungen Pflanzen weniger Wasser und steigert es mit dem Alter bis zum vollen Wochenziel, gerechnet ab dem „Pflanz-/Umpflanzdatum“ auf der Geräteseite der Zone. Aus: immer das volle Ziel. Eigene Kurve: Lege deine Kurve selbst auf der Geräteseite fest.",
           "csv_path": "Eine Datei, in die jede Bewässerung, jedes Überspringen und jede Warnung mit Zahlen geschrieben wird – zum Nachprüfen, was ZoneFlow getan hat (lässt sich in jeder Tabellenkalkulation öffnen). Die vorgeschlagene Datei in deinem config-Ordner passt.",
           "deep_soak_enabled": "Eine Tiefenbewässerung ist ein großes, langsames Gießen alle paar Wochen (anfangs alle 14 Tage), das den Boden tief durchfeuchtet, damit die Wurzeln in die Tiefe wachsen. Gut für Bäume, Sträucher und Stauden; schalte sie für flach wurzelnde Pflanzen wie Salat und Kräuter aus. Die Routinebewässerung läuft so oder so.",
@@ -640,6 +640,24 @@
           "fri": "Freitag",
           "sat": "Samstag",
           "sun": "Sonntag"
+        }
+      },
+      "drainage": {
+        "name": "Versickerung",
+        "state": {
+          "unknown": "Weiß nicht",
+          "fast": "Versickert schnell",
+          "medium": "Mittel",
+          "slow": "Versickert langsam"
+        }
+      },
+      "slope": {
+        "name": "Hangneigung",
+        "state": {
+          "flat": "Eben",
+          "slight": "Leicht geneigt",
+          "moderate": "Mäßig geneigt",
+          "steep": "Steil"
         }
       }
     },

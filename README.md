@@ -38,7 +38,7 @@ counts as the routine watering, so the routine interval restarts from it
 manual, goes through the same pipeline:
 
 1. **Plant and site** — crop, soil type, drainage, slope and irrigation
-   method (descriptive; they guide the recommended numbers), plus an
+   method (soil, drainage and slope decide cycle and soak — see below), plus an
    optional growth-stage ramp from a planting date.
 2. **Demand** — how much water, how often:
    - temperature tiers (cool / normal / hot) from the 3-day average of daily
@@ -54,7 +54,11 @@ manual, goes through the same pipeline:
    significant rain, an optional **weather forecast gate**, and a
    30-minute pre-irrigation rain check that also stops a running cycle.
 4. **Physical delivery** — runtime from your calibrated emitter flow rate,
-   split into pulses with soak gaps (so clay can absorb it), optional pump
+   split into pulses with soak gaps (**cycle and soak**: as many pulses as
+   the soil takes in without runoff — about 3 mm per pulse on clay, 15 mm
+   on loam, 30 mm on sand, less with slow drainage — one more on a
+   moderate slope and two on a steep one, with 30 minutes between pulses
+   or an hour on clay and slow-draining soil), optional pump
    pre/post delays, and serialized access to a **shared pump**.
 5. **Safety** — per-cycle and daily runtime caps, stuck-valve force-off,
    pump-power audit, no-flow detection, power-loss abort, stale-lock
@@ -294,7 +298,7 @@ to its translators.
 1. **Zone name** (becomes the device name and default CSV file name) and
    **what's planted** — Tomatoes, Chilis, Leafy vegetables, Herbs,
    Strawberries, Flower bed, Lawn, Shrubs, Young tree, Fruit tree, or your
-   own. A preset pre-fills the weekly targets, crop factor, pulses, deep
+   own. A preset pre-fills the weekly targets, crop factor, deep
    soak and growth ramp; every value stays adjustable.
 2. **Entities and schedule** — the valve, any optional sensors from the
    table above, the Shared pump ID if the pump is shared, units, soil/site

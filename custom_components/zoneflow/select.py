@@ -77,6 +77,8 @@ from .const import (
     SUMMARY_OFF,
     SUMMARY_OPTIONS,
     SOIL_TYPE_OPTIONS,
+    DRAINAGE_OPTIONS,
+    SLOPE_OPTIONS,
 )
 
 
@@ -85,6 +87,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities(
         [
             ZoneFlowSoilTypeSelect(entry, controller),
+            ZoneFlowDrainageSelect(entry, controller),
+            ZoneFlowSlopeSelect(entry, controller),
             ZoneFlowGrowthStageSelect(entry, controller),
             ZoneFlowGrowthRampProfileSelect(entry, controller),
             ZoneFlowHealthSelect(entry, controller),
@@ -130,6 +134,56 @@ class ZoneFlowSoilTypeSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.soil_type_override = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.async_soil_changed()
+
+
+class ZoneFlowDrainageSelect(_Base):
+    """Live override of the zone's drainage, same pattern as the soil type
+    -- it shapes the cycle-and-soak pulses and the soak between them."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    _attr_icon = "mdi:water-percent"
+    _attr_options = DRAINAGE_OPTIONS
+    _attr_translation_key = "drainage"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_drainage_select"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.drainage
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.drainage_override = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.async_soil_changed()
+
+
+class ZoneFlowSlopeSelect(_Base):
+    """Live override of the zone's slope: a moderate slope adds a pulse, a
+    steep one two (cycle and soak)."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    _attr_icon = "mdi:slope-uphill"
+    _attr_options = SLOPE_OPTIONS
+    _attr_translation_key = "slope"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_slope_select"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.slope
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.slope_override = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
 

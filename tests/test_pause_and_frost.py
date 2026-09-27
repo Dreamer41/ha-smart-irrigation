@@ -16,7 +16,7 @@ from custom_components.zoneflow.const import DOMAIN, FROST_RETRY_COUNT, FROST_RE
 from .scenario_harness import CompressedTime
 from .test_service_runs import _switch
 from .test_scenarios_cycles import _history
-from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry
+from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry, schedule_clear_of_now
 
 DAY = 86400
 
@@ -33,6 +33,10 @@ async def _zone(hass, monkeypatch, tmp_path, *, temp="28.0", temp_unit=None, **o
     hass.states.async_set(RAIN_COUNTER, "0")
     hass.states.async_set(OUTDOOR_TEMP, temp, {"unit_of_measurement": temp_unit} if temp_unit else {})
     await hass.async_block_till_done()
+    # The frost tests move the clock hours ahead: keep the zone's own
+    # watering times out of the way, or a scheduled run joins in depending
+    # on the hour the suite runs.
+    overrides = {**schedule_clear_of_now(), **overrides}
     entry = make_entry(hass, csv_path=str(tmp_path / "p.csv"), notify_entity="notify.phone", **overrides)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()

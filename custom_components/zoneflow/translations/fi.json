@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
-          "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, jaksot, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla."
+          "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Maan kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa peruskastelua, märällä maalla se ohitetaan, ja niiden välillä noudatetaan normaalia aikataulua. Kuiva- ja märkäraja ovat vyöhykkeen laitesivulla.",
           "notify_entity": "Puhelimesi ilmoitusentiteetti Home Assistant Companion -sovelluksesta. ZoneFlow lähettää sinne viat ja tärkeät tapahtumat sekä viikkoyhteenvedon, jos otat sen käyttöön. Ilman sitä ne menevät vain lokiin.",
           "weather_entity": "Sääentiteetti, jossa on ennuste. ZoneFlow jättää kastelun väliin, kun sadetta ennustetaan tarpeeksi (mutta ei liian monena päivänä peräkkäin), ja käyttää sen nykyistä lämpötilaa hallasuojaan, jos lämpötila-anturia ei ole.",
-          "soil_type": "Tiedoksi sinulle: tämä ei itsessään muuta kastelua. Maalaji näkyy vyöhykkeen Maaprofiili-anturissa ja auttaa valitsemaan jaksot ja imeytystauot laitesivulla: savimaa ottaa vettä hitaasti ja kaipaa useampia, lyhyempiä jaksoja ja pidempiä imeytystaukoja niiden välissä; hiekkamaalle riittää vähemmän jaksoja.",
-          "drainage": "Kuinka nopeasti vesi häviää runsaan kastelun tai sateen jälkeen. Tiedoksi, kuten maalaji: hitaasti läpäisevä maa kaipaa useampia, lyhyempiä jaksoja.",
-          "slope": "Tiedoksi, kuten maalaji: rinteessä vesi valuu pois ennen kuin ehtii imeytyä, joten useammat, lyhyemmät jaksot auttavat.",
-          "irrigation_method": "Miten vesi jaetaan. Tiedoksi, kuten maalaji; vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
+          "soil_type": "Määrää, miten kukin kastelu jaetaan jaksoihin, jotta vesi imeytyy eikä valu pois: noin 3 mm jaksoa kohden savimaalla, 15 mm multamaalla, 30 mm hiekkamaalla, ja jaksojen välissä 30 minuutin imeytystauko (tunti savimaalla ja savisella mullalla). \"En tiedä\" käyttää varovaista keskitason arvoa. Voit muuttaa sen myöhemmin myös vyöhykkeen laitesivulla.",
+          "drainage": "Hitaasti läpäisevä maa (alla kova, tiivis kerros) saa vähemmän vettä jaksoa kohden ja tunnin imeytystauon jaksojen välissä.",
+          "slope": "Rinteessä vesi valuu pois ennen kuin ehtii imeytyä: kohtalainen rinne lisää jokaiseen kasteluun yhden jakson, jyrkkä kaksi.",
+          "irrigation_method": "Miten vesi jaetaan. Tippukastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke aloittaa vähintään kahdella jaksolla, jotta vesi pysyy juuristoalueella. Vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
           "growth_ramp_profile": "Antaa nuorille kasveille vähemmän vettä ja nostaa määrää kasvien vanhetessa täyteen viikkotavoitteeseen, laskettuna vyöhykkeen laitesivun Istutus- / siirtopäivästä. Pois: aina täysi tavoite. Oma: määritä oma käyräsi laitesivulla.",
           "csv_path": "Tiedosto, johon jokainen kastelu, ohitus ja varoitus kirjataan lukuineen, jotta voit tarkistaa, mitä ZoneFlow teki (aukeaa missä tahansa taulukkolaskentaohjelmassa). Ehdotettu tiedosto config-kansiossasi käy hyvin.",
           "deep_soak_enabled": "Syväkastelu on runsas, hidas kastelu parin viikon välein (aluksi 14 päivän välein). Se kostuttaa maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; ota se pois käytöstä matalajuurisilta kasveilta, kuten salaatilta ja yrteiltä. Peruskastelu toimii joka tapauksessa.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Maan kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa peruskastelua, märällä maalla se ohitetaan, ja niiden välillä noudatetaan normaalia aikataulua. Kuiva- ja märkäraja ovat vyöhykkeen laitesivulla.",
           "notify_entity": "Puhelimesi ilmoitusentiteetti Home Assistant Companion -sovelluksesta. ZoneFlow lähettää sinne viat ja tärkeät tapahtumat sekä viikkoyhteenvedon, jos otat sen käyttöön. Ilman sitä ne menevät vain lokiin.",
           "weather_entity": "Sääentiteetti, jossa on ennuste. ZoneFlow jättää kastelun väliin, kun sadetta ennustetaan tarpeeksi (mutta ei liian monena päivänä peräkkäin), ja käyttää sen nykyistä lämpötilaa hallasuojaan, jos lämpötila-anturia ei ole.",
-          "soil_type": "Tiedoksi sinulle: tämä ei itsessään muuta kastelua. Maalaji näkyy vyöhykkeen Maaprofiili-anturissa ja auttaa valitsemaan jaksot ja imeytystauot laitesivulla: savimaa ottaa vettä hitaasti ja kaipaa useampia, lyhyempiä jaksoja ja pidempiä imeytystaukoja niiden välissä; hiekkamaalle riittää vähemmän jaksoja.",
-          "drainage": "Kuinka nopeasti vesi häviää runsaan kastelun tai sateen jälkeen. Tiedoksi, kuten maalaji: hitaasti läpäisevä maa kaipaa useampia, lyhyempiä jaksoja.",
-          "slope": "Tiedoksi, kuten maalaji: rinteessä vesi valuu pois ennen kuin ehtii imeytyä, joten useammat, lyhyemmät jaksot auttavat.",
-          "irrigation_method": "Miten vesi jaetaan. Tiedoksi, kuten maalaji; vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
+          "soil_type": "Määrää, miten kukin kastelu jaetaan jaksoihin, jotta vesi imeytyy eikä valu pois: noin 3 mm jaksoa kohden savimaalla, 15 mm multamaalla, 30 mm hiekkamaalla, ja jaksojen välissä 30 minuutin imeytystauko (tunti savimaalla ja savisella mullalla). \"En tiedä\" käyttää varovaista keskitason arvoa. Voit muuttaa sen myöhemmin myös vyöhykkeen laitesivulla.",
+          "drainage": "Hitaasti läpäisevä maa (alla kova, tiivis kerros) saa vähemmän vettä jaksoa kohden ja tunnin imeytystauon jaksojen välissä.",
+          "slope": "Rinteessä vesi valuu pois ennen kuin ehtii imeytyä: kohtalainen rinne lisää jokaiseen kasteluun yhden jakson, jyrkkä kaksi.",
+          "irrigation_method": "Miten vesi jaetaan. Tippukastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke aloittaa vähintään kahdella jaksolla, jotta vesi pysyy juuristoalueella. Vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
           "growth_ramp_profile": "Antaa nuorille kasveille vähemmän vettä ja nostaa määrää kasvien vanhetessa täyteen viikkotavoitteeseen, laskettuna vyöhykkeen laitesivun Istutus- / siirtopäivästä. Pois: aina täysi tavoite. Oma: määritä oma käyräsi laitesivulla.",
           "csv_path": "Tiedosto, johon jokainen kastelu, ohitus ja varoitus kirjataan lukuineen, jotta voit tarkistaa, mitä ZoneFlow teki (aukeaa missä tahansa taulukkolaskentaohjelmassa). Ehdotettu tiedosto config-kansiossasi käy hyvin.",
           "deep_soak_enabled": "Syväkastelu on runsas, hidas kastelu parin viikon välein (aluksi 14 päivän välein). Se kostuttaa maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; ota se pois käytöstä matalajuurisilta kasveilta, kuten salaatilta ja yrteiltä. Peruskastelu toimii joka tapauksessa.",
@@ -640,6 +640,24 @@
           "fri": "Perjantai",
           "sat": "Lauantai",
           "sun": "Sunnuntai"
+        }
+      },
+      "drainage": {
+        "name": "Vedenläpäisy",
+        "state": {
+          "unknown": "En tiedä",
+          "fast": "Läpäisee nopeasti",
+          "medium": "Keskinopea",
+          "slow": "Läpäisee hitaasti"
+        }
+      },
+      "slope": {
+        "name": "Kaltevuus",
+        "state": {
+          "flat": "Tasainen",
+          "slight": "Loiva rinne",
+          "moderate": "Kohtalainen rinne",
+          "steep": "Jyrkkä rinne"
         }
       }
     },

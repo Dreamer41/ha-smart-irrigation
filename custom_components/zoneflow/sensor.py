@@ -399,6 +399,12 @@ class ZoneFlowSoilProfileSensor(_Base):
             "drainage": _label(self._controller.drainage),
             "slope": _label(self._controller.slope),
             "irrigation_method": _label(self._controller.irrigation_method),
+            # Cycle and soak (calculations.soil_pulse_count): how much one
+            # pulse may put on before the next, and the slope's extra pulses.
+            "water_per_pulse": units.depth_text(
+                calc.mm_per_pulse(self._controller.soil_type, self._controller.drainage), self._controller.imperial
+            ),
+            "extra_pulses_for_slope": calc.SLOPE_EXTRA_PULSES.get(self._controller.slope, 0),
         }
 
 

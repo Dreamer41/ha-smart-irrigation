@@ -218,7 +218,8 @@ async def test_doubling_the_flow_rate_halves_runtime_but_not_the_water(hass, fak
 @pytest.mark.asyncio
 @pytest.mark.parametrize("count", [1, 2, 5, 8])
 async def test_pulse_count_splits_the_same_water_evenly(hass, fake_valve_services, monkeypatch, tmp_path, count):
-    controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
+    # Sand takes the whole 20 mm in one pulse: the setting alone decides.
+    controller, clock, _ = await _zone(hass, monkeypatch, tmp_path, soil_type="sandy")
     _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
     await _set(controller, routine_pulse_count=count, routine_pulse_rest_minutes=10)
 
@@ -498,7 +499,7 @@ async def test_a_long_slow_drip_pulse_runs_whole_and_its_watchdog_limit_covers_i
     pulse count 1, allowed by the 900-min caps) used to be killed by the
     stuck-valve watchdog every time. The limit now stretches to the planned
     pulse + 30 min while ZoneFlow runs it."""
-    controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
+    controller, clock, events = await _zone(hass, monkeypatch, tmp_path, soil_type="sandy")
     _history(controller, last_deep_days_ago=14)
     await _set(
         controller,

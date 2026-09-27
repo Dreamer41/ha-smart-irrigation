@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
-          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, pulses, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page."
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
           "notify_entity": "Your phone's notify entity from the Home Assistant Companion app. ZoneFlow sends faults and notable events there, and the weekly summary if you turn it on. Without one, they only go to the log.",
           "weather_entity": "A weather entity with a forecast. ZoneFlow holds a watering off when enough rain is forecast (but not for too many days in a row), and uses its current temperature for the frost guard when there's no temperature sensor.",
-          "soil_type": "For your reference: it doesn't change the watering by itself. It's shown on the zone's Soil Profile sensor and helps you choose the pulses and soak times on the device page: clay takes water slowly and wants more, shorter pulses with longer soaks between them; sand can take it in fewer pulses.",
-          "drainage": "How fast water disappears after a heavy watering or rain. For your reference, like the soil type: slow-draining soil wants more, shorter pulses.",
-          "slope": "For your reference, like the soil type: on a slope, water runs off before it soaks in, so more, shorter pulses help.",
-          "irrigation_method": "How the water is delivered. For your reference, like the soil type; how much water it gives is set by the flow rate (Configure → Flow rate).",
+          "soil_type": "Decides how each watering is split into pulses, so the water soaks in instead of running off: about 3 mm per pulse on clay, 15 mm on loam, 30 mm on sand, with a 30-minute soak between pulses (an hour on clay and clay loam). \"Not sure\" uses a cautious middle value. You can also change it later on the zone's device page.",
+          "drainage": "Slow-draining soil (a hard, compact layer underneath) takes less water per pulse and gets an hour's soak between pulses.",
+          "slope": "Water runs off a slope before it soaks in: a moderate slope adds one pulse to each watering, a steep one two.",
+          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate).",
           "growth_ramp_profile": "Gives young plants less water and grows it to the full weekly target as they get older, counted from the Planting / Transplant Date on the zone's device page. Off: always the full target. Custom: draw your own curve on the device page.",
           "csv_path": "A file where every watering, skip and warning is written with its numbers, for checking what ZoneFlow did (opens in any spreadsheet). The suggested file in your config folder is fine.",
           "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
           "notify_entity": "Your phone's notify entity from the Home Assistant Companion app. ZoneFlow sends faults and notable events there, and the weekly summary if you turn it on. Without one, they only go to the log.",
           "weather_entity": "A weather entity with a forecast. ZoneFlow holds a watering off when enough rain is forecast (but not for too many days in a row), and uses its current temperature for the frost guard when there's no temperature sensor.",
-          "soil_type": "For your reference: it doesn't change the watering by itself. It's shown on the zone's Soil Profile sensor and helps you choose the pulses and soak times on the device page: clay takes water slowly and wants more, shorter pulses with longer soaks between them; sand can take it in fewer pulses.",
-          "drainage": "How fast water disappears after a heavy watering or rain. For your reference, like the soil type: slow-draining soil wants more, shorter pulses.",
-          "slope": "For your reference, like the soil type: on a slope, water runs off before it soaks in, so more, shorter pulses help.",
-          "irrigation_method": "How the water is delivered. For your reference, like the soil type; how much water it gives is set by the flow rate (Configure → Flow rate).",
+          "soil_type": "Decides how each watering is split into pulses, so the water soaks in instead of running off: about 3 mm per pulse on clay, 15 mm on loam, 30 mm on sand, with a 30-minute soak between pulses (an hour on clay and clay loam). \"Not sure\" uses a cautious middle value. You can also change it later on the zone's device page.",
+          "drainage": "Slow-draining soil (a hard, compact layer underneath) takes less water per pulse and gets an hour's soak between pulses.",
+          "slope": "Water runs off a slope before it soaks in: a moderate slope adds one pulse to each watering, a steep one two.",
+          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate).",
           "growth_ramp_profile": "Gives young plants less water and grows it to the full weekly target as they get older, counted from the Planting / Transplant Date on the zone's device page. Off: always the full target. Custom: draw your own curve on the device page.",
           "csv_path": "A file where every watering, skip and warning is written with its numbers, for checking what ZoneFlow did (opens in any spreadsheet). The suggested file in your config folder is fine.",
           "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
@@ -640,6 +640,24 @@
           "fri": "Friday",
           "sat": "Saturday",
           "sun": "Sunday"
+        }
+      },
+      "drainage": {
+        "name": "Drainage",
+        "state": {
+          "unknown": "Not sure",
+          "fast": "Fast-draining",
+          "medium": "Medium",
+          "slow": "Slow-draining"
+        }
+      },
+      "slope": {
+        "name": "Slope",
+        "state": {
+          "flat": "Flat",
+          "slight": "Slight slope",
+          "moderate": "Moderate slope",
+          "steep": "Steep slope"
         }
       }
     },

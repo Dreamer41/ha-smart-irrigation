@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
-          "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, porcje, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy."
+          "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Czujnik wilgotności gleby (%) przy korzeniach roślin w tej strefie. Sucha gleba przyspiesza regularne podlewanie, mokra je pomija, a pomiędzy decyduje zwykły harmonogram. Progi „sucha” i „mokra” ustawisz na stronie urządzenia strefy.",
           "notify_entity": "Encja powiadomień Twojego telefonu z aplikacji Home Assistant Companion. ZoneFlow wysyła tam usterki i ważne zdarzenia, a także podsumowanie tygodnia, jeśli je włączysz. Bez niej trafiają one tylko do dziennika.",
           "weather_entity": "Encja pogody z prognozą. ZoneFlow wstrzymuje podlewanie, gdy prognoza zapowiada dość deszczu (ale nie przez zbyt wiele dni z rzędu), a gdy nie ma czujnika temperatury, używa jej bieżącej temperatury do ochrony przed przymrozkiem.",
-          "soil_type": "Informacyjnie: samo nie zmienia podlewania. Jest widoczne na czujniku „Profil gleby” strefy i pomaga dobrać porcje i przerwy między nimi na stronie urządzenia: gleba ilasta wchłania wodę powoli i potrzebuje więcej krótszych porcji z dłuższymi przerwami; piaszczysta przyjmie ją w mniejszej liczbie porcji.",
-          "drainage": "Jak szybko woda znika po obfitym podlewaniu lub deszczu. Informacyjnie, jak rodzaj gleby: gleba o niskiej przepuszczalności potrzebuje więcej krótszych porcji.",
-          "slope": "Informacyjnie, jak rodzaj gleby: na zboczu woda spływa, zanim wsiąknie, więc pomaga więcej krótszych porcji.",
-          "irrigation_method": "Jak woda trafia do roślin. Informacyjnie, jak rodzaj gleby; ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
+          "soil_type": "Decyduje, jak każde podlewanie dzieli się na porcje, żeby woda wsiąkała, a nie spływała: około 3 mm na porcję na glebie ilastej, 15 mm na gliniastej, 30 mm na piaszczystej, z 30-minutową przerwą między porcjami (godzinną na glebie ilastej i gliniasto-ilastej). „Nie wiem” używa ostrożnej wartości pośredniej. Możesz to też zmienić później na stronie urządzenia strefy.",
+          "drainage": "Gleba o niskiej przepuszczalności (z twardą, zbitą warstwą pod spodem) dostaje mniej wody na porcję i godzinną przerwę między porcjami.",
+          "slope": "Na zboczu woda spływa, zanim wsiąknie: umiarkowane nachylenie dodaje jedną porcję do każdego podlewania, duże – dwie.",
+          "irrigation_method": "Jak woda trafia do roślin. Przy linii kroplującej lub wężu pocącym na glebie piaszczystej nowa strefa zaczyna od co najmniej dwóch porcji, żeby woda została w strefie korzeni. Ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
           "growth_ramp_profile": "Daje młodym roślinom mniej wody i zwiększa ją do pełnej dawki tygodniowej, w miarę jak rosną, licząc od daty w polu „Data sadzenia / przesadzenia” na stronie urządzenia strefy. Brak: zawsze pełna dawka. Własna krzywa: ustaw ją sam na stronie urządzenia.",
           "csv_path": "Plik, do którego trafia każde podlewanie, pominięcie i ostrzeżenie wraz z liczbami, żeby można było sprawdzić, co zrobił ZoneFlow (otworzysz go w każdym arkuszu kalkulacyjnym). Proponowany plik w folderze konfiguracji jest w porządku.",
           "deep_soak_enabled": "Głębokie podlewanie to duża, powolna dawka wody co kilka tygodni (na początek co 14 dni), która zwilża glebę głęboko, żeby korzenie rosły w głąb. Dobre dla drzew, krzewów i bylin; wyłącz je dla roślin o płytkich korzeniach, takich jak sałata i zioła. Regularne podlewanie działa niezależnie od tego.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Czujnik wilgotności gleby (%) przy korzeniach roślin w tej strefie. Sucha gleba przyspiesza regularne podlewanie, mokra je pomija, a pomiędzy decyduje zwykły harmonogram. Progi „sucha” i „mokra” ustawisz na stronie urządzenia strefy.",
           "notify_entity": "Encja powiadomień Twojego telefonu z aplikacji Home Assistant Companion. ZoneFlow wysyła tam usterki i ważne zdarzenia, a także podsumowanie tygodnia, jeśli je włączysz. Bez niej trafiają one tylko do dziennika.",
           "weather_entity": "Encja pogody z prognozą. ZoneFlow wstrzymuje podlewanie, gdy prognoza zapowiada dość deszczu (ale nie przez zbyt wiele dni z rzędu), a gdy nie ma czujnika temperatury, używa jej bieżącej temperatury do ochrony przed przymrozkiem.",
-          "soil_type": "Informacyjnie: samo nie zmienia podlewania. Jest widoczne na czujniku „Profil gleby” strefy i pomaga dobrać porcje i przerwy między nimi na stronie urządzenia: gleba ilasta wchłania wodę powoli i potrzebuje więcej krótszych porcji z dłuższymi przerwami; piaszczysta przyjmie ją w mniejszej liczbie porcji.",
-          "drainage": "Jak szybko woda znika po obfitym podlewaniu lub deszczu. Informacyjnie, jak rodzaj gleby: gleba o niskiej przepuszczalności potrzebuje więcej krótszych porcji.",
-          "slope": "Informacyjnie, jak rodzaj gleby: na zboczu woda spływa, zanim wsiąknie, więc pomaga więcej krótszych porcji.",
-          "irrigation_method": "Jak woda trafia do roślin. Informacyjnie, jak rodzaj gleby; ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
+          "soil_type": "Decyduje, jak każde podlewanie dzieli się na porcje, żeby woda wsiąkała, a nie spływała: około 3 mm na porcję na glebie ilastej, 15 mm na gliniastej, 30 mm na piaszczystej, z 30-minutową przerwą między porcjami (godzinną na glebie ilastej i gliniasto-ilastej). „Nie wiem” używa ostrożnej wartości pośredniej. Możesz to też zmienić później na stronie urządzenia strefy.",
+          "drainage": "Gleba o niskiej przepuszczalności (z twardą, zbitą warstwą pod spodem) dostaje mniej wody na porcję i godzinną przerwę między porcjami.",
+          "slope": "Na zboczu woda spływa, zanim wsiąknie: umiarkowane nachylenie dodaje jedną porcję do każdego podlewania, duże – dwie.",
+          "irrigation_method": "Jak woda trafia do roślin. Przy linii kroplującej lub wężu pocącym na glebie piaszczystej nowa strefa zaczyna od co najmniej dwóch porcji, żeby woda została w strefie korzeni. Ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
           "growth_ramp_profile": "Daje młodym roślinom mniej wody i zwiększa ją do pełnej dawki tygodniowej, w miarę jak rosną, licząc od daty w polu „Data sadzenia / przesadzenia” na stronie urządzenia strefy. Brak: zawsze pełna dawka. Własna krzywa: ustaw ją sam na stronie urządzenia.",
           "csv_path": "Plik, do którego trafia każde podlewanie, pominięcie i ostrzeżenie wraz z liczbami, żeby można było sprawdzić, co zrobił ZoneFlow (otworzysz go w każdym arkuszu kalkulacyjnym). Proponowany plik w folderze konfiguracji jest w porządku.",
           "deep_soak_enabled": "Głębokie podlewanie to duża, powolna dawka wody co kilka tygodni (na początek co 14 dni), która zwilża glebę głęboko, żeby korzenie rosły w głąb. Dobre dla drzew, krzewów i bylin; wyłącz je dla roślin o płytkich korzeniach, takich jak sałata i zioła. Regularne podlewanie działa niezależnie od tego.",
@@ -640,6 +640,24 @@
           "fri": "Piątek",
           "sat": "Sobota",
           "sun": "Niedziela"
+        }
+      },
+      "drainage": {
+        "name": "Przepuszczalność gleby",
+        "state": {
+          "unknown": "Nie wiem",
+          "fast": "Wysoka (woda szybko wsiąka)",
+          "medium": "Średnia",
+          "slow": "Niska (woda długo stoi)"
+        }
+      },
+      "slope": {
+        "name": "Nachylenie",
+        "state": {
+          "flat": "Płaski teren",
+          "slight": "Lekkie nachylenie",
+          "moderate": "Umiarkowane nachylenie",
+          "steep": "Duże nachylenie"
         }
       }
     },

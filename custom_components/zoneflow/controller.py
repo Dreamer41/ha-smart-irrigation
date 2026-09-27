@@ -383,11 +383,34 @@ class ZoneFlowController:
 
     @property
     def drainage(self) -> str:
+        """Live select (select.py) first, like soil_type."""
+        override = self.store.state.drainage_override
+        if override is not None:
+            return override
         return self.entry.options.get(CONF_DRAINAGE, self.entry.data.get(CONF_DRAINAGE, DEFAULT_DRAINAGE))
 
     @property
     def slope(self) -> str:
+        """Live select (select.py) first, like soil_type."""
+        override = self.store.state.slope_override
+        if override is not None:
+            return override
         return self.entry.options.get(CONF_SLOPE, self.entry.data.get(CONF_SLOPE, DEFAULT_SLOPE))
+
+    @property
+    def site(self) -> tuple[str, str, str]:
+        """(soil, drainage, slope): what splits a watering into pulses
+        (calculations.soil_pulse_count)."""
+        return self.soil_type, self.drainage, self.slope
+
+    async def async_soil_changed(self) -> None:
+        """Soil type or drainage was picked or changed: the soak between
+        pulses follows it (the person can still move the sliders after)."""
+        minutes = calc.soak_minutes(self.soil_type, self.drainage)
+        for key in ("routine_pulse_rest_minutes", "deep_soak_pulse_rest_minutes"):
+            entity = self.numbers.get(key)
+            if entity is not None:
+                await entity.async_set_metric_value(minutes)
 
     @property
     def irrigation_method(self) -> str:
@@ -2590,6 +2613,7 @@ class ZoneFlowController:
             self.number("flow_rate_mm_per_min"),
             pulse_count=deep_soak_pulse_count,
             min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+            site=self.site,
         )
 
         if plan.total_runtime_minutes > self.number("deep_soak_max_runtime_minutes"):
@@ -2838,6 +2862,7 @@ class ZoneFlowController:
             pulse_count=routine_pulse_count,
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
+            site=self.site,
         )
 
         # Only a zone that HAS watered before can be overdue -- a brand-new

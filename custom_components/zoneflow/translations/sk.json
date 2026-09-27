@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Stane sa názvom zariadenia zóny a začiatkom názvov jej entít a zobrazuje sa v správach v telefóne. Napr. „Záhon paradajok“, „Predný trávnik“.",
-          "plant": "Vyplní rozumné počiatočné hodnoty pre túto plodinu: týždenné ciele vody, koeficient plodiny, pulzy, hĺbkovú zálievku a rastovú krivku. „Niečo iné“ začína so všeobecnými hodnotami. Všetko môžete neskôr zmeniť na stránke zariadenia zóny."
+          "plant": "Vyplní rozumné počiatočné hodnoty pre túto plodinu: týždenné ciele vody, koeficient plodiny, hĺbkovú zálievku a rastovú krivku. „Niečo iné“ začína so všeobecnými hodnotami. Všetko môžete neskôr zmeniť na stránke zariadenia zóny."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Snímač vlhkosti pôdy (%) v koreňovej zóne tejto zóny. Suchá pôda bežnú zálievku urýchli, mokrá ju vynechá a medzi tým rozhoduje bežný plán. Hranice sucha a vlhka sú na stránke zariadenia zóny.",
           "notify_entity": "Entita oznámení vášho telefónu z aplikácie Home Assistant Companion. ZoneFlow tam posiela poruchy a dôležité udalosti a tiež týždenný súhrn, ak ho zapnete. Bez nej sa zapisujú len do denníka.",
           "weather_entity": "Entita počasia s predpoveďou. Keď sa predpovedá dosť dažďa, ZoneFlow zálievku odloží (no nie príliš veľa dní po sebe) a ak nemáte snímač teploty, použije jej aktuálnu teplotu pre ochranu pred mrazom.",
-          "soil_type": "Len pre vašu informáciu: samo o sebe zálievku nemení. Zobrazuje sa na snímači Pôdny profil zóny a pomôže vám zvoliť pulzy a čas na vsiaknutie na stránke zariadenia: íl prijíma vodu pomaly a potrebuje viac kratších pulzov s dlhšími prestávkami; piesok zvládne menej pulzov.",
-          "drainage": "Ako rýchlo voda zmizne po výdatnej zálievke alebo daždi. Len pre informáciu, ako typ pôdy: pomaly odvodňovaná pôda potrebuje viac kratších pulzov.",
-          "slope": "Len pre informáciu, ako typ pôdy: na svahu voda steká skôr, než vsiakne, preto pomôže viac kratších pulzov.",
-          "irrigation_method": "Ako sa voda privádza. Len pre informáciu, ako typ pôdy; množstvo vody určuje prietok (Konfigurovať → Prietok).",
+          "soil_type": "Určuje, ako sa každá zálievka rozdelí na pulzy, aby voda vsiakla a nestekala: asi 3 mm na pulz pri ílovitej pôde, 15 mm pri hlinitej, 30 mm pri piesočnatej, s 30-minútovou prestávkou na vsiaknutie medzi pulzmi (hodina pri ílovitej a ílovitohlinitej). „Neviem“ použije opatrnú strednú hodnotu. Neskôr to môžete zmeniť aj na stránke zariadenia zóny.",
+          "drainage": "Pomaly odvodňovaná pôda (s tvrdou, zhutnenou vrstvou pod povrchom) dostane menej vody na pulz a hodinovú prestávku na vsiaknutie medzi pulzmi.",
+          "slope": "Na svahu voda steká skôr, než vsiakne: stredný svah pridá ku každej zálievke jeden pulz, strmý dva.",
+          "irrigation_method": "Ako sa voda privádza. S kvapkovou alebo priesakovou hadicou na piesočnatej pôde začne nová zóna aspoň s dvoma pulzmi, aby voda zostala v koreňovej zóne. Množstvo vody určuje prietok (Konfigurovať → Prietok).",
           "growth_ramp_profile": "Mladé rastliny dostanú menej vody a s vekom sa dávka zvyšuje až na plný týždenný cieľ, počítané od dátumu na stránke zariadenia zóny (Dátum výsadby / presadenia). Vypnuté: vždy plný cieľ. Vlastná: nakreslite si vlastnú krivku na stránke zariadenia.",
           "csv_path": "Súbor, do ktorého sa zapisuje každá zálievka, vynechanie a varovanie aj s číslami, aby ste mohli skontrolovať, čo ZoneFlow robil (otvorí sa v každom tabuľkovom programe). Navrhnutý súbor v konfiguračnom priečinku je v poriadku.",
           "deep_soak_enabled": "Hĺbková zálievka je výdatné, pomalé zalievanie raz za pár týždňov (na začiatok 14 dní), ktoré zavlaží pôdu hlboko, aby korene rástli do hĺbky. Vhodná pre stromy, kry a trvalky; pre plytko koreniace rastliny ako šalát a bylinky ju vypnite. Bežná zálievka beží v každom prípade.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Snímač vlhkosti pôdy (%) v koreňovej zóne tejto zóny. Suchá pôda bežnú zálievku urýchli, mokrá ju vynechá a medzi tým rozhoduje bežný plán. Hranice sucha a vlhka sú na stránke zariadenia zóny.",
           "notify_entity": "Entita oznámení vášho telefónu z aplikácie Home Assistant Companion. ZoneFlow tam posiela poruchy a dôležité udalosti a tiež týždenný súhrn, ak ho zapnete. Bez nej sa zapisujú len do denníka.",
           "weather_entity": "Entita počasia s predpoveďou. Keď sa predpovedá dosť dažďa, ZoneFlow zálievku odloží (no nie príliš veľa dní po sebe) a ak nemáte snímač teploty, použije jej aktuálnu teplotu pre ochranu pred mrazom.",
-          "soil_type": "Len pre vašu informáciu: samo o sebe zálievku nemení. Zobrazuje sa na snímači Pôdny profil zóny a pomôže vám zvoliť pulzy a čas na vsiaknutie na stránke zariadenia: íl prijíma vodu pomaly a potrebuje viac kratších pulzov s dlhšími prestávkami; piesok zvládne menej pulzov.",
-          "drainage": "Ako rýchlo voda zmizne po výdatnej zálievke alebo daždi. Len pre informáciu, ako typ pôdy: pomaly odvodňovaná pôda potrebuje viac kratších pulzov.",
-          "slope": "Len pre informáciu, ako typ pôdy: na svahu voda steká skôr, než vsiakne, preto pomôže viac kratších pulzov.",
-          "irrigation_method": "Ako sa voda privádza. Len pre informáciu, ako typ pôdy; množstvo vody určuje prietok (Konfigurovať → Prietok).",
+          "soil_type": "Určuje, ako sa každá zálievka rozdelí na pulzy, aby voda vsiakla a nestekala: asi 3 mm na pulz pri ílovitej pôde, 15 mm pri hlinitej, 30 mm pri piesočnatej, s 30-minútovou prestávkou na vsiaknutie medzi pulzmi (hodina pri ílovitej a ílovitohlinitej). „Neviem“ použije opatrnú strednú hodnotu. Neskôr to môžete zmeniť aj na stránke zariadenia zóny.",
+          "drainage": "Pomaly odvodňovaná pôda (s tvrdou, zhutnenou vrstvou pod povrchom) dostane menej vody na pulz a hodinovú prestávku na vsiaknutie medzi pulzmi.",
+          "slope": "Na svahu voda steká skôr, než vsiakne: stredný svah pridá ku každej zálievke jeden pulz, strmý dva.",
+          "irrigation_method": "Ako sa voda privádza. S kvapkovou alebo priesakovou hadicou na piesočnatej pôde začne nová zóna aspoň s dvoma pulzmi, aby voda zostala v koreňovej zóne. Množstvo vody určuje prietok (Konfigurovať → Prietok).",
           "growth_ramp_profile": "Mladé rastliny dostanú menej vody a s vekom sa dávka zvyšuje až na plný týždenný cieľ, počítané od dátumu na stránke zariadenia zóny (Dátum výsadby / presadenia). Vypnuté: vždy plný cieľ. Vlastná: nakreslite si vlastnú krivku na stránke zariadenia.",
           "csv_path": "Súbor, do ktorého sa zapisuje každá zálievka, vynechanie a varovanie aj s číslami, aby ste mohli skontrolovať, čo ZoneFlow robil (otvorí sa v každom tabuľkovom programe). Navrhnutý súbor v konfiguračnom priečinku je v poriadku.",
           "deep_soak_enabled": "Hĺbková zálievka je výdatné, pomalé zalievanie raz za pár týždňov (na začiatok 14 dní), ktoré zavlaží pôdu hlboko, aby korene rástli do hĺbky. Vhodná pre stromy, kry a trvalky; pre plytko koreniace rastliny ako šalát a bylinky ju vypnite. Bežná zálievka beží v každom prípade.",
@@ -640,6 +640,24 @@
           "fri": "Piatok",
           "sat": "Sobota",
           "sun": "Nedeľa"
+        }
+      },
+      "drainage": {
+        "name": "Odvodnenie",
+        "state": {
+          "unknown": "Neviem",
+          "fast": "Rýchle odvodnenie",
+          "medium": "Stredné",
+          "slow": "Pomalé odvodnenie"
+        }
+      },
+      "slope": {
+        "name": "Sklon",
+        "state": {
+          "flat": "Rovina",
+          "slight": "Mierny svah",
+          "moderate": "Stredný svah",
+          "steep": "Strmý svah"
         }
       }
     },

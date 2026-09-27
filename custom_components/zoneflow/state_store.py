@@ -103,6 +103,9 @@ class IrrigationState:
     # replacement for them. None/"auto" always means "behave exactly as
     # before this feature existed."
     soil_type_override: str | None = None
+    # Same for drainage and slope (they shape the cycle-and-soak pulses).
+    drainage_override: str | None = None
+    slope_override: str | None = None
     growth_stage_mode: str = "auto"
 
     # Live override of the growth-ramp profile itself (which curve this

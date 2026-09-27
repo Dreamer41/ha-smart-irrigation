@@ -294,6 +294,12 @@ async def test_climate_step_seeds_the_temperature_sliders(hass):
         "hot_temp_threshold": 23.0,
         "cool_temp_threshold": 14.5,
         "fallback_temp": 18.0,
+        # Cycle and soak from the soil ("Not sure"): one pulse at least, the
+        # soil adds what it needs; 30 minutes between pulses.
+        "routine_pulse_count": 1.0,
+        "deep_soak_pulse_count": 1.0,
+        "routine_pulse_rest_minutes": 30.0,
+        "deep_soak_pulse_rest_minutes": 30.0,
     }
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]

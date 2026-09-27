@@ -1387,7 +1387,9 @@ const SETTINGS_GROUPS = [
     "number.deep_soak_drydown_days", "number.deep_soak_rain_threshold", "number.deep_soak_pulse_count",
     "number.deep_soak_pulse_rest_minutes", "number.deep_soak_max_runtime_minutes",
   ]],
-  ["soil", ["number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_type"]],
+  ["soil", [
+    "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_type", "select.drainage", "select.slope",
+  ]],
   ["growth", [
     "select.growth_ramp_profile", "datetime.planting_date", "select.growth_stage_mode",
     "number.growth_stage_override_pct", "number.growth_ramp_custom_start_pct",

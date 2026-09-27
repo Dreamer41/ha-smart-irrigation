@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Pasa a ser el nombre del dispositivo de la zona y el comienzo de los nombres de sus entidades, y aparece en los mensajes del teléfono. P. ej., \"Bancal de tomates\", \"Césped delantero\".",
-          "plant": "Rellena valores iniciales razonables para este cultivo: objetivos semanales de agua, coeficiente de cultivo, pulsos, riego profundo y rampa de crecimiento. \"Otra cosa\" parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona."
+          "plant": "Rellena valores iniciales razonables para este cultivo: objetivos semanales de agua, coeficiente de cultivo, riego profundo y rampa de crecimiento. \"Otra cosa\" parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
           "notify_entity": "La entidad de notificación de tu teléfono, de la app Home Assistant Companion. ZoneFlow envía ahí los fallos y los eventos importantes, y también el resumen semanal si lo activas. Sin ella, todo queda solo en el registro.",
           "weather_entity": "Una entidad meteorológica con previsión. ZoneFlow aplaza un riego cuando se prevé suficiente lluvia (pero no demasiados días seguidos), y usa su temperatura actual para la protección antiheladas si no hay sensor de temperatura.",
-          "soil_type": "Solo como referencia: por sí solo no cambia el riego. Aparece en el sensor Perfil del suelo de la zona y te ayuda a elegir los pulsos y las pausas entre pulsos en la página del dispositivo: un suelo arcilloso absorbe el agua despacio y pide más pulsos, más cortos y con pausas más largas entre ellos; uno arenoso la absorbe con menos pulsos.",
-          "drainage": "Lo rápido que desaparece el agua tras un riego abundante o una lluvia. Solo como referencia, igual que el tipo de suelo: un suelo que drena lento pide más pulsos, más cortos.",
-          "slope": "Solo como referencia, igual que el tipo de suelo: en pendiente, el agua escurre antes de infiltrarse, así que ayudan más pulsos, más cortos.",
-          "irrigation_method": "Cómo llega el agua. Solo como referencia, igual que el tipo de suelo; cuánta agua da lo determina el caudal (Configurar → Caudal: calcularlo a partir de los emisores).",
+          "soil_type": "Decide cómo se divide cada riego en pulsos, para que el agua se infiltre en vez de escurrir: unos 3 mm por pulso en suelo arcilloso, 15 mm en franco, 30 mm en arenoso, con una pausa de 30 minutos entre pulsos (una hora en arcilloso y franco arcilloso). \"No lo sé\" usa un valor intermedio prudente. También puedes cambiarlo más tarde en la página del dispositivo de la zona.",
+          "drainage": "Un suelo que drena lento (con una capa dura y compacta debajo) recibe menos agua por pulso y una pausa de una hora entre pulsos.",
+          "slope": "En pendiente, el agua escurre antes de infiltrarse: una pendiente moderada añade un pulso a cada riego; una pronunciada, dos.",
+          "irrigation_method": "Cómo llega el agua. Con goteo o manguera exudante en suelo arenoso, una zona nueva empieza con al menos dos pulsos, para que el agua se quede en la zona de las raíces. Cuánta agua da lo determina el caudal (Configurar → Caudal).",
           "growth_ramp_profile": "Da menos agua a las plantas jóvenes y la va subiendo hasta el objetivo semanal completo a medida que crecen, contando desde la Fecha de siembra / trasplante de la página del dispositivo de la zona. Desactivada: siempre el objetivo completo. Personalizada: dibuja tu propia curva en la página del dispositivo.",
           "csv_path": "Un archivo donde se anota cada riego, omisión y aviso con sus cifras, para comprobar qué hizo ZoneFlow (se abre con cualquier hoja de cálculo). El archivo sugerido en tu carpeta config sirve perfectamente.",
           "deep_soak_enabled": "El riego profundo es un riego abundante y lento cada dos semanas o así (14 días para empezar) que moja el suelo en profundidad, para que las raíces crezcan hondas. Va bien para árboles, arbustos y perennes; desactívalo para plantas de raíz superficial como ensaladas y aromáticas. El riego habitual funciona en cualquier caso.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
           "notify_entity": "La entidad de notificación de tu teléfono, de la app Home Assistant Companion. ZoneFlow envía ahí los fallos y los eventos importantes, y también el resumen semanal si lo activas. Sin ella, todo queda solo en el registro.",
           "weather_entity": "Una entidad meteorológica con previsión. ZoneFlow aplaza un riego cuando se prevé suficiente lluvia (pero no demasiados días seguidos), y usa su temperatura actual para la protección antiheladas si no hay sensor de temperatura.",
-          "soil_type": "Solo como referencia: por sí solo no cambia el riego. Aparece en el sensor Perfil del suelo de la zona y te ayuda a elegir los pulsos y las pausas entre pulsos en la página del dispositivo: un suelo arcilloso absorbe el agua despacio y pide más pulsos, más cortos y con pausas más largas entre ellos; uno arenoso la absorbe con menos pulsos.",
-          "drainage": "Lo rápido que desaparece el agua tras un riego abundante o una lluvia. Solo como referencia, igual que el tipo de suelo: un suelo que drena lento pide más pulsos, más cortos.",
-          "slope": "Solo como referencia, igual que el tipo de suelo: en pendiente, el agua escurre antes de infiltrarse, así que ayudan más pulsos, más cortos.",
-          "irrigation_method": "Cómo llega el agua. Solo como referencia, igual que el tipo de suelo; cuánta agua da lo determina el caudal (Configurar → Caudal: calcularlo a partir de los emisores).",
+          "soil_type": "Decide cómo se divide cada riego en pulsos, para que el agua se infiltre en vez de escurrir: unos 3 mm por pulso en suelo arcilloso, 15 mm en franco, 30 mm en arenoso, con una pausa de 30 minutos entre pulsos (una hora en arcilloso y franco arcilloso). \"No lo sé\" usa un valor intermedio prudente. También puedes cambiarlo más tarde en la página del dispositivo de la zona.",
+          "drainage": "Un suelo que drena lento (con una capa dura y compacta debajo) recibe menos agua por pulso y una pausa de una hora entre pulsos.",
+          "slope": "En pendiente, el agua escurre antes de infiltrarse: una pendiente moderada añade un pulso a cada riego; una pronunciada, dos.",
+          "irrigation_method": "Cómo llega el agua. Con goteo o manguera exudante en suelo arenoso, una zona nueva empieza con al menos dos pulsos, para que el agua se quede en la zona de las raíces. Cuánta agua da lo determina el caudal (Configurar → Caudal).",
           "growth_ramp_profile": "Da menos agua a las plantas jóvenes y la va subiendo hasta el objetivo semanal completo a medida que crecen, contando desde la Fecha de siembra / trasplante de la página del dispositivo de la zona. Desactivada: siempre el objetivo completo. Personalizada: dibuja tu propia curva en la página del dispositivo.",
           "csv_path": "Un archivo donde se anota cada riego, omisión y aviso con sus cifras, para comprobar qué hizo ZoneFlow (se abre con cualquier hoja de cálculo). El archivo sugerido en tu carpeta config sirve perfectamente.",
           "deep_soak_enabled": "El riego profundo es un riego abundante y lento cada dos semanas o así (14 días para empezar) que moja el suelo en profundidad, para que las raíces crezcan hondas. Va bien para árboles, arbustos y perennes; desactívalo para plantas de raíz superficial como ensaladas y aromáticas. El riego habitual funciona en cualquier caso.",
@@ -640,6 +640,24 @@
           "fri": "Viernes",
           "sat": "Sábado",
           "sun": "Domingo"
+        }
+      },
+      "drainage": {
+        "name": "Drenaje",
+        "state": {
+          "unknown": "No lo sé",
+          "fast": "Drena rápido",
+          "medium": "Medio",
+          "slow": "Drena lento"
+        }
+      },
+      "slope": {
+        "name": "Pendiente",
+        "state": {
+          "flat": "Llano",
+          "slight": "Pendiente suave",
+          "moderate": "Pendiente moderada",
+          "steep": "Pendiente pronunciada"
         }
       }
     },

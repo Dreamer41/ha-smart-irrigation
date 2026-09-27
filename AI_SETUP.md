@@ -196,9 +196,10 @@ unanswered optional field is not the same as a "no."
    length: is the ground this zone sits on flat, a slight slope, a
    moderate slope, or steep? (A person can usually answer this from memory
    without going to look at anything, unlike soil type below — that's why
-   it's worth getting out of the way immediately.) It's descriptive/
-   informational only (§4's table says more), so "not sure" is a fine
-   answer if they genuinely don't know.
+   it's worth getting out of the way immediately.) ZoneFlow uses it for
+   cycle and soak: a moderate slope adds one pulse to each watering, a
+   steep one two (§4's table says more). "Flat" is the right answer if
+   they genuinely don't know.
 6. **Dashboard card, and/or a plain-language cheat sheet?** Two separate,
    independent, purely-cosmetic offers — ask about both, don't assume one
    implies the other: (a) a ready-to-paste dashboard YAML for this zone
@@ -696,13 +697,18 @@ order they appear:
 | Routine trigger | same options as deep soak trigger | same guidance |
 | Routine sun offset (minutes) | only relevant if routine trigger isn't "Fixed time" | ask how many minutes before/after |
 
-The four descriptive site fields (soil type, drainage, slope, irrigation
-method) are **informational only** — nothing in ZoneFlow's scheduling logic
-reads them directly. Their entire job is to inform how *you* fill in §5's
-real tunable numbers (split-cycle pulse counts, dry-down holdoffs, rain
-efficiency); they always have a valid value (even "not sure"/"flat"/"drip"
-as defaults), so they never block submitting this screen. Say this plainly
-if the person asks why an "unknown" answer is fine here.
+The four site fields decide **cycle and soak** by themselves (1.5.0+):
+each watering is split into as many pulses as the soil takes in without
+runoff (about 3 mm per pulse on clay, 7 on clay loam, 15 on loam, 20 on
+sandy loam, 30 on sand, 10 when "not sure"; 70 % of that with slow
+drainage), plus one pulse on a moderate slope and two on a steep one, at
+most 8. The soak between pulses is 30 minutes, or an hour on clay, clay
+loam or slow-draining soil. Drip or a soaker hose on sandy soil starts at
+two pulses. So get these right rather than guessing — but "not sure" is
+still a safe, cautious answer and never blocks submitting this screen. The
+zone's pulse-count settings are the *minimum* per watering; there's no
+need to raise them by hand for clay or slopes. Soil type, drainage and
+slope can be changed later on the device page too.
 
 **Screen 3 — climate.** One dropdown: Tropical (hot all year), Hot summers
 (Mediterranean, desert, southern US), Temperate (most of Europe, northern
@@ -879,45 +885,35 @@ crop table below, not in isolation:
   season, but watch the forecast dry-spell override (§7.4) — long genuine
   dry spells are normal here, not a sign the forecast gate is misbehaving.
 
-**Soil type, drainage and slope.** These were already collected as
-descriptive fields in §4 — this is where that context actually gets used,
-translated into real numbers. Most people don't know their soil type off
+**Soil type, drainage and slope.** These were already collected in §4,
+and they already set the pulses and soak (see §4). Here they also inform
+the other numbers. Most people don't know their soil type off
 the top of their head, so if the §4 answer was "not sure," describe this
 simple test rather than assuming they'll guess right: *take a handful of
 moist (not soaking) soil and squeeze it — if it falls apart immediately,
 it's sandy; if it holds a ball shape but crumbles with a poke, it's loam;
 if it holds a shape and can be rolled into a ribbon between your fingers,
-it's clay.* If they can now answer it, go back and update the §4 field too
-— it's a two-second edit via the integration's **Options**, and keeps the
-descriptive field honest.
+it's clay.* If they can now answer it, update it — the zone's device page
+has a Soil type dropdown (and Drainage and Slope), which also sets the soak
+between pulses.
 
 - **Sandy soil / fast drainage:** absorbs even heavy rain well (little
   runoff) but dries out again quickly. Rain efficiency can stay near the
   factory defaults; **shorten the dry-down holdoffs** (both routine and
-  deep soak) versus what you'd otherwise pick from root depth alone. For
-  split-cycle pulsing (below), sandy soil rarely needs more than 1-2
-  pulses with a short or zero soak gap — infiltration isn't the
-  bottleneck.
+  deep soak) versus what you'd otherwise pick from root depth alone.
 - **Loam / medium drainage:** the "average" case the factory defaults were
   tuned around — no adjustment needed unless something else about the site
-  is unusual. 2-3 pulses with a moderate soak gap (15-20min) is a
-  reasonable split-cycle starting point.
+  is unusual.
 - **Clay soil / slow drainage:** a heavy downpour runs off rather than
   soaking in, so heavy rain should get *less* credit than the factory
   default assumes — lower `rain_eff_high` (heavy rain efficiency, default
   1.0) toward 0.6-0.7. Clay holds moisture much longer once it does soak
   in, so it's fine to **lengthen the dry-down holdoffs** versus what root
-  depth alone would suggest. For split-cycle pulsing, clay is where it
-  matters most: use **more, shorter pulses with a longer soak gap between
-  them** (e.g. 3-4 pulses, 25-35min rest) so water has time to actually
-  infiltrate instead of pooling or running off between pulses.
-- **Slope** compounds whichever of the above applies rather than replacing
-  it: a sloped clay/slow-drainage site is the case that benefits most from
-  more/shorter pulses and a longer soak, since runoff on a slope happens
-  faster than on flat ground; a sloped sandy/fast-drainage site is less
-  affected, since it absorbs water quickly enough that runoff is less of a
-  concern even on a slope. Steep + slow-draining is the strongest signal
-  to lean toward the high end of both pulse count and soak-gap length.
+  depth alone would suggest.
+- **Pulses and soak** follow from soil, drainage and slope by themselves
+  (§4) — don't set the pulse counts or soak gaps by hand unless the person
+  sees water pooling or running off anyway: then raise the pulse count
+  (it's the minimum per watering) or lengthen the soak.
 
 **Root depth (deep soak target depth).** Suggest a starting number
 yourself first, rather than asking the person to name a depth in

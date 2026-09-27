@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Passa a ser o nome do dispositivo da zona e o início dos nomes das suas entidades, e aparece nas mensagens do telefone. Ex.: \"Canteiro de tomates\", \"Jardim da frente\".",
-          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente cultural, pulsos, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona."
+          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente cultural, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona."
         }
       },
       "entities": {
@@ -51,10 +51,10 @@
           "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado dispensa-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
           "notify_entity": "A entidade de notificação do seu telefone, da app Home Assistant Companion. O ZoneFlow envia para lá avarias e eventos importantes, e também o resumo semanal se o ativar. Sem ela, ficam só no registo.",
           "weather_entity": "Uma entidade meteorológica com previsão. O ZoneFlow adia uma rega quando está prevista chuva suficiente (mas não durante demasiados dias seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
-          "soil_type": "Serve de referência: por si só não altera a rega. Aparece no sensor Perfil do solo da zona e ajuda a escolher os pulsos e as pausas na página do dispositivo: o solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; o arenoso aguenta menos pulsos.",
-          "drainage": "A rapidez com que a água desaparece depois de uma rega forte ou de chuva. Serve de referência, como o tipo de solo: um solo com drenagem lenta prefere mais pulsos, mais curtos.",
-          "slope": "Serve de referência, como o tipo de solo: num declive, a água escorre antes de se infiltrar, por isso ajudam mais pulsos, mais curtos.",
-          "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
+          "soil_type": "Decide como cada rega é dividida em pulsos, para que a água se infiltre em vez de escorrer: cerca de 3 mm por pulso em solo argiloso, 15 mm em franco, 30 mm em arenoso, com uma pausa de 30 minutos entre pulsos (uma hora em argiloso e franco-argiloso). \"Não sei\" usa um valor intermédio prudente. Também pode alterá-lo mais tarde na página do dispositivo da zona.",
+          "drainage": "Um solo com drenagem lenta (com uma camada dura e compacta por baixo) recebe menos água por pulso e uma pausa de uma hora entre pulsos.",
+          "slope": "Num declive, a água escorre antes de se infiltrar: um terreno moderadamente inclinado acrescenta um pulso a cada rega; um muito inclinado, dois.",
+          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
           "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta-a até à meta semanal completa à medida que crescem, a contar da Data de plantação / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: defina a sua própria curva na página do dispositivo.",
           "csv_path": "Um ficheiro onde cada rega, rega dispensada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
           "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
@@ -143,10 +143,10 @@
           "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado dispensa-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
           "notify_entity": "A entidade de notificação do seu telefone, da app Home Assistant Companion. O ZoneFlow envia para lá avarias e eventos importantes, e também o resumo semanal se o ativar. Sem ela, ficam só no registo.",
           "weather_entity": "Uma entidade meteorológica com previsão. O ZoneFlow adia uma rega quando está prevista chuva suficiente (mas não durante demasiados dias seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
-          "soil_type": "Serve de referência: por si só não altera a rega. Aparece no sensor Perfil do solo da zona e ajuda a escolher os pulsos e as pausas na página do dispositivo: o solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; o arenoso aguenta menos pulsos.",
-          "drainage": "A rapidez com que a água desaparece depois de uma rega forte ou de chuva. Serve de referência, como o tipo de solo: um solo com drenagem lenta prefere mais pulsos, mais curtos.",
-          "slope": "Serve de referência, como o tipo de solo: num declive, a água escorre antes de se infiltrar, por isso ajudam mais pulsos, mais curtos.",
-          "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
+          "soil_type": "Decide como cada rega é dividida em pulsos, para que a água se infiltre em vez de escorrer: cerca de 3 mm por pulso em solo argiloso, 15 mm em franco, 30 mm em arenoso, com uma pausa de 30 minutos entre pulsos (uma hora em argiloso e franco-argiloso). \"Não sei\" usa um valor intermédio prudente. Também pode alterá-lo mais tarde na página do dispositivo da zona.",
+          "drainage": "Um solo com drenagem lenta (com uma camada dura e compacta por baixo) recebe menos água por pulso e uma pausa de uma hora entre pulsos.",
+          "slope": "Num declive, a água escorre antes de se infiltrar: um terreno moderadamente inclinado acrescenta um pulso a cada rega; um muito inclinado, dois.",
+          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
           "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta-a até à meta semanal completa à medida que crescem, a contar da Data de plantação / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: defina a sua própria curva na página do dispositivo.",
           "csv_path": "Um ficheiro onde cada rega, rega dispensada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
           "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
@@ -640,6 +640,24 @@
           "fri": "Sexta-feira",
           "sat": "Sábado",
           "sun": "Domingo"
+        }
+      },
+      "drainage": {
+        "name": "Drenagem",
+        "state": {
+          "unknown": "Não sei",
+          "fast": "Drenagem rápida",
+          "medium": "Média",
+          "slow": "Drenagem lenta"
+        }
+      },
+      "slope": {
+        "name": "Inclinação",
+        "state": {
+          "flat": "Plano",
+          "slight": "Pouco inclinado",
+          "moderate": "Moderadamente inclinado",
+          "steep": "Muito inclinado"
         }
       }
     },
