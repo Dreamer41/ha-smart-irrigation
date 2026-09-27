@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d. %m. %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d. %m.",
+    "time": "%H:%M",
+    "days": "po,út,st,čt,pá,so,ne",
+    "months": "led,úno,bře,dub,kvě,čvn,čvc,srp,zář,říj,lis,pro"
+  },
+  "cycle": {
+    "deep_soak": "Hloubková zálivka",
+    "routine": "Běžná zálivka",
+    "service_run": "Servisní běh",
+    "test_pulse": "Testovací pulz"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Silný déšť",
+      "message": "Zaznamenán silný déšť (24 h: {rain_24h}). Prodlevy na vyschnutí aktualizovány."
+    },
+    "stale_lock": {
+      "title": "⚠️ Zámek zavlažování resetován",
+      "message": "Zámek zavlažování byl zaseknutý déle než 3 hodiny. Byl resetován, aby neblokoval další zálivky."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Zasáhl hlídač ventilu",
+      "message": "Ventil zůstal zapnutý nepřetržitě {minutes} min. Byl vypnut, aby se ochránily rostliny."
+    },
+    "power_loss": {
+      "title": "🚨 Výpadek proudu během zálivky",
+      "message": "Ventil nebo čerpadlo byly uprostřed cyklu bez proudu 10+ minut. Zálivka se zastavila a zámek byl uvolněn; další naplánovaný běh to zkusí znovu."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Ventil zapnutý po obnovení proudu",
+      "message": "Po návratu proudu hlásil ventil stav zapnuto — byl vynuceně vypnut. Zkontrolujte relé a zapojení."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Zálivku přerušil restart",
+      "message": "Home Assistant se restartoval uprostřed cyklu. Zámek byl uvolněn a ventil, pokud byl dostupný, vynuceně vypnut; další naplánovaný běh to zkusí znovu."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Deficitní režim skončil",
+      "message": "Jeho datum konce uplynulo — běžná zálivka je zpět na plné dávce."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: voda neteče",
+      "message": "Cyklus skončil, ale průtokoměr neukazuje žádnou dodanou vodu. Zkontrolujte ventil, čerpadlo a zapojení průtokoměru."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: zastaveno kvůli chybě",
+      "message": "Zastaveno: {error}. Ventil je zavřený; další naplánovaný běh to zkusí znovu."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: zastaveno kvůli chybě",
+      "message": "Zastaveno: {error}. {valve} může být stále OTEVŘENÝ — zkontrolujte ho hned."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: nízký příkon čerpadla",
+      "message": "Běží pulz {pulse}, ale čerpadlo ukazuje {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle}: zastaveno deštěm",
+      "message": "Zastaveno po {given} z {planned} min: za posledních 30 minut napršelo {rain}. Další naplánovaný běh rozhodne znovu a tento déšť započítá."
+    },
+    "forecast_override": {
+      "title": "⏱️ Zálivka i přes předpověď",
+      "message": "Déšť byl opakovaně předpovídán, ale nenapršelo nic (počet dní: {days}, limit této zóny: {limit}) — zalévá se i tak."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Hloubková zálivka neproběhla: limit doby",
+      "message": "Vypočtená doba ({minutes} min) překračuje bezpečnostní limit hloubkové zálivky této zóny. Zálivka zrušena — zkontrolujte průtok a cílovou dávku."
+    },
+    "routine_cap": {
+      "title": "⚠️ Běžná zálivka neproběhla: limit doby",
+      "message": "Vypočtená doba ({minutes} min) překračuje bezpečnostní limit běžné zálivky této zóny ({cap} min). Zálivka zrušena — zkontrolujte průtok a týdenní cíle."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle}: vynecháno, denní limit doby",
+      "message": "Dnes už {used} min; tento běh ({minutes} min) by překročil denní limit {cap} min. Zkusí to znovu, až bude na řadě."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle}: zrušeno",
+      "message": "Zrušeno: za posledních 30 minut napršelo {rain}."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Hloubková zálivka dokončena",
+      "message": "Dodáno {amount}, pulzy: {pulses} ({minutes} min). Počítá se i jako běžná zálivka.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Další běžná: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Zálivka je po termínu",
+      "message": "Od poslední zálivky uplynulo dní: {days} — neobvykle dlouhá pauza, vyplatí se systém zkontrolovat."
+    },
+    "routine_done": {
+      "title": "🚿 Běžná zálivka dokončena",
+      "message": "Zalito {minutes} min (cíl {target}, odečten déšť {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Zkontrolujte půdní sondu",
+      "message": "Hodnoty mokré půdy ({pct} %) zadržují běžnou zálivku už delší dobu (dní: {days}). Pokud moc nepršelo, zkontrolujte sondu (umístění, baterii, hodnotu) — stále se podle ní řídí."
+    },
+    "probe_frozen": {
+      "title": "🌱 Půdní sonda se zdá zamrzlá",
+      "message": "Půdní sonda hlásí mokro ({pct} %) už delší dobu (dní: {days}) a 24 h neposlala nové měření, takže zálivka se opět řídí plánem. Zkontrolujte sondu (baterii, připojení)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Servisní režim vypnut",
+      "message": "Servisní režim běžel {minutes} min a sám se vypnul (čas automatického vypnutí)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Servisní režim vypnut",
+      "message": "Servisní režim běžel {minutes} min a sám se vypnul (zkráceno, aby se vešel do dnešního bezpečnostního limitu doby)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Samočinné doladění",
+      "message": "Prodleva na vyschnutí u běžné zálivky zkrácena (dní: {days}) podle vašich nedávných předčasných spuštění."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Samočinné doladění",
+      "message": "Prodleva na vyschnutí u běžné zálivky prodloužena (dní: {days}) podle vašich nedávných vynechání."
+    },
+    "frost": {
+      "title": "❄️ {cycle}: čeká, mráz",
+      "message": "Je {temp}, pod hranicí ochrany před mrazem {limit}. Kontroluje znovu každou hodinu, nejvýše po dobu {hours} h, pak čeká na další naplánovaný čas."
+    },
+    "flow_measured": {
+      "title": "💧 Průtok změřen",
+      "message": "{volume} za {minutes} min: průtok emitorů je nyní {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Průtok nezměřen",
+      "message": "Průtokoměr naměřil {volume} za {minutes} min, z čehož nelze určit použitelný průtok. Zkontrolujte průtokoměr a plochu, nebo průtok vypočítejte z emitorů (Nastavit → Průtok)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Vlhkost půdy {pct} % (sucho) — zalito dřív, než byl termín podle plánu.",
+    "deficit_active": " Deficitní režim: dávka {pct} %.",
+    "deficit_hot": " Deficitní režim: dnes plná dávka (horko).",
+    "deficit_soil_dry": " Deficitní režim: dnes plná dávka (půda na prahu sucha).",
+    "deficit_no_temp": " Deficitní režim: plná dávka (žádné zaznamenané měření teploty).",
+    "deficit_young": " Deficitní režim: plná dávka (rostlina je stále na růstové křivce)."
+  },
+  "status": {
+    "watering": "Právě se zalévá: {cycle}",
+    "service_run": "Probíhá servisní běh",
+    "lock_held": "Pozdrženo: dřívější běh nedoběhl (zóna je zamčená)",
+    "snoozed": "Pro dnešek vynecháno",
+    "done": "{cycle}: hotovo v {time}, {amount} za {minutes} min",
+    "skipped_soil_wet": "{cycle}: vynecháno v {time}, půda je mokrá ({pct} %)",
+    "skipped_drydown": "{cycle}: vynecháno v {time}, půda po dešti vysychá do {until}",
+    "skipped_forecast": "{cycle}: vynecháno v {time}, předpověď deště {rain}",
+    "skipped_rain_credit": "{cycle}: vynecháno v {time}, nedávný déšť ({rain}) pokryl potřebných {target}",
+    "skipped_wet_fortnight": "{cycle}: pozdrženo v {time}, za posledních 14 dní napršelo {rain}",
+    "skipped_service": "{cycle}: vynecháno v {time}, ventil používal servisní běh",
+    "cancelled_rain": "{cycle}: zrušeno v {time}, pršelo ({rain} za 30 min)",
+    "refused_runtime_cap": "{cycle}: nespuštěno v {time}, potřeba {minutes} min, nad limitem cyklu {cap} min",
+    "refused_deep_soak_cap": "{cycle}: nespuštěno v {time}, potřeba {minutes} min, nad limitem",
+    "refused_daily_cap": "{cycle}: nespuštěno v {time}, překročilo by dnešní bezpečnostní limit {cap} min",
+    "interrupted": "{cycle}: zastaveno v {time} před dokončením",
+    "waiting_soil_wet": "Čeká se, až půda vyschne ({pct} %)",
+    "waiting_drydown": "Půda po dešti vysychá do {until}",
+    "next": "Další zálivka {when}",
+    "next_deep_soak": "Další: hloubková zálivka {when}",
+    "first_run": "První zálivka {when}",
+    "idle": "Nic naplánováno",
+    "with_next": "{status} · další {when}",
+    "waiting_pump": "Čeká na sdílené čerpadlo: {cycle}",
+    "with_next_deep_soak": "{status} · hloubková zálivka {when}",
+    "first_run_deep_soak": "První zálivka: hloubková zálivka {when}",
+    "paused": "Pozastaveno: nezalévá se, dokud nevypnete Pozastavení",
+    "skipped_frost": "{cycle}: vynecháno v {time}, {temp} je pod ochranou před mrazem ({limit})",
+    "waiting_frost": "{cycle}: pozdrženo v {time}, {temp} je pod ochranou před mrazem ({limit}); kontroluje se každou hodinu",
+    "waiting_deep_soak": "{cycle}: čeká od {time}, jakmile se oteplí, má přednost hloubková zálivka",
+    "paused_until": "Pozastaveno do {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: váš týden",
+    "zone": "{zone}: zalito {runs}× — {water} za {minutes} min",
+    "measured": " (naměřeno {volume})",
+    "rain": " · déšť (7 dní) {rain}",
+    "held_back": " · pozdrženo (dní: {days})",
+    "paused": " · pozastaveno",
+    "next": " · další {when}",
+    "zone_none": "{zone}: bez zálivky"
+  }
+}

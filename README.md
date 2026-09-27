@@ -263,11 +263,17 @@ existed) looks like this:
 ## Languages
 
 ZoneFlow follows Home Assistant's language: English, German, Dutch, French,
-Spanish, Italian, Finnish, Swedish, Polish and Portuguese — entity names,
+Spanish, Italian, Finnish, Swedish, Norwegian, Danish, Polish, Czech,
+Slovak, Hungarian, Russian, Ukrainian, Portuguese (Portugal and Brazil)
+and Chinese (Simplified) — entity names,
 setup screens, the Status sentence, phone notifications, the weekly
 summary and the card. The CSV log stays in English, so its history reads
 the same whatever the language. Corrections from native speakers are very
-welcome (`custom_components/zoneflow/translations/` and `messages/`).
+welcome (`custom_components/zoneflow/translations/`, `messages/`, and the
+card's texts in `frontend/zoneflow-card.js`). Much of the gardening
+wording follows the community translations of
+[Smart Irrigation](https://github.com/altmenorg/HAsmartirrigation) — thanks
+to its translators.
 
 ## Installation
 

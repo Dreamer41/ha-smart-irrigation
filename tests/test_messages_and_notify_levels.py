@@ -247,7 +247,10 @@ def _walk(node, prefix=""):
             yield path, value
 
 
-LANGUAGES = ("de", "nl", "fr", "es", "it", "fi", "sv", "pl", "pt")
+LANGUAGES = (
+    "de", "nl", "fr", "es", "it", "fi", "sv", "pl", "pt",
+    "pt-BR", "cs", "da", "hu", "nb", "ru", "sk", "uk", "zh-Hans",
+)
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
@@ -280,7 +283,7 @@ async def test_dates_in_every_language(hass, language):
     assert "Mon" not in text or language == "en"
 
 
-@pytest.mark.parametrize(("regional", "base"), [("pt-BR", "pt"), ("es-419", "es"), ("de-CH", "de")])
+@pytest.mark.parametrize(("regional", "base"), [("es-419", "es"), ("de-CH", "de")])
 def test_regional_copies_match(regional, base):
     """Home Assistant doesn't fall back from a regional language to its base
     for integration texts: those files are copies, kept identical."""

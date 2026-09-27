@@ -1,0 +1,779 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow öntözés",
+        "description": "Adj ennek az öntözési zónának egy rövid nevet (pl. \"Előkert gyepe\", \"Avokádófa\"). Később további zónákhoz add hozzá újra ezt az integrációt.",
+        "data": {
+          "zone_name": "Zóna neve",
+          "plant": "Mi van ültetve"
+        },
+        "data_description": {
+          "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
+          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, szakaszok, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán."
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow öntözés",
+        "description": "Add meg a valódi entitásaidat. A ZoneFlow soha nem hoz létre saját fizikai entitásokat. Csak a szelepkapcsoló kötelező – minden más lent kihagyható, és nélküle is működik, csak kevesebbet tud.",
+        "data": {
+          "valve_entity": "Szelepkapcsoló",
+          "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
+          "pump_id": "Közös szivattyú azonosítója (opcionális)",
+          "rain_counter_entity": "Esőmérő billenésszámlálója (opcionális)",
+          "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő (opcionális)",
+          "flow_meter_entity": "Átfolyásmérő (opcionális)",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
+          "notify_entity": "Telefonos értesítési cél (opcionális)",
+          "weather_entity": "Időjárás-előrejelzés forrása (opcionális)",
+          "soil_type": "Talajtípus",
+          "drainage": "Vízelvezetés",
+          "slope": "Lejtés",
+          "irrigation_method": "Öntözési mód",
+          "growth_ramp_profile": "Automatikus növekedési görbe",
+          "csv_path": "CSV naplófájl elérési útja",
+          "deep_soak_enabled": "Mélyöntözés bekapcsolása",
+          "deep_soak_time": "Mélyöntözés időpontja",
+          "routine_time": "Rendszeres öntözés időpontja",
+          "deep_soak_sun_mode": "Mélyöntözés indítása",
+          "deep_soak_sun_offset_minutes": "Mélyöntözés eltolása a naphoz (perc)",
+          "routine_sun_mode": "Rendszeres öntözés indítása",
+          "routine_sun_offset_minutes": "Rendszeres öntözés eltolása a naphoz (perc)",
+          "unit_system": "Mértékegységek"
+        },
+        "data_description": {
+          "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
+          "pump_power_entity": "A szivattyú teljesítményérzékelője (W), pl. egy okoskonnektorból. A ZoneFlow minden öntözéskor ellenőrzi, hogy a szivattyú tényleg vesz-e fel áramot, és szól, ha nem. Hagyd üresen, ha nincs ilyened.",
+          "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adj itt mindegyiknek ugyanazt a nevet (bármilyet, pl. \"A szivattyú\"), és akkor egymás után futnak, nem egyszerre. Hagyd üresen, ha ennek a zónának saját szivattyúja vagy vízellátása van.",
+          "rain_counter_entity": "Esőmérő-számláló, amely a billenőedény minden billenésével eggyel nő. A ZoneFlow ekkor levonja az esőt az öntözésből, hagyja előbb kiszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Hogy egy billenés mennyi eső, azt a zóna eszközoldalán állítod be (Esőmérő mm/billenés). Esőmérő nélkül a ZoneFlow úgy öntöz, mintha sosem esne.",
+          "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő. Vele a ZoneFlow magától többet öntöz melegben és kevesebbet hűvösben, a fagyvédelem pedig fagyban visszatartja az öntözést. Nélküle a Tartalék / kézi hőmérséklet beállítás dönt.",
+          "flow_meter_entity": "Vízóra, amely a teljes mennyiséget számolja (liter, gallon vagy m³). A ZoneFlow ekkor naplózza, mennyi vizet használt valójában minden öntözés, szól, ha a szivattyú ment, de nem folyt víz, és meg is tudja mérni a vízhozamot (Konfigurálás → Vízhozam).",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
+          "notify_entity": "A telefonod értesítési entitása a Home Assistant Companion alkalmazásból. A ZoneFlow ide küldi a hibákat és a fontosabb eseményeket, és a heti összesítőt, ha bekapcsolod. Nélküle ezek csak a naplóba kerülnek.",
+          "weather_entity": "Előrejelzéssel rendelkező időjárás-entitás. A ZoneFlow elhalasztja az öntözést, ha elég eső várható (de nem túl sok napig egymás után), és a jelenlegi hőmérsékletét használja a fagyvédelemhez, ha nincs hőmérséklet-érzékelő.",
+          "soil_type": "Tájékoztató jellegű: magától nem változtat az öntözésen. A zóna Talajprofil érzékelőjén jelenik meg, és segít kiválasztani a szakaszokat és a beszivárgási szüneteket az eszközoldalon: az agyag lassan veszi fel a vizet, ezért több, rövidebb szakasz kell neki, köztük hosszabb szünettel; a homok kevesebb szakaszban is felveszi.",
+          "drainage": "Milyen gyorsan tűnik el a víz egy bő öntözés vagy eső után. Tájékoztató jellegű, mint a talajtípus: a lassan szikkadó talajnak több, rövidebb szakasz kell.",
+          "slope": "Tájékoztató jellegű, mint a talajtípus: lejtőn a víz elfolyik, mielőtt beszivárogna, ezért több, rövidebb szakasz segít.",
+          "irrigation_method": "Hogyan jut ki a víz. Tájékoztató jellegű, mint a talajtípus; hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
+          "growth_ramp_profile": "A fiatal növények kevesebb vizet kapnak, és ahogy nőnek, ez a teljes heti célig emelkedik, a zóna eszközoldalán megadott Ültetés / átültetés dátumától számítva. Ki: mindig a teljes cél. Egyéni: rajzold meg a saját görbédet az eszközoldalon.",
+          "csv_path": "Fájl, amelybe minden öntözés, kihagyás és figyelmeztetés bekerül a számaival, hogy ellenőrizhesd, mit csinált a ZoneFlow (bármilyen táblázatkezelő megnyitja). A konfigurációs mappádban javasolt fájl megfelel.",
+          "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés néhány hetente (kezdetben 14 naponta), amely mélyen átnedvesíti a talajt, így a gyökerek mélyre nőnek. Fáknak, cserjéknek és évelőknek jó; sekélyen gyökerező növényeknél, mint a saláta és a fűszernövények, kapcsold ki. A rendszeres öntözés mindenképp fut.",
+          "deep_soak_time": "Mikor indul a mélyöntözés azokon a napokon, amikor esedékes, ha lent a rögzített időpont van kiválasztva. A kora reggel a legjobb: kevesebb víz vész el a nap és a szél miatt.",
+          "routine_time": "Mikor ellenőrzi a ZoneFlow naponta, hogy esedékes-e a rendszeres öntözés, és ha igen, öntöz. Hogy milyen gyakran esedékes, az az időjárástól és a heti céltól függ. A kora reggel a legjobb.",
+          "deep_soak_sun_mode": "A mélyöntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
+          "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
+          "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
+          "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz."
+        }
+      },
+      "climate": {
+        "title": "Éghajlat",
+        "description": "Milyen a tenyészidőszak ott, ahol ez a zóna van? Ez csak a következő oldal hőmérséklet-csúszkáit tölti ki előre – ott minden értéket módosíthatsz, később pedig a zóna eszközoldalán is.",
+        "data": {
+          "climate": "Éghajlat"
+        },
+        "data_description": {
+          "climate": "Válaszd a leginkább hasonlót. Csak a következő oldal hőmérsékleti küszöbeit tölti ki."
+        }
+      },
+      "temperatures": {
+        "title": "Hőmérsékleti küszöbök",
+        "description": "A ZoneFlow az elmúlt 3 nap napi CSÚCShőmérsékletét átlagolja. A meleg küszöbön vagy felette gyakrabban öntöz (3 naponta), a meleg időre szóló heti céllal; a hűvös küszöb alatt a hűvös időre szóló heti célt használja; a kettő között normál.\n\nA tartalék hőmérséklet akkor számít, ha nincs valódi mérés: hőmérséklet-érzékelő nélkül ez a kézi szabályozód (hőségben emeld, hidegben csökkentsd); érzékelővel csak addig használja, amíg az érzékelő fel nem vett egy teljes napot, illetve ha 3 napig egyetlen mérés sem érkezik.",
+        "data": {
+          "hot_temp_threshold": "Meleg idő küszöbe",
+          "cool_temp_threshold": "Hűvös idő küszöbe",
+          "fallback_temp": "Tartalék / kézi hőmérséklet"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Ha az elmúlt 3 nap csúcsainak átlaga eléri vagy meghaladja ezt, a zóna a meleg időre szóló heti célt használja, és gyakrabban öntöz.",
+          "cool_temp_threshold": "Ha ez az átlag ez alatt van, a zóna a hűvös időre szóló heti célt használja. A kettő között normál az idő.",
+          "fallback_temp": "Akkor számít, ha nincs valódi mérés. Hőmérséklet-érzékelő nélkül ez a kézi szabályozód: hőségben emeld, hidegben csökkentsd."
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "A zóna neve nem lehet üres.",
+      "cool_not_below_hot": "A hűvös küszöbnek a meleg küszöb alatt kell lennie."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurálás",
+        "menu_options": {
+          "settings": "Zóna beállításai (entitások, talaj, ütemezés…)",
+          "flow_rate": "Vízhozam: kiszámítás a csepegtetők alapján",
+          "flow_measure": "Vízhozam: mérés az átfolyásmérővel"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Szelepkapcsoló",
+          "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
+          "pump_id": "Közös szivattyú azonosítója (opcionális)",
+          "rain_counter_entity": "Esőmérő billenésszámlálója (opcionális)",
+          "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő (opcionális)",
+          "flow_meter_entity": "Átfolyásmérő (opcionális)",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
+          "notify_entity": "Telefonos értesítési cél (opcionális)",
+          "weather_entity": "Időjárás-előrejelzés forrása (opcionális)",
+          "soil_type": "Talajtípus",
+          "drainage": "Vízelvezetés",
+          "slope": "Lejtés",
+          "irrigation_method": "Öntözési mód",
+          "growth_ramp_profile": "Automatikus növekedési görbe",
+          "csv_path": "CSV naplófájl elérési útja",
+          "deep_soak_enabled": "Mélyöntözés bekapcsolása",
+          "deep_soak_time": "Mélyöntözés időpontja",
+          "routine_time": "Rendszeres öntözés időpontja",
+          "deep_soak_sun_mode": "Mélyöntözés indítása",
+          "deep_soak_sun_offset_minutes": "Mélyöntözés eltolása a naphoz (perc)",
+          "routine_sun_mode": "Rendszeres öntözés indítása",
+          "routine_sun_offset_minutes": "Rendszeres öntözés eltolása a naphoz (perc)",
+          "unit_system": "Mértékegységek"
+        },
+        "data_description": {
+          "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
+          "pump_power_entity": "A szivattyú teljesítményérzékelője (W), pl. egy okoskonnektorból. A ZoneFlow minden öntözéskor ellenőrzi, hogy a szivattyú tényleg vesz-e fel áramot, és szól, ha nem. Hagyd üresen, ha nincs ilyened.",
+          "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adj itt mindegyiknek ugyanazt a nevet (bármilyet, pl. \"A szivattyú\"), és akkor egymás után futnak, nem egyszerre. Hagyd üresen, ha ennek a zónának saját szivattyúja vagy vízellátása van.",
+          "rain_counter_entity": "Esőmérő-számláló, amely a billenőedény minden billenésével eggyel nő. A ZoneFlow ekkor levonja az esőt az öntözésből, hagyja előbb kiszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Hogy egy billenés mennyi eső, azt a zóna eszközoldalán állítod be (Esőmérő mm/billenés). Esőmérő nélkül a ZoneFlow úgy öntöz, mintha sosem esne.",
+          "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő. Vele a ZoneFlow magától többet öntöz melegben és kevesebbet hűvösben, a fagyvédelem pedig fagyban visszatartja az öntözést. Nélküle a Tartalék / kézi hőmérséklet beállítás dönt.",
+          "flow_meter_entity": "Vízóra, amely a teljes mennyiséget számolja (liter, gallon vagy m³). A ZoneFlow ekkor naplózza, mennyi vizet használt valójában minden öntözés, szól, ha a szivattyú ment, de nem folyt víz, és meg is tudja mérni a vízhozamot (Konfigurálás → Vízhozam).",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
+          "notify_entity": "A telefonod értesítési entitása a Home Assistant Companion alkalmazásból. A ZoneFlow ide küldi a hibákat és a fontosabb eseményeket, és a heti összesítőt, ha bekapcsolod. Nélküle ezek csak a naplóba kerülnek.",
+          "weather_entity": "Előrejelzéssel rendelkező időjárás-entitás. A ZoneFlow elhalasztja az öntözést, ha elég eső várható (de nem túl sok napig egymás után), és a jelenlegi hőmérsékletét használja a fagyvédelemhez, ha nincs hőmérséklet-érzékelő.",
+          "soil_type": "Tájékoztató jellegű: magától nem változtat az öntözésen. A zóna Talajprofil érzékelőjén jelenik meg, és segít kiválasztani a szakaszokat és a beszivárgási szüneteket az eszközoldalon: az agyag lassan veszi fel a vizet, ezért több, rövidebb szakasz kell neki, köztük hosszabb szünettel; a homok kevesebb szakaszban is felveszi.",
+          "drainage": "Milyen gyorsan tűnik el a víz egy bő öntözés vagy eső után. Tájékoztató jellegű, mint a talajtípus: a lassan szikkadó talajnak több, rövidebb szakasz kell.",
+          "slope": "Tájékoztató jellegű, mint a talajtípus: lejtőn a víz elfolyik, mielőtt beszivárogna, ezért több, rövidebb szakasz segít.",
+          "irrigation_method": "Hogyan jut ki a víz. Tájékoztató jellegű, mint a talajtípus; hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
+          "growth_ramp_profile": "A fiatal növények kevesebb vizet kapnak, és ahogy nőnek, ez a teljes heti célig emelkedik, a zóna eszközoldalán megadott Ültetés / átültetés dátumától számítva. Ki: mindig a teljes cél. Egyéni: rajzold meg a saját görbédet az eszközoldalon.",
+          "csv_path": "Fájl, amelybe minden öntözés, kihagyás és figyelmeztetés bekerül a számaival, hogy ellenőrizhesd, mit csinált a ZoneFlow (bármilyen táblázatkezelő megnyitja). A konfigurációs mappádban javasolt fájl megfelel.",
+          "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés néhány hetente (kezdetben 14 naponta), amely mélyen átnedvesíti a talajt, így a gyökerek mélyre nőnek. Fáknak, cserjéknek és évelőknek jó; sekélyen gyökerező növényeknél, mint a saláta és a fűszernövények, kapcsold ki. A rendszeres öntözés mindenképp fut.",
+          "deep_soak_time": "Mikor indul a mélyöntözés azokon a napokon, amikor esedékes, ha lent a rögzített időpont van kiválasztva. A kora reggel a legjobb: kevesebb víz vész el a nap és a szél miatt.",
+          "routine_time": "Mikor ellenőrzi a ZoneFlow naponta, hogy esedékes-e a rendszeres öntözés, és ha igen, öntöz. Hogy milyen gyakran esedékes, az az időjárástól és a heti céltól függ. A kora reggel a legjobb.",
+          "deep_soak_sun_mode": "A mélyöntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
+          "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
+          "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
+          "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz."
+        }
+      },
+      "flow_rate": {
+        "title": "Csepegtetők vízhozama",
+        "description": "Mennyi vizet juttatnak a zóna csepegtetői (szórófejei) az általuk nedvesített területre. 1 liter 1 m²-en 1 mm. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük valóban nedvesedő területet vedd. Az eredmény felülírja a zóna Csepegtetők vízhozama (kalibrálás) értékét.",
+        "data": {
+          "emitters": "Csepegtetők, szórófejek száma a zónában",
+          "emitter_flow": "Egy csepegtető vízhozama",
+          "area": "Az öntözött terület"
+        },
+        "data_description": {
+          "emitters": "Számold össze az összes csepegtetőt vagy szórófejet, amelyet ennek a zónának a szelepe lát el.",
+          "emitter_flow": "Mennyit ad egy csepegtető óránként: rá van nyomtatva vagy a csomagolásán szerepel (pl. 2 L/h, 0.5 gal/h).",
+          "area": "A valóban nedvesedő terület. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük lévő nedves foltokat add össze, ne az egész ágyást."
+        }
+      },
+      "flow_measure": {
+        "title": "Vízhozam mérése",
+        "description": "{minutes} percig nyitva tartja a szelepet szervizfuttatásként (nem számít öntözésnek, de a percei beleszámítanak a mai biztonsági időkorlátba), és az átfolyásmérő literjeiből kiszámítja a vízhozamot. A mérő közben csak ennek a zónának a vizét mérheti. Az eredmény telefonos üzenetben érkezik, és automatikusan beállítódik; a Szerviz mód kikapcsolása megszakítja a mérést.",
+        "data": {
+          "area": "A zóna csepegtetői által öntözött terület"
+        },
+        "data_description": {
+          "area": "A zóna csepegtetői által valóban nedvesített terület. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük lévő nedves foltokat add össze, ne az egész ágyást."
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "A csepegtetők vízhozama beállítva: {rate}.",
+      "flow_rate_out_of_range": "Ez {rate} lenne, ami kívül esik a beállítás tartományán ({low} – {high}). Ellenőrizd a számokat: egyes növények körül elhelyezett csepegtetőknél a valóban nedvesedő területet add meg, ne az egész ágyást.",
+      "measuring": "Mérés folyamatban: a szelep kb. {minutes} percig lesz nyitva. Az eredmény telefonos üzenetben érkezik (vagy a Home Assistant értesítései között, ha a zónának nincs telefonos célja), és automatikusan beállítódik.",
+      "zone_not_loaded": "Ez a zóna most nem fut, ezért ez nem végezhető el.",
+      "zone_busy": "A zóna (vagy a szivattyúja) foglalt, vagy elfogyott a mai biztonsági időkorlát. Próbáld újra később.",
+      "flow_rate_disabled": "A zóna Csepegtetők vízhozama (kalibrálás) entitása le van tiltva. Engedélyezd (a zóna eszközoldala → entitások), és próbáld újra."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "A fenti rögzített időpont",
+        "before_sunrise": "Napkelte előtt",
+        "after_sunrise": "Napkelte után",
+        "before_sunset": "Napnyugta előtt",
+        "after_sunset": "Napnyugta után"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Nem tudom / vegyes",
+        "sandy": "Homok",
+        "sandy_loam": "Homokos vályog",
+        "loam": "Vályog",
+        "clay_loam": "Agyagos vályog",
+        "clay": "Agyag"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Nem tudom",
+        "fast": "Gyorsan szikkadó",
+        "medium": "Közepes",
+        "slow": "Lassan szikkadó"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Sík",
+        "slight": "Enyhe lejtő",
+        "moderate": "Közepes lejtő",
+        "steep": "Meredek lejtő"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Csepegtetőcső / csepegtetők",
+        "micro_sprinkler": "Mikroszórófej",
+        "sprinkler": "Esőztető",
+        "soaker_hose": "Szivárgócső",
+        "other": "Egyéb"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Ki (mindig a teljes heti cél)",
+        "fast_annual": "Gyorsan növő egynyári (pl. a legtöbb zöldség)",
+        "slow_fruiting": "Lassan termőre forduló (pl. paradicsom, paprika)",
+        "established_perennial": "Meggyökeresedő évelő (pl. fiatal fa vagy cserje)",
+        "custom": "Egyéni (saját görbe)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Home Assistant szerint",
+        "metric": "Metrikus (mm, °C)",
+        "imperial": "Angolszász (hüvelyk, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Trópusi (egész évben meleg, pl. Délkelet-Ázsia)",
+        "hot_dry": "Forró nyár (mediterrán, sivatagi, az USA déli része)",
+        "temperate": "Mérsékelt (Európa nagy része, az USA északi része)",
+        "cool": "Hűvös nyár (Skandinávia, Egyesült Királyság, északi tengerpart)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Valami más (magam állítom be)",
+        "tomatoes": "Paradicsom",
+        "chilis": "Chili / paprika",
+        "leafy_vegetables": "Levélzöldség / saláta",
+        "herbs": "Fűszernövények (mediterrán)",
+        "strawberries": "Eper",
+        "flowers": "Virágágyás",
+        "lawn": "Gyep",
+        "shrubs": "Cserjék / sövény",
+        "young_tree": "Fiatal fa (első évek)",
+        "fruit_tree": "Kifejlett gyümölcsfa"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Rendszeres öntözés: normál heti cél"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Rendszeres öntözés: heti cél melegben"
+      },
+      "hot_temp_threshold": {
+        "name": "Meleg idő hőmérsékleti küszöbe"
+      },
+      "cool_temp_threshold": {
+        "name": "Hűvös idő hőmérsékleti küszöbe"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Rendszeres öntözés: heti cél hűvösben"
+      },
+      "rain_eff_low": {
+        "name": "Eső hasznosulása - gyenge (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Eső hasznosulása - közepes (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Eső hasznosulása - erős (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Csepegtetők vízhozama (kalibrálás)"
+      },
+      "deep_soak_target_mm": {
+        "name": "Mélyöntözés célmélysége"
+      },
+      "pump_min_watts": {
+        "name": "Szivattyú alacsony teljesítmény küszöbe"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Mélyöntözés biztonsági max. időtartama"
+      },
+      "max_runtime_minutes": {
+        "name": "Rendszeres öntözés biztonsági max. időtartama"
+      },
+      "routine_drydown_days": {
+        "name": "Rendszeres öntözés: száradási várakozás"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Mélyöntözés: altalaj száradási várakozása"
+      },
+      "deep_soak_interval_days": {
+        "name": "Mélyöntözések közötti idő"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Mélyöntözés: esőkorlát (14 nap)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Esőmérő mm/billenés (kalibrálás)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Öntözés előtti esőküszöb leállításhoz (30 min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Szivattyú előfutása (indítási késleltetés)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Szivattyú utófutása (leállási késleltetés)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Előrejelzett eső: kihagyási küszöb"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Előrejelzett eső: valószínűségi küszöb"
+      },
+      "forecast_dry_override_days": {
+        "name": "Előrejelzés figyelmen kívül hagyása szárazságban"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Talajnedvesség: száraz küszöb"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Talajnedvesség: nedves küszöb"
+      },
+      "routine_pulse_count": {
+        "name": "Rendszeres öntözés: szakaszok száma (osztott öntözés)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Rendszeres öntözés: beszivárgási szünet a szakaszok között"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Mélyöntözés: szakaszok száma (osztott öntözés)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Mélyöntözés: beszivárgási szünet a szakaszok között"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Napi max. öntözési idő (biztonsági korlát)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Fejlődési fázis kézi beállítása"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Egyéni görbe: kezdő % (0. nap)"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Egyéni görbe: 1. köztes pont napja"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Egyéni görbe: 1. köztes pont %"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Egyéni görbe: 2. köztes pont napja"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Egyéni görbe: 2. köztes pont %"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Egyéni görbe: a 100% elérésének napja"
+      },
+      "crop_coefficient": {
+        "name": "Növényi együttható (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Takarékos mód vízadagja"
+      },
+      "fallback_temp": {
+        "name": "Tartalék / kézi hőmérséklet"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Szerviz mód automatikus kikapcsolása"
+      },
+      "frost_guard_temp": {
+        "name": "Fagyvédelmi hőmérséklet"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Utolsó rendszeres öntözés"
+      },
+      "last_deep_soak": {
+        "name": "Utolsó mélyöntözés"
+      },
+      "last_significant_rain": {
+        "name": "Utolsó jelentős eső"
+      },
+      "planting_date": {
+        "name": "Ültetés / átültetés dátuma"
+      },
+      "last_fertilizing": {
+        "name": "Utolsó tápanyag-utánpótlás"
+      },
+      "deficit_until": {
+        "name": "Takarékos mód vége"
+      },
+      "paused_until": {
+        "name": "Szüneteltetés vége"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Mélyöntözés indítása most"
+      },
+      "run_routine": {
+        "name": "Rendszeres öntözés indítása most"
+      },
+      "reset_lock": {
+        "name": "Öntözési zárolás feloldása"
+      },
+      "snooze_today": {
+        "name": "Mai öntözés kihagyása"
+      },
+      "service_run_1_min": {
+        "name": "Szervizfuttatás 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Szervizfuttatás 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Szervizfuttatás 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Öntözés folyamatban"
+      },
+      "irrigation_abort": {
+        "name": "Öntözés megszakítva jelző"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Mélyöntözés bekapcsolva"
+      },
+      "deficit_mode": {
+        "name": "Takarékos mód"
+      },
+      "service_mode": {
+        "name": "Szerviz mód"
+      },
+      "pause": {
+        "name": "Szüneteltetés"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Eső (elmúlt 30 min)"
+      },
+      "rain_past_24h": {
+        "name": "Eső (elmúlt 24 óra)"
+      },
+      "rain_past_3d": {
+        "name": "Eső (elmúlt 3 nap)"
+      },
+      "rain_past_7d": {
+        "name": "Eső (elmúlt 7 nap)"
+      },
+      "rain_past_14d": {
+        "name": "Eső (elmúlt 14 nap)"
+      },
+      "avg_peak_temp_3d": {
+        "name": "3 napos átlagos csúcshőmérséklet"
+      },
+      "next_irrigation_estimate": {
+        "name": "Következő öntözés (becslés)"
+      },
+      "days_until_next_run": {
+        "name": "Napok a következő öntözésig"
+      },
+      "last_water_delivered": {
+        "name": "Utolsó kijuttatott víz (becslés)"
+      },
+      "rain_today": {
+        "name": "Mai eső"
+      },
+      "soil_profile": {
+        "name": "Talajprofil"
+      },
+      "growth_ramp_pct": {
+        "name": "Növekedési görbe"
+      },
+      "last_cycle_water_liters": {
+        "name": "Utolsó öntözés vízmennyisége (mért)"
+      },
+      "reference_et0_3d": {
+        "name": "Referencia ET₀ (3 napos átlag)"
+      },
+      "routine_weekly_target": {
+        "name": "Rendszeres öntözés heti célja"
+      },
+      "soil_moisture": {
+        "name": "Talajnedvesség"
+      },
+      "soil_moisture_status": {
+        "name": "Talajnedvesség állapota",
+        "state": {
+          "dry": "Száraz - öntözés előrehozva",
+          "wet": "Nedves - kihagyás",
+          "in_range": "Megfelelő - ütemezés szerint",
+          "offline": "Érzékelő nem elérhető - ütemezés szerint",
+          "stale": "24 órája nincs új mérés - ütemezés szerint",
+          "implausible": "Lehetetlen érték - ütemezés szerint"
+        }
+      },
+      "deficit_status": {
+        "name": "Takarékos mód állapota",
+        "state": {
+          "off": "Ki",
+          "active": "Aktív - csökkentett adag",
+          "full_dose_hot": "Ma teljes adag (meleg idő)",
+          "full_dose_soil_dry": "Ma teljes adag (száraz talaj)",
+          "ended": "Véget ért",
+          "full_dose_young_plant": "Teljes adag (fiatal növény)",
+          "full_dose_no_temp": "Ma teljes adag (nincs rögzített hőmérsékletmérés)"
+        }
+      },
+      "status": {
+        "name": "Állapot"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Talajtípus",
+        "state": {
+          "unknown": "Nem tudom / vegyes",
+          "sandy": "Homok",
+          "sandy_loam": "Homokos vályog",
+          "loam": "Vályog",
+          "clay_loam": "Agyagos vályog",
+          "clay": "Agyag"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Fejlődési fázis",
+        "state": {
+          "auto": "Automatikus (ültetés dátuma alapján)",
+          "seedling": "Palánta",
+          "establishing": "Meggyökeresedés",
+          "vegetative": "Vegetatív növekedés",
+          "near_fruiting": "Termésképzés előtt",
+          "mature": "Kifejlett",
+          "manual": "Kézi (csúszkával)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Növekedési görbe típusa",
+        "state": {
+          "off": "Ki (mindig a teljes heti cél)",
+          "fast_annual": "Gyorsan növő egynyári (pl. a legtöbb zöldség)",
+          "slow_fruiting": "Lassan termőre forduló (pl. paradicsom, paprika)",
+          "established_perennial": "Meggyökeresedő évelő (pl. fiatal fa vagy cserje)",
+          "custom": "Egyéni (saját görbe)"
+        }
+      },
+      "health_status": {
+        "name": "Egészség",
+        "state": {
+          "excellent": "Kiváló",
+          "good": "Jó",
+          "poor": "Gyenge",
+          "sick": "Beteg"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Következő tápanyag-utánpótlás",
+        "state": {
+          "1": "1 hónap múlva",
+          "2": "2 hónap múlva",
+          "3": "3 hónap múlva",
+          "4": "4 hónap múlva",
+          "5": "5 hónap múlva",
+          "6": "6 hónap múlva",
+          "7": "7 hónap múlva",
+          "8": "8 hónap múlva",
+          "9": "9 hónap múlva",
+          "10": "10 hónap múlva",
+          "11": "11 hónap múlva",
+          "12": "12 hónap múlva"
+        }
+      },
+      "demand_model": {
+        "name": "Vízigény-modell",
+        "state": {
+          "temperature_tiers": "Hőmérsékleti sávok",
+          "et_curve": "ET-görbe (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Értesítések",
+        "state": {
+          "all": "Mind",
+          "warnings": "Csak figyelmeztetések",
+          "none": "Nincs"
+        }
+      },
+      "weekly_summary": {
+        "name": "Heti összesítő",
+        "state": {
+          "off": "Ki",
+          "mon": "Hétfő",
+          "tue": "Kedd",
+          "wed": "Szerda",
+          "thu": "Csütörtök",
+          "fri": "Péntek",
+          "sat": "Szombat",
+          "sun": "Vasárnap"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Egészségügyi jegyzetek"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Mélyöntözés indítása",
+      "description": "Most elindítja a mélyöntözést, ha (és csak ha) teljesülnek ugyanazok a feltételek, mint a 05:00-s ütemezésnél (nincs zárolás, letelt a 14 napos időköz és a száradási várakozás, nem lépte túl a 14 napos esőkorlátot). Ugyanaz a kódút, mint az ütemezett futásnál.",
+      "fields": {
+        "device_id": {
+          "name": "Zóna eszköze",
+          "description": "A zóna eszköze. Csak 2 vagy több zóna esetén kell megadni."
+        },
+        "entity_id": {
+          "name": "Zóna entitása",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zóna eszköze helyett)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Rendszeres öntözés indítása",
+      "description": "Most elindítja a rendszeres öntözést, ha (és csak ha) teljesülnek ugyanazok a feltételek, mint a 05:30-as ütemezésnél. Ugyanaz a kódút, mint az ütemezett futásnál.",
+      "fields": {
+        "device_id": {
+          "name": "Zóna eszköze",
+          "description": "A zóna eszköze. Csak 2 vagy több zóna esetén kell megadni."
+        },
+        "entity_id": {
+          "name": "Zóna entitása",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zóna eszköze helyett)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Öntözési zárolás feloldása",
+      "description": "Kényszerítve törli a zárolást és a megszakítás jelzőt. Csak vészhelyzetben használd.",
+      "fields": {
+        "device_id": {
+          "name": "Zóna eszköze",
+          "description": "A zóna eszköze. Csak 2 vagy több zóna esetén kell megadni."
+        },
+        "entity_id": {
+          "name": "Zóna entitása",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zóna eszköze helyett)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Mai öntözés kihagyása",
+      "description": "Kihagyja a zóna mai ütemezett öntözései közül (mélyöntözés, rendszeres vagy mindkettő) azt, amelyik még nem futott le, más beállítás módosítása nélkül. Holnaptól automatikusan visszaáll a normál ütemezés.",
+      "fields": {
+        "device_id": {
+          "name": "Zóna eszköze",
+          "description": "A zóna eszköze. Csak 2 vagy több zóna esetén kell megadni."
+        },
+        "entity_id": {
+          "name": "Zóna entitása",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zóna eszköze helyett)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Tesztimpulzus",
+      "description": "Megkerüli az összes ütemezési, száradási és eső feltételt, és egyetlen rövid szelepnyitást végez, hogy kipróbálhasd a szelep és a szivattyú bekötését, mielőtt a valódi ütemezésre bíznád. A zárolást és a biztonsági felügyeletet továbbra is figyelembe veszi.",
+      "fields": {
+        "device_id": {
+          "name": "Zóna eszköze",
+          "description": "A zóna eszköze. Csak 2 vagy több zóna esetén kell megadni."
+        },
+        "entity_id": {
+          "name": "Zóna entitása",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zóna eszköze helyett)."
+        },
+        "seconds": {
+          "name": "Másodperc",
+          "description": "Az impulzus hossza másodpercben (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Heti összesítő küldése most",
+      "description": "Most elküldi a heti összesítőt minden telefonra, amelyhez tartozik beállított heti összesítő nappal rendelkező zóna – ez csak előnézet; a heti számlálás az ütemezett összesítőig folytatódik."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Ez a dátum nem lehet a jövőben: valami már megtörtént dolgot rögzít. Csak az Ültetés / átültetés dátuma lehet előre megadva."
+    },
+    "cool_not_below_hot": {
+      "message": "A hűvös idő küszöbének a meleg idő küszöbe alatt kell maradnia. Ha mindkettőt csökkentenéd, előbb a hűvöset vidd lejjebb; ha mindkettőt emelnéd, előbb a meleget."
+    },
+    "zone_busy": {
+      "message": "Ez a zóna foglalt (éppen öntöz vagy szervizfuttatás van folyamatban). Próbáld újra, ha végzett."
+    },
+    "pump_busy": {
+      "message": "A zóna közös szivattyúját most egy másik zóna használja. Próbáld újra, ha az a zóna végzett."
+    },
+    "daily_cap_reached": {
+      "message": "Ez a zóna elérte a mai biztonsági időkorlátot, így holnapig nem indulhat szervizfuttatás (vagy emeld a Napi max. öntözési idő korlátot)."
+    },
+    "zone_paused": {
+      "message": "Ez a zóna szüneteltetve van. Az öntözéshez kapcsold ki a Szüneteltetést."
+    },
+    "pause_until_past": {
+      "message": "Válassz egy jövőbeli dátumot és időpontot, ameddig a szüneteltetés tart."
+    },
+    "no_weekly_summary": {
+      "message": "Egyik zónán sincs beállítva heti összesítő nap és telefonos értesítési cél, így nincs mit küldeni."
+    },
+    "summary_send_failed": {
+      "message": "A heti összesítőt nem sikerült elküldeni: a telefonos értesítés hibát adott. Ellenőrizd a zóna értesítési célját."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: a szelep nem elérhető",
+      "description": "A(z) {zone} zóna szelepe ({entity}) több mint egy órája nem elérhető, így a zóna nem tud öntözni. Ellenőrizd a szelep eszközét és integrációját. Ez magától megszűnik, amint a szelep újra elérhető."
+    },
+    "sensor_offline": {
+      "title": "{zone}: érzékelő nem elérhető (napok: {days})",
+      "description": "A(z) {zone} zóna által használt {entity} már {days} napja nem elérhető. A zóna nélküle is működik (hogy ez mit jelent, lásd a README-ben), de ellenőrizd az eszközt – vagy távolítsd el a zónából a Konfigurálás alatt. Ez magától megszűnik, amint az érzékelő újra jelent."
+    },
+    "notify_missing": {
+      "title": "{zone}: hiányzik a telefonos értesítési cél",
+      "description": "A(z) {zone} zóna a telefonos értesítéseit ide küldi: {entity}, de ez már nem létezik a Home Assistantban, így nem érkeznek értesítések. Válaszd ki az aktuális értesítési célt a zóna Konfigurálás menüjében. Ez magától megszűnik, amint a cél újra létezik."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: kalibráld a csepegtetők vízhozamát",
+      "description": "A(z) {zone} zóna még az alapértelmezett Csepegtetők vízhozama (kalibrálás) értéket használja (0.24 mm/min). Ez az az egy szám, amely eldönti, mennyi vizet ad minden öntözés, ezért mérd meg a saját csepegtetőidre: a zóna Konfigurálás → Vízhozam menüje kiszámítja a csepegtetőkből, vagy megméri átfolyásmérővel. Ha ennél a zónánál tényleg a 0.24 mm/min a helyes, hagyd figyelmen kívül."
+    }
+  }
+}

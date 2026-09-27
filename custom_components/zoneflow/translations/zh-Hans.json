@@ -1,0 +1,779 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow 灌溉",
+        "description": "为这个灌溉区域起一个简短的名称（例如“前院草坪”“牛油果树”）。以后要添加更多区域，再次添加此集成即可。",
+        "data": {
+          "zone_name": "区域名称",
+          "plant": "种植的作物"
+        },
+        "data_description": {
+          "zone_name": "将作为该区域的设备名称和实体名称的开头，也会出现在手机消息中。例如“番茄畦”“前院草坪”。",
+          "plant": "为这种作物填入合适的初始值：每周水量目标、作物系数、分段浇水、深层浇灌和生长期递增。“其他”则从通用值开始。所有值以后都可以在该区域的设备页面上修改。"
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow 灌溉",
+        "description": "请选择您现有的实体。ZoneFlow 自己不会创建任何新的物理实体。只有阀门开关是必需的——下面其他各项不设置也能正常工作，只是功能相应减少。",
+        "data": {
+          "valve_entity": "阀门开关",
+          "pump_power_entity": "水泵功率传感器（可选）",
+          "pump_id": "共用水泵 ID（可选）",
+          "rain_counter_entity": "雨量计翻斗计数器（可选）",
+          "outdoor_temp_entity": "室外温度传感器（可选）",
+          "flow_meter_entity": "水表（可选）",
+          "soil_moisture_entity": "土壤湿度传感器（可选）",
+          "notify_entity": "手机通知目标（可选）",
+          "weather_entity": "天气预报来源（可选）",
+          "soil_type": "土壤类型",
+          "drainage": "排水",
+          "slope": "坡度",
+          "irrigation_method": "灌溉方式",
+          "growth_ramp_profile": "按生长阶段自动递增",
+          "csv_path": "CSV 日志文件路径",
+          "deep_soak_enabled": "启用深层浇灌",
+          "deep_soak_time": "深层浇灌时间",
+          "routine_time": "常规浇水时间",
+          "deep_soak_sun_mode": "深层浇灌触发方式",
+          "deep_soak_sun_offset_minutes": "深层浇灌日出日落偏移（分钟）",
+          "routine_sun_mode": "常规浇水触发方式",
+          "routine_sun_offset_minutes": "常规浇水日出日落偏移（分钟）",
+          "unit_system": "单位"
+        },
+        "data_description": {
+          "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
+          "pump_power_entity": "水泵上的功率传感器（W），例如来自智能插座。每次浇水时 ZoneFlow 都会检查水泵是否真的在耗电，如果没有就提醒您。没有的话留空即可。",
+          "pump_id": "仅用于共用同一台水泵的区域：在这里为它们填写相同的名称（任意名称，例如“水泵 A”），它们就会轮流运行，而不是同时运行。如果该区域有自己的水泵或水源，请留空。",
+          "rain_counter_entity": "雨量计的计数器，翻斗每翻一次加一。有了它，ZoneFlow 会从浇水量中扣除降雨量，让湿润的土壤先变干，并在开始下雨时停止浇水。每翻一次代表多少雨量，请在该区域的设备页面上设置（雨量计每斗毫米数）。没有雨量计时，ZoneFlow 会按从不下雨来浇水。",
+          "outdoor_temp_entity": "室外温度传感器。有了它，ZoneFlow 会自动在天热时多浇、天凉时少浇，结冰时防霜保护会暂停浇水。没有它时，由“备用/手动温度”设置决定。",
+          "flow_meter_entity": "累计总水量的水表（升、加仑或 m³）。有了它，ZoneFlow 会记录每次浇水的实际用水量，在水泵运行但没有出水时提醒您，还能为您测量流量（配置 → 流量）。",
+          "soil_moisture_entity": "放在该区域根系层的土壤湿度传感器（%）。土壤干燥时提前进行常规浇水，湿润时跳过，介于两者之间则按正常计划。干燥和湿润阈值在该区域的设备页面上设置。",
+          "notify_entity": "Home Assistant Companion 应用中您手机的通知实体。ZoneFlow 会把故障和重要事件发送到这里，开启后还会发送每周总结。未设置时，这些只会写入日志。",
+          "weather_entity": "带天气预报的天气实体。预报降雨足够多时，ZoneFlow 会暂缓浇水（但不会连续暂缓太多天）；没有温度传感器时，还会用它的当前温度来判断防霜保护。",
+          "soil_type": "仅供参考：它本身不会改变浇水量。它显示在该区域的“土壤概况”传感器上，帮助您在设备页面上选择分段次数和渗透时间：黏土吸水慢，适合更多、更短的分段，并在段间留更长的渗透时间；沙土可以用较少的分段。",
+          "drainage": "大量浇水或下雨后水分消失的速度。与土壤类型一样仅供参考：排水慢的土壤适合更多、更短的分段。",
+          "slope": "与土壤类型一样仅供参考：在坡地上，水还没渗入就会流走，因此更多、更短的分段会有帮助。",
+          "irrigation_method": "水是如何输送的。与土壤类型一样仅供参考；实际浇多少水由流量决定（配置 → 流量）。",
+          "growth_ramp_profile": "给幼苗较少的水，随着植物长大逐渐增加到完整的每周目标，从该区域设备页面上的“种植/移栽日期”开始计算。关闭：始终使用完整目标。自定义：在设备页面上设置您自己的曲线。",
+          "csv_path": "记录每次浇水、跳过和警告及其数据的文件，用于核查 ZoneFlow 做了什么（可用任何电子表格打开）。使用配置文件夹中的建议文件即可。",
+          "deep_soak_enabled": "深层浇灌是每隔一两周（初始为 14 天）进行一次的大量、缓慢浇水，让水渗透到深层土壤，促使根系向深处生长。适合乔木、灌木和多年生植物；对于生菜、香草等浅根植物请关闭。常规浇水不受影响，照常进行。",
+          "deep_soak_time": "在需要深层浇灌的日子里开始的时间（当下面的触发方式为固定时间时）。清晨最好：被阳光和风带走的水更少。",
+          "routine_time": "ZoneFlow 每天检查是否需要常规浇水的时间，需要时就浇水。需要浇水的频率取决于天气和您的每周目标。清晨最好。",
+          "deep_soak_sun_mode": "在上面的固定时间开始深层浇灌，或在日出、日落之前或之后开始，这样会随季节变化。",
+          "deep_soak_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
+          "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
+          "routine_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
+          "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。"
+        }
+      },
+      "climate": {
+        "title": "气候",
+        "description": "这个区域所在地的生长季气候如何？这只会预填下一页的温度滑块——那里的每个值都可以修改，以后也可以在该区域的设备页面上修改。",
+        "data": {
+          "climate": "气候"
+        },
+        "data_description": {
+          "climate": "选择最接近的一项。它只会填写下一页的温度阈值。"
+        }
+      },
+      "temperatures": {
+        "title": "温度阈值",
+        "description": "ZoneFlow 会计算最近 3 天每日最高气温的平均值。达到或高于“炎热”阈值时，它会按炎热每周目标更频繁地浇水（每 3 天一次）；低于“凉爽”阈值时，使用凉爽每周目标；两者之间为正常。\n\n没有实际读数可用时使用备用温度：没有温度传感器时，它就是您的手动控制（热浪时调高，寒潮时调低）；有传感器时，只在传感器记录满第一天之前，以及连续 3 天没有任何读数后使用。",
+        "data": {
+          "hot_temp_threshold": "炎热天气阈值",
+          "cool_temp_threshold": "凉爽天气阈值",
+          "fallback_temp": "备用/手动温度"
+        },
+        "data_description": {
+          "hot_temp_threshold": "最近 3 天最高气温的平均值达到或高于此值时，该区域使用炎热每周目标，并更频繁地浇水。",
+          "cool_temp_threshold": "该平均值低于此值时，该区域使用凉爽每周目标。两者之间为正常天气。",
+          "fallback_temp": "没有实际读数时使用。没有温度传感器时，这就是您的手动控制：热浪时调高，寒潮时调低。"
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "区域名称不能为空。",
+      "cool_not_below_hot": "凉爽阈值必须低于炎热阈值。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "配置",
+        "menu_options": {
+          "settings": "区域设置（实体、土壤、计划……）",
+          "flow_rate": "流量：根据灌水器计算",
+          "flow_measure": "流量：用水表测量"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "阀门开关",
+          "pump_power_entity": "水泵功率传感器（可选）",
+          "pump_id": "共用水泵 ID（可选）",
+          "rain_counter_entity": "雨量计翻斗计数器（可选）",
+          "outdoor_temp_entity": "室外温度传感器（可选）",
+          "flow_meter_entity": "水表（可选）",
+          "soil_moisture_entity": "土壤湿度传感器（可选）",
+          "notify_entity": "手机通知目标（可选）",
+          "weather_entity": "天气预报来源（可选）",
+          "soil_type": "土壤类型",
+          "drainage": "排水",
+          "slope": "坡度",
+          "irrigation_method": "灌溉方式",
+          "growth_ramp_profile": "按生长阶段自动递增",
+          "csv_path": "CSV 日志文件路径",
+          "deep_soak_enabled": "启用深层浇灌",
+          "deep_soak_time": "深层浇灌时间",
+          "routine_time": "常规浇水时间",
+          "deep_soak_sun_mode": "深层浇灌触发方式",
+          "deep_soak_sun_offset_minutes": "深层浇灌日出日落偏移（分钟）",
+          "routine_sun_mode": "常规浇水触发方式",
+          "routine_sun_offset_minutes": "常规浇水日出日落偏移（分钟）",
+          "unit_system": "单位"
+        },
+        "data_description": {
+          "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
+          "pump_power_entity": "水泵上的功率传感器（W），例如来自智能插座。每次浇水时 ZoneFlow 都会检查水泵是否真的在耗电，如果没有就提醒您。没有的话留空即可。",
+          "pump_id": "仅用于共用同一台水泵的区域：在这里为它们填写相同的名称（任意名称，例如“水泵 A”），它们就会轮流运行，而不是同时运行。如果该区域有自己的水泵或水源，请留空。",
+          "rain_counter_entity": "雨量计的计数器，翻斗每翻一次加一。有了它，ZoneFlow 会从浇水量中扣除降雨量，让湿润的土壤先变干，并在开始下雨时停止浇水。每翻一次代表多少雨量，请在该区域的设备页面上设置（雨量计每斗毫米数）。没有雨量计时，ZoneFlow 会按从不下雨来浇水。",
+          "outdoor_temp_entity": "室外温度传感器。有了它，ZoneFlow 会自动在天热时多浇、天凉时少浇，结冰时防霜保护会暂停浇水。没有它时，由“备用/手动温度”设置决定。",
+          "flow_meter_entity": "累计总水量的水表（升、加仑或 m³）。有了它，ZoneFlow 会记录每次浇水的实际用水量，在水泵运行但没有出水时提醒您，还能为您测量流量（配置 → 流量）。",
+          "soil_moisture_entity": "放在该区域根系层的土壤湿度传感器（%）。土壤干燥时提前进行常规浇水，湿润时跳过，介于两者之间则按正常计划。干燥和湿润阈值在该区域的设备页面上设置。",
+          "notify_entity": "Home Assistant Companion 应用中您手机的通知实体。ZoneFlow 会把故障和重要事件发送到这里，开启后还会发送每周总结。未设置时，这些只会写入日志。",
+          "weather_entity": "带天气预报的天气实体。预报降雨足够多时，ZoneFlow 会暂缓浇水（但不会连续暂缓太多天）；没有温度传感器时，还会用它的当前温度来判断防霜保护。",
+          "soil_type": "仅供参考：它本身不会改变浇水量。它显示在该区域的“土壤概况”传感器上，帮助您在设备页面上选择分段次数和渗透时间：黏土吸水慢，适合更多、更短的分段，并在段间留更长的渗透时间；沙土可以用较少的分段。",
+          "drainage": "大量浇水或下雨后水分消失的速度。与土壤类型一样仅供参考：排水慢的土壤适合更多、更短的分段。",
+          "slope": "与土壤类型一样仅供参考：在坡地上，水还没渗入就会流走，因此更多、更短的分段会有帮助。",
+          "irrigation_method": "水是如何输送的。与土壤类型一样仅供参考；实际浇多少水由流量决定（配置 → 流量）。",
+          "growth_ramp_profile": "给幼苗较少的水，随着植物长大逐渐增加到完整的每周目标，从该区域设备页面上的“种植/移栽日期”开始计算。关闭：始终使用完整目标。自定义：在设备页面上设置您自己的曲线。",
+          "csv_path": "记录每次浇水、跳过和警告及其数据的文件，用于核查 ZoneFlow 做了什么（可用任何电子表格打开）。使用配置文件夹中的建议文件即可。",
+          "deep_soak_enabled": "深层浇灌是每隔一两周（初始为 14 天）进行一次的大量、缓慢浇水，让水渗透到深层土壤，促使根系向深处生长。适合乔木、灌木和多年生植物；对于生菜、香草等浅根植物请关闭。常规浇水不受影响，照常进行。",
+          "deep_soak_time": "在需要深层浇灌的日子里开始的时间（当下面的触发方式为固定时间时）。清晨最好：被阳光和风带走的水更少。",
+          "routine_time": "ZoneFlow 每天检查是否需要常规浇水的时间，需要时就浇水。需要浇水的频率取决于天气和您的每周目标。清晨最好。",
+          "deep_soak_sun_mode": "在上面的固定时间开始深层浇灌，或在日出、日落之前或之后开始，这样会随季节变化。",
+          "deep_soak_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
+          "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
+          "routine_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
+          "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。"
+        }
+      },
+      "flow_rate": {
+        "title": "灌水器流量",
+        "description": "该区域的灌水器在其浇湿的面积上洒下多少水。1 升水洒在 1 m² 上就是 1 mm。对于单株植物旁的滴头，请使用其周围实际被浇湿的面积。结果将替换该区域的“灌水器流量校准”。",
+        "data": {
+          "emitters": "区域内灌水器（滴头、喷头）的数量",
+          "emitter_flow": "单个灌水器的流量",
+          "area": "浇水面积"
+        },
+        "data_description": {
+          "emitters": "数一数该区域阀门供水的所有滴头或喷头。",
+          "emitter_flow": "单个灌水器每小时的出水量：印在灌水器或其包装上（例如 2 L/h、0.5 gal/h）。",
+          "area": "实际被浇湿的面积。对于单株植物旁的滴头，请把它们周围的湿润区域加起来，而不是整个苗床。"
+        }
+      },
+      "flow_measure": {
+        "title": "测量流量",
+        "description": "让阀门以维护运行方式运行 {minutes} 分钟（不计为浇水，但运行时间计入今天的运行时长安全上限），并根据水表的升数计算流量。运行期间，水表必须只计量该区域的用水。结果会以手机消息发送并自动设置；关闭维护模式即可取消。",
+        "data": {
+          "area": "该区域灌水器的浇水面积"
+        },
+        "data_description": {
+          "area": "该区域灌水器实际浇湿的面积。对于单株植物旁的滴头，请把它们周围的湿润区域加起来，而不是整个苗床。"
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "灌水器流量已设为 {rate}。",
+      "flow_rate_out_of_range": "计算结果为 {rate}，超出了该设置允许的范围（{low} 至 {high}）。请检查数值——对于分布在单株植物周围的滴头，请使用它们实际浇湿的面积，而不是整个苗床。",
+      "measuring": "正在测量：阀门将运行约 {minutes} 分钟。结果会以手机消息发送（如果该区域没有手机目标，则发送到 Home Assistant 的通知中）并自动设置。",
+      "zone_not_loaded": "该区域目前未运行，因此无法执行此操作。",
+      "zone_busy": "该区域（或其水泵）正忙，或今天的运行时长安全上限已用完。请稍后再试。",
+      "flow_rate_disabled": "该区域的“灌水器流量校准”实体已被禁用。请启用它（该区域的设备页面 → 其实体）后重试。"
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "使用上面的固定时间",
+        "before_sunrise": "日出前",
+        "after_sunrise": "日出后",
+        "before_sunset": "日落前",
+        "after_sunset": "日落后"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "不确定/混合",
+        "sandy": "沙土",
+        "sandy_loam": "沙壤土",
+        "loam": "壤土",
+        "clay_loam": "黏壤土",
+        "clay": "黏土"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "不确定",
+        "fast": "排水快",
+        "medium": "中等",
+        "slow": "排水慢"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "平地",
+        "slight": "缓坡",
+        "moderate": "中等坡度",
+        "steep": "陡坡"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "滴灌管/滴头",
+        "micro_sprinkler": "微喷",
+        "sprinkler": "喷灌",
+        "soaker_hose": "渗灌管",
+        "other": "其他"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "关闭（始终使用完整每周目标）",
+        "fast_annual": "速生一年生作物（例如大多数蔬菜）",
+        "slow_fruiting": "慢熟结果作物（例如番茄、辣椒）",
+        "established_perennial": "定植中的多年生植物（例如幼树或灌木）",
+        "custom": "自定义（设置您自己的曲线）"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "跟随 Home Assistant",
+        "metric": "公制（mm、°C）",
+        "imperial": "英制（英寸、°F）"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "热带（全年炎热，例如东南亚）",
+        "hot_dry": "夏季炎热（地中海、沙漠、美国南部）",
+        "temperate": "温带（欧洲大部分地区、美国北部）",
+        "cool": "夏季凉爽（北欧、英国、北方沿海）"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "其他（我自己设置）",
+        "tomatoes": "番茄",
+        "chilis": "辣椒/甜椒",
+        "leafy_vegetables": "叶菜/生菜",
+        "herbs": "香草（地中海类）",
+        "strawberries": "草莓",
+        "flowers": "花坛",
+        "lawn": "草坪",
+        "shrubs": "灌木/绿篱",
+        "young_tree": "幼树（头几年）",
+        "fruit_tree": "成年果树"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "常规浇水正常每周目标"
+      },
+      "target_weekly_hot_mm": {
+        "name": "常规浇水炎热每周目标"
+      },
+      "hot_temp_threshold": {
+        "name": "炎热天气温度阈值"
+      },
+      "cool_temp_threshold": {
+        "name": "凉爽天气温度阈值"
+      },
+      "target_weekly_cool_mm": {
+        "name": "常规浇水凉爽每周目标"
+      },
+      "rain_eff_low": {
+        "name": "降雨有效率 - 小雨（3-5mm）"
+      },
+      "rain_eff_mid": {
+        "name": "降雨有效率 - 中雨（5-10mm）"
+      },
+      "rain_eff_high": {
+        "name": "降雨有效率 - 大雨（10-20mm+）"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "灌水器流量校准"
+      },
+      "deep_soak_target_mm": {
+        "name": "深层浇灌目标深度"
+      },
+      "pump_min_watts": {
+        "name": "水泵低功率警告阈值"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "深层浇灌最长运行时长（安全上限）"
+      },
+      "max_runtime_minutes": {
+        "name": "常规浇水最长运行时长（安全上限）"
+      },
+      "routine_drydown_days": {
+        "name": "常规浇水雨后晾干期"
+      },
+      "deep_soak_drydown_days": {
+        "name": "深层浇灌底土晾干期"
+      },
+      "deep_soak_interval_days": {
+        "name": "深层浇灌间隔"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "深层浇灌降雨上限（14天）"
+      },
+      "rain_mm_per_tip": {
+        "name": "雨量计每斗毫米数（校准）"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "浇水前取消阈值（30分钟）"
+      },
+      "pump_preamble_seconds": {
+        "name": "水泵预启动（预热延时）"
+      },
+      "pump_postamble_seconds": {
+        "name": "水泵后延时（稳定延时）"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "预报降雨跳过阈值"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "预报降雨概率阈值"
+      },
+      "forecast_dry_override_days": {
+        "name": "预报不准时强制浇水天数"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "土壤湿度干燥阈值"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "土壤湿度湿润阈值"
+      },
+      "routine_pulse_count": {
+        "name": "常规浇水分段次数"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "常规浇水段间渗透时间"
+      },
+      "deep_soak_pulse_count": {
+        "name": "深层浇灌分段次数"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "深层浇灌段间渗透时间"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "每日最长灌溉时长（安全上限）"
+      },
+      "growth_stage_override_pct": {
+        "name": "生长阶段手动设置"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "自定义递增：第 0 天起始 %"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "自定义递增：中间点 1 天数"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "自定义递增：中间点 1 %"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "自定义递增：中间点 2 天数"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "自定义递增：中间点 2 %"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "自定义递增：达到 100% 的天数"
+      },
+      "crop_coefficient": {
+        "name": "作物系数（Kc）"
+      },
+      "deficit_water_pct": {
+        "name": "控水模式水量"
+      },
+      "fallback_temp": {
+        "name": "备用/手动温度"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "维护模式自动关闭"
+      },
+      "frost_guard_temp": {
+        "name": "防霜保护温度"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "上次常规浇水"
+      },
+      "last_deep_soak": {
+        "name": "上次深层浇灌"
+      },
+      "last_significant_rain": {
+        "name": "上次有效降雨"
+      },
+      "planting_date": {
+        "name": "种植/移栽日期"
+      },
+      "last_fertilizing": {
+        "name": "上次施肥"
+      },
+      "deficit_until": {
+        "name": "控水模式结束时间"
+      },
+      "paused_until": {
+        "name": "暂停至"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "立即深层浇灌"
+      },
+      "run_routine": {
+        "name": "立即常规浇水"
+      },
+      "reset_lock": {
+        "name": "重置灌溉锁"
+      },
+      "snooze_today": {
+        "name": "今天跳过"
+      },
+      "service_run_1_min": {
+        "name": "维护运行 1 min"
+      },
+      "service_run_5_min": {
+        "name": "维护运行 5 min"
+      },
+      "service_run_10_min": {
+        "name": "维护运行 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "正在灌溉"
+      },
+      "irrigation_abort": {
+        "name": "灌溉中止标志"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "深层浇灌已启用"
+      },
+      "deficit_mode": {
+        "name": "控水模式"
+      },
+      "service_mode": {
+        "name": "维护模式"
+      },
+      "pause": {
+        "name": "暂停"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "过去 30 分钟降雨"
+      },
+      "rain_past_24h": {
+        "name": "过去 24 小时降雨"
+      },
+      "rain_past_3d": {
+        "name": "过去 3 天降雨"
+      },
+      "rain_past_7d": {
+        "name": "过去 7 天降雨"
+      },
+      "rain_past_14d": {
+        "name": "过去 14 天降雨"
+      },
+      "avg_peak_temp_3d": {
+        "name": "3 天平均最高气温"
+      },
+      "next_irrigation_estimate": {
+        "name": "预计下次灌溉"
+      },
+      "days_until_next_run": {
+        "name": "距下次运行天数"
+      },
+      "last_water_delivered": {
+        "name": "上次浇水量（估算）"
+      },
+      "rain_today": {
+        "name": "今日降雨"
+      },
+      "soil_profile": {
+        "name": "土壤概况"
+      },
+      "growth_ramp_pct": {
+        "name": "生长阶段递增"
+      },
+      "last_cycle_water_liters": {
+        "name": "上次浇水量（实测）"
+      },
+      "reference_et0_3d": {
+        "name": "参考 ET₀（3 天平均）"
+      },
+      "routine_weekly_target": {
+        "name": "常规浇水每周目标"
+      },
+      "soil_moisture": {
+        "name": "土壤湿度"
+      },
+      "soil_moisture_status": {
+        "name": "土壤湿度状态",
+        "state": {
+          "dry": "干燥 - 提前浇水",
+          "wet": "湿润 - 跳过",
+          "in_range": "正常范围 - 按计划",
+          "offline": "传感器离线 - 按计划",
+          "stale": "24 小时无新读数 - 按计划",
+          "implausible": "读数不可能 - 按计划"
+        }
+      },
+      "deficit_status": {
+        "name": "控水模式状态",
+        "state": {
+          "off": "关闭",
+          "active": "生效中 - 减少水量",
+          "full_dose_hot": "今天全量（天气炎热）",
+          "full_dose_soil_dry": "今天全量（土壤干燥）",
+          "ended": "已结束",
+          "full_dose_young_plant": "全量（幼苗）",
+          "full_dose_no_temp": "今天全量（没有温度读数记录）"
+        }
+      },
+      "status": {
+        "name": "状态"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "土壤类型",
+        "state": {
+          "unknown": "不确定/混合",
+          "sandy": "沙土",
+          "sandy_loam": "沙壤土",
+          "loam": "壤土",
+          "clay_loam": "黏壤土",
+          "clay": "黏土"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "生长阶段",
+        "state": {
+          "auto": "自动（按种植日期）",
+          "seedling": "幼苗期",
+          "establishing": "定植期",
+          "vegetative": "营养生长期",
+          "near_fruiting": "即将结果",
+          "mature": "成熟期",
+          "manual": "手动（使用滑块）"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "生长递增方案",
+        "state": {
+          "off": "关闭（始终使用完整每周目标）",
+          "fast_annual": "速生一年生作物（例如大多数蔬菜）",
+          "slow_fruiting": "慢熟结果作物（例如番茄、辣椒）",
+          "established_perennial": "定植中的多年生植物（例如幼树或灌木）",
+          "custom": "自定义（设置您自己的曲线）"
+        }
+      },
+      "health_status": {
+        "name": "健康状况",
+        "state": {
+          "excellent": "极好",
+          "good": "良好",
+          "poor": "较差",
+          "sick": "患病"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "下次施肥间隔",
+        "state": {
+          "1": "1 个月",
+          "2": "2 个月",
+          "3": "3 个月",
+          "4": "4 个月",
+          "5": "5 个月",
+          "6": "6 个月",
+          "7": "7 个月",
+          "8": "8 个月",
+          "9": "9 个月",
+          "10": "10 个月",
+          "11": "11 个月",
+          "12": "12 个月"
+        }
+      },
+      "demand_model": {
+        "name": "需水量模型",
+        "state": {
+          "temperature_tiers": "温度分档",
+          "et_curve": "ET 曲线（Hargreaves）"
+        }
+      },
+      "notifications": {
+        "name": "通知",
+        "state": {
+          "all": "全部",
+          "warnings": "仅警告",
+          "none": "无"
+        }
+      },
+      "weekly_summary": {
+        "name": "每周总结",
+        "state": {
+          "off": "关闭",
+          "mon": "星期一",
+          "tue": "星期二",
+          "wed": "星期三",
+          "thu": "星期四",
+          "fri": "星期五",
+          "sat": "星期六",
+          "sun": "星期日"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "健康备注"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "运行深层浇灌",
+      "description": "当（且仅当）满足 05:00 计划所用的相同条件时（互斥锁空闲、已满 14 天间隔和晾干期、未超过 14 天降雨上限），立即运行深层浇灌。与计划运行的代码路径完全相同。",
+      "fields": {
+        "device_id": {
+          "name": "区域设备",
+          "description": "该区域的设备。仅在配置了 2 个或更多区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "运行常规浇水",
+      "description": "当（且仅当）满足 05:30 计划所用的相同条件时，立即运行常规浇水。与计划运行的代码路径完全相同。",
+      "fields": {
+        "device_id": {
+          "name": "区域设备",
+          "description": "该区域的设备。仅在配置了 2 个或更多区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "重置灌溉锁",
+      "description": "强制清除互斥锁和中止标志。仅限紧急情况使用。",
+      "fields": {
+        "device_id": {
+          "name": "区域设备",
+          "description": "该区域的设备。仅在配置了 2 个或更多区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "今天跳过",
+      "description": "跳过该区域今天尚未运行的计划浇水（深层浇灌、常规浇水或两者），不更改任何其他设置。从明天起自动恢复正常计划。",
+      "fields": {
+        "device_id": {
+          "name": "区域设备",
+          "description": "该区域的设备。仅在配置了 2 个或更多区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "测试脉冲",
+      "description": "绕过所有计划、晾干期和降雨条件，让阀门短暂运行一次，用于在信任实际计划之前测试阀门和水泵的接线。仍会遵守互斥锁和安全看门狗。",
+      "fields": {
+        "device_id": {
+          "name": "区域设备",
+          "description": "该区域的设备。仅在配置了 2 个或更多区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
+        },
+        "seconds": {
+          "name": "秒数",
+          "description": "脉冲持续时间，单位为秒（1-120）。"
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "立即发送每周总结",
+      "description": "立即向所有设置了“每周总结”日期的区域所对应的手机发送每周总结——仅作预览；本周的统计会继续累计，直到计划发送的那一次。"
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "此日期不能是将来的日期：它记录的是已经发生的事。只有“种植/移栽日期”可以设为将来。"
+    },
+    "cool_not_below_hot": {
+      "message": "凉爽天气阈值必须始终低于炎热天气阈值。要把两者都调低，请先调低凉爽阈值；要把两者都调高，请先调高炎热阈值。"
+    },
+    "zone_busy": {
+      "message": "该区域正忙（正在浇水或已在进行维护运行）。请在完成后再试。"
+    },
+    "pump_busy": {
+      "message": "该区域共用的水泵正被另一个区域使用。请在那个区域完成后再试。"
+    },
+    "daily_cap_reached": {
+      "message": "该区域已达到今天的最长运行时长安全上限，明天之前无法开始维护运行（或调高“每日最长灌溉时长”上限）。"
+    },
+    "zone_paused": {
+      "message": "该区域已暂停。关闭“暂停”即可浇水。"
+    },
+    "pause_until_past": {
+      "message": "请选择一个将来的日期和时间作为暂停结束时间。"
+    },
+    "no_weekly_summary": {
+      "message": "没有任何区域同时设置了“每周总结”日期和手机通知目标，因此没有可发送的内容。"
+    },
+    "summary_send_failed": {
+      "message": "无法发送每周总结：手机通知失败。请检查该区域的通知目标。"
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}：阀门不可用",
+      "description": "区域 {zone} 的阀门（{entity}）已不可用超过一小时，因此该区域无法浇水。请检查阀门的设备及其集成。阀门恢复后，此问题会自动消除。"
+    },
+    "sensor_offline": {
+      "title": "{zone}：传感器已离线 {days} 天",
+      "description": "区域 {zone} 使用的 {entity} 已离线 {days} 天。该区域会在没有它的情况下继续运行（具体影响请参阅 README），但请检查该设备——或在“配置”中将其从该区域移除。传感器重新上报后，此问题会自动消除。"
+    },
+    "notify_missing": {
+      "title": "{zone}：缺少手机通知目标",
+      "description": "区域 {zone} 将手机通知发送到 {entity}，但它在 Home Assistant 中已不存在，因此收不到任何通知。请在该区域的“配置”中选择当前的通知目标。它重新存在后，此问题会自动消除。"
+    },
+    "flow_rate_default": {
+      "title": "{zone}：请校准灌水器流量",
+      "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。"
+    }
+  }
+}

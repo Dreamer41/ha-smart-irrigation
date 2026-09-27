@@ -1,0 +1,779 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Zavlažovanie ZoneFlow",
+        "description": "Pomenujte túto zónu zavlažovania krátkym názvom (napr. „Predný trávnik“, „Avokádo“). Ďalšie zóny pridáte neskôr tak, že túto integráciu pridáte znova.",
+        "data": {
+          "zone_name": "Názov zóny",
+          "plant": "Čo je zasadené"
+        },
+        "data_description": {
+          "zone_name": "Stane sa názvom zariadenia zóny a začiatkom názvov jej entít a zobrazuje sa v správach v telefóne. Napr. „Záhon paradajok“, „Predný trávnik“.",
+          "plant": "Vyplní rozumné počiatočné hodnoty pre túto plodinu: týždenné ciele vody, koeficient plodiny, pulzy, hĺbkovú zálievku a rastovú krivku. „Niečo iné“ začína so všeobecnými hodnotami. Všetko môžete neskôr zmeniť na stránke zariadenia zóny."
+        }
+      },
+      "entities": {
+        "title": "Zavlažovanie ZoneFlow",
+        "description": "Priraďte svoje skutočné entity. Integrácia nikdy nevytvára vlastné fyzické entity. Povinný je iba spínač ventilu – všetko ostatné nižšie môžete nechať prázdne a zóna bude fungovať aj bez toho.",
+        "data": {
+          "valve_entity": "Spínač ventilu",
+          "pump_power_entity": "Snímač príkonu čerpadla (voliteľné)",
+          "pump_id": "ID zdieľaného čerpadla (voliteľné)",
+          "rain_counter_entity": "Počítadlo preklopení zrážkomera (voliteľné)",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty (voliteľné)",
+          "flow_meter_entity": "Prietokomer (voliteľné)",
+          "soil_moisture_entity": "Snímač vlhkosti pôdy (voliteľné)",
+          "notify_entity": "Cieľ oznámení v telefóne (voliteľné)",
+          "weather_entity": "Zdroj predpovede počasia (voliteľné)",
+          "soil_type": "Typ pôdy",
+          "drainage": "Odvodnenie",
+          "slope": "Sklon",
+          "irrigation_method": "Spôsob zavlažovania",
+          "growth_ramp_profile": "Automatická rastová krivka",
+          "csv_path": "Cesta k súboru denníka CSV",
+          "deep_soak_enabled": "Zapnúť hĺbkovú zálievku",
+          "deep_soak_time": "Čas hĺbkovej zálievky",
+          "routine_time": "Čas bežnej zálievky",
+          "deep_soak_sun_mode": "Spúšťač hĺbkovej zálievky",
+          "deep_soak_sun_offset_minutes": "Posun hĺbkovej zálievky voči slnku (minúty)",
+          "routine_sun_mode": "Spúšťač bežnej zálievky",
+          "routine_sun_offset_minutes": "Posun bežnej zálievky voči slnku (minúty)",
+          "unit_system": "Jednotky"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
+          "pump_power_entity": "Snímač príkonu (W) čerpadla, napr. z inteligentnej zásuvky. Počas každej zálievky ZoneFlow kontroluje, či čerpadlo naozaj odoberá prúd, a ak nie, upozorní vás. Ak ho nemáte, nechajte prázdne.",
+          "pump_id": "Len pre zóny, ktoré bežia z jedného čerpadla: zadajte im tu všetkým rovnaký názov (ľubovoľný, napr. „Čerpadlo A“) a budú sa striedať namiesto toho, aby bežali naraz. Ak má zóna vlastné čerpadlo alebo prívod vody, nechajte prázdne.",
+          "rain_counter_entity": "Počítadlo zrážkomera, ktoré sa s každým preklopením misky zvýši o jedna. ZoneFlow potom odpočíta dážď od zálievky, nechá mokrú pôdu najprv vyschnúť a zastaví zálievku, keď začne pršať. Koľko zrážok zodpovedá jednému preklopeniu, nastavíte na stránke zariadenia zóny (Zrážkomer: mm na preklopenie). Bez zrážkomera ZoneFlow polieva, akoby nikdy nepršalo.",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty. S ním ZoneFlow sám polieva viac v horúčavách a menej v chladnom počasí a ochrana pred mrazom pri mraze zálievku odloží. Bez neho rozhoduje nastavenie Náhradná / ručná teplota.",
+          "flow_meter_entity": "Vodomer, ktorý načítava celkový objem (litre, galóny alebo m³). ZoneFlow potom zaznamená, koľko vody každá zálievka naozaj spotrebovala, upozorní vás, ak čerpadlo bežalo, ale voda netiekla, a vie za vás zmerať prietok (Konfigurovať → Prietok).",
+          "soil_moisture_entity": "Snímač vlhkosti pôdy (%) v koreňovej zóne tejto zóny. Suchá pôda bežnú zálievku urýchli, mokrá ju vynechá a medzi tým rozhoduje bežný plán. Hranice sucha a vlhka sú na stránke zariadenia zóny.",
+          "notify_entity": "Entita oznámení vášho telefónu z aplikácie Home Assistant Companion. ZoneFlow tam posiela poruchy a dôležité udalosti a tiež týždenný súhrn, ak ho zapnete. Bez nej sa zapisujú len do denníka.",
+          "weather_entity": "Entita počasia s predpoveďou. Keď sa predpovedá dosť dažďa, ZoneFlow zálievku odloží (no nie príliš veľa dní po sebe) a ak nemáte snímač teploty, použije jej aktuálnu teplotu pre ochranu pred mrazom.",
+          "soil_type": "Len pre vašu informáciu: samo o sebe zálievku nemení. Zobrazuje sa na snímači Pôdny profil zóny a pomôže vám zvoliť pulzy a čas na vsiaknutie na stránke zariadenia: íl prijíma vodu pomaly a potrebuje viac kratších pulzov s dlhšími prestávkami; piesok zvládne menej pulzov.",
+          "drainage": "Ako rýchlo voda zmizne po výdatnej zálievke alebo daždi. Len pre informáciu, ako typ pôdy: pomaly odvodňovaná pôda potrebuje viac kratších pulzov.",
+          "slope": "Len pre informáciu, ako typ pôdy: na svahu voda steká skôr, než vsiakne, preto pomôže viac kratších pulzov.",
+          "irrigation_method": "Ako sa voda privádza. Len pre informáciu, ako typ pôdy; množstvo vody určuje prietok (Konfigurovať → Prietok).",
+          "growth_ramp_profile": "Mladé rastliny dostanú menej vody a s vekom sa dávka zvyšuje až na plný týždenný cieľ, počítané od dátumu na stránke zariadenia zóny (Dátum výsadby / presadenia). Vypnuté: vždy plný cieľ. Vlastná: nakreslite si vlastnú krivku na stránke zariadenia.",
+          "csv_path": "Súbor, do ktorého sa zapisuje každá zálievka, vynechanie a varovanie aj s číslami, aby ste mohli skontrolovať, čo ZoneFlow robil (otvorí sa v každom tabuľkovom programe). Navrhnutý súbor v konfiguračnom priečinku je v poriadku.",
+          "deep_soak_enabled": "Hĺbková zálievka je výdatné, pomalé zalievanie raz za pár týždňov (na začiatok 14 dní), ktoré zavlaží pôdu hlboko, aby korene rástli do hĺbky. Vhodná pre stromy, kry a trvalky; pre plytko koreniace rastliny ako šalát a bylinky ju vypnite. Bežná zálievka beží v každom prípade.",
+          "deep_soak_time": "Kedy sa hĺbková zálievka spustí v dňoch, keď je na rade, ak je spúšťač nižšie nastavený na pevný čas. Najlepšie je skoré ráno: menej vody sa stratí slnkom a vetrom.",
+          "routine_time": "Kedy ZoneFlow každý deň skontroluje, či je bežná zálievka na rade, a ak áno, zaleje. Ako často je na rade, závisí od počasia a týždenného cieľa. Najlepšie je skoré ráno.",
+          "deep_soak_sun_mode": "Spustiť hĺbkovú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
+          "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
+          "routine_sun_mode": "Spustiť bežnú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
+          "routine_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
+          "unit_system": "Čo táto zóna zobrazuje: podľa Home Assistant, alebo vždy metrické (mm, °C, litre) či imperiálne (palce, °F, galóny). Mení len zobrazenie, nikdy nie množstvo vody."
+        }
+      },
+      "climate": {
+        "title": "Podnebie",
+        "description": "Aké je vegetačné obdobie tam, kde je táto zóna? Vyplní sa tým len predvolené nastavenie teplotných posuvníkov na ďalšej stránke – každú hodnotu tam môžete zmeniť, aj neskôr na stránke zariadenia zóny.",
+        "data": {
+          "climate": "Podnebie"
+        },
+        "data_description": {
+          "climate": "Vyberte najbližšiu možnosť. Vyplní len teplotné prahy na ďalšej stránke."
+        }
+      },
+      "temperatures": {
+        "title": "Teplotné prahy",
+        "description": "ZoneFlow priemeruje denné MAXIMÁLNE teploty za posledné 3 dni. Pri prahu Horúco alebo nad ním polieva častejšie (každé 3 dni) s týždenným cieľom pre horúco; pod prahom Chladno použije týždenný cieľ pre chladno; medzi nimi je normálne počasie.\n\nNáhradná teplota sa použije, keď nie je k dispozícii skutočné meranie: bez snímača teploty ňou riadite ručne (pri vlne horúčav ju zvýšte, pri ochladení znížte); so snímačom sa použije len dovtedy, kým snímač nezaznamená prvý celý deň, a po 3 dňoch bez jediného merania.",
+        "data": {
+          "hot_temp_threshold": "Prah horúceho počasia",
+          "cool_temp_threshold": "Prah chladného počasia",
+          "fallback_temp": "Náhradná / ručná teplota"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Keď je priemer maxím za posledné 3 dni na tejto hodnote alebo nad ňou, zóna použije týždenný cieľ pre horúco a polieva častejšie.",
+          "cool_temp_threshold": "Keď je tento priemer pod touto hodnotou, zóna použije týždenný cieľ pre chladno. Medzi nimi je normálne počasie.",
+          "fallback_temp": "Použije sa, keď nie je skutočné meranie. Bez snímača teploty ňou riadite ručne: pri vlne horúčav ju zvýšte, pri ochladení znížte."
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Názov zóny nemôže byť prázdny.",
+      "cool_not_below_hot": "Prah chladna musí byť nižší ako prah horúca."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurovať",
+        "menu_options": {
+          "settings": "Nastavenia zóny (entity, pôda, plán…)",
+          "flow_rate": "Prietok: vypočítať z emitorov",
+          "flow_measure": "Prietok: zmerať prietokomerom"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Spínač ventilu",
+          "pump_power_entity": "Snímač príkonu čerpadla (voliteľné)",
+          "pump_id": "ID zdieľaného čerpadla (voliteľné)",
+          "rain_counter_entity": "Počítadlo preklopení zrážkomera (voliteľné)",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty (voliteľné)",
+          "flow_meter_entity": "Prietokomer (voliteľné)",
+          "soil_moisture_entity": "Snímač vlhkosti pôdy (voliteľné)",
+          "notify_entity": "Cieľ oznámení v telefóne (voliteľné)",
+          "weather_entity": "Zdroj predpovede počasia (voliteľné)",
+          "soil_type": "Typ pôdy",
+          "drainage": "Odvodnenie",
+          "slope": "Sklon",
+          "irrigation_method": "Spôsob zavlažovania",
+          "growth_ramp_profile": "Automatická rastová krivka",
+          "csv_path": "Cesta k súboru denníka CSV",
+          "deep_soak_enabled": "Zapnúť hĺbkovú zálievku",
+          "deep_soak_time": "Čas hĺbkovej zálievky",
+          "routine_time": "Čas bežnej zálievky",
+          "deep_soak_sun_mode": "Spúšťač hĺbkovej zálievky",
+          "deep_soak_sun_offset_minutes": "Posun hĺbkovej zálievky voči slnku (minúty)",
+          "routine_sun_mode": "Spúšťač bežnej zálievky",
+          "routine_sun_offset_minutes": "Posun bežnej zálievky voči slnku (minúty)",
+          "unit_system": "Jednotky"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
+          "pump_power_entity": "Snímač príkonu (W) čerpadla, napr. z inteligentnej zásuvky. Počas každej zálievky ZoneFlow kontroluje, či čerpadlo naozaj odoberá prúd, a ak nie, upozorní vás. Ak ho nemáte, nechajte prázdne.",
+          "pump_id": "Len pre zóny, ktoré bežia z jedného čerpadla: zadajte im tu všetkým rovnaký názov (ľubovoľný, napr. „Čerpadlo A“) a budú sa striedať namiesto toho, aby bežali naraz. Ak má zóna vlastné čerpadlo alebo prívod vody, nechajte prázdne.",
+          "rain_counter_entity": "Počítadlo zrážkomera, ktoré sa s každým preklopením misky zvýši o jedna. ZoneFlow potom odpočíta dážď od zálievky, nechá mokrú pôdu najprv vyschnúť a zastaví zálievku, keď začne pršať. Koľko zrážok zodpovedá jednému preklopeniu, nastavíte na stránke zariadenia zóny (Zrážkomer: mm na preklopenie). Bez zrážkomera ZoneFlow polieva, akoby nikdy nepršalo.",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty. S ním ZoneFlow sám polieva viac v horúčavách a menej v chladnom počasí a ochrana pred mrazom pri mraze zálievku odloží. Bez neho rozhoduje nastavenie Náhradná / ručná teplota.",
+          "flow_meter_entity": "Vodomer, ktorý načítava celkový objem (litre, galóny alebo m³). ZoneFlow potom zaznamená, koľko vody každá zálievka naozaj spotrebovala, upozorní vás, ak čerpadlo bežalo, ale voda netiekla, a vie za vás zmerať prietok (Konfigurovať → Prietok).",
+          "soil_moisture_entity": "Snímač vlhkosti pôdy (%) v koreňovej zóne tejto zóny. Suchá pôda bežnú zálievku urýchli, mokrá ju vynechá a medzi tým rozhoduje bežný plán. Hranice sucha a vlhka sú na stránke zariadenia zóny.",
+          "notify_entity": "Entita oznámení vášho telefónu z aplikácie Home Assistant Companion. ZoneFlow tam posiela poruchy a dôležité udalosti a tiež týždenný súhrn, ak ho zapnete. Bez nej sa zapisujú len do denníka.",
+          "weather_entity": "Entita počasia s predpoveďou. Keď sa predpovedá dosť dažďa, ZoneFlow zálievku odloží (no nie príliš veľa dní po sebe) a ak nemáte snímač teploty, použije jej aktuálnu teplotu pre ochranu pred mrazom.",
+          "soil_type": "Len pre vašu informáciu: samo o sebe zálievku nemení. Zobrazuje sa na snímači Pôdny profil zóny a pomôže vám zvoliť pulzy a čas na vsiaknutie na stránke zariadenia: íl prijíma vodu pomaly a potrebuje viac kratších pulzov s dlhšími prestávkami; piesok zvládne menej pulzov.",
+          "drainage": "Ako rýchlo voda zmizne po výdatnej zálievke alebo daždi. Len pre informáciu, ako typ pôdy: pomaly odvodňovaná pôda potrebuje viac kratších pulzov.",
+          "slope": "Len pre informáciu, ako typ pôdy: na svahu voda steká skôr, než vsiakne, preto pomôže viac kratších pulzov.",
+          "irrigation_method": "Ako sa voda privádza. Len pre informáciu, ako typ pôdy; množstvo vody určuje prietok (Konfigurovať → Prietok).",
+          "growth_ramp_profile": "Mladé rastliny dostanú menej vody a s vekom sa dávka zvyšuje až na plný týždenný cieľ, počítané od dátumu na stránke zariadenia zóny (Dátum výsadby / presadenia). Vypnuté: vždy plný cieľ. Vlastná: nakreslite si vlastnú krivku na stránke zariadenia.",
+          "csv_path": "Súbor, do ktorého sa zapisuje každá zálievka, vynechanie a varovanie aj s číslami, aby ste mohli skontrolovať, čo ZoneFlow robil (otvorí sa v každom tabuľkovom programe). Navrhnutý súbor v konfiguračnom priečinku je v poriadku.",
+          "deep_soak_enabled": "Hĺbková zálievka je výdatné, pomalé zalievanie raz za pár týždňov (na začiatok 14 dní), ktoré zavlaží pôdu hlboko, aby korene rástli do hĺbky. Vhodná pre stromy, kry a trvalky; pre plytko koreniace rastliny ako šalát a bylinky ju vypnite. Bežná zálievka beží v každom prípade.",
+          "deep_soak_time": "Kedy sa hĺbková zálievka spustí v dňoch, keď je na rade, ak je spúšťač nižšie nastavený na pevný čas. Najlepšie je skoré ráno: menej vody sa stratí slnkom a vetrom.",
+          "routine_time": "Kedy ZoneFlow každý deň skontroluje, či je bežná zálievka na rade, a ak áno, zaleje. Ako často je na rade, závisí od počasia a týždenného cieľa. Najlepšie je skoré ráno.",
+          "deep_soak_sun_mode": "Spustiť hĺbkovú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
+          "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
+          "routine_sun_mode": "Spustiť bežnú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
+          "routine_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
+          "unit_system": "Čo táto zóna zobrazuje: podľa Home Assistant, alebo vždy metrické (mm, °C, litre) či imperiálne (palce, °F, galóny). Mení len zobrazenie, nikdy nie množstvo vody."
+        }
+      },
+      "flow_rate": {
+        "title": "Prietok emitorov",
+        "description": "Koľko vody dodajú emitory zóny na plochu, ktorú zavlažujú. 1 liter na 1 m² je 1 mm. Pri kvapkačoch pri jednotlivých rastlinách použite plochu okolo nich, ktorá naozaj navlhne. Výsledok nahradí hodnotu Kalibrácia prietoku emitorov v zóne.",
+        "data": {
+          "emitters": "Počet emitorov (kvapkačov, rozstrekovačov) v zóne",
+          "emitter_flow": "Prietok jedného emitora",
+          "area": "Zavlažovaná plocha"
+        },
+        "data_description": {
+          "emitters": "Spočítajte všetky kvapkače a rozstrekovače, ktoré napája ventil tejto zóny.",
+          "emitter_flow": "Koľko dá jeden emitor za hodinu: je to uvedené na emitore alebo jeho obale (napr. 2 L/h, 0,5 gal/h).",
+          "area": "Plocha, ktorá naozaj navlhne. Pri kvapkačoch pri jednotlivých rastlinách sčítajte mokré miesta okolo nich, nie celý záhon."
+        }
+      },
+      "flow_measure": {
+        "title": "Zmerať prietok",
+        "description": "Otvorí ventil na {minutes} min ako servisný chod (nepočíta sa ako zálievka, ale jeho minúty sa rátajú do dnešného bezpečnostného limitu doby chodu) a z litrov na prietokomere vypočíta prietok. Počas merania smie prietokomer merať len vodu tejto zóny. Výsledok príde ako správa do telefónu a nastaví sa automaticky; vypnutím Servisného režimu sa meranie zruší.",
+        "data": {
+          "area": "Plocha zavlažovaná emitormi zóny"
+        },
+        "data_description": {
+          "area": "Plocha, ktorú emitory zóny naozaj zavlažia. Pri kvapkačoch pri jednotlivých rastlinách sčítajte mokré miesta okolo nich, nie celý záhon."
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Prietok emitorov nastavený na {rate}.",
+      "flow_rate_out_of_range": "Vychádza to na {rate}, čo je mimo povoleného rozsahu ({low} až {high}). Skontrolujte čísla – pri kvapkačoch pri jednotlivých rastlinách použite plochu, ktorú naozaj zavlažia, nie celý záhon.",
+      "measuring": "Meria sa: ventil bude otvorený asi {minutes} min. Výsledok príde ako správa do telefónu (alebo do oznámení Home Assistant, ak zóna nemá cieľ v telefóne) a nastaví sa automaticky.",
+      "zone_not_loaded": "Táto zóna teraz nebeží, takže to nie je možné vykonať.",
+      "zone_busy": "Zóna (alebo jej čerpadlo) je zaneprázdnená, alebo je dnešný bezpečnostný limit doby chodu vyčerpaný. Skúste to neskôr.",
+      "flow_rate_disabled": "Entita Kalibrácia prietoku emitorov je v tejto zóne zakázaná. Povoľte ju (stránka zariadenia zóny → jej entity) a skúste to znova."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Použiť pevný čas vyššie",
+        "before_sunrise": "Pred východom slnka",
+        "after_sunrise": "Po východe slnka",
+        "before_sunset": "Pred západom slnka",
+        "after_sunset": "Po západe slnka"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Neviem / zmiešaná",
+        "sandy": "Piesočnatá",
+        "sandy_loam": "Hlinitopiesočnatá",
+        "loam": "Hlinitá",
+        "clay_loam": "Ílovitohlinitá",
+        "clay": "Ílovitá"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Neviem",
+        "fast": "Rýchle odvodnenie",
+        "medium": "Stredné",
+        "slow": "Pomalé odvodnenie"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Rovina",
+        "slight": "Mierny svah",
+        "moderate": "Stredný svah",
+        "steep": "Strmý svah"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Kvapková hadica / emitory",
+        "micro_sprinkler": "Mikropostrekovač",
+        "sprinkler": "Postrekovač",
+        "soaker_hose": "Priesaková hadica",
+        "other": "Iné"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Vypnuté (vždy plný týždenný cieľ)",
+        "fast_annual": "Rýchlo rastúca jednoročná (napr. väčšina zeleniny)",
+        "slow_fruiting": "Pomaly plodiaca plodina (napr. paradajky, papriky)",
+        "established_perennial": "Ujímajúca sa trvalka (napr. mladý strom alebo ker)",
+        "custom": "Vlastná (nastavte si vlastnú krivku)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Podľa Home Assistant",
+        "metric": "Metrické (mm, °C)",
+        "imperial": "Imperiálne (palce, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropické (horúco celý rok, napr. juhovýchodná Ázia)",
+        "hot_dry": "Horúce letá (Stredomorie, púšť, juh USA)",
+        "temperate": "Mierne (väčšina Európy, sever USA)",
+        "cool": "Chladné letá (Škandinávia, Británia, severné pobrežie)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Niečo iné (nastavím si sám)",
+        "tomatoes": "Paradajky",
+        "chilis": "Čili / papriky",
+        "leafy_vegetables": "Listová zelenina / šalát",
+        "herbs": "Bylinky (stredomorské)",
+        "strawberries": "Jahody",
+        "flowers": "Kvetinový záhon",
+        "lawn": "Trávnik",
+        "shrubs": "Kry / živý plot",
+        "young_tree": "Mladý strom (prvé roky)",
+        "fruit_tree": "Zakorenený ovocný strom"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Bežná zálievka: týždenný cieľ (normálne)"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Bežná zálievka: týždenný cieľ (horúco)"
+      },
+      "hot_temp_threshold": {
+        "name": "Teplotný prah horúceho počasia"
+      },
+      "cool_temp_threshold": {
+        "name": "Teplotný prah chladného počasia"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Bežná zálievka: týždenný cieľ (chladno)"
+      },
+      "rain_eff_low": {
+        "name": "Účinnosť dažďa – slabý (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Účinnosť dažďa – mierny (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Účinnosť dažďa – silný (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Kalibrácia prietoku emitorov"
+      },
+      "deep_soak_target_mm": {
+        "name": "Hĺbková zálievka: cieľová dávka"
+      },
+      "pump_min_watts": {
+        "name": "Prah varovania pri nízkom príkone čerpadla"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Hĺbková zálievka: max. doba chodu (bezpečnostný limit)"
+      },
+      "max_runtime_minutes": {
+        "name": "Bežná zálievka: max. doba chodu (bezpečnostný limit)"
+      },
+      "routine_drydown_days": {
+        "name": "Bežná zálievka: čakanie na vyschnutie"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Hĺbková zálievka: čakanie na vyschnutie podložia"
+      },
+      "deep_soak_interval_days": {
+        "name": "Interval hĺbkovej zálievky"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Hĺbková zálievka: strop zrážok (14 d)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Zrážkomer: mm na preklopenie (kalibrácia)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Prah zrušenia pred zálievkou (30 min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Nábeh čerpadla (oneskorenie pred štartom)"
+      },
+      "pump_postamble_seconds": {
+        "name": "Dobeh čerpadla (oneskorenie po skončení)"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Predpoveď: prah zrážok na vynechanie"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Predpoveď: prah pravdepodobnosti dažďa"
+      },
+      "forecast_dry_override_days": {
+        "name": "Predpoveď: prelomenie pri suchu"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Vlhkosť pôdy: prah sucha"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Vlhkosť pôdy: prah vlhka"
+      },
+      "routine_pulse_count": {
+        "name": "Bežná zálievka: počet pulzov (delený cyklus)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Bežná zálievka: prestávka na vsiaknutie medzi pulzmi"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Hĺbková zálievka: počet pulzov (delený cyklus)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Hĺbková zálievka: prestávka na vsiaknutie medzi pulzmi"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Max. denná doba zavlažovania (bezpečnostný limit)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Rastová fáza: ručné nastavenie"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Vlastná krivka: štartovacie % v deň 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Vlastná krivka: deň bodu 1"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Vlastná krivka: % v bode 1"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Vlastná krivka: deň bodu 2"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Vlastná krivka: % v bode 2"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Vlastná krivka: deň dosiahnutia 100%"
+      },
+      "crop_coefficient": {
+        "name": "Koeficient plodiny (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Voda v deficitnom režime"
+      },
+      "fallback_temp": {
+        "name": "Náhradná / ručná teplota"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Automatické vypnutie servisného režimu"
+      },
+      "frost_guard_temp": {
+        "name": "Teplota ochrany pred mrazom"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Posledná bežná zálievka"
+      },
+      "last_deep_soak": {
+        "name": "Posledná hĺbková zálievka"
+      },
+      "last_significant_rain": {
+        "name": "Posledný výdatný dážď"
+      },
+      "planting_date": {
+        "name": "Dátum výsadby / presadenia"
+      },
+      "last_fertilizing": {
+        "name": "Posledné hnojenie"
+      },
+      "deficit_until": {
+        "name": "Koniec deficitného režimu"
+      },
+      "paused_until": {
+        "name": "Pozastavené do"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Spustiť hĺbkovú zálievku teraz"
+      },
+      "run_routine": {
+        "name": "Spustiť bežnú zálievku teraz"
+      },
+      "reset_lock": {
+        "name": "Resetovať zámok zavlažovania"
+      },
+      "snooze_today": {
+        "name": "Dnes vynechať"
+      },
+      "service_run_1_min": {
+        "name": "Servisný chod 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Servisný chod 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Servisný chod 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Zavlažovanie prebieha"
+      },
+      "irrigation_abort": {
+        "name": "Príznak prerušenia zavlažovania"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Hĺbková zálievka zapnutá"
+      },
+      "deficit_mode": {
+        "name": "Deficitný režim"
+      },
+      "service_mode": {
+        "name": "Servisný režim"
+      },
+      "pause": {
+        "name": "Pozastavenie"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Dážď za posledných 30 min"
+      },
+      "rain_past_24h": {
+        "name": "Dážď za posledných 24 h"
+      },
+      "rain_past_3d": {
+        "name": "Dážď za posledné 3 d"
+      },
+      "rain_past_7d": {
+        "name": "Dážď za posledných 7 d"
+      },
+      "rain_past_14d": {
+        "name": "Dážď za posledných 14 d"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Priemerné denné maximum za 3 dni"
+      },
+      "next_irrigation_estimate": {
+        "name": "Odhad ďalšej zálievky"
+      },
+      "days_until_next_run": {
+        "name": "Dni do ďalšej zálievky"
+      },
+      "last_water_delivered": {
+        "name": "Posledná dodaná voda (odhad)"
+      },
+      "rain_today": {
+        "name": "Dážď dnes"
+      },
+      "soil_profile": {
+        "name": "Pôdny profil"
+      },
+      "growth_ramp_pct": {
+        "name": "Rastová krivka"
+      },
+      "last_cycle_water_liters": {
+        "name": "Voda v poslednom cykle (nameraná)"
+      },
+      "reference_et0_3d": {
+        "name": "Referenčná ET₀ (3-dňový priemer)"
+      },
+      "routine_weekly_target": {
+        "name": "Týždenný cieľ bežnej zálievky"
+      },
+      "soil_moisture": {
+        "name": "Vlhkosť pôdy"
+      },
+      "soil_moisture_status": {
+        "name": "Stav vlhkosti pôdy",
+        "state": {
+          "dry": "Sucho – zálievka urýchlená",
+          "wet": "Mokro – vynecháva sa",
+          "in_range": "V rozsahu – podľa plánu",
+          "offline": "Snímač offline – podľa plánu",
+          "stale": "24 h bez nového merania – podľa plánu",
+          "implausible": "Nemožná hodnota – podľa plánu"
+        }
+      },
+      "deficit_status": {
+        "name": "Stav deficitného režimu",
+        "state": {
+          "off": "Vypnuté",
+          "active": "Aktívny – znížená dávka",
+          "full_dose_hot": "Dnes plná dávka (horúco)",
+          "full_dose_soil_dry": "Dnes plná dávka (suchá pôda)",
+          "ended": "Skončený",
+          "full_dose_young_plant": "Plná dávka (mladá rastlina)",
+          "full_dose_no_temp": "Dnes plná dávka (chýba záznam teploty)"
+        }
+      },
+      "status": {
+        "name": "Stav"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Typ pôdy",
+        "state": {
+          "unknown": "Neviem / zmiešaná",
+          "sandy": "Piesočnatá",
+          "sandy_loam": "Hlinitopiesočnatá",
+          "loam": "Hlinitá",
+          "clay_loam": "Ílovitohlinitá",
+          "clay": "Ílovitá"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Rastová fáza",
+        "state": {
+          "auto": "Automaticky (podľa dátumu výsadby)",
+          "seedling": "Priesada",
+          "establishing": "Ujímanie",
+          "vegetative": "Vegetatívny rast",
+          "near_fruiting": "Pred plodením",
+          "mature": "Dospelá",
+          "manual": "Ručne (posuvníkom)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Profil rastovej krivky",
+        "state": {
+          "off": "Vypnuté (vždy plný týždenný cieľ)",
+          "fast_annual": "Rýchlo rastúca jednoročná (napr. väčšina zeleniny)",
+          "slow_fruiting": "Pomaly plodiaca plodina (napr. paradajky, papriky)",
+          "established_perennial": "Ujímajúca sa trvalka (napr. mladý strom alebo ker)",
+          "custom": "Vlastná (nastavte si vlastnú krivku)"
+        }
+      },
+      "health_status": {
+        "name": "Zdravie",
+        "state": {
+          "excellent": "Výborné",
+          "good": "Dobré",
+          "poor": "Slabé",
+          "sick": "Choré"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Ďalšie hnojenie o",
+        "state": {
+          "1": "1 mesiac",
+          "2": "2 mesiace",
+          "3": "3 mesiace",
+          "4": "4 mesiace",
+          "5": "5 mesiacov",
+          "6": "6 mesiacov",
+          "7": "7 mesiacov",
+          "8": "8 mesiacov",
+          "9": "9 mesiacov",
+          "10": "10 mesiacov",
+          "11": "11 mesiacov",
+          "12": "12 mesiacov"
+        }
+      },
+      "demand_model": {
+        "name": "Model potreby vody",
+        "state": {
+          "temperature_tiers": "Teplotné pásma",
+          "et_curve": "Krivka ET (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Oznámenia",
+        "state": {
+          "all": "Všetky",
+          "warnings": "Len varovania",
+          "none": "Žiadne"
+        }
+      },
+      "weekly_summary": {
+        "name": "Týždenný súhrn",
+        "state": {
+          "off": "Vypnuté",
+          "mon": "Pondelok",
+          "tue": "Utorok",
+          "wed": "Streda",
+          "thu": "Štvrtok",
+          "fri": "Piatok",
+          "sat": "Sobota",
+          "sun": "Nedeľa"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Poznámky o zdraví"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Spustiť hĺbkovú zálievku",
+      "description": "Spustí hĺbkovú zálievku teraz, ak (a len ak) sú splnené rovnaké podmienky ako pri plánovanom spustení o 05:00 (zámok voľný, 14-dňový interval a čakanie na vyschnutie splnené, 14-dňový strop zrážok neprekročený). Rovnaký postup ako pri plánovanom spustení.",
+      "fields": {
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Spustiť bežnú zálievku",
+      "description": "Spustí bežnú zálievku teraz, ak (a len ak) sú splnené rovnaké podmienky ako pri plánovanom spustení o 05:30. Rovnaký postup ako pri plánovanom spustení.",
+      "fields": {
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Resetovať zámok zavlažovania",
+      "description": "Násilne uvoľní zámok a príznak prerušenia. Len pre núdzové situácie.",
+      "fields": {
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Dnes vynechať",
+      "description": "Vynechá tie plánované cykly tejto zóny (hĺbkovú, bežnú alebo obe zálievky), ktoré dnes ešte neprebehli, bez zmeny iných nastavení. Od zajtra sa plán automaticky obnoví.",
+      "fields": {
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Testovací pulz",
+      "description": "Obíde všetky podmienky plánu, vyschnutia a dažďa a otvorí ventil na jeden krátky pulz, aby ste mohli otestovať zapojenie ventilu a čerpadla skôr, než sa spoľahnete na skutočný plán. Zámok a bezpečnostné strážcov stále rešpektuje.",
+      "fields": {
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        },
+        "seconds": {
+          "name": "Sekundy",
+          "description": "Dĺžka pulzu v sekundách (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Odoslať týždenný súhrn teraz",
+      "description": "Hneď odošle týždenný súhrn do každého telefónu, ktorý má zónu s nastaveným dňom Týždenného súhrnu – ako ukážku; týždenné počty pokračujú až do plánovaného súhrnu."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Tento dátum nemôže byť v budúcnosti: zaznamenáva niečo, čo sa už stalo. Dopredu možno nastaviť len Dátum výsadby / presadenia."
+    },
+    "cool_not_below_hot": {
+      "message": "Prah chladného počasia musí zostať pod prahom horúceho. Ak chcete znížiť oba, najprv znížte prah chladna; ak chcete zvýšiť oba, najprv zvýšte prah horúca."
+    },
+    "zone_busy": {
+      "message": "Táto zóna je zaneprázdnená (polieva alebo už beží servisný chod). Skúste to znova, keď skončí."
+    },
+    "pump_busy": {
+      "message": "Zdieľané čerpadlo tejto zóny práve používa iná zóna. Skúste to znova, keď tá zóna skončí."
+    },
+    "daily_cap_reached": {
+      "message": "Táto zóna dosiahla dnešný bezpečnostný limit doby chodu, takže servisný chod sa do zajtra nespustí (alebo zvýšte Max. dennú dobu zavlažovania)."
+    },
+    "zone_paused": {
+      "message": "Táto zóna je pozastavená. Ak ju chcete poliať, vypnite Pozastavenie."
+    },
+    "pause_until_past": {
+      "message": "Vyberte dátum a čas v budúcnosti, do ktorého sa má pozastaviť."
+    },
+    "no_weekly_summary": {
+      "message": "Žiadna zóna nemá nastavený deň Týždenného súhrnu a cieľ oznámení v telefóne, takže nie je čo odoslať."
+    },
+    "summary_send_failed": {
+      "message": "Týždenný súhrn sa nepodarilo odoslať: oznámenie do telefónu zlyhalo. Skontrolujte cieľ oznámení zóny."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: ventil nedostupný",
+      "description": "Ventil zóny {zone} ({entity}) je nedostupný viac ako hodinu, takže zóna nemôže polievať. Skontrolujte zariadenie ventilu a jeho integráciu. Hlásenie zmizne samo, keď bude ventil opäť dostupný."
+    },
+    "sensor_offline": {
+      "title": "{zone}: snímač offline (počet dní: {days})",
+      "description": "{entity}, ktorý používa zóna {zone}, je offline (počet dní: {days}). Zóna pokračuje bez neho (čo to znamená, nájdete v README), ale skontrolujte zariadenie – alebo ho zo zóny odoberte v časti Konfigurovať. Hlásenie zmizne samo, keď snímač opäť začne posielať údaje."
+    },
+    "notify_missing": {
+      "title": "{zone}: chýba cieľ oznámení v telefóne",
+      "description": "Zóna {zone} posiela oznámenia do telefónu na {entity}, ktorý už v Home Assistant neexistuje, takže žiadne oznámenia neprichádzajú. Vyberte aktuálny cieľ oznámení v časti Konfigurovať danej zóny. Hlásenie zmizne samo, keď cieľ opäť bude existovať."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: nakalibrujte prietok emitorov",
+      "description": "Zóna {zone} stále používa predvolenú Kalibráciu prietoku emitorov (0,24 mm/min). Práve toto číslo rozhoduje, koľko vody dá každá zálievka, preto ho zmerajte pre svoje emitory: v zóne cez Konfigurovať → Prietok ho vypočítate z emitorov alebo zmeriate prietokomerom. Ak je 0,24 mm/min pre túto zónu naozaj správne, toto hlásenie ignorujte."
+    }
+  }
+}

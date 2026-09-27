@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%b%d日 %a %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%b%d日 %a",
+    "time": "%H:%M",
+    "days": "周一,周二,周三,周四,周五,周六,周日",
+    "months": "1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月"
+  },
+  "cycle": {
+    "deep_soak": "深层浇灌",
+    "routine": "常规浇水",
+    "service_run": "维护运行",
+    "test_pulse": "测试脉冲"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ 大雨",
+      "message": "记录到大雨（24 小时：{rain_24h}）。晾干计时已更新。"
+    },
+    "stale_lock": {
+      "title": "⚠️ 灌溉锁已重置",
+      "message": "灌溉锁卡住超过 3 小时，已被重置，以免阻止后续运行。"
+    },
+    "valve_watchdog": {
+      "title": "🚨 阀门看门狗已触发",
+      "message": "阀门连续开启了 {minutes} 分钟，已被关闭以保护植物。"
+    },
+    "power_loss": {
+      "title": "🚨 浇水时断电",
+      "message": "阀门或水泵在浇水中途断电超过 10 分钟。浇水已停止，灌溉锁已清除；下一次计划运行时会重试。"
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 恢复供电后阀门处于开启状态",
+      "message": "恢复供电后阀门显示为开启——已被强制关闭。请检查继电器和接线。"
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 浇水因重启而中断",
+      "message": "Home Assistant 在浇水中途重启。灌溉锁已清除，阀门在可访问时已被强制关闭；下一次计划运行时会重试。"
+    },
+    "deficit_ended": {
+      "title": "🌶️ 控水模式已结束",
+      "message": "已过结束日期——常规浇水恢复全量。"
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}：没有水流",
+      "message": "浇水已结束，但水表显示没有出水。请检查阀门、水泵和水表的接线。"
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}：因错误停止",
+      "message": "已停止：{error}。阀门已关闭；下一次计划运行时会重试。"
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}：因错误停止",
+      "message": "已停止：{error}。{valve} 可能仍处于开启状态——请立即检查。"
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}：水泵功率过低",
+      "message": "第 {pulse} 段正在运行，但水泵读数只有 {watts} W。"
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle}因下雨停止",
+      "message": "计划 {planned} 分钟，运行 {given} 分钟后停止：过去 30 分钟降雨 {rain}。下一次计划运行时会把这场雨考虑在内重新判断。"
+    },
+    "forecast_override": {
+      "title": "⏱️ 不顾预报照常浇水",
+      "message": "一直预报有雨，但已经 {days} 天没下雨了（该区域的上限为 {limit} 天）——照常浇水。"
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ 深层浇灌未运行：超出运行时长上限",
+      "message": "计算出的运行时长（{minutes} 分钟）超过了该区域的深层浇灌安全上限。已取消浇水——请检查流量和目标深度。"
+    },
+    "routine_cap": {
+      "title": "⚠️ 常规浇水未运行：超出运行时长上限",
+      "message": "计算出的运行时长（{minutes} 分钟）超过了该区域的常规浇水安全上限（{cap} 分钟）。已取消浇水——请检查流量和每周目标。"
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle}已跳过：超出每日运行时长上限",
+      "message": "今天已运行 {used} 分钟；本次运行（{minutes} 分钟）将超过每日上限 {cap} 分钟。到期时会再次尝试。"
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle}已取消",
+      "message": "已取消：过去 30 分钟降雨 {rain}。"
+    },
+    "deep_soak_done": {
+      "title": "🚿 深层浇灌已完成",
+      "message": "分 {pulses} 段共浇水 {amount}（{minutes} 分钟）。同时计为一次常规浇水。{next}"
+    },
+    "deep_soak_done_next": {
+      "message": "下次常规浇水：{when}。"
+    },
+    "overdue": {
+      "title": "⚠️ 浇水逾期",
+      "message": "距上次浇水已过 {days} 天——间隔异常长，建议检查系统。"
+    },
+    "routine_done": {
+      "title": "🚿 常规浇水已完成",
+      "message": "浇水 {minutes} 分钟（目标 {target}，扣除降雨 {rain}）。{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 请检查土壤探头",
+      "message": "土壤湿润读数（{pct}%）已让常规浇水暂停了 {days} 天。如果最近没怎么下雨，请检查探头（位置、电池、读数）——目前仍按它的读数执行。"
+    },
+    "probe_frozen": {
+      "title": "🌱 土壤探头似乎卡住了",
+      "message": "土壤探头已连续 {days} 天显示湿润（{pct}%），且 24 小时内没有新读数，因此浇水重新按计划进行。请检查探头（电池、连接）。"
+    },
+    "service_auto_off": {
+      "title": "🔧 维护模式已关闭",
+      "message": "维护模式运行了 {minutes} 分钟后自动关闭（自动关闭时间）。"
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 维护模式已关闭",
+      "message": "维护模式运行了 {minutes} 分钟后自动关闭（为不超过今天的运行时长安全上限而缩短）。"
+    },
+    "self_tune_shorter": {
+      "title": "🌱 自动调整",
+      "message": "根据您最近几次提前浇水，常规浇水雨后晾干期已缩短为 {days} 天。"
+    },
+    "self_tune_longer": {
+      "title": "🌱 自动调整",
+      "message": "根据您最近几次跳过浇水，常规浇水雨后晾干期已延长为 {days} 天。"
+    },
+    "frost": {
+      "title": "❄️ {cycle}等待中：霜冻",
+      "message": "当前 {temp}，低于防霜保护温度 {limit}。之后每小时检查一次，最多 {hours} 小时，然后等待下一次计划时间。"
+    },
+    "flow_measured": {
+      "title": "💧 流量已测得",
+      "message": "{minutes} 分钟内 {volume}：灌水器流量现为 {rate}。"
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ 流量未能测得",
+      "message": "水表在 {minutes} 分钟内计得 {volume}，无法得出可用的流量。请检查水表和面积，或改为根据灌水器计算（配置 → 流量）。"
+    }
+  },
+  "notes": {
+    "soil_dry_forced": "土壤湿度 {pct}%（干燥）——在计划时间之前浇水。",
+    "deficit_active": "控水模式：{pct}% 水量。",
+    "deficit_hot": "控水模式：今天全量（天气炎热）。",
+    "deficit_soil_dry": "控水模式：今天全量（土壤达到干燥阈值）。",
+    "deficit_no_temp": "控水模式：全量（没有温度读数记录）。",
+    "deficit_young": "控水模式：全量（植物仍处于生长递增期）。"
+  },
+  "status": {
+    "watering": "正在浇水：{cycle}",
+    "service_run": "正在进行维护运行",
+    "lock_held": "暂停中：之前的运行未完成（区域已锁定）",
+    "snoozed": "今天已跳过",
+    "done": "{cycle}已于 {time} 完成：{minutes} 分钟浇水 {amount}",
+    "skipped_soil_wet": "{cycle}已于 {time} 跳过：土壤湿润（{pct}%）",
+    "skipped_drydown": "{cycle}已于 {time} 跳过：雨后晾干至 {until}",
+    "skipped_forecast": "{cycle}已于 {time} 跳过：预报降雨 {rain}",
+    "skipped_rain_credit": "{cycle}已于 {time} 跳过：近期降雨（{rain}）已满足所需的 {target}",
+    "skipped_wet_fortnight": "{cycle}已于 {time} 暂缓：过去 14 天降雨 {rain}",
+    "skipped_service": "{cycle}已于 {time} 跳过：维护运行正在使用阀门",
+    "cancelled_rain": "{cycle}已于 {time} 取消：正在下雨（30 分钟内 {rain}）",
+    "refused_runtime_cap": "{cycle}未于 {time} 运行：需要 {minutes} 分钟，超过单次上限 {cap} 分钟",
+    "refused_deep_soak_cap": "{cycle}未于 {time} 运行：需要 {minutes} 分钟，超过上限",
+    "refused_daily_cap": "{cycle}未于 {time} 运行：将超过今天的安全上限 {cap} 分钟",
+    "interrupted": "{cycle}于 {time} 中途停止",
+    "waiting_soil_wet": "等待土壤变干（{pct}%）",
+    "waiting_drydown": "雨后晾干至 {until}",
+    "next": "下次浇水 {when}",
+    "next_deep_soak": "下次：深层浇灌 {when}",
+    "first_run": "首次浇水 {when}",
+    "idle": "无计划",
+    "with_next": "{status} · 下次 {when}",
+    "waiting_pump": "等待共用水泵：{cycle}",
+    "with_next_deep_soak": "{status} · 深层浇灌 {when}",
+    "first_run_deep_soak": "首次浇水：深层浇灌 {when}",
+    "paused": "已暂停：关闭“暂停”之前不会浇水",
+    "skipped_frost": "{cycle}已于 {time} 跳过：{temp}，低于防霜保护温度（{limit}）",
+    "waiting_frost": "{cycle}于 {time} 起暂缓：{temp}，低于防霜保护温度（{limit}）；每小时重新检查",
+    "waiting_deep_soak": "{cycle}自 {time} 起等待：天气够暖后先进行深层浇灌",
+    "paused_until": "暂停至 {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow：本周概况",
+    "zone": "{zone}：浇水 {runs}× — {minutes} 分钟共 {water}",
+    "measured": "（实测 {volume}）",
+    "rain": " · 降雨（7 天）{rain}",
+    "held_back": " · 暂缓 {days} 天",
+    "paused": " · 已暂停",
+    "next": " · 下次 {when}",
+    "zone_none": "{zone}：未浇水"
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d %b %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d %b",
+    "time": "%H:%M",
+    "days": "seg,ter,qua,qui,sex,sáb,dom",
+    "months": "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
+  },
+  "cycle": {
+    "deep_soak": "Irrigação profunda",
+    "routine": "Irrigação de rotina",
+    "service_run": "Ciclo de manutenção",
+    "test_pulse": "Pulso de teste"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Chuva forte",
+      "message": "Chuva forte registrada (24 h: {rain_24h}). Tempos de secagem atualizados."
+    },
+    "stale_lock": {
+      "title": "⚠️ Bloqueio da irrigação liberado",
+      "message": "O bloqueio da irrigação ficou travado por mais de 3 horas. Ele foi liberado para não impedir as próximas irrigações."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Proteção da válvula acionada",
+      "message": "A válvula ficou aberta por {minutes} minutos seguidos. Ela foi fechada para proteger as plantas."
+    },
+    "power_loss": {
+      "title": "🚨 Queda de energia durante a irrigação",
+      "message": "A válvula ou a bomba ficou sem energia por mais de 10 minutos no meio do ciclo. A irrigação parou e o bloqueio foi liberado; a próxima irrigação agendada tenta de novo."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Válvula aberta após a volta da energia",
+      "message": "A válvula indicava aberta quando a energia voltou — ela foi fechada à força. Verifique o relé e a fiação."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Irrigação interrompida por uma reinicialização",
+      "message": "O Home Assistant reiniciou no meio do ciclo. O bloqueio foi liberado e a válvula fechada à força, se acessível; a próxima irrigação agendada tenta de novo."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Fim da irrigação deficitária",
+      "message": "A data de término já passou — a irrigação de rotina voltou à dose completa."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: sem passagem de água",
+      "message": "O ciclo terminou, mas o medidor de vazão não mostra água fornecida. Verifique a válvula, a bomba e a fiação do medidor de vazão."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: interrompida por um erro",
+      "message": "Interrompida: {error}. A válvula está fechada; a próxima irrigação agendada tenta de novo."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: interrompida por um erro",
+      "message": "Interrompida: {error}. {valve} pode ainda estar ABERTA — verifique agora."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: potência baixa da bomba",
+      "message": "O pulso {pulse} está em andamento, mas a bomba indica {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle}: interrompida pela chuva",
+      "message": "Interrompida após {given} de {planned} min: caíram {rain} nos últimos 30 minutos. A próxima irrigação agendada decide de novo, levando esta chuva em conta."
+    },
+    "forecast_override": {
+      "title": "⏱️ Irrigando apesar da previsão",
+      "message": "A previsão continua indicando chuva, mas não chove há {days} dias (o limite desta zona é {limit} dias) — irrigando mesmo assim."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Irrigação profunda não feita: limite de tempo",
+      "message": "O tempo calculado ({minutes} min) passa do limite de segurança da irrigação profunda desta zona. Irrigação cancelada — confira a vazão e a lâmina alvo."
+    },
+    "routine_cap": {
+      "title": "⚠️ Irrigação de rotina não feita: limite de tempo",
+      "message": "O tempo calculado ({minutes} min) passa do limite de segurança da rotina desta zona ({cap} min). Irrigação cancelada — confira a vazão e as metas semanais."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} pulada: limite diário de tempo",
+      "message": "Já foram {used} min hoje; esta irrigação ({minutes} min) passaria do limite diário de {cap} min. Ela tenta de novo no próximo horário."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle}: cancelada",
+      "message": "Cancelada: caíram {rain} nos últimos 30 minutos."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Irrigação profunda concluída",
+      "message": "{amount} aplicados em {pulses} pulso(s) ({minutes} min). Também conta como irrigação de rotina.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Próxima rotina: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Irrigação atrasada",
+      "message": "{days} dias desde a última irrigação — um intervalo anormalmente longo, vale a pena verificar o sistema."
+    },
+    "routine_done": {
+      "title": "🚿 Irrigação de rotina concluída",
+      "message": "Irrigou {minutes} min (meta {target}, descontados {rain} de chuva).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Verifique o sensor do solo",
+      "message": "Leituras de solo úmido ({pct}%) seguram a irrigação de rotina há {days} dias. Se não choveu muito, verifique o sensor (posição, bateria, leitura) — a irrigação continua seguindo ele."
+    },
+    "probe_frozen": {
+      "title": "🌱 O sensor do solo parece travado",
+      "message": "O sensor do solo indica úmido ({pct}%) há {days} dias, sem nova leitura em 24 h, então a irrigação volta a seguir o horário. Verifique o sensor (bateria, conexão)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Modo de manutenção desligado",
+      "message": "O Modo de manutenção ficou ligado por {minutes} min e desligou sozinho (tempo de desligamento automático)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Modo de manutenção desligado",
+      "message": "O Modo de manutenção ficou ligado por {minutes} min e desligou sozinho (encurtado para caber no limite de segurança diário de funcionamento)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Ajuste automático",
+      "message": "Espera de secagem da rotina reduzida para {days} dias, com base nas suas irrigações antecipadas recentes."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Ajuste automático",
+      "message": "Espera de secagem da rotina aumentada para {days} dias, com base nas vezes recentes em que você usou Não irrigar hoje."
+    },
+    "frost": {
+      "title": "❄️ {cycle} aguardando: geada",
+      "message": "Está {temp}, abaixo da proteção contra geada de {limit}. Verifica de novo a cada hora por até {hours} horas e depois espera o próximo horário agendado."
+    },
+    "flow_measured": {
+      "title": "💧 Vazão medida",
+      "message": "{volume} em {minutes} min: a vazão dos emissores agora é {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Vazão não medida",
+      "message": "O medidor de vazão contou {volume} em {minutes} min, o que não dá uma vazão utilizável. Verifique o medidor e a área, ou calcule a partir dos emissores (Configurar → Vazão)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Umidade do solo {pct}% (seco) — irrigou antes do horário previsto.",
+    "deficit_active": " Irrigação deficitária: dose de {pct}%.",
+    "deficit_hot": " Irrigação deficitária: dose completa hoje (calor).",
+    "deficit_soil_dry": " Irrigação deficitária: dose completa hoje (solo no limite seco).",
+    "deficit_no_temp": " Irrigação deficitária: dose completa (sem dados de temperatura).",
+    "deficit_young": " Irrigação deficitária: dose completa (planta ainda na rampa de crescimento)."
+  },
+  "status": {
+    "watering": "Irrigando agora: {cycle}",
+    "service_run": "Ciclo de manutenção em andamento",
+    "lock_held": "Em espera: uma irrigação anterior não terminou (zona bloqueada)",
+    "snoozed": "Sem irrigação hoje",
+    "done": "{cycle} concluída às {time}: {amount} em {minutes} min",
+    "skipped_soil_wet": "{cycle} pulada às {time}: o solo está úmido ({pct}%)",
+    "skipped_drydown": "{cycle} pulada às {time}: secando após a chuva até {until}",
+    "skipped_forecast": "{cycle} pulada às {time}: previsão de {rain} de chuva",
+    "skipped_rain_credit": "{cycle} pulada às {time}: a chuva recente ({rain}) cobre os {target} necessários",
+    "skipped_wet_fortnight": "{cycle} em espera às {time}: {rain} de chuva nos últimos 14 dias",
+    "skipped_service": "{cycle} pulada às {time}: um ciclo de manutenção estava usando a válvula",
+    "cancelled_rain": "{cycle} cancelada às {time}: estava chovendo ({rain} em 30 min)",
+    "refused_runtime_cap": "{cycle} não feita às {time}: precisava de {minutes} min, acima do limite de {cap} min por ciclo",
+    "refused_deep_soak_cap": "{cycle} não feita às {time}: precisava de {minutes} min, acima do limite",
+    "refused_daily_cap": "{cycle} não feita às {time}: passaria do limite de segurança de {cap} min de hoje",
+    "interrupted": "{cycle} interrompida às {time} antes de terminar",
+    "waiting_soil_wet": "Aguardando o solo secar ({pct}%)",
+    "waiting_drydown": "Secando após a chuva até {until}",
+    "next": "Próxima irrigação {when}",
+    "next_deep_soak": "Próxima: irrigação profunda {when}",
+    "first_run": "Primeira irrigação {when}",
+    "idle": "Nada agendado",
+    "with_next": "{status} · próxima {when}",
+    "waiting_pump": "Aguardando a bomba compartilhada: {cycle}",
+    "with_next_deep_soak": "{status} · irrigação profunda {when}",
+    "first_run_deep_soak": "Primeira irrigação: irrigação profunda {when}",
+    "paused": "Em pausa: sem irrigação até desligar a Pausa",
+    "skipped_frost": "{cycle} pulada às {time}: {temp}, abaixo da proteção contra geada ({limit})",
+    "waiting_frost": "{cycle} em espera às {time}: {temp}, abaixo da proteção contra geada ({limit}); verificando de novo a cada hora",
+    "waiting_deep_soak": "{cycle} aguardando desde as {time}: a irrigação profunda vai primeiro, quando esquentar o suficiente",
+    "paused_until": "Em pausa até {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: sua semana",
+    "zone": "{zone}: irrigou {runs}× — {water} em {minutes} min",
+    "measured": " (medido {volume})",
+    "rain": " · chuva (7 dias) {rain}",
+    "held_back": " · irrigação adiada em {days} dia(s)",
+    "paused": " · em pausa",
+    "next": " · próxima {when}",
+    "zone_none": "{zone}: sem irrigação"
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%b %d., %a %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%b %d., %a",
+    "time": "%H:%M",
+    "days": "H,K,Sze,Cs,P,Szo,V",
+    "months": "jan.,febr.,márc.,ápr.,máj.,jún.,júl.,aug.,szept.,okt.,nov.,dec."
+  },
+  "cycle": {
+    "deep_soak": "Mélyöntözés",
+    "routine": "Rendszeres öntözés",
+    "service_run": "Szervizfuttatás",
+    "test_pulse": "Tesztimpulzus"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Erős eső",
+      "message": "Erős eső mérve (24 óra: {rain_24h}). A száradási időzítők frissítve."
+    },
+    "stale_lock": {
+      "title": "⚠️ Öntözési zárolás feloldva",
+      "message": "Az öntözési zárolás több mint 3 órája beragadt. A rendszer feloldotta, hogy ne akadályozza a további öntözéseket."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Szelepfelügyelet beavatkozott",
+      "message": "A szelep {minutes} percig folyamatosan nyitva volt. A rendszer a növények védelmében elzárta."
+    },
+    "power_loss": {
+      "title": "🚨 Áramkimaradás öntözés közben",
+      "message": "A szelep vagy a szivattyú öntözés közben 10+ percig áram nélkül maradt. Az öntözés leállt, a zárolás feloldva; a következő ütemezett öntözés újra megpróbálja."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Szelep nyitva az áram visszatérése után",
+      "message": "Az áram visszatérése után a szelep bekapcsolt állapotot jelzett — a rendszer kényszerítve elzárta. Ellenőrizd a relét és a bekötést."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Az öntözést újraindítás szakította meg",
+      "message": "A Home Assistant öntözés közben újraindult. A zárolás feloldva, a szelep elzárva, ha elérhető volt; a következő ütemezett öntözés újra megpróbálja."
+    },
+    "deficit_ended": {
+      "title": "🌶️ A takarékos mód véget ért",
+      "message": "Lejárt a befejezési dátuma — a rendszeres öntözés újra teljes adaggal megy."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: nincs vízátfolyás",
+      "message": "Az öntözés lefutott, de az átfolyásmérő szerint nem jutott ki víz. Ellenőrizd a szelepet, a szivattyút és az átfolyásmérő bekötését."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: hiba miatt leállt",
+      "message": "Leállt: {error}. A szelep zárva; a következő ütemezett öntözés újra megpróbálja."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: hiba miatt leállt",
+      "message": "Leállt: {error}. Lehet, hogy a szelep ({valve}) még NYITVA van — ellenőrizd most."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: alacsony szivattyúteljesítmény",
+      "message": "A(z) {pulse}. szakasz fut, de a szivattyú csak {watts} W-ot mutat."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle}: eső miatt leállt",
+      "message": "Leállt {given} min után (tervezett: {planned} min): az elmúlt 30 percben {rain} eső esett. A következő ütemezett öntözés ezt az esőt is figyelembe véve dönt újra."
+    },
+    "forecast_override": {
+      "title": "⏱️ Öntözés az előrejelzés ellenére",
+      "message": "Folyamatosan esőt jeleztek előre, de {days} napja nem esett (a zóna korlátja {limit} nap) — öntözés ennek ellenére."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Mélyöntözés elmaradt: időkorlát",
+      "message": "A számított időtartam ({minutes} min) meghaladja a zóna mélyöntözési biztonsági korlátját. Az öntözés elmarad — ellenőrizd a vízhozamot és a célmélységet."
+    },
+    "routine_cap": {
+      "title": "⚠️ Rendszeres öntözés elmaradt: időkorlát",
+      "message": "A számított időtartam ({minutes} min) meghaladja a zóna rendszeres öntözési biztonsági korlátját ({cap} min). Az öntözés elmarad — ellenőrizd a vízhozamot és a heti célokat."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} kihagyva: napi időkorlát",
+      "message": "Ma már {used} min; ez az öntözés ({minutes} min) túllépné a napi {cap} min korlátot. Újra megpróbálja, amikor esedékes."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle}: elmarad",
+      "message": "Elmarad: az elmúlt 30 percben {rain} eső esett."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Mélyöntözés kész",
+      "message": "{amount} kijuttatva ({minutes} min, szakaszok: {pulses}). Rendszeres öntözésnek is számít.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Következő rendszeres öntözés: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Az öntözés késésben",
+      "message": "{days} nap telt el az utolsó öntözés óta — szokatlanul hosszú szünet, érdemes ellenőrizni a rendszert."
+    },
+    "routine_done": {
+      "title": "🚿 Rendszeres öntözés kész",
+      "message": "Öntözés: {minutes} min (cél {target}, levont eső {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Ellenőrizd a talajszondát",
+      "message": "A nedves talajértékek ({pct}%) {days} napja visszatartják a rendszeres öntözést. Ha nem esett sok eső, ellenőrizd a szondát (elhelyezés, elem, mért érték) — a rendszer továbbra is figyelembe veszi."
+    },
+    "probe_frozen": {
+      "title": "🌱 A talajszonda beragadtnak tűnik",
+      "message": "A talajszonda {days} napja nedveset mutat ({pct}%), és 24 órája nem küldött új értéket, ezért az öntözés újra az ütemezést követi. Ellenőrizd a szondát (elem, kapcsolat)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Szerviz mód kikapcsolva",
+      "message": "A Szerviz mód {minutes} min után magától kikapcsolt (automatikus kikapcsolási idő)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Szerviz mód kikapcsolva",
+      "message": "A Szerviz mód {minutes} min után magától kikapcsolt (lerövidítve, hogy beleférjen a mai biztonsági időkorlátba)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Önhangolás",
+      "message": "A rendszeres öntözés száradási várakozása {days} napra rövidült, mert mostanában többször öntöztél korábban."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Önhangolás",
+      "message": "A rendszeres öntözés száradási várakozása {days} napra nőtt, mert mostanában többször kihagytad az öntözést."
+    },
+    "frost": {
+      "title": "❄️ {cycle} vár: fagy",
+      "message": "A hőmérséklet {temp}, a fagyvédelmi határ ({limit}) alatt. Legfeljebb {hours} óráig óránként újra ellenőrzi, utána a következő ütemezett időpontra vár."
+    },
+    "flow_measured": {
+      "title": "💧 Vízhozam megmérve",
+      "message": "{volume} {minutes} min alatt: a csepegtetők vízhozama mostantól {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ A vízhozam mérése nem sikerült",
+      "message": "Az átfolyásmérő {volume} mennyiséget számolt {minutes} min alatt, ebből nem jön ki használható vízhozam. Ellenőrizd a mérőt és a területet, vagy számítsd ki inkább a csepegtetőkből (Konfigurálás → Vízhozam)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Talajnedvesség {pct}% (száraz) — az ütemezett időpont előtt öntözve.",
+    "deficit_active": " Takarékos mód: {pct}% adag.",
+    "deficit_hot": " Takarékos mód: ma teljes adag (meleg idő).",
+    "deficit_soil_dry": " Takarékos mód: ma teljes adag (a talaj elérte a száraz küszöböt).",
+    "deficit_no_temp": " Takarékos mód: teljes adag (nincs rögzített hőmérsékletmérés).",
+    "deficit_young": " Takarékos mód: teljes adag (a növény még a növekedési görbén van)."
+  },
+  "status": {
+    "watering": "Öntözés folyamatban: {cycle}",
+    "service_run": "Szervizfuttatás folyamatban",
+    "lock_held": "Várakozik: egy korábbi öntözés nem fejeződött be (a zóna zárolva)",
+    "snoozed": "Mára kihagyva",
+    "done": "{cycle} kész ({time}): {amount} {minutes} min alatt",
+    "skipped_soil_wet": "{cycle} kihagyva ({time}): a talaj nedves ({pct}%)",
+    "skipped_drydown": "{cycle} kihagyva ({time}): száradás eső után, eddig: {until}",
+    "skipped_forecast": "{cycle} kihagyva ({time}): {rain} eső várható",
+    "skipped_rain_credit": "{cycle} kihagyva ({time}): a friss eső ({rain}) fedezi a szükséges {target} mennyiséget",
+    "skipped_wet_fortnight": "{cycle} visszatartva ({time}): {rain} eső az elmúlt 14 napban",
+    "skipped_service": "{cycle} kihagyva ({time}): szervizfuttatás használta a szelepet",
+    "cancelled_rain": "{cycle} elmaradt ({time}): esett az eső ({rain} 30 min alatt)",
+    "refused_runtime_cap": "{cycle} nem indult ({time}): {minutes} min kellett volna, több a {cap} min korlátnál",
+    "refused_deep_soak_cap": "{cycle} nem indult ({time}): {minutes} min kellett volna, több a korlátnál",
+    "refused_daily_cap": "{cycle} nem indult ({time}): túllépné a mai {cap} min biztonsági korlátot",
+    "interrupted": "{cycle} befejezés előtt leállt ({time})",
+    "waiting_soil_wet": "Vár, amíg a talaj kiszárad ({pct}%)",
+    "waiting_drydown": "Száradás eső után, eddig: {until}",
+    "next": "Következő öntözés: {when}",
+    "next_deep_soak": "Következő: mélyöntözés, {when}",
+    "first_run": "Első öntözés: {when}",
+    "idle": "Nincs ütemezve",
+    "with_next": "{status} · következő: {when}",
+    "waiting_pump": "Vár a közös szivattyúra: {cycle}",
+    "with_next_deep_soak": "{status} · mélyöntözés: {when}",
+    "first_run_deep_soak": "Első öntözés: mélyöntözés, {when}",
+    "paused": "Szüneteltetve: nincs öntözés, amíg a Szüneteltetés be van kapcsolva",
+    "skipped_frost": "{cycle} kihagyva ({time}): {temp}, a fagyvédelmi határ ({limit}) alatt",
+    "waiting_frost": "{cycle} várakozik ({time}): {temp}, a fagyvédelmi határ ({limit}) alatt; óránként újra ellenőrzi",
+    "waiting_deep_soak": "{cycle} vár ({time} óta): előbb a mélyöntözés jön, amint elég meleg lesz",
+    "paused_until": "Szüneteltetve, eddig: {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: a heted",
+    "zone": "{zone}: {runs}× öntözve — {water} {minutes} min alatt",
+    "measured": " (mért: {volume})",
+    "rain": " · eső (7 nap) {rain}",
+    "held_back": " · visszatartva {days} napon",
+    "paused": " · szüneteltetve",
+    "next": " · következő: {when}",
+    "zone_none": "{zone}: nem volt öntözés"
+  }
+}

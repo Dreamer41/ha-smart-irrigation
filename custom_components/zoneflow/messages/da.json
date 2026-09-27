@@ -1,0 +1,188 @@
+{
+  "formats": {
+    "datetime": "%a %d. %b %H:%M",
+    "weekday_time": "%a %H:%M",
+    "date": "%a %d. %b",
+    "time": "%H:%M",
+    "days": "man,tir,ons,tor,fre,lør,søn",
+    "months": "jan,feb,mar,apr,maj,jun,jul,aug,sep,okt,nov,dec"
+  },
+  "cycle": {
+    "deep_soak": "Dybdevanding",
+    "routine": "Rutinevanding",
+    "service_run": "Servicekørsel",
+    "test_pulse": "Testpuls"
+  },
+  "notify": {
+    "heavy_rain": {
+      "title": "🌧️ Kraftig regn",
+      "message": "Kraftig regn registreret (24 h: {rain_24h}). Udtørringstiderne er opdateret."
+    },
+    "stale_lock": {
+      "title": "⚠️ Vandingslåsen er nulstillet",
+      "message": "Vandingslåsen har siddet fast i mere end 3 timer. Den er nulstillet, så kommende kørsler ikke blokeres."
+    },
+    "valve_watchdog": {
+      "title": "🚨 Ventilvagten slog til",
+      "message": "Ventilen var åben i {minutes} minutter i træk. Den blev lukket for at beskytte planterne."
+    },
+    "power_loss": {
+      "title": "🚨 Strømsvigt under vanding",
+      "message": "Ventilen eller pumpen var uden strøm i 10+ minutter midt i en vanding. Vandingen stoppede, og låsen blev fjernet; næste planlagte kørsel prøver igen."
+    },
+    "power_restore_anomaly": {
+      "title": "🚨 Ventil åben efter strømsvigt",
+      "message": "Ventilen meldte sig åben, da strømmen kom tilbage — den blev tvangslukket. Tjek relæet og ledningerne."
+    },
+    "restart_lock_cleared": {
+      "title": "🚨 Vandingen blev afbrudt af en genstart",
+      "message": "Home Assistant genstartede midt i en vanding. Låsen blev fjernet, og ventilen blev tvangslukket, hvis den kunne nås; næste planlagte kørsel prøver igen."
+    },
+    "deficit_ended": {
+      "title": "🌶️ Sparetilstand afsluttet",
+      "message": "Slutdatoen er passeret — rutinevandingen er tilbage på fuld mængde."
+    },
+    "no_flow": {
+      "title": "⚠️ {cycle}: intet vandflow",
+      "message": "Vandingen blev færdig, men flowmåleren viser, at der ikke kom noget vand. Tjek ledningerne til ventil, pumpe og flowmåler."
+    },
+    "cycle_error_closed": {
+      "title": "⚠️ {cycle}: stoppet af en fejl",
+      "message": "Stoppet: {error}. Ventilen er lukket; næste planlagte kørsel prøver igen."
+    },
+    "cycle_error_open": {
+      "title": "⚠️ {cycle}: stoppet af en fejl",
+      "message": "Stoppet: {error}. {valve} kan stadig være ÅBEN — tjek den nu."
+    },
+    "low_pump_power": {
+      "title": "⚠️ {cycle}: lav pumpeeffekt",
+      "message": "Puls {pulse} kører, men pumpen viser {watts} W."
+    },
+    "stopped_by_rain": {
+      "title": "🌧️ {cycle} stoppet af regn",
+      "message": "Stoppet efter {given} af {planned} min: der er faldet {rain} de seneste 30 minutter. Næste planlagte kørsel vurderer igen og tager højde for regnen."
+    },
+    "forecast_override": {
+      "title": "⏱️ Vander trods vejrudsigten",
+      "message": "Vejrudsigten har lovet regn, men der er ikke faldet noget i {days} dage (zonens grænse er {limit} dage) — vander alligevel."
+    },
+    "deep_soak_cap": {
+      "title": "⚠️ Ingen dybdevanding: grænse for køretid",
+      "message": "Den beregnede køretid ({minutes} min) er over zonens sikkerhedsgrænse for dybdevanding. Vandingen er annulleret — tjek flowet og måldybden."
+    },
+    "routine_cap": {
+      "title": "⚠️ Ingen rutinevanding: grænse for køretid",
+      "message": "Den beregnede køretid ({minutes} min) er over zonens sikkerhedsgrænse for rutinevanding ({cap} min). Vandingen er annulleret — tjek flowet og ugemålene."
+    },
+    "daily_cap": {
+      "title": "⚠️ {cycle} sprunget over: daglig grænse for køretid",
+      "message": "Allerede {used} min i dag; denne kørsel ({minutes} min) ville gå over dagsgrænsen på {cap} min. Den prøver igen, når det er tid."
+    },
+    "rain_cancel": {
+      "title": "🌧️ {cycle} annulleret",
+      "message": "Annulleret: der er faldet {rain} de seneste 30 minutter."
+    },
+    "deep_soak_done": {
+      "title": "🚿 Dybdevanding færdig",
+      "message": "{amount} givet i {pulses} puls(er) ({minutes} min). Tæller også som rutinevanding.{next}"
+    },
+    "deep_soak_done_next": {
+      "message": " Næste rutinevanding: {when}."
+    },
+    "overdue": {
+      "title": "⚠️ Vandingen er forsinket",
+      "message": "{days} dage siden seneste vanding — en usædvanlig lang pause, så tjek gerne systemet."
+    },
+    "routine_done": {
+      "title": "🚿 Rutinevanding færdig",
+      "message": "Vandede {minutes} min (mål {target}, fradrag for regn {rain}).{notes}"
+    },
+    "probe_check": {
+      "title": "🌱 Tjek jordføleren",
+      "message": "Våde jordmålinger ({pct}%) har holdt rutinevandingen tilbage i {days} dage. Hvis det ikke har regnet meget, så tjek føleren (placering, batteri, måling) — den følges stadig."
+    },
+    "probe_frozen": {
+      "title": "🌱 Jordføleren ser ud til at have hængt sig",
+      "message": "Jordføleren har vist våd ({pct}%) i {days} dage uden en ny måling i 24 h, så vandingen følger tidsplanen igen. Tjek føleren (batteri, forbindelse)."
+    },
+    "service_auto_off": {
+      "title": "🔧 Servicetilstand slået fra",
+      "message": "Servicetilstand var slået til i {minutes} min og slog sig selv fra (den indstillede tid)."
+    },
+    "service_auto_off_capped": {
+      "title": "🔧 Servicetilstand slået fra",
+      "message": "Servicetilstand var slået til i {minutes} min og slog sig selv fra (forkortet for at holde sig inden for dagens sikkerhedsgrænse for køretid)."
+    },
+    "self_tune_shorter": {
+      "title": "🌱 Automatisk justering",
+      "message": "Udtørringspausen for rutinevanding er forkortet til {days} dage ud fra dine seneste tidlige kørsler."
+    },
+    "self_tune_longer": {
+      "title": "🌱 Automatisk justering",
+      "message": "Udtørringspausen for rutinevanding er forlænget til {days} dage ud fra dine seneste overspringninger."
+    },
+    "frost": {
+      "title": "❄️ {cycle} venter: frost",
+      "message": "Det er {temp}, under frostsikringens {limit}. Den tjekker igen hver time i op til {hours} timer og venter derefter til sit næste planlagte tidspunkt."
+    },
+    "flow_measured": {
+      "title": "💧 Flow målt",
+      "message": "{volume} på {minutes} min: dryppernes flow er nu {rate}."
+    },
+    "flow_measure_failed": {
+      "title": "⚠️ Flowet kunne ikke måles",
+      "message": "Flowmåleren talte {volume} på {minutes} min, hvilket ikke giver et brugbart flow. Tjek måleren og området, eller beregn det ud fra drypperne i stedet (Konfigurer → Flow)."
+    }
+  },
+  "notes": {
+    "soil_dry_forced": " Jordfugtighed {pct}% (tør) — vandede før tidsplanen.",
+    "deficit_active": " Sparetilstand: {pct}% af mængden.",
+    "deficit_hot": " Sparetilstand: fuld mængde i dag (varmt vejr).",
+    "deficit_soil_dry": " Sparetilstand: fuld mængde i dag (jorden ved tør-grænsen).",
+    "deficit_no_temp": " Sparetilstand: fuld mængde (ingen temperaturmåling registreret).",
+    "deficit_young": " Sparetilstand: fuld mængde (planten er stadig i optrapning)."
+  },
+  "status": {
+    "watering": "Vander nu: {cycle}",
+    "service_run": "Servicekørsel i gang",
+    "lock_held": "Venter: en tidligere kørsel blev ikke færdig (zonen er låst)",
+    "snoozed": "Sprunget over i dag",
+    "done": "{cycle} færdig {time}: {amount} på {minutes} min",
+    "skipped_soil_wet": "{cycle} sprunget over {time}: jorden er våd ({pct}%)",
+    "skipped_drydown": "{cycle} sprunget over {time}: jorden tørrer ud efter regn indtil {until}",
+    "skipped_forecast": "{cycle} sprunget over {time}: udsigt til {rain} regn",
+    "skipped_rain_credit": "{cycle} sprunget over {time}: nylig regn ({rain}) dækker de {target}, der skal til",
+    "skipped_wet_fortnight": "{cycle} holdt tilbage {time}: {rain} regn de seneste 14 dage",
+    "skipped_service": "{cycle} sprunget over {time}: en servicekørsel brugte ventilen",
+    "cancelled_rain": "{cycle} annulleret {time}: det regnede ({rain} på 30 min)",
+    "refused_runtime_cap": "{cycle} ikke kørt {time}: kræver {minutes} min, over grænsen på {cap} min pr. vanding",
+    "refused_deep_soak_cap": "{cycle} ikke kørt {time}: kræver {minutes} min, over grænsen",
+    "refused_daily_cap": "{cycle} ikke kørt {time}: ville gå over dagens sikkerhedsgrænse på {cap} min",
+    "interrupted": "{cycle} stoppet {time}, før den blev færdig",
+    "waiting_soil_wet": "Venter på, at jorden tørrer ({pct}%)",
+    "waiting_drydown": "Jorden tørrer ud efter regn indtil {until}",
+    "next": "Næste vanding {when}",
+    "next_deep_soak": "Næste: dybdevanding {when}",
+    "first_run": "Første vanding {when}",
+    "idle": "Intet planlagt",
+    "with_next": "{status} · næste {when}",
+    "waiting_pump": "Venter på den fælles pumpe: {cycle}",
+    "with_next_deep_soak": "{status} · dybdevanding {when}",
+    "first_run_deep_soak": "Første vanding: dybdevanding {when}",
+    "paused": "På pause: ingen vanding, før Pause slås fra",
+    "skipped_frost": "{cycle} sprunget over {time}: {temp}, under frostsikringen ({limit})",
+    "waiting_frost": "{cycle} venter {time}: {temp}, under frostsikringen ({limit}); tjekker igen hver time",
+    "waiting_deep_soak": "{cycle} venter siden {time}: dybdevandingen kører først, når det er varmt nok",
+    "paused_until": "På pause indtil {until}"
+  },
+  "summary": {
+    "title": "💧 ZoneFlow: din uge",
+    "zone": "{zone}: vandet {runs}× — {water} på {minutes} min",
+    "measured": " (målt {volume})",
+    "rain": " · regn (7 dage) {rain}",
+    "held_back": " · holdt tilbage {days} dag(e)",
+    "paused": " · på pause",
+    "next": " · næste {when}",
+    "zone_none": "{zone}: ingen vanding"
+  }
+}

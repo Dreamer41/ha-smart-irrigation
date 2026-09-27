@@ -1,0 +1,779 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ZoneFlow vanning",
+        "description": "Gi vanningssonen et kort navn (f.eks. \"Plenen foran\", \"Avokadotreet\"). Vil du ha flere soner senere, legger du til integrasjonen på nytt.",
+        "data": {
+          "zone_name": "Sonenavn",
+          "plant": "Hva som vokser her"
+        },
+        "data_description": {
+          "zone_name": "Blir enhetsnavnet til sonen og starten på entitetsnavnene, og vises i telefonvarsler. F.eks. \"Tomatbed\", \"Plenen foran\".",
+          "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, pulser, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside."
+        }
+      },
+      "entities": {
+        "title": "ZoneFlow vanning",
+        "description": "Pek på entitetene du faktisk har. Integrasjonen lager aldri egne fysiske entiteter. Bare ventilbryteren er påkrevd -- alt annet nedenfor fungerer greit også når det står tomt.",
+        "data": {
+          "valve_entity": "Ventilbryter",
+          "pump_power_entity": "Effektsensor for pumpe (valgfritt)",
+          "pump_id": "Felles pumpe-ID (valgfritt)",
+          "rain_counter_entity": "Vippeteller for regnmåler (valgfritt)",
+          "outdoor_temp_entity": "Utetemperatursensor (valgfritt)",
+          "flow_meter_entity": "Vannmåler (valgfritt)",
+          "soil_moisture_entity": "Jordfuktighetssensor (valgfritt)",
+          "notify_entity": "Telefon for varsler (valgfritt)",
+          "weather_entity": "Kilde for værmelding (valgfritt)",
+          "soil_type": "Jordtype",
+          "drainage": "Drenering",
+          "slope": "Helning",
+          "irrigation_method": "Vanningsmetode",
+          "growth_ramp_profile": "Automatisk opptrapping etter vekststadium",
+          "csv_path": "Filbane for CSV-logg",
+          "deep_soak_enabled": "Slå på dypvanning",
+          "deep_soak_time": "Tidspunkt for dypvanning",
+          "routine_time": "Tidspunkt for rutinevanning",
+          "deep_soak_sun_mode": "Start av dypvanning",
+          "deep_soak_sun_offset_minutes": "Dypvanning: avstand til sol (minutter)",
+          "routine_sun_mode": "Start av rutinevanning",
+          "routine_sun_offset_minutes": "Rutinevanning: avstand til sol (minutter)",
+          "unit_system": "Enheter"
+        },
+        "data_description": {
+          "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
+          "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk trekker strøm, og varsler deg hvis ikke. La stå tom hvis du ikke har en.",
+          "pump_id": "Bare for soner som går på samme pumpe: gi dem alle samme navn her (hvilket som helst, f.eks. \"Pumpe A\"), så bytter de på i stedet for å gå samtidig. La stå tom hvis sonen har egen pumpe eller vanntilførsel.",
+          "rain_counter_entity": "En teller på regnmåleren som øker med én for hver gang bøtta vipper. ZoneFlow trekker da regnet fra vanningen, lar våt jord tørke opp først, og stopper vanningen når det begynner å regne. Hvor mye regn ett vipp er, stiller du inn på sonens enhetsside (Regnmåler mm per vipp). Uten regnmåler vanner ZoneFlow som om det aldri regner.",
+          "outdoor_temp_entity": "En utetemperatursensor. Med den vanner ZoneFlow selv mer når det er varmt og mindre når det er kjølig, og frostvakten holder igjen vanningen når det fryser. Uten den bestemmer innstillingen Reserve / manuell temperatur.",
+          "flow_meter_entity": "En vannmåler som teller opp totalvolumet (liter, gallon eller m³). ZoneFlow logger da hvor mye vann hver vanning faktisk brukte, varsler deg hvis pumpen gikk uten at vann rant, og kan måle vannmengden for deg (Konfigurer → Vannmengde).",
+          "soil_moisture_entity": "En jordfuktighetssensor (%) i rotsonen til denne sonen. Tørr jord fremskynder rutinevanningen, våt jord hopper over den, og midt imellom gjelder den vanlige planen. Nivåene for tørr og våt finner du på sonens enhetsside.",
+          "notify_entity": "Telefonens varslingsentitet fra Home Assistant Companion-appen. ZoneFlow sender feil og viktige hendelser dit, og ukesammendraget hvis du slår det på. Uten den havner de bare i loggen.",
+          "weather_entity": "En værentitet med værmelding. ZoneFlow holder igjen vanningen når det er meldt nok regn (men ikke for mange dager på rad), og bruker den nåværende temperaturen til frostvakten når du ikke har temperatursensor.",
+          "soil_type": "Til din informasjon: den endrer ikke vanningen av seg selv. Den vises på sonens sensor Jordprofil og hjelper deg å velge pulser og pauser på enhetssiden: leire tar opp vann sakte og trenger flere, kortere pulser med lengre pauser imellom; sand klarer seg med færre pulser.",
+          "drainage": "Hvor fort vannet forsvinner etter kraftig vanning eller regn. Til din informasjon, som jordtypen: jord som drenerer sakte, trenger flere, kortere pulser.",
+          "slope": "Til din informasjon, som jordtypen: i en skråning renner vannet av før det trekker inn, så flere, kortere pulser hjelper.",
+          "irrigation_method": "Hvordan vannet kommer ut. Til din informasjon, som jordtypen; hvor mye vann den gir, bestemmes av vannmengden (Konfigurer → Vannmengde).",
+          "growth_ramp_profile": "Gir unge planter mindre vann og øker til hele ukemålet etter hvert som de vokser, regnet fra Plante- / omplantingsdato på sonens enhetsside. Av: alltid hele ukemålet. Egendefinert: tegn din egen kurve på enhetssiden.",
+          "csv_path": "En fil der hver vanning, hvert hopp og hver advarsel skrives med tall, så du kan sjekke hva ZoneFlow har gjort (åpnes i alle regneark). Den foreslåtte filen i config-mappen fungerer fint.",
+          "deep_soak_enabled": "Dypvanning er en stor, langsom vanning med noen ukers mellomrom (14 dager til å begynne med) som fukter jorda langt ned, så røttene vokser dypt. Bra for trær, busker og stauder; slå den av for planter med grunne røtter, som salat og urter. Rutinevanningen går uansett.",
+          "deep_soak_time": "Når dypvanningen starter på dagene den skal gå, hvis starten nedenfor er fast klokkeslett. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
+          "routine_time": "Når ZoneFlow hver dag sjekker om det er tid for rutinevanning, og vanner i så fall. Hvor ofte det skjer, avhenger av været og ukemålet ditt. Tidlig morgen er best.",
+          "deep_soak_sun_mode": "Start dypvanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
+          "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter soloppgang eller solnedgang. Brukes ikke med fast klokkeslett.",
+          "routine_sun_mode": "Start rutinevanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
+          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter soloppgang eller solnedgang. Brukes ikke med fast klokkeslett.",
+          "unit_system": "Hva denne sonen viser: følg Home Assistant, eller alltid metrisk (mm, °C, liter) eller imperial (tommer, °F, gallon). Endrer bare det du ser, aldri hvor mye den vanner."
+        }
+      },
+      "climate": {
+        "title": "Klima",
+        "description": "Hvordan er vekstsesongen der sonen ligger? Dette fyller bare inn temperaturglidebryterne på neste side -- du kan endre alle verdiene der, og senere på sonens enhetsside.",
+        "data": {
+          "climate": "Klima"
+        },
+        "data_description": {
+          "climate": "Velg det som passer best. Det fyller bare inn temperaturgrensene på neste side."
+        }
+      },
+      "temperatures": {
+        "title": "Temperaturgrenser",
+        "description": "ZoneFlow regner ut snittet av dagens HØYESTE temperatur de siste 3 dagene. Ved Varm eller over vanner den oftere (hver 3. dag) med det varme ukemålet; under Kjølig bruker den det kjølige ukemålet; midt imellom er normalt.\n\nReservetemperaturen brukes når det ikke finnes noen ekte måling: uten temperatursensor er den din manuelle styring (skru den opp i en hetebølge, ned i en kuldeperiode); med sensor brukes den bare til sensoren har registrert sitt første hele døgn, og etter 3 dager uten én eneste måling.",
+        "data": {
+          "hot_temp_threshold": "Grense for varmt vær",
+          "cool_temp_threshold": "Grense for kjølig vær",
+          "fallback_temp": "Reserve / manuell temperatur"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Når snittet av makstemperaturene de siste 3 dagene er på eller over denne, bruker sonen det varme ukemålet og vanner oftere.",
+          "cool_temp_threshold": "Når snittet er under denne, bruker sonen det kjølige ukemålet. Midt imellom er normalt vær.",
+          "fallback_temp": "Brukes når det ikke finnes noen ekte måling. Uten temperatursensor er dette din manuelle styring: skru opp i en hetebølge, ned i en kuldeperiode."
+        }
+      }
+    },
+    "error": {
+      "zone_name_required": "Sonenavnet kan ikke være tomt.",
+      "cool_not_below_hot": "Grensen for kjølig må være lavere enn grensen for varmt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurer",
+        "menu_options": {
+          "settings": "Soneinnstillinger (entiteter, jord, tidsplan…)",
+          "flow_rate": "Vannmengde: regn den ut fra utløpene",
+          "flow_measure": "Vannmengde: mål den med vannmåleren"
+        }
+      },
+      "settings": {
+        "data": {
+          "valve_entity": "Ventilbryter",
+          "pump_power_entity": "Effektsensor for pumpe (valgfritt)",
+          "pump_id": "Felles pumpe-ID (valgfritt)",
+          "rain_counter_entity": "Vippeteller for regnmåler (valgfritt)",
+          "outdoor_temp_entity": "Utetemperatursensor (valgfritt)",
+          "flow_meter_entity": "Vannmåler (valgfritt)",
+          "soil_moisture_entity": "Jordfuktighetssensor (valgfritt)",
+          "notify_entity": "Telefon for varsler (valgfritt)",
+          "weather_entity": "Kilde for værmelding (valgfritt)",
+          "soil_type": "Jordtype",
+          "drainage": "Drenering",
+          "slope": "Helning",
+          "irrigation_method": "Vanningsmetode",
+          "growth_ramp_profile": "Automatisk opptrapping etter vekststadium",
+          "csv_path": "Filbane for CSV-logg",
+          "deep_soak_enabled": "Slå på dypvanning",
+          "deep_soak_time": "Tidspunkt for dypvanning",
+          "routine_time": "Tidspunkt for rutinevanning",
+          "deep_soak_sun_mode": "Start av dypvanning",
+          "deep_soak_sun_offset_minutes": "Dypvanning: avstand til sol (minutter)",
+          "routine_sun_mode": "Start av rutinevanning",
+          "routine_sun_offset_minutes": "Rutinevanning: avstand til sol (minutter)",
+          "unit_system": "Enheter"
+        },
+        "data_description": {
+          "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
+          "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk trekker strøm, og varsler deg hvis ikke. La stå tom hvis du ikke har en.",
+          "pump_id": "Bare for soner som går på samme pumpe: gi dem alle samme navn her (hvilket som helst, f.eks. \"Pumpe A\"), så bytter de på i stedet for å gå samtidig. La stå tom hvis sonen har egen pumpe eller vanntilførsel.",
+          "rain_counter_entity": "En teller på regnmåleren som øker med én for hver gang bøtta vipper. ZoneFlow trekker da regnet fra vanningen, lar våt jord tørke opp først, og stopper vanningen når det begynner å regne. Hvor mye regn ett vipp er, stiller du inn på sonens enhetsside (Regnmåler mm per vipp). Uten regnmåler vanner ZoneFlow som om det aldri regner.",
+          "outdoor_temp_entity": "En utetemperatursensor. Med den vanner ZoneFlow selv mer når det er varmt og mindre når det er kjølig, og frostvakten holder igjen vanningen når det fryser. Uten den bestemmer innstillingen Reserve / manuell temperatur.",
+          "flow_meter_entity": "En vannmåler som teller opp totalvolumet (liter, gallon eller m³). ZoneFlow logger da hvor mye vann hver vanning faktisk brukte, varsler deg hvis pumpen gikk uten at vann rant, og kan måle vannmengden for deg (Konfigurer → Vannmengde).",
+          "soil_moisture_entity": "En jordfuktighetssensor (%) i rotsonen til denne sonen. Tørr jord fremskynder rutinevanningen, våt jord hopper over den, og midt imellom gjelder den vanlige planen. Nivåene for tørr og våt finner du på sonens enhetsside.",
+          "notify_entity": "Telefonens varslingsentitet fra Home Assistant Companion-appen. ZoneFlow sender feil og viktige hendelser dit, og ukesammendraget hvis du slår det på. Uten den havner de bare i loggen.",
+          "weather_entity": "En værentitet med værmelding. ZoneFlow holder igjen vanningen når det er meldt nok regn (men ikke for mange dager på rad), og bruker den nåværende temperaturen til frostvakten når du ikke har temperatursensor.",
+          "soil_type": "Til din informasjon: den endrer ikke vanningen av seg selv. Den vises på sonens sensor Jordprofil og hjelper deg å velge pulser og pauser på enhetssiden: leire tar opp vann sakte og trenger flere, kortere pulser med lengre pauser imellom; sand klarer seg med færre pulser.",
+          "drainage": "Hvor fort vannet forsvinner etter kraftig vanning eller regn. Til din informasjon, som jordtypen: jord som drenerer sakte, trenger flere, kortere pulser.",
+          "slope": "Til din informasjon, som jordtypen: i en skråning renner vannet av før det trekker inn, så flere, kortere pulser hjelper.",
+          "irrigation_method": "Hvordan vannet kommer ut. Til din informasjon, som jordtypen; hvor mye vann den gir, bestemmes av vannmengden (Konfigurer → Vannmengde).",
+          "growth_ramp_profile": "Gir unge planter mindre vann og øker til hele ukemålet etter hvert som de vokser, regnet fra Plante- / omplantingsdato på sonens enhetsside. Av: alltid hele ukemålet. Egendefinert: tegn din egen kurve på enhetssiden.",
+          "csv_path": "En fil der hver vanning, hvert hopp og hver advarsel skrives med tall, så du kan sjekke hva ZoneFlow har gjort (åpnes i alle regneark). Den foreslåtte filen i config-mappen fungerer fint.",
+          "deep_soak_enabled": "Dypvanning er en stor, langsom vanning med noen ukers mellomrom (14 dager til å begynne med) som fukter jorda langt ned, så røttene vokser dypt. Bra for trær, busker og stauder; slå den av for planter med grunne røtter, som salat og urter. Rutinevanningen går uansett.",
+          "deep_soak_time": "Når dypvanningen starter på dagene den skal gå, hvis starten nedenfor er fast klokkeslett. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
+          "routine_time": "Når ZoneFlow hver dag sjekker om det er tid for rutinevanning, og vanner i så fall. Hvor ofte det skjer, avhenger av været og ukemålet ditt. Tidlig morgen er best.",
+          "deep_soak_sun_mode": "Start dypvanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
+          "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter soloppgang eller solnedgang. Brukes ikke med fast klokkeslett.",
+          "routine_sun_mode": "Start rutinevanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
+          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter soloppgang eller solnedgang. Brukes ikke med fast klokkeslett.",
+          "unit_system": "Hva denne sonen viser: følg Home Assistant, eller alltid metrisk (mm, °C, liter) eller imperial (tommer, °F, gallon). Endrer bare det du ser, aldri hvor mye den vanner."
+        }
+      },
+      "flow_rate": {
+        "title": "Vannmengde fra utløp",
+        "description": "Hvor mye vann sonens utløp gir på arealet de fukter. 1 liter på 1 m² er 1 mm. For dryppere ved enkeltplanter bruker du arealet rundt dem som faktisk blir vått. Resultatet erstatter sonens Kalibrering av vannmengde.",
+        "data": {
+          "emitters": "Antall utløp (dryppere, spredere) i sonen",
+          "emitter_flow": "Vannmengde per utløp",
+          "area": "Arealet de vanner"
+        },
+        "data_description": {
+          "emitters": "Tell alle dryppere og spredere som sonens ventil forsyner.",
+          "emitter_flow": "Hva ett utløp gir per time: det står på utløpet eller pakningen (f.eks. 2 L/h, 0.5 gal/h).",
+          "area": "Arealet som faktisk blir vått. For dryppere ved enkeltplanter legger du sammen de våte flekkene rundt dem, ikke hele bedet."
+        }
+      },
+      "flow_measure": {
+        "title": "Mål vannmengden",
+        "description": "Kjører ventilen i {minutes} minutter som en servicekjøring (teller ikke som vanning, men minuttene teller mot dagens sikkerhetsgrense for kjøretid) og regner ut vannmengden fra literne vannmåleren viser. Måleren må bare måle vannet til denne sonen mens den går. Resultatet kommer som telefonvarsel og settes automatisk; slår du av Servicemodus, avbrytes målingen.",
+        "data": {
+          "area": "Arealet sonens utløp vanner"
+        },
+        "data_description": {
+          "area": "Arealet sonens utløp faktisk fukter. For dryppere ved enkeltplanter legger du sammen de våte flekkene rundt dem, ikke hele bedet."
+        }
+      }
+    },
+    "abort": {
+      "flow_rate_set": "Vannmengde fra utløp satt til {rate}.",
+      "flow_rate_out_of_range": "Det blir {rate}, utenfor det innstillingen tillater ({low} til {high}). Sjekk tallene -- for dryppere spredt rundt enkeltplanter bruker du arealet de faktisk fukter, ikke hele bedet.",
+      "measuring": "Måler: ventilen går i omtrent {minutes} minutter. Resultatet kommer som telefonvarsel (eller i Home Assistants varsler hvis sonen ikke har telefon) og settes automatisk.",
+      "zone_not_loaded": "Sonen kjører ikke akkurat nå, så dette kan ikke gjøres.",
+      "zone_busy": "Sonen (eller pumpen) er opptatt, eller dagens sikkerhetsgrense for kjøretid er brukt opp. Prøv igjen senere.",
+      "flow_rate_disabled": "Sonens entitet Kalibrering av vannmengde er deaktivert. Aktiver den (sonens enhetsside → entitetene) og prøv igjen."
+    }
+  },
+  "selector": {
+    "sun_mode": {
+      "options": {
+        "fixed": "Bruk det faste klokkeslettet over",
+        "before_sunrise": "Før soloppgang",
+        "after_sunrise": "Etter soloppgang",
+        "before_sunset": "Før solnedgang",
+        "after_sunset": "Etter solnedgang"
+      }
+    },
+    "soil_type": {
+      "options": {
+        "unknown": "Usikker / blandet",
+        "sandy": "Sand",
+        "sandy_loam": "Sandholdig lettleire",
+        "loam": "Lettleire / moldjord",
+        "clay_loam": "Leirholdig lettleire",
+        "clay": "Leire"
+      }
+    },
+    "drainage": {
+      "options": {
+        "unknown": "Usikker",
+        "fast": "Drenerer raskt",
+        "medium": "Middels",
+        "slow": "Drenerer sakte"
+      }
+    },
+    "slope": {
+      "options": {
+        "flat": "Flatt",
+        "slight": "Svak helning",
+        "moderate": "Middels helning",
+        "steep": "Bratt helning"
+      }
+    },
+    "irrigation_method": {
+      "options": {
+        "drip": "Dryppslange / dryppere",
+        "micro_sprinkler": "Mikrospreder",
+        "sprinkler": "Spreder",
+        "soaker_hose": "Sildreslange",
+        "other": "Annet"
+      }
+    },
+    "growth_ramp_profile": {
+      "options": {
+        "off": "Av (alltid hele ukemålet)",
+        "fast_annual": "Hurtigvoksende ettårig (f.eks. de fleste grønnsaker)",
+        "slow_fruiting": "Saktevoksende fruktbærende (f.eks. tomat, paprika)",
+        "established_perennial": "Flerårig i etablering (f.eks. ungt tre eller busk)",
+        "custom": "Egendefinert (lag din egen kurve)"
+      }
+    },
+    "unit_system": {
+      "options": {
+        "auto": "Følg Home Assistant",
+        "metric": "Metrisk (mm, °C)",
+        "imperial": "Imperial (tommer, °F)"
+      }
+    },
+    "climate": {
+      "options": {
+        "tropical": "Tropisk (varmt hele året, f.eks. Sørøst-Asia)",
+        "hot_dry": "Varme somre (Middelhavet, ørken, sørlige USA)",
+        "temperate": "Temperert (det meste av Europa, nordlige USA)",
+        "cool": "Kjølige somre (Norden, Storbritannia, nordlige kyststrøk)"
+      }
+    },
+    "plant": {
+      "options": {
+        "custom": "Noe annet (jeg setter det opp selv)",
+        "tomatoes": "Tomater",
+        "chilis": "Chili / paprika",
+        "leafy_vegetables": "Bladgrønnsaker / salat",
+        "herbs": "Urter (middelhavsurter)",
+        "strawberries": "Jordbær",
+        "flowers": "Blomsterbed",
+        "lawn": "Plen",
+        "shrubs": "Busker / hekk",
+        "young_tree": "Ungt tre (de første årene)",
+        "fruit_tree": "Etablert frukttre"
+      }
+    }
+  },
+  "entity": {
+    "number": {
+      "target_weekly_mm": {
+        "name": "Rutine: ukemål, normalt"
+      },
+      "target_weekly_hot_mm": {
+        "name": "Rutine: ukemål, varmt"
+      },
+      "hot_temp_threshold": {
+        "name": "Temperaturgrense for varmt vær"
+      },
+      "cool_temp_threshold": {
+        "name": "Temperaturgrense for kjølig vær"
+      },
+      "target_weekly_cool_mm": {
+        "name": "Rutine: ukemål, kjølig"
+      },
+      "rain_eff_low": {
+        "name": "Regnets effekt - lett (3-5mm)"
+      },
+      "rain_eff_mid": {
+        "name": "Regnets effekt - moderat (5-10mm)"
+      },
+      "rain_eff_high": {
+        "name": "Regnets effekt - kraftig (10-20mm+)"
+      },
+      "flow_rate_mm_per_min": {
+        "name": "Kalibrering av vannmengde"
+      },
+      "deep_soak_target_mm": {
+        "name": "Dypvanning: måldybde"
+      },
+      "pump_min_watts": {
+        "name": "Varselgrense for lav pumpeeffekt"
+      },
+      "deep_soak_max_runtime_minutes": {
+        "name": "Dypvanning: maks kjøretid (sikkerhet)"
+      },
+      "max_runtime_minutes": {
+        "name": "Rutine: maks kjøretid (sikkerhet)"
+      },
+      "routine_drydown_days": {
+        "name": "Rutine: opptørkingstid"
+      },
+      "deep_soak_drydown_days": {
+        "name": "Dypvanning: opptørkingstid for undergrunnen"
+      },
+      "deep_soak_interval_days": {
+        "name": "Dypvanning: intervall"
+      },
+      "deep_soak_rain_threshold": {
+        "name": "Dypvanning: regntak (14d)"
+      },
+      "rain_mm_per_tip": {
+        "name": "Regnmåler mm per vipp (kalibrering)"
+      },
+      "preirrigation_rain_threshold_mm": {
+        "name": "Avbruddsgrense før vanning (30min)"
+      },
+      "pump_preamble_seconds": {
+        "name": "Pumpe: forsinkelse før start"
+      },
+      "pump_postamble_seconds": {
+        "name": "Pumpe: forsinkelse etter stopp"
+      },
+      "forecast_rain_threshold_mm": {
+        "name": "Regngrense i værmeldingen for å hoppe over"
+      },
+      "forecast_probability_threshold_pct": {
+        "name": "Grense for regnsannsynlighet i værmeldingen"
+      },
+      "forecast_dry_override_days": {
+        "name": "Overstyring ved tørkeperiode tross værmelding"
+      },
+      "soil_moisture_dry_pct": {
+        "name": "Jordfuktighet: grense for tørt"
+      },
+      "soil_moisture_wet_pct": {
+        "name": "Jordfuktighet: grense for vått"
+      },
+      "routine_pulse_count": {
+        "name": "Rutine: antall pulser (delt syklus)"
+      },
+      "routine_pulse_rest_minutes": {
+        "name": "Rutine: pause mellom pulser"
+      },
+      "deep_soak_pulse_count": {
+        "name": "Dypvanning: antall pulser (delt syklus)"
+      },
+      "deep_soak_pulse_rest_minutes": {
+        "name": "Dypvanning: pause mellom pulser"
+      },
+      "max_daily_runtime_minutes": {
+        "name": "Maks vanningstid per dag (sikkerhetsgrense)"
+      },
+      "growth_stage_override_pct": {
+        "name": "Vekststadium: manuell overstyring"
+      },
+      "growth_ramp_custom_start_pct": {
+        "name": "Egen opptrapping: % på dag 0"
+      },
+      "growth_ramp_custom_point1_day": {
+        "name": "Egen opptrapping: dag for punkt 1"
+      },
+      "growth_ramp_custom_point1_pct": {
+        "name": "Egen opptrapping: % for punkt 1"
+      },
+      "growth_ramp_custom_point2_day": {
+        "name": "Egen opptrapping: dag for punkt 2"
+      },
+      "growth_ramp_custom_point2_pct": {
+        "name": "Egen opptrapping: % for punkt 2"
+      },
+      "growth_ramp_custom_full_day": {
+        "name": "Egen opptrapping: dag for 100%"
+      },
+      "crop_coefficient": {
+        "name": "Avlingsfaktor (Kc)"
+      },
+      "deficit_water_pct": {
+        "name": "Underskuddsvanning: vannmengde"
+      },
+      "fallback_temp": {
+        "name": "Reserve / manuell temperatur"
+      },
+      "service_mode_auto_off_minutes": {
+        "name": "Servicemodus: automatisk av"
+      },
+      "frost_guard_temp": {
+        "name": "Frostvakt: temperatur"
+      }
+    },
+    "datetime": {
+      "last_routine": {
+        "name": "Siste rutinevanning"
+      },
+      "last_deep_soak": {
+        "name": "Siste dypvanning"
+      },
+      "last_significant_rain": {
+        "name": "Siste betydelige regn"
+      },
+      "planting_date": {
+        "name": "Plante- / omplantingsdato"
+      },
+      "last_fertilizing": {
+        "name": "Siste gjødsling"
+      },
+      "deficit_until": {
+        "name": "Underskuddsvanning slutter"
+      },
+      "paused_until": {
+        "name": "Pause til"
+      }
+    },
+    "button": {
+      "run_deep_soak": {
+        "name": "Kjør dypvanning nå"
+      },
+      "run_routine": {
+        "name": "Kjør rutinevanning nå"
+      },
+      "reset_lock": {
+        "name": "Nullstill vanningslås"
+      },
+      "snooze_today": {
+        "name": "Hopp over i dag"
+      },
+      "service_run_1_min": {
+        "name": "Servicekjøring 1 min"
+      },
+      "service_run_5_min": {
+        "name": "Servicekjøring 5 min"
+      },
+      "service_run_10_min": {
+        "name": "Servicekjøring 10 min"
+      }
+    },
+    "binary_sensor": {
+      "irrigation_in_progress": {
+        "name": "Vanning pågår"
+      },
+      "irrigation_abort": {
+        "name": "Avbruddsflagg for vanning"
+      }
+    },
+    "switch": {
+      "deep_soak_enabled": {
+        "name": "Dypvanning på"
+      },
+      "deficit_mode": {
+        "name": "Underskuddsvanning"
+      },
+      "service_mode": {
+        "name": "Servicemodus"
+      },
+      "pause": {
+        "name": "Pause"
+      }
+    },
+    "sensor": {
+      "rain_past_30min": {
+        "name": "Regn siste 30min"
+      },
+      "rain_past_24h": {
+        "name": "Regn siste 24t"
+      },
+      "rain_past_3d": {
+        "name": "Regn siste 3d"
+      },
+      "rain_past_7d": {
+        "name": "Regn siste 7d"
+      },
+      "rain_past_14d": {
+        "name": "Regn siste 14d"
+      },
+      "avg_peak_temp_3d": {
+        "name": "Snitt av makstemperatur, 3 dager"
+      },
+      "next_irrigation_estimate": {
+        "name": "Neste vanning (anslag)"
+      },
+      "days_until_next_run": {
+        "name": "Dager til neste vanning"
+      },
+      "last_water_delivered": {
+        "name": "Siste vannmengde (anslag)"
+      },
+      "rain_today": {
+        "name": "Regn i dag"
+      },
+      "soil_profile": {
+        "name": "Jordprofil"
+      },
+      "growth_ramp_pct": {
+        "name": "Vekstopptrapping"
+      },
+      "last_cycle_water_liters": {
+        "name": "Siste vannmengde (målt)"
+      },
+      "reference_et0_3d": {
+        "name": "Referanse-ET₀ (snitt 3 dager)"
+      },
+      "routine_weekly_target": {
+        "name": "Rutine: ukemål"
+      },
+      "soil_moisture": {
+        "name": "Jordfuktighet"
+      },
+      "soil_moisture_status": {
+        "name": "Jordfuktighetsstatus",
+        "state": {
+          "dry": "Tørt - vanning fremskyndet",
+          "wet": "Vått - hopper over",
+          "in_range": "Innenfor - følger planen",
+          "offline": "Sensor frakoblet - følger planen",
+          "stale": "Ingen ny måling på 24 t - følger planen",
+          "implausible": "Umulig måling - følger planen"
+        }
+      },
+      "deficit_status": {
+        "name": "Status for underskuddsvanning",
+        "state": {
+          "off": "Av",
+          "active": "Aktiv - redusert mengde",
+          "full_dose_hot": "Full mengde i dag (varmt vær)",
+          "full_dose_soil_dry": "Full mengde i dag (tørr jord)",
+          "ended": "Avsluttet",
+          "full_dose_young_plant": "Full mengde (ung plante)",
+          "full_dose_no_temp": "Full mengde i dag (ingen temperaturmåling registrert)"
+        }
+      },
+      "status": {
+        "name": "Status"
+      }
+    },
+    "select": {
+      "soil_type": {
+        "name": "Jordtype",
+        "state": {
+          "unknown": "Usikker / blandet",
+          "sandy": "Sand",
+          "sandy_loam": "Sandholdig lettleire",
+          "loam": "Lettleire / moldjord",
+          "clay_loam": "Leirholdig lettleire",
+          "clay": "Leire"
+        }
+      },
+      "growth_stage_mode": {
+        "name": "Vekststadium",
+        "state": {
+          "auto": "Auto (etter plantedato)",
+          "seedling": "Frøplante",
+          "establishing": "Etablering",
+          "vegetative": "Vegetativ vekst",
+          "near_fruiting": "Nær fruktsetting",
+          "mature": "Fullvoksen",
+          "manual": "Manuell (bruk glidebryteren)"
+        }
+      },
+      "growth_ramp_profile": {
+        "name": "Profil for vekstopptrapping",
+        "state": {
+          "off": "Av (alltid hele ukemålet)",
+          "fast_annual": "Hurtigvoksende ettårig (f.eks. de fleste grønnsaker)",
+          "slow_fruiting": "Saktevoksende fruktbærende (f.eks. tomat, paprika)",
+          "established_perennial": "Flerårig i etablering (f.eks. ungt tre eller busk)",
+          "custom": "Egendefinert (lag din egen kurve)"
+        }
+      },
+      "health_status": {
+        "name": "Helse",
+        "state": {
+          "excellent": "Utmerket",
+          "good": "God",
+          "poor": "Dårlig",
+          "sick": "Syk"
+        }
+      },
+      "fertilizing_interval": {
+        "name": "Neste gjødsling om",
+        "state": {
+          "1": "1 måned",
+          "2": "2 måneder",
+          "3": "3 måneder",
+          "4": "4 måneder",
+          "5": "5 måneder",
+          "6": "6 måneder",
+          "7": "7 måneder",
+          "8": "8 måneder",
+          "9": "9 måneder",
+          "10": "10 måneder",
+          "11": "11 måneder",
+          "12": "12 måneder"
+        }
+      },
+      "demand_model": {
+        "name": "Modell for vannbehov",
+        "state": {
+          "temperature_tiers": "Temperaturtrinn",
+          "et_curve": "ET-kurve (Hargreaves)"
+        }
+      },
+      "notifications": {
+        "name": "Varsler",
+        "state": {
+          "all": "Alle",
+          "warnings": "Bare advarsler",
+          "none": "Ingen"
+        }
+      },
+      "weekly_summary": {
+        "name": "Ukesammendrag",
+        "state": {
+          "off": "Av",
+          "mon": "Mandag",
+          "tue": "Tirsdag",
+          "wed": "Onsdag",
+          "thu": "Torsdag",
+          "fri": "Fredag",
+          "sat": "Lørdag",
+          "sun": "Søndag"
+        }
+      }
+    },
+    "text": {
+      "health_notes": {
+        "name": "Helsenotater"
+      }
+    }
+  },
+  "services": {
+    "run_deep_soak": {
+      "name": "Kjør dypvanning",
+      "description": "Kjører dypvanningen nå hvis (og bare hvis) de samme vilkårene som tidsplanen kl. 05:00 bruker er oppfylt (låsen er ledig, 14-dagersintervall og opptørking er nådd, regntaket for 14 dager er ikke overskredet). Samme kode som den planlagte kjøringen.",
+      "fields": {
+        "device_id": {
+          "name": "Soneenhet",
+          "description": "Sonens enhet. Trengs bare når du har 2 eller flere soner."
+        },
+        "entity_id": {
+          "name": "Soneentitet",
+          "description": "Hvilken som helst entitet som hører til sonens enhet (i stedet for Soneenhet)."
+        }
+      }
+    },
+    "run_routine_irrigation": {
+      "name": "Kjør rutinevanning",
+      "description": "Kjører rutinevanningen nå hvis (og bare hvis) de samme vilkårene som tidsplanen kl. 05:30 bruker er oppfylt. Samme kode som den planlagte kjøringen.",
+      "fields": {
+        "device_id": {
+          "name": "Soneenhet",
+          "description": "Sonens enhet. Trengs bare når du har 2 eller flere soner."
+        },
+        "entity_id": {
+          "name": "Soneentitet",
+          "description": "Hvilken som helst entitet som hører til sonens enhet (i stedet for Soneenhet)."
+        }
+      }
+    },
+    "reset_lock": {
+      "name": "Nullstill vanningslås",
+      "description": "Tvangsnullstiller låsen og avbruddsflagget. Bare for nødstilfeller.",
+      "fields": {
+        "device_id": {
+          "name": "Soneenhet",
+          "description": "Sonens enhet. Trengs bare når du har 2 eller flere soner."
+        },
+        "entity_id": {
+          "name": "Soneentitet",
+          "description": "Hvilken som helst entitet som hører til sonens enhet (i stedet for Soneenhet)."
+        }
+      }
+    },
+    "snooze_today": {
+      "name": "Hopp over i dag",
+      "description": "Hopper over de planlagte syklusene i sonen (dypvanning, rutine eller begge) som ikke allerede har gått i dag, uten å endre andre innstillinger. Vanlig tidsplan fortsetter automatisk fra i morgen.",
+      "fields": {
+        "device_id": {
+          "name": "Soneenhet",
+          "description": "Sonens enhet. Trengs bare når du har 2 eller flere soner."
+        },
+        "entity_id": {
+          "name": "Soneentitet",
+          "description": "Hvilken som helst entitet som hører til sonens enhet (i stedet for Soneenhet)."
+        }
+      }
+    },
+    "test_pulse": {
+      "name": "Testpuls",
+      "description": "Går forbi alle vilkår for tidsplan, opptørking og regn og kjører én kort puls på ventilen, for å teste koblingen av ventil og pumpe før du stoler på den ekte tidsplanen. Respekterer fortsatt låsen og sikkerhetsvaktene.",
+      "fields": {
+        "device_id": {
+          "name": "Soneenhet",
+          "description": "Sonens enhet. Trengs bare når du har 2 eller flere soner."
+        },
+        "entity_id": {
+          "name": "Soneentitet",
+          "description": "Hvilken som helst entitet som hører til sonens enhet (i stedet for Soneenhet)."
+        },
+        "seconds": {
+          "name": "Sekunder",
+          "description": "Pulsens varighet i sekunder (1-120)."
+        }
+      }
+    },
+    "send_weekly_summary": {
+      "name": "Send ukesammendrag nå",
+      "description": "Sender ukesammendraget nå til alle telefoner som har en sone med valgt dag for Ukesammendrag -- en forhåndsvisning; ukens tall telles videre frem til det planlagte sammendraget."
+    }
+  },
+  "exceptions": {
+    "date_in_future": {
+      "message": "Denne datoen kan ikke være i fremtiden: den registrerer noe som allerede har skjedd. Bare Plante- / omplantingsdato kan settes frem i tid."
+    },
+    "cool_not_below_hot": {
+      "message": "Grensen for kjølig vær må være lavere enn grensen for varmt vær. Skal begge ned, senker du den kjølige først; skal begge opp, hever du den varme først."
+    },
+    "zone_busy": {
+      "message": "Sonen er opptatt (vanner eller har allerede en servicekjøring). Prøv igjen når den er ferdig."
+    },
+    "pump_busy": {
+      "message": "Pumpen som sonen deler, brukes av en annen sone akkurat nå. Prøv igjen når den sonen er ferdig."
+    },
+    "daily_cap_reached": {
+      "message": "Sonen har nådd dagens sikkerhetsgrense for kjøretid, så ingen servicekjøring kan starte før i morgen (eller hev grensen Maks vanningstid per dag)."
+    },
+    "zone_paused": {
+      "message": "Sonen er satt på pause. Slå av Pause for å vanne den."
+    },
+    "pause_until_past": {
+      "message": "Velg en dato og et klokkeslett i fremtiden å ta pause til."
+    },
+    "no_weekly_summary": {
+      "message": "Ingen sone har både valgt dag for Ukesammendrag og telefon for varsler, så det er ingenting å sende."
+    },
+    "summary_send_failed": {
+      "message": "Ukesammendraget kunne ikke sendes: telefonvarselet mislyktes. Sjekk sonens telefon for varsler."
+    }
+  },
+  "issues": {
+    "valve_unavailable": {
+      "title": "{zone}: ventil utilgjengelig",
+      "description": "Ventilen i sonen {zone} ({entity}) har vært utilgjengelig i over en time, så sonen kan ikke vanne. Sjekk ventilens enhet og integrasjonen den hører til. Dette forsvinner av seg selv når ventilen er tilbake."
+    },
+    "sensor_offline": {
+      "title": "{zone}: sensor frakoblet i {days} dager",
+      "description": "{entity}, som sonen {zone} bruker, har vært frakoblet i {days} dager. Sonen fortsetter uten den (hva det betyr, står i README), men sjekk enheten -- eller fjern den fra sonen under Konfigurer. Dette forsvinner av seg selv når sensoren melder igjen."
+    },
+    "notify_missing": {
+      "title": "{zone}: telefon for varsler mangler",
+      "description": "Sonen {zone} sender telefonvarsler til {entity}, som ikke lenger finnes i Home Assistant, så ingen varsler kommer frem. Velg riktig varslingsmål under sonens Konfigurer. Dette forsvinner av seg selv når den finnes igjen."
+    },
+    "flow_rate_default": {
+      "title": "{zone}: kalibrer vannmengden fra utløpene",
+      "description": "Sonen {zone} bruker fortsatt standardverdien for Kalibrering av vannmengde (0.24 mm/min). Det er det ene tallet som avgjør hvor mye vann hver kjøring gir, så mål det for dine utløp: sonens Konfigurer → Vannmengde regner det ut fra utløpene, eller måler det med en vannmåler. Hvis 0.24 mm/min virkelig stemmer for denne sonen, kan du se bort fra dette."
+    }
+  }
+}
