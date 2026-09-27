@@ -1,14 +1,36 @@
 # ZoneFlow Irrigation
 
-A native Home Assistant custom integration for drip, sprinkler and valve
-irrigation, written as real Python (config flow, entities, services) rather
-than a pile of YAML automations and helpers. It drives the valve, pump and
-sensors you already have — it never creates physical entities of its own.
+**ZoneFlow is a Home Assistant irrigation controller** for gardens, lawns,
+vegetable beds, fruit trees and other plants. It is a custom integration
+(install with HACS) that decides when and how much to water each zone and
+opens and closes the valves itself — no separate automations needed. It
+works with drip lines, sprinklers and soaker hoses, supports multiple
+zones and shared pumps, and adapts the watering to the plant, the soil,
+the slope, the temperature, rain and — optionally — a soil-moisture probe,
+a flow meter and the weather forecast.
 
 **Only a valve switch is required.** Every sensor is optional, each one adds
 a specific capability, and each zone can use a different combination. A
 sensor that goes offline later degrades that capability safely instead of
 breaking the zone.
+
+**At a glance**
+
+- **Automatic watering per zone**: a light, frequent routine watering and
+  an occasional deep soak, from temperature tiers or an evapotranspiration
+  (ET) curve with a crop factor (Kc).
+- **Plant, soil and slope aware**: plant presets at setup, and **cycle and
+  soak** — each watering is split into as many pulses as the soil takes in
+  without runoff, with extra pulses on a slope.
+- **Rain and weather**: rain credit from a rain gauge, a dry-down pause
+  after heavy rain, a forecast skip, a frost guard, and a rain stop during
+  a running cycle.
+- **Says why**: a plain-language Status per zone ("Skipped: the soil is
+  wet (72%)"), phone notifications and a weekly summary.
+- **Safety first**: runtime caps, stuck-valve watchdog, pump and flow
+  checks, power-loss handling — a cycle always ends with the valve closed.
+- **Built-in dashboard cards**, flow-rate calibration helper, fertilizing
+  reminders, 19 languages, no YAML, and an optional **AI-assisted setup**.
 
 ## Screenshots
 
@@ -29,7 +51,7 @@ also generate a dashboard card and a plain-language cheat sheet per zone.
 The rest of this page is the human overview. AI_SETUP.md is the detailed
 reference for every setting.
 
-## How it decides
+## How ZoneFlow decides when and how much to water
 
 Each zone runs two cadences: an infrequent **deep soak** (for deep roots)
 and a lighter, frequent **routine irrigation**. A completed deep soak also
@@ -65,7 +87,7 @@ manual, goes through the same pipeline:
    recovery, and interruption handling that always ends with the valve
    closed and confirmed.
 
-## What each sensor adds
+## Sensors: what each one adds (all optional except the valve)
 
 | Entity | Adds | Without it |
 |---|---|---|
@@ -97,7 +119,7 @@ the whole garden); the valve and a soil probe belong to one zone.
   alarm.
 - **Weather:** the forecast gate fails open and never blocks a run.
 
-## Multiple zones and shared pumps
+## Multiple irrigation zones and shared pumps
 
 Add the integration once per zone — each has its own name, valve, targets
 and schedule, and any mix of sensors.
@@ -283,6 +305,82 @@ card's texts in `frontend/zoneflow-card.js`). Much of the gardening
 wording follows the community translations of
 [Smart Irrigation](https://github.com/altmenorg/HAsmartirrigation) — thanks
 to its translators.
+
+## FAQ
+
+**What is ZoneFlow?**
+A Home Assistant integration that works as an irrigation controller: it
+schedules and runs the watering for each zone, opening and closing the
+valve through Home Assistant, and tells you what it did and why.
+
+**Does it control the valves itself, or only calculate how long to water?**
+It controls them. ZoneFlow switches the valve (and waits for a shared pump)
+itself; you don't need automations to do the watering.
+
+**What hardware does it work with?**
+Any valve, relay or smart plug that Home Assistant shows as a `switch`
+(Zigbee, Z-Wave, ESPHome, Shelly, Tuya…). Sensors are ordinary Home
+Assistant sensors. It has no cloud service of its own.
+
+**Can it control several zones? Can zones share one pump?**
+Yes — add one zone per valve; it's tested with ten zones. Zones given the
+same Shared pump ID take turns on the pump. See
+[Multiple irrigation zones and shared pumps](#multiple-irrigation-zones-and-shared-pumps).
+
+**Do I need a soil-moisture sensor, rain gauge or flow meter?**
+No. Only the valve is required; each sensor adds something specific (see
+[Sensors](#sensors-what-each-one-adds-all-optional-except-the-valve)).
+Without a soil probe it waters on its modelled schedule; with one, dry
+soil brings the watering forward and wet soil skips it.
+
+**Does it account for rain and the weather forecast?**
+Yes. A rain gauge gives rain credit, a dry-down pause after heavy rain and
+a rain stop during a cycle; a `weather` entity can skip a watering when
+rain is forecast; the frost guard waits out freezing temperatures.
+
+**Does it support evapotranspiration (ET) and crop factors?**
+Yes, optionally: a Hargreaves ET₀ curve from daily min/max temperature and
+your latitude, times a crop factor (Kc). By default it uses simpler
+cool/normal/hot temperature tiers.
+
+**Does it account for soil type and slope?**
+Yes. Soil type and drainage decide how much water goes on per pulse and
+how long it soaks in between (cycle and soak); a moderate slope adds one
+pulse and a steep slope two.
+
+**Does it work with drip irrigation and sprinklers?**
+Yes — drip lines and emitters, micro-sprinklers, sprinklers and soaker
+hoses. The flow-rate helper works out how fast your system waters from the
+emitters, or measures it with a flow meter.
+
+**Does it explain why it skipped a watering?**
+Yes. Each zone's Status says what it did and why ("Skipped: 8 mm of rain
+forecast"), and every run, skip and warning is in the zone's CSV log.
+
+**Does it have a dashboard?**
+Yes, two cards come with it: a card per zone and an overview of all zones
+with status, next and last watering and a water-now button. See
+[Dashboard](#dashboard).
+
+**Do I need YAML?**
+No. Setup, settings and the dashboard cards are all done in the Home
+Assistant UI.
+
+**Is there help with setting it up?**
+Yes: every setup field has a help line, and [AI_SETUP.md](./AI_SETUP.md)
+lets an AI assistant (Claude, ChatGPT…) walk you through it, suggest
+numbers for your plants, climate and soil, and check the result.
+
+**What safety protections does it have?**
+Per-cycle and daily runtime caps, a stuck-valve watchdog that forces the
+valve off, a pump-power check, a no-flow alert, power-loss handling,
+stale-lock recovery, and interrupted cycles that always end with the valve
+closed. With a phone set up, an alert that a valve may still be open always
+comes through, even with notifications turned off.
+
+**What Home Assistant version do I need?**
+2024.5 or newer. Install with HACS (as a custom repository) or copy the
+folder by hand — see [Installation](#installation).
 
 ## Installation
 
