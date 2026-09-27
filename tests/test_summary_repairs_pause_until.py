@@ -17,7 +17,7 @@ from custom_components.zoneflow.const import DOMAIN, SUMMARY_DAYS, SUMMARY_HOUR
 
 from .scenario_harness import CompressedTime
 from .test_scenarios_cycles import _history
-from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry
+from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry, schedule_clear_of_now
 
 VALVE_B = "switch.watering2"
 WEATHER = "weather.home"
@@ -96,7 +96,9 @@ async def test_weekly_summary_one_message_per_phone(hass, fake_valve_services, m
 @pytest.mark.asyncio
 async def test_weekly_summary_goes_out_at_its_time(hass, fake_valve_services, tmp_path, sent):
     await _seed(hass)
-    zone = await _zone(hass, tmp_path, "Chilis", notify_entity="notify.phone")
+    # The clock jumps up to a day ahead: keep the zone's own watering times
+    # out of the way, or a real cycle starts mid-test depending on the hour.
+    zone = await _zone(hass, tmp_path, "Chilis", notify_entity="notify.phone", **schedule_clear_of_now())
     now = dt_util.now()
     at = now.replace(hour=SUMMARY_HOUR, minute=0, second=0, microsecond=0)
     if at <= now:

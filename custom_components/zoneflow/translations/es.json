@@ -6,8 +6,11 @@
         "description": "Dale a esta zona de riego un nombre corto (p. ej., \"Césped delantero\", \"Aguacate\"). Para añadir más zonas después, vuelve a añadir esta integración.",
         "data": {
           "zone_name": "Nombre de la zona",
-          "unit_system": "Unidades",
-          "plant": "Qué hay plantado (rellena objetivos y ajustes; todo se puede cambiar después)"
+          "plant": "Qué hay plantado"
+        },
+        "data_description": {
+          "zone_name": "Pasa a ser el nombre del dispositivo de la zona y el comienzo de los nombres de sus entidades, y aparece en los mensajes del teléfono. P. ej., \"Bancal de tomates\", \"Césped delantero\".",
+          "plant": "Rellena valores iniciales razonables para este cultivo: objetivos semanales de agua, coeficiente de cultivo, pulsos, riego profundo y rampa de crecimiento. \"Otra cosa\" parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
-          "pump_id": "ID de bomba compartida (opcional, p. ej., \"Bomba A\"; solo si esta zona comparte una bomba física con otra zona)",
+          "pump_id": "ID de bomba compartida (opcional)",
           "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Caudalímetro (opcional)",
-          "soil_moisture_entity": "Sensor de humedad del suelo (opcional, %; si se define, decide el riego habitual directamente en lugar de la programación calculada)",
+          "soil_moisture_entity": "Sensor de humedad del suelo (opcional)",
           "notify_entity": "Destino de notificaciones del teléfono (opcional)",
           "weather_entity": "Fuente de previsión meteorológica (opcional)",
           "soil_type": "Tipo de suelo",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Inicio del riego profundo",
           "deep_soak_sun_offset_minutes": "Desfase solar del riego profundo (minutos)",
           "routine_sun_mode": "Inicio del riego habitual",
-          "routine_sun_offset_minutes": "Desfase solar del riego habitual (minutos)"
+          "routine_sun_offset_minutes": "Desfase solar del riego habitual (minutos)",
+          "unit_system": "Unidades"
+        },
+        "data_description": {
+          "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
+          "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej., el de un enchufe inteligente. En cada riego, ZoneFlow comprueba que la bomba consume corriente de verdad y te avisa si no es así. Déjalo vacío si no tienes uno.",
+          "pump_id": "Solo para zonas que funcionan con la misma bomba: ponles a todas el mismo nombre aquí (el que quieras, p. ej., \"Bomba A\") y regarán por turnos en lugar de a la vez. Déjalo vacío si esta zona tiene su propia bomba o toma de agua.",
+          "rain_counter_entity": "Un contador del pluviómetro que sube de uno en uno con cada vuelco de su cazoleta. Así ZoneFlow descuenta la lluvia de lo que riega, deja que el suelo mojado se seque primero y detiene un riego cuando empieza a llover. Cuánta lluvia equivale a un vuelco se ajusta en la página del dispositivo de la zona, con \"Pluviómetro: mm por vuelco (calibración)\". Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "outdoor_temp_entity": "Un sensor de temperatura exterior. Con él, ZoneFlow riega por sí solo más cuando hace calor y menos cuando hace fresco, y la protección antiheladas detiene el riego cuando hiela. Sin él, decide el ajuste Temperatura de respaldo / manual.",
+          "flow_meter_entity": "Un contador de agua que va sumando el volumen total (litros, galones o m³). Así ZoneFlow registra cuánta agua usó realmente cada riego, te avisa si la bomba funcionó pero no pasó agua, y puede medir el caudal por ti (Configurar → Caudal: medirlo con el caudalímetro).",
+          "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
+          "notify_entity": "La entidad de notificación de tu teléfono, de la app Home Assistant Companion. ZoneFlow envía ahí los fallos y los eventos importantes, y también el resumen semanal si lo activas. Sin ella, todo queda solo en el registro.",
+          "weather_entity": "Una entidad meteorológica con previsión. ZoneFlow aplaza un riego cuando se prevé suficiente lluvia (pero no demasiados días seguidos), y usa su temperatura actual para la protección antiheladas si no hay sensor de temperatura.",
+          "soil_type": "Solo como referencia: por sí solo no cambia el riego. Aparece en el sensor Perfil del suelo de la zona y te ayuda a elegir los pulsos y las pausas entre pulsos en la página del dispositivo: un suelo arcilloso absorbe el agua despacio y pide más pulsos, más cortos y con pausas más largas entre ellos; uno arenoso la absorbe con menos pulsos.",
+          "drainage": "Lo rápido que desaparece el agua tras un riego abundante o una lluvia. Solo como referencia, igual que el tipo de suelo: un suelo que drena lento pide más pulsos, más cortos.",
+          "slope": "Solo como referencia, igual que el tipo de suelo: en pendiente, el agua escurre antes de infiltrarse, así que ayudan más pulsos, más cortos.",
+          "irrigation_method": "Cómo llega el agua. Solo como referencia, igual que el tipo de suelo; cuánta agua da lo determina el caudal (Configurar → Caudal: calcularlo a partir de los emisores).",
+          "growth_ramp_profile": "Da menos agua a las plantas jóvenes y la va subiendo hasta el objetivo semanal completo a medida que crecen, contando desde la Fecha de siembra / trasplante de la página del dispositivo de la zona. Desactivada: siempre el objetivo completo. Personalizada: dibuja tu propia curva en la página del dispositivo.",
+          "csv_path": "Un archivo donde se anota cada riego, omisión y aviso con sus cifras, para comprobar qué hizo ZoneFlow (se abre con cualquier hoja de cálculo). El archivo sugerido en tu carpeta config sirve perfectamente.",
+          "deep_soak_enabled": "El riego profundo es un riego abundante y lento cada dos semanas o así (14 días para empezar) que moja el suelo en profundidad, para que las raíces crezcan hondas. Va bien para árboles, arbustos y perennes; desactívalo para plantas de raíz superficial como ensaladas y aromáticas. El riego habitual funciona en cualquier caso.",
+          "deep_soak_time": "A qué hora empieza el riego profundo los días que toca, cuando su inicio (abajo) es la hora fija. Lo mejor es a primera hora de la mañana: se pierde menos agua por el sol y el viento.",
+          "routine_time": "A qué hora comprueba ZoneFlow cada día si toca el riego habitual, y riega si toca. Cada cuánto toca depende del tiempo y de tu objetivo semanal. Lo mejor es a primera hora de la mañana.",
+          "deep_soak_sun_mode": "Inicia el riego profundo a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
+          "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o del atardecer. No se usa con la hora fija.",
+          "routine_sun_mode": "Inicia el riego habitual a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
+          "routine_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o del atardecer. No se usa con la hora fija.",
+          "unit_system": "Lo que muestra esta zona: igual que Home Assistant, o siempre métrico (mm, °C, litros) o imperial (pulgadas, °F, galones). Solo cambia lo que ves, nunca cuánto riega."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "¿Cómo es la temporada de cultivo donde está esta zona? Esto solo rellena los controles de temperatura de la página siguiente; puedes cambiar cada valor allí y, más adelante, en la página del dispositivo de la zona.",
         "data": {
           "climate": "Clima"
+        },
+        "data_description": {
+          "climate": "Elige el más parecido. Solo rellena los umbrales de temperatura de la página siguiente."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Umbral de tiempo caluroso",
           "cool_temp_threshold": "Umbral de tiempo fresco",
           "fallback_temp": "Temperatura de respaldo / manual"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Cuando la media de las máximas de los últimos 3 días llega a este valor o lo supera, la zona usa su Objetivo semanal con calor y riega más a menudo.",
+          "cool_temp_threshold": "Cuando esa media está por debajo de este valor, la zona usa su Objetivo semanal con fresco. Entre ambos, el tiempo es normal.",
+          "fallback_temp": "Se usa cuando no hay una lectura real. Sin sensor de temperatura, es tu control manual: súbela en una ola de calor, bájala en una racha de frío."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
-          "pump_id": "ID de bomba compartida (opcional, p. ej., \"Bomba A\"; solo si esta zona comparte una bomba física con otra zona)",
+          "pump_id": "ID de bomba compartida (opcional)",
           "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Caudalímetro (opcional)",
-          "soil_moisture_entity": "Sensor de humedad del suelo (opcional, %; si se define, decide el riego habitual directamente en lugar de la programación calculada)",
+          "soil_moisture_entity": "Sensor de humedad del suelo (opcional)",
           "notify_entity": "Destino de notificaciones del teléfono (opcional)",
           "weather_entity": "Fuente de previsión meteorológica (opcional)",
           "soil_type": "Tipo de suelo",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Inicio del riego habitual",
           "routine_sun_offset_minutes": "Desfase solar del riego habitual (minutos)",
           "unit_system": "Unidades"
+        },
+        "data_description": {
+          "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
+          "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej., el de un enchufe inteligente. En cada riego, ZoneFlow comprueba que la bomba consume corriente de verdad y te avisa si no es así. Déjalo vacío si no tienes uno.",
+          "pump_id": "Solo para zonas que funcionan con la misma bomba: ponles a todas el mismo nombre aquí (el que quieras, p. ej., \"Bomba A\") y regarán por turnos en lugar de a la vez. Déjalo vacío si esta zona tiene su propia bomba o toma de agua.",
+          "rain_counter_entity": "Un contador del pluviómetro que sube de uno en uno con cada vuelco de su cazoleta. Así ZoneFlow descuenta la lluvia de lo que riega, deja que el suelo mojado se seque primero y detiene un riego cuando empieza a llover. Cuánta lluvia equivale a un vuelco se ajusta en la página del dispositivo de la zona, con \"Pluviómetro: mm por vuelco (calibración)\". Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "outdoor_temp_entity": "Un sensor de temperatura exterior. Con él, ZoneFlow riega por sí solo más cuando hace calor y menos cuando hace fresco, y la protección antiheladas detiene el riego cuando hiela. Sin él, decide el ajuste Temperatura de respaldo / manual.",
+          "flow_meter_entity": "Un contador de agua que va sumando el volumen total (litros, galones o m³). Así ZoneFlow registra cuánta agua usó realmente cada riego, te avisa si la bomba funcionó pero no pasó agua, y puede medir el caudal por ti (Configurar → Caudal: medirlo con el caudalímetro).",
+          "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
+          "notify_entity": "La entidad de notificación de tu teléfono, de la app Home Assistant Companion. ZoneFlow envía ahí los fallos y los eventos importantes, y también el resumen semanal si lo activas. Sin ella, todo queda solo en el registro.",
+          "weather_entity": "Una entidad meteorológica con previsión. ZoneFlow aplaza un riego cuando se prevé suficiente lluvia (pero no demasiados días seguidos), y usa su temperatura actual para la protección antiheladas si no hay sensor de temperatura.",
+          "soil_type": "Solo como referencia: por sí solo no cambia el riego. Aparece en el sensor Perfil del suelo de la zona y te ayuda a elegir los pulsos y las pausas entre pulsos en la página del dispositivo: un suelo arcilloso absorbe el agua despacio y pide más pulsos, más cortos y con pausas más largas entre ellos; uno arenoso la absorbe con menos pulsos.",
+          "drainage": "Lo rápido que desaparece el agua tras un riego abundante o una lluvia. Solo como referencia, igual que el tipo de suelo: un suelo que drena lento pide más pulsos, más cortos.",
+          "slope": "Solo como referencia, igual que el tipo de suelo: en pendiente, el agua escurre antes de infiltrarse, así que ayudan más pulsos, más cortos.",
+          "irrigation_method": "Cómo llega el agua. Solo como referencia, igual que el tipo de suelo; cuánta agua da lo determina el caudal (Configurar → Caudal: calcularlo a partir de los emisores).",
+          "growth_ramp_profile": "Da menos agua a las plantas jóvenes y la va subiendo hasta el objetivo semanal completo a medida que crecen, contando desde la Fecha de siembra / trasplante de la página del dispositivo de la zona. Desactivada: siempre el objetivo completo. Personalizada: dibuja tu propia curva en la página del dispositivo.",
+          "csv_path": "Un archivo donde se anota cada riego, omisión y aviso con sus cifras, para comprobar qué hizo ZoneFlow (se abre con cualquier hoja de cálculo). El archivo sugerido en tu carpeta config sirve perfectamente.",
+          "deep_soak_enabled": "El riego profundo es un riego abundante y lento cada dos semanas o así (14 días para empezar) que moja el suelo en profundidad, para que las raíces crezcan hondas. Va bien para árboles, arbustos y perennes; desactívalo para plantas de raíz superficial como ensaladas y aromáticas. El riego habitual funciona en cualquier caso.",
+          "deep_soak_time": "A qué hora empieza el riego profundo los días que toca, cuando su inicio (abajo) es la hora fija. Lo mejor es a primera hora de la mañana: se pierde menos agua por el sol y el viento.",
+          "routine_time": "A qué hora comprueba ZoneFlow cada día si toca el riego habitual, y riega si toca. Cada cuánto toca depende del tiempo y de tu objetivo semanal. Lo mejor es a primera hora de la mañana.",
+          "deep_soak_sun_mode": "Inicia el riego profundo a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
+          "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o del atardecer. No se usa con la hora fija.",
+          "routine_sun_mode": "Inicia el riego habitual a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
+          "routine_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o del atardecer. No se usa con la hora fija.",
+          "unit_system": "Lo que muestra esta zona: igual que Home Assistant, o siempre métrico (mm, °C, litros) o imperial (pulgadas, °F, galones). Solo cambia lo que ves, nunca cuánto riega."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Número de emisores (goteros, difusores) en la zona",
           "emitter_flow": "Caudal de un emisor",
           "area": "Superficie que riegan"
+        },
+        "data_description": {
+          "emitters": "Cuenta todos los goteros o difusores que alimenta la válvula de esta zona.",
+          "emitter_flow": "Lo que da un emisor por hora: viene impreso en el propio emisor o en su envase (p. ej., 2 L/h, 0.5 gal/h).",
+          "area": "La superficie que realmente se moja. Para goteros en plantas sueltas, suma la superficie mojada alrededor de cada una, no todo el bancal."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Abre la válvula durante {minutes} minutos como ejecución de mantenimiento (no cuenta como riego, pero sus minutos sí cuentan para el límite de seguridad de tiempo diario) y calcula el caudal a partir de los litros del caudalímetro. Mientras funciona, el medidor solo debe medir el agua de esta zona. El resultado llega como mensaje al teléfono y se aplica automáticamente; si desactivas el Modo mantenimiento, se cancela.",
         "data": {
           "area": "Superficie que riegan los emisores de la zona"
+        },
+        "data_description": {
+          "area": "La superficie que realmente mojan los emisores de la zona. Para goteros en plantas sueltas, suma la superficie mojada alrededor de cada una, no todo el bancal."
         }
       }
     },

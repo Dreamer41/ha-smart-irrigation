@@ -6,8 +6,11 @@
         "description": "Geef deze bewateringszone een korte naam (bv. \"Voortuin\", \"Avocadoboom\"). Wil je later meer zones? Voeg deze integratie dan opnieuw toe.",
         "data": {
           "zone_name": "Zonenaam",
-          "unit_system": "Eenheden",
-          "plant": "Wat staat er (vult doelen en instellingen alvast in; alles is later aan te passen)"
+          "plant": "Wat staat er"
+        },
+        "data_description": {
+          "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
+          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, pulsen, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Klepschakelaar",
           "pump_power_entity": "Vermogenssensor pomp (optioneel)",
-          "pump_id": "ID gedeelde pomp (optioneel, bv. \"Pomp A\" -- alleen nodig als deze zone een pomp deelt met een andere zone)",
+          "pump_id": "ID gedeelde pomp (optioneel)",
           "rain_counter_entity": "Kiepteller regenmeter (optioneel)",
           "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
           "flow_meter_entity": "Watermeter (optioneel)",
-          "soil_moisture_entity": "Bodemvochtsensor (optioneel, % -- indien ingesteld bepaalt die de routinewatergift, niet het berekende schema)",
+          "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
           "notify_entity": "Telefoon voor meldingen (optioneel)",
           "weather_entity": "Bron weersverwachting (optioneel)",
           "soil_type": "Grondsoort",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Start diepe watergift",
           "deep_soak_sun_offset_minutes": "Zonverschuiving diepe watergift (minuten)",
           "routine_sun_mode": "Start routinewatergift",
-          "routine_sun_offset_minutes": "Zonverschuiving routinewatergift (minuten)"
+          "routine_sun_offset_minutes": "Zonverschuiving routinewatergift (minuten)",
+          "unit_system": "Eenheden"
+        },
+        "data_description": {
+          "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
+          "pump_power_entity": "Een vermogenssensor (W) op de pomp, bv. van een slimme stekker. Bij elke watergift controleert ZoneFlow of de pomp echt stroom trekt, en waarschuwt je als dat niet zo is. Laat leeg als je er geen hebt.",
+          "pump_id": "Alleen voor zones op dezelfde pomp: geef ze hier allemaal dezelfde naam (maakt niet uit welke, bv. \"Pomp A\"), dan draaien ze om de beurt in plaats van tegelijk. Laat leeg als deze zone een eigen pomp of wateraansluiting heeft.",
+          "rain_counter_entity": "Een teller van de regenmeter die bij elke kiep van het bakje één omhoog gaat. ZoneFlow trekt de regen dan af van de watergift, laat natte grond eerst opdrogen en stopt een watergift als het gaat regenen. Hoeveel regen één kiep is, stel je in op de apparaatpagina van de zone (Regenmeter mm per kiep). Zonder regenmeter geeft ZoneFlow water alsof het nooit regent.",
+          "outdoor_temp_entity": "Een buitentemperatuursensor. Daarmee geeft ZoneFlow vanzelf meer water als het warm is en minder als het koel is, en houdt de vorstbeveiliging de watergift tegen als het vriest. Zonder sensor bepaalt de instelling Reserve- / handmatige temperatuur het.",
+          "flow_meter_entity": "Een watermeter die het totale volume optelt (liters, gallons of m³). ZoneFlow legt dan vast hoeveel water elke watergift echt gebruikte, waarschuwt je als de pomp draaide maar er geen water stroomde, en kan de afgifte voor je meten (Configureren → Afgifte).",
+          "soil_moisture_entity": "Een bodemvochtsensor (%) bij de wortels van de planten in deze zone. Droge grond haalt de routinewatergift naar voren, natte grond slaat hem over, en daartussen bepaalt het normale schema. De grenzen voor droog en nat staan op de apparaatpagina van de zone.",
+          "notify_entity": "De meldingsentiteit van je telefoon uit de Home Assistant Companion-app. ZoneFlow stuurt storingen en belangrijke gebeurtenissen daarheen, en ook het weekoverzicht als je dat aanzet. Zonder telefoon komen ze alleen in het logboek.",
+          "weather_entity": "Een weerentiteit met verwachting. ZoneFlow houdt een watergift tegen als er genoeg regen wordt verwacht (maar niet te veel dagen achter elkaar), en gebruikt de actuele temperatuur voor de vorstbeveiliging als er geen temperatuursensor is.",
+          "soil_type": "Ter informatie: het verandert de watergift niet zelf. Het staat op de sensor Bodemprofiel van de zone en helpt je de pulsen en intrekpauzes op de apparaatpagina te kiezen: klei neemt water langzaam op en wil meer, kortere pulsen met langere intrekpauzes ertussen; zand kan het in minder pulsen aan.",
+          "drainage": "Hoe snel het water verdwijnt na een flinke watergift of regenbui. Net als de grondsoort ter informatie: traag doorlatende grond wil meer, kortere pulsen.",
+          "slope": "Net als de grondsoort ter informatie: op een helling loopt water weg voordat het intrekt, dus meer, kortere pulsen helpen.",
+          "irrigation_method": "Hoe het water wordt gegeven. Net als de grondsoort ter informatie; hoeveel water er komt, bepaalt de afgifte (Configureren → Afgifte).",
+          "growth_ramp_profile": "Geeft jonge planten minder water en bouwt dat op naar het volledige weekdoel naarmate ze ouder worden, gerekend vanaf de Plant- / verplantdatum op de apparaatpagina van de zone. Uit: altijd het volledige doel. Aangepast: stel je eigen curve in op de apparaatpagina.",
+          "csv_path": "Een bestand waarin elke watergift, overgeslagen beurt en waarschuwing met de cijfers wordt vastgelegd, om na te kijken wat ZoneFlow deed (opent in elk spreadsheetprogramma). Het voorgestelde bestand in je configuratiemap is prima.",
+          "deep_soak_enabled": "Een diepe watergift is een grote, langzame watergift om de paar weken (om te beginnen elke 14 dagen) die de grond diep nat maakt, zodat wortels diep groeien. Goed voor bomen, heesters en vaste planten; zet hem uit voor ondiep wortelende planten zoals sla en kruiden. De routinewatergift draait hoe dan ook.",
+          "deep_soak_time": "Wanneer de diepe watergift start op de dagen dat hij aan de beurt is, als de start hieronder op de vaste kloktijd staat. Vroeg in de ochtend is het best: er gaat minder water verloren door zon en wind.",
+          "routine_time": "Wanneer ZoneFlow elke dag kijkt of de routinewatergift aan de beurt is, en dan water geeft. Hoe vaak dat is, hangt af van het weer en je weekdoel. Vroeg in de ochtend is het best.",
+          "deep_soak_sun_mode": "Start de diepe watergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
+          "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
+          "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
+          "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "Hoe is het groeiseizoen waar deze zone ligt? Dit vult alleen de temperatuurschuiven op de volgende pagina alvast in -- je kunt daar elke waarde aanpassen, en later ook op de apparaatpagina van de zone.",
         "data": {
           "climate": "Klimaat"
+        },
+        "data_description": {
+          "climate": "Kies wat er het dichtst bij komt. Het vult alleen de temperatuurgrenzen op de volgende pagina in."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Grens warm weer",
           "cool_temp_threshold": "Grens koel weer",
           "fallback_temp": "Reserve- / handmatige temperatuur"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Ligt het gemiddelde van de maximumtemperaturen van de laatste 3 dagen op of boven deze waarde, dan gebruikt de zone \"Routine: weekdoel warm\" en geeft vaker water.",
+          "cool_temp_threshold": "Ligt dat gemiddelde hieronder, dan gebruikt de zone \"Routine: weekdoel koel\". Daartussen is het normaal weer.",
+          "fallback_temp": "Gebruikt als er geen echte meting is. Zonder temperatuursensor is dit je handmatige knop: hoger bij een hittegolf, lager bij een koude periode."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Klepschakelaar",
           "pump_power_entity": "Vermogenssensor pomp (optioneel)",
-          "pump_id": "ID gedeelde pomp (optioneel, bv. \"Pomp A\" -- alleen nodig als deze zone een pomp deelt met een andere zone)",
+          "pump_id": "ID gedeelde pomp (optioneel)",
           "rain_counter_entity": "Kiepteller regenmeter (optioneel)",
           "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
           "flow_meter_entity": "Watermeter (optioneel)",
-          "soil_moisture_entity": "Bodemvochtsensor (optioneel, % -- indien ingesteld bepaalt die de routinewatergift, niet het berekende schema)",
+          "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
           "notify_entity": "Telefoon voor meldingen (optioneel)",
           "weather_entity": "Bron weersverwachting (optioneel)",
           "soil_type": "Grondsoort",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Start routinewatergift",
           "routine_sun_offset_minutes": "Zonverschuiving routinewatergift (minuten)",
           "unit_system": "Eenheden"
+        },
+        "data_description": {
+          "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
+          "pump_power_entity": "Een vermogenssensor (W) op de pomp, bv. van een slimme stekker. Bij elke watergift controleert ZoneFlow of de pomp echt stroom trekt, en waarschuwt je als dat niet zo is. Laat leeg als je er geen hebt.",
+          "pump_id": "Alleen voor zones op dezelfde pomp: geef ze hier allemaal dezelfde naam (maakt niet uit welke, bv. \"Pomp A\"), dan draaien ze om de beurt in plaats van tegelijk. Laat leeg als deze zone een eigen pomp of wateraansluiting heeft.",
+          "rain_counter_entity": "Een teller van de regenmeter die bij elke kiep van het bakje één omhoog gaat. ZoneFlow trekt de regen dan af van de watergift, laat natte grond eerst opdrogen en stopt een watergift als het gaat regenen. Hoeveel regen één kiep is, stel je in op de apparaatpagina van de zone (Regenmeter mm per kiep). Zonder regenmeter geeft ZoneFlow water alsof het nooit regent.",
+          "outdoor_temp_entity": "Een buitentemperatuursensor. Daarmee geeft ZoneFlow vanzelf meer water als het warm is en minder als het koel is, en houdt de vorstbeveiliging de watergift tegen als het vriest. Zonder sensor bepaalt de instelling Reserve- / handmatige temperatuur het.",
+          "flow_meter_entity": "Een watermeter die het totale volume optelt (liters, gallons of m³). ZoneFlow legt dan vast hoeveel water elke watergift echt gebruikte, waarschuwt je als de pomp draaide maar er geen water stroomde, en kan de afgifte voor je meten (Configureren → Afgifte).",
+          "soil_moisture_entity": "Een bodemvochtsensor (%) bij de wortels van de planten in deze zone. Droge grond haalt de routinewatergift naar voren, natte grond slaat hem over, en daartussen bepaalt het normale schema. De grenzen voor droog en nat staan op de apparaatpagina van de zone.",
+          "notify_entity": "De meldingsentiteit van je telefoon uit de Home Assistant Companion-app. ZoneFlow stuurt storingen en belangrijke gebeurtenissen daarheen, en ook het weekoverzicht als je dat aanzet. Zonder telefoon komen ze alleen in het logboek.",
+          "weather_entity": "Een weerentiteit met verwachting. ZoneFlow houdt een watergift tegen als er genoeg regen wordt verwacht (maar niet te veel dagen achter elkaar), en gebruikt de actuele temperatuur voor de vorstbeveiliging als er geen temperatuursensor is.",
+          "soil_type": "Ter informatie: het verandert de watergift niet zelf. Het staat op de sensor Bodemprofiel van de zone en helpt je de pulsen en intrekpauzes op de apparaatpagina te kiezen: klei neemt water langzaam op en wil meer, kortere pulsen met langere intrekpauzes ertussen; zand kan het in minder pulsen aan.",
+          "drainage": "Hoe snel het water verdwijnt na een flinke watergift of regenbui. Net als de grondsoort ter informatie: traag doorlatende grond wil meer, kortere pulsen.",
+          "slope": "Net als de grondsoort ter informatie: op een helling loopt water weg voordat het intrekt, dus meer, kortere pulsen helpen.",
+          "irrigation_method": "Hoe het water wordt gegeven. Net als de grondsoort ter informatie; hoeveel water er komt, bepaalt de afgifte (Configureren → Afgifte).",
+          "growth_ramp_profile": "Geeft jonge planten minder water en bouwt dat op naar het volledige weekdoel naarmate ze ouder worden, gerekend vanaf de Plant- / verplantdatum op de apparaatpagina van de zone. Uit: altijd het volledige doel. Aangepast: stel je eigen curve in op de apparaatpagina.",
+          "csv_path": "Een bestand waarin elke watergift, overgeslagen beurt en waarschuwing met de cijfers wordt vastgelegd, om na te kijken wat ZoneFlow deed (opent in elk spreadsheetprogramma). Het voorgestelde bestand in je configuratiemap is prima.",
+          "deep_soak_enabled": "Een diepe watergift is een grote, langzame watergift om de paar weken (om te beginnen elke 14 dagen) die de grond diep nat maakt, zodat wortels diep groeien. Goed voor bomen, heesters en vaste planten; zet hem uit voor ondiep wortelende planten zoals sla en kruiden. De routinewatergift draait hoe dan ook.",
+          "deep_soak_time": "Wanneer de diepe watergift start op de dagen dat hij aan de beurt is, als de start hieronder op de vaste kloktijd staat. Vroeg in de ochtend is het best: er gaat minder water verloren door zon en wind.",
+          "routine_time": "Wanneer ZoneFlow elke dag kijkt of de routinewatergift aan de beurt is, en dan water geeft. Hoe vaak dat is, hangt af van het weer en je weekdoel. Vroeg in de ochtend is het best.",
+          "deep_soak_sun_mode": "Start de diepe watergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
+          "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
+          "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
+          "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Aantal druppelaars (of sproeiers) in de zone",
           "emitter_flow": "Afgifte van één druppelaar",
           "area": "Oppervlakte die ze bewateren"
+        },
+        "data_description": {
+          "emitters": "Tel elke druppelaar of sproeier die de klep van deze zone voedt.",
+          "emitter_flow": "Wat één druppelaar per uur geeft: dat staat op de druppelaar of de verpakking (bv. 2 L/h, 0,5 gal/h).",
+          "area": "De oppervlakte die echt nat wordt. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Laat de klep {minutes} minuten proefdraaien (telt niet als watergift, maar de minuten tellen wel mee voor de dagelijkse veiligheidslimiet) en berekent de afgifte uit de liters van de watermeter. De meter mag tijdens het meten alleen het water van deze zone meten. De uitkomst komt als telefoonmelding en wordt automatisch ingesteld; Onderhoudsmodus uitzetten breekt het af.",
         "data": {
           "area": "Oppervlakte die de druppelaars bewateren"
+        },
+        "data_description": {
+          "area": "De oppervlakte die de druppelaars van de zone echt nat maken. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
         }
       }
     },

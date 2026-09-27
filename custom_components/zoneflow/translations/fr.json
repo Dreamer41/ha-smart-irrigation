@@ -6,8 +6,11 @@
         "description": "Donnez un nom court à cette zone d'arrosage (ex. « Pelouse avant », « Avocatier »). Pour ajouter d'autres zones plus tard, ajoutez à nouveau cette intégration.",
         "data": {
           "zone_name": "Nom de la zone",
-          "unit_system": "Unités",
-          "plant": "Ce qui est planté (préremplit les objectifs et réglages ; tout reste modifiable)"
+          "plant": "Ce qui est planté"
+        },
+        "data_description": {
+          "zone_name": "Devient le nom de l'appareil de la zone et le début des noms de ses entités, et apparaît dans les messages sur le téléphone. Ex. « Carré de tomates », « Pelouse avant ».",
+          "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, passages, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Interrupteur de la vanne",
           "pump_power_entity": "Capteur de puissance de la pompe (facultatif)",
-          "pump_id": "ID de pompe partagée (facultatif, ex. « Pompe A » — seulement si cette zone partage une pompe avec une autre zone)",
+          "pump_id": "ID de pompe partagée (facultatif)",
           "rain_counter_entity": "Compteur de basculements du pluviomètre (facultatif)",
           "outdoor_temp_entity": "Capteur de température extérieure (facultatif)",
           "flow_meter_entity": "Débitmètre (facultatif)",
-          "soil_moisture_entity": "Sonde d'humidité du sol (facultatif, % — si définie, elle décide directement de l'arrosage régulier à la place du programme calculé)",
+          "soil_moisture_entity": "Sonde d'humidité du sol (facultatif)",
           "notify_entity": "Cible de notification téléphone (facultatif)",
           "weather_entity": "Source des prévisions météo (facultatif)",
           "soil_type": "Type de sol",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Déclenchement de l'arrosage profond",
           "deep_soak_sun_offset_minutes": "Décalage solaire de l'arrosage profond (minutes)",
           "routine_sun_mode": "Déclenchement de l'arrosage régulier",
-          "routine_sun_offset_minutes": "Décalage solaire de l'arrosage régulier (minutes)"
+          "routine_sun_offset_minutes": "Décalage solaire de l'arrosage régulier (minutes)",
+          "unit_system": "Unités"
+        },
+        "data_description": {
+          "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
+          "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. celui d'une prise connectée. Pendant chaque arrosage, ZoneFlow vérifie que la pompe consomme vraiment du courant et vous prévient si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
+          "pump_id": "Seulement pour les zones alimentées par la même pompe : donnez-leur à toutes le même nom ici (n'importe lequel, ex. « Pompe A ») et elles arrosent chacune à leur tour au lieu de fonctionner en même temps. Laissez vide si cette zone a sa propre pompe ou sa propre arrivée d'eau.",
+          "rain_counter_entity": "Un compteur de pluviomètre qui augmente de un à chaque basculement de son auget. ZoneFlow déduit alors la pluie de ce qu'il arrose, laisse d'abord sécher un sol mouillé et arrête un arrosage quand il se met à pleuvoir. La quantité de pluie d'un basculement se règle sur la page de l'appareil de la zone, avec « Pluviomètre : mm par basculement (étalonnage) ». Sans pluviomètre, ZoneFlow arrose comme s'il ne pleuvait jamais.",
+          "outdoor_temp_entity": "Un capteur de température extérieure. Avec lui, ZoneFlow arrose de lui-même davantage par temps chaud et moins par temps frais, et la protection antigel suspend l'arrosage quand il gèle. Sans lui, c'est le réglage Température de secours / manuelle qui décide.",
+          "flow_meter_entity": "Un compteur d'eau qui totalise le volume (litres, gallons ou m³). ZoneFlow note alors la quantité d'eau réellement utilisée à chaque arrosage, vous prévient si la pompe a tourné sans que l'eau circule, et peut mesurer le débit pour vous (Configurer → Débit : le mesurer avec le débitmètre).",
+          "soil_moisture_entity": "Une sonde d'humidité du sol (%) placée au niveau des racines de cette zone. Un sol sec avance l'arrosage régulier, un sol humide le fait sauter, et entre les deux c'est le programme normal qui décide. Les seuils sec et humide se trouvent sur la page de l'appareil de la zone.",
+          "notify_entity": "L'entité de notification de votre téléphone, fournie par l'application Home Assistant Companion. ZoneFlow y envoie les pannes et les événements importants, ainsi que le résumé hebdomadaire si vous l'activez. Sans elle, tout reste uniquement dans le journal.",
+          "weather_entity": "Une entité météo avec prévisions. ZoneFlow suspend un arrosage quand assez de pluie est prévue (mais pas trop de jours d'affilée), et utilise sa température actuelle pour la protection antigel s'il n'y a pas de capteur de température.",
+          "soil_type": "Pour information : cela ne change pas l'arrosage à lui seul. Il s'affiche sur le capteur Profil du sol de la zone et vous aide à choisir les passages et les pauses entre passages sur la page de l'appareil : un sol argileux absorbe l'eau lentement et préfère des passages plus nombreux et plus courts, avec des pauses plus longues entre eux ; un sol sableux se contente de moins de passages.",
+          "drainage": "La vitesse à laquelle l'eau disparaît après un gros arrosage ou une pluie. Pour information, comme le type de sol : un sol qui draine lentement préfère des passages plus nombreux et plus courts.",
+          "slope": "Pour information, comme le type de sol : sur une pente, l'eau ruisselle avant de s'infiltrer, donc des passages plus nombreux et plus courts aident.",
+          "irrigation_method": "Comment l'eau est apportée. Pour information, comme le type de sol ; la quantité d'eau donnée dépend du débit (Configurer → Débit : le calculer à partir des goutteurs).",
+          "growth_ramp_profile": "Donne moins d'eau aux jeunes plantes, puis augmente jusqu'à l'objectif hebdo complet à mesure qu'elles grandissent, à partir de la Date de plantation / repiquage sur la page de l'appareil de la zone. Désactivé : toujours l'objectif complet. Personnalisé : tracez votre propre courbe sur la page de l'appareil.",
+          "csv_path": "Un fichier où chaque arrosage, saut et alerte est noté avec ses chiffres, pour vérifier ce qu'a fait ZoneFlow (il s'ouvre dans n'importe quel tableur). Le fichier proposé dans votre dossier config convient très bien.",
+          "deep_soak_enabled": "L'arrosage profond est un arrosage copieux et lent toutes les deux semaines environ (14 jours au départ) qui humidifie le sol en profondeur, pour que les racines descendent. Idéal pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et les aromatiques. L'arrosage régulier fonctionne dans tous les cas.",
+          "deep_soak_time": "L'heure de début de l'arrosage profond les jours où il est prévu, si son déclenchement ci-dessous est l'heure fixe. Tôt le matin, c'est idéal : moins d'eau perdue à cause du soleil et du vent.",
+          "routine_time": "L'heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage régulier est prévu, et arrose si c'est le cas. Sa fréquence dépend de la météo et de votre objectif hebdo. Tôt le matin, c'est idéal.",
+          "deep_soak_sun_mode": "Démarrer l'arrosage profond à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
+          "deep_soak_sun_offset_minutes": "Combien de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "routine_sun_mode": "Démarrer l'arrosage régulier à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
+          "routine_sun_offset_minutes": "Combien de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "unit_system": "Ce qu'affiche cette zone : suivre Home Assistant, ou toujours le système métrique (mm, °C, litres) ou impérial (pouces, °F, gallons). Cela change seulement l'affichage, jamais la quantité d'eau donnée."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "Comment est la saison de culture là où se trouve cette zone ? Cela préremplit seulement les curseurs de température de la page suivante — vous pourrez y modifier chaque valeur, et plus tard sur la page de l'appareil de la zone.",
         "data": {
           "climate": "Climat"
+        },
+        "data_description": {
+          "climate": "Choisissez le plus proche. Cela préremplit seulement les seuils de température de la page suivante."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Seuil temps chaud",
           "cool_temp_threshold": "Seuil temps frais",
           "fallback_temp": "Température de secours / manuelle"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Quand la moyenne des maximales des 3 derniers jours atteint ou dépasse ce seuil, la zone utilise son Objectif hebdo – temps chaud et arrose plus souvent.",
+          "cool_temp_threshold": "Quand cette moyenne est sous ce seuil, la zone utilise son Objectif hebdo – temps frais. Entre les deux, c'est un temps normal.",
+          "fallback_temp": "Utilisée quand il n'y a pas de vraie mesure. Sans capteur de température, c'est votre réglage manuel : montez-la pendant une canicule, baissez-la pendant un coup de froid."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Interrupteur de la vanne",
           "pump_power_entity": "Capteur de puissance de la pompe (facultatif)",
-          "pump_id": "ID de pompe partagée (facultatif, ex. « Pompe A » — seulement si cette zone partage une pompe avec une autre zone)",
+          "pump_id": "ID de pompe partagée (facultatif)",
           "rain_counter_entity": "Compteur de basculements du pluviomètre (facultatif)",
           "outdoor_temp_entity": "Capteur de température extérieure (facultatif)",
           "flow_meter_entity": "Débitmètre (facultatif)",
-          "soil_moisture_entity": "Sonde d'humidité du sol (facultatif, % — si définie, elle décide directement de l'arrosage régulier à la place du programme calculé)",
+          "soil_moisture_entity": "Sonde d'humidité du sol (facultatif)",
           "notify_entity": "Cible de notification téléphone (facultatif)",
           "weather_entity": "Source des prévisions météo (facultatif)",
           "soil_type": "Type de sol",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Déclenchement de l'arrosage régulier",
           "routine_sun_offset_minutes": "Décalage solaire de l'arrosage régulier (minutes)",
           "unit_system": "Unités"
+        },
+        "data_description": {
+          "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
+          "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. celui d'une prise connectée. Pendant chaque arrosage, ZoneFlow vérifie que la pompe consomme vraiment du courant et vous prévient si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
+          "pump_id": "Seulement pour les zones alimentées par la même pompe : donnez-leur à toutes le même nom ici (n'importe lequel, ex. « Pompe A ») et elles arrosent chacune à leur tour au lieu de fonctionner en même temps. Laissez vide si cette zone a sa propre pompe ou sa propre arrivée d'eau.",
+          "rain_counter_entity": "Un compteur de pluviomètre qui augmente de un à chaque basculement de son auget. ZoneFlow déduit alors la pluie de ce qu'il arrose, laisse d'abord sécher un sol mouillé et arrête un arrosage quand il se met à pleuvoir. La quantité de pluie d'un basculement se règle sur la page de l'appareil de la zone, avec « Pluviomètre : mm par basculement (étalonnage) ». Sans pluviomètre, ZoneFlow arrose comme s'il ne pleuvait jamais.",
+          "outdoor_temp_entity": "Un capteur de température extérieure. Avec lui, ZoneFlow arrose de lui-même davantage par temps chaud et moins par temps frais, et la protection antigel suspend l'arrosage quand il gèle. Sans lui, c'est le réglage Température de secours / manuelle qui décide.",
+          "flow_meter_entity": "Un compteur d'eau qui totalise le volume (litres, gallons ou m³). ZoneFlow note alors la quantité d'eau réellement utilisée à chaque arrosage, vous prévient si la pompe a tourné sans que l'eau circule, et peut mesurer le débit pour vous (Configurer → Débit : le mesurer avec le débitmètre).",
+          "soil_moisture_entity": "Une sonde d'humidité du sol (%) placée au niveau des racines de cette zone. Un sol sec avance l'arrosage régulier, un sol humide le fait sauter, et entre les deux c'est le programme normal qui décide. Les seuils sec et humide se trouvent sur la page de l'appareil de la zone.",
+          "notify_entity": "L'entité de notification de votre téléphone, fournie par l'application Home Assistant Companion. ZoneFlow y envoie les pannes et les événements importants, ainsi que le résumé hebdomadaire si vous l'activez. Sans elle, tout reste uniquement dans le journal.",
+          "weather_entity": "Une entité météo avec prévisions. ZoneFlow suspend un arrosage quand assez de pluie est prévue (mais pas trop de jours d'affilée), et utilise sa température actuelle pour la protection antigel s'il n'y a pas de capteur de température.",
+          "soil_type": "Pour information : cela ne change pas l'arrosage à lui seul. Il s'affiche sur le capteur Profil du sol de la zone et vous aide à choisir les passages et les pauses entre passages sur la page de l'appareil : un sol argileux absorbe l'eau lentement et préfère des passages plus nombreux et plus courts, avec des pauses plus longues entre eux ; un sol sableux se contente de moins de passages.",
+          "drainage": "La vitesse à laquelle l'eau disparaît après un gros arrosage ou une pluie. Pour information, comme le type de sol : un sol qui draine lentement préfère des passages plus nombreux et plus courts.",
+          "slope": "Pour information, comme le type de sol : sur une pente, l'eau ruisselle avant de s'infiltrer, donc des passages plus nombreux et plus courts aident.",
+          "irrigation_method": "Comment l'eau est apportée. Pour information, comme le type de sol ; la quantité d'eau donnée dépend du débit (Configurer → Débit : le calculer à partir des goutteurs).",
+          "growth_ramp_profile": "Donne moins d'eau aux jeunes plantes, puis augmente jusqu'à l'objectif hebdo complet à mesure qu'elles grandissent, à partir de la Date de plantation / repiquage sur la page de l'appareil de la zone. Désactivé : toujours l'objectif complet. Personnalisé : tracez votre propre courbe sur la page de l'appareil.",
+          "csv_path": "Un fichier où chaque arrosage, saut et alerte est noté avec ses chiffres, pour vérifier ce qu'a fait ZoneFlow (il s'ouvre dans n'importe quel tableur). Le fichier proposé dans votre dossier config convient très bien.",
+          "deep_soak_enabled": "L'arrosage profond est un arrosage copieux et lent toutes les deux semaines environ (14 jours au départ) qui humidifie le sol en profondeur, pour que les racines descendent. Idéal pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et les aromatiques. L'arrosage régulier fonctionne dans tous les cas.",
+          "deep_soak_time": "L'heure de début de l'arrosage profond les jours où il est prévu, si son déclenchement ci-dessous est l'heure fixe. Tôt le matin, c'est idéal : moins d'eau perdue à cause du soleil et du vent.",
+          "routine_time": "L'heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage régulier est prévu, et arrose si c'est le cas. Sa fréquence dépend de la météo et de votre objectif hebdo. Tôt le matin, c'est idéal.",
+          "deep_soak_sun_mode": "Démarrer l'arrosage profond à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
+          "deep_soak_sun_offset_minutes": "Combien de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "routine_sun_mode": "Démarrer l'arrosage régulier à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
+          "routine_sun_offset_minutes": "Combien de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "unit_system": "Ce qu'affiche cette zone : suivre Home Assistant, ou toujours le système métrique (mm, °C, litres) ou impérial (pouces, °F, gallons). Cela change seulement l'affichage, jamais la quantité d'eau donnée."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Nombre de goutteurs (ou diffuseurs) dans la zone",
           "emitter_flow": "Débit d'un goutteur",
           "area": "Surface arrosée"
+        },
+        "data_description": {
+          "emitters": "Comptez tous les goutteurs ou diffuseurs alimentés par la vanne de cette zone.",
+          "emitter_flow": "Ce que donne un goutteur par heure : c'est indiqué dessus ou sur son emballage (ex. 2 L/h, 0,5 gal/h).",
+          "area": "La surface réellement mouillée. Pour des goutteurs au pied de plantes isolées, additionnez les surfaces mouillées autour d'elles, pas tout le massif."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Ouvre la vanne pendant {minutes} minutes en test de maintenance (non compté comme arrosage, mais ces minutes comptent dans le plafond de sécurité du jour) et calcule le débit à partir des litres du débitmètre. Pendant ce temps, le compteur ne doit mesurer que l'eau de cette zone. Le résultat arrive par message sur le téléphone et s'applique automatiquement ; désactiver le mode maintenance l'annule.",
         "data": {
           "area": "Surface arrosée par les goutteurs de la zone"
+        },
+        "data_description": {
+          "area": "La surface que les goutteurs de la zone mouillent réellement. Pour des goutteurs au pied de plantes isolées, additionnez les surfaces mouillées autour d'elles, pas tout le massif."
         }
       }
     },

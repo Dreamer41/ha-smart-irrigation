@@ -6,8 +6,11 @@
         "description": "Dai a questa zona di irrigazione un nome breve (es. \"Prato davanti\", \"Avocado\"). Per aggiungere altre zone in seguito, aggiungi di nuovo questa integrazione.",
         "data": {
           "zone_name": "Nome della zona",
-          "unit_system": "Unità di misura",
-          "plant": "Cosa è piantato (precompila obiettivi e impostazioni; tutto si può cambiare in seguito)"
+          "plant": "Cosa è piantato"
+        },
+        "data_description": {
+          "zone_name": "Diventa il nome del dispositivo della zona e l'inizio dei nomi delle sue entità, e compare nei messaggi sul telefono. Es. \"Aiuola pomodori\", \"Prato davanti\".",
+          "plant": "Precompila valori di partenza adatti a questa coltura: obiettivi settimanali d'acqua, coefficiente colturale, impulsi, irrigazione profonda e aumento graduale secondo la crescita. \"Altro\" parte da valori generici. Puoi cambiarli tutti in seguito nella pagina del dispositivo della zona."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Interruttore della valvola",
           "pump_power_entity": "Sensore di potenza della pompa (facoltativo)",
-          "pump_id": "ID pompa condivisa (facoltativo, es. \"Pompa A\" -- serve solo se questa zona condivide una pompa fisica con un'altra zona)",
+          "pump_id": "ID pompa condivisa (facoltativo)",
           "rain_counter_entity": "Contatore scatti del pluviometro (facoltativo)",
           "outdoor_temp_entity": "Sensore di temperatura esterna (facoltativo)",
           "flow_meter_entity": "Flussometro (facoltativo)",
-          "soil_moisture_entity": "Sensore di umidità del terreno (facoltativo, % -- se impostato, decide direttamente l'irrigazione ordinaria al posto del programma calcolato)",
+          "soil_moisture_entity": "Sensore di umidità del terreno (facoltativo)",
           "notify_entity": "Destinazione notifiche sul telefono (facoltativo)",
           "weather_entity": "Fonte delle previsioni meteo (facoltativo)",
           "soil_type": "Tipo di terreno",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Avvio dell'irrigazione profonda",
           "deep_soak_sun_offset_minutes": "Irrigazione profonda: scarto da alba/tramonto (minuti)",
           "routine_sun_mode": "Avvio dell'irrigazione ordinaria",
-          "routine_sun_offset_minutes": "Irrigazione ordinaria: scarto da alba/tramonto (minuti)"
+          "routine_sun_offset_minutes": "Irrigazione ordinaria: scarto da alba/tramonto (minuti)",
+          "unit_system": "Unità di misura"
+        },
+        "data_description": {
+          "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
+          "pump_power_entity": "Un sensore di potenza (W) sulla pompa, es. quello di una presa smart. Durante ogni irrigazione ZoneFlow controlla che la pompa assorba davvero corrente e ti avvisa se non succede. Lascia vuoto se non ce l'hai.",
+          "pump_id": "Solo per le zone servite dalla stessa pompa: dai a tutte lo stesso nome qui (uno qualsiasi, es. \"Pompa A\") e irrigheranno a turno invece che tutte insieme. Lascia vuoto se questa zona ha una pompa o un'alimentazione d'acqua tutta sua.",
+          "rain_counter_entity": "Un contatore del pluviometro che sale di uno a ogni scatto della sua bascula. Così ZoneFlow toglie la pioggia dall'acqua da dare, lascia prima asciugare il terreno bagnato e interrompe un'irrigazione quando comincia a piovere. Quanta pioggia vale uno scatto lo imposti nella pagina del dispositivo della zona, con \"Pluviometro: mm per scatto (taratura)\". Senza pluviometro, ZoneFlow irriga come se non piovesse mai.",
+          "outdoor_temp_entity": "Un sensore di temperatura esterna. Con questo, ZoneFlow irriga da solo di più quando fa caldo e di meno quando fa fresco, e la protezione antigelo sospende l'irrigazione quando gela. Senza, decide l'impostazione Temperatura di riserva / manuale.",
+          "flow_meter_entity": "Un contatore d'acqua che conta il volume totale (litri, galloni o m³). Così ZoneFlow registra quanta acqua ha usato davvero ogni irrigazione, ti avvisa se la pompa ha funzionato ma l'acqua non è passata, e può misurare la portata per te (Configura → Portata: misurala con il flussometro).",
+          "soil_moisture_entity": "Un sensore di umidità del terreno (%) all'altezza delle radici di questa zona. Il terreno secco anticipa l'irrigazione ordinaria, quello bagnato la fa saltare, e nel mezzo decide il programma normale. Le soglie di secco e bagnato sono nella pagina del dispositivo della zona.",
+          "notify_entity": "L'entità di notifica del tuo telefono, dall'app Home Assistant Companion. ZoneFlow ci invia guasti ed eventi importanti, e anche il riepilogo settimanale se lo attivi. Senza, finisce tutto solo nel log.",
+          "weather_entity": "Un'entità meteo con previsioni. ZoneFlow rimanda un'irrigazione quando è prevista abbastanza pioggia (ma non per troppi giorni di fila), e usa la sua temperatura attuale per la protezione antigelo se non c'è un sensore di temperatura.",
+          "soil_type": "Solo come riferimento: da solo non cambia l'irrigazione. Compare nel sensore Profilo del terreno della zona e ti aiuta a scegliere impulsi e pause tra impulsi nella pagina del dispositivo: il terreno argilloso assorbe l'acqua lentamente e vuole più impulsi, più brevi, con pause più lunghe tra uno e l'altro; quello sabbioso se la cava con meno impulsi.",
+          "drainage": "Quanto in fretta sparisce l'acqua dopo un'irrigazione abbondante o la pioggia. Solo come riferimento, come il tipo di terreno: un terreno che drena male vuole più impulsi, più brevi.",
+          "slope": "Solo come riferimento, come il tipo di terreno: in pendenza l'acqua scorre via prima di penetrare, quindi aiutano più impulsi, più brevi.",
+          "irrigation_method": "Come arriva l'acqua. Solo come riferimento, come il tipo di terreno; quanta acqua dà lo decide la portata (Configura → Portata: calcolala dagli erogatori).",
+          "growth_ramp_profile": "Dà meno acqua alle piante giovani e la aumenta fino all'obiettivo settimanale pieno man mano che crescono, a partire dalla Data di impianto / trapianto nella pagina del dispositivo della zona. Disattivato: sempre l'obiettivo pieno. Personalizzato: disegna la tua curva nella pagina del dispositivo.",
+          "csv_path": "Un file in cui ogni irrigazione, salto e avviso viene scritto con i suoi numeri, per controllare cosa ha fatto ZoneFlow (si apre con qualsiasi foglio di calcolo). Il file proposto nella tua cartella config va benissimo.",
+          "deep_soak_enabled": "L'irrigazione profonda è un'irrigazione abbondante e lenta ogni due settimane circa (14 giorni per iniziare) che bagna il terreno in profondità, così le radici scendono in basso. Ottima per alberi, arbusti e perenni; disattivala per piante a radici superficiali come insalata ed erbe aromatiche. L'irrigazione ordinaria funziona in ogni caso.",
+          "deep_soak_time": "Quando parte l'irrigazione profonda nei giorni previsti, se il suo avvio qui sotto è l'orario fisso. La mattina presto è l'ideale: si perde meno acqua per sole e vento.",
+          "routine_time": "Quando ZoneFlow controlla ogni giorno se tocca all'irrigazione ordinaria, e irriga se è così. Quanto spesso tocca dipende dal meteo e dal tuo obiettivo settimanale. La mattina presto è l'ideale.",
+          "deep_soak_sun_mode": "Avvia l'irrigazione profonda all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
+          "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
+          "routine_sun_mode": "Avvia l'irrigazione ordinaria all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
+          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
+          "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "Com'è la stagione di crescita dove si trova questa zona? Serve solo a precompilare i cursori della temperatura nella pagina successiva -- lì puoi cambiare ogni valore, e anche in seguito nella pagina del dispositivo della zona.",
         "data": {
           "climate": "Clima"
+        },
+        "data_description": {
+          "climate": "Scegli quello più simile. Serve solo a precompilare le soglie di temperatura nella pagina successiva."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Soglia del caldo",
           "cool_temp_threshold": "Soglia del fresco",
           "fallback_temp": "Temperatura di riserva / manuale"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Quando la media delle massime degli ultimi 3 giorni è pari o superiore a questo valore, la zona usa il suo Obiettivo settimanale caldo e irriga più spesso.",
+          "cool_temp_threshold": "Quando quella media è sotto questo valore, la zona usa il suo Obiettivo settimanale fresco. Nel mezzo il tempo è normale.",
+          "fallback_temp": "Si usa quando non c'è una lettura reale. Senza sensore di temperatura è il tuo comando manuale: alzala per un'ondata di caldo, abbassala per un'ondata di freddo."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Interruttore della valvola",
           "pump_power_entity": "Sensore di potenza della pompa (facoltativo)",
-          "pump_id": "ID pompa condivisa (facoltativo, es. \"Pompa A\" -- serve solo se questa zona condivide una pompa fisica con un'altra zona)",
+          "pump_id": "ID pompa condivisa (facoltativo)",
           "rain_counter_entity": "Contatore scatti del pluviometro (facoltativo)",
           "outdoor_temp_entity": "Sensore di temperatura esterna (facoltativo)",
           "flow_meter_entity": "Flussometro (facoltativo)",
-          "soil_moisture_entity": "Sensore di umidità del terreno (facoltativo, % -- se impostato, decide direttamente l'irrigazione ordinaria al posto del programma calcolato)",
+          "soil_moisture_entity": "Sensore di umidità del terreno (facoltativo)",
           "notify_entity": "Destinazione notifiche sul telefono (facoltativo)",
           "weather_entity": "Fonte delle previsioni meteo (facoltativo)",
           "soil_type": "Tipo di terreno",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Avvio dell'irrigazione ordinaria",
           "routine_sun_offset_minutes": "Irrigazione ordinaria: scarto da alba/tramonto (minuti)",
           "unit_system": "Unità di misura"
+        },
+        "data_description": {
+          "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
+          "pump_power_entity": "Un sensore di potenza (W) sulla pompa, es. quello di una presa smart. Durante ogni irrigazione ZoneFlow controlla che la pompa assorba davvero corrente e ti avvisa se non succede. Lascia vuoto se non ce l'hai.",
+          "pump_id": "Solo per le zone servite dalla stessa pompa: dai a tutte lo stesso nome qui (uno qualsiasi, es. \"Pompa A\") e irrigheranno a turno invece che tutte insieme. Lascia vuoto se questa zona ha una pompa o un'alimentazione d'acqua tutta sua.",
+          "rain_counter_entity": "Un contatore del pluviometro che sale di uno a ogni scatto della sua bascula. Così ZoneFlow toglie la pioggia dall'acqua da dare, lascia prima asciugare il terreno bagnato e interrompe un'irrigazione quando comincia a piovere. Quanta pioggia vale uno scatto lo imposti nella pagina del dispositivo della zona, con \"Pluviometro: mm per scatto (taratura)\". Senza pluviometro, ZoneFlow irriga come se non piovesse mai.",
+          "outdoor_temp_entity": "Un sensore di temperatura esterna. Con questo, ZoneFlow irriga da solo di più quando fa caldo e di meno quando fa fresco, e la protezione antigelo sospende l'irrigazione quando gela. Senza, decide l'impostazione Temperatura di riserva / manuale.",
+          "flow_meter_entity": "Un contatore d'acqua che conta il volume totale (litri, galloni o m³). Così ZoneFlow registra quanta acqua ha usato davvero ogni irrigazione, ti avvisa se la pompa ha funzionato ma l'acqua non è passata, e può misurare la portata per te (Configura → Portata: misurala con il flussometro).",
+          "soil_moisture_entity": "Un sensore di umidità del terreno (%) all'altezza delle radici di questa zona. Il terreno secco anticipa l'irrigazione ordinaria, quello bagnato la fa saltare, e nel mezzo decide il programma normale. Le soglie di secco e bagnato sono nella pagina del dispositivo della zona.",
+          "notify_entity": "L'entità di notifica del tuo telefono, dall'app Home Assistant Companion. ZoneFlow ci invia guasti ed eventi importanti, e anche il riepilogo settimanale se lo attivi. Senza, finisce tutto solo nel log.",
+          "weather_entity": "Un'entità meteo con previsioni. ZoneFlow rimanda un'irrigazione quando è prevista abbastanza pioggia (ma non per troppi giorni di fila), e usa la sua temperatura attuale per la protezione antigelo se non c'è un sensore di temperatura.",
+          "soil_type": "Solo come riferimento: da solo non cambia l'irrigazione. Compare nel sensore Profilo del terreno della zona e ti aiuta a scegliere impulsi e pause tra impulsi nella pagina del dispositivo: il terreno argilloso assorbe l'acqua lentamente e vuole più impulsi, più brevi, con pause più lunghe tra uno e l'altro; quello sabbioso se la cava con meno impulsi.",
+          "drainage": "Quanto in fretta sparisce l'acqua dopo un'irrigazione abbondante o la pioggia. Solo come riferimento, come il tipo di terreno: un terreno che drena male vuole più impulsi, più brevi.",
+          "slope": "Solo come riferimento, come il tipo di terreno: in pendenza l'acqua scorre via prima di penetrare, quindi aiutano più impulsi, più brevi.",
+          "irrigation_method": "Come arriva l'acqua. Solo come riferimento, come il tipo di terreno; quanta acqua dà lo decide la portata (Configura → Portata: calcolala dagli erogatori).",
+          "growth_ramp_profile": "Dà meno acqua alle piante giovani e la aumenta fino all'obiettivo settimanale pieno man mano che crescono, a partire dalla Data di impianto / trapianto nella pagina del dispositivo della zona. Disattivato: sempre l'obiettivo pieno. Personalizzato: disegna la tua curva nella pagina del dispositivo.",
+          "csv_path": "Un file in cui ogni irrigazione, salto e avviso viene scritto con i suoi numeri, per controllare cosa ha fatto ZoneFlow (si apre con qualsiasi foglio di calcolo). Il file proposto nella tua cartella config va benissimo.",
+          "deep_soak_enabled": "L'irrigazione profonda è un'irrigazione abbondante e lenta ogni due settimane circa (14 giorni per iniziare) che bagna il terreno in profondità, così le radici scendono in basso. Ottima per alberi, arbusti e perenni; disattivala per piante a radici superficiali come insalata ed erbe aromatiche. L'irrigazione ordinaria funziona in ogni caso.",
+          "deep_soak_time": "Quando parte l'irrigazione profonda nei giorni previsti, se il suo avvio qui sotto è l'orario fisso. La mattina presto è l'ideale: si perde meno acqua per sole e vento.",
+          "routine_time": "Quando ZoneFlow controlla ogni giorno se tocca all'irrigazione ordinaria, e irriga se è così. Quanto spesso tocca dipende dal meteo e dal tuo obiettivo settimanale. La mattina presto è l'ideale.",
+          "deep_soak_sun_mode": "Avvia l'irrigazione profonda all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
+          "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
+          "routine_sun_mode": "Avvia l'irrigazione ordinaria all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
+          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
+          "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Numero di erogatori (gocciolatori, spruzzatori) nella zona",
           "emitter_flow": "Portata di un erogatore",
           "area": "Area che bagnano"
+        },
+        "data_description": {
+          "emitters": "Conta tutti i gocciolatori o spruzzatori alimentati dalla valvola di questa zona.",
+          "emitter_flow": "Quanto dà un erogatore in un'ora: è stampato sull'erogatore o sulla confezione (es. 2 L/h, 0,5 gal/h).",
+          "area": "L'area che si bagna davvero. Per i gocciolatori su singole piante, somma le chiazze bagnate intorno a loro, non l'intera aiuola."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Apre la valvola per {minutes} minuti come ciclo di manutenzione (non conta come irrigazione, ma i suoi minuti contano per il limite di sicurezza giornaliero) e calcola la portata dai litri del flussometro. Mentre è in funzione, il flussometro deve misurare solo l'acqua di questa zona. Il risultato arriva come messaggio sul telefono e viene impostato automaticamente; disattivare la Modalità manutenzione lo annulla.",
         "data": {
           "area": "Area bagnata dagli erogatori della zona"
+        },
+        "data_description": {
+          "area": "L'area che gli erogatori della zona bagnano davvero. Per i gocciolatori su singole piante, somma le chiazze bagnate intorno a loro, non l'intera aiuola."
         }
       }
     },

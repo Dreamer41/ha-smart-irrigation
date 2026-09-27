@@ -286,3 +286,19 @@ def test_regional_copies_match(regional, base):
     for integration texts: those files are copies, kept identical."""
     folder = ROOT / "translations"
     assert (folder / f"{regional}.json").read_text(encoding="utf-8") == (folder / f"{base}.json").read_text(encoding="utf-8")
+
+
+def test_every_setup_field_has_a_label_and_an_explanation():
+    """The grey help line under each field is what people who set ZoneFlow up
+    by hand go on: every field of every setup and settings form has one."""
+    from custom_components.zoneflow.config_flow import _schema
+
+    english = json.loads((ROOT / "translations" / "en.json").read_text(encoding="utf-8"))
+    fields = {str(key.schema) for key in _schema({}).schema}
+    for flow, step in (("config", "entities"), ("options", "settings")):
+        assert set(english[flow]["step"][step]["data"]) == fields, (flow, step)
+    for flow in ("config", "options"):
+        for name, step in english[flow]["step"].items():
+            labels = step.get("data", {})
+            assert set(step.get("data_description", {})) == set(labels), (flow, name)
+            assert all(text.strip() for text in step.get("data_description", {}).values()), (flow, name)

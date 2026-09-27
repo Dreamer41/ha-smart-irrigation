@@ -6,8 +6,11 @@
         "description": "Anna tälle kasteluvyöhykkeelle lyhyt nimi (esim. \"Etunurmikko\", \"Avokadopuu\"). Lisää vyöhykkeitä myöhemmin lisäämällä tämä integraatio uudelleen.",
         "data": {
           "zone_name": "Vyöhykkeen nimi",
-          "unit_system": "Yksiköt",
-          "plant": "Mitä on istutettu (esitäyttää tavoitteet ja asetukset; kaikkia voi muuttaa myöhemmin)"
+          "plant": "Mitä on istutettu"
+        },
+        "data_description": {
+          "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
+          "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, jaksot, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Venttiilin kytkin",
           "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
-          "pump_id": "Yhteisen pumpun tunnus (valinnainen, esim. \"Pumppu A\" -- tarvitaan vain, jos vyöhyke jakaa fyysisen pumpun toisen vyöhykkeen kanssa)",
+          "pump_id": "Yhteisen pumpun tunnus (valinnainen)",
           "rain_counter_entity": "Sademittarin kippauslaskuri (valinnainen)",
           "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
           "flow_meter_entity": "Virtausmittari (valinnainen)",
-          "soil_moisture_entity": "Maan kosteusanturi (valinnainen, % -- ohjaa peruskastelua suoraan laskennallisen aikataulun sijaan)",
+          "soil_moisture_entity": "Maan kosteusanturi (valinnainen)",
           "notify_entity": "Puhelimen ilmoituskohde (valinnainen)",
           "weather_entity": "Sääennusteen lähde (valinnainen)",
           "soil_type": "Maalaji",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Syväkastelun ajoitus",
           "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
           "routine_sun_mode": "Peruskastelun ajoitus",
-          "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)"
+          "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
+          "unit_system": "Yksiköt"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
+          "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, että pumppu todella ottaa virtaa, ja varoittaa sinua, jos ei ota. Jätä tyhjäksi, jos sinulla ei ole sellaista.",
+          "pump_id": "Vain vyöhykkeille, jotka käyttävät samaa pumppua: anna niille kaikille tähän sama nimi (mikä tahansa, esim. \"Pumppu A\"), niin ne vuorottelevat eivätkä käy yhtä aikaa. Jätä tyhjäksi, jos vyöhykkeellä on oma pumppu tai vedensyöttö.",
+          "rain_counter_entity": "Sademittarin laskuri, joka kasvaa yhdellä aina, kun mittarin kuppi kippaa. ZoneFlow vähentää silloin sateen kastelumäärästä, antaa märän maan ensin kuivua ja keskeyttää kastelun, kun alkaa sataa. Yhden kippauksen sademäärän asetat vyöhykkeen laitesivulla kohdassa Sademittarin mm/kippaus (kalibrointi). Ilman sademittaria ZoneFlow kastelee kuin ei koskaan sataisi.",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi. Sen avulla ZoneFlow kastelee itsestään enemmän helteellä ja vähemmän viileällä säällä, ja hallasuoja estää kastelun pakkasella. Ilman anturia asetus Vara- / käsisäätölämpötila ratkaisee.",
+          "flow_meter_entity": "Vesimittari, joka laskee kokonaismäärää ylöspäin (litroina, gallonoina tai m³). ZoneFlow kirjaa silloin, paljonko vettä kukin kastelu todella käytti, varoittaa sinua, jos pumppu kävi mutta vettä ei virrannut, ja voi mitata virtaaman puolestasi (Määritä → Virtaama).",
+          "soil_moisture_entity": "Maan kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa peruskastelua, märällä maalla se ohitetaan, ja niiden välillä noudatetaan normaalia aikataulua. Kuiva- ja märkäraja ovat vyöhykkeen laitesivulla.",
+          "notify_entity": "Puhelimesi ilmoitusentiteetti Home Assistant Companion -sovelluksesta. ZoneFlow lähettää sinne viat ja tärkeät tapahtumat sekä viikkoyhteenvedon, jos otat sen käyttöön. Ilman sitä ne menevät vain lokiin.",
+          "weather_entity": "Sääentiteetti, jossa on ennuste. ZoneFlow jättää kastelun väliin, kun sadetta ennustetaan tarpeeksi (mutta ei liian monena päivänä peräkkäin), ja käyttää sen nykyistä lämpötilaa hallasuojaan, jos lämpötila-anturia ei ole.",
+          "soil_type": "Tiedoksi sinulle: tämä ei itsessään muuta kastelua. Maalaji näkyy vyöhykkeen Maaprofiili-anturissa ja auttaa valitsemaan jaksot ja imeytystauot laitesivulla: savimaa ottaa vettä hitaasti ja kaipaa useampia, lyhyempiä jaksoja ja pidempiä imeytystaukoja niiden välissä; hiekkamaalle riittää vähemmän jaksoja.",
+          "drainage": "Kuinka nopeasti vesi häviää runsaan kastelun tai sateen jälkeen. Tiedoksi, kuten maalaji: hitaasti läpäisevä maa kaipaa useampia, lyhyempiä jaksoja.",
+          "slope": "Tiedoksi, kuten maalaji: rinteessä vesi valuu pois ennen kuin ehtii imeytyä, joten useammat, lyhyemmät jaksot auttavat.",
+          "irrigation_method": "Miten vesi jaetaan. Tiedoksi, kuten maalaji; vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
+          "growth_ramp_profile": "Antaa nuorille kasveille vähemmän vettä ja nostaa määrää kasvien vanhetessa täyteen viikkotavoitteeseen, laskettuna vyöhykkeen laitesivun Istutus- / siirtopäivästä. Pois: aina täysi tavoite. Oma: määritä oma käyräsi laitesivulla.",
+          "csv_path": "Tiedosto, johon jokainen kastelu, ohitus ja varoitus kirjataan lukuineen, jotta voit tarkistaa, mitä ZoneFlow teki (aukeaa missä tahansa taulukkolaskentaohjelmassa). Ehdotettu tiedosto config-kansiossasi käy hyvin.",
+          "deep_soak_enabled": "Syväkastelu on runsas, hidas kastelu parin viikon välein (aluksi 14 päivän välein). Se kostuttaa maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; ota se pois käytöstä matalajuurisilta kasveilta, kuten salaatilta ja yrteiltä. Peruskastelu toimii joka tapauksessa.",
+          "deep_soak_time": "Milloin syväkastelu alkaa päivinä, jolloin se on vuorossa, kun alla olevaksi ajoitukseksi on valittu tämä kellonaika. Aikainen aamu on paras: vähemmän vettä menee hukkaan auringon ja tuulen takia.",
+          "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko peruskastelu vuorossa, ja kastelee, jos on. Kuinka usein se on vuorossa, riippuu säästä ja viikkotavoitteestasi. Aikainen aamu on paras.",
+          "deep_soak_sun_mode": "Aloita syväkastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
+          "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
+          "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
+          "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "Millainen kasvukausi on siellä, missä tämä vyöhyke on? Tämä vain esitäyttää seuraavan sivun lämpötilasäätimet -- voit muuttaa jokaista arvoa siellä ja myöhemmin vyöhykkeen laitesivulla.",
         "data": {
           "climate": "Ilmasto"
+        },
+        "data_description": {
+          "climate": "Valitse lähin vaihtoehto. Se vain esitäyttää lämpötilarajat seuraavalla sivulla."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Kuuman sään raja",
           "cool_temp_threshold": "Viileän sään raja",
           "fallback_temp": "Vara- / käsisäätölämpötila"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Kun kolmen viime päivän ylimpien lämpötilojen keskiarvo on tällä rajalla tai yli, vyöhyke käyttää asetusta Viikkotavoite: kuuma sää ja kastelee useammin.",
+          "cool_temp_threshold": "Kun keskiarvo on tämän rajan alla, vyöhyke käyttää asetusta Viikkotavoite: viileä sää. Niiden välissä sää on normaali.",
+          "fallback_temp": "Käytetään, kun todellista lukemaa ei ole. Ilman lämpötila-anturia tämä on käsisäätösi: nosta sitä helleaallon ajaksi, laske kylmän jakson ajaksi."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Venttiilin kytkin",
           "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
-          "pump_id": "Yhteisen pumpun tunnus (valinnainen, esim. \"Pumppu A\" -- tarvitaan vain, jos vyöhyke jakaa fyysisen pumpun toisen vyöhykkeen kanssa)",
+          "pump_id": "Yhteisen pumpun tunnus (valinnainen)",
           "rain_counter_entity": "Sademittarin kippauslaskuri (valinnainen)",
           "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
           "flow_meter_entity": "Virtausmittari (valinnainen)",
-          "soil_moisture_entity": "Maan kosteusanturi (valinnainen, % -- ohjaa peruskastelua suoraan laskennallisen aikataulun sijaan)",
+          "soil_moisture_entity": "Maan kosteusanturi (valinnainen)",
           "notify_entity": "Puhelimen ilmoituskohde (valinnainen)",
           "weather_entity": "Sääennusteen lähde (valinnainen)",
           "soil_type": "Maalaji",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Peruskastelun ajoitus",
           "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
           "unit_system": "Yksiköt"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
+          "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, että pumppu todella ottaa virtaa, ja varoittaa sinua, jos ei ota. Jätä tyhjäksi, jos sinulla ei ole sellaista.",
+          "pump_id": "Vain vyöhykkeille, jotka käyttävät samaa pumppua: anna niille kaikille tähän sama nimi (mikä tahansa, esim. \"Pumppu A\"), niin ne vuorottelevat eivätkä käy yhtä aikaa. Jätä tyhjäksi, jos vyöhykkeellä on oma pumppu tai vedensyöttö.",
+          "rain_counter_entity": "Sademittarin laskuri, joka kasvaa yhdellä aina, kun mittarin kuppi kippaa. ZoneFlow vähentää silloin sateen kastelumäärästä, antaa märän maan ensin kuivua ja keskeyttää kastelun, kun alkaa sataa. Yhden kippauksen sademäärän asetat vyöhykkeen laitesivulla kohdassa Sademittarin mm/kippaus (kalibrointi). Ilman sademittaria ZoneFlow kastelee kuin ei koskaan sataisi.",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi. Sen avulla ZoneFlow kastelee itsestään enemmän helteellä ja vähemmän viileällä säällä, ja hallasuoja estää kastelun pakkasella. Ilman anturia asetus Vara- / käsisäätölämpötila ratkaisee.",
+          "flow_meter_entity": "Vesimittari, joka laskee kokonaismäärää ylöspäin (litroina, gallonoina tai m³). ZoneFlow kirjaa silloin, paljonko vettä kukin kastelu todella käytti, varoittaa sinua, jos pumppu kävi mutta vettä ei virrannut, ja voi mitata virtaaman puolestasi (Määritä → Virtaama).",
+          "soil_moisture_entity": "Maan kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa peruskastelua, märällä maalla se ohitetaan, ja niiden välillä noudatetaan normaalia aikataulua. Kuiva- ja märkäraja ovat vyöhykkeen laitesivulla.",
+          "notify_entity": "Puhelimesi ilmoitusentiteetti Home Assistant Companion -sovelluksesta. ZoneFlow lähettää sinne viat ja tärkeät tapahtumat sekä viikkoyhteenvedon, jos otat sen käyttöön. Ilman sitä ne menevät vain lokiin.",
+          "weather_entity": "Sääentiteetti, jossa on ennuste. ZoneFlow jättää kastelun väliin, kun sadetta ennustetaan tarpeeksi (mutta ei liian monena päivänä peräkkäin), ja käyttää sen nykyistä lämpötilaa hallasuojaan, jos lämpötila-anturia ei ole.",
+          "soil_type": "Tiedoksi sinulle: tämä ei itsessään muuta kastelua. Maalaji näkyy vyöhykkeen Maaprofiili-anturissa ja auttaa valitsemaan jaksot ja imeytystauot laitesivulla: savimaa ottaa vettä hitaasti ja kaipaa useampia, lyhyempiä jaksoja ja pidempiä imeytystaukoja niiden välissä; hiekkamaalle riittää vähemmän jaksoja.",
+          "drainage": "Kuinka nopeasti vesi häviää runsaan kastelun tai sateen jälkeen. Tiedoksi, kuten maalaji: hitaasti läpäisevä maa kaipaa useampia, lyhyempiä jaksoja.",
+          "slope": "Tiedoksi, kuten maalaji: rinteessä vesi valuu pois ennen kuin ehtii imeytyä, joten useammat, lyhyemmät jaksot auttavat.",
+          "irrigation_method": "Miten vesi jaetaan. Tiedoksi, kuten maalaji; vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
+          "growth_ramp_profile": "Antaa nuorille kasveille vähemmän vettä ja nostaa määrää kasvien vanhetessa täyteen viikkotavoitteeseen, laskettuna vyöhykkeen laitesivun Istutus- / siirtopäivästä. Pois: aina täysi tavoite. Oma: määritä oma käyräsi laitesivulla.",
+          "csv_path": "Tiedosto, johon jokainen kastelu, ohitus ja varoitus kirjataan lukuineen, jotta voit tarkistaa, mitä ZoneFlow teki (aukeaa missä tahansa taulukkolaskentaohjelmassa). Ehdotettu tiedosto config-kansiossasi käy hyvin.",
+          "deep_soak_enabled": "Syväkastelu on runsas, hidas kastelu parin viikon välein (aluksi 14 päivän välein). Se kostuttaa maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; ota se pois käytöstä matalajuurisilta kasveilta, kuten salaatilta ja yrteiltä. Peruskastelu toimii joka tapauksessa.",
+          "deep_soak_time": "Milloin syväkastelu alkaa päivinä, jolloin se on vuorossa, kun alla olevaksi ajoitukseksi on valittu tämä kellonaika. Aikainen aamu on paras: vähemmän vettä menee hukkaan auringon ja tuulen takia.",
+          "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko peruskastelu vuorossa, ja kastelee, jos on. Kuinka usein se on vuorossa, riippuu säästä ja viikkotavoitteestasi. Aikainen aamu on paras.",
+          "deep_soak_sun_mode": "Aloita syväkastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
+          "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
+          "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
+          "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Suuttimien (tippusuuttimet, sumuttimet) määrä vyöhykkeellä",
           "emitter_flow": "Yhden suuttimen virtaama",
           "area": "Kasteltava ala"
+        },
+        "data_description": {
+          "emitters": "Laske kaikki tippusuuttimet tai sumuttimet, joille tämän vyöhykkeen venttiili syöttää vettä.",
+          "emitter_flow": "Paljonko yksi suutin antaa tunnissa: se on painettu suuttimeen tai sen pakkaukseen (esim. 2 L/h, 0,5 gal/h).",
+          "area": "Ala, joka oikeasti kastuu. Jos tippusuuttimet ovat yksittäisten kasvien juurella, laske yhteen kasvien ympärille kastuvat alueet, älä koko penkkiä."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Pitää venttiiliä auki {minutes} min huoltoajona (ei lasketa kasteluksi, mutta minuutit lasketaan päivän käyntiajan turvarajaan) ja laskee virtaaman virtausmittarin litroista. Mittarin on mitattava ajon aikana vain tämän vyöhykkeen vettä. Tulos tulee puhelinviestinä ja asetetaan automaattisesti; Huoltotilan kytkeminen pois peruu mittauksen.",
         "data": {
           "area": "Vyöhykkeen suuttimien kastelema ala"
+        },
+        "data_description": {
+          "area": "Ala, jonka vyöhykkeen suuttimet oikeasti kastelevat. Jos tippusuuttimet ovat yksittäisten kasvien juurella, laske yhteen kasvien ympärille kastuvat alueet, älä koko penkkiä."
         }
       }
     },

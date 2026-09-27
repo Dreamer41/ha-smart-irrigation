@@ -6,8 +6,11 @@
         "description": "Nadaj tej strefie nawadniania krótką nazwę (np. „Trawnik przed domem”, „Awokado”). Aby dodać kolejne strefy, dodaj tę integrację ponownie.",
         "data": {
           "zone_name": "Nazwa strefy",
-          "unit_system": "Jednostki",
-          "plant": "Co tu rośnie (wstępnie ustawia dawki i ustawienia; wszystko można później zmienić)"
+          "plant": "Co tu rośnie"
+        },
+        "data_description": {
+          "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
+          "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, porcje, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Przełącznik zaworu",
           "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
-          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie, np. „Pompa A” – tylko gdy ta strefa dzieli fizyczną pompę z inną strefą)",
+          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie)",
           "rain_counter_entity": "Licznik przechyleń deszczomierza (opcjonalnie)",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
           "flow_meter_entity": "Przepływomierz (opcjonalnie)",
-          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie, % – jeśli ustawiony, to on decyduje o regularnym podlewaniu zamiast wyliczonego harmonogramu)",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
           "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
           "weather_entity": "Źródło prognozy pogody (opcjonalnie)",
           "soil_type": "Rodzaj gleby",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Wyzwalacz głębokiego podlewania",
           "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
           "routine_sun_mode": "Wyzwalacz regularnego podlewania",
-          "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)"
+          "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)",
+          "unit_system": "Jednostki"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
+          "pump_power_entity": "Czujnik mocy (W) pompy, np. z inteligentnego gniazdka. Przy każdym podlewaniu ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega Cię, jeśli nie. Zostaw puste, jeśli go nie masz.",
+          "pump_id": "Tylko dla stref zasilanych z tej samej pompy: wpisz im tu tę samą nazwę (dowolną, np. „Pompa A”), a będą podlewać po kolei zamiast jednocześnie. Zostaw puste, jeśli ta strefa ma własną pompę lub własne źródło wody.",
+          "rain_counter_entity": "Licznik deszczomierza, który rośnie o jeden przy każdym przechyle korytka. ZoneFlow odejmuje wtedy deszcz od tego, co podlewa, pozwala mokrej glebie najpierw przeschnąć i przerywa podlewanie, gdy zaczyna padać. Ile deszczu daje jeden przechył, ustawiasz na stronie urządzenia strefy („Deszczomierz: mm na przechył”). Bez deszczomierza ZoneFlow podlewa tak, jakby nigdy nie padało.",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej. Dzięki niemu ZoneFlow sam podlewa więcej, gdy jest gorąco, i mniej, gdy jest chłodno, a ochrona przed przymrozkiem wstrzymuje podlewanie, gdy jest mróz. Bez niego decyduje ustawienie „Temperatura zastępcza / ręczna”.",
+          "flow_meter_entity": "Przepływomierz, który zlicza całkowitą objętość (litry, galony lub m³). ZoneFlow zapisuje wtedy, ile wody naprawdę zużyło każde podlewanie, ostrzega Cię, gdy pompa pracowała, a woda nie płynęła, i może sam zmierzyć wydajność (Konfiguruj → Wydajność).",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (%) przy korzeniach roślin w tej strefie. Sucha gleba przyspiesza regularne podlewanie, mokra je pomija, a pomiędzy decyduje zwykły harmonogram. Progi „sucha” i „mokra” ustawisz na stronie urządzenia strefy.",
+          "notify_entity": "Encja powiadomień Twojego telefonu z aplikacji Home Assistant Companion. ZoneFlow wysyła tam usterki i ważne zdarzenia, a także podsumowanie tygodnia, jeśli je włączysz. Bez niej trafiają one tylko do dziennika.",
+          "weather_entity": "Encja pogody z prognozą. ZoneFlow wstrzymuje podlewanie, gdy prognoza zapowiada dość deszczu (ale nie przez zbyt wiele dni z rzędu), a gdy nie ma czujnika temperatury, używa jej bieżącej temperatury do ochrony przed przymrozkiem.",
+          "soil_type": "Informacyjnie: samo nie zmienia podlewania. Jest widoczne na czujniku „Profil gleby” strefy i pomaga dobrać porcje i przerwy między nimi na stronie urządzenia: gleba ilasta wchłania wodę powoli i potrzebuje więcej krótszych porcji z dłuższymi przerwami; piaszczysta przyjmie ją w mniejszej liczbie porcji.",
+          "drainage": "Jak szybko woda znika po obfitym podlewaniu lub deszczu. Informacyjnie, jak rodzaj gleby: gleba o niskiej przepuszczalności potrzebuje więcej krótszych porcji.",
+          "slope": "Informacyjnie, jak rodzaj gleby: na zboczu woda spływa, zanim wsiąknie, więc pomaga więcej krótszych porcji.",
+          "irrigation_method": "Jak woda trafia do roślin. Informacyjnie, jak rodzaj gleby; ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
+          "growth_ramp_profile": "Daje młodym roślinom mniej wody i zwiększa ją do pełnej dawki tygodniowej, w miarę jak rosną, licząc od daty w polu „Data sadzenia / przesadzenia” na stronie urządzenia strefy. Brak: zawsze pełna dawka. Własna krzywa: ustaw ją sam na stronie urządzenia.",
+          "csv_path": "Plik, do którego trafia każde podlewanie, pominięcie i ostrzeżenie wraz z liczbami, żeby można było sprawdzić, co zrobił ZoneFlow (otworzysz go w każdym arkuszu kalkulacyjnym). Proponowany plik w folderze konfiguracji jest w porządku.",
+          "deep_soak_enabled": "Głębokie podlewanie to duża, powolna dawka wody co kilka tygodni (na początek co 14 dni), która zwilża glebę głęboko, żeby korzenie rosły w głąb. Dobre dla drzew, krzewów i bylin; wyłącz je dla roślin o płytkich korzeniach, takich jak sałata i zioła. Regularne podlewanie działa niezależnie od tego.",
+          "deep_soak_time": "O której startuje głębokie podlewanie w dniu, gdy przypada, jeśli jego wyzwalacz poniżej to stała godzina. Najlepiej wcześnie rano: mniej wody traci się przez słońce i wiatr.",
+          "routine_time": "O której ZoneFlow codziennie sprawdza, czy przypada regularne podlewanie, i podlewa, jeśli tak. Jak często przypada, zależy od pogody i Twojej dawki tygodniowej. Najlepiej wcześnie rano.",
+          "deep_soak_sun_mode": "Uruchamiaj głębokie podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
+          "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
+          "routine_sun_mode": "Uruchamiaj regularne podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
+          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
+          "unit_system": "Co pokazuje ta strefa: jak w Home Assistant albo zawsze jednostki metryczne (mm, °C, litry) lub imperialne (cale, °F, galony). Zmienia tylko to, co widzisz, nigdy ilość podlewanej wody."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "Jak wygląda sezon wegetacyjny tam, gdzie jest ta strefa? To tylko wstępnie ustawia suwaki temperatur na następnej stronie – każdą wartość możesz tam zmienić, a później także na stronie urządzenia strefy.",
         "data": {
           "climate": "Klimat"
+        },
+        "data_description": {
+          "climate": "Wybierz najbliższy. Ustawia tylko progi temperatury na następnej stronie."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Próg upału",
           "cool_temp_threshold": "Próg chłodu",
           "fallback_temp": "Temperatura zastępcza / ręczna"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Gdy średnia z najwyższych temperatur z ostatnich 3 dni osiąga ten próg lub go przekracza, strefa stosuje ustawienie „Dawka tygodniowa – upał” i podlewa częściej.",
+          "cool_temp_threshold": "Gdy ta średnia jest niższa, strefa stosuje ustawienie „Dawka tygodniowa – chłód”. Pomiędzy jest normalna pogoda.",
+          "fallback_temp": "Używana, gdy brak prawdziwego odczytu. Bez czujnika temperatury to Twoje ręczne sterowanie: podnieś ją na czas upałów, obniż na czas chłodów."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Przełącznik zaworu",
           "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
-          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie, np. „Pompa A” – tylko gdy ta strefa dzieli fizyczną pompę z inną strefą)",
+          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie)",
           "rain_counter_entity": "Licznik przechyleń deszczomierza (opcjonalnie)",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
           "flow_meter_entity": "Przepływomierz (opcjonalnie)",
-          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie, % – jeśli ustawiony, to on decyduje o regularnym podlewaniu zamiast wyliczonego harmonogramu)",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
           "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
           "weather_entity": "Źródło prognozy pogody (opcjonalnie)",
           "soil_type": "Rodzaj gleby",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Wyzwalacz regularnego podlewania",
           "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)",
           "unit_system": "Jednostki"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
+          "pump_power_entity": "Czujnik mocy (W) pompy, np. z inteligentnego gniazdka. Przy każdym podlewaniu ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega Cię, jeśli nie. Zostaw puste, jeśli go nie masz.",
+          "pump_id": "Tylko dla stref zasilanych z tej samej pompy: wpisz im tu tę samą nazwę (dowolną, np. „Pompa A”), a będą podlewać po kolei zamiast jednocześnie. Zostaw puste, jeśli ta strefa ma własną pompę lub własne źródło wody.",
+          "rain_counter_entity": "Licznik deszczomierza, który rośnie o jeden przy każdym przechyle korytka. ZoneFlow odejmuje wtedy deszcz od tego, co podlewa, pozwala mokrej glebie najpierw przeschnąć i przerywa podlewanie, gdy zaczyna padać. Ile deszczu daje jeden przechył, ustawiasz na stronie urządzenia strefy („Deszczomierz: mm na przechył”). Bez deszczomierza ZoneFlow podlewa tak, jakby nigdy nie padało.",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej. Dzięki niemu ZoneFlow sam podlewa więcej, gdy jest gorąco, i mniej, gdy jest chłodno, a ochrona przed przymrozkiem wstrzymuje podlewanie, gdy jest mróz. Bez niego decyduje ustawienie „Temperatura zastępcza / ręczna”.",
+          "flow_meter_entity": "Przepływomierz, który zlicza całkowitą objętość (litry, galony lub m³). ZoneFlow zapisuje wtedy, ile wody naprawdę zużyło każde podlewanie, ostrzega Cię, gdy pompa pracowała, a woda nie płynęła, i może sam zmierzyć wydajność (Konfiguruj → Wydajność).",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (%) przy korzeniach roślin w tej strefie. Sucha gleba przyspiesza regularne podlewanie, mokra je pomija, a pomiędzy decyduje zwykły harmonogram. Progi „sucha” i „mokra” ustawisz na stronie urządzenia strefy.",
+          "notify_entity": "Encja powiadomień Twojego telefonu z aplikacji Home Assistant Companion. ZoneFlow wysyła tam usterki i ważne zdarzenia, a także podsumowanie tygodnia, jeśli je włączysz. Bez niej trafiają one tylko do dziennika.",
+          "weather_entity": "Encja pogody z prognozą. ZoneFlow wstrzymuje podlewanie, gdy prognoza zapowiada dość deszczu (ale nie przez zbyt wiele dni z rzędu), a gdy nie ma czujnika temperatury, używa jej bieżącej temperatury do ochrony przed przymrozkiem.",
+          "soil_type": "Informacyjnie: samo nie zmienia podlewania. Jest widoczne na czujniku „Profil gleby” strefy i pomaga dobrać porcje i przerwy między nimi na stronie urządzenia: gleba ilasta wchłania wodę powoli i potrzebuje więcej krótszych porcji z dłuższymi przerwami; piaszczysta przyjmie ją w mniejszej liczbie porcji.",
+          "drainage": "Jak szybko woda znika po obfitym podlewaniu lub deszczu. Informacyjnie, jak rodzaj gleby: gleba o niskiej przepuszczalności potrzebuje więcej krótszych porcji.",
+          "slope": "Informacyjnie, jak rodzaj gleby: na zboczu woda spływa, zanim wsiąknie, więc pomaga więcej krótszych porcji.",
+          "irrigation_method": "Jak woda trafia do roślin. Informacyjnie, jak rodzaj gleby; ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
+          "growth_ramp_profile": "Daje młodym roślinom mniej wody i zwiększa ją do pełnej dawki tygodniowej, w miarę jak rosną, licząc od daty w polu „Data sadzenia / przesadzenia” na stronie urządzenia strefy. Brak: zawsze pełna dawka. Własna krzywa: ustaw ją sam na stronie urządzenia.",
+          "csv_path": "Plik, do którego trafia każde podlewanie, pominięcie i ostrzeżenie wraz z liczbami, żeby można było sprawdzić, co zrobił ZoneFlow (otworzysz go w każdym arkuszu kalkulacyjnym). Proponowany plik w folderze konfiguracji jest w porządku.",
+          "deep_soak_enabled": "Głębokie podlewanie to duża, powolna dawka wody co kilka tygodni (na początek co 14 dni), która zwilża glebę głęboko, żeby korzenie rosły w głąb. Dobre dla drzew, krzewów i bylin; wyłącz je dla roślin o płytkich korzeniach, takich jak sałata i zioła. Regularne podlewanie działa niezależnie od tego.",
+          "deep_soak_time": "O której startuje głębokie podlewanie w dniu, gdy przypada, jeśli jego wyzwalacz poniżej to stała godzina. Najlepiej wcześnie rano: mniej wody traci się przez słońce i wiatr.",
+          "routine_time": "O której ZoneFlow codziennie sprawdza, czy przypada regularne podlewanie, i podlewa, jeśli tak. Jak często przypada, zależy od pogody i Twojej dawki tygodniowej. Najlepiej wcześnie rano.",
+          "deep_soak_sun_mode": "Uruchamiaj głębokie podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
+          "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
+          "routine_sun_mode": "Uruchamiaj regularne podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
+          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
+          "unit_system": "Co pokazuje ta strefa: jak w Home Assistant albo zawsze jednostki metryczne (mm, °C, litry) lub imperialne (cale, °F, galony). Zmienia tylko to, co widzisz, nigdy ilość podlewanej wody."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Liczba emiterów (kroplowników, zraszaczy) w strefie",
           "emitter_flow": "Wydajność jednego emitera",
           "area": "Powierzchnia, którą podlewają"
+        },
+        "data_description": {
+          "emitters": "Policz wszystkie kroplowniki lub zraszacze zasilane przez zawór tej strefy.",
+          "emitter_flow": "Ile wody daje jeden emiter na godzinę: jest to podane na emiterze lub opakowaniu (np. 2 L/h, 0,5 gal/h).",
+          "area": "Powierzchnia, która faktycznie jest mokra. Przy kroplownikach pod pojedynczymi roślinami zsumuj mokre plamy wokół nich, a nie całą grządkę."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Otwiera zawór na {minutes} min jako uruchomienie serwisowe (nie liczy się jako podlewanie, ale jego minuty wliczają się do dzisiejszego limitu czasu pracy) i oblicza wydajność z litrów zmierzonych przez przepływomierz. W tym czasie przepływomierz musi mierzyć wyłącznie wodę tej strefy. Wynik przyjdzie jako wiadomość na telefon i zostanie ustawiony automatycznie; wyłączenie trybu serwisowego przerywa pomiar.",
         "data": {
           "area": "Powierzchnia podlewana przez emitery strefy"
+        },
+        "data_description": {
+          "area": "Powierzchnia, którą emitery strefy faktycznie zwilżają. Przy kroplownikach pod pojedynczymi roślinami zsumuj mokre plamy wokół nich, a nie całą grządkę."
         }
       }
     },

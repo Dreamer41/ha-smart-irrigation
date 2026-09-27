@@ -6,8 +6,11 @@
         "description": "Dê um nome curto a esta zona de rega (ex.: \"Jardim da frente\", \"Abacateiro\"). Para adicionar mais zonas, adicione esta integração novamente.",
         "data": {
           "zone_name": "Nome da zona",
-          "unit_system": "Unidades",
-          "plant": "O que está plantado (preenche metas e definições; tudo pode ser alterado depois)"
+          "plant": "O que está plantado"
+        },
+        "data_description": {
+          "zone_name": "Passa a ser o nome do dispositivo da zona e o início dos nomes das suas entidades, e aparece nas mensagens do telefone. Ex.: \"Canteiro de tomates\", \"Jardim da frente\".",
+          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente de cultura, pulsos, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
-          "pump_id": "ID da bomba partilhada (opcional, ex.: \"Bomba A\" -- só se esta zona partilhar uma bomba física com outra zona)",
+          "pump_id": "ID da bomba partilhada (opcional)",
           "rain_counter_entity": "Contador do medidor de chuva (opcional)",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Medidor de fluxo (opcional)",
-          "soil_moisture_entity": "Sensor de humidade do solo (opcional, % -- se definido, decide a rega de rotina diretamente em vez do horário calculado)",
+          "soil_moisture_entity": "Sensor de humidade do solo (opcional)",
           "notify_entity": "Destino das notificações no telefone (opcional)",
           "weather_entity": "Fonte da previsão do tempo (opcional)",
           "soil_type": "Tipo de solo",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Início da rega profunda",
           "deep_soak_sun_offset_minutes": "Rega profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da rega de rotina",
-          "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol"
+          "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol",
+          "unit_system": "Unidades"
+        },
+        "data_description": {
+          "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
+          "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Em cada rega, o ZoneFlow verifica se a bomba consome mesmo energia e avisa-o se não consumir. Deixe em branco se não tiver.",
+          "pump_id": "Só para zonas que usam a mesma bomba: dê-lhes aqui o mesmo nome (qualquer um, ex.: \"Bomba A\") e passam a regar à vez em vez de ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprios.",
+          "rain_counter_entity": "Um contador do medidor de chuva que sobe uma unidade a cada báscula. O ZoneFlow desconta então a chuva ao que rega, deixa o solo molhado secar primeiro e para uma rega quando começa a chover. Quanta chuva vale uma báscula define-se na página do dispositivo da zona (Medidor de chuva: mm por báscula). Sem medidor, o ZoneFlow rega como se nunca chovesse.",
+          "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow rega sozinho mais quando está calor e menos quando está fresco, e a proteção contra geada suspende a rega quando está a gelar. Sem ele, quem decide é a definição Temperatura de reserva / manual.",
+          "flow_meter_entity": "Um medidor de fluxo que conta o volume total (litros, galões ou m³). O ZoneFlow regista então quanta água cada rega gastou realmente, avisa-o se a bomba trabalhou mas a água não correu, e pode medir o fluxo por si (Configurar → Fluxo).",
+          "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado salta-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
+          "notify_entity": "A entidade de notificação do seu telefone, da app Home Assistant Companion. O ZoneFlow envia para lá avarias e eventos importantes, e também o resumo semanal se o ativar. Sem ela, ficam só no registo.",
+          "weather_entity": "Uma entidade meteorológica com previsão. O ZoneFlow adia uma rega quando está prevista chuva suficiente (mas não durante demasiados dias seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
+          "soil_type": "Serve de referência: por si só não altera a rega. Aparece no sensor Perfil do solo da zona e ajuda a escolher os pulsos e as pausas na página do dispositivo: o solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; o arenoso aguenta menos pulsos.",
+          "drainage": "A rapidez com que a água desaparece depois de uma rega forte ou de chuva. Serve de referência, como o tipo de solo: um solo com drenagem lenta prefere mais pulsos, mais curtos.",
+          "slope": "Serve de referência, como o tipo de solo: num declive, a água escorre antes de se infiltrar, por isso ajudam mais pulsos, mais curtos.",
+          "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
+          "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta-a até à meta semanal completa à medida que crescem, a contar da Data de plantação / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: defina a sua própria curva na página do dispositivo.",
+          "csv_path": "Um ficheiro onde cada rega, rega saltada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
+          "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
+          "deep_soak_time": "A hora a que a rega profunda começa nos dias em que calha, quando o início abaixo está na hora fixa. De manhã cedo é o melhor: perde-se menos água com o sol e o vento.",
+          "routine_time": "A hora a que o ZoneFlow verifica todos os dias se a rega de rotina é devida, e rega se for. A frequência depende do tempo e da sua meta semanal. De manhã cedo é o melhor.",
+          "deep_soak_sun_mode": "Inicie a rega profunda à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
+          "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
+          "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
+          "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "Como é a época de crescimento onde fica esta zona? Isto só preenche os valores de temperatura da página seguinte -- pode alterar todos lá e, mais tarde, na página do dispositivo da zona.",
         "data": {
           "climate": "Clima"
+        },
+        "data_description": {
+          "climate": "Escolha o mais parecido. Só preenche os limites de temperatura na página seguinte."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Limite de tempo quente",
           "cool_temp_threshold": "Limite de tempo fresco",
           "fallback_temp": "Temperatura de reserva / manual"
+        },
+        "data_description": {
+          "hot_temp_threshold": "Quando a média das máximas dos últimos 3 dias está neste valor ou acima, a zona usa a \"Rotina: meta semanal (quente)\" e rega com mais frequência.",
+          "cool_temp_threshold": "Quando essa média fica abaixo deste valor, a zona usa a \"Rotina: meta semanal (fresco)\". Entre os dois, o tempo é normal.",
+          "fallback_temp": "Usada quando não há leitura real. Sem sensor de temperatura, é o seu ajuste manual: suba-a numa onda de calor, baixe-a num período frio."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
-          "pump_id": "ID da bomba partilhada (opcional, ex.: \"Bomba A\" -- só se esta zona partilhar uma bomba física com outra zona)",
+          "pump_id": "ID da bomba partilhada (opcional)",
           "rain_counter_entity": "Contador do medidor de chuva (opcional)",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Medidor de fluxo (opcional)",
-          "soil_moisture_entity": "Sensor de humidade do solo (opcional, % -- se definido, decide a rega de rotina diretamente em vez do horário calculado)",
+          "soil_moisture_entity": "Sensor de humidade do solo (opcional)",
           "notify_entity": "Destino das notificações no telefone (opcional)",
           "weather_entity": "Fonte da previsão do tempo (opcional)",
           "soil_type": "Tipo de solo",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Início da rega de rotina",
           "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol",
           "unit_system": "Unidades"
+        },
+        "data_description": {
+          "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
+          "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Em cada rega, o ZoneFlow verifica se a bomba consome mesmo energia e avisa-o se não consumir. Deixe em branco se não tiver.",
+          "pump_id": "Só para zonas que usam a mesma bomba: dê-lhes aqui o mesmo nome (qualquer um, ex.: \"Bomba A\") e passam a regar à vez em vez de ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprios.",
+          "rain_counter_entity": "Um contador do medidor de chuva que sobe uma unidade a cada báscula. O ZoneFlow desconta então a chuva ao que rega, deixa o solo molhado secar primeiro e para uma rega quando começa a chover. Quanta chuva vale uma báscula define-se na página do dispositivo da zona (Medidor de chuva: mm por báscula). Sem medidor, o ZoneFlow rega como se nunca chovesse.",
+          "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow rega sozinho mais quando está calor e menos quando está fresco, e a proteção contra geada suspende a rega quando está a gelar. Sem ele, quem decide é a definição Temperatura de reserva / manual.",
+          "flow_meter_entity": "Um medidor de fluxo que conta o volume total (litros, galões ou m³). O ZoneFlow regista então quanta água cada rega gastou realmente, avisa-o se a bomba trabalhou mas a água não correu, e pode medir o fluxo por si (Configurar → Fluxo).",
+          "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado salta-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
+          "notify_entity": "A entidade de notificação do seu telefone, da app Home Assistant Companion. O ZoneFlow envia para lá avarias e eventos importantes, e também o resumo semanal se o ativar. Sem ela, ficam só no registo.",
+          "weather_entity": "Uma entidade meteorológica com previsão. O ZoneFlow adia uma rega quando está prevista chuva suficiente (mas não durante demasiados dias seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
+          "soil_type": "Serve de referência: por si só não altera a rega. Aparece no sensor Perfil do solo da zona e ajuda a escolher os pulsos e as pausas na página do dispositivo: o solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; o arenoso aguenta menos pulsos.",
+          "drainage": "A rapidez com que a água desaparece depois de uma rega forte ou de chuva. Serve de referência, como o tipo de solo: um solo com drenagem lenta prefere mais pulsos, mais curtos.",
+          "slope": "Serve de referência, como o tipo de solo: num declive, a água escorre antes de se infiltrar, por isso ajudam mais pulsos, mais curtos.",
+          "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
+          "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta-a até à meta semanal completa à medida que crescem, a contar da Data de plantação / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: defina a sua própria curva na página do dispositivo.",
+          "csv_path": "Um ficheiro onde cada rega, rega saltada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
+          "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
+          "deep_soak_time": "A hora a que a rega profunda começa nos dias em que calha, quando o início abaixo está na hora fixa. De manhã cedo é o melhor: perde-se menos água com o sol e o vento.",
+          "routine_time": "A hora a que o ZoneFlow verifica todos os dias se a rega de rotina é devida, e rega se for. A frequência depende do tempo e da sua meta semanal. De manhã cedo é o melhor.",
+          "deep_soak_sun_mode": "Inicie a rega profunda à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
+          "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
+          "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
+          "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Número de emissores (gotejadores, aspersores) na zona",
           "emitter_flow": "Fluxo de um emissor",
           "area": "Área que regam"
+        },
+        "data_description": {
+          "emitters": "Conte todos os gotejadores ou aspersores que a válvula desta zona alimenta.",
+          "emitter_flow": "O que um emissor dá por hora: vem impresso no emissor ou na embalagem (ex.: 2 L/h, 0,5 gal/h).",
+          "area": "A área que fica realmente molhada. Para gotejadores junto a plantas isoladas, some as manchas molhadas à volta delas, não o canteiro inteiro."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Abre a válvula durante {minutes} minutos como ciclo de manutenção (não conta como rega, mas os minutos contam para o limite de segurança diário) e calcula o fluxo a partir dos litros do medidor de fluxo. Enquanto isso, o medidor só pode medir a água desta zona. O resultado chega por mensagem no telefone e é aplicado automaticamente; desligar o Modo de manutenção cancela a medição.",
         "data": {
           "area": "Área que os emissores da zona regam"
+        },
+        "data_description": {
+          "area": "A área que os emissores da zona molham realmente. Para gotejadores junto a plantas isoladas, some as manchas molhadas à volta delas, não o canteiro inteiro."
         }
       }
     },

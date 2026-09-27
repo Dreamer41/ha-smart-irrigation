@@ -6,8 +6,11 @@
         "description": "Give this irrigation zone a short name (e.g. \"Front Lawn\", \"Avocado Tree\"). To add more zones later, add this integration again.",
         "data": {
           "zone_name": "Zone name",
-          "unit_system": "Units",
-          "plant": "What's planted (pre-fills targets and settings; all can be changed later)"
+          "plant": "What's planted"
+        },
+        "data_description": {
+          "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, pulses, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page."
         }
       },
       "entities": {
@@ -16,11 +19,11 @@
         "data": {
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
-          "pump_id": "Shared pump ID (optional, e.g. \"Pump A\" -- only needed if this zone shares a physical pump with another zone)",
+          "pump_id": "Shared pump ID (optional)",
           "rain_counter_entity": "Rain gauge tip counter (optional)",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
-          "soil_moisture_entity": "Soil moisture sensor (optional, % -- when set, decides routine watering directly instead of the modeled schedule)",
+          "soil_moisture_entity": "Soil moisture sensor (optional)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
           "soil_type": "Soil type",
@@ -35,7 +38,33 @@
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
-          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)",
+          "unit_system": "Units"
+        },
+        "data_description": {
+          "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
+          "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
+          "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
+          "rain_counter_entity": "A rain gauge counter that goes up by one with every tip of its bucket. ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. How much rain one tip is, you set on the zone's device page (Rain Gauge mm per Tip). Without a gauge, ZoneFlow waters as if it never rains.",
+          "outdoor_temp_entity": "An outdoor temperature sensor. With it, ZoneFlow waters more in hot weather and less in cool weather by itself, and the frost guard holds watering off when it's freezing. Without it, the Fallback / Manual Temperature setting decides.",
+          "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
+          "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
+          "notify_entity": "Your phone's notify entity from the Home Assistant Companion app. ZoneFlow sends faults and notable events there, and the weekly summary if you turn it on. Without one, they only go to the log.",
+          "weather_entity": "A weather entity with a forecast. ZoneFlow holds a watering off when enough rain is forecast (but not for too many days in a row), and uses its current temperature for the frost guard when there's no temperature sensor.",
+          "soil_type": "For your reference: it doesn't change the watering by itself. It's shown on the zone's Soil Profile sensor and helps you choose the pulses and soak times on the device page: clay takes water slowly and wants more, shorter pulses with longer soaks between them; sand can take it in fewer pulses.",
+          "drainage": "How fast water disappears after a heavy watering or rain. For your reference, like the soil type: slow-draining soil wants more, shorter pulses.",
+          "slope": "For your reference, like the soil type: on a slope, water runs off before it soaks in, so more, shorter pulses help.",
+          "irrigation_method": "How the water is delivered. For your reference, like the soil type; how much water it gives is set by the flow rate (Configure → Flow rate).",
+          "growth_ramp_profile": "Gives young plants less water and grows it to the full weekly target as they get older, counted from the Planting / Transplant Date on the zone's device page. Off: always the full target. Custom: draw your own curve on the device page.",
+          "csv_path": "A file where every watering, skip and warning is written with its numbers, for checking what ZoneFlow did (opens in any spreadsheet). The suggested file in your config folder is fine.",
+          "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
+          "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
+          "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters."
         }
       },
       "climate": {
@@ -43,6 +72,9 @@
         "description": "What is the growing season like where this zone is? This only pre-fills the temperature sliders on the next page -- you can change every value there, and later on the zone's device page.",
         "data": {
           "climate": "Climate"
+        },
+        "data_description": {
+          "climate": "Pick the closest match. It only fills in the temperature thresholds on the next page."
         }
       },
       "temperatures": {
@@ -52,6 +84,11 @@
           "hot_temp_threshold": "Hot weather threshold",
           "cool_temp_threshold": "Cool weather threshold",
           "fallback_temp": "Fallback / manual temperature"
+        },
+        "data_description": {
+          "hot_temp_threshold": "When the average of the last 3 days' highs is at or above this, the zone uses its Hot weekly target and waters more often.",
+          "cool_temp_threshold": "When that average is below this, the zone uses its Cool weekly target. In between is normal weather.",
+          "fallback_temp": "Used when there's no real reading. Without a temperature sensor this is your manual control: raise it for a heat wave, lower it for a cold spell."
         }
       }
     },
@@ -74,11 +111,11 @@
         "data": {
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
-          "pump_id": "Shared pump ID (optional, e.g. \"Pump A\" -- only needed if this zone shares a physical pump with another zone)",
+          "pump_id": "Shared pump ID (optional)",
           "rain_counter_entity": "Rain gauge tip counter (optional)",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
-          "soil_moisture_entity": "Soil moisture sensor (optional, % -- when set, decides routine watering directly instead of the modeled schedule)",
+          "soil_moisture_entity": "Soil moisture sensor (optional)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
           "soil_type": "Soil type",
@@ -95,6 +132,31 @@
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
           "unit_system": "Units"
+        },
+        "data_description": {
+          "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
+          "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
+          "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
+          "rain_counter_entity": "A rain gauge counter that goes up by one with every tip of its bucket. ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. How much rain one tip is, you set on the zone's device page (Rain Gauge mm per Tip). Without a gauge, ZoneFlow waters as if it never rains.",
+          "outdoor_temp_entity": "An outdoor temperature sensor. With it, ZoneFlow waters more in hot weather and less in cool weather by itself, and the frost guard holds watering off when it's freezing. Without it, the Fallback / Manual Temperature setting decides.",
+          "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
+          "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
+          "notify_entity": "Your phone's notify entity from the Home Assistant Companion app. ZoneFlow sends faults and notable events there, and the weekly summary if you turn it on. Without one, they only go to the log.",
+          "weather_entity": "A weather entity with a forecast. ZoneFlow holds a watering off when enough rain is forecast (but not for too many days in a row), and uses its current temperature for the frost guard when there's no temperature sensor.",
+          "soil_type": "For your reference: it doesn't change the watering by itself. It's shown on the zone's Soil Profile sensor and helps you choose the pulses and soak times on the device page: clay takes water slowly and wants more, shorter pulses with longer soaks between them; sand can take it in fewer pulses.",
+          "drainage": "How fast water disappears after a heavy watering or rain. For your reference, like the soil type: slow-draining soil wants more, shorter pulses.",
+          "slope": "For your reference, like the soil type: on a slope, water runs off before it soaks in, so more, shorter pulses help.",
+          "irrigation_method": "How the water is delivered. For your reference, like the soil type; how much water it gives is set by the flow rate (Configure → Flow rate).",
+          "growth_ramp_profile": "Gives young plants less water and grows it to the full weekly target as they get older, counted from the Planting / Transplant Date on the zone's device page. Off: always the full target. Custom: draw your own curve on the device page.",
+          "csv_path": "A file where every watering, skip and warning is written with its numbers, for checking what ZoneFlow did (opens in any spreadsheet). The suggested file in your config folder is fine.",
+          "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
+          "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
+          "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters."
         }
       },
       "flow_rate": {
@@ -104,6 +166,11 @@
           "emitters": "Number of emitters (drippers, sprayers) in the zone",
           "emitter_flow": "Flow of one emitter",
           "area": "Area they water"
+        },
+        "data_description": {
+          "emitters": "Count every dripper or sprayer this zone's valve feeds.",
+          "emitter_flow": "What one emitter gives per hour: it's printed on the emitter or its packaging (e.g. 2 L/h, 0.5 gal/h).",
+          "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
       },
       "flow_measure": {
@@ -111,6 +178,9 @@
         "description": "Runs the valve for {minutes} minutes as a service run (not counted as watering, but its minutes count toward today's runtime safety cap) and works the flow rate out from the flow meter's litres. The meter must only measure this zone's water while it runs. The result comes as a phone message and is set automatically; switching Service Mode off cancels it.",
         "data": {
           "area": "Area the zone's emitters water"
+        },
+        "data_description": {
+          "area": "The area the zone's emitters actually wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
       }
     },
