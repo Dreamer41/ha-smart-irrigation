@@ -47,14 +47,14 @@
           "pump_id": "Bara för zoner som går på samma pump: ge dem alla samma namn här (vilket som helst, t.ex. ”Pump A”), så turas de om i stället för att köra samtidigt. Lämna tomt om zonen har egen pump eller egen vattenförsörjning.",
           "rain_counter_entity": "En räknare på regnmätaren som ökar med ett för varje vipp. ZoneFlow drar då av regnet från det som ska vattnas, låter blöt jord torka upp först och stoppar en vattning när det börjar regna. Hur mycket regn en vipp motsvarar ställer du in på zonens enhetssida under ”Regnmätare mm per vipp (kalibrering)”. Utan regnmätare vattnar ZoneFlow som om det aldrig regnade.",
           "outdoor_temp_entity": "En utetemperatursensor. Med den vattnar ZoneFlow själv mer i varmt väder och mindre i svalt väder, och frostskyddet håller inne vattningen när det fryser. Utan den avgör inställningen ”Reserv-/manuell temperatur”.",
-          "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar då hur mycket vatten varje vattning faktiskt använde, varnar dig om pumpen gick men inget vatten rann, och kan mäta flödestakten åt dig (Konfigurera → Flödestakt).",
+          "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar då hur mycket vatten varje vattning faktiskt använde, varnar dig om pumpen gick men inget vatten rann, och kan mäta flödet åt dig (Konfigurera → Flöde).",
           "soil_moisture_entity": "En jordfuktighetssensor (%) i zonens rotzon. Torr jord tidigarelägger rutinvattningen, vid blöt jord hoppas den över, och däremellan avgör det vanliga schemat. Torr- och blötgränsen finns på zonens enhetssida.",
           "notify_entity": "Din mobils aviseringsentitet från Home Assistant Companion-appen. ZoneFlow skickar fel och viktiga händelser dit, och veckosammanfattningen om du slår på den. Utan den hamnar de bara i loggen.",
           "weather_entity": "En väderentitet med prognos. ZoneFlow håller inne en vattning när prognosen visar tillräckligt med regn (men inte för många dagar i rad), och använder dess aktuella temperatur för frostskyddet om det inte finns någon temperatursensor.",
           "soil_type": "Som referens för dig: den ändrar inte vattningen av sig själv. Jordarten visas på zonens sensor Jordprofil och hjälper dig att välja pulser och pauser på enhetssidan: lerjord tar upp vatten långsamt och vill ha fler, kortare pulser med längre pauser emellan; sandjord klarar sig med färre pulser.",
           "drainage": "Hur snabbt vattnet försvinner efter en rejäl vattning eller ett regn. Som referens, precis som jordarten: jord som dränerar långsamt vill ha fler, kortare pulser.",
           "slope": "Som referens, precis som jordarten: i en slänt rinner vattnet undan innan det hinner sjunka in, så fler, kortare pulser hjälper.",
-          "irrigation_method": "Hur vattnet kommer ut. Som referens, precis som jordarten; hur mycket vatten det ger styrs av flödestakten (Konfigurera → Flödestakt).",
+          "irrigation_method": "Hur vattnet kommer ut. Som referens, precis som jordarten; hur mycket vatten det ger styrs av flödet (Konfigurera → Flöde).",
           "growth_ramp_profile": "Ger unga plantor mindre vatten och trappar upp till hela veckomålet allt eftersom de växer, räknat från ”Planterings-/utplanteringsdatum” på zonens enhetssida. Av: alltid hela målet. Egen: ställ in din egen kurva på enhetssidan.",
           "csv_path": "En fil där varje vattning, överhoppning och varning skrivs ner med sina siffror, så att du kan kontrollera vad ZoneFlow gjorde (öppnas i vilket kalkylprogram som helst). Den föreslagna filen i din config-mapp går bra.",
           "deep_soak_enabled": "En djupvattning är en stor, långsam vattning med ett par veckors mellanrum (till att börja med var 14:e dag) som blöter jorden långt ner, så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av den för grunt rotade växter som sallat och kryddväxter. Rutinvattningen körs oavsett.",
@@ -103,8 +103,8 @@
         "title": "Konfigurera",
         "menu_options": {
           "settings": "Zoninställningar (entiteter, jord, schema…)",
-          "flow_rate": "Flödestakt: räkna ut från dropparna",
-          "flow_measure": "Flödestakt: mät med flödesmätaren"
+          "flow_rate": "Flöde: räkna ut från dropparna",
+          "flow_measure": "Flöde: mät med flödesmätaren"
         }
       },
       "settings": {
@@ -139,14 +139,14 @@
           "pump_id": "Bara för zoner som går på samma pump: ge dem alla samma namn här (vilket som helst, t.ex. ”Pump A”), så turas de om i stället för att köra samtidigt. Lämna tomt om zonen har egen pump eller egen vattenförsörjning.",
           "rain_counter_entity": "En räknare på regnmätaren som ökar med ett för varje vipp. ZoneFlow drar då av regnet från det som ska vattnas, låter blöt jord torka upp först och stoppar en vattning när det börjar regna. Hur mycket regn en vipp motsvarar ställer du in på zonens enhetssida under ”Regnmätare mm per vipp (kalibrering)”. Utan regnmätare vattnar ZoneFlow som om det aldrig regnade.",
           "outdoor_temp_entity": "En utetemperatursensor. Med den vattnar ZoneFlow själv mer i varmt väder och mindre i svalt väder, och frostskyddet håller inne vattningen när det fryser. Utan den avgör inställningen ”Reserv-/manuell temperatur”.",
-          "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar då hur mycket vatten varje vattning faktiskt använde, varnar dig om pumpen gick men inget vatten rann, och kan mäta flödestakten åt dig (Konfigurera → Flödestakt).",
+          "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar då hur mycket vatten varje vattning faktiskt använde, varnar dig om pumpen gick men inget vatten rann, och kan mäta flödet åt dig (Konfigurera → Flöde).",
           "soil_moisture_entity": "En jordfuktighetssensor (%) i zonens rotzon. Torr jord tidigarelägger rutinvattningen, vid blöt jord hoppas den över, och däremellan avgör det vanliga schemat. Torr- och blötgränsen finns på zonens enhetssida.",
           "notify_entity": "Din mobils aviseringsentitet från Home Assistant Companion-appen. ZoneFlow skickar fel och viktiga händelser dit, och veckosammanfattningen om du slår på den. Utan den hamnar de bara i loggen.",
           "weather_entity": "En väderentitet med prognos. ZoneFlow håller inne en vattning när prognosen visar tillräckligt med regn (men inte för många dagar i rad), och använder dess aktuella temperatur för frostskyddet om det inte finns någon temperatursensor.",
           "soil_type": "Som referens för dig: den ändrar inte vattningen av sig själv. Jordarten visas på zonens sensor Jordprofil och hjälper dig att välja pulser och pauser på enhetssidan: lerjord tar upp vatten långsamt och vill ha fler, kortare pulser med längre pauser emellan; sandjord klarar sig med färre pulser.",
           "drainage": "Hur snabbt vattnet försvinner efter en rejäl vattning eller ett regn. Som referens, precis som jordarten: jord som dränerar långsamt vill ha fler, kortare pulser.",
           "slope": "Som referens, precis som jordarten: i en slänt rinner vattnet undan innan det hinner sjunka in, så fler, kortare pulser hjälper.",
-          "irrigation_method": "Hur vattnet kommer ut. Som referens, precis som jordarten; hur mycket vatten det ger styrs av flödestakten (Konfigurera → Flödestakt).",
+          "irrigation_method": "Hur vattnet kommer ut. Som referens, precis som jordarten; hur mycket vatten det ger styrs av flödet (Konfigurera → Flöde).",
           "growth_ramp_profile": "Ger unga plantor mindre vatten och trappar upp till hela veckomålet allt eftersom de växer, räknat från ”Planterings-/utplanteringsdatum” på zonens enhetssida. Av: alltid hela målet. Egen: ställ in din egen kurva på enhetssidan.",
           "csv_path": "En fil där varje vattning, överhoppning och varning skrivs ner med sina siffror, så att du kan kontrollera vad ZoneFlow gjorde (öppnas i vilket kalkylprogram som helst). Den föreslagna filen i din config-mapp går bra.",
           "deep_soak_enabled": "En djupvattning är en stor, långsam vattning med ett par veckors mellanrum (till att börja med var 14:e dag) som blöter jorden långt ner, så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av den för grunt rotade växter som sallat och kryddväxter. Rutinvattningen körs oavsett.",
@@ -160,8 +160,8 @@
         }
       },
       "flow_rate": {
-        "title": "Droppares flödestakt",
-        "description": "Hur mycket vatten zonens droppare ger på ytan de väter. 1 liter på 1 m² är 1 mm. För droppare vid enskilda plantor, använd ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Kalibrering av flödestakt.",
+        "title": "Dropparnas flöde",
+        "description": "Hur mycket vatten zonens droppare ger på ytan de väter. 1 liter på 1 m² är 1 mm. För droppare vid enskilda plantor, använd ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Dropparflöde (kalibrering).",
         "data": {
           "emitters": "Antal droppare (eller spridare) i zonen",
           "emitter_flow": "Flöde per droppare",
@@ -174,8 +174,8 @@
         }
       },
       "flow_measure": {
-        "title": "Mät flödestakten",
-        "description": "Kör ventilen i {minutes} minuter som servicekörning (räknas inte som vattning, men minuterna räknas mot dagens säkerhetsgräns för körtid) och räknar ut flödestakten från flödesmätarens liter. Mätaren får bara mäta den här zonens vatten under körningen. Resultatet kommer som ett mobilmeddelande och ställs in automatiskt; stänger du av Serviceläge avbryts mätningen.",
+        "title": "Mät flödet",
+        "description": "Kör ventilen i {minutes} minuter som servicekörning (räknas inte som vattning, men minuterna räknas mot dagens säkerhetsgräns för körtid) och räknar ut flödet från flödesmätarens liter. Mätaren får bara mäta den här zonens vatten under körningen. Resultatet kommer som ett mobilmeddelande och ställs in automatiskt; stänger du av Serviceläge avbryts mätningen.",
         "data": {
           "area": "Yta som zonens droppare vattnar"
         },
@@ -185,12 +185,12 @@
       }
     },
     "abort": {
-      "flow_rate_set": "Flödestakten är nu {rate}.",
+      "flow_rate_set": "Dropparnas flöde är nu {rate}.",
       "flow_rate_out_of_range": "Det blir {rate}, utanför vad inställningen tillåter ({low} till {high}). Kontrollera siffrorna – för droppare vid enskilda plantor, använd ytan de faktiskt väter, inte hela bädden.",
       "measuring": "Mäter: ventilen går i cirka {minutes} minuter. Resultatet kommer som ett mobilmeddelande (eller i Home Assistants aviseringar om zonen saknar mobil) och ställs in automatiskt.",
       "zone_not_loaded": "Zonen körs inte just nu, så det här går inte att göra.",
       "zone_busy": "Zonen (eller dess pump) är upptagen, eller så är dagens säkerhetsgräns för körtid förbrukad. Försök igen senare.",
-      "flow_rate_disabled": "Zonens entitet Kalibrering av flödestakt är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen."
+      "flow_rate_disabled": "Zonens entitet Dropparflöde (kalibrering) är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen."
     }
   },
   "selector": {
@@ -305,7 +305,7 @@
         "name": "Regnets nytta - kraftigt (10-20mm+)"
       },
       "flow_rate_mm_per_min": {
-        "name": "Kalibrering av flödestakt"
+        "name": "Dropparflöde (kalibrering)"
       },
       "deep_soak_target_mm": {
         "name": "Djupvattning: måldjup"
@@ -495,7 +495,7 @@
         "name": "Regn senaste 14d"
       },
       "avg_peak_temp_3d": {
-        "name": "Medel av dagens högsta, 3 dagar"
+        "name": "Maxtemperatur (medel 3 dagar)"
       },
       "next_irrigation_estimate": {
         "name": "Nästa bevattning (uppskattning)"
@@ -755,7 +755,7 @@
       "message": "Ingen zon har både en dag för Veckosammanfattning och en mobil för aviseringar, så det finns inget att skicka."
     },
     "summary_send_failed": {
-      "message": "Veckosammanfattningen kunde inte skickas: aviseringen till telefonen misslyckades. Kontrollera zonens aviseringsmål."
+      "message": "Veckosammanfattningen kunde inte skickas: aviseringen till telefonen misslyckades. Kontrollera zonens mobil för aviseringar."
     }
   },
   "issues": {
@@ -772,8 +772,8 @@
       "description": "Zonen {zone} skickar sina mobilaviseringar till {entity}, som inte längre finns i Home Assistant, så inga aviseringar kommer fram. Välj den aktuella mottagaren under zonens Konfigurera. Det här försvinner av sig självt när den finns igen."
     },
     "flow_rate_default": {
-      "title": "{zone}: kalibrera flödestakten",
-      "description": "Zonen {zone} använder fortfarande standardvärdet för Kalibrering av flödestakt (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flödestakt räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här."
+      "title": "{zone}: kalibrera dropparnas flöde",
+      "description": "Zonen {zone} använder fortfarande standardvärdet för Dropparflöde (kalibrering) (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flöde räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här."
     }
   }
 }

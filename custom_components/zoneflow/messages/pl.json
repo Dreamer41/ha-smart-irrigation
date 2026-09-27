@@ -64,7 +64,7 @@
     },
     "forecast_override": {
       "title": "⏱️ Podlewanie mimo prognozy",
-      "message": "Prognoza wciąż zapowiadała deszcz, ale nie padało (dni bez deszczu: {days}, limit tej strefy: {limit}) — podlewam mimo to."
+      "message": "Prognoza wciąż zapowiadała deszcz, ale nie padało (dni bez deszczu: {days}, limit tej strefy: {limit}) — mimo to strefa zostanie podlana."
     },
     "deep_soak_cap": {
       "title": "⚠️ Głębokie podlewanie pominięte: limit czasu",

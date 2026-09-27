@@ -68,11 +68,11 @@
     },
     "deep_soak_cap": {
       "title": "⚠️ Ingen djupvattning: körtidsgräns",
-      "message": "Den beräknade körtiden ({minutes} min) är över zonens säkerhetsgräns för djupvattning. Vattningen ställdes in — kontrollera flödestakten och måldjupet."
+      "message": "Den beräknade körtiden ({minutes} min) är över zonens säkerhetsgräns för djupvattning. Vattningen ställdes in — kontrollera flödet och måldjupet."
     },
     "routine_cap": {
       "title": "⚠️ Ingen rutinvattning: körtidsgräns",
-      "message": "Den beräknade körtiden ({minutes} min) är över zonens säkerhetsgräns för rutinvattning ({cap} min). Vattningen ställdes in — kontrollera flödestakten och veckomålen."
+      "message": "Den beräknade körtiden ({minutes} min) är över zonens säkerhetsgräns för rutinvattning ({cap} min). Vattningen ställdes in — kontrollera flödet och veckomålen."
     },
     "daily_cap": {
       "title": "⚠️ {cycle} överhoppad: daglig körtidsgräns",
@@ -126,12 +126,12 @@
       "message": "Det är {temp}, under frostskyddets {limit}. Den kollar igen varje timme i upp till {hours} timmar och väntar sedan till nästa schemalagda tid."
     },
     "flow_measured": {
-      "title": "💧 Flödestakten uppmätt",
-      "message": "{volume} på {minutes} min: flödestakten är nu {rate}."
+      "title": "💧 Flödet uppmätt",
+      "message": "{volume} på {minutes} min: dropparnas flöde är nu {rate}."
     },
     "flow_measure_failed": {
-      "title": "⚠️ Flödestakten kunde inte mätas",
-      "message": "Flödesmätaren räknade {volume} på {minutes} min, vilket inte ger en användbar flödestakt. Kontrollera mätaren och ytan, eller räkna ut den från dropparna i stället (Konfigurera → Flödestakt)."
+      "title": "⚠️ Flödet kunde inte mätas",
+      "message": "Flödesmätaren räknade {volume} på {minutes} min, vilket inte ger ett användbart flöde. Kontrollera mätaren och ytan, eller räkna ut flödet från dropparna i stället (Konfigurera → Flöde)."
     }
   },
   "notes": {

@@ -10,7 +10,7 @@
   "cycle": {
     "deep_soak": "Riego profundo",
     "routine": "Riego habitual",
-    "service_run": "Ejecución de mantenimiento",
+    "service_run": "Ciclo de mantenimiento",
     "test_pulse": "Pulso de prueba"
   },
   "notify": {
@@ -23,12 +23,12 @@
       "message": "El bloqueo de riego llevaba más de 3 horas activado. Se ha restablecido para no impedir los próximos riegos."
     },
     "valve_watchdog": {
-      "title": "🚨 Vigilancia de la válvula activada",
+      "title": "🚨 Protección de la válvula activada",
       "message": "La válvula estuvo abierta {minutes} minutos seguidos. Se ha cerrado para proteger las plantas."
     },
     "power_loss": {
       "title": "🚨 Corte de luz durante el riego",
-      "message": "La válvula o la bomba se quedó sin corriente 10+ minutos a mitad del ciclo. El riego se detuvo y se liberó el bloqueo; el próximo riego programado lo volverá a intentar."
+      "message": "La válvula o la bomba se quedó sin corriente más de 10 minutos a mitad del ciclo. El riego se detuvo y se liberó el bloqueo; el próximo riego programado lo volverá a intentar."
     },
     "power_restore_anomaly": {
       "title": "🚨 Válvula abierta al volver la luz",
@@ -147,13 +147,13 @@
     "service_run": "Mantenimiento en curso",
     "lock_held": "En espera: un riego anterior no terminó (la zona está bloqueada)",
     "snoozed": "Omitido por hoy",
-    "done": "{cycle} hecho a las {time}: {amount} en {minutes} min",
+    "done": "{cycle} completado a las {time}: {amount} en {minutes} min",
     "skipped_soil_wet": "{cycle} omitido a las {time}: el suelo está húmedo ({pct}%)",
     "skipped_drydown": "{cycle} omitido a las {time}: secándose tras la lluvia hasta {until}",
     "skipped_forecast": "{cycle} omitido a las {time}: se prevén {rain} de lluvia",
     "skipped_rain_credit": "{cycle} omitido a las {time}: la lluvia reciente ({rain}) cubre los {target} necesarios",
-    "skipped_wet_fortnight": "{cycle} retenido a las {time}: {rain} de lluvia en los últimos 14 días",
-    "skipped_service": "{cycle} omitido a las {time}: una ejecución de mantenimiento usaba la válvula",
+    "skipped_wet_fortnight": "{cycle} no iniciado a las {time}: {rain} de lluvia en los últimos 14 días",
+    "skipped_service": "{cycle} omitido a las {time}: un ciclo de mantenimiento usaba la válvula",
     "cancelled_rain": "{cycle} cancelado a las {time}: estaba lloviendo ({rain} en 30 min)",
     "refused_runtime_cap": "{cycle} no realizado a las {time}: necesitaba {minutes} min, más que el límite de {cap} min por ciclo",
     "refused_deep_soak_cap": "{cycle} no realizado a las {time}: necesitaba {minutes} min, más que su límite",
@@ -180,7 +180,7 @@
     "zone": "{zone}: regada {runs}× — {water} en {minutes} min",
     "measured": " ({volume} medidos)",
     "rain": " · lluvia (7 días) {rain}",
-    "held_back": " · riego retenido {days} día(s)",
+    "held_back": "· {days} día(s) con el riego aplazado",
     "paused": " · en pausa",
     "next": " · próximo {when}",
     "zone_none": "{zone}: sin riego"

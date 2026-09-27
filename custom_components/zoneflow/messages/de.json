@@ -16,7 +16,7 @@
   "notify": {
     "heavy_rain": {
       "title": "🌧️ Starkregen",
-      "message": "Starkregen gemessen (24 h: {rain_24h}). Abtrockenzeiten aktualisiert."
+      "message": "Starkregen gemessen (24 h: {rain_24h}). Abtrocknungszeiten aktualisiert."
     },
     "stale_lock": {
       "title": "⚠️ Bewässerungssperre zurückgesetzt",
@@ -115,11 +115,11 @@
     },
     "self_tune_shorter": {
       "title": "🌱 Selbstanpassung",
-      "message": "Abtrockenzeit der Routine auf {days} Tage verkürzt, weil du zuletzt öfter früher gegossen hast."
+      "message": "Abtrocknungszeit der Routine auf {days} Tage verkürzt, weil du zuletzt öfter früher gegossen hast."
     },
     "self_tune_longer": {
       "title": "🌱 Selbstanpassung",
-      "message": "Abtrockenzeit der Routine auf {days} Tage verlängert, weil du zuletzt öfter ausgesetzt hast."
+      "message": "Abtrocknungszeit der Routine auf {days} Tage verlängert, weil du zuletzt öfter ausgesetzt hast."
     },
     "frost": {
       "title": "❄️ {cycle} wartet: Frost",

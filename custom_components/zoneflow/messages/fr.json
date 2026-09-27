@@ -32,7 +32,7 @@
     },
     "power_restore_anomaly": {
       "title": "🚨 Vanne ouverte au retour du courant",
-      "message": "La vanne s'est signalée ouverte au retour du courant — elle a été fermée de force. Vérifiez le relais et le câblage."
+      "message": "La vanne apparaissait ouverte au retour du courant — elle a été fermée de force. Vérifiez le relais et le câblage."
     },
     "restart_lock_cleared": {
       "title": "🚨 Arrosage interrompu par un redémarrage",
@@ -55,7 +55,7 @@
       "message": "Arrêté : {error}. La vanne {valve} est peut-être encore OUVERTE — vérifiez-la maintenant."
     },
     "low_pump_power": {
-      "title": "⚠️ {cycle} : pompe en faible puissance",
+      "title": "⚠️ {cycle} : puissance de la pompe faible",
       "message": "Passage {pulse} en cours mais la pompe n'indique que {watts} W."
     },
     "stopped_by_rain": {
@@ -99,7 +99,7 @@
     },
     "probe_check": {
       "title": "🌱 Vérifiez la sonde de sol",
-      "message": "Des mesures de sol humide ({pct}%) retiennent l'arrosage régulier depuis {days} jours. S'il a peu plu, vérifiez la sonde (emplacement, pile, mesure) — elle est toujours suivie."
+      "message": "Des mesures de sol humide ({pct}%) empêchent l'arrosage régulier depuis {days} jours. S'il a peu plu, vérifiez la sonde (emplacement, pile, mesure) — elle est toujours suivie."
     },
     "probe_frozen": {
       "title": "🌱 La sonde de sol semble bloquée",
@@ -177,10 +177,10 @@
   },
   "summary": {
     "title": "💧 ZoneFlow : votre semaine",
-    "zone": "{zone} : arrosé {runs}× — {water} en {minutes} min",
+    "zone": "{zone} : arrosée {runs}× — {water} en {minutes} min",
     "measured": " (mesuré {volume})",
     "rain": " · pluie (7 jours) {rain}",
-    "held_back": " · arrosage retenu {days} jour(s)",
+    "held_back": "· {days} jour(s) d'arrosage reporté",
     "paused": " · en pause",
     "next": " · prochain {when}",
     "zone_none": "{zone} : aucun arrosage"

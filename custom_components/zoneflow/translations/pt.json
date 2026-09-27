@@ -10,7 +10,7 @@
         },
         "data_description": {
           "zone_name": "Passa a ser o nome do dispositivo da zona e o início dos nomes das suas entidades, e aparece nas mensagens do telefone. Ex.: \"Canteiro de tomates\", \"Jardim da frente\".",
-          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente de cultura, pulsos, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona."
+          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente cultural, pulsos, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona."
         }
       },
       "entities": {
@@ -48,7 +48,7 @@
           "rain_counter_entity": "Um contador do medidor de chuva que sobe uma unidade a cada báscula. O ZoneFlow desconta então a chuva ao que rega, deixa o solo molhado secar primeiro e para uma rega quando começa a chover. Quanta chuva vale uma báscula define-se na página do dispositivo da zona (Medidor de chuva: mm por báscula). Sem medidor, o ZoneFlow rega como se nunca chovesse.",
           "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow rega sozinho mais quando está calor e menos quando está fresco, e a proteção contra geada suspende a rega quando está a gelar. Sem ele, quem decide é a definição Temperatura de reserva / manual.",
           "flow_meter_entity": "Um medidor de fluxo que conta o volume total (litros, galões ou m³). O ZoneFlow regista então quanta água cada rega gastou realmente, avisa-o se a bomba trabalhou mas a água não correu, e pode medir o fluxo por si (Configurar → Fluxo).",
-          "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado salta-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
+          "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado dispensa-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
           "notify_entity": "A entidade de notificação do seu telefone, da app Home Assistant Companion. O ZoneFlow envia para lá avarias e eventos importantes, e também o resumo semanal se o ativar. Sem ela, ficam só no registo.",
           "weather_entity": "Uma entidade meteorológica com previsão. O ZoneFlow adia uma rega quando está prevista chuva suficiente (mas não durante demasiados dias seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
           "soil_type": "Serve de referência: por si só não altera a rega. Aparece no sensor Perfil do solo da zona e ajuda a escolher os pulsos e as pausas na página do dispositivo: o solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; o arenoso aguenta menos pulsos.",
@@ -56,7 +56,7 @@
           "slope": "Serve de referência, como o tipo de solo: num declive, a água escorre antes de se infiltrar, por isso ajudam mais pulsos, mais curtos.",
           "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
           "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta-a até à meta semanal completa à medida que crescem, a contar da Data de plantação / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: defina a sua própria curva na página do dispositivo.",
-          "csv_path": "Um ficheiro onde cada rega, rega saltada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
+          "csv_path": "Um ficheiro onde cada rega, rega dispensada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
           "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
           "deep_soak_time": "A hora a que a rega profunda começa nos dias em que calha, quando o início abaixo está na hora fixa. De manhã cedo é o melhor: perde-se menos água com o sol e o vento.",
           "routine_time": "A hora a que o ZoneFlow verifica todos os dias se a rega de rotina é devida, e rega se for. A frequência depende do tempo e da sua meta semanal. De manhã cedo é o melhor.",
@@ -140,7 +140,7 @@
           "rain_counter_entity": "Um contador do medidor de chuva que sobe uma unidade a cada báscula. O ZoneFlow desconta então a chuva ao que rega, deixa o solo molhado secar primeiro e para uma rega quando começa a chover. Quanta chuva vale uma báscula define-se na página do dispositivo da zona (Medidor de chuva: mm por báscula). Sem medidor, o ZoneFlow rega como se nunca chovesse.",
           "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow rega sozinho mais quando está calor e menos quando está fresco, e a proteção contra geada suspende a rega quando está a gelar. Sem ele, quem decide é a definição Temperatura de reserva / manual.",
           "flow_meter_entity": "Um medidor de fluxo que conta o volume total (litros, galões ou m³). O ZoneFlow regista então quanta água cada rega gastou realmente, avisa-o se a bomba trabalhou mas a água não correu, e pode medir o fluxo por si (Configurar → Fluxo).",
-          "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado salta-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
+          "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado dispensa-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
           "notify_entity": "A entidade de notificação do seu telefone, da app Home Assistant Companion. O ZoneFlow envia para lá avarias e eventos importantes, e também o resumo semanal se o ativar. Sem ela, ficam só no registo.",
           "weather_entity": "Uma entidade meteorológica com previsão. O ZoneFlow adia uma rega quando está prevista chuva suficiente (mas não durante demasiados dias seguidos) e usa a temperatura atual dela para a proteção contra geada quando não há sensor de temperatura.",
           "soil_type": "Serve de referência: por si só não altera a rega. Aparece no sensor Perfil do solo da zona e ajuda a escolher os pulsos e as pausas na página do dispositivo: o solo argiloso absorve a água devagar e prefere mais pulsos, mais curtos, com pausas maiores entre eles; o arenoso aguenta menos pulsos.",
@@ -148,7 +148,7 @@
           "slope": "Serve de referência, como o tipo de solo: num declive, a água escorre antes de se infiltrar, por isso ajudam mais pulsos, mais curtos.",
           "irrigation_method": "Como a água é aplicada. Serve de referência, como o tipo de solo; a quantidade de água é definida pelo fluxo (Configurar → Fluxo).",
           "growth_ramp_profile": "Dá menos água às plantas jovens e aumenta-a até à meta semanal completa à medida que crescem, a contar da Data de plantação / transplante na página do dispositivo da zona. Desligado: sempre a meta completa. Personalizado: defina a sua própria curva na página do dispositivo.",
-          "csv_path": "Um ficheiro onde cada rega, rega saltada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
+          "csv_path": "Um ficheiro onde cada rega, rega dispensada e aviso fica registado com os respetivos números, para verificar o que o ZoneFlow fez (abre em qualquer folha de cálculo). O ficheiro sugerido na sua pasta de configuração serve perfeitamente.",
           "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
           "deep_soak_time": "A hora a que a rega profunda começa nos dias em que calha, quando o início abaixo está na hora fixa. De manhã cedo é o melhor: perde-se menos água com o sol e o vento.",
           "routine_time": "A hora a que o ZoneFlow verifica todos os dias se a rega de rotina é devida, e rega se for. A frequência depende do tempo e da sua meta semanal. De manhã cedo é o melhor.",
@@ -395,7 +395,7 @@
         "name": "Rampa personalizada: dia em que chega a 100%"
       },
       "crop_coefficient": {
-        "name": "Coeficiente de cultura (Kc)"
+        "name": "Coeficiente cultural (Kc)"
       },
       "deficit_water_pct": {
         "name": "Rega deficitária: água"

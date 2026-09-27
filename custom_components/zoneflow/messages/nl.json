@@ -27,15 +27,15 @@
       "message": "De klep stond {minutes} minuten achter elkaar open. Hij is dichtgezet om de planten te beschermen."
     },
     "power_loss": {
-      "title": "🚨 Stroomuitval tijdens water geven",
-      "message": "Klep of pomp had midden in de beurt meer dan 10 minuten geen stroom. Water geven is gestopt en het slot vrijgegeven; de volgende geplande beurt probeert het opnieuw."
+      "title": "🚨 Stroomuitval tijdens watergift",
+      "message": "Klep of pomp had midden in de beurt meer dan 10 minuten geen stroom. De watergift is gestopt en het slot is vrijgegeven; de volgende geplande beurt probeert het opnieuw."
     },
     "power_restore_anomaly": {
       "title": "🚨 Klep open na stroomherstel",
       "message": "De klep meldde open toen de stroom terugkwam — hij is dichtgezet. Controleer relais en bedrading."
     },
     "restart_lock_cleared": {
-      "title": "🚨 Water geven onderbroken door herstart",
+      "title": "🚨 Watergift onderbroken door herstart",
       "message": "Home Assistant herstartte midden in een beurt. Het slot is vrijgegeven en de klep dichtgezet als die bereikbaar was; de volgende geplande beurt probeert het opnieuw."
     },
     "deficit_ended": {
@@ -63,16 +63,16 @@
       "message": "Gestopt na {given} van {planned} min: er viel {rain} in de laatste 30 minuten. De volgende geplande beurt beslist opnieuw, met deze regen erbij."
     },
     "forecast_override": {
-      "title": "⏱️ Water geven ondanks de voorspelling",
-      "message": "Er werd steeds regen voorspeld maar in {days} dagen viel er niets (de grens van deze zone is {limit} dagen) — er wordt toch water gegeven."
+      "title": "⏱️ Water geven ondanks de verwachting",
+      "message": "Er werd steeds regen verwacht maar in {days} dagen viel er niets (de grens van deze zone is {limit} dagen) — er wordt toch water gegeven."
     },
     "deep_soak_cap": {
       "title": "⚠️ Diepe watergift niet gestart: looptijdlimiet",
-      "message": "De berekende looptijd ({minutes} min) is langer dan de veiligheidslimiet van deze zone. Water geven geannuleerd — controleer het debiet en de doeldiepte."
+      "message": "De berekende looptijd ({minutes} min) is langer dan de veiligheidslimiet voor diepe watergift van deze zone. Watergift geannuleerd — controleer het debiet en de doeldiepte."
     },
     "routine_cap": {
       "title": "⚠️ Routinewatergift niet gestart: looptijdlimiet",
-      "message": "De berekende looptijd ({minutes} min) is langer dan de veiligheidslimiet van deze zone ({cap} min). Water geven geannuleerd — controleer het debiet en de weekdoelen."
+      "message": "De berekende looptijd ({minutes} min) is langer dan de veiligheidslimiet voor routinewatergift van deze zone ({cap} min). Watergift geannuleerd — controleer het debiet en de weekdoelen."
     },
     "daily_cap": {
       "title": "⚠️ {cycle} overgeslagen: daglimiet",
@@ -90,7 +90,7 @@
       "message": " Volgende routine: {when}."
     },
     "overdue": {
-      "title": "⚠️ Water geven achterstallig",
+      "title": "⚠️ Watergift achterstallig",
       "message": "{days} dagen sinds de laatste watergift — ongewoon lang, controleer het systeem."
     },
     "routine_done": {
@@ -114,12 +114,12 @@
       "message": "De onderhoudsmodus liep {minutes} min en ging vanzelf uit (ingekort tot de daglimiet)."
     },
     "self_tune_shorter": {
-      "title": "🌱 Zelfafstemming",
+      "title": "🌱 Automatische bijstelling",
       "message": "Opdroogtijd voor routine verkort tot {days} dagen, op basis van je recente vroege beurten."
     },
     "self_tune_longer": {
-      "title": "🌱 Zelfafstemming",
-      "message": "Opdroogtijd voor routine verlengd tot {days} dagen, op basis van je recente keren overslaan."
+      "title": "🌱 Automatische bijstelling",
+      "message": "Opdroogtijd voor routine verlengd tot {days} dagen, op basis van de keren dat je onlangs Vandaag overslaan gebruikte."
     },
     "frost": {
       "title": "❄️ {cycle} wacht: vorst",
@@ -140,17 +140,17 @@
     "deficit_hot": " Spaarmodus: vandaag volle dosis (warm weer).",
     "deficit_soil_dry": " Spaarmodus: vandaag volle dosis (bodem op de droogtegrens).",
     "deficit_no_temp": " Spaarmodus: volle dosis (geen temperatuurmeting bekend).",
-    "deficit_young": " Spaarmodus: volle dosis (plant nog in de groeifase)."
+    "deficit_young": " Spaarmodus: volle dosis (plant zit nog in de opbouw per groeifase)."
   },
   "status": {
-    "watering": "Nu water geven: {cycle}",
+    "watering": "Geeft nu water: {cycle}",
     "service_run": "Proefdraaien bezig",
     "lock_held": "Wacht: een eerdere beurt is niet afgerond (zone vergrendeld)",
     "snoozed": "Vandaag overgeslagen",
     "done": "{cycle} klaar om {time}: {amount} in {minutes} min",
     "skipped_soil_wet": "{cycle} overgeslagen om {time}: de bodem is nat ({pct}%)",
     "skipped_drydown": "{cycle} overgeslagen om {time}: opdrogen na regen tot {until}",
-    "skipped_forecast": "{cycle} overgeslagen om {time}: {rain} regen voorspeld",
+    "skipped_forecast": "{cycle} overgeslagen om {time}: {rain} regen verwacht",
     "skipped_rain_credit": "{cycle} overgeslagen om {time}: recente regen ({rain}) dekt de benodigde {target}",
     "skipped_wet_fortnight": "{cycle} uitgesteld om {time}: {rain} regen in de laatste 14 dagen",
     "skipped_service": "{cycle} overgeslagen om {time}: proefdraaien gebruikte de klep",
@@ -180,7 +180,7 @@
     "zone": "{zone}: {runs}× water — {water} in {minutes} min",
     "measured": " (gemeten {volume})",
     "rain": " · regen (7 dagen) {rain}",
-    "held_back": " · tegengehouden op {days} dag(en)",
+    "held_back": " · uitgesteld op {days} dag(en)",
     "paused": " · gepauzeerd",
     "next": " · volgende {when}",
     "zone_none": "{zone}: geen water"

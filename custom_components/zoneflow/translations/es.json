@@ -175,7 +175,7 @@
       },
       "flow_measure": {
         "title": "Medir el caudal",
-        "description": "Abre la válvula durante {minutes} minutos como ejecución de mantenimiento (no cuenta como riego, pero sus minutos sí cuentan para el límite de seguridad de tiempo diario) y calcula el caudal a partir de los litros del caudalímetro. Mientras funciona, el medidor solo debe medir el agua de esta zona. El resultado llega como mensaje al teléfono y se aplica automáticamente; si desactivas el Modo mantenimiento, se cancela.",
+        "description": "Abre la válvula durante {minutes} minutos como ciclo de mantenimiento (no cuenta como riego, pero sus minutos sí cuentan para el límite de seguridad de tiempo diario) y calcula el caudal a partir de los litros del caudalímetro. Mientras funciona, el medidor solo debe medir el agua de esta zona. El resultado llega como mensaje al teléfono y se aplica automáticamente; si desactivas el Modo mantenimiento, se cancela.",
         "data": {
           "area": "Superficie que riegan los emisores de la zona"
         },
@@ -651,7 +651,7 @@
   },
   "services": {
     "run_deep_soak": {
-      "name": "Ejecutar riego profundo",
+      "name": "Iniciar riego profundo",
       "description": "Inicia ahora el ciclo de riego profundo si (y solo si) se cumplen las mismas condiciones que usa la programación de las 05:00 (bloqueo libre, intervalo de 14 días y espera de secado cumplidos, tope de lluvia de 14 días no superado). Mismo código que el riego programado.",
       "fields": {
         "device_id": {
@@ -665,7 +665,7 @@
       }
     },
     "run_routine_irrigation": {
-      "name": "Ejecutar riego habitual",
+      "name": "Iniciar riego habitual",
       "description": "Inicia ahora el ciclo de riego habitual si (y solo si) se cumplen las mismas condiciones que usa la programación de las 05:30. Mismo código que el riego programado.",
       "fields": {
         "device_id": {
@@ -708,7 +708,7 @@
     },
     "test_pulse": {
       "name": "Pulso de prueba",
-      "description": "Ignora todas las condiciones de programación, secado y lluvia y abre la válvula en un pulso corto, para probar el cableado de la válvula y la bomba antes de confiar en la programación real. Sigue respetando el bloqueo y las vigilancias de seguridad.",
+      "description": "Ignora todas las condiciones de programación, secado y lluvia y abre la válvula en un pulso corto, para probar el cableado de la válvula y la bomba antes de confiar en la programación real. Sigue respetando el bloqueo y las protecciones de seguridad.",
       "fields": {
         "device_id": {
           "name": "Dispositivo de la zona",
@@ -737,19 +737,19 @@
       "message": "El umbral de tiempo fresco tiene que quedar por debajo del umbral de tiempo caluroso. Para bajar ambos, baja primero el de fresco; para subir ambos, sube primero el de calor."
     },
     "zone_busy": {
-      "message": "Esta zona está ocupada (regando o ya en una ejecución de mantenimiento). Inténtalo cuando termine."
+      "message": "Esta zona está ocupada (regando o ya en un ciclo de mantenimiento). Inténtalo cuando termine."
     },
     "pump_busy": {
       "message": "La bomba que comparte esta zona la está usando otra zona ahora mismo. Inténtalo cuando esa zona termine."
     },
     "daily_cap_reached": {
-      "message": "Esta zona ha alcanzado el tiempo máximo de seguridad de hoy, así que no puede empezar ninguna ejecución de mantenimiento hasta mañana (o sube el Tiempo máximo de riego diario)."
+      "message": "Esta zona ha alcanzado el tiempo máximo de seguridad de hoy, así que no puede empezar ningún ciclo de mantenimiento hasta mañana (o sube el Tiempo máximo de riego diario)."
     },
     "zone_paused": {
       "message": "Esta zona está en pausa. Desactiva Pausa para regarla."
     },
     "pause_until_past": {
-      "message": "Elige una fecha y hora futuras hasta la que pausar."
+      "message": "Elige una fecha y hora futuras para el fin de la pausa."
     },
     "no_weekly_summary": {
       "message": "Ninguna zona tiene definido un día de Resumen semanal y un destino de notificaciones del teléfono, así que no hay nada que enviar."

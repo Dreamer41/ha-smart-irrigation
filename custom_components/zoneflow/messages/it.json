@@ -27,8 +27,8 @@
       "message": "La valvola è rimasta aperta per {minutes} minuti di fila. È stata chiusa per proteggere le piante."
     },
     "power_loss": {
-      "title": "🚨 Corrente mancata durante l'irrigazione",
-      "message": "La valvola o la pompa è rimasta senza corrente per 10+ minuti a metà ciclo. L'irrigazione si è fermata e il blocco è stato rimosso; il prossimo ciclo programmato riproverà."
+      "title": "🚨 Mancanza di corrente durante l'irrigazione",
+      "message": "La valvola o la pompa è rimasta senza corrente per oltre 10 minuti a metà ciclo. L'irrigazione si è fermata e il blocco è stato rimosso; il prossimo ciclo programmato riproverà."
     },
     "power_restore_anomaly": {
       "title": "🚨 Valvola aperta al ritorno della corrente",
@@ -68,7 +68,7 @@
     },
     "deep_soak_cap": {
       "title": "⚠️ Irrigazione profonda non eseguita: limite di durata",
-      "message": "La durata calcolata ({minutes} min) supera il limite di sicurezza dell'irrigazione profonda di questa zona. Irrigazione annullata — controlla la portata e l'obiettivo."
+      "message": "La durata calcolata ({minutes} min) supera il limite di sicurezza dell'irrigazione profonda di questa zona. Irrigazione annullata — controlla la portata e l'obiettivo dell'irrigazione profonda."
     },
     "routine_cap": {
       "title": "⚠️ Irrigazione ordinaria non eseguita: limite di durata",
@@ -99,7 +99,7 @@
     },
     "probe_check": {
       "title": "🌱 Controlla la sonda del terreno",
-      "message": "Le letture di terreno bagnato ({pct}%) trattengono l'irrigazione ordinaria da {days} giorni. Se non ha piovuto molto, controlla la sonda (posizione, batteria, lettura) — per ora viene ancora seguita."
+      "message": "Le letture di terreno bagnato ({pct}%) rinviano l'irrigazione ordinaria da {days} giorni. Se non ha piovuto molto, controlla la sonda (posizione, batteria, lettura) — per ora viene ancora seguita."
     },
     "probe_frozen": {
       "title": "🌱 La sonda del terreno sembra bloccata",
@@ -147,12 +147,12 @@
     "service_run": "Ciclo di manutenzione in corso",
     "lock_held": "In attesa: un ciclo precedente non è terminato (zona bloccata)",
     "snoozed": "Irrigazione di oggi saltata",
-    "done": "{cycle} alle {time}: {amount} in {minutes} min",
+    "done": "{cycle} completata alle {time}: {amount} in {minutes} min",
     "skipped_soil_wet": "{cycle} saltata alle {time}: il terreno è bagnato ({pct}%)",
     "skipped_drydown": "{cycle} saltata alle {time}: asciugatura dopo la pioggia fino a {until}",
     "skipped_forecast": "{cycle} saltata alle {time}: previsti {rain} di pioggia",
     "skipped_rain_credit": "{cycle} saltata alle {time}: la pioggia recente ({rain}) copre i {target} necessari",
-    "skipped_wet_fortnight": "{cycle} rinviata alle {time}: {rain} di pioggia negli ultimi 14 giorni",
+    "skipped_wet_fortnight": "{cycle} non avviata alle {time}: {rain} di pioggia negli ultimi 14 giorni",
     "skipped_service": "{cycle} saltata alle {time}: un ciclo di manutenzione usava la valvola",
     "cancelled_rain": "{cycle} annullata alle {time}: pioveva ({rain} in 30 min)",
     "refused_runtime_cap": "{cycle} non eseguita alle {time}: servono {minutes} min, oltre il limite di {cap} min per ciclo",
@@ -180,7 +180,7 @@
     "zone": "{zone}: irrigata {runs}× — {water} in {minutes} min",
     "measured": " (misurati {volume})",
     "rain": " · pioggia (7 giorni) {rain}",
-    "held_back": " · rinviata per {days} giorno/i",
+    "held_back": "· {days} giorno/i di irrigazione rinviata",
     "paused": " · in pausa",
     "next": " · prossima {when}",
     "zone_none": "{zone}: nessuna irrigazione"

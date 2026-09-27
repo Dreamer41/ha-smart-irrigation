@@ -217,7 +217,7 @@
       "options": {
         "unknown": "En tiedä",
         "fast": "Läpäisee nopeasti",
-        "medium": "Keskinkertainen",
+        "medium": "Keskinopea",
         "slow": "Läpäisee hitaasti"
       }
     },
@@ -350,7 +350,7 @@
         "name": "Ennustetun sateen todennäköisyysraja"
       },
       "forecast_dry_override_days": {
-        "name": "Ennusteen ohitus poutajaksolla"
+        "name": "Ennusteen sivuutus poutajaksolla"
       },
       "soil_moisture_dry_pct": {
         "name": "Maan kosteuden kuivaraja"
@@ -761,7 +761,7 @@
   "issues": {
     "valve_unavailable": {
       "title": "{zone}: venttiili ei käytettävissä",
-      "description": "Vyöhyke {zone}: venttiili ({entity}) on ollut poissa käytöstä yli tunnin, joten vyöhyke ei voi kastella. Tarkista venttiilin laite ja sen integraatio. Tämä poistuu itsestään, kun venttiili toimii taas."
+      "description": "Vyöhyke {zone}: venttiili ({entity}) ei ole ollut käytettävissä yli tuntiin, joten vyöhyke ei voi kastella. Tarkista venttiilin laite ja sen integraatio. Tämä poistuu itsestään, kun venttiili toimii taas."
     },
     "sensor_offline": {
       "title": "{zone}: anturi ei ole raportoinut {days} päivään",
@@ -773,7 +773,7 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibroi suuttimien virtaama",
-      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen vesimittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä."
+      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä."
     }
   }
 }

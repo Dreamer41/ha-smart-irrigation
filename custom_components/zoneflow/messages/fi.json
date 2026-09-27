@@ -99,7 +99,7 @@
     },
     "probe_check": {
       "title": "🌱 Tarkista kosteusanturi",
-      "message": "Märän maan lukemat ({pct} %) ovat pidättäneet peruskastelua {days} päivän ajan. Jos ei ole juuri satanut, tarkista anturi (sijainti, paristo, lukema) — sitä noudatetaan edelleen."
+      "message": "Märän maan lukemat ({pct} %) ovat lykänneet peruskastelua {days} päivän ajan. Jos ei ole juuri satanut, tarkista anturi (sijainti, paristo, lukema) — sitä noudatetaan edelleen."
     },
     "probe_frozen": {
       "title": "🌱 Kosteusanturi näyttää jumittuneen",
@@ -152,7 +152,7 @@
     "skipped_drydown": "{cycle} ohitettu klo {time}: maa kuivuu sateen jälkeen {until} asti",
     "skipped_forecast": "{cycle} ohitettu klo {time}: ennusteessa sadetta {rain}",
     "skipped_rain_credit": "{cycle} ohitettu klo {time}: viimeaikainen sade ({rain}) kattaa tarpeen ({target})",
-    "skipped_wet_fortnight": "{cycle} pidätetty klo {time}: 14 päivässä satanut {rain}",
+    "skipped_wet_fortnight": "{cycle} lykätty klo {time}: 14 päivässä satanut {rain}",
     "skipped_service": "{cycle} ohitettu klo {time}: huoltoajo käytti venttiiliä",
     "cancelled_rain": "{cycle} peruttu klo {time}: satoi ({rain} / 30 min)",
     "refused_runtime_cap": "{cycle} jäi väliin klo {time}: tarve {minutes} min, yli kestorajan {cap} min",
@@ -180,7 +180,7 @@
     "zone": "{zone}: kasteltu {runs}× — {water} {minutes} minuutissa",
     "measured": " (mitattu {volume})",
     "rain": " · sade (7 pv) {rain}",
-    "held_back": " · pidätetty {days} päivänä",
+    "held_back": " · lykätty {days} päivänä",
     "paused": " · tauolla",
     "next": " · seuraava {when}",
     "zone_none": "{zone}: ei kastelua"

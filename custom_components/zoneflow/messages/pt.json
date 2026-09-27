@@ -43,7 +43,7 @@
       "message": "A data de fim já passou — a rega de rotina volta à dose completa."
     },
     "no_flow": {
-      "title": "⚠️ {cycle}: sem fluxo de água",
+      "title": "⚠️ {cycle}: sem passagem de água",
       "message": "O ciclo terminou, mas o medidor de fluxo não mostra água. Verifique a válvula, a bomba e as ligações do medidor de fluxo."
     },
     "cycle_error_closed": {
@@ -147,7 +147,7 @@
     "service_run": "Ciclo de manutenção em curso",
     "lock_held": "Em espera: uma rega anterior não terminou (zona bloqueada)",
     "snoozed": "Sem rega hoje",
-    "done": "{cycle} às {time}: {amount} em {minutes} min",
+    "done": "{cycle} concluída às {time}: {amount} em {minutes} min",
     "skipped_soil_wet": "{cycle} dispensada às {time}: o solo está molhado ({pct}%)",
     "skipped_drydown": "{cycle} dispensada às {time}: em secagem após a chuva até {until}",
     "skipped_forecast": "{cycle} dispensada às {time}: previsão de {rain} de chuva",

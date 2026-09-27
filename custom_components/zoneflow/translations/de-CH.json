@@ -48,7 +48,7 @@
           "rain_counter_entity": "Ein Zähler am Regenmesser, der bei jeder Kippung um eins steigt. ZoneFlow zieht dann den Regen von der Gießmenge ab, lässt nassen Boden erst abtrocknen und stoppt eine Bewässerung, wenn es zu regnen beginnt. Wie viel Regen eine Kippung ist, stellst du auf der Geräteseite der Zone ein: „Regenmesser mm pro Kippung (Kalibrierung)“. Ohne Regenmesser gießt ZoneFlow, als würde es nie regnen.",
           "outdoor_temp_entity": "Ein Außentemperatursensor. Damit gießt ZoneFlow bei Hitze von selbst mehr und bei kühlem Wetter weniger, und der Frostschutz setzt die Bewässerung bei Frost aus. Ohne Sensor entscheidet die Einstellung „Ersatz-/manuelle Temperatur“.",
           "flow_meter_entity": "Ein Wasserzähler bzw. Durchflussmesser, der die Gesamtmenge hochzählt (Liter, Gallonen oder m³). ZoneFlow protokolliert dann, wie viel Wasser jede Bewässerung wirklich verbraucht hat, warnt dich, wenn die Pumpe lief, aber kein Wasser floss, und kann die Durchflussrate für dich messen (Konfigurieren → Durchflussrate).",
-          "soil_moisture_entity": "Ein Bodenfeuchtesensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, bei nassem Boden wird sie ausgesetzt, dazwischen gilt der normale Zeitplan. Die Schwellen für trocken und nass findest du auf der Geräteseite der Zone.",
+          "soil_moisture_entity": "Ein Bodenfeuchtesensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, bei nassem Boden wird sie übersprungen, dazwischen gilt der normale Zeitplan. Die Schwellen für trocken und nass findest du auf der Geräteseite der Zone.",
           "notify_entity": "Die Benachrichtigungs-Entität deines Handys aus der Home Assistant Companion App. ZoneFlow schickt Störungen und wichtige Ereignisse dorthin, und auch die Wochenübersicht, wenn du sie einschaltest. Ohne sie landet alles nur im Log.",
           "weather_entity": "Eine Wetter-Entität mit Vorhersage. ZoneFlow setzt eine Bewässerung aus, wenn genug Regen vorhergesagt ist (aber nicht zu viele Tage hintereinander), und nutzt ihre aktuelle Temperatur für den Frostschutz, wenn kein Temperatursensor da ist.",
           "soil_type": "Nur zur Orientierung: Die Bewässerung ändert sich dadurch nicht von selbst. Die Bodenart erscheint im Sensor „Bodenprofil“ der Zone und hilft dir, auf der Geräteseite Durchgänge und Einsickerpausen zu wählen: Tonboden nimmt Wasser langsam auf und braucht mehr, kürzere Durchgänge mit längeren Einsickerpausen dazwischen; Sandboden kommt mit weniger Durchgängen aus.",
@@ -56,7 +56,7 @@
           "slope": "Nur zur Orientierung, wie die Bodenart: Am Hang läuft Wasser ab, bevor es einsickert – mehr, kürzere Durchgänge helfen.",
           "irrigation_method": "Wie das Wasser ausgebracht wird. Nur zur Orientierung, wie die Bodenart; wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
           "growth_ramp_profile": "Gibt jungen Pflanzen weniger Wasser und steigert es mit dem Alter bis zum vollen Wochenziel, gerechnet ab dem „Pflanz-/Umpflanzdatum“ auf der Geräteseite der Zone. Aus: immer das volle Ziel. Eigene Kurve: Lege deine Kurve selbst auf der Geräteseite fest.",
-          "csv_path": "Eine Datei, in die jede Bewässerung, jedes Aussetzen und jede Warnung mit Zahlen geschrieben wird – zum Nachprüfen, was ZoneFlow getan hat (lässt sich in jeder Tabellenkalkulation öffnen). Die vorgeschlagene Datei in deinem config-Ordner passt.",
+          "csv_path": "Eine Datei, in die jede Bewässerung, jedes Überspringen und jede Warnung mit Zahlen geschrieben wird – zum Nachprüfen, was ZoneFlow getan hat (lässt sich in jeder Tabellenkalkulation öffnen). Die vorgeschlagene Datei in deinem config-Ordner passt.",
           "deep_soak_enabled": "Eine Tiefenbewässerung ist ein großes, langsames Gießen alle paar Wochen (anfangs alle 14 Tage), das den Boden tief durchfeuchtet, damit die Wurzeln in die Tiefe wachsen. Gut für Bäume, Sträucher und Stauden; schalte sie für flach wurzelnde Pflanzen wie Salat und Kräuter aus. Die Routinebewässerung läuft so oder so.",
           "deep_soak_time": "Wann die Tiefenbewässerung an fälligen Tagen startet, wenn unten als Auslöser die feste Uhrzeit gewählt ist. Früh am Morgen ist am besten: Es geht weniger Wasser an Sonne und Wind verloren.",
           "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und dann gießt. Wie oft sie fällig ist, richtet sich nach dem Wetter und deinem Wochenziel. Früh am Morgen ist am besten.",
@@ -140,7 +140,7 @@
           "rain_counter_entity": "Ein Zähler am Regenmesser, der bei jeder Kippung um eins steigt. ZoneFlow zieht dann den Regen von der Gießmenge ab, lässt nassen Boden erst abtrocknen und stoppt eine Bewässerung, wenn es zu regnen beginnt. Wie viel Regen eine Kippung ist, stellst du auf der Geräteseite der Zone ein: „Regenmesser mm pro Kippung (Kalibrierung)“. Ohne Regenmesser gießt ZoneFlow, als würde es nie regnen.",
           "outdoor_temp_entity": "Ein Außentemperatursensor. Damit gießt ZoneFlow bei Hitze von selbst mehr und bei kühlem Wetter weniger, und der Frostschutz setzt die Bewässerung bei Frost aus. Ohne Sensor entscheidet die Einstellung „Ersatz-/manuelle Temperatur“.",
           "flow_meter_entity": "Ein Wasserzähler bzw. Durchflussmesser, der die Gesamtmenge hochzählt (Liter, Gallonen oder m³). ZoneFlow protokolliert dann, wie viel Wasser jede Bewässerung wirklich verbraucht hat, warnt dich, wenn die Pumpe lief, aber kein Wasser floss, und kann die Durchflussrate für dich messen (Konfigurieren → Durchflussrate).",
-          "soil_moisture_entity": "Ein Bodenfeuchtesensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, bei nassem Boden wird sie ausgesetzt, dazwischen gilt der normale Zeitplan. Die Schwellen für trocken und nass findest du auf der Geräteseite der Zone.",
+          "soil_moisture_entity": "Ein Bodenfeuchtesensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, bei nassem Boden wird sie übersprungen, dazwischen gilt der normale Zeitplan. Die Schwellen für trocken und nass findest du auf der Geräteseite der Zone.",
           "notify_entity": "Die Benachrichtigungs-Entität deines Handys aus der Home Assistant Companion App. ZoneFlow schickt Störungen und wichtige Ereignisse dorthin, und auch die Wochenübersicht, wenn du sie einschaltest. Ohne sie landet alles nur im Log.",
           "weather_entity": "Eine Wetter-Entität mit Vorhersage. ZoneFlow setzt eine Bewässerung aus, wenn genug Regen vorhergesagt ist (aber nicht zu viele Tage hintereinander), und nutzt ihre aktuelle Temperatur für den Frostschutz, wenn kein Temperatursensor da ist.",
           "soil_type": "Nur zur Orientierung: Die Bewässerung ändert sich dadurch nicht von selbst. Die Bodenart erscheint im Sensor „Bodenprofil“ der Zone und hilft dir, auf der Geräteseite Durchgänge und Einsickerpausen zu wählen: Tonboden nimmt Wasser langsam auf und braucht mehr, kürzere Durchgänge mit längeren Einsickerpausen dazwischen; Sandboden kommt mit weniger Durchgängen aus.",
@@ -148,7 +148,7 @@
           "slope": "Nur zur Orientierung, wie die Bodenart: Am Hang läuft Wasser ab, bevor es einsickert – mehr, kürzere Durchgänge helfen.",
           "irrigation_method": "Wie das Wasser ausgebracht wird. Nur zur Orientierung, wie die Bodenart; wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
           "growth_ramp_profile": "Gibt jungen Pflanzen weniger Wasser und steigert es mit dem Alter bis zum vollen Wochenziel, gerechnet ab dem „Pflanz-/Umpflanzdatum“ auf der Geräteseite der Zone. Aus: immer das volle Ziel. Eigene Kurve: Lege deine Kurve selbst auf der Geräteseite fest.",
-          "csv_path": "Eine Datei, in die jede Bewässerung, jedes Aussetzen und jede Warnung mit Zahlen geschrieben wird – zum Nachprüfen, was ZoneFlow getan hat (lässt sich in jeder Tabellenkalkulation öffnen). Die vorgeschlagene Datei in deinem config-Ordner passt.",
+          "csv_path": "Eine Datei, in die jede Bewässerung, jedes Überspringen und jede Warnung mit Zahlen geschrieben wird – zum Nachprüfen, was ZoneFlow getan hat (lässt sich in jeder Tabellenkalkulation öffnen). Die vorgeschlagene Datei in deinem config-Ordner passt.",
           "deep_soak_enabled": "Eine Tiefenbewässerung ist ein großes, langsames Gießen alle paar Wochen (anfangs alle 14 Tage), das den Boden tief durchfeuchtet, damit die Wurzeln in die Tiefe wachsen. Gut für Bäume, Sträucher und Stauden; schalte sie für flach wurzelnde Pflanzen wie Salat und Kräuter aus. Die Routinebewässerung läuft so oder so.",
           "deep_soak_time": "Wann die Tiefenbewässerung an fälligen Tagen startet, wenn unten als Auslöser die feste Uhrzeit gewählt ist. Früh am Morgen ist am besten: Es geht weniger Wasser an Sonne und Wind verloren.",
           "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und dann gießt. Wie oft sie fällig ist, richtet sich nach dem Wetter und deinem Wochenziel. Früh am Morgen ist am besten.",
@@ -205,7 +205,7 @@
     },
     "soil_type": {
       "options": {
-        "unknown": "Unsicher / gemischt",
+        "unknown": "Weiß nicht / gemischt",
         "sandy": "Sandboden",
         "sandy_loam": "Lehmiger Sand",
         "loam": "Lehmboden",
@@ -215,7 +215,7 @@
     },
     "drainage": {
       "options": {
-        "unknown": "Unsicher",
+        "unknown": "Weiß nicht",
         "fast": "Versickert schnell",
         "medium": "Mittel",
         "slow": "Versickert langsam"
@@ -320,10 +320,10 @@
         "name": "Routine: max. Laufzeit (Sicherheit)"
       },
       "routine_drydown_days": {
-        "name": "Routine: Abtrockenzeit"
+        "name": "Routine: Abtrocknungszeit"
       },
       "deep_soak_drydown_days": {
-        "name": "Tiefenbewässerung: Abtrockenzeit Unterboden"
+        "name": "Tiefenbewässerung: Abtrocknungszeit Unterboden"
       },
       "deep_soak_interval_days": {
         "name": "Tiefenbewässerung: Intervall"
@@ -344,7 +344,7 @@
         "name": "Pumpen-Nachlauf (Beruhigungszeit)"
       },
       "forecast_rain_threshold_mm": {
-        "name": "Vorhersage: Regenmenge zum Aussetzen"
+        "name": "Vorhersage: Regenmenge zum Überspringen"
       },
       "forecast_probability_threshold_pct": {
         "name": "Vorhersage: Schwelle Regenwahrscheinlichkeit"
@@ -531,7 +531,7 @@
         "name": "Bodenfeuchte-Status",
         "state": {
           "dry": "Trocken – Bewässerung vorgezogen",
-          "wet": "Nass – wird ausgesetzt",
+          "wet": "Nass – wird übersprungen",
           "in_range": "Im Bereich – nach Zeitplan",
           "offline": "Sensor offline – nach Zeitplan",
           "stale": "Seit 24 h kein neuer Wert – nach Zeitplan",
@@ -558,7 +558,7 @@
       "soil_type": {
         "name": "Bodenart",
         "state": {
-          "unknown": "Unsicher / gemischt",
+          "unknown": "Weiß nicht / gemischt",
           "sandy": "Sandboden",
           "sandy_loam": "Lehmiger Sand",
           "loam": "Lehmboden",
@@ -652,7 +652,7 @@
   "services": {
     "run_deep_soak": {
       "name": "Tiefenbewässerung starten",
-      "description": "Startet die Tiefenbewässerung jetzt, sofern (und nur wenn) dieselben Bedingungen wie beim 05:00-Zeitplan erfüllt sind (Sperre frei, 14-Tage-Intervall und Abtrockenzeit erreicht, 14-Tage-Regenobergrenze nicht überschritten). Gleicher Ablauf wie beim geplanten Lauf.",
+      "description": "Startet die Tiefenbewässerung jetzt, sofern (und nur wenn) dieselben Bedingungen wie beim 05:00-Zeitplan erfüllt sind (Sperre frei, 14-Tage-Intervall und Abtrocknungszeit erreicht, 14-Tage-Regenobergrenze nicht überschritten). Gleicher Ablauf wie beim geplanten Lauf.",
       "fields": {
         "device_id": {
           "name": "Zonen-Gerät",
@@ -708,7 +708,7 @@
     },
     "test_pulse": {
       "name": "Testimpuls",
-      "description": "Umgeht alle Zeitplan-, Abtrocken- und Regenbedingungen und öffnet das Ventil einmal kurz – zum Testen der Ventil-/Pumpenverkabelung, bevor du dich auf den echten Zeitplan verlässt. Sperre und Sicherheitswächter gelten weiterhin.",
+      "description": "Umgeht alle Zeitplan-, Abtrocknungs- und Regenbedingungen und öffnet das Ventil einmal kurz – zum Testen der Ventil-/Pumpenverkabelung, bevor du dich auf den echten Zeitplan verlässt. Sperre und Sicherheitswächter gelten weiterhin.",
       "fields": {
         "device_id": {
           "name": "Zonen-Gerät",

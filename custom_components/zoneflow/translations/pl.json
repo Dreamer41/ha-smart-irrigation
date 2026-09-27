@@ -504,7 +504,7 @@
         "name": "Dni do następnego podlewania"
       },
       "last_water_delivered": {
-        "name": "Ostatnia dawka wody (szacunek)"
+        "name": "Ostatnia dawka wody (szacowana)"
       },
       "rain_today": {
         "name": "Deszcz dzisiaj"
@@ -773,7 +773,7 @@
     },
     "flow_rate_default": {
       "title": "{zone}: skalibruj wydajność emiterów",
-      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy wodomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to."
+      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to."
     }
   }
 }

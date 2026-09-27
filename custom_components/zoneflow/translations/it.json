@@ -56,7 +56,7 @@
           "slope": "Solo come riferimento, come il tipo di terreno: in pendenza l'acqua scorre via prima di penetrare, quindi aiutano più impulsi, più brevi.",
           "irrigation_method": "Come arriva l'acqua. Solo come riferimento, come il tipo di terreno; quanta acqua dà lo decide la portata (Configura → Portata: calcolala dagli erogatori).",
           "growth_ramp_profile": "Dà meno acqua alle piante giovani e la aumenta fino all'obiettivo settimanale pieno man mano che crescono, a partire dalla Data di impianto / trapianto nella pagina del dispositivo della zona. Disattivato: sempre l'obiettivo pieno. Personalizzato: disegna la tua curva nella pagina del dispositivo.",
-          "csv_path": "Un file in cui ogni irrigazione, salto e avviso viene scritto con i suoi numeri, per controllare cosa ha fatto ZoneFlow (si apre con qualsiasi foglio di calcolo). Il file proposto nella tua cartella config va benissimo.",
+          "csv_path": "Un file in cui ogni irrigazione, irrigazione saltata e avviso viene scritto con i suoi numeri, per controllare cosa ha fatto ZoneFlow (si apre con qualsiasi foglio di calcolo). Il file proposto nella tua cartella config va benissimo.",
           "deep_soak_enabled": "L'irrigazione profonda è un'irrigazione abbondante e lenta ogni due settimane circa (14 giorni per iniziare) che bagna il terreno in profondità, così le radici scendono in basso. Ottima per alberi, arbusti e perenni; disattivala per piante a radici superficiali come insalata ed erbe aromatiche. L'irrigazione ordinaria funziona in ogni caso.",
           "deep_soak_time": "Quando parte l'irrigazione profonda nei giorni previsti, se il suo avvio qui sotto è l'orario fisso. La mattina presto è l'ideale: si perde meno acqua per sole e vento.",
           "routine_time": "Quando ZoneFlow controlla ogni giorno se tocca all'irrigazione ordinaria, e irriga se è così. Quanto spesso tocca dipende dal meteo e dal tuo obiettivo settimanale. La mattina presto è l'ideale.",
@@ -148,7 +148,7 @@
           "slope": "Solo come riferimento, come il tipo di terreno: in pendenza l'acqua scorre via prima di penetrare, quindi aiutano più impulsi, più brevi.",
           "irrigation_method": "Come arriva l'acqua. Solo come riferimento, come il tipo di terreno; quanta acqua dà lo decide la portata (Configura → Portata: calcolala dagli erogatori).",
           "growth_ramp_profile": "Dà meno acqua alle piante giovani e la aumenta fino all'obiettivo settimanale pieno man mano che crescono, a partire dalla Data di impianto / trapianto nella pagina del dispositivo della zona. Disattivato: sempre l'obiettivo pieno. Personalizzato: disegna la tua curva nella pagina del dispositivo.",
-          "csv_path": "Un file in cui ogni irrigazione, salto e avviso viene scritto con i suoi numeri, per controllare cosa ha fatto ZoneFlow (si apre con qualsiasi foglio di calcolo). Il file proposto nella tua cartella config va benissimo.",
+          "csv_path": "Un file in cui ogni irrigazione, irrigazione saltata e avviso viene scritto con i suoi numeri, per controllare cosa ha fatto ZoneFlow (si apre con qualsiasi foglio di calcolo). Il file proposto nella tua cartella config va benissimo.",
           "deep_soak_enabled": "L'irrigazione profonda è un'irrigazione abbondante e lenta ogni due settimane circa (14 giorni per iniziare) che bagna il terreno in profondità, così le radici scendono in basso. Ottima per alberi, arbusti e perenni; disattivala per piante a radici superficiali come insalata ed erbe aromatiche. L'irrigazione ordinaria funziona in ogni caso.",
           "deep_soak_time": "Quando parte l'irrigazione profonda nei giorni previsti, se il suo avvio qui sotto è l'orario fisso. La mattina presto è l'ideale: si perde meno acqua per sole e vento.",
           "routine_time": "Quando ZoneFlow controlla ogni giorno se tocca all'irrigazione ordinaria, e irriga se è così. Quanto spesso tocca dipende dal meteo e dal tuo obiettivo settimanale. La mattina presto è l'ideale.",
@@ -773,7 +773,7 @@
     },
     "flow_rate_default": {
       "title": "{zone}: tara la portata degli erogatori",
-      "description": "La zona {zone} usa ancora la Taratura portata erogatori predefinita (0,24 mm/min). È l'unico numero che decide quanta acqua dà ogni ciclo, quindi misurala per i tuoi erogatori: Configura → Portata della zona la calcola dai tuoi erogatori o la misura con un contatore d'acqua. Se 0,24 mm/min è davvero giusto per questa zona, ignora questo avviso."
+      "description": "La zona {zone} usa ancora la Taratura portata erogatori predefinita (0,24 mm/min). È l'unico numero che decide quanta acqua dà ogni ciclo, quindi misurala per i tuoi erogatori: Configura → Portata della zona la calcola dai tuoi erogatori o la misura con il flussometro. Se 0,24 mm/min è davvero giusto per questa zona, ignora questo avviso."
     }
   }
 }
