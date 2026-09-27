@@ -1767,7 +1767,9 @@ the zone). With more than one zone, also put a **ZoneFlow overview** card
 (`type: custom:zoneflow-overview-card`, `sort: next`) on the first tab:
 every zone in one table, a click opens a zone's full card. Give each zone an
 icon that fits its crop in the overview card's editor (preset zones already
-have one). With tool access, put one card per zone in its own view or
+have one); its **Add zone** button (admins only) starts the next zone's
+setup. The zone card keeps its screen short: the plant journal and all
+settings open as popups from buttons at its bottom. With tool access, put one card per zone in its own view or
 section, with the view's icon and title set per zone as described below.
 Only build the hand-made layout that follows if the person specifically
 wants a custom arrangement, or is on a ZoneFlow version before 1.5.0.

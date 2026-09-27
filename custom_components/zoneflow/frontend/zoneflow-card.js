@@ -79,8 +79,12 @@ const I18N = {
         "frost_wait": "Frost wait",
         "frost_skip": "Frost skip",
         "deep_soak_first": "Deep soak first"
-      }
-    }
+      },
+      "add_zone": "Add zone",
+      "show_add": "Show the Add zone button"
+    },
+    "close": "Close",
+    "device_page": "Open the device page"
   },
   "de": {
     "now": "Jetzt",
@@ -145,8 +149,12 @@ const I18N = {
         "frost_wait": "Wartet: Frost",
         "frost_skip": "Frost: ausgelassen",
         "deep_soak_first": "Erst Tiefenbewässerung"
-      }
-    }
+      },
+      "add_zone": "Zone hinzufügen",
+      "show_add": "Schaltfläche „Zone hinzufügen“ anzeigen"
+    },
+    "close": "Schließen",
+    "device_page": "Geräteseite öffnen"
   },
   "es": {
     "now": "Ahora",
@@ -211,8 +219,12 @@ const I18N = {
         "frost_wait": "Esperando: helada",
         "frost_skip": "Helada: omitido",
         "deep_soak_first": "Primero riego profundo"
-      }
-    }
+      },
+      "add_zone": "Añadir zona",
+      "show_add": "Mostrar el botón Añadir zona"
+    },
+    "close": "Cerrar",
+    "device_page": "Abrir la página del dispositivo"
   },
   "fi": {
     "now": "Nyt",
@@ -277,8 +289,12 @@ const I18N = {
         "frost_wait": "Odottaa: halla",
         "frost_skip": "Halla: ohitettu",
         "deep_soak_first": "Ensin syväkastelu"
-      }
-    }
+      },
+      "add_zone": "Lisää vyöhyke",
+      "show_add": "Näytä Lisää vyöhyke -painike"
+    },
+    "close": "Sulje",
+    "device_page": "Avaa laitteen sivu"
   },
   "fr": {
     "now": "Maintenant",
@@ -343,8 +359,12 @@ const I18N = {
         "frost_wait": "Attente : gel",
         "frost_skip": "Gel : sauté",
         "deep_soak_first": "Arrosage profond d'abord"
-      }
-    }
+      },
+      "add_zone": "Ajouter une zone",
+      "show_add": "Afficher le bouton Ajouter une zone"
+    },
+    "close": "Fermer",
+    "device_page": "Ouvrir la page de l'appareil"
   },
   "it": {
     "now": "Adesso",
@@ -409,8 +429,12 @@ const I18N = {
         "frost_wait": "Attesa: gelo",
         "frost_skip": "Gelo: saltata",
         "deep_soak_first": "Prima l'irrigazione profonda"
-      }
-    }
+      },
+      "add_zone": "Aggiungi zona",
+      "show_add": "Mostra il pulsante Aggiungi zona"
+    },
+    "close": "Chiudi",
+    "device_page": "Apri la pagina del dispositivo"
   },
   "nl": {
     "now": "Nu",
@@ -475,8 +499,12 @@ const I18N = {
         "frost_wait": "Wacht: vorst",
         "frost_skip": "Vorst: overgeslagen",
         "deep_soak_first": "Eerst diepe watergift"
-      }
-    }
+      },
+      "add_zone": "Zone toevoegen",
+      "show_add": "Knop Zone toevoegen tonen"
+    },
+    "close": "Sluiten",
+    "device_page": "Apparaatpagina openen"
   },
   "pl": {
     "now": "Teraz",
@@ -541,8 +569,12 @@ const I18N = {
         "frost_wait": "Czeka: przymrozek",
         "frost_skip": "Przymrozek: pominięte",
         "deep_soak_first": "Najpierw głębokie podlewanie"
-      }
-    }
+      },
+      "add_zone": "Dodaj strefę",
+      "show_add": "Pokaż przycisk Dodaj strefę"
+    },
+    "close": "Zamknij",
+    "device_page": "Otwórz stronę urządzenia"
   },
   "pt": {
     "now": "Agora",
@@ -607,8 +639,12 @@ const I18N = {
         "frost_wait": "Espera: geada",
         "frost_skip": "Geada: dispensada",
         "deep_soak_first": "Primeiro a rega profunda"
-      }
-    }
+      },
+      "add_zone": "Adicionar zona",
+      "show_add": "Mostrar o botão Adicionar zona"
+    },
+    "close": "Fechar",
+    "device_page": "Abrir a página do dispositivo"
   },
   "sv": {
     "now": "Nu",
@@ -673,8 +709,12 @@ const I18N = {
         "frost_wait": "Väntar: frost",
         "frost_skip": "Frost: överhoppad",
         "deep_soak_first": "Djupvattning först"
-      }
-    }
+      },
+      "add_zone": "Lägg till zon",
+      "show_add": "Visa knappen Lägg till zon"
+    },
+    "close": "Stäng",
+    "device_page": "Öppna enhetssidan"
   }
 };
 
@@ -863,13 +903,29 @@ class ZoneFlowCard extends HTMLElement {
       .section { padding: 0 16px 8px; }
       .section-title { font-weight: 500; color: var(--secondary-text-color); font-size: 0.85em;
         text-transform: uppercase; letter-spacing: 0.04em; margin: 12px 0 4px; }
-      details { border-top: 1px solid var(--divider-color); padding: 0 16px; }
-      details > summary { cursor: pointer; padding: 12px 0; font-weight: 500; list-style: none; display: flex;
-        align-items: center; justify-content: space-between; }
-      details > summary::-webkit-details-marker { display: none; }
-      details > summary::after { content: "▸" / ""; color: var(--secondary-text-color); }
-      details[open] > summary::after { content: "▾" / ""; }
-      .group-title { color: var(--secondary-text-color); font-size: 0.85em; margin: 8px 0 2px; }
+      .more { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 16px 16px; border-top: 1px solid var(--divider-color); }
+      .more button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 18px;
+        border: 1px solid var(--divider-color); background: var(--secondary-background-color, transparent);
+        color: var(--primary-text-color); font: inherit; font-size: 0.95em; cursor: pointer; }
+      .more button:hover { border-color: var(--primary-color); }
+      .more button ha-icon { --mdc-icon-size: 18px; color: var(--secondary-text-color); }
+      dialog { border: none; border-radius: var(--ha-dialog-border-radius, 24px); padding: 0; width: min(560px, 94vw);
+        max-height: 88vh; background: var(--mdc-theme-surface, var(--card-background-color, #fff));
+        color: var(--primary-text-color); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); }
+      dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+      dialog .dlg { display: flex; flex-direction: column; max-height: 88vh; }
+      dialog header { display: flex; align-items: center; gap: 8px; padding: 12px 8px 8px 20px;
+        border-bottom: 1px solid var(--divider-color); }
+      dialog header .dlg-title { flex: 1; font-size: 1.2em; font-weight: 500; }
+      dialog header .dlg-sub { display: block; font-size: 0.8em; font-weight: 400; color: var(--secondary-text-color); }
+      dialog header button { border: none; background: none; color: var(--secondary-text-color); cursor: pointer;
+        padding: 8px; border-radius: 50%; display: inline-flex; }
+      dialog header button:hover { background: var(--secondary-background-color); }
+      dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
+      dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
+      dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
+      .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
+        letter-spacing: 0.04em; margin: 16px 0 2px; }
       .rows > * { display: block; margin: 4px 0; }
       .missing { padding: 16px; color: var(--secondary-text-color); }
       ${this._config.embedded ? `
@@ -968,39 +1024,115 @@ class ZoneFlowCard extends HTMLElement {
       card.appendChild(el);
       this._addRows(list, confs);
     };
-    const folded = (titleKey, parts) => {
-      const nonEmpty = parts.filter(([, confs]) => confs.length);
-      if (!nonEmpty.length) return;
-      const details = document.createElement("details");
-      // Stays open (or closed) when the card rebuilds.
-      details.open = !!this._open[titleKey];
-      details.addEventListener("toggle", () => {
-        this._open[titleKey] = details.open;
-      });
-      const summary = document.createElement("summary");
-      summary.textContent = t(hass, titleKey);
-      details.appendChild(summary);
-      for (const [groupKey, confs] of nonEmpty) {
-        if (groupKey) {
-          const heading = document.createElement("div");
-          heading.className = "group-title";
-          heading.textContent = t(hass, `groups.${groupKey}`);
-          details.appendChild(heading);
-        }
-        const list = document.createElement("div");
-        list.className = "rows";
-        details.appendChild(list);
-        this._addRows(list, confs);
-      }
-      card.appendChild(details);
-    };
-
+    // Journal, settings and diagnostics: buttons that open a popup, like
+    // Home Assistant's own entity dialogs.
+    this._popups = {};
+    if (this._config.show_journal) this._popups.journal = { icon: "mdi:notebook-outline", parts: [[null, journal]] };
+    if (this._config.show_settings) this._popups.settings = { icon: "mdi:cog-outline", parts: groups };
+    if (this._config.show_diagnostics) {
+      this._popups.diagnostics = { icon: "mdi:chart-box-outline", parts: [[null, diagnostics]] };
+    }
+    for (const [key, popup] of Object.entries(this._popups)) {
+      popup.parts = popup.parts.filter(([, confs]) => confs.length);
+      if (!popup.parts.length) delete this._popups[key];
+    }
     section("now", now);
     section("controls", controls);
     section("service", service);
-    if (this._config.show_journal) folded("journal", [[null, journal]]);
-    if (this._config.show_settings) folded("settings", groups);
-    if (this._config.show_diagnostics) folded("diagnostics", [[null, diagnostics]]);
+    if (Object.keys(this._popups).length) {
+      const bar = document.createElement("div");
+      bar.className = "more";
+      for (const [key, popup] of Object.entries(this._popups)) {
+        const button = document.createElement("button");
+        const icon = document.createElement("ha-icon");
+        icon.setAttribute("icon", popup.icon);
+        button.append(icon, document.createTextNode(t(hass, key)));
+        button.addEventListener("click", () => this._openPopup(key));
+        bar.appendChild(button);
+      }
+      card.appendChild(bar);
+    }
+    // Rebuilt while a popup was open (e.g. a setting appeared): open again.
+    if (this._popupKey && this._popups[this._popupKey]) this._openPopup(this._popupKey);
+  }
+
+  _openPopup(key) {
+    const hass = this._hass;
+    const popup = this._popups?.[key];
+    if (!popup || !this.shadowRoot) return;
+    this.shadowRoot.querySelector("dialog")?.remove();
+    this._popupKey = key;
+    const dialog = document.createElement("dialog");
+    dialog.setAttribute("aria-label", t(hass, key));
+    const box = document.createElement("div");
+    box.className = "dlg";
+    const header = document.createElement("header");
+    const title = document.createElement("div");
+    title.className = "dlg-title";
+    title.textContent = t(hass, key);
+    const device = hass.devices?.[this._config.device_id];
+    const sub = document.createElement("span");
+    sub.className = "dlg-sub";
+    sub.textContent = this._config.title || device?.name_by_user || device?.name || "";
+    title.appendChild(sub);
+    const close = document.createElement("button");
+    close.setAttribute("aria-label", t(hass, "close"));
+    const closeIcon = document.createElement("ha-icon");
+    closeIcon.setAttribute("icon", "mdi:close");
+    close.appendChild(closeIcon);
+    close.addEventListener("click", () => dialog.close());
+    header.append(title, close);
+    const body = document.createElement("div");
+    body.className = "dlg-body";
+    for (const [groupKey, confs] of popup.parts) {
+      if (groupKey) {
+        const heading = document.createElement("div");
+        heading.className = "group-title";
+        heading.textContent = t(hass, `groups.${groupKey}`);
+        body.appendChild(heading);
+      }
+      const list = document.createElement("div");
+      list.className = "rows";
+      body.appendChild(list);
+      this._addRows(list, confs, "popup");
+    }
+    box.append(header, body);
+    if (hass.user?.is_admin) {
+      // The zone's own device page: every entity, logbook, and more.
+      const footer = document.createElement("footer");
+      const link = document.createElement("a");
+      link.textContent = t(hass, "device_page");
+      link.addEventListener("click", () => {
+        dialog.close();
+        history.pushState(null, "", `/config/devices/device/${this._config.device_id}`);
+        window.dispatchEvent(new CustomEvent("location-changed"));
+      });
+      footer.appendChild(link);
+      box.appendChild(footer);
+    }
+    dialog.appendChild(box);
+    dialog.addEventListener("click", (ev) => {
+      if (ev.target === dialog) dialog.close(); // a click on the backdrop
+    });
+    dialog.addEventListener("close", () => {
+      if (this._popupKey === key) this._popupKey = undefined;
+      this._rows = (this._rows || []).filter((row) => !box.contains(row));
+      dialog.remove();
+    });
+    // An entity's own dialog (its name clicked) must not open underneath
+    // this one: step aside, and come back when it closes.
+    dialog.addEventListener("hass-more-info", () => {
+      dialog.close();
+      window.addEventListener(
+        "dialog-closed",
+        () => {
+          if (this.isConnected && !this.shadowRoot.querySelector("dialog")) this._openPopup(key);
+        },
+        { once: true }
+      );
+    });
+    this.shadowRoot.appendChild(dialog);
+    dialog.showModal();
   }
 
   _shortName(conf) {
@@ -1251,6 +1383,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
       this._hass.locale?.language,
       this._config.title,
+      this._config.show_add,
+      !!this._hass.user?.is_admin,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
@@ -1271,9 +1405,14 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.5fr) minmax(0, 1.15fr) minmax(0, 0.75fr) 48px;
         align-items: center; column-gap: 8px; padding: 0 8px 0 16px; }
       .head { color: var(--secondary-text-color); font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.04em;
-        padding-bottom: 4px; border-bottom: 1px solid var(--divider-color); }
-      .zone { border-bottom: 1px solid var(--divider-color); }
-      .zone:last-child { border-bottom: none; }
+        padding-bottom: 6px; margin: 0 12px; }
+      /* Each zone its own tile, a little apart from the next. */
+      .zone { margin: 0 12px 8px; border: 1px solid var(--divider-color); border-radius: 12px; overflow: hidden;
+        background: var(--card-background-color, transparent); }
+      .add { display: flex; align-items: center; justify-content: center; gap: 8px; width: calc(100% - 24px);
+        margin: 4px 12px 12px; padding: 10px; border: 1px dashed var(--divider-color); border-radius: 12px;
+        background: none; color: var(--primary-color); font: inherit; font-weight: 500; cursor: pointer; }
+      .add:hover { border-color: var(--primary-color); background: var(--secondary-background-color); }
       .row { min-height: 52px; cursor: pointer; }
       .row:hover, .row[aria-expanded="true"] { background: var(--secondary-background-color); }
       .row:focus-visible { outline: 2px solid var(--primary-color); outline-offset: -2px; }
@@ -1287,7 +1426,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .action ha-icon-button { color: var(--primary-color); }
       .action ha-icon-button[disabled] { color: var(--disabled-text-color); }
       .details { padding: 0 8px 8px; }
-      .empty { padding: 16px; color: var(--secondary-text-color); }
+      .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
       /* Phones: two lines per zone -- the name, then status and next. */
       @container (max-width: 480px) {
         .head { display: none; }
@@ -1309,11 +1448,27 @@ class ZoneFlowOverviewCard extends HTMLElement {
     title.textContent = this._config.title || tr("title");
     card.appendChild(title);
     this._rows = {};
+    const addButton = () => {
+      // Adding a zone is ZoneFlow's normal setup (admins only, like any
+      // integration).
+      if (!hass.user?.is_admin || this._config.show_add === false) return;
+      const add = document.createElement("button");
+      add.className = "add";
+      const icon = document.createElement("ha-icon");
+      icon.setAttribute("icon", "mdi:plus");
+      add.append(icon, document.createTextNode(tr("add_zone")));
+      add.addEventListener("click", () => {
+        history.pushState(null, "", "/config/integrations/dashboard/add?domain=zoneflow");
+        window.dispatchEvent(new CustomEvent("location-changed"));
+      });
+      card.appendChild(add);
+    };
     if (!zones.length) {
       const empty = document.createElement("div");
       empty.className = "empty";
       empty.textContent = tr("no_zones");
       card.appendChild(empty);
+      addButton();
       return;
     }
     const head = document.createElement("div");
@@ -1390,6 +1545,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       card.appendChild(wrap);
       this._rows[zone.device_id] = { status, statusIcon, statusText, next, last, water, details };
     }
+    addButton();
   }
 
   _fillDetails(zone, details) {
@@ -1477,13 +1633,19 @@ class ZoneFlowOverviewCardEditor extends HTMLElement {
         if (value.title) config.title = value.title;
         else delete config.title;
         if (!Object.keys(icons).length) delete config.icons;
+        if (value.show_add === false) config.show_add = false;
+        else delete config.show_add;
         this._config = config;
         this.dispatchEvent(new CustomEvent("config-changed", { detail: { config }, bubbles: true, composed: true }));
       });
       this.appendChild(this._form);
     }
-    const labels = { title: tr("title"), sort: tr("sort") };
-    const data = { title: this._config.title || "", sort: this._config.sort || "name" };
+    const labels = { title: tr("title"), sort: tr("sort"), show_add: tr("show_add") };
+    const data = {
+      title: this._config.title || "",
+      sort: this._config.sort || "name",
+      show_add: this._config.show_add !== false,
+    };
     const iconFields = zones.map((zone) => {
       labels[`icon_${zone.device_id}`] = zone.name;
       data[`icon_${zone.device_id}`] = this._config.icons?.[zone.device_id] || "";
@@ -1512,6 +1674,7 @@ class ZoneFlowOverviewCardEditor extends HTMLElement {
       ...(iconFields.length
         ? [{ type: "expandable", name: "", title: tr("icons"), flatten: true, schema: iconFields }]
         : []),
+      { name: "show_add", selector: { boolean: {} } },
     ];
     this._form.data = data;
   }

@@ -88,8 +88,24 @@ JS_SECTIONS = """() => {
   for (const s of root.querySelectorAll('.section')) {
     out.sections[s.querySelector('.section-title').textContent] = [...s.querySelectorAll('.row')].map(r => r.textContent);
   }
-  for (const d of root.querySelectorAll('details')) {
-    out.folded[d.querySelector('summary').textContent] = [...d.querySelectorAll('.row')].map(r => r.textContent);
+  out.buttons = [...root.querySelectorAll('.more button')].map(b => b.textContent);
+  return out;
+}"""
+
+JS_POPUPS = """async () => {
+  // Opens each popup (journal, settings, diagnostics) and reads its rows.
+  const card = window._card;
+  const out = {};
+  for (const button of [...card.shadowRoot.querySelectorAll('.more button')]) {
+    button.click();
+    await new Promise(r => setTimeout(r, 100));
+    const dialog = card.shadowRoot.querySelector('dialog');
+    out[button.textContent] = {
+      modal: dialog.open && dialog.matches(':modal'),
+      rows: [...dialog.querySelectorAll('.row')].map(r => r.textContent),
+      groups: [...dialog.querySelectorAll('.group-title')].map(g => g.textContent),
+    };
+    dialog.close();
   }
   return out;
 }"""
@@ -127,7 +143,12 @@ def main() -> int:
         shown = page.evaluate(JS_SECTIONS)
         print(json.dumps(shown, indent=1))
         now, controls, service = (shown["sections"].get(k, []) for k in ("Now", "Controls", "Service & checks (not counted as watering)"))
-        settings = shown["folded"].get("Settings", [])
+        popups = page.evaluate(JS_POPUPS)
+        print(json.dumps(popups, indent=1))
+        check(shown["buttons"] == ["Plant journal", "Settings", "Diagnostics"], "journal, settings and diagnostics as buttons")
+        check(all(p["modal"] for p in popups.values()), "they open as popups")
+        settings = popups["Settings"]["rows"]
+        check(popups["Settings"]["groups"][0] == "How much water", "settings popup grouped")
         check(shown["status"] == "Next watering Tue 05:30", "status sentence at the top")
         check(now[:2] == ["Valve", "soil_moisture"], "valve first, names without the zone prefix")
         check("deficit_status" not in now, "deficit status left out while deficit mode is off")
@@ -138,8 +159,8 @@ def main() -> int:
         check("rain_eff_low" not in settings, "hidden settings left out")
         check("brand_new_setting" in settings, "a setting added later appears by itself")
         check("notifications" in settings, "notifications among the settings")
-        check(shown["folded"].get("Plant journal") == ["health_status", "health_notes"], "plant journal")
-        check("rain_past_24h" in shown["folded"].get("Diagnostics", []), "diagnostics when asked for")
+        check(popups["Plant journal"]["rows"] == ["health_status", "health_notes"], "plant journal")
+        check("rain_past_24h" in popups["Diagnostics"]["rows"], "diagnostics when asked for")
         check(not any("other_zone" in row for rows in shown["sections"].values() for row in rows), "only this zone")
 
         # Changes: deficit mode switched on, the hidden button unhidden, status changes.
@@ -176,13 +197,16 @@ def main() -> int:
         check(bool(text) and "Pick a ZoneFlow zone" in text, "a card without a zone asks for one (card picker preview)")
 
         # Settings opened, then something makes the card rebuild: stays open.
-        page.evaluate("() => { const d = window._card.shadowRoot.querySelectorAll('details')[1]; d.open = true; }")
+        page.evaluate("() => window._card.shadowRoot.querySelectorAll('.more button')[1].click()")
         page.wait_for_timeout(50)
         hass["states"]["sensor.chilis_deficit_status"]["state"] = "off"
         page.evaluate("(hass) => { window._card.hass = hass; }", hass)
         page.wait_for_timeout(200)
-        is_open = page.evaluate("() => window._card.shadowRoot.querySelectorAll('details')[1].open")
-        check(is_open, "an opened section stays open when the card rebuilds")
+        is_open = page.evaluate(
+            "() => { const d = window._card.shadowRoot.querySelector('dialog'); return !!d && d.open && d.querySelectorAll('.row').length > 3; }"
+        )
+        check(is_open, "an open popup stays open when the card rebuilds")
+        page.evaluate("() => window._card.shadowRoot.querySelector('dialog').close()")
 
         # A renamed entity: the card follows it.
         hass["entities"]["sensor.chilis_soil_moisture"]["entity_id"] = "sensor.chili_soil"
@@ -312,6 +336,22 @@ def check_overview(pw, check, args) -> None:
     page.wait_for_timeout(100)
     rows = page.evaluate(JS_OVERVIEW)
     check(rows[0]["open"] and rows[0]["status"] == "Watering now", "overview: stays open and follows changes")
+    has_add = page.evaluate("() => !!window._ov.shadowRoot.querySelector('.add')")
+    check(not has_add, "overview: no Add zone button for non-admin users")
+    page.evaluate("() => { const h = JSON.parse(JSON.stringify(window._ovHass)); h.user = {is_admin: true}; h.callService = window._ovHass.callService; window._ov.hass = h; }")
+    page.wait_for_timeout(100)
+    add = page.evaluate("() => window._ov.shadowRoot.querySelector('.add')?.textContent")
+    check(add == "Add zone", "overview: Add zone button for admins")
+    page.evaluate("() => { const h = window._ov._hass; window._ov.setConfig({show_add: false}); window._ov.hass = h; }")
+    page.wait_for_timeout(100)
+    hidden = page.evaluate("() => !window._ov.shadowRoot.querySelector('.add') && !!window._ov.shadowRoot.querySelector('.zone')")
+    check(hidden, "overview: show_add: false hides the Add zone button")
+    page.evaluate("() => { const h = window._ov._hass; window._ov.setConfig({}); window._ov.hass = h; }")
+    page.wait_for_timeout(100)
+    tiles = page.evaluate(
+        "() => [...window._ov.shadowRoot.querySelectorAll('.zone')].map(z => getComputedStyle(z).marginBottom)"
+    )
+    check(all(m == "8px" for m in tiles), "overview: zones as separate tiles with a gap")
     if args.screenshot:
         shot = args.screenshot.with_name(args.screenshot.stem + "-overview" + args.screenshot.suffix)
         page.locator("#ov").screenshot(path=str(shot))

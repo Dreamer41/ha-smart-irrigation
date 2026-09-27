@@ -193,9 +193,9 @@ pick the zone. Or in YAML:
 ```yaml
 type: custom:zoneflow-card
 device_id: <the zone's device>   # picked for you in the card editor
-show_journal: true               # plant journal (folded)
-show_settings: true              # every setting, grouped (folded)
-show_diagnostics: false
+show_journal: true               # Plant journal button
+show_settings: true              # Settings button: every setting, grouped
+show_diagnostics: false          # Diagnostics button
 title: Chili bed                 # optional: instead of the zone's name
 icon: mdi:chili-hot              # optional
 ```
@@ -203,8 +203,14 @@ icon: mdi:chili-hot              # optional
 <img src="docs/screenshots/card.png" width="380" alt="The ZoneFlow card: status sentence, valve, soil moisture, next watering, controls and service runs">
 
 It shows the zone's Status sentence up top, then the valve, soil moisture
-and next watering, the controls (water now, snooze, pause), service runs,
-and the settings folded away in groups. It finds the zone's entities
+and next watering, the controls (water now, snooze, pause) and service
+runs. **Plant journal** and **Settings** at the bottom open in a popup,
+like Home Assistant's own entity dialogs: every setting in groups, and a
+link to the zone's device page (for admins).
+
+<img src="docs/screenshots/settings-popup.png" width="380" alt="The ZoneFlow Settings popup: settings grouped under headings, with a link to the device page">
+
+It finds the zone's entities
 through its device and leaves out whatever the zone doesn't use, so after
 a ZoneFlow update new features appear on it by themselves. Units follow
 the zone. Ordinary Home Assistant cards keep working alongside it.
@@ -212,7 +218,8 @@ the zone. Ordinary Home Assistant cards keep working alongside it.
 **All zones at a glance: the ZoneFlow overview card.** Add card →
 **ZoneFlow overview**. It finds every zone by itself and shows one row
 each: status, next watering, last watering and a 💧 water-now button.
-Click a zone to open its full card right there.
+Click a zone to open its full card right there. Admins get an **Add
+zone** button at the bottom that starts the setup of a new zone.
 
 <img src="docs/screenshots/overview.png" width="520" alt="The ZoneFlow overview card: every zone with its status, next and last watering and a water-now button">
 
@@ -222,6 +229,7 @@ sort: next          # or name (default): soonest watering on top
 title: Garden       # optional
 icons:              # optional, picked per zone in the card editor
   <device_id>: mdi:chili-hot
+show_add: false     # optional: hide the Add zone button
 ```
 
 A zone set up with a plant preset gets a matching icon by itself (a
