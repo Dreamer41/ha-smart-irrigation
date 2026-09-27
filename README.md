@@ -1,13 +1,12 @@
 # ZoneFlow Irrigation
 
-**ZoneFlow is a Home Assistant irrigation controller** for gardens, lawns,
-vegetable beds, fruit trees and other plants. It is a custom integration
-(install with HACS) that decides when and how much to water each zone and
-opens and closes the valves itself — no separate automations needed. It
-works with drip lines, sprinklers and soaker hoses, supports multiple
-zones and shared pumps, and adapts the watering to the plant, the soil,
-the slope, the temperature, rain and — optionally — a soil-moisture probe,
-a flow meter and the weather forecast.
+**ZoneFlow is a smart irrigation integration for Home Assistant** for
+gardens, lawns, vegetable beds, fruit trees and other plants (install with
+HACS). It works out when and how much each zone needs — from the plant,
+the soil, the slope, the temperature and the rain, and optionally a
+soil-moisture probe, a flow meter and the weather forecast — and tells you
+in plain words why it watered or skipped. It works with drip lines,
+sprinklers and soaker hoses, multiple zones and shared pumps.
 
 **Only a valve switch is required.** Every sensor is optional, each one adds
 a specific capability, and each zone can use a different combination. A
@@ -296,26 +295,18 @@ existed) looks like this:
 ZoneFlow follows Home Assistant's language: English, German, Dutch, French,
 Spanish, Italian, Finnish, Swedish, Norwegian, Danish, Polish, Czech,
 Slovak, Hungarian, Russian, Ukrainian, Portuguese (Portugal and Brazil)
-and Chinese (Simplified) — entity names,
-setup screens, the Status sentence, phone notifications, the weekly
-summary and the card. The CSV log stays in English, so its history reads
+and Chinese (Simplified) — entity names, setup screens, the Status
+sentence, phone notifications, the weekly summary and the cards. The CSV log stays in English, so its history reads
 the same whatever the language. Corrections from native speakers are very
 welcome (`custom_components/zoneflow/translations/`, `messages/`, and the
-card's texts in `frontend/zoneflow-card.js`). Much of the gardening
-wording follows the community translations of
-[Smart Irrigation](https://github.com/altmenorg/HAsmartirrigation) — thanks
-to its translators.
+card's texts in `frontend/zoneflow-card.js`).
 
 ## FAQ
 
 **What is ZoneFlow?**
-A Home Assistant integration that works as an irrigation controller: it
-schedules and runs the watering for each zone, opening and closing the
-valve through Home Assistant, and tells you what it did and why.
-
-**Does it control the valves itself, or only calculate how long to water?**
-It controls them. ZoneFlow switches the valve (and waits for a shared pump)
-itself; you don't need automations to do the watering.
+A Home Assistant integration that waters each zone for you: it works out
+when and how much, runs the watering through Home Assistant, and tells you
+what it did and why.
 
 **What hardware does it work with?**
 Any valve, relay or smart plug that Home Assistant shows as a `switch`
