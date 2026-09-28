@@ -38,7 +38,7 @@ async def test_card_is_served_and_loaded_once(hass, monkeypatch, tmp_path):
     hass.config.components.add("frontend")
     await frontend.async_register(hass)
     await frontend.async_register(hass)  # a second zone: nothing more
-    assert len(added) == 1 and re.fullmatch(r"/zoneflow_static/zoneflow-card.js\?v=[0-9.]+-[0-9]+", added[0])
+    assert len(added) == 1 and re.fullmatch(r"/zoneflow_static/zoneflow-card.js\?v=[0-9a-z.]+-[0-9]+", added[0])
     served = http.registered
     if served is not None:  # Home Assistant 2024.7+
         assert served[0].url_path == "/zoneflow_static/zoneflow-card.js"
