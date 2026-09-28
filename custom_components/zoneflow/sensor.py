@@ -374,8 +374,18 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_last_water_delivered"
         self._attr_translation_key = "last_water_delivered"
 
-    def metric_native_value(self) -> float:
-        return calc.estimate_last_water_delivered_mm(
+    def metric_native_value(self) -> float | None:
+        """The last completed watering: its minutes x the calibrated flow
+        rate ("estimate" because it isn't measured -- the flow meter's
+        sensor is). Unknown until a cycle completes. It used to show half
+        the current weekly target whatever had happened, so it moved with
+        the temperature and never with the watering."""
+        return self._controller.store.state.last_cycle_applied_mm
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        state = self._controller.store.state
+        typical = calc.estimate_last_water_delivered_mm(
             avg_peak_temp=self._controller.effective_avg_peak_temp(),
             hot_threshold=self._controller.number("hot_temp_threshold"),
             cool_threshold=self._controller.number("cool_temp_threshold"),
@@ -384,6 +394,13 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
             cool_weekly_mm=self._controller.number("target_weekly_cool_mm"),
             weekly_target_override_mm=self._controller.et_weekly_target_mm(),
         )
+        imperial = self._controller.imperial
+        return {
+            "cycle": state.last_cycle_kind,
+            "runtime_minutes": state.last_cycle_runtime_min,
+            # The old value, for planning: half this week's target.
+            "typical_watering": units.depth_text(typical, imperial),
+        }
 
 
 class ZoneFlowTodayRainSensor(_Base):

@@ -180,18 +180,40 @@ async def test_days_until_next_run_counts_a_sooner_deep_soak(hass, fake_valve_se
 
 
 @pytest.mark.asyncio
-async def test_last_water_delivered_estimate_matches_a_real_cycle(hass, fake_valve_services, monkeypatch, tmp_path):
-    """The "Last Water Delivered (estimate)" sensor shows half the weekly
-    target -- right for the original 3.5-day average cadence. Check it's in
-    the same ballpark as what a real normal-tier cycle puts on."""
+async def test_last_water_delivered_is_the_last_completed_watering(hass, fake_valve_services, monkeypatch, tmp_path):
+    """The "Last Water Delivered (estimate)" sensor shows what the last
+    completed cycle put on (its minutes x the calibrated flow rate). It used
+    to show half the current weekly target whatever had happened, so it
+    moved with the temperature and never with the watering."""
     controller, clock, _ = await _zone(hass, monkeypatch, tmp_path)
+    assert _sensor_value(hass, "last_water_delivered") is None  # nothing watered yet
+
     _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
-    estimate = _sensor_value(hass, "last_water_delivered")
     delivered = _delivered_mm(clock, controller)
-    assert estimate == pytest.approx(17.5)
-    assert abs(estimate - delivered) / delivered < 0.15  # within 15% of the real 20 mm
+    assert _sensor_value(hass, "last_water_delivered") == pytest.approx(delivered, abs=0.01)
+    assert delivered == pytest.approx(20.0, abs=_tolerance_mm(controller, 3))
+    sensor = next(e for e in hass.data["sensor"].entities if e.entity_id == _sensor(hass, "last_water_delivered"))
+    assert sensor.extra_state_attributes["cycle"] == "routine"
+    assert sensor.extra_state_attributes["typical_watering"] == "17.5 mm"  # the old number, for planning
+
+    # A cooler week doesn't change what was delivered.
+    controller.store.state.peak_temp_day_history_c = [20.0, 20.0, 20.0]
+    assert _sensor_value(hass, "last_water_delivered") == pytest.approx(delivered, abs=0.01)
+
+    # An interrupted cycle doesn't count as a watering.
+    async def stop(index):
+        controller.store.state.abort_on = True
+        controller._abort_event.set()
+
+    clock.reset()
+    clock.on_pulse = stop
+    _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
+    await _set(controller, flow_rate_mm_per_min=0.5)
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert _sensor_value(hass, "last_water_delivered") == pytest.approx(delivered, abs=0.01)
 
 
 # ---------------------------------------------------------------------------

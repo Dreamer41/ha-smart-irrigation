@@ -2705,7 +2705,7 @@ class ZoneFlowController:
         # counts (an aborted or interrupted one returned above).
         state.last_routine_ts = done_ts
         state.today_runtime_minutes += plan.total_runtime_minutes
-        self._count_for_summary(plan.total_runtime_minutes)
+        self._count_for_summary(plan.total_runtime_minutes, "deep_soak")
         self._record_decision(
             "deep_soak",
             "done",
@@ -2984,7 +2984,7 @@ class ZoneFlowController:
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
         state.today_runtime_minutes += plan.calc_runtime_minutes
-        self._count_for_summary(plan.calc_runtime_minutes)
+        self._count_for_summary(plan.calc_runtime_minutes, "routine")
         self._record_decision(
             "routine", "done", minutes=plan.calc_runtime_minutes, amount_mm=round(plan.calc_runtime_minutes * self.number("flow_rate_mm_per_min"), 1)
         )
@@ -3613,12 +3613,19 @@ class ZoneFlowController:
             state.summary_skip_days = [d for d in state.summary_skip_days if d not in reported["skip_days"]]
         await self.store.async_save()
 
-    def _count_for_summary(self, minutes: float) -> None:
-        """A completed watering, for the weekly summary (see summary.py)."""
+    def _count_for_summary(self, minutes: float, cycle: str) -> None:
+        """A completed watering: the weekly summary's counts (summary.py) and
+        what the Last Water Delivered sensor shows -- the valve's minutes
+        times the calibrated flow rate, like the Status sentence's amount.
+        Only completed cycles get here; interrupted or cancelled ones don't."""
         state = self.store.state
+        mm = minutes * self.number("flow_rate_mm_per_min")
         state.summary_runs += 1
         state.summary_minutes += minutes
-        state.summary_mm += minutes * self.number("flow_rate_mm_per_min")
+        state.summary_mm += mm
+        state.last_cycle_applied_mm = round(mm, 2)
+        state.last_cycle_kind = cycle
+        state.last_cycle_runtime_min = minutes
 
     def _record_decision(self, cycle: str, code: str, **params: Any) -> None:
         """What a due cycle decided (`cycle` is "routine" or "deep_soak").

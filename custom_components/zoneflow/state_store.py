@@ -97,6 +97,12 @@ class IrrigationState:
     # flow-meter entity (None if no flow meter is configured, or if the
     # meter's reading couldn't be read at both ends of the cycle).
     last_cycle_water_liters: float | None = None
+    # The last completed watering as ZoneFlow applied it (its minutes x the
+    # calibrated flow rate): what the Last Water Delivered sensor shows.
+    # None until the first cycle completes under a version that records it.
+    last_cycle_applied_mm: float | None = None
+    last_cycle_kind: str | None = None  # "routine" or "deep_soak"
+    last_cycle_runtime_min: float | None = None
 
     # Live dashboard overrides (select.py) -- both are pure convenience
     # layers on top of the config-flow/planting-date-driven values, not a
