@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Le nom de la zone ne peut pas être vide.",
-      "cool_not_below_hot": "Le seuil frais doit être inférieur au seuil chaud."
+      "cool_not_below_hot": "Le seuil frais doit être inférieur au seuil chaud.",
+      "valve_already_used": "Une autre zone ZoneFlow utilise déjà cette vanne.",
+      "csv_path_already_used": "Une autre zone ZoneFlow enregistre déjà dans ce fichier CSV."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Cette zone ne fonctionne pas pour le moment, impossible de le faire.",
       "zone_busy": "La zone (ou sa pompe) est occupée, ou le plafond de sécurité du jour est atteint. Réessayez plus tard.",
       "flow_rate_disabled": "L'entité Étalonnage du débit des goutteurs de la zone est désactivée. Activez-la (page de l'appareil de la zone → ses entités) et réessayez."
+    },
+    "error": {
+      "valve_already_used": "Une autre zone ZoneFlow utilise déjà cette vanne.",
+      "csv_path_already_used": "Une autre zone ZoneFlow enregistre déjà dans ce fichier CSV."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone} : étalonnez le débit des goutteurs",
       "description": "La zone {zone} utilise toujours l'Étalonnage du débit des goutteurs par défaut (0,24 mm/min). C'est le chiffre qui décide de la quantité d'eau donnée à chaque arrosage : mesurez-le pour vos goutteurs. Configurer → Débit de la zone le calcule à partir de vos goutteurs, ou le mesure avec un débitmètre. Si 0,24 mm/min est vraiment correct pour cette zone, ignorez ce message."
+    },
+    "shared_valve": {
+      "title": "{zone} : vanne partagée avec une autre zone",
+      "description": "La zone {zone} et la zone {other_zone} sont toutes deux configurées avec la même entité de vanne ({entity}). À moins qu'elles ne partagent aussi un ID de pompe ou un capteur de puissance de pompe, ZoneFlow ne peut pas savoir qu'il s'agit de la même vanne physique et ne les empêchera pas de l'ouvrir en même temps. Donnez à l'une des zones sa propre vanne, ou définissez le même ID de pompe pour les deux sous Configurer."
     }
   }
 }

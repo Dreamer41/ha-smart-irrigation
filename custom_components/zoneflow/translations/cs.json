@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Název zóny nesmí být prázdný.",
-      "cool_not_below_hot": "Práh chladna musí být nižší než práh horka."
+      "cool_not_below_hot": "Práh chladna musí být nižší než práh horka.",
+      "valve_already_used": "Jiná zóna ZoneFlow už tento ventil používá.",
+      "csv_path_already_used": "Jiná zóna ZoneFlow už zapisuje do tohoto souboru CSV."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Tato zóna teď neběží, takže to nelze provést.",
       "zone_busy": "Zóna (nebo její čerpadlo) je zaneprázdněná, nebo je dnešní bezpečnostní limit doby vyčerpán. Zkuste to později.",
       "flow_rate_disabled": "Entita Kalibrace průtoku emitorů této zóny je zakázaná. Povolte ji (stránka zařízení zóny → její entity) a zkuste to znovu."
+    },
+    "error": {
+      "valve_already_used": "Jiná zóna ZoneFlow už tento ventil používá.",
+      "csv_path_already_used": "Jiná zóna ZoneFlow už zapisuje do tohoto souboru CSV."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: zkalibrujte průtok emitorů",
       "description": "Zóna {zone} stále používá výchozí Kalibraci průtoku emitorů (0.24 mm/min). Právě toto číslo rozhoduje, kolik vody každá zálivka dá, takže ho pro své emitory změřte: v zóně Nastavit → Průtok ho vypočítá z vašich emitorů, nebo ho změří průtokoměrem. Pokud je 0.24 mm/min pro tuto zónu opravdu správně, toto hlášení ignorujte."
+    },
+    "shared_valve": {
+      "title": "{zone}: ventil sdílený s jinou zónou",
+      "description": "Zóna {zone} a zóna {other_zone} jsou obě nastaveny se stejnou entitou ventilu ({entity}). Pokud nesdílejí i ID čerpadla nebo senzor výkonu čerpadla, ZoneFlow nepozná, že jde o stejný fyzický ventil, a nezabrání jejich současnému otevření. Přiřaďte jedné ze zón vlastní ventil, nebo v Konfiguraci nastavte oběma stejné ID čerpadla."
     }
   }
 }

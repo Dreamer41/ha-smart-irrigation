@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "区域名称不能为空。",
-      "cool_not_below_hot": "凉爽阈值必须低于炎热阈值。"
+      "cool_not_below_hot": "凉爽阈值必须低于炎热阈值。",
+      "valve_already_used": "另一个 ZoneFlow 区域已在使用此阀门。",
+      "csv_path_already_used": "另一个 ZoneFlow 区域已在写入此 CSV 文件。"
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "该区域目前未运行，因此无法执行此操作。",
       "zone_busy": "该区域（或其水泵）正忙，或今天的运行时长安全上限已用完。请稍后再试。",
       "flow_rate_disabled": "该区域的“灌水器流量校准”实体已被禁用。请启用它（该区域的设备页面 → 其实体）后重试。"
+    },
+    "error": {
+      "valve_already_used": "另一个 ZoneFlow 区域已在使用此阀门。",
+      "csv_path_already_used": "另一个 ZoneFlow 区域已在写入此 CSV 文件。"
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}：请校准灌水器流量",
       "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。"
+    },
+    "shared_valve": {
+      "title": "{zone}：阀门与另一个区域共用",
+      "description": "区域 {zone} 和区域 {other_zone} 配置了相同的阀门实体（{entity}）。除非它们还共用同一个水泵 ID 或水泵功率传感器，否则 ZoneFlow 无法识别这是同一个物理阀门，也不会阻止它们同时打开它。请为其中一个区域指定专属阀门，或在“配置”中为两者设置相同的水泵 ID。"
     }
   }
 }

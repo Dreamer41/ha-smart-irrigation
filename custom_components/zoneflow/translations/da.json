@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Zonenavnet må ikke være tomt.",
-      "cool_not_below_hot": "Grænsen for køligt vejr skal være lavere end grænsen for varmt vejr."
+      "cool_not_below_hot": "Grænsen for køligt vejr skal være lavere end grænsen for varmt vejr.",
+      "valve_already_used": "En anden ZoneFlow-zone bruger allerede denne ventil.",
+      "csv_path_already_used": "En anden ZoneFlow-zone logger allerede til denne CSV-fil."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Zonen kører ikke lige nu, så det kan ikke lade sig gøre.",
       "zone_busy": "Zonen (eller dens pumpe) er optaget, eller dagens sikkerhedsgrænse for køretid er brugt op. Prøv igen senere.",
       "flow_rate_disabled": "Zonens entitet Dryppernes flow (kalibrering) er deaktiveret. Aktivér den (zonens enhedsside → dens entiteter), og prøv igen."
+    },
+    "error": {
+      "valve_already_used": "En anden ZoneFlow-zone bruger allerede denne ventil.",
+      "csv_path_already_used": "En anden ZoneFlow-zone logger allerede til denne CSV-fil."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: kalibrér dryppernes flow",
       "description": "Zonen {zone} bruger stadig standardværdien for Dryppernes flow (kalibrering) (0,24 mm/min). Det er det ene tal, der afgør, hvor meget vand hver kørsel giver, så mål det for dine dryppere: zonens Konfigurer → Flow beregner det ud fra drypperne eller måler det med en flowmåler. Hvis 0,24 mm/min virkelig passer til zonen, kan du se bort fra dette."
+    },
+    "shared_valve": {
+      "title": "{zone}: ventil delt med en anden zone",
+      "description": "Zone {zone} og zone {other_zone} er begge konfigureret med den samme ventilenhed ({entity}). Medmindre de også deler et pumpe-id eller en pumpeeffektsensor, kan ZoneFlow ikke se, at det er den samme fysiske ventil, og forhindrer dem ikke i at åbne den samtidigt. Giv en af zonerne sin egen ventil, eller angiv samme pumpe-id for begge under Konfigurer."
     }
   }
 }

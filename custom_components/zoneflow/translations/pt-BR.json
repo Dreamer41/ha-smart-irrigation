@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "O nome da zona não pode ficar vazio.",
-      "cool_not_below_hot": "O limite de tempo fresco precisa ficar abaixo do limite de calor."
+      "cool_not_below_hot": "O limite de tempo fresco precisa ficar abaixo do limite de calor.",
+      "valve_already_used": "Outra zona do ZoneFlow já usa esta válvula.",
+      "csv_path_already_used": "Outra zona do ZoneFlow já grava neste arquivo CSV."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Esta zona não está em funcionamento agora, então não é possível fazer isso.",
       "zone_busy": "A zona (ou a bomba dela) está ocupada, ou o limite de segurança diário de funcionamento já foi atingido. Tente novamente mais tarde.",
       "flow_rate_disabled": "A entidade Calibração da vazão dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente."
+    },
+    "error": {
+      "valve_already_used": "Outra zona do ZoneFlow já usa esta válvula.",
+      "csv_path_already_used": "Outra zona do ZoneFlow já grava neste arquivo CSV."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: calibre a vazão dos emissores",
       "description": "A zona {zone} ainda usa a Calibração da vazão dos emissores padrão (0,24 mm/min). É o número que decide quanta água cada irrigação aplica, então meça-o para os seus emissores: em Configurar → Vazão da zona, dá para calcular a partir dos emissores ou medir com um medidor de vazão. Se 0,24 mm/min estiver mesmo certo para esta zona, ignore este aviso."
+    },
+    "shared_valve": {
+      "title": "{zone}: válvula compartilhada com outra zona",
+      "description": "A zona {zone} e a zona {other_zone} estão configuradas com a mesma entidade de válvula ({entity}). A menos que também compartilhem um ID de bomba ou um sensor de potência da bomba, o ZoneFlow não consegue saber que é a mesma válvula física e não vai impedir que as duas a abram ao mesmo tempo. Dê a uma das zonas sua própria válvula, ou defina o mesmo ID de bomba nas duas em Configurar."
     }
   }
 }

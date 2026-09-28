@@ -200,6 +200,40 @@ async def test_flow_rate_and_notify_issues(hass, fake_valve_services, monkeypatc
 
 
 @pytest.mark.asyncio
+async def test_shared_valve_issue_between_two_already_configured_zones(hass, fake_valve_services, tmp_path):
+    """Config-flow validation stops a *new* zone from being pointed at
+    another zone's valve, but doesn't retroactively fix zones that already
+    shared one before that check existed -- this Repairs issue is what
+    catches that case."""
+    await _seed(hass)
+    a = await _zone(hass, tmp_path, "Chilis", pump_power_entity=None)
+    b = await _zone(hass, tmp_path, "Avocado", valve_entity=VALVE, pump_power_entity=None)  # same valve as "a"
+    issues.async_check(a)
+    issues.async_check(b)
+    issue_a = _issue(hass, a, "shared_valve")
+    issue_b = _issue(hass, b, "shared_valve")
+    assert issue_a is not None and issue_a.translation_placeholders["other_zone"] == "Avocado"
+    assert issue_b is not None and issue_b.translation_placeholders["other_zone"] == "Chilis"
+
+    # A zone on its own valve raises nothing.
+    c = await _zone(hass, tmp_path, "Herbs", valve_entity="switch.w3", pump_power_entity=None)
+    hass.states.async_set("switch.w3", "off")
+    issues.async_check(c)
+    assert _issue(hass, c, "shared_valve") is None
+
+    # Removing the conflict (one zone moves to its own valve) clears both.
+    hass.states.async_set("switch.w4", "off")
+    hass.config_entries.async_update_entry(b.entry, options={"valve_entity": "switch.w4"})
+    assert await hass.config_entries.async_reload(b.entry.entry_id)
+    await hass.async_block_till_done()
+    b = hass.data[DOMAIN][b.entry.entry_id]
+    issues.async_check(a)
+    issues.async_check(b)
+    assert _issue(hass, a, "shared_valve") is None
+    assert _issue(hass, b, "shared_valve") is None
+
+
+@pytest.mark.asyncio
 async def test_issues_are_checked_hourly(hass, fake_valve_services, tmp_path):
     await _seed(hass)
     zone = await _zone(hass, tmp_path, "Chilis")

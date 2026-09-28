@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Nazwa strefy nie może być pusta.",
-      "cool_not_below_hot": "Próg chłodu musi być niższy niż próg upału."
+      "cool_not_below_hot": "Próg chłodu musi być niższy niż próg upału.",
+      "valve_already_used": "Inna strefa ZoneFlow już korzysta z tego zaworu.",
+      "csv_path_already_used": "Inna strefa ZoneFlow już zapisuje do tego pliku CSV."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Ta strefa w tej chwili nie działa, więc nie można tego zrobić.",
       "zone_busy": "Strefa (lub jej pompa) jest zajęta albo dzisiejszy limit czasu pracy został wyczerpany. Spróbuj później.",
       "flow_rate_disabled": "Encja „Kalibracja wydajności emiterów” tej strefy jest wyłączona. Włącz ją (strona urządzenia strefy → encje) i spróbuj ponownie."
+    },
+    "error": {
+      "valve_already_used": "Inna strefa ZoneFlow już korzysta z tego zaworu.",
+      "csv_path_already_used": "Inna strefa ZoneFlow już zapisuje do tego pliku CSV."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: skalibruj wydajność emiterów",
       "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to."
+    },
+    "shared_valve": {
+      "title": "{zone}: zawór współdzielony z inną strefą",
+      "description": "Strefa {zone} i strefa {other_zone} są skonfigurowane z tym samym zaworem ({entity}). Jeśli nie mają też tego samego identyfikatora pompy lub czujnika mocy pompy, ZoneFlow nie może rozpoznać, że to ten sam fizyczny zawór, i nie zapobiegnie ich jednoczesnemu otwarciu. Przypisz jednej ze stref własny zawór albo ustaw taki sam identyfikator pompy dla obu w Konfiguracji."
     }
   }
 }

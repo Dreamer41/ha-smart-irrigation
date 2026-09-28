@@ -88,8 +88,9 @@ async def _register(hass: HomeAssistant) -> str:
     card = Path(__file__).parent / "frontend" / CARD_FILE
     try:
         from homeassistant.components.http import StaticPathConfig  # 2024.7+
-    except ImportError:  # older Home Assistant
-        hass.http.register_static_path(CARD_URL, str(card), True)
+    except ImportError:  # older Home Assistant: register_static_path is a
+        # blocking call, so it must not run directly on the event loop.
+        await hass.async_add_executor_job(hass.http.register_static_path, CARD_URL, str(card), True)
     else:
         await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(card), True)])
     from homeassistant.components.frontend import add_extra_js_url

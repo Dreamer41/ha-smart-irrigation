@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Zonenaam mag niet leeg zijn.",
-      "cool_not_below_hot": "De koele grens moet onder de warme grens liggen."
+      "cool_not_below_hot": "De koele grens moet onder de warme grens liggen.",
+      "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
+      "csv_path_already_used": "Een andere ZoneFlow-zone logt al naar dit CSV-bestand."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Deze zone draait nu niet, dus dit kan niet.",
       "zone_busy": "De zone (of de pomp) is bezig, of de dagelijkse veiligheidslimiet is op. Probeer het later opnieuw.",
       "flow_rate_disabled": "De entiteit Kalibratie debiet druppelaars van de zone is uitgeschakeld. Schakel hem in (apparaatpagina van de zone → entiteiten) en probeer het opnieuw."
+    },
+    "error": {
+      "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
+      "csv_path_already_used": "Een andere ZoneFlow-zone logt al naar dit CSV-bestand."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: kalibreer het debiet van de druppelaars",
       "description": "Zone {zone} gebruikt nog de standaardwaarde van Kalibratie debiet druppelaars (0,24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0,24 mm/min echt voor deze zone, negeer dit dan."
+    },
+    "shared_valve": {
+      "title": "{zone}: klep gedeeld met een andere zone",
+      "description": "Zone {zone} en zone {other_zone} zijn beide geconfigureerd met dezelfde klep-entiteit ({entity}). Tenzij ze ook een Pomp-ID of pompvermogensensor delen, kan ZoneFlow niet zien dat het om dezelfde fysieke klep gaat en voorkomt het niet dat ze tegelijk wordt geopend. Geef een van de zones een eigen klep, of stel bij beide onder Configureren dezelfde Pomp-ID in."
     }
   }
 }

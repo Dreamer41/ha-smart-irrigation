@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Vyöhykkeen nimi ei voi olla tyhjä.",
-      "cool_not_below_hot": "Viileän sään rajan on oltava kuuman sään rajaa alempi."
+      "cool_not_below_hot": "Viileän sään rajan on oltava kuuman sään rajaa alempi.",
+      "valve_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo tätä venttiiliä.",
+      "csv_path_already_used": "Toinen ZoneFlow-vyöhyke kirjoittaa jo tähän CSV-tiedostoon."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Tämä vyöhyke ei ole nyt käynnissä, joten tätä ei voi tehdä.",
       "zone_busy": "Vyöhyke (tai sen pumppu) on varattu, tai päivän käyntiajan turvaraja on käytetty. Yritä myöhemmin uudelleen.",
       "flow_rate_disabled": "Vyöhykkeen entiteetti Suuttimien virtaama (kalibrointi) on poistettu käytöstä. Ota se käyttöön (vyöhykkeen laitesivu → sen entiteetit) ja yritä uudelleen."
+    },
+    "error": {
+      "valve_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo tätä venttiiliä.",
+      "csv_path_already_used": "Toinen ZoneFlow-vyöhyke kirjoittaa jo tähän CSV-tiedostoon."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: kalibroi suuttimien virtaama",
       "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä."
+    },
+    "shared_valve": {
+      "title": "{zone}: venttiili jaettu toisen vyöhykkeen kanssa",
+      "description": "Vyöhykkeet {zone} ja {other_zone} on molemmat määritetty käyttämään samaa venttiiliä ({entity}). Ellei niillä ole myös samaa pumpun tunnusta tai pumpun tehoanturia, ZoneFlow ei voi tietää, että kyse on samasta fyysisestä venttiilistä, eikä estä niitä avaamasta sitä samaan aikaan. Anna toiselle vyöhykkeelle oma venttiili tai aseta molemmille sama pumpun tunnus Määritä-valikossa."
     }
   }
 }

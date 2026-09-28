@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Sonenavnet kan ikke være tomt.",
-      "cool_not_below_hot": "Grensen for kjølig må være lavere enn grensen for varmt."
+      "cool_not_below_hot": "Grensen for kjølig må være lavere enn grensen for varmt.",
+      "valve_already_used": "En annen ZoneFlow-sone bruker allerede denne ventilen.",
+      "csv_path_already_used": "En annen ZoneFlow-sone logger allerede til denne CSV-filen."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Sonen kjører ikke akkurat nå, så dette kan ikke gjøres.",
       "zone_busy": "Sonen (eller pumpen) er opptatt, eller dagens sikkerhetsgrense for kjøretid er brukt opp. Prøv igjen senere.",
       "flow_rate_disabled": "Sonens entitet Kalibrering av vannmengde er deaktivert. Aktiver den (sonens enhetsside → entitetene) og prøv igjen."
+    },
+    "error": {
+      "valve_already_used": "En annen ZoneFlow-sone bruker allerede denne ventilen.",
+      "csv_path_already_used": "En annen ZoneFlow-sone logger allerede til denne CSV-filen."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: kalibrer vannmengden fra utløpene",
       "description": "Sonen {zone} bruker fortsatt standardverdien for Kalibrering av vannmengde (0.24 mm/min). Det er det ene tallet som avgjør hvor mye vann hver kjøring gir, så mål det for dine utløp: sonens Konfigurer → Vannmengde regner det ut fra utløpene, eller måler det med en vannmåler. Hvis 0.24 mm/min virkelig stemmer for denne sonen, kan du se bort fra dette."
+    },
+    "shared_valve": {
+      "title": "{zone}: ventil delt med en annen sone",
+      "description": "Sone {zone} og sone {other_zone} er begge konfigurert med samme ventilenhet ({entity}). Med mindre de også deler en pumpe-ID eller en pumpeeffektsensor, kan ZoneFlow ikke se at det er samme fysiske ventil, og hindrer dem ikke i å åpne den samtidig. Gi en av sonene sin egen ventil, eller sett samme pumpe-ID på begge under Konfigurer."
     }
   }
 }

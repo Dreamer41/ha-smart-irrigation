@@ -37,7 +37,13 @@ OFFLINE = ("unavailable", "unknown")
 
 
 SENSOR_ROLES = ("temperature", "rain_gauge", "soil_moisture", "pump_power", "flow_meter", "weather")
-ALL_KEYS = ("valve_unavailable", "notify_missing", "flow_rate_default", *(f"sensor_offline_{r}" for r in SENSOR_ROLES))
+ALL_KEYS = (
+    "valve_unavailable",
+    "notify_missing",
+    "flow_rate_default",
+    "shared_valve",
+    *(f"sensor_offline_{r}" for r in SENSOR_ROLES),
+)
 # Flow rates within this of the default count as "never calibrated" (an
 # imperial zone saves its display value, which comes back a hair off).
 FLOW_DEFAULT_TOLERANCE = 0.0005
@@ -131,6 +137,28 @@ def async_check(controller: ZoneFlowController) -> None:
         severity=ir.IssueSeverity.WARNING,
         translation_key="notify_missing",
         translation_placeholders={"zone": zone, "entity": notify or ""},
+    )
+
+    # Config-flow validation blocks this for zones set up (or reconfigured)
+    # after that check existed; this catches zones that already shared a
+    # valve before then. Two zones on the same valve entity race each
+    # other's switch.turn_on/turn_off unless they also happen to share a
+    # pump_id/pump_power_entity (see controller.py's _pump_lock_key).
+    sibling = None
+    if controller.valve_entity:
+        for other_id, other in hass.data.get(DOMAIN, {}).items():
+            if other_id != controller.entry.entry_id and getattr(other, "valve_entity", None) == controller.valve_entity:
+                sibling = other.entry.title
+                break
+    _set(
+        hass,
+        controller,
+        "shared_valve",
+        sibling is not None,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key="shared_valve",
+        translation_placeholders={"zone": zone, "entity": controller.valve_entity or "", "other_zone": sibling or ""},
+        learn_more_url=LEARN_MORE,
     )
 
     flow = controller.numbers.get("flow_rate_mm_per_min")

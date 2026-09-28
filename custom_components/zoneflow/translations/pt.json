@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "O nome da zona não pode ficar vazio.",
-      "cool_not_below_hot": "O limite de tempo fresco tem de ficar abaixo do limite de tempo quente."
+      "cool_not_below_hot": "O limite de tempo fresco tem de ficar abaixo do limite de tempo quente.",
+      "valve_already_used": "Outra zona ZoneFlow já usa esta válvula.",
+      "csv_path_already_used": "Outra zona ZoneFlow já regista neste ficheiro CSV."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Esta zona não está ativa neste momento, por isso não é possível fazer isto.",
       "zone_busy": "A zona (ou a sua bomba) está ocupada, ou o limite de segurança diário já foi atingido. Tente mais tarde.",
       "flow_rate_disabled": "A entidade Calibração do fluxo dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente."
+    },
+    "error": {
+      "valve_already_used": "Outra zona ZoneFlow já usa esta válvula.",
+      "csv_path_already_used": "Outra zona ZoneFlow já regista neste ficheiro CSV."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: calibre o fluxo dos emissores",
       "description": "A zona {zone} ainda usa a Calibração do fluxo dos emissores predefinida (0,24 mm/min). É o número que decide quanta água cada rega dá, por isso meça-o para os seus emissores: Configurar → Fluxo da zona calcula-o a partir dos emissores ou mede-o com um medidor de fluxo. Se 0,24 mm/min estiver mesmo certo para esta zona, ignore isto."
+    },
+    "shared_valve": {
+      "title": "{zone}: válvula partilhada com outra zona",
+      "description": "A zona {zone} e a zona {other_zone} estão ambas configuradas com a mesma entidade de válvula ({entity}). A menos que também partilhem um ID de bomba ou um sensor de potência da bomba, o ZoneFlow não consegue saber que é a mesma válvula física e não as impedirá de a abrir ao mesmo tempo. Atribua a uma das zonas a sua própria válvula, ou defina o mesmo ID de bomba em ambas em Configurar."
     }
   }
 }

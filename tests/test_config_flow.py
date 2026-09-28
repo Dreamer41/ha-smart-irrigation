@@ -354,3 +354,62 @@ async def test_climate_step_in_fahrenheit_is_stored_in_celsius(hass):
     assert seeds["cool_temp_threshold"] == pytest.approx(25.0)
     assert seeds["fallback_temp"] == pytest.approx(30.0)
     await hass.async_block_till_done()
+
+
+@pytest.mark.asyncio
+async def test_a_second_zone_cannot_share_the_first_zones_valve(hass):
+    """Two zones pointed at the same switch would race each other's
+    turn_on/turn_off unless they also share a pump_id/pump_power_entity
+    (controller.py's _pump_lock_key) -- so it's refused up front instead."""
+    from .test_smoke_setup import make_entry
+
+    make_entry(hass, csv_path="/tmp/test_zoneflow_first.csv")  # existing zone, same VALVE
+
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Second Zone"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input())
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "entities"
+    assert result["errors"] == {CONF_VALVE_ENTITY: "valve_already_used"}
+
+    # A different valve but the same CSV path is refused too.
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        _minimal_entities_input(**{CONF_VALVE_ENTITY: "switch.watering2", CONF_CSV_PATH: "/tmp/test_zoneflow_first.csv"}),
+    )
+    assert result["errors"] == {CONF_CSV_PATH: "csv_path_already_used"}
+
+    # A genuinely distinct valve and CSV path goes through.
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], _minimal_entities_input(**{CONF_VALVE_ENTITY: "switch.watering2"})
+    )
+    result = await _through_climate(hass, result)
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+
+
+@pytest.mark.asyncio
+async def test_configure_cannot_change_a_zone_onto_another_zones_valve(hass):
+    """The same guard applies to Configure -- _schema() lets a zone's valve
+    be edited there too, so a zone could otherwise be walked onto a
+    colliding valve after both were already set up cleanly."""
+    from .test_smoke_setup import make_entry
+
+    make_entry(hass, csv_path="/tmp/test_zoneflow_first.csv")  # VALVE = switch.watering1
+    entry = make_entry(
+        hass,
+        csv_path="/tmp/test_zoneflow_second.csv",
+        **{CONF_VALVE_ENTITY: "switch.watering2", CONF_ZONE_NAME: "Second Zone"},
+    )
+
+    options_result = await _options_settings(hass, entry)
+    updated = await hass.config_entries.options.async_configure(
+        options_result["flow_id"], _minimal_entities_input(**{CONF_CSV_PATH: "/tmp/test_zoneflow_second.csv"})
+    )
+    assert updated["type"] == FlowResultType.FORM
+    assert updated["errors"] == {CONF_VALVE_ENTITY: "valve_already_used"}
+    # Its own existing valve/csv (unchanged) is never flagged against itself.
+    updated = await hass.config_entries.options.async_configure(
+        options_result["flow_id"],
+        _minimal_entities_input(**{CONF_VALVE_ENTITY: "switch.watering2", CONF_CSV_PATH: "/tmp/test_zoneflow_second.csv"}),
+    )
+    assert updated["type"] == FlowResultType.CREATE_ENTRY

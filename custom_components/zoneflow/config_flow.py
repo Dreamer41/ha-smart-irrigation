@@ -223,6 +223,28 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     )
 
 
+def _duplicate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | None = None) -> dict[str, str]:
+    """Catch two zones pointed at the same valve, or logging to the same
+    CSV file. Nothing else validates this: two zones sharing a valve get
+    two independent pump locks unless they also happen to share a pump_id
+    or pump_power_entity (controller.py's _pump_lock_key), so the second
+    zone's watering call can race the first zone's on the very same
+    switch; two zones sharing a csv_path have their controllers' unlocked
+    executor-thread writes (_write_csv_row) interleave into one file."""
+    errors: dict[str, str] = {}
+    valve = data.get(CONF_VALVE_ENTITY)
+    csv_path = data.get(CONF_CSV_PATH)
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        if entry.entry_id == exclude_entry_id:
+            continue
+        other = {**entry.data, **entry.options}
+        if valve and CONF_VALVE_ENTITY not in errors and other.get(CONF_VALVE_ENTITY) == valve:
+            errors[CONF_VALVE_ENTITY] = "valve_already_used"
+        if csv_path and CONF_CSV_PATH not in errors and other.get(CONF_CSV_PATH) == csv_path:
+            errors[CONF_CSV_PATH] = "csv_path_already_used"
+    return errors
+
+
 def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     """A new zone's cycle-and-soak starting values from its soil, drainage
     and irrigation method: the pulse-count settings (the minimum; each
@@ -277,12 +299,14 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_entities(self, user_input: dict[str, Any] | None = None):
         errors: dict[str, str] = {}
         if user_input is not None:
-            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                if len(user_input[key].split(":")) == 2:
-                    user_input[key] = f"{user_input[key]}:00"
-            user_input[CONF_ZONE_NAME] = self._zone_name
-            self._data = user_input
-            return await self.async_step_climate()
+            errors = _duplicate_errors(self.hass, user_input)
+            if not errors:
+                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
+                    if len(user_input[key].split(":")) == 2:
+                        user_input[key] = f"{user_input[key]}:00"
+                user_input[CONF_ZONE_NAME] = self._zone_name
+                self._data = user_input
+                return await self.async_step_climate()
         # Default CSV path is zone-specific so two zones never silently
         # write into the same log file if the user just accepts defaults.
         default_csv = f"/config/zoneflow_{slugify(self._zone_name)}.csv"
@@ -471,23 +495,26 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         )
 
     async def async_step_settings(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
         if user_input is not None:
-            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                if len(user_input[key].split(":")) == 2:
-                    user_input[key] = f"{user_input[key]}:00"
-            # A cleared optional sensor is left out of the form's answer;
-            # store it as None, or the zone would fall back to the one
-            # chosen at first setup (options override the setup data).
-            for key in OPTIONAL_ENTITY_KEYS:
-                user_input.setdefault(key, None)
-            await self._apply_site(user_input)
-            return self.async_create_entry(title="", data=user_input)
-        defaults = {**self._config_entry.data, **self._config_entry.options}
+            errors = _duplicate_errors(self.hass, user_input, exclude_entry_id=self._config_entry.entry_id)
+            if not errors:
+                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
+                    if len(user_input[key].split(":")) == 2:
+                        user_input[key] = f"{user_input[key]}:00"
+                # A cleared optional sensor is left out of the form's answer;
+                # store it as None, or the zone would fall back to the one
+                # chosen at first setup (options override the setup data).
+                for key in OPTIONAL_ENTITY_KEYS:
+                    user_input.setdefault(key, None)
+                await self._apply_site(user_input)
+                return self.async_create_entry(title="", data=user_input)
+        defaults = {**self._config_entry.data, **self._config_entry.options, **(user_input or {})}
         controller = self.hass.data.get(DOMAIN, {}).get(self._config_entry.entry_id)
-        if controller is not None:
+        if controller is not None and not user_input:
             # What the zone uses now -- the device page's dropdowns included.
             defaults.update({CONF_SOIL_TYPE: controller.soil_type, CONF_DRAINAGE: controller.drainage, CONF_SLOPE: controller.slope})
-        return self.async_show_form(step_id="settings", data_schema=_schema(defaults))
+        return self.async_show_form(step_id="settings", data_schema=_schema(defaults), errors=errors)
 
     async def _apply_site(self, user_input: dict[str, Any]) -> None:
         """The form's soil, drainage and slope are now the zone's: they

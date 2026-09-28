@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Zonnamnet får inte vara tomt.",
-      "cool_not_below_hot": "Gränsen för svalt måste vara lägre än gränsen för varmt."
+      "cool_not_below_hot": "Gränsen för svalt måste vara lägre än gränsen för varmt.",
+      "valve_already_used": "En annan ZoneFlow-zon använder redan denna ventil.",
+      "csv_path_already_used": "En annan ZoneFlow-zon loggar redan till den här CSV-filen."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Zonen körs inte just nu, så det här går inte att göra.",
       "zone_busy": "Zonen (eller dess pump) är upptagen, eller så är dagens säkerhetsgräns för körtid förbrukad. Försök igen senare.",
       "flow_rate_disabled": "Zonens entitet Dropparflöde (kalibrering) är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen."
+    },
+    "error": {
+      "valve_already_used": "En annan ZoneFlow-zon använder redan denna ventil.",
+      "csv_path_already_used": "En annan ZoneFlow-zon loggar redan till den här CSV-filen."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: kalibrera dropparnas flöde",
       "description": "Zonen {zone} använder fortfarande standardvärdet för Dropparflöde (kalibrering) (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flöde räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här."
+    },
+    "shared_valve": {
+      "title": "{zone}: ventil delad med en annan zon",
+      "description": "Zon {zone} och zon {other_zone} är båda konfigurerade med samma ventilenhet ({entity}). Om de inte också delar ett pump-ID eller en pumpeffektsensor kan ZoneFlow inte avgöra att det är samma fysiska ventil och hindrar dem inte från att öppna den samtidigt. Ge en av zonerna en egen ventil, eller ange samma pump-ID för båda under Konfigurera."
     }
   }
 }

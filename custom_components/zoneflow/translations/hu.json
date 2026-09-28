@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "A zóna neve nem lehet üres.",
-      "cool_not_below_hot": "A hűvös küszöbnek a meleg küszöb alatt kell lennie."
+      "cool_not_below_hot": "A hűvös küszöbnek a meleg küszöb alatt kell lennie.",
+      "valve_already_used": "Egy másik ZoneFlow zóna már használja ezt a szelepet.",
+      "csv_path_already_used": "Egy másik ZoneFlow zóna már ebbe a CSV-fájlba naplóz."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Ez a zóna most nem fut, ezért ez nem végezhető el.",
       "zone_busy": "A zóna (vagy a szivattyúja) foglalt, vagy elfogyott a mai biztonsági időkorlát. Próbáld újra később.",
       "flow_rate_disabled": "A zóna Csepegtetők vízhozama (kalibrálás) entitása le van tiltva. Engedélyezd (a zóna eszközoldala → entitások), és próbáld újra."
+    },
+    "error": {
+      "valve_already_used": "Egy másik ZoneFlow zóna már használja ezt a szelepet.",
+      "csv_path_already_used": "Egy másik ZoneFlow zóna már ebbe a CSV-fájlba naplóz."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: kalibráld a csepegtetők vízhozamát",
       "description": "A(z) {zone} zóna még az alapértelmezett Csepegtetők vízhozama (kalibrálás) értéket használja (0.24 mm/min). Ez az az egy szám, amely eldönti, mennyi vizet ad minden öntözés, ezért mérd meg a saját csepegtetőidre: a zóna Konfigurálás → Vízhozam menüje kiszámítja a csepegtetőkből, vagy megméri átfolyásmérővel. Ha ennél a zónánál tényleg a 0.24 mm/min a helyes, hagyd figyelmen kívül."
+    },
+    "shared_valve": {
+      "title": "{zone}: szelep megosztva egy másik zónával",
+      "description": "A(z) {zone} és a(z) {other_zone} zóna is ugyanazt a szelep entitást ({entity}) használja. Hacsak nem osztoznak egy szivattyú-azonosítón vagy szivattyú-teljesítmény érzékelőn is, a ZoneFlow nem tudja megállapítani, hogy ugyanarról a fizikai szelepről van szó, és nem akadályozza meg, hogy egyszerre nyissák ki. Adj az egyik zónának saját szelepet, vagy állíts be mindkettőn azonos szivattyú-azonosítót a Konfigurálásban."
     }
   }
 }

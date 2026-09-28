@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Der Zonenname darf nicht leer sein.",
-      "cool_not_below_hot": "Die Kühl-Schwelle muss unter der Heiß-Schwelle liegen."
+      "cool_not_below_hot": "Die Kühl-Schwelle muss unter der Heiß-Schwelle liegen.",
+      "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
+      "csv_path_already_used": "Eine andere ZoneFlow-Zone protokolliert bereits in diese CSV-Datei."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Diese Zone läuft gerade nicht, daher geht das jetzt nicht.",
       "zone_busy": "Die Zone (oder ihre Pumpe) ist beschäftigt, oder das heutige Laufzeit-Sicherheitslimit ist ausgeschöpft. Versuche es später erneut.",
       "flow_rate_disabled": "Die Entität „Tropfer-Durchflussrate (Kalibrierung)“ der Zone ist deaktiviert. Aktiviere sie (Geräteseite der Zone → Entitäten) und versuche es erneut."
+    },
+    "error": {
+      "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
+      "csv_path_already_used": "Eine andere ZoneFlow-Zone protokolliert bereits in diese CSV-Datei."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: Tropfer-Durchflussrate kalibrieren",
       "description": "Zone {zone} nutzt noch den Standardwert der Tropfer-Durchflussrate (Kalibrierung) (0,24 mm/min). Genau diese Zahl bestimmt, wie viel Wasser jeder Lauf gibt – miss sie also für deine Tropfer: „Konfigurieren → Durchflussrate“ der Zone berechnet sie aus deinen Tropfern oder misst sie mit einem Durchflussmesser. Wenn 0,24 mm/min für diese Zone wirklich stimmt, ignoriere diesen Hinweis."
+    },
+    "shared_valve": {
+      "title": "{zone}: Ventil wird mit einer anderen Zone geteilt",
+      "description": "Zone {zone} und Zone {other_zone} sind beide mit derselben Ventil-Entität ({entity}) konfiguriert. Sofern sie nicht auch eine Pump-ID oder einen Pumpenleistungssensor teilen, kann ZoneFlow nicht erkennen, dass es sich um dasselbe physische Ventil handelt, und verhindert nicht, dass beide es gleichzeitig öffnen. Geben Sie einer der Zonen ein eigenes Ventil, oder legen Sie unter Konfigurieren für beide dieselbe Pump-ID fest."
     }
   }
 }

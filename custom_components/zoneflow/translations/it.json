@@ -94,7 +94,9 @@
     },
     "error": {
       "zone_name_required": "Il nome della zona non può essere vuoto.",
-      "cool_not_below_hot": "La soglia del fresco deve essere inferiore alla soglia del caldo."
+      "cool_not_below_hot": "La soglia del fresco deve essere inferiore alla soglia del caldo.",
+      "valve_already_used": "Un'altra zona ZoneFlow usa già questa valvola.",
+      "csv_path_already_used": "Un'altra zona ZoneFlow scrive già in questo file CSV."
     }
   },
   "options": {
@@ -191,6 +193,10 @@
       "zone_not_loaded": "Questa zona non è attiva in questo momento, quindi non è possibile farlo.",
       "zone_busy": "La zona (o la sua pompa) è occupata, oppure il limite di sicurezza giornaliero è esaurito. Riprova più tardi.",
       "flow_rate_disabled": "L'entità Taratura portata erogatori della zona è disabilitata. Abilitala (pagina del dispositivo della zona → le sue entità) e riprova."
+    },
+    "error": {
+      "valve_already_used": "Un'altra zona ZoneFlow usa già questa valvola.",
+      "csv_path_already_used": "Un'altra zona ZoneFlow scrive già in questo file CSV."
     }
   },
   "selector": {
@@ -801,6 +807,10 @@
     "flow_rate_default": {
       "title": "{zone}: tara la portata degli erogatori",
       "description": "La zona {zone} usa ancora la Taratura portata erogatori predefinita (0,24 mm/min). È l'unico numero che decide quanta acqua dà ogni ciclo, quindi misurala per i tuoi erogatori: Configura → Portata della zona la calcola dai tuoi erogatori o la misura con il flussometro. Se 0,24 mm/min è davvero giusto per questa zona, ignora questo avviso."
+    },
+    "shared_valve": {
+      "title": "{zone}: valvola condivisa con un'altra zona",
+      "description": "La zona {zone} e la zona {other_zone} sono entrambe configurate con la stessa entità valvola ({entity}). A meno che non condividano anche un ID pompa o un sensore di potenza della pompa, ZoneFlow non può capire che si tratta della stessa valvola fisica e non impedirà che vengano aperte contemporaneamente. Assegna a una delle due zone una valvola propria, oppure imposta lo stesso ID pompa su entrambe in Configura."
     }
   }
 }

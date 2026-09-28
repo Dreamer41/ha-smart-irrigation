@@ -94,10 +94,16 @@
     },
     "error": {
       "zone_name_required": "Zone name can't be empty.",
-      "cool_not_below_hot": "The cool threshold has to be below the hot threshold."
+      "cool_not_below_hot": "The cool threshold has to be below the hot threshold.",
+      "valve_already_used": "Another ZoneFlow zone already uses this valve.",
+      "csv_path_already_used": "Another ZoneFlow zone already logs to this CSV file."
     }
   },
   "options": {
+    "error": {
+      "valve_already_used": "Another ZoneFlow zone already uses this valve.",
+      "csv_path_already_used": "Another ZoneFlow zone already logs to this CSV file."
+    },
     "step": {
       "init": {
         "title": "Configure",
@@ -789,6 +795,10 @@
     "valve_unavailable": {
       "title": "{zone}: valve unavailable",
       "description": "The valve of zone {zone} ({entity}) has been unavailable for over an hour, so the zone can't water. Check the valve's device and its integration. This clears by itself once the valve is back."
+    },
+    "shared_valve": {
+      "title": "{zone}: valve shared with another zone",
+      "description": "Zone {zone} and zone {other_zone} are both configured with the same valve entity ({entity}). Unless they also share a Pump ID or pump power sensor, ZoneFlow can't tell they're the same physical valve and won't stop them from opening it at the same time. Give one of the zones its own valve, or set a matching Pump ID on both under Configure."
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline for {days} days",
