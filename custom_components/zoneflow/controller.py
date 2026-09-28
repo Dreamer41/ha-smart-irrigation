@@ -704,6 +704,10 @@ class ZoneFlowController:
         if self._resume_cancel is not None:
             self._resume_cancel()
             self._resume_cancel = None
+        # Write out anything only scheduled for saving (e.g. when a sensor
+        # was first seen offline) -- once closed, a late save is dropped, and
+        # the reloaded zone would load the state without it.
+        await self.store.async_save()
         # Anything the old cycle does from here on must not overwrite the
         # state the reloaded zone has just loaded.
         self.store.closed = True
