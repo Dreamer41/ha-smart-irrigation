@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Współczynnik roślinny (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Korekta ET dla ściółki"
+      },
       "deficit_water_pct": {
         "name": "Dawka w trybie deficytowym"
       },
@@ -634,6 +637,13 @@
         "state": {
           "temperature_tiers": "Progi temperatury",
           "et_curve": "Krzywa ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Ściółkowanie",
+        "state": {
+          "mulched": "Ściółkowane",
+          "not_mulched": "Bez ściółki"
         }
       },
       "notifications": {

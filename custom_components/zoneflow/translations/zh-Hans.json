@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "作物系数（Kc）"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "覆盖蒸散调整"
+      },
       "deficit_water_pct": {
         "name": "控水模式水量"
       },
@@ -634,6 +637,13 @@
         "state": {
           "temperature_tiers": "温度分档",
           "et_curve": "ET 曲线（Hargreaves）"
+        }
+      },
+      "mulch_status": {
+        "name": "覆盖物",
+        "state": {
+          "mulched": "已覆盖",
+          "not_mulched": "未覆盖"
         }
       },
       "notifications": {

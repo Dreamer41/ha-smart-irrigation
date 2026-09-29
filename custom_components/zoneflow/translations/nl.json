@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Gewasfactor (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Mulch-ET-aanpassing"
+      },
       "deficit_water_pct": {
         "name": "Spaarmodus: waterdosis"
       },
@@ -634,6 +637,13 @@
         "state": {
           "temperature_tiers": "Temperatuurtrappen",
           "et_curve": "ET-curve (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Mulch",
+        "state": {
+          "mulched": "Gemulcht",
+          "not_mulched": "Niet gemulcht"
         }
       },
       "notifications": {

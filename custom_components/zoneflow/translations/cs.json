@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Plodinový koeficient (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Úprava ET pro mulč"
+      },
       "deficit_water_pct": {
         "name": "Voda v deficitním režimu"
       },
@@ -634,6 +637,13 @@
         "state": {
           "temperature_tiers": "Teplotní pásma",
           "et_curve": "Křivka ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Mulč",
+        "state": {
+          "mulched": "Mulčováno",
+          "not_mulched": "Bez mulče"
         }
       },
       "notifications": {

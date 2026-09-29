@@ -256,6 +256,8 @@ class ZoneFlowWeeklyTargetSensor(_Base):
             "deficit_pct": round(self._controller.deficit()[0] * 100, 0),
             "avg_et0_mm_per_day": round(et0, 2) if et0 is not None else None,
             "crop_coefficient": self._controller.number("crop_coefficient"),
+            "mulch_status": self._controller.mulch_status,
+            "mulch_factor": round(self._controller.mulch_factor(), 3),
         }
 
 

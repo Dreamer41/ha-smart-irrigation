@@ -1503,19 +1503,40 @@ person's plant and place, the same way §5 reasons about weekly targets:
      keep Kc at the grown-plant value and let the growth-stage ramp (§6)
      scale it down, so the number stays right as the plant grows. Only
      lower Kc itself for a plant that will stay small or sparse.
-   - Drip on mostly bare or mulched soil (only the root zone is wetted):
-     a little lower, typically 0.05-0.1, since less surface evaporation
-     happens than the published figures assume.
+   - **Don't hand-adjust Kc for mulch or bare soil** -- that's what the
+     zone's **Mulch** select and paired **Mulch ET Adjustment** slider are
+     for (device page, both demand models). Set Kc from the published/
+     looked-up value for the plant itself; set Mulch to whatever the
+     person's ground cover actually is. Doing both would double-count the
+     same effect.
 
    **Ground cover is the person's own choice — don't preach about it.**
-   You ask about mulch only because it changes the number, not to judge
-   it. Whatever they answer (bare soil, grass, mulch), just use it for
-   the adjustment above and move on. Only if their crop genuinely benefits
+   You ask about mulch only to set the Mulch select correctly, not to
+   judge it. Whatever they answer (bare soil, grass, mulch), set the
+   select accordingly and move on. Only if their crop genuinely benefits
    a lot from mulch (for example avocado and other shallow-rooted trees,
    or strawberries) and they said it isn't mulched, you may add **one
    short sentence**, once — e.g. "Avocados generally do well with a mulch
    layer, if you ever want to try it." No follow-up, no list of benefits,
    and don't bring it up again in the rest of the setup.
+
+   **Setting the Mulch ET Adjustment slider**, if they said "not
+   mulched": the default is 20%, a reasonable starting point for a
+   mature plant with a fair amount of its own canopy cover. Adjust from
+   there based on how much bare soil is actually exposed to sun and wind:
+
+   | Situation | Suggested adjustment |
+   |---|---|
+   | Young plant, visible bare soil between plants (vegetables, herbs, flowers) | 25-35% |
+   | Shrub or young tree, partial canopy | 15-25% |
+   | Mature tree with a full, dense canopy | 10-15% |
+   | Lawn / turf | Leave at "Mulched" (0%) -- there's no exposed soil for it to apply to |
+   | Windy or fully sun-exposed site | Add a few % on top of the row above |
+   | Already seeing pooling, runoff, or soggy soil after a change | Lower it -- canopy/ground cover is doing more than assumed |
+
+   This is a starting point for the person to tune from their own
+   observation (the slider goes to 70%), the same as everything else in
+   this section -- say so rather than presenting it as exact.
 4. **No web access?** Use the starting points below, say plainly that
    they're general starting points rather than a looked-up value, and
    suggest the person check with a local nursery or extension service.
@@ -1958,6 +1979,10 @@ views:
             name: Reference ET0 (3-day avg)
           - entity: <number.zone_crop_factor_kc>
             name: Crop Factor Kc (ET curve only)
+          - entity: <select.zone_mulch>
+            name: Mulch
+          - entity: <number.zone_mulch_et_adjustment>
+            name: Mulch ET Adjustment (while Not Mulched)
 
       - type: entities
         title: Routine Irrigation

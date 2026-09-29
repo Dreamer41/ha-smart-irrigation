@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass, field
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import DEFAULT_DEMAND_MODEL, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
+from .const import DEFAULT_DEMAND_MODEL, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DEFAULT_MULCH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
 from .rain_tracker import RainWindowTracker
 
 
@@ -140,6 +140,10 @@ class IrrigationState:
     # Which routine weekly-target model this zone uses -- see const.py's
     # DEMAND_MODEL_* comment. Defaults to the original temperature tiers.
     demand_model: str = DEFAULT_DEMAND_MODEL
+    # Whether this zone's soil is mulched -- see const.py's MULCH_STATUS_*
+    # comment. Defaults to "mulched" (no adjustment) so an existing zone's
+    # watering doesn't change on upgrade.
+    mulch_status: str = DEFAULT_MULCH_STATUS
     # Deficit mode (regulated deficit irrigation) -- a runtime toggle like
     # the demand model, plus an optional end date after which it switches
     # itself off.

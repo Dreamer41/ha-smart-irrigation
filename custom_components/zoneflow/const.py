@@ -133,6 +133,25 @@ DEMAND_MODEL_ET = "et_curve"
 DEMAND_MODEL_OPTIONS = [DEMAND_MODEL_TIERS, DEMAND_MODEL_ET]
 DEFAULT_DEMAND_MODEL = DEMAND_MODEL_TIERS
 
+# Mulch: whether this zone's bare soil is covered (mulch, or a full canopy/
+# turf that already does the same job) or exposed. Bare soil loses more of
+# what you apply to evaporation before the roots get it, so "not_mulched"
+# scales the routine weekly target UP by the paired "Mulch ET Adjustment"
+# number entity (see NUMBER_DEFS) -- the person's own dial for how much that
+# matters for their specific plant/site, since it depends on canopy cover
+# and exposure that ZoneFlow has no sensor for. Applied in controller.py's
+# `scale` alongside growth ramp and deficit mode, so it affects BOTH demand
+# models the same way (temperature tiers and the ET curve alike) -- unlike
+# crop_coefficient, which the ET curve alone reads. Default is "mulched"
+# (no adjustment) so an existing zone's watering doesn't silently change
+# when this ships; see AI_SETUP.md for guidance on how much to dial in for
+# different plants/situations.
+CONF_MULCH_STATUS = "mulch_status"
+MULCH_STATUS_MULCHED = "mulched"
+MULCH_STATUS_NOT_MULCHED = "not_mulched"
+MULCH_STATUS_OPTIONS = [MULCH_STATUS_MULCHED, MULCH_STATUS_NOT_MULCHED]
+DEFAULT_MULCH_STATUS = MULCH_STATUS_MULCHED
+
 # Growth-stage auto-ramp (optional, off by default -- see controller.py's
 # growth_ramp_fraction()). "off" means the weekly-target math behaves
 # exactly as it always has; any other profile scales the weekly target by
@@ -412,6 +431,15 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # surface). Only read while the zone's "Water Demand Model" select is
     # set to the ET curve -- see DEMAND_MODEL_* below.
     "crop_coefficient": ("Crop Factor (Kc)", 0.1, 1.5, 0.05, None),
+    # How much to scale the routine weekly target up while this zone's
+    # "Mulch" select is "Not Mulched" -- see CONF_MULCH_STATUS above. Has no
+    # effect while the select is "Mulched". Default 20% is a starting point
+    # for a mature tree with a fair amount of its own canopy cover; a young
+    # or sparse plant with a lot of exposed bare soil around it usually
+    # needs more -- AI_SETUP.md has scenario guidance, and the 70% ceiling
+    # is there for the person to dial in from their own observation, not a
+    # number to reach for by default.
+    "mulch_et_adjustment_pct": ("Mulch ET Adjustment", 0.0, 70.0, 5.0, "%"),
     # How long the Service Mode switch keeps the valve open before switching
     # itself off (with a phone alert) -- so a forgotten switch can't water
     # for hours. See controller.start_service_run.
@@ -473,6 +501,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # Middle of the usual 0.6-1.0 range for established trees and most
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
+    "mulch_et_adjustment_pct": 20.0,
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
 }

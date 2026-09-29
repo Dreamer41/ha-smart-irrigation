@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Növényi együttható (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Talajtakarás ET-korrekció"
+      },
       "deficit_water_pct": {
         "name": "Takarékos mód vízadagja"
       },
@@ -634,6 +637,13 @@
         "state": {
           "temperature_tiers": "Hőmérsékleti sávok",
           "et_curve": "ET-görbe (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Talajtakarás",
+        "state": {
+          "mulched": "Takart",
+          "not_mulched": "Nem takart"
         }
       },
       "notifications": {
