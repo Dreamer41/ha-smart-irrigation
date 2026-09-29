@@ -1,0 +1,42 @@
+name: Weekly test against latest Home Assistant
+
+# tests.yml pins pytest-homeassistant-custom-component (requirements-test.txt)
+# for reproducible day-to-day CI, so it never notices a new upstream Home
+# Assistant release breaking ZoneFlow. This job installs the latest test
+# harness every run instead of the pinned one, so it actually exercises
+# whatever HA core is current -- on a schedule, so a breaking HA update
+# surfaces here before a user hits it.
+#
+# A red run here does not mean anything is wrong on main right now -- it
+# means the next Home Assistant release might break ZoneFlow. Check the
+# failure against what changed upstream (Home Assistant's release notes)
+# before assuming it's a ZoneFlow bug. GitHub emails the repo owner (and
+# anyone watching with "Failed workflows only" or "All Activity" under
+# Settings -> Notifications -> Actions) when a scheduled run like this one
+# fails.
+
+on:
+  schedule:
+    - cron: "17 3 * * 1" # Monday ~03:17 UTC -- off the hour, avoids GitHub's scheduled-job pile-up
+  workflow_dispatch:
+
+jobs:
+  test-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          # Keep in step with tests.yml's choice of 3.12 -- see that
+          # workflow's comment (numpy has no 3.13 wheel pytest-homeassistant-
+          # custom-component can use yet).
+          python-version: "3.12"
+      - name: Install dependencies (latest Home Assistant test harness)
+        run: |
+          python -m pip install --upgrade pip
+          # PyRIC (a Home Assistant dependency) fails to build on modern
+          # setuptools on Linux -- see requirements-test.txt for details.
+          pip install "setuptools<66" wheel
+          pip install --upgrade pytest-homeassistant-custom-component pytest-asyncio tzdata
+      - name: Run tests
+        run: pytest tests/ -q
