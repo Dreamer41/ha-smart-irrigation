@@ -12,7 +12,7 @@
  *
  * Also here: zoneflow-overview-card, every zone in one table (further down).
  */
-const CARD_VERSION = "1.5.0b1";
+const CARD_VERSION = "1.5.0";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
