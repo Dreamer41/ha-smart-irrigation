@@ -694,3 +694,21 @@ async def test_changing_vent_open_position_moves_vents_that_are_already_open(has
     assert positions == [50]
     await c.greenhouse.async_evaluate("test")
     assert positions == [50]  # sent once, not every evaluation
+
+
+@pytest.mark.asyncio
+async def test_failsafe_status_says_what_vents_really_do_when_it_is_cold(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    c.store.state.ventilation_failsafe = "open"
+    hass.states.async_set(OUTSIDE, "2")  # cold: the failsafe heater runs, so vents stay shut
+    hass.states.async_set(INSIDE_TEMP, "unavailable")
+    c.greenhouse._started = True
+    c.greenhouse._inside_bad_since = time.time() - 300
+    await c.greenhouse.async_evaluate("test")
+    assert c.greenhouse._decision.failsafe and c.greenhouse._decision.vents is False
+    text = c.greenhouse.status()["text"]
+    assert "vents closed, fans off" in text and "vents open" not in text
+    hass.states.async_set(OUTSIDE, "30")  # warm: the setting applies
+    await c.greenhouse.async_evaluate("test")
+    assert "vents open, fans on" in c.greenhouse.status()["text"]

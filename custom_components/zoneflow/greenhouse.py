@@ -255,6 +255,19 @@ class GreenhouseManager:
         climate = self.c.entry.options.get(CONF_CLIMATE, self.c.entry.data.get(CONF_CLIMATE))
         return gl.PRESET_FAILSAFE.get(climate, gl.FAILSAFE_CLOSED)
 
+    def failsafe_vent_mode(self) -> str:
+        """What vents and fans really do in the failsafe right now: the
+        Sensor Failsafe setting, except that they are shut while the failsafe
+        heater is in force in the cold (greenhouse_logic.decide)."""
+        decision = self._decision
+        if decision is not None and decision.failsafe:
+            if decision.vents is True:
+                return gl.FAILSAFE_OPEN
+            if decision.vents is False:
+                return gl.FAILSAFE_CLOSED
+            return gl.FAILSAFE_LEAVE
+        return self.failsafe_mode()
+
     def heater_failsafe_mode(self) -> str:
         """Chosen on the Heater Failsafe select; by default follow the
         outside temperature when there is an outside sensor, else off."""
@@ -760,7 +773,7 @@ class GreenhouseManager:
     async def _failsafe_notices(self, decision: gl.Decision, now: float) -> None:
         if decision.failsafe and not self._failsafe_active:
             self._failsafe_active = True
-            mode = self.failsafe_mode()
+            mode = self.failsafe_vent_mode()
             await self._log("Greenhouse Failsafe", "WARNING")
             await self._notice(
                 "greenhouse_failsafe", LEVEL_WARNING,
@@ -891,7 +904,7 @@ class GreenhouseManager:
             code = "control_off"
         elif decision.failsafe:
             code = "failsafe"
-            params["mode"] = messages.text(self.hass, f"greenhouse.failsafe_mode.{self.failsafe_mode()}")
+            params["mode"] = messages.text(self.hass, f"greenhouse.failsafe_mode.{self.failsafe_vent_mode()}")
             params["heater"] = messages.text(self.hass, f"greenhouse.heater_mode.{self.heater_failsafe_mode()}")
         elif state.mist_halted:
             code = "mist_halted"
