@@ -10,6 +10,7 @@ from pytest_homeassistant_custom_component.common import async_fire_time_changed
 from custom_components.zoneflow import calculations as calc
 from custom_components.zoneflow.const import DOMAIN, FERTILIZE_REMINDER_HOUR, FERTILIZING_INTERVAL_OPTIONS
 
+from .conftest import block_till_done
 from .test_smoke_setup import PUMP, VALVE, make_entry, schedule_clear_of_now
 
 
@@ -82,7 +83,7 @@ async def test_one_reminder_on_the_due_date(hass, fake_valve_services, tmp_path)
 
     at = _next_reminder_time()
     async_fire_time_changed(hass, dt_util.as_utc(at) + timedelta(seconds=1))
-    await hass.async_block_till_done()
+    await block_till_done(hass)  # the reminder runs as a background task on newer HA
     feed = [n for n in notes if "fertiliz" in n["title"].lower()]
     assert len(feed) == 1 and "Test Zone" in feed[0]["title"]
 

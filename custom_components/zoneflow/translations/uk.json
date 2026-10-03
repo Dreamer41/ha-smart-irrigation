@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Коефіцієнт культури (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Коригування ET за мульчею"
+      },
       "deficit_water_pct": {
         "name": "Дефіцитний полив: частка води"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Підживлено сьогодні"
+      },
+      "mark_watered": {
+        "name": "Позначити полив"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Температурні рівні",
           "et_curve": "Крива ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Мульча",
+        "state": {
+          "mulched": "Замульчовано",
+          "not_mulched": "Без мульчі"
         }
       },
       "notifications": {

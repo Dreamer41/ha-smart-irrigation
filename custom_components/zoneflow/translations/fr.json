@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Coefficient cultural (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Ajustement ET du paillage"
+      },
       "deficit_water_pct": {
         "name": "Arrosage réduit : dose"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Engrais apporté aujourd'hui"
+      },
+      "mark_watered": {
+        "name": "Marquer comme arrosé"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Paliers de température",
           "et_curve": "Courbe ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Paillage",
+        "state": {
+          "mulched": "Paillé",
+          "not_mulched": "Non paillé"
         }
       },
       "notifications": {

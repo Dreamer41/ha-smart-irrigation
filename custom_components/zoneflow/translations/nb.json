@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Avlingsfaktor (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Mulch ET-justering"
+      },
       "deficit_water_pct": {
         "name": "Underskuddsvanning: vannmengde"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Gjødslet i dag"
+      },
+      "mark_watered": {
+        "name": "Merk som vannet"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Temperaturtrinn",
           "et_curve": "ET-kurve (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Mulch",
+        "state": {
+          "mulched": "Mulchet",
+          "not_mulched": "Ikke mulchet"
         }
       },
       "notifications": {

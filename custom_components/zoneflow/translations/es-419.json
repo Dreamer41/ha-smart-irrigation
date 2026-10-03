@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Coeficiente de cultivo (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Ajuste de ET por acolchado"
+      },
       "deficit_water_pct": {
         "name": "Agua en modo déficit"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Abonado hoy"
+      },
+      "mark_watered": {
+        "name": "Marcar como regado"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Por tramos de temperatura",
           "et_curve": "Curva ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Acolchado",
+        "state": {
+          "mulched": "Acolchado",
+          "not_mulched": "Sin acolchado"
         }
       },
       "notifications": {

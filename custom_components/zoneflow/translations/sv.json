@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Växtfaktor (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Marktäckning ET-justering"
+      },
       "deficit_water_pct": {
         "name": "Sparläge: vattenmängd"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Gödslat idag"
+      },
+      "mark_watered": {
+        "name": "Markera som vattnad"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Temperaturnivåer",
           "et_curve": "ET-kurva (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Marktäckning",
+        "state": {
+          "mulched": "Marktäckt",
+          "not_mulched": "Ej marktäckt"
         }
       },
       "notifications": {

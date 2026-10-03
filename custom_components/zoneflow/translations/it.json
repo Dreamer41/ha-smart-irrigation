@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Coefficiente colturale (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Regolazione ET per pacciamatura"
+      },
       "deficit_water_pct": {
         "name": "Acqua in modalità deficit"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Concimato oggi"
+      },
+      "mark_watered": {
+        "name": "Segna come annaffiato"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Fasce di temperatura",
           "et_curve": "Curva ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Pacciamatura",
+        "state": {
+          "mulched": "Pacciamato",
+          "not_mulched": "Non pacciamato"
         }
       },
       "notifications": {

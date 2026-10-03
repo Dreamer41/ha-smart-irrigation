@@ -26,6 +26,34 @@ pytest_plugins = "pytest_homeassistant_custom_component"
 pytest_socket.disable_socket = lambda *args, **kwargs: None
 
 
+async def block_till_done(hass):
+    """hass.async_block_till_done(), plus Home Assistant's own "background"
+    tasks on versions that support waiting for them.
+
+    Home Assistant changed async_track_time_change (and
+    async_track_utc_time_change) to run their listener as a background task
+    (hass.async_run_hass_job(..., background=True)) rather than a normally
+    tracked one -- as of this writing that's every HA release the
+    pytest-homeassistant-custom-component versions newer than this repo's
+    own pin (requirements-test.txt) resolve to, but not the pinned one
+    itself. A background task is deliberately NOT waited for by a plain
+    async_block_till_done() (so a long-running background job can't block
+    shutdown or a test), so a test that fires a simulated time change for a
+    fixed-clock-time listener (FERTILIZE_REMINDER_HOUR and friends) and then
+    asserts on that listener's side effect needs to wait for background
+    tasks too, or the assertion can run before the listener finishes -- see
+    tests/test_fertilizing.py's test_one_reminder_on_the_due_date, caught by
+    the weekly-latest-ha.yml CI job. The pinned Home Assistant version's
+    async_block_till_done() doesn't accept the keyword at all, hence the
+    fallback: use this helper (instead of hass.async_block_till_done()
+    directly) after any async_fire_time_changed for a fixed-clock-time
+    listener, so the test keeps working on both."""
+    try:
+        await hass.async_block_till_done(wait_background_tasks=True)
+    except TypeError:
+        await hass.async_block_till_done()
+
+
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations):
     """Make custom_components/zoneflow loadable in every test."""

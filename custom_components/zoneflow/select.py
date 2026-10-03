@@ -43,6 +43,12 @@ on the planting date (growth stage):
   curve. Unlike the journal fields this one DOES change watering; see
   const.py's DEMAND_MODEL_* comment.
 
+- ZoneFlowMulchSelect: Mulched / Not Mulched, paired with the "Mulch ET
+  Adjustment" number entity (const.py/number.py). Also changes watering --
+  "Not Mulched" scales the routine weekly target up by that number, applied
+  the same way regardless of which demand model the zone is on. See
+  const.py's MULCH_STATUS_* comment.
+
 - ZoneFlowNotificationsSelect: which phone notifications the zone sends --
   all, warnings only (faults and anything that needs a look) or none. The
   CSV log always records everything.
@@ -73,6 +79,7 @@ from .const import (
     GROWTH_STAGE_PRESETS,
     GROWTH_STAGE_SELECT_OPTIONS,
     HEALTH_STATUS_OPTIONS,
+    MULCH_STATUS_OPTIONS,
     NOTIFY_LEVEL_OPTIONS,
     SUMMARY_OFF,
     SUMMARY_OPTIONS,
@@ -94,6 +101,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowHealthSelect(entry, controller),
             ZoneFlowFertilizingIntervalSelect(entry, controller),
             ZoneFlowDemandModelSelect(entry, controller),
+            ZoneFlowMulchSelect(entry, controller),
             ZoneFlowNotificationsSelect(entry, controller),
             ZoneFlowWeeklySummarySelect(entry, controller),
         ]
@@ -324,6 +332,32 @@ class ZoneFlowDemandModelSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.demand_model = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowMulchSelect(_Base):
+    """Mulched / Not Mulched -- see module docstring and const.py's
+    MULCH_STATUS_* comment. Read by ZoneFlowController.mulch_factor() at
+    each routine cycle, so a change applies from the next cycle with no
+    reload, same as the demand model select."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+
+    _attr_icon = "mdi:leaf-circle-outline"
+    _attr_options = MULCH_STATUS_OPTIONS
+    _attr_translation_key = "mulch_status"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_mulch_status_select"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.store.state.mulch_status
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.mulch_status = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
 

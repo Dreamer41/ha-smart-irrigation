@@ -96,6 +96,7 @@ from .const import (
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
     DEMAND_MODEL_ET,
+    MULCH_STATUS_NOT_MULCHED,
     DOMAIN,
     EVENT_LOG,
     GROWTH_RAMP_CURVES,
@@ -997,6 +998,21 @@ class ZoneFlowController:
     def demand_model(self) -> str:
         return self.store.state.demand_model
 
+    @property
+    def mulch_status(self) -> str:
+        return self.store.state.mulch_status
+
+    def mulch_factor(self) -> float:
+        """1.0 while mulched (no adjustment); while not mulched, scales the
+        routine weekly target by the "Mulch ET Adjustment" number entity
+        (-50% to +70%: negative for soil that holds water well, positive for
+        fast-drying soil) -- see const.py's MULCH_STATUS_* comment. Folded into `scale`
+        alongside growth ramp and deficit mode wherever the routine target
+        is computed, so it applies the same way under either demand model."""
+        if self.mulch_status != MULCH_STATUS_NOT_MULCHED:
+            return 1.0
+        return 1.0 + max(self.number("mulch_et_adjustment_pct"), -50.0) / 100.0
+
     def et_weekly_target_mm(self) -> float | None:
         """The ET demand model's full-strength weekly target (before the
         growth ramp), or None when this zone uses temperature tiers, or
@@ -1744,8 +1760,9 @@ class ZoneFlowController:
 
     def routine_target_scale(self) -> float:
         """Everything that scales the routine weekly target: the growth
-        ramp and deficit mode."""
-        return self.growth_ramp_fraction() * self.deficit()[0]
+        ramp, deficit mode, and the mulch adjustment (1.0 unless this zone
+        is marked "Not Mulched" -- see const.py's MULCH_STATUS_*)."""
+        return self.growth_ramp_fraction() * self.deficit()[0] * self.mulch_factor()
 
     def routine_next_estimate(self) -> tuple[float | None, str]:
         """When the next routine run is expected, and what decides it:
@@ -2850,8 +2867,9 @@ class ZoneFlowController:
         # same way with plant age.
         ramp = self.growth_ramp_fraction()
         deficit_share, deficit_reason = self.deficit()
-        # The routine dose scales with the growth ramp and deficit mode alike.
-        scale = ramp * deficit_share
+        # The routine dose scales with the growth ramp, deficit mode, and
+        # mulch adjustment alike -- see routine_target_scale().
+        scale = self.routine_target_scale()
         et_weekly = self.et_weekly_target_mm()
         routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
         days_elapsed = int(elapsed_seconds / 86400)
@@ -3391,6 +3409,28 @@ class ZoneFlowController:
         await self._register_self_tune_signal("skip")
         await self._log_event(
             event_type="Manual Snooze Today",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+        )
+
+    async def mark_watered(self) -> None:
+        """The "Mark Watered" button: the person watered this zone by hand
+        (hose, watering can). Counts as the latest watering so everything
+        keyed on the last routine follows -- the routine interval, the
+        rain-credit window, the next-run estimate and Days Until Next Run --
+        and the next scheduled run doesn't water it again. Not ZoneFlow's
+        own valve time, so it never counts toward the daily runtime cap or
+        the summaries."""
+        self.store.state.last_routine_ts = dt_util.utcnow().timestamp()
+        await self.store.async_save()
+        self._notify_status()
+        await self._log_event(
+            event_type="Manually Watered",
             status="INFO",
             target_mm=0.0,
             deducted_mm=0.0,

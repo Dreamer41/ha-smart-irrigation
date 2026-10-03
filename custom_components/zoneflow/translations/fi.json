@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Kasvikerroin (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Katteen ET-säätö"
+      },
       "deficit_water_pct": {
         "name": "Vajaakastelun vesimäärä"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Lannoitettu tänään"
+      },
+      "mark_watered": {
+        "name": "Merkitse kastelluksi"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Lämpötilaportaat",
           "et_curve": "ET-käyrä (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Kate",
+        "state": {
+          "mulched": "Katettu",
+          "not_mulched": "Ei katetta"
         }
       },
       "notifications": {

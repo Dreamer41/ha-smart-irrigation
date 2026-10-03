@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Crop Factor (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Mulch ET Adjustment"
+      },
       "deficit_water_pct": {
         "name": "Deficit Mode Water"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Fertilized Today"
+      },
+      "mark_watered": {
+        "name": "Mark watered"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Temperature tiers",
           "et_curve": "ET curve (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Mulch",
+        "state": {
+          "mulched": "Mulched",
+          "not_mulched": "Not Mulched"
         }
       },
       "notifications": {

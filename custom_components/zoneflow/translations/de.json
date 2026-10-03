@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Pflanzenfaktor (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Mulch-ET-Anpassung"
+      },
       "deficit_water_pct": {
         "name": "Defizitmodus: Wassermenge"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Heute gedüngt"
+      },
+      "mark_watered": {
+        "name": "Als bewässert markieren"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Temperaturstufen",
           "et_curve": "ET-Kurve (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Mulch",
+        "state": {
+          "mulched": "Gemulcht",
+          "not_mulched": "Nicht gemulcht"
         }
       },
       "notifications": {

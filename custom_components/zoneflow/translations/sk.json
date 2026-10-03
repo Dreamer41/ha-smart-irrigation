@@ -403,6 +403,9 @@
       "crop_coefficient": {
         "name": "Koeficient plodiny (Kc)"
       },
+      "mulch_et_adjustment_pct": {
+        "name": "Úprava ET pre mulč"
+      },
       "deficit_water_pct": {
         "name": "Voda v deficitnom režime"
       },
@@ -463,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Dnes pohnojené"
+      },
+      "mark_watered": {
+        "name": "Označiť ako zaliate"
       }
     },
     "binary_sensor": {
@@ -634,6 +640,13 @@
         "state": {
           "temperature_tiers": "Teplotné pásma",
           "et_curve": "Krivka ET (Hargreaves)"
+        }
+      },
+      "mulch_status": {
+        "name": "Mulč",
+        "state": {
+          "mulched": "Mulčované",
+          "not_mulched": "Bez mulča"
         }
       },
       "notifications": {
