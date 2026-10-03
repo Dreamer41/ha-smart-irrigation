@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Heute gedüngt"
+      },
+      "mark_watered": {
+        "name": "Als bewässert markieren"
       }
     },
     "binary_sensor": {

@@ -81,3 +81,26 @@ async def test_snooze_does_not_affect_deep_soak_gates_it_does_not_touch(hass, fa
 
     assert controller.store.state.lock_on == before_lock
     assert controller._is_snoozed_today() is True
+
+
+@pytest.mark.asyncio
+async def test_mark_watered_counts_as_the_last_watering_without_valve_time(hass, fake_valve_services):
+    """The "Mark Watered" button: watered by hand. The routine clock restarts
+    from now, but no ZoneFlow runtime is counted."""
+    from custom_components.zoneflow.const import DOMAIN
+
+    from .test_smoke_setup import make_entry
+
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    controller.store.state.last_routine_ts = 0.0
+    before_runtime = controller.store.state.today_runtime_minutes
+
+    button = next(e for e in hass.states.async_entity_ids("button") if e.endswith("_mark_watered"))
+    await hass.services.async_call("button", "press", {"entity_id": button}, blocking=True)
+    await hass.async_block_till_done()
+
+    assert controller.store.state.last_routine_ts and controller.store.state.last_routine_ts > 0
+    assert controller.store.state.today_runtime_minutes == before_runtime

@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "今天已施肥"
+      },
+      "mark_watered": {
+        "name": "标记为已浇水"
       }
     },
     "binary_sensor": {

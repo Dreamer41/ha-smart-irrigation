@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Engrais apporté aujourd'hui"
+      },
+      "mark_watered": {
+        "name": "Marquer comme arrosé"
       }
     },
     "binary_sensor": {

@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Lannoitettu tänään"
+      },
+      "mark_watered": {
+        "name": "Merkitse kastelluksi"
       }
     },
     "binary_sensor": {

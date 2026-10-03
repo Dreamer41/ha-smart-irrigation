@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Mai tápanyag-utánpótlás kész"
+      },
+      "mark_watered": {
+        "name": "Megjelölés öntözöttként"
       }
     },
     "binary_sensor": {

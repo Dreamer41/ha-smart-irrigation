@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Gödslat idag"
+      },
+      "mark_watered": {
+        "name": "Markera som vattnad"
       }
     },
     "binary_sensor": {

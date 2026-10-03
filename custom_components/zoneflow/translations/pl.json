@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Nawożono dzisiaj"
+      },
+      "mark_watered": {
+        "name": "Oznacz jako podlane"
       }
     },
     "binary_sensor": {

@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Adubado hoje"
+      },
+      "mark_watered": {
+        "name": "Marcar como regado"
       }
     },
     "binary_sensor": {

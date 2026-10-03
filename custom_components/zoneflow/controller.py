@@ -1004,13 +1004,14 @@ class ZoneFlowController:
 
     def mulch_factor(self) -> float:
         """1.0 while mulched (no adjustment); while not mulched, scales the
-        routine weekly target up by the "Mulch ET Adjustment" number entity
-        -- see const.py's MULCH_STATUS_* comment. Folded into `scale`
+        routine weekly target by the "Mulch ET Adjustment" number entity
+        (-50% to +70%: negative for soil that holds water well, positive for
+        fast-drying soil) -- see const.py's MULCH_STATUS_* comment. Folded into `scale`
         alongside growth ramp and deficit mode wherever the routine target
         is computed, so it applies the same way under either demand model."""
         if self.mulch_status != MULCH_STATUS_NOT_MULCHED:
             return 1.0
-        return 1.0 + max(self.number("mulch_et_adjustment_pct"), 0.0) / 100.0
+        return 1.0 + max(self.number("mulch_et_adjustment_pct"), -50.0) / 100.0
 
     def et_weekly_target_mm(self) -> float | None:
         """The ET demand model's full-strength weekly target (before the
@@ -3408,6 +3409,28 @@ class ZoneFlowController:
         await self._register_self_tune_signal("skip")
         await self._log_event(
             event_type="Manual Snooze Today",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+        )
+
+    async def mark_watered(self) -> None:
+        """The "Mark Watered" button: the person watered this zone by hand
+        (hose, watering can). Counts as the latest watering so everything
+        keyed on the last routine follows -- the routine interval, the
+        rain-credit window, the next-run estimate and Days Until Next Run --
+        and the next scheduled run doesn't water it again. Not ZoneFlow's
+        own valve time, so it never counts toward the daily runtime cap or
+        the summaries."""
+        self.store.state.last_routine_ts = dt_util.utcnow().timestamp()
+        await self.store.async_save()
+        self._notify_status()
+        await self._log_event(
+            event_type="Manually Watered",
             status="INFO",
             target_mm=0.0,
             deducted_mm=0.0,

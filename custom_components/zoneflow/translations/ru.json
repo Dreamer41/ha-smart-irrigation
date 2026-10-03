@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Подкормлено сегодня"
+      },
+      "mark_watered": {
+        "name": "Отметить полив"
       }
     },
     "binary_sensor": {

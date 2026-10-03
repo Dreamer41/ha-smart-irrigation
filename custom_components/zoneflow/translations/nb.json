@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Gjødslet i dag"
+      },
+      "mark_watered": {
+        "name": "Merk som vannet"
       }
     },
     "binary_sensor": {

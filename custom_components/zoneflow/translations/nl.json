@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Vandaag bemest"
+      },
+      "mark_watered": {
+        "name": "Markeer als bewaterd"
       }
     },
     "binary_sensor": {

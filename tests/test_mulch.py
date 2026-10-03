@@ -141,3 +141,28 @@ async def test_weekly_target_sensor_reports_mulch_attributes(hass, fake_valve_se
     state = hass.states.get(entity_id)
     assert state.attributes["mulch_status"] == "not_mulched"
     assert state.attributes["mulch_factor"] == pytest.approx(1.2)
+
+
+@pytest.mark.asyncio
+async def test_negative_slider_scales_the_target_down_and_is_floored(hass, fake_valve_services, monkeypatch):
+    controller = await _setup(hass)
+    plans = _capture_plans(monkeypatch)
+    await hass.services.async_call(
+        "select", "select_option",
+        {"entity_id": _entity(hass, "select", "mulch"), "option": "not_mulched"},
+        blocking=True,
+    )
+    await hass.services.async_call(
+        "number", "set_value",
+        {"entity_id": _entity(hass, "number", "mulch_et_adjustment"), "value": -25},
+        blocking=True,
+    )
+    assert controller.mulch_factor() == pytest.approx(0.75)
+
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert plans[-1].target_weekly_mm == pytest.approx(controller.number("target_weekly_mm") * 0.75)
+
+    # The slider stops at -50%, and the factor never goes below that either.
+    monkeypatch.setattr(controller, "number", lambda key: -90.0 if key == "mulch_et_adjustment_pct" else 0.0)
+    assert controller.mulch_factor() == pytest.approx(0.5)

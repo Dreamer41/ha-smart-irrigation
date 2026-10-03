@@ -1496,8 +1496,11 @@ person's plant and place, the same way §5 reasons about weekly targets:
    came from, in one line.
 3. **Adjust it for their situation**, and say why in plain words:
    - Humid climate (the tropics, a humid coastal summer): the Hargreaves
-     ET₀ this zone uses tends to read somewhat high there, so go toward
-     the low end of the published range.
+     ET₀ this zone uses tends to read low there (narrow diurnal
+     temperature swings from cloud cover and high humidity dampen the
+     calculation). Make up the shortfall with the **Mulch ET Adjustment**
+     slider in "Not Mulched" mode, or ask the person to observe one cycle
+     and dial the slider from there.
    - Hot, dry, windy climate: toward the high end.
    - Young or small plant, or a tree shading only part of the ground:
      keep Kc at the grown-plant value and let the growth-stage ramp (§6)
@@ -1533,9 +1536,10 @@ person's plant and place, the same way §5 reasons about weekly targets:
    | Lawn / turf | Leave at "Mulched" (0%) -- there's no exposed soil for it to apply to |
    | Windy or fully sun-exposed site | Add a few % on top of the row above |
    | Already seeing pooling, runoff, or soggy soil after a change | Lower it -- canopy/ground cover is doing more than assumed |
+   | Heavy clay, deep shade, or soil that stays wet | Go negative: start around -20% (down to -50%). Large negative values cut watering a lot, so only use them if the soil stays wet, and check it over a week or two |
 
    This is a starting point for the person to tune from their own
-   observation (the slider goes to 70%), the same as everything else in
+   observation (the slider runs from -50% to +70%), the same as everything else in
    this section -- say so rather than presenting it as exact.
 4. **No web access?** Use the starting points below, say plainly that
    they're general starting points rather than a looked-up value, and

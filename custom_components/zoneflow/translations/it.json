@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Concimato oggi"
+      },
+      "mark_watered": {
+        "name": "Segna come annaffiato"
       }
     },
     "binary_sensor": {

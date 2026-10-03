@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Dnes pohnojeno"
+      },
+      "mark_watered": {
+        "name": "Označit jako zalité"
       }
     },
     "binary_sensor": {

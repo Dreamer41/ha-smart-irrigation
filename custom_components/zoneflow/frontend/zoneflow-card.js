@@ -12,7 +12,7 @@
  *
  * Also here: zoneflow-overview-card, every zone in one table (further down).
  */
-const CARD_VERSION = "1.5.0";
+const CARD_VERSION = "1.5.1";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -85,9 +85,23 @@ const I18N = {
       "next_feed": "Next fertilizing",
       "feed_due": "Fertilize now"
     },
+    "tips": {
+      "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
+      "flow_rate_mm_per_min": "How fast your irrigation delivers water, in mm per minute. It sets how long each run lasts. Measure it with a flow meter, or a container and a stopwatch.",
+      "deep_soak_target_mm": "How much water a deep soak applies, so it reaches the deeper roots.",
+      "deep_soak_interval_days": "The shortest time between deep soaks. Longer means less frequent deep watering.",
+      "growth_ramp_profile": "Waters young plants less and increases the amount as they grow up to full size.",
+      "deficit_water_pct": "Share of the normal water to give while deficit mode is on. Lower stresses the plant more (encourages deep roots); higher keeps growth lush.",
+      "mulch_status": "Mulched soil (or a full canopy or turf) loses little water to evaporation. Choose Not mulched for exposed soil, then use the adjustment next to it.",
+      "mulch_et_adjustment_pct": "Fine-tunes the routine watering amount for your soil cover, -50% to +70%. Positive for exposed soil that dries fast, negative for water-holding soil such as heavy clay or shade. Large negative values cut watering a lot: use them only if your soil stays wet, and watch it for a week or two.",
+      "rain_eff_low": "Share of light rain that actually reaches the roots. The rest runs off or evaporates.",
+      "rain_eff_mid": "Share of moderate rain that actually reaches the roots. The rest runs off or evaporates.",
+      "rain_eff_high": "Share of heavy rain that actually reaches the roots. The rest runs off or evaporates."
+    },
     "close": "Close",
     "device_page": "Open the device page",
-    "fertilized": "Fertilized"
+    "fertilized": "Fertilized",
+    "mark_watered": "Mark watered"
   },
   "de": {
     "now": "Jetzt",
@@ -160,7 +174,21 @@ const I18N = {
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
-    "fertilized": "Gedüngt"
+    "fertilized": "Gedüngt",
+    "mark_watered": "Als bewässert markieren",
+    "tips": {
+      "crop_coefficient": "Gibt den Wasserbedarf der Pflanze im Vergleich zur Referenz-Evapotranspiration (ET0) an. Höhere Werte bedeuten mehr Wasser, niedrigere weniger.",
+      "flow_rate_mm_per_min": "Gibt an, wie viel Wasser das Bewässerungssystem pro Minute abgibt (in mm/min). Dieser Wert bestimmt die Laufzeit pro Durchgang. Messung per Durchflussmesser oder Behälter und Stoppuhr.",
+      "deep_soak_target_mm": "Wassermenge für eine Tiefenbewässerung, damit das Wasser auch tiefere Wurzelzonen erreicht.",
+      "deep_soak_interval_days": "Mindestabstand zwischen zwei Tiefenbewässerungen. Ein höherer Wert führt zu seltenerer Tiefenbewässerung.",
+      "growth_ramp_profile": "Bewässert Jungpflanzen sparsamer und steigert die Wassermenge schrittweise mit zunehmender Wuchsgröße.",
+      "deficit_water_pct": "Prozentualer Anteil der normalen Wassermenge im Defizitmodus. Niedrigere Werte belasten die Pflanze stärker (fördert tiefes Wurzelwachstum), höhere Werte erhalten ein üppiges Wachstum.",
+      "mulch_status": "Mulchschichten, dichtes Blätterdach oder Rasen reduzieren die Verdunstung. Wählen Sie „Nicht gemulcht“ bei offenem Boden und passen Sie den Korrekturwert daneben an.",
+      "mulch_et_adjustment_pct": "Feinanpassung der täglichen Bewässerungsmenge je nach Bodenbedeckung (-50 % bis +70 %). Positive Werte für schnell trocknende Böden, negative Werte für wasserspeichernde Böden (z. B. lehmig oder schattig). Starke negative Anpassungen reduzieren die Wassermenge erheblich – bitte beobachten Sie die Pflanzen in den ersten zwei Wochen gut.",
+      "rain_eff_low": "Anteil leichten Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
+      "rain_eff_mid": "Anteil mäßigen Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
+      "rain_eff_high": "Anteil starken Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab."
+    }
   },
   "es": {
     "now": "Ahora",
@@ -233,7 +261,21 @@ const I18N = {
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
-    "fertilized": "Abonado"
+    "fertilized": "Abonado",
+    "mark_watered": "Marcar como regado",
+    "tips": {
+      "crop_coefficient": "Indica las necesidades de agua de la planta en comparación con la evapotranspiración de referencia (ET0). Un valor más alto requiere más agua; uno más bajo, menos.",
+      "flow_rate_mm_per_min": "Caudal que aporta el sistema de riego en mm por minuto. Determina la duración de cada sesión. Puede medirlo con un caudalímetro o usando un recipiente y un cronómetro.",
+      "deep_soak_target_mm": "Cantidad de agua aplicada en un riego profundo para garantizar que llegue a las raíces más profundas.",
+      "deep_soak_interval_days": "Tiempo mínimo entre riegos profundos. Un intervalo mayor reduce la frecuencia de los riegos profundos.",
+      "growth_ramp_profile": "Riega menos las plantas jóvenes e incrementa el aporte de agua gradualmente a medida que crecen.",
+      "deficit_water_pct": "Porcentaje de agua respecto al riego normal mientras el modo de déficit está activo. Un valor menor estresa más a la planta (estimula raíces profundas); un valor mayor mantiene un crecimiento frondoso.",
+      "mulch_status": "El suelo acolchado (cubierto de mantillo, vegetación tupida o césped) pierde muy poca agua por evaporación. Seleccione 'Sin acolchado' si el suelo está expuesto y ajuste el porcentaje contiguo.",
+      "mulch_et_adjustment_pct": "Ajuste fino del riego habitual según la cobertura del suelo (-50% a +70%). Los valores positivos son para suelos expuestos que se secan rápido; los negativos, para suelos que retienen humedad (arcillosos o en sombra). Ajustes negativos altos reducen bastante el riego: úselos solo si el suelo permanece húmedo y observe la evolución durante un par de semanas.",
+      "rain_eff_low": "Proporción de lluvia débil que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
+      "rain_eff_mid": "Proporción de lluvia moderada que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
+      "rain_eff_high": "Proporción de lluvia intensa que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía."
+    }
   },
   "fi": {
     "now": "Nyt",
@@ -244,8 +286,8 @@ const I18N = {
     "diagnostics": "Diagnostiikka",
     "valve": "Venttiili",
     "water_now": "Kastele nyt",
-    "deep_soak_now": "Syväkastelu nyt",
-    "snooze": "Ohita tänään",
+    "deep_soak_now": "Syväkastele nyt",
+    "snooze": "Ei kastelua tänään",
     "reset_lock": "Nollaa lukko",
     "min": "min",
     "pick_zone": "Valitse tälle kortille ZoneFlow-vyöhyke.",
@@ -306,7 +348,21 @@ const I18N = {
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
-    "fertilized": "Lannoitettu"
+    "fertilized": "Lannoita",
+    "mark_watered": "Merkitse kastelluksi",
+    "tips": {
+      "crop_coefficient": "Kasvin vedenkulutus verrattuna vertailuevapotranspiraatioon (ET0). Suurempi arvo tarkoittaa suurempaa veden tarvetta, pienempi vähempää.",
+      "flow_rate_mm_per_min": "Sadetuksen tai kastelun määrä millimetreinä minuutissa. Määrittää kastelukerran keston. Voit mitata arvon virtausmittarilla tai astialla ja sekuntikellolla.",
+      "deep_soak_target_mm": "Syväkastelun vesimäärä millimetreinä, jotta kosteus saavuttaa syvemmät juuret.",
+      "deep_soak_interval_days": "Syväkastelujen välinen vähimmäisaika vuorokausina. Suurempi arvo harventaa syväkastelukertoja.",
+      "growth_ramp_profile": "Kastelee nuoria kasveja vähemmän ja lisää vesimäärää asteittain kasvin varttuessa täyteen kokoonsa.",
+      "deficit_water_pct": "Kastelumäärän osuus normaalista, kun vajaakastelu on käytössä. Pienempi arvo aiheuttaa kasville enemmän kuivuusstressiä (edistää syvää juurtumista); suurempi arvo ylläpitää rehevää kasvua.",
+      "mulch_status": "Kate, tiheä lehvästö tai nurmikko vähentää veden haihtumista maaperästä. Valitse 'Ei katetta', jos maaperä on paljas, ja säädä vieressä olevaa korjausprosenttia.",
+      "mulch_et_adjustment_pct": "Säätää rutiinikastelun määrää maaperän katteen mukaan (-50 % – +70 %). Positiivinen arvo sopii nopeasti kuivuvalle paljaalle maalle, negatiivinen arvo vettä pidättävälle maalle (kuten savimaalle tai varjoisalle paikalle). Suuret negatiiviset arvot leikkaavat kastelua huomattavasti: käytä niitä vain, jos maa pysyy märkänä, ja seuraa tilannetta viikko tai kaksi.",
+      "rain_eff_low": "Kevyen sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
+      "rain_eff_mid": "Kohtalaisen sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
+      "rain_eff_high": "Runsaan sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois."
+    }
   },
   "fr": {
     "now": "Maintenant",
@@ -379,7 +435,21 @@ const I18N = {
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
-    "fertilized": "Engrais apporté"
+    "fertilized": "Engrais apporté",
+    "mark_watered": "Marquer comme arrosé",
+    "tips": {
+      "crop_coefficient": "Besoins en eau de la plante par rapport à l'évapotranspiration de référence (ET0). Une valeur plus élevée augmente l'arrosage, une valeur plus basse le réduit.",
+      "flow_rate_mm_per_min": "Pluviométrie du système d'arrosage en mm par minute. Détermine la durée de chaque cycle. À mesurer avec un débitmètre ou un récipient et un chronomètre.",
+      "deep_soak_target_mm": "Quantité d'eau appliquée lors d'un arrosage en profondeur pour atteindre les racines profondes.",
+      "deep_soak_interval_days": "Intervalle minimal en jours entre deux arrosages en profondeur. Une valeur plus élevée espace ces arrosages.",
+      "growth_ramp_profile": "Arrose moins les jeunes plants et augmente progressivement le volume d'eau jusqu'à maturité.",
+      "deficit_water_pct": "Pourcentage de l'apport d'eau normal en mode déficit. Une valeur faible stresse davantage la plante (incite l'enracinement profond) ; une valeur plus élevée maintient un feuillage dense.",
+      "mulch_status": "Un sol paillé (ou un feuillage dense / de la pelouse) limite fortement l'évaporation. Choisissez « Non paillé » pour un sol nu, puis ajustez le pourcentage associé.",
+      "mulch_et_adjustment_pct": "Ajustement précis de l'arrosage quotidien selon la couverture du sol (de -50% à +70%). Valeurs positives pour les sols nus séchant vite, négatives pour les sols retenant l'eau (argileux ou à l'ombre). Des valeurs fortement négatives réduisent nettement l'arrosage : à n'utiliser que si le sol reste très humide, en observant le résultat sur une à deux semaines.",
+      "rain_eff_low": "Proportion de pluie faible atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
+      "rain_eff_mid": "Proportion de pluie modérée atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
+      "rain_eff_high": "Proportion de pluie forte atteignant réellement les racines. Le reste s'évapore ou ruisselle."
+    }
   },
   "it": {
     "now": "Adesso",
@@ -452,7 +522,21 @@ const I18N = {
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
-    "fertilized": "Concimato"
+    "fertilized": "Concimato",
+    "mark_watered": "Segna come annaffiato",
+    "tips": {
+      "crop_coefficient": "Fabbisogno idrico della pianta rispetto all'evapotraspirazione di riferimento (ET0). Valori più alti indicano maggiore fabbisogno d'acqua, valori più bassi minore.",
+      "flow_rate_mm_per_min": "Tasso di erogazione dell'impianto di irrigazione espresso in mm al minuto. Determina la durata di ciascuna sessione. Può essere misurato con un flussometro oppure con un contenitore e un cronometro.",
+      "deep_soak_target_mm": "Quantità d'acqua erogata per un'irrigazione profonda, in modo da raggiungere le radici più profonde.",
+      "deep_soak_interval_days": "Intervallo minimo espresso in giorni tra due irrigazioni profonde. Valori più alti diradano la frequenza.",
+      "growth_ramp_profile": "Irriga meno le piante giovani e aumenta gradualmente la quantità d'acqua man mano che crescono fino a raggiungere la maturità.",
+      "deficit_water_pct": "Percentuale rispetto al normale apporto idrico applicata durante la modalità deficit. Valori più bassi stimolano lo stress idrico (favoriscono radici profonde); valori più alti mantengono una crescita rigogliosa.",
+      "mulch_status": "Il terreno pacciamato (o con fitta copertura vegetale / prato) riduce notevolmente l'evaporazione. Selezionare 'Non pacciamato' in caso di terreno esposto e impostare la correzione percentuale affianco.",
+      "mulch_et_adjustment_pct": "Regolazione fine dell'irrigazione quotidiana in base alla copertura del suolo (-50% a +70%). Valori positivi per terreni esposti ad asciugatura rapida; valori negativi per terreni a forte ritenzione idrica (come argilla o zone d'ombra). Valori fortemente negativi riducono parecchio l'irrigazione: utilizzare solo se il terreno rimane molto umido e monitorare per una o due settimane.",
+      "rain_eff_low": "Quota di pioggia debole che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
+      "rain_eff_mid": "Quota di pioggia moderata che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
+      "rain_eff_high": "Quota di pioggia intensa che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento."
+    }
   },
   "nl": {
     "now": "Nu",
@@ -525,7 +609,21 @@ const I18N = {
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
-    "fertilized": "Bemest"
+    "fertilized": "Bemest",
+    "mark_watered": "Markeer als bewaterd",
+    "tips": {
+      "crop_coefficient": "Bepaalt de waterbehoefte van het gewas ten opzichte van de referentie-evapotranspiratie (ET0). Hoger = meer water, lager = minder water.",
+      "flow_rate_mm_per_min": "De neerslagsnelheid van je irrigatiesysteem in mm per minuut. Dit bepaalt de duur van elke sproeibeurt. Te meten met een stroommeter of met een opvangbakje en een stopwatch.",
+      "deep_soak_target_mm": "Hoeveelheid water die bij een diepe bewatering wordt toegediend om de diepere wortels te bereiken.",
+      "deep_soak_interval_days": "Minimale periode tussen twee diepe bewateringsbeurten. Een hogere waarde betekent minder frequente diepe bewatering.",
+      "growth_ramp_profile": "Geeft jonge planten minder water en verhoogt de hoeveelheid geleidelijk naarmate ze uitgroeien tot volwaardige planten.",
+      "deficit_water_pct": "Percentage van de normale hoeveelheid water dat wordt gegeven als de deficit-modus actief is. Een lagere waarde geeft meer stress (stimuleert diepe wortelgroei); een hogere waarde behoudt een volle, weelderige groei.",
+      "mulch_status": "Gemulchte grond (of een dicht bladerdek of gazon) verliest weinig vocht door verdamping. Kies 'Niet gemulcht' bij onbedekte grond en stel de aanpassing ernaast in.",
+      "mulch_et_adjustment_pct": "Fijnafstemming van de dagelijkse bewatering op basis van de bodembedekking (-50% tot +70%). Positief voor onbedekte grond die snel uitdroogt, negatief voor watervasthoudende grond (zoals zware klei of schaduwrijke zones). Grote negatieve waarden verminderen de bewatering sterk: gebruik dit alleen als de grond erg nat blijft en houd het een à twee weken in de gaten.",
+      "rain_eff_low": "Het deel van lichte regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
+      "rain_eff_mid": "Het deel van matige regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
+      "rain_eff_high": "Het deel van zware regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg."
+    }
   },
   "pl": {
     "now": "Teraz",
@@ -598,7 +696,21 @@ const I18N = {
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
-    "fertilized": "Nawożono"
+    "fertilized": "Nawożono",
+    "mark_watered": "Oznacz jako podlane",
+    "tips": {
+      "crop_coefficient": "Określa zapotrzebowanie rośliny na wodę w stosunku do ewapotranspiracji wskaźnikowej (ET0). Wyższa wartość = więcej wody, niższa = mniej.",
+      "flow_rate_mm_per_min": "Wydajność systemu nawadniania wyrażona w mm na minutę. Wyznacza czas trwania pojedynczego cyklu. Można ją zmierzyć przepływomierzem lub pojemnikiem i stoperem.",
+      "deep_soak_target_mm": "Ilość wody dostarczana podczas głębokiego podlewania, dostosowana do zasięgu głębszych korzeni.",
+      "deep_soak_interval_days": "Minimalny odstęp w dniach między kolejnymi cyklami głębokiego podlewania. Wyższa wartość oznacza rzadsze nawadnianie głębokie.",
+      "growth_ramp_profile": "Podaje mniej wody młodym roślinom i stopniowo zwiększa dawkę w miarę ich wzrostu do dojrzałości.",
+      "deficit_water_pct": "Procentowa część standardowej dawki wody podawana w trybie deficytowym. Niższa wartość zwiększa stres wodny (stymuluje głębszy rozwój korzeni); wyższa utrzymuje bujny wzrost.",
+      "mulch_status": "Gleba pokryta ściółką (lub gęstą koroną roślin czy trawnikiem) traci niewiele wody przez parowanie. Wybierz 'Bez ściółki' dla odkrytej gleby i dostosuj współczynnik obok.",
+      "mulch_et_adjustment_pct": "Precyzyjna korekta dawki nawadniania w zależności od przykrycia gleby (od -50% do +70%). Wartości dodatnie stosuj dla odsłoniętej, szybko schnącej gleby; ujemne dla gleb zatrzymujących wilgoć (np. gliniastych lub zacienionych). Znaczne wartości ujemne mocno ograniczają podlewanie – stosuj je tylko, gdy gleba długo pozostaje wilgotna i obserwuj rośliny przez 1-2 tygodnie.",
+      "rain_eff_low": "Część opadów lekkiego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
+      "rain_eff_mid": "Część opadów umiarkowanego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
+      "rain_eff_high": "Część opadów ulewnego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa."
+    }
   },
   "pt": {
     "now": "Agora",
@@ -671,7 +783,21 @@ const I18N = {
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
-    "fertilized": "Adubado"
+    "fertilized": "Adubado",
+    "mark_watered": "Marcar como regado",
+    "tips": {
+      "crop_coefficient": "Indica a necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
+      "flow_rate_mm_per_min": "Taxa de precipitação da rega em mm por minuto. Define a duração de cada ciclo. Pode medir com um caudalímetro ou com um recipiente e um cronómetro.",
+      "deep_soak_target_mm": "Quantidade de água aplicada numa rega profunda para alcançar as raízes mais profundas.",
+      "deep_soak_interval_days": "Intervalo mínimo em dias entre regas profundas. Valores maiores tornam as regas profundas menos frequentes.",
+      "growth_ramp_profile": "Aplica menos água a plantas jovens e aumenta gradualmente a quantidade à medida que crescem até ao tamanho adulto.",
+      "deficit_water_pct": "Percentagem da quantidade normal de água a aplicar com o modo de défice ativo. Valores mais baixos causam mais stress à planta (estimulando raízes profundas); valores mais altos mantêm um crescimento exuberante.",
+      "mulch_status": "Solo com cobertura (ou copa densa / relvado) perde pouca água por evaporação. Escolha 'Sem cobertura' para solo exposto e ajuste a percentagem ao lado.",
+      "mulch_et_adjustment_pct": "Ajuste fino da rega diária com base na cobertura do solo (-50% a +70%). Valores positivos destinam-se a solos expostos que secam rápido; valores negativos para solos que retêm humidade (como argilosos ou à sombra). Ajustes negativos elevados reduzem bastante a rega: utilize-os apenas se o solo se mantiver húmido e monitorize durante uma ou duas semanas.",
+      "rain_eff_low": "Percentagem de chuva fraca que chega efetivamente às raízes. O restante evapora ou escorre.",
+      "rain_eff_mid": "Percentagem de chuva moderada que chega efetivamente às raízes. O restante evapora ou escorre.",
+      "rain_eff_high": "Percentagem de chuva forte que chega efetivamente às raízes. O restante evapora ou escorre."
+    }
   },
   "sv": {
     "now": "Nu",
@@ -744,7 +870,21 @@ const I18N = {
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
-    "fertilized": "Gödslat"
+    "fertilized": "Gödslat",
+    "mark_watered": "Markera som vattnad",
+    "tips": {
+      "crop_coefficient": "Växtens vattenbehov i jämförelse med referensevapotranspiration (ET0). Högre värde innebär mer vatten, lägre värde mindre.",
+      "flow_rate_mm_per_min": "Bevattningssystemets flöde i mm per minut. Detta bestämmer bevattningstiden för varje pass. Mät med flödesmätare eller behållare och tidtagarur.",
+      "deep_soak_target_mm": "Vattenmängd vid en djupvattning för att nå ner till de djupare rötterna.",
+      "deep_soak_interval_days": "Minsta antal dagar mellan djupvattningar. Ett högre värde ger glesare djupvattningar.",
+      "growth_ramp_profile": "Vattnar unga plantor mindre och ökar vattenmängden efter hand som de växer till full storlek.",
+      "deficit_water_pct": "Andel av normal vattenmängd som ges när sparläget är aktivt. Lägre värde stressar växten mer (stimulerar djupa rötter); högre värde bibehåller en tät och frodig tillväxt.",
+      "mulch_status": "Täckt jord (med täckmaterial, tätt bladverk eller gräsmatta) förlorar lite vatten genom avdunstning. Välj 'Ej marktäckt' för bar jord och justera procentsatsen bredvid.",
+      "mulch_et_adjustment_pct": "Finjustering av den dagliga bevattningen baserat på marktäckning (-50 % till +70 %). Positiva värden för bar jord som torkar snabbt, negativa för vattenhållande jord (t.ex. styv lera eller skuggiga lägen). Stora negativa värden minskar bevattningen avsevärt: använd dem endast om jorden förblir fuktig och följ upp under en till två veckor.",
+      "rain_eff_low": "Andel av lätt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
+      "rain_eff_mid": "Andel av måttligt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
+      "rain_eff_high": "Andel av kraftigt regn som faktiskt når rötterna. Resten dunstar eller rinner av."
+    }
   },
   "cs": {
     "now": "Teď",
@@ -817,7 +957,21 @@ const I18N = {
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
-    "fertilized": "Pohnojeno"
+    "fertilized": "Pohnojeno",
+    "mark_watered": "Označit jako zalité",
+    "tips": {
+      "crop_coefficient": "Vyjadřuje nároky rostliny na vodu v porovnání s referenční evapotranspirací (ET0). Vyšší hodnota znamená více vody, nižší méně.",
+      "flow_rate_mm_per_min": "Intenzita závlahy v mm za minutu. Určuje délku jednoho zavlažovacího cyklu. Změřte průtokoměrem nebo pomocí nádoby a stopek.",
+      "deep_soak_target_mm": "Množství vody dodané při hlubokém prolití, aby se vlhkost dostala až ke hlubším kořenům.",
+      "deep_soak_interval_days": "Nejkratší interval ve dnech mezi hlubokými prolitími. Vyšší hodnota znamená méně časté hluboké zalévání.",
+      "growth_ramp_profile": "Mladé rostliny zalévá méně a dávku postupně zvyšuje, jak rostou do plné velikosti.",
+      "deficit_water_pct": "Podíl běžné dávky vody aplikovaný v deficitním režimu. Nižší hodnota rostlinu více vystavuje stresu (podporuje hlubší kořenění), vyšší hodnota udržuje bujný růst.",
+      "mulch_status": "Mulčovaná půda (případně hustý zápoj rostlin nebo trávník) ztrácí odparem jen málo vody. Pro odhalenou půdu zvolte 'Bez mulče' a nastavte vedlejší korekci.",
+      "mulch_et_adjustment_pct": "Jemné doladění denní závlahy podle pokryvu půdy (-50 % až +70 %). Kladné hodnoty pro odhalenou půdu, která rychle vysychá; záporné hodnoty pro půdu zadržující vodu (např. těžká jílovitá nebo ve stínu). Výrazně záporné hodnoty značně omezí zálivku: používejte je pouze v případě, že půda zůstává mokrá, a stav týden až dva sledujte.",
+      "rain_eff_low": "Podíl mírného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
+      "rain_eff_mid": "Podíl středně silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
+      "rain_eff_high": "Podíl silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří."
+    }
   },
   "da": {
     "now": "Nu",
@@ -890,7 +1044,21 @@ const I18N = {
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
-    "fertilized": "Gødsket"
+    "fertilized": "Gødsket",
+    "mark_watered": "Markér som vandet",
+    "tips": {
+      "crop_coefficient": "Viser plantens vandbehov sammenlignet med reference-evapotranspiration (ET0). Højere værdi betyder mere vand, lavere betyder mindre.",
+      "flow_rate_mm_per_min": "Vandtilførsel fra vandingssystemet i mm pr. minut. Det bestemmer varigheden af hver vanding. Måles med en flowmåler eller en beholder og et stopur.",
+      "deep_soak_target_mm": "Vandmængde ved en dybdevanding, så fugten når helt ned til de dybe rødder.",
+      "deep_soak_interval_days": "Minimumsantal af dage mellem dybdevandinger. En højere værdi giver sjældnere dybdevanding.",
+      "growth_ramp_profile": "Vander unge planter mindre og øger vandmængden gradvist, efterhånden som de vokser til fuld størrelse.",
+      "deficit_water_pct": "Andel af den normale vandmængde, der tilføres i sparetilstand. En lavere værdi stresser planten mere (fremmer dybe rødder); en højere værdi bevarer en frodig vækst.",
+      "mulch_status": "Jord med mulch (eller et tæt løvhang eller græsplæne) mister meget lidt vand ved fordampning. Vælg 'Ikke mulchet' ved bar jord, og juster efterfølgende procenten ved siden af.",
+      "mulch_et_adjustment_pct": "Finjustering af den daglige vanding baseret på jorddække (-50% til +70%). Positive værdier er til bar jord, der tørrer hurtigt ud; negative værdier er til vandholdende jord (f.eks. tung lerjord eller skyggefulde områder). Store negative værdier reducerer vandingen markant: brug dem kun, hvis jorden forbliver våd, og hold øje med det i 1-2 uger.",
+      "rain_eff_low": "Andel af let regn, der reelt når rødderne. Resten fordamper eller løber af.",
+      "rain_eff_mid": "Andel af moderat regn, der reelt når rødderne. Resten fordamper eller løber af.",
+      "rain_eff_high": "Andel af kraftig regn, der reelt når rødderne. Resten fordamper eller løber af."
+    }
   },
   "hu": {
     "now": "Most",
@@ -963,7 +1131,21 @@ const I18N = {
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
-    "fertilized": "Tápanyag pótolva"
+    "fertilized": "Tápanyag pótolva",
+    "mark_watered": "Megjelölés öntözöttként",
+    "tips": {
+      "crop_coefficient": "A növény vízigénye a referencia-párolgáshoz (ET0) képest. A magasabb érték több, az alacsonyabb kevesebb vizet jelent.",
+      "flow_rate_mm_per_min": "A öntözőrendszer csapadékintenzitása mm/percben. Ez határozza meg az egyes öntözések időtartamát. Áramlásmérővel, vagy edénnyel és stopperórával mérhető.",
+      "deep_soak_target_mm": "A mélyöntözés során kijuttatott vízmennyiség, amely eléri a mélyebben fekvő gyökereket is.",
+      "deep_soak_interval_days": "A mélyöntözések közötti minimális időtartam napokban. A nagyobb érték ritkább mélyöntözést jelent.",
+      "growth_ramp_profile": "A fiatal növényeket kevesebb vízzel öntözi, majd a növekedéssel párhuzamosan fokozatosan emeli a mennyiséget a teljes méret eléréséig.",
+      "deficit_water_pct": "A normál vízmennyiség százalékos aránya hiányöntözési (csökkentett) módban. Az alacsonyabb érték jobban terheli a növényt (mélyebb gyökérzet növesztésére ösztönzi); a magasabb érték dús növekedést biztosít.",
+      "mulch_status": "A mulcsozott talaj (vagy a sűrű növényzet, illetve gyep) párolgási vesztesége alacsony. Csupasz talaj esetén válassza a 'Nem takart' lehetőséget, majd állítsa be a mellette lévő korrekciót.",
+      "mulch_et_adjustment_pct": "A napi öntözési mennyiség finomhangolása a talajtakarástól függően (-50% és +70% között). Pozitív érték a gyorsan kiszáradó, csupasz talajhoz; negatív érték a jó víztartó talajhoz (pl. kötött agyag vagy árnyékos terület). A nagy negatív értékek jelentősen csökkentik az öntözést: csak akkor használja, ha a talaj tartósan nedves marad, és figyelje a növényeket 1-2 hétig.",
+      "rain_eff_low": "A gyenge eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
+      "rain_eff_mid": "A mérsékelt eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
+      "rain_eff_high": "A heves eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik."
+    }
   },
   "nb": {
     "now": "Nå",
@@ -1036,7 +1218,21 @@ const I18N = {
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
-    "fertilized": "Gjødslet"
+    "fertilized": "Gjødslet",
+    "mark_watered": "Merk som vannet",
+    "tips": {
+      "crop_coefficient": "Plantens vannbehov sammenlignet med referanse-evapotranspirasjon (ET0). Høyere verdi gir mer vann, lavere gir mindre.",
+      "flow_rate_mm_per_min": "Vanningssystemets vanntilførsel i mm per minutt. Dette bestemmer varigheten på hver vanning. Kan måles med mengdemåler eller med en beholder og stoppeklokke.",
+      "deep_soak_target_mm": "Vannmengde tilført ved dypvanning slik at fuktigheten når de dypere røttene.",
+      "deep_soak_interval_days": "Minstetid i dager mellom hver dypvanning. Høyere verdi gir sjeldnere dypvanning.",
+      "growth_ramp_profile": "Vanner unge planter mindre og øker vannmengden gradvis etter hvert som de vokser til full størrelse.",
+      "deficit_water_pct": "Andel av normal vannmengde som tilføres når underskuddsvanning er aktiv. Lavere verdi stresser planten mer (fremmer dypere rotvekst); høyere verdi opprettholder frodig vekst.",
+      "mulch_status": "Jord dekket med mulch (eller tett bladverk/plen) mister lite vann til fordamping. Velg 'Ikke mulchet' for bar jord, og juster deretter korreksjonsprosenten ved siden av.",
+      "mulch_et_adjustment_pct": "Finjustering av den daglige vanningen basert på dekke (-50 % til +70 %). Positive verdier brukes for bar jord som tørker raskt; negative verdier for jord som holder på fuktigheten (som tung leirjord eller i skygge). Store negative verdier reduserer vanningen betraktelig: bruk dette kun dersom jorden forblir våt, og følg med i en uke eller to.",
+      "rain_eff_low": "Andel av lett regn som faktisk når røttene. Resten fordamper eller renner vekk.",
+      "rain_eff_mid": "Andel av moderat regn som faktisk når røttene. Resten fordamper eller renner vekk.",
+      "rain_eff_high": "Andel av kraftig regn som faktisk når røttene. Resten fordamper eller renner vekk."
+    }
   },
   "pt-BR": {
     "now": "Agora",
@@ -1109,7 +1305,21 @@ const I18N = {
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
-    "fertilized": "Adubado"
+    "fertilized": "Adubado",
+    "mark_watered": "Marcar como regado",
+    "tips": {
+      "crop_coefficient": "Necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
+      "flow_rate_mm_per_min": "Taxa de precipitação da irrigação em mm por minuto. Determina a duração de cada ciclo. Pode ser medida com um medidor de vazão ou usando um recipiente e um cronômetro.",
+      "deep_soak_target_mm": "Quantidade de água aplicada em uma irrigação profunda para atingir as raízes mais profundas.",
+      "deep_soak_interval_days": "Intervalo mínimo em dias entre irrigações profundas. Valores maiores tornam as irrigações profundas menos frequentes.",
+      "growth_ramp_profile": "Aplica menos água em plantas jovens e aumenta a quantidade gradualmente à medida que crescem até o tamanho adulto.",
+      "deficit_water_pct": "Porcentagem da quantidade normal de água aplicada enquanto o modo de déficit estiver ativo. Valores menores estressam mais a planta (estimulam raízes profundas); valores maiores mantêm um crescimento exuberante.",
+      "mulch_status": "Solo com cobertura (ou copa densa / gramado) perde pouca água por evaporação. Selecione 'Sem cobertura' para solo exposto e ajuste a porcentagem ao lado.",
+      "mulch_et_adjustment_pct": "Ajuste fino da irrigação diária com base na cobertura do solo (-50% a +70%). Valores positivos são para solos expostos que secam rápido; valores negativos para solos que retêm umidade (como argilosos ou na sombra). Ajustes negativos altos reduzem bastante a irrigação: use-os apenas se o solo permanecer úmido e observe o resultado por uma ou duas semanas.",
+      "rain_eff_low": "Proporção de chuva fraca que realmente atinge as raízes. O restante evapora ou escorre.",
+      "rain_eff_mid": "Proporção de chuva moderada que realmente atinge as raízes. O restante evapora ou escorre.",
+      "rain_eff_high": "Proporção de chuva forte que realmente atinge as raízes. O restante evapora ou escorre."
+    }
   },
   "ru": {
     "now": "Сейчас",
@@ -1182,7 +1392,21 @@ const I18N = {
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
-    "fertilized": "Подкормлено"
+    "fertilized": "Подкормлено",
+    "mark_watered": "Отметить полив",
+    "tips": {
+      "crop_coefficient": "Потребность растения в воде по сравнению с эталонной эвапотранспирацией (ET0). Чем выше значение, тем больше воды требуется.",
+      "flow_rate_mm_per_min": "Интенсивность полива в мм/мин. Определяет продолжительность одного сеанса. Можно измерить расходомером или с помощью емкости и секундомера.",
+      "deep_soak_target_mm": "Количество воды, подаваемое при глубоком промачивании, чтобы влага доходила до глубоких корней.",
+      "deep_soak_interval_days": "Минимальный интервал в днях между глубокими поливами. Чем выше значение, тем реже проводится глубокий полив.",
+      "growth_ramp_profile": "Подает меньше воды молодым растениям и постепенно увеличивает объем по мере их роста до взрослого состояния.",
+      "deficit_water_pct": "Доля от нормы полива, подаваемая в режиме дефицита. Низкое значение сильнее подвергает растение стрессу (стимулирует рост корней вглубь); высокое — поддерживает пышный рост.",
+      "mulch_status": "Замульчированная почва (или плотный покров / газон) теряет мало влаги на испарение. Выберите «Без мульчи» для открытого грунта и задайте процент коррекции рядом.",
+      "mulch_et_adjustment_pct": "Точная настройка ежедневного полива в зависимости от покрытия почвы (от -50% до +70%). Положительные значения — для открытой, быстро сохнущей почвы; отрицательные — для влагоемких почв (глинистых или в тени). Сильно отрицательные значения существенно снижают полив: используйте их только если почва остается сырой, и наблюдайте за состоянием в течение 1-2 недель.",
+      "rain_eff_low": "Доля слабого дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
+      "rain_eff_mid": "Доля умеренного дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
+      "rain_eff_high": "Доля сильного дождя, которая реально доходит до корней. Остальное испаряется или стекает."
+    }
   },
   "sk": {
     "now": "Teraz",
@@ -1255,7 +1479,21 @@ const I18N = {
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
-    "fertilized": "Pohnojené"
+    "fertilized": "Pohnojené",
+    "mark_watered": "Označiť ako zaliate",
+    "tips": {
+      "crop_coefficient": "Vyjadruje potrebu vody pre rastlinu v porovnaní s referenčnou evapotranspiráciou (ET0). Vyššia hodnota znamená viac vody, nižšia menej.",
+      "flow_rate_mm_per_min": "Intenzita zavlažovania v mm za minútu. Určuje dĺžku jedného cyklu. Zmerajte ju prietokomerom alebo pomocou nádoby a stopiek.",
+      "deep_soak_target_mm": "Množstvo vody dodané pri hlbokom preliatí, aby sa vlhkosť dostala až k hlbším koreňom.",
+      "deep_soak_interval_days": "Najkratší interval v dňoch medzi hlbokými preliatiami. Vyššia hodnota znamená menej časté hlboké zalievanie.",
+      "growth_ramp_profile": "Mladé rastliny zalieva menej a dávku postupne zvyšuje, ako rastú do plnej veľkosti.",
+      "deficit_water_pct": "Podiel bežnej dávky vody aplikovaný v deficitnom režime. Nižšia hodnota vystavuje rastlinu väčšiemu stresu (podporuje hlbšie zakorenenie); vyššia udržiava bujný rast.",
+      "mulch_status": "Mulčovaná pôda (prípadne hustý porast alebo trávnik) stráca odparovaním len málo vody. Pre odhalenú pôdu zvoľte 'Bez mulča' a nastavte vedľajšiu korekciu.",
+      "mulch_et_adjustment_pct": "Jemné doladenie dennej závlahy podľa pokrytia pôdy (-50 % až +70 %). Kladné hodnoty pre odhalenú pôdu, ktorá rýchlo schne; záporné hodnoty pre pôdu zadržiavajúcu vodu (napr. ťažká ílovitá alebo v tieni). Výrazne záporné hodnoty značne obmedzia zálievku: používajte ich len vtedy, ak pôda zostáva mokrá, a stav týždeň až dva sledujte.",
+      "rain_eff_low": "Podiel mierneho dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
+      "rain_eff_mid": "Podiel stredne silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
+      "rain_eff_high": "Podiel silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí."
+    }
   },
   "uk": {
     "now": "Зараз",
@@ -1328,7 +1566,21 @@ const I18N = {
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
-    "fertilized": "Підживлено"
+    "fertilized": "Підживлено",
+    "mark_watered": "Позначити полив",
+    "tips": {
+      "crop_coefficient": "Потреба рослини у воді порівняно з еталонною евапотранспірацією (ET0). Вище значення означає більше води, нижче — менше.",
+      "flow_rate_mm_per_min": "Інтенсивність поливу в мм за хвилину. Визначає тривалість кожного сеансу. Можна виміряти витратоміром або за допомогою ємності та секундоміра.",
+      "deep_soak_target_mm": "Кількість води, що подається під час глибокого просочування, щоб волога досягала глибокого коріння.",
+      "deep_soak_interval_days": "Мінімальний інтервал у днях між глибокими поливами. Більше значення означає рідший глибокий полив.",
+      "growth_ramp_profile": "Поливає молоді рослини менше і поступово збільшує об'єм води в міру їхнього росту до дорослого стану.",
+      "deficit_water_pct": "Частка від норми води під час увімкненого дефіцитного режиму. Нижчий відсоток сильніше піддає рослину стресу (стимулює розвиток глибокого коріння); вищий — підтримує пишний ріст.",
+      "mulch_status": "Замульчований ґрунт (або щільний насадження / газон) втрачає мало води через випаровування. Виберіть «Без мульчі» для відкритого ґрунту та налаштуйте відсоток коригування поруч.",
+      "mulch_et_adjustment_pct": "Точне налаштування щоденного поливу залежно від покриття ґрунту (від -50% до +70%). Додатні значення — для відкритого ґрунту, що швидко висихає; від'ємні — для ґрунту, що добре утримує вологу (наприклад, глинистого або в тіні). Значні від'ємні значення суттєво зменшують полив: використовуйте їх лише якщо ґрунт залишається вологим, і спостерігайте протягом 1-2 тижнів.",
+      "rain_eff_low": "Частка слабкого дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
+      "rain_eff_mid": "Частка помірного дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
+      "rain_eff_high": "Частка сильного дощу, яка дійсно досягає коріння. Решта випаровується або стікає."
+    }
   },
   "zh-Hans": {
     "now": "当前",
@@ -1401,7 +1653,21 @@ const I18N = {
     },
     "close": "关闭",
     "device_page": "打开设备页面",
-    "fertilized": "已施肥"
+    "fertilized": "已施肥",
+    "mark_watered": "标记为已浇水",
+    "tips": {
+      "crop_coefficient": "衡量植物相比于基准蒸散发量 (ET0) 的需水程度。数值越高需水量越大，越低则越小。",
+      "flow_rate_mm_per_min": "灌溉系统的喷灌强度（毫米/分钟）。该参数决定每次灌溉的持续时长。可使用流量计或利用测量容器与秒表测定。",
+      "deep_soak_target_mm": "深层浇灌时的目标灌水量，确保水分能够渗透至较深根系。",
+      "deep_soak_interval_days": "两次深层浇灌之间的最短间隔天数。设定值越大，深层浇灌频率越低。",
+      "growth_ramp_profile": "在幼苗期减少浇水量，并随植物生长逐渐增加水量直至成熟。",
+      "deficit_water_pct": "赤字灌溉模式下提供正常水量的百分比。设定较低值会让植物承受一定水分胁迫（有助于促进根系深扎）；较高值则可保持生长繁茂。",
+      "mulch_status": "覆盖有机物（或具有密集的树冠、草坪）的土壤水分蒸发量极低。若为裸露土壤请选择“未覆盖”，并调整旁边的修正百分比。",
+      "mulch_et_adjustment_pct": "根据土壤覆盖情况微调日常灌水量（-50% 至 +70%）。正值适用于干燥快的裸露土壤，负值适用于保水性强的土壤（如重黏土或阴凉区域）。较大的负值会大幅减少灌水量：仅建议在土壤持续湿润时使用，并观察一至两周。",
+      "rain_eff_low": "小雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
+      "rain_eff_mid": "中雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
+      "rain_eff_high": "大雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。"
+    }
   }
 };
 
@@ -1449,6 +1715,7 @@ const SETTINGS_GROUPS = [
   ]],
   ["soil", [
     "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_type", "select.drainage", "select.slope",
+    "select.mulch_status", "number.mulch_et_adjustment_pct",
   ]],
   ["growth", [
     "select.growth_ramp_profile", "datetime.planting_date", "select.growth_stage_mode",
@@ -1468,7 +1735,7 @@ const SETTINGS_GROUPS = [
 const HANDLED = new Set([
   "sensor.status", "button.run_routine", "button.run_deep_soak", "button.snooze_today",
   "button.reset_lock", "switch.service_mode", "button.service_run_1_min", "button.service_run_5_min",
-  "button.service_run_10_min", "button.fertilized_today",
+  "button.service_run_10_min", "button.fertilized_today", "button.mark_watered",
 ]);
 
 function t(hass, key) {
@@ -1476,6 +1743,14 @@ function t(hass, key) {
   const table = I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
   const lookup = (tbl) => key.split(".").reduce((node, part) => (node ? node[part] : undefined), tbl);
   return lookup(table) ?? lookup(I18N.en) ?? key;
+}
+
+// Hover text for a setting (keyed by the entity's name after the domain);
+// English until a language has its own "tips".
+function tip(hass, key) {
+  const lang = (hass && (hass.locale?.language || hass.language)) || "en";
+  const table = I18N[lang] || I18N[lang.split("-")[0]] || I18N.en;
+  return table.tips?.[key] ?? I18N.en.tips?.[key];
 }
 
 const _entityCache = new WeakMap();
@@ -1658,10 +1933,16 @@ class ZoneFlowCard extends HTMLElement {
       used.add(key);
       return visible[key]?.entity_id;
     };
-    const rows = (keys) => keys.map((key) => id(key)).filter(Boolean).map((entity) => ({ entity }));
+    const rows = (keys) => keys
+      .filter((key) => id(key))
+      .map((key) => ({ entity: visible[key].entity_id, _tip: tip(hass, key.split(".")[1]) }));
     const buttons = (items) => {
       const entities = items
-        .map(([key, name, icon]) => (id(key) ? { entity: visible[key].entity_id, name, icon } : null))
+        .map(([key, name, icon]) => (id(key) ? {
+          entity: visible[key].entity_id, name, icon,
+          // One tap presses the button: no "more info" popup to press again.
+          tap_action: { action: "call-service", service: "button.press", target: { entity_id: visible[key].entity_id } },
+        } : null))
         .filter(Boolean);
       return entities.length ? [{ type: "buttons", entities }] : [];
     };
@@ -1677,6 +1958,7 @@ class ZoneFlowCard extends HTMLElement {
         ["button.run_deep_soak", t(hass, "deep_soak_now"), "mdi:waves"],
         ["button.snooze_today", t(hass, "snooze"), "mdi:sleep"],
         ["button.fertilized_today", t(hass, "fertilized"), "mdi:sprout"],
+        ["button.mark_watered", t(hass, "mark_watered"), "mdi:watering-can-outline"],
       ]),
       ...rows(CONTROLS),
     ];
@@ -1848,6 +2130,7 @@ class ZoneFlowCard extends HTMLElement {
           const add = (before) => {
             const row = helpers.createRowElement(conf);
             row.hass = this._hass;
+            if (conf._tip) row.title = conf._tip;
             // A row that has to be recreated replaces just itself.
             row.addEventListener("ll-rebuild", (ev) => {
               ev.stopPropagation();

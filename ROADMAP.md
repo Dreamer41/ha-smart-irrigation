@@ -10,7 +10,7 @@ Ideas queued for upcoming releases.
   about 12 mm").
 - More languages, and corrections from native speakers.
 - **Mulch** select (Mulched / Not Mulched) with a paired **Mulch ET
-  Adjustment** slider (0-70%, default 20%): bare soil loses more of what
+  Adjustment** slider (-50% to +70%, default 20%): bare soil loses more of what
   you apply to evaporation before the roots get it, so "Not Mulched"
   scales the routine weekly target up by that slider -- under either
   Water Demand Model, not just the ET curve. See AI_SETUP.md's scenario

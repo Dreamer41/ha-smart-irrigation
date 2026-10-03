@@ -136,8 +136,10 @@ DEFAULT_DEMAND_MODEL = DEMAND_MODEL_TIERS
 # Mulch: whether this zone's bare soil is covered (mulch, or a full canopy/
 # turf that already does the same job) or exposed. Bare soil loses more of
 # what you apply to evaporation before the roots get it, so "not_mulched"
-# scales the routine weekly target UP by the paired "Mulch ET Adjustment"
-# number entity (see NUMBER_DEFS) -- the person's own dial for how much that
+# scales the routine weekly target by the paired "Mulch ET Adjustment"
+# number entity (see NUMBER_DEFS): positive values UP (exposed, fast-drying
+# soil), negative values DOWN (heavy clay or shade that holds water well),
+# range -50% to +70% -- the person's own dial for how much that
 # matters for their specific plant/site, since it depends on canopy cover
 # and exposure that ZoneFlow has no sensor for. Applied in controller.py's
 # `scale` alongside growth ramp and deficit mode, so it affects BOTH demand
@@ -439,7 +441,7 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # needs more -- AI_SETUP.md has scenario guidance, and the 70% ceiling
     # is there for the person to dial in from their own observation, not a
     # number to reach for by default.
-    "mulch_et_adjustment_pct": ("Mulch ET Adjustment", 0.0, 70.0, 5.0, "%"),
+    "mulch_et_adjustment_pct": ("Mulch ET Adjustment", -50.0, 70.0, 5.0, "%"),
     # How long the Service Mode switch keeps the valve open before switching
     # itself off (with a phone alert) -- so a forgotten switch can't water
     # for hours. See controller.start_service_run.

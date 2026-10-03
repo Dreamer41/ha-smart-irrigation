@@ -466,6 +466,9 @@
       },
       "fertilized_today": {
         "name": "Fertilized Today"
+      },
+      "mark_watered": {
+        "name": "Mark watered"
       }
     },
     "binary_sensor": {
