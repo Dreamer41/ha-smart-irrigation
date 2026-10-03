@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: dags att gödsla",
       "message": "Planerat till {date}. Tryck på Gödslat idag när det är gjort; nästa datum räknas ut därifrån."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: säkerhetsläge för klimatgivare",
+      "message": "Ingen innetemperaturgivare fungerar. Dimmare är av; vädring och fläktar: {mode}; värmare: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: klimatstyrning tillbaka till det normala",
+      "message": "Innetemperaturgivaren rapporterar igen."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} svarar inte",
+      "message": "{entity} ändrade inte läge enligt kommandot, inte en efter ett andra försök."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: dimmaren fastnade i påslaget läge",
+      "message": "En dimmare var påslagen längre än sin impuls och stängdes av."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: dimmning stoppad",
+      "message": "En dimmare stängdes inte av, så dimmningen har stoppats. Kontrollera den och tryck sedan på Återställ bevattningslås."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: använder reservtemperaturgivaren",
+      "message": "Huvudgivaren för innetemperatur ({entity}) slutade fungera. Klimatstyrningen fortsätter med reservgivaren."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · pausad",
     "next": " · nästa {when}",
     "zone_none": "{zone}: ingen vattning"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "vädring öppen, fläktar på",
+      "closed": "vädring stängd, fläktar av",
+      "leave": "lämnade som de är"
+    },
+    "status": {
+      "starting": "Startar upp",
+      "control_off": "Växthusstyrningen är avstängd",
+      "failsafe": "Säkerhetsläge: ingen innetemperatur (vädring och fläktar: {mode}; värmare: {heater})",
+      "mist_halted": "Dimmning stoppad: tryck på Återställ bevattningslås",
+      "held": "{device} lämnad i fred i {minutes} min (ändrad manuellt)",
+      "heating": "Värmer ({temp})",
+      "ventilating_temperature": "Vädrar: för varmt ({temp})",
+      "ventilating_humidity": "Vädrar: för fuktigt ({humidity})",
+      "misting": "Dimmar ({temp}, {humidity})",
+      "gate_blocked": "Vädrar inte: uteluften ({outside}) är inte kallare än inne ({temp})",
+      "idle": "Allt väl: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "av",
+      "limited": "på en del av tiden",
+      "outside": "på en del av tiden vid kyla ute"
+    }
   }
 }

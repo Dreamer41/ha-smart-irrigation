@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: czas na nawożenie",
       "message": "Termin: {date}. Po nawożeniu naciśnij Nawożono dzisiaj; od tego dnia zostanie wyliczony następny termin."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: tryb awaryjny czujnika klimatu",
+      "message": "Żaden wewnętrzny czujnik temperatury nie działa. Zamgławiacze są wyłączone; wietrzniki i wentylatory: {mode}; grzejnik: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: kontrola klimatu wróciła do normy",
+      "message": "Czujnik temperatury wewnętrznej ponownie wysyła odczyty."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} nie odpowiada",
+      "message": "{entity} nie przełączyło się zgodnie z poleceniem, nawet po drugiej próbie."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: zamgławiacz zablokował się w pozycji włączonej",
+      "message": "Zamgławiacz pozostał włączony po zakończeniu impulsu i został wyłączony."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: zamgławianie zatrzymane",
+      "message": "Zamgławiacz nie chciał się wyłączyć, więc zamgławianie zostało zatrzymane. Sprawdź go, a następnie naciśnij Zresetuj blokadę nawadniania."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: używanie zapasowego czujnika temperatury",
+      "message": "Główny czujnik temperatury wewnętrznej ({entity}) przestał działać. Kontrola klimatu jest kontynuowana z użyciem czujnika zapasowego."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · pauza",
     "next": " · następne {when}",
     "zone_none": "{zone}: bez podlewania"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "wietrzniki otwarte, wentylatory włączone",
+      "closed": "wietrzniki zamknięte, wentylatory wyłączone",
+      "leave": "pozostawione bez zmian"
+    },
+    "status": {
+      "starting": "Uruchamianie",
+      "control_off": "Sterowanie szklarnią jest wyłączone",
+      "failsafe": "Tryb awaryjny: brak temperatury wewnętrznej (wietrzniki i wentylatory: {mode}; grzejnik: {heater})",
+      "mist_halted": "Zamgławianie zatrzymane: naciśnij Zresetuj blokadę nawadniania",
+      "held": "{device} pozostawiono bez zmian na {minutes} min (przełączono ręcznie)",
+      "heating": "Ogrzewanie ({temp})",
+      "ventilating_temperature": "Wentylacja: zbyt ciepło ({temp})",
+      "ventilating_humidity": "Wentylacja: zbyt wilgotno ({humidity})",
+      "misting": "Zamgławianie ({temp}, {humidity})",
+      "gate_blocked": "Brak wentylacji: powietrze na zewnątrz ({outside}) nie jest chłodniejsze niż wewnątrz ({temp})",
+      "idle": "Wszystko w normie: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "wyłączony",
+      "limited": "włączony przez część czasu",
+      "outside": "włączony przez część czasu, gdy na zewnątrz jest zimno"
+    }
   }
 }

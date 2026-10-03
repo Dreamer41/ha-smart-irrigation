@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: tid for gjødsling",
       "message": "Planlagt til {date}. Trykk på Gjødslet i dag når det er gjort; neste dato regnes ut derfra."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: nødstyring for klimasensor",
+      "message": "Ingen innvendig temperatursensor fungerer. Tåkelegging er av; lufting og vifter: {mode}; varmeovn: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: klimastyring tilbake til normalt",
+      "message": "Den innvendige temperatursensoren rapporterer igjen."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} svarer ikke",
+      "message": "{entity} endret ikke status som forespurt, selv etter et nytt forsøk."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: tåkelegger hang fast på",
+      "message": "En tåkelegger forble på utover pulstiden sin og ble slått av."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: tåkelegging stoppet",
+      "message": "En tåkelegger ville ikke slå seg av, så tåkelegging er stoppet. Sjekk den, og trykk deretter Tilbakestill vanningslås."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: bruker reserve-temperatursensor",
+      "message": "Hovedsensoren for innvendig temperatur ({entity}) sluttet å fungere. Klimastyringen fortsetter med reservesensoren."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · på pause",
     "next": " · neste {when}",
     "zone_none": "{zone}: ingen vanning"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "lufting åpen, vifter på",
+      "closed": "lufting lukket, vifter av",
+      "leave": "latt stå som de er"
+    },
+    "status": {
+      "starting": "Starter opp",
+      "control_off": "Drivhusstyring er av",
+      "failsafe": "Nødstyring: ingen innvendig temperatur (lufting og vifter: {mode}; varmeovn: {heater})",
+      "mist_halted": "Tåkelegging stoppet: trykk Tilbakestill vanningslås",
+      "held": "{device} lates i fred i {minutes} min (manuelt overstyrt)",
+      "heating": "Varmer ({temp})",
+      "ventilating_temperature": "Lufter: for varmt ({temp})",
+      "ventilating_humidity": "Lufter: for fuktig ({humidity})",
+      "misting": "Tåkelegger ({temp}, {humidity})",
+      "gate_blocked": "Lufter ikke: uteluft ({outside}) er ikke kaldere enn inne ({temp})",
+      "idle": "Alt i orden: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "av",
+      "limited": "på deler av tiden",
+      "outside": "på deler av tiden ved kald uteluft"
+    }
   }
 }

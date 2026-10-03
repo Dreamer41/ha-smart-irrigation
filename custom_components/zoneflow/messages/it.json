@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: è ora di concimare",
       "message": "Prevista per il {date}. Premi Concimato oggi quando hai finito; la data successiva viene calcolata da lì."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: protezione sensore climatico",
+      "message": "Nessun sensore di temperatura interna è funzionante. Nebulizzatori spenti; aperture e ventole: {mode}; riscaldatore: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: controllo climatico tornato alla normalità",
+      "message": "Il sensore di temperatura interna sta inviando di nuovo i dati."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} non risponde",
+      "message": "{entity} non si è commutato come richiesto, neanche dopo un secondo tentativo."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: il nebulizzatore era bloccato acceso",
+      "message": "Un nebulizzatore è rimasto acceso oltre l’impulso previsto ed è stato spento."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: nebulizzazione interrotta",
+      "message": "Un nebulizzatore non si spegneva, quindi la nebulizzazione è stata bloccata. Controllalo, poi premi Ripristina blocco irrigazione."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: uso del sensore di temperatura di riserva",
+      "message": "Il sensore di temperatura interna principale ({entity}) ha smesso di funzionare. Il controllo climatico prosegue con quello di riserva."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · in pausa",
     "next": " · prossima {when}",
     "zone_none": "{zone}: nessuna irrigazione"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "aperture aperte, ventole accese",
+      "closed": "aperture chiuse, ventole spente",
+      "leave": "lasciate così come sono"
+    },
+    "status": {
+      "starting": "Avvio in corso",
+      "control_off": "Controllo serra disattivato",
+      "failsafe": "Protezione: nessuna temperatura interna (aperture e ventole: {mode}; riscaldatore: {heater})",
+      "mist_halted": "Nebulizzazione interrotta: premi Ripristina blocco irrigazione",
+      "held": "{device} non gestito per {minutes} min (azionato manualmente)",
+      "heating": "Riscaldamento in corso ({temp})",
+      "ventilating_temperature": "Ventilazione: troppo caldo ({temp})",
+      "ventilating_humidity": "Ventilazione: troppo umido ({humidity})",
+      "misting": "Nebulizzazione in corso ({temp}, {humidity})",
+      "gate_blocked": "Ventilazione assente: l’aria esterna ({outside}) non è più fresca di quella interna ({temp})",
+      "idle": "Tutto regolare: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "spento",
+      "limited": "acceso parte del tempo",
+      "outside": "acceso parte del tempo se freddo fuori"
+    }
   }
 }

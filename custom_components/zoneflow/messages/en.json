@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: time to fertilize",
       "message": "Due {date}. Press Fertilized Today when it's done; the next date is worked out from there."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: climate sensor failsafe",
+      "message": "No inside temperature sensor is working. Misters are off; vents and fans: {mode}; heater: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: climate control back to normal",
+      "message": "The inside temperature sensor is reporting again."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} not responding",
+      "message": "{entity} did not switch as commanded, even after a second try."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: mister was stuck on",
+      "message": "A mister stayed on past its pulse and was switched off."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: misting stopped",
+      "message": "A mister would not switch off, so misting is stopped. Check it, then press Reset Irrigation Lock."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: using the backup temperature sensor",
+      "message": "The main inside temperature sensor ({entity}) stopped working. Climate control carries on with the backup."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · paused",
     "next": " · next {when}",
     "zone_none": "{zone}: no watering"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "vents open, fans on",
+      "closed": "vents closed, fans off",
+      "leave": "left as they are"
+    },
+    "status": {
+      "starting": "Starting up",
+      "control_off": "Greenhouse control is off",
+      "failsafe": "Failsafe: no inside temperature (vents and fans: {mode}; heater: {heater})",
+      "mist_halted": "Misting stopped: press Reset Irrigation Lock",
+      "held": "{device} left alone for {minutes} min (switched by hand)",
+      "heating": "Heating ({temp})",
+      "ventilating_temperature": "Ventilating: too warm ({temp})",
+      "ventilating_humidity": "Ventilating: too humid ({humidity})",
+      "misting": "Misting ({temp}, {humidity})",
+      "gate_blocked": "Not ventilating: outside air ({outside}) is not cooler than inside ({temp})",
+      "idle": "All good: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "off",
+      "limited": "on part of the time",
+      "outside": "on part of the time while cold outside"
+    }
   }
 }

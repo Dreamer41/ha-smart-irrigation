@@ -81,7 +81,10 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
         "newest": _ts(samples[-1][0]) if samples else None,
     }
     for key in [k for k in state if k.endswith("_ts")]:
-        state[key] = _ts(state[key])
+        if isinstance(state[key], dict):  # per-role times (greenhouse)
+            state[key] = {role: _ts(value) for role, value in state[key].items()}
+        else:
+            state[key] = _ts(state[key])
 
     temp, temp_source = controller.watering_temp()
     moisture, moisture_problem = controller.soil_moisture_check()

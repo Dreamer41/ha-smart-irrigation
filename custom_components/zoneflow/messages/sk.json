@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: čas pohnojiť",
       "message": "Termín: {date}. Po pohnojení stlačte Dnes pohnojené; ďalší termín sa vypočíta od tohto dňa."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: núdzový režim klimatického senzora",
+      "message": "Žiadny senzor vnútornej teploty nefunguje. Zahmlievanie je vypnuté; vetranie a ventilátory: {mode}; ohrievač: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: riadenie klímy späť v normále",
+      "message": "Senzor vnútornej teploty opäť podáva správy."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} neodpovedá",
+      "message": "{entity} sa nepreplo podľa pokynu, ani po druhom pokuse."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: zahmlievač zostal zaseknutý zapnutý",
+      "message": "Zahmlievač zostal zapnutý aj po skončení impulzu a bol vypnutý."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: zahmlievanie zastavené",
+      "message": "Zahmlievač sa nevypol, preto je zahmlievanie zastavené. Skontrolujte ho a potom stlačte Vynulovať zámok zavlažovania."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: používa sa záložný senzor teploty",
+      "message": "Hlavný senzor vnútornej teploty ({entity}) prestal fungovať. Riadenie klímy pokračuje so záložným."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · pozastavené",
     "next": " · ďalšia {when}",
     "zone_none": "{zone}: bez zálievky"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "vetranie otvorené, ventilátory zapnuté",
+      "closed": "vetranie zatvorené, ventilátory vypnuté",
+      "leave": "ponechané tak, ako sú"
+    },
+    "status": {
+      "starting": "Spúšťanie",
+      "control_off": "Riadenie skleníka je vypnuté",
+      "failsafe": "Núdza: žiadna vnútorná teplota (vetranie a ventilátory: {mode}; ohrievač: {heater})",
+      "mist_halted": "Zahmlievanie zastavené: stlačte Vynulovať zámok zavlažovania",
+      "held": "{device} ponechané bez zásahu na {minutes} min (ručne prepnuté)",
+      "heating": "Vykurovanie ({temp})",
+      "ventilating_temperature": "Vetranie: príliš teplo ({temp})",
+      "ventilating_humidity": "Vetranie: príliš vlhko ({humidity})",
+      "misting": "Zahmlievanie ({temp}, {humidity})",
+      "gate_blocked": "Nevetrá sa: vonkajší vzduch ({outside}) nie je chladnejší ako vnútorný ({temp})",
+      "idle": "Všetko v poriadku: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "vypnutý",
+      "limited": "zapnutý časť času",
+      "outside": "zapnutý časť času, keď je vonku chladno"
+    }
   }
 }

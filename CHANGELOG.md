@@ -4,6 +4,26 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.6.0] — Greenhouse & indoor climate control
+
+- **New**: zone types — **outdoor** (as before), **greenhouse** and **indoor**. Existing zones stay outdoor; nothing changes for them. Change the type any time under Configure → Zone type, nothing is deleted
+- **New**: climate control for greenhouse and indoor zones — **fans, vents (covers or switches), misters and a heater**, any number of each, from `switch`, `input_boolean`, `fan`, `cover`, `valve` and `climate` entities, driven by an inside temperature sensor and optional humidity, light and outside temperature sensors
+- **New**: the valve is optional — a **climate-only zone** has no watering at all, and its watering settings, sensors, buttons and Repairs issues are hidden
+- **New**: outside-air check — vents and fans only open when the outside air is cooler than inside, so a hot afternoon never gets hotter air
+- **New**: misting by temperature, humidity or light, in short pulses with hard limits: confirmed off, one retry, then it halts until Reset Irrigation Lock, stuck-mister watchdog, Max Misting Per Hour, no misting at night / when cold / while heating / in frost
+- **New**: failsafes — if the inside sensor fails, misters go off, vents and fans follow **Sensor Failsafe**, and the heater follows **Heater Failsafe** (off, part of the time, or part of the time while cold outside; 10 minutes on in every 20)
+- **New**: **backup inside temperature sensors** — control carries on with the first working one, and you are told if main and backup disagree by more than 5 °C for 30 minutes
+- **New**: Manual Hold — a device you switch by hand is left alone for a set time; a device coming back from unavailable is not mistaken for you
+- **New**: Greenhouse Status, Inside VPD, Misting Today and Ventilation Allowed sensors, the Greenhouse Control switch, and about 20 climate settings that appear only when the hardware they act on is set up
+- **New**: add or change sensors, backup sensors and devices later under Configure → Valve, sensors and climate devices — no re-setup
+- **New**: the ZoneFlow card and overview card show climate zones (status, climate settings groups, greenhouse icon for valveless zones)
+- **New**: all the new texts translated into the 19 languages (machine translated; corrections from native speakers welcome)
+- **Docs**: new [Greenhouse and indoor zones guide](docs/GREENHOUSE.md); [AI_SETUP.md](AI_SETUP.md) gets a greenhouse and indoor section (§7.11) and updated questions and flow; README updated. If you have a heater, the guide recommends a hardware frost thermostat and a backup temperature sensor placed away from the main one
+- **Fixed**: a climate-only zone no longer gets the irrigation "flow rate is still the default" Repairs warning
+- **Tests**: full suite passes — 650 tests; climate engine also exercised on a sandbox Home Assistant (hot, outside-air check, cold, sensor loss and recovery, misting)
+
+---
+
 ## [1.5.1] — Mulch Adjustment, Mark Watered & card fixes
 
 - **New**: Mark Watered button — record a manual watering (hose, can); the routine clock restarts and the next run doesn't water again

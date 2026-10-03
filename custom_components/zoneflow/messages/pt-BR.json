@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: hora de adubar",
       "message": "Previsto para {date}. Pressione Adubado hoje quando terminar; a próxima data é calculada a partir daí."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: segurança do sensor de clima",
+      "message": "Nenhum sensor de temperatura interna está funcionando. Nebulizadores desligados; ventilação e ventiladores: {mode}; aquecedor: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: controle de clima voltou ao normal",
+      "message": "O sensor de temperatura interna está reportando novamente."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} não está respondendo",
+      "message": "{entity} não comutou conforme comandado, mesmo após uma segunda tentativa."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: nebulizador ficou preso ligado",
+      "message": "Um nebulizador permaneceu ligado além do seu pulso e foi desligado."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: nebulização interrompida",
+      "message": "Um nebulizador não desligava, por isso a nebulização foi interrompida. Verifique-o e pressione Reiniciar Bloqueio de Irrigação."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: usando o sensor de temperatura de backup",
+      "message": "O sensor de temperatura interna principal ({entity}) parou de funcionar. O controle de clima continua com o backup."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · em pausa",
     "next": " · próxima {when}",
     "zone_none": "{zone}: sem irrigação"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "ventilação aberta, ventiladores ligados",
+      "closed": "ventilação fechada, ventiladores desligados",
+      "leave": "mantidos como estão"
+    },
+    "status": {
+      "starting": "Iniciando",
+      "control_off": "O controle da estufa está desligado",
+      "failsafe": "Modo de segurança: sem temperatura interna (ventilação e ventiladores: {mode}; aquecedor: {heater})",
+      "mist_halted": "Nebulização interrompida: pressione Reiniciar Bloqueio de Irrigação",
+      "held": "{device} mantido inalterado por {minutes} min (acionado manualmente)",
+      "heating": "Aquecendo ({temp})",
+      "ventilating_temperature": "Ventilando: muito quente ({temp})",
+      "ventilating_humidity": "Ventilando: muito úmido ({humidity})",
+      "misting": "Nebulizando ({temp}, {humidity})",
+      "gate_blocked": "Sem ventilação: ar externo ({outside}) não está mais frio que o interno ({temp})",
+      "idle": "Tudo certo: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "desligado",
+      "limited": "ligado parte do tempo",
+      "outside": "ligado parte do tempo enquanto frio fora"
+    }
   }
 }

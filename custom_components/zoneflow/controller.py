@@ -44,7 +44,9 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, issues, messages, units
+from .greenhouse import GreenhouseManager
 from .const import (
+    GREENHOUSE_NUMBERS,
     FERTILIZE_REMINDER_HOUR,
     FLOW_MEASURE_MIN_MINUTES,
     FLOW_METER_SETTLE_SECONDS,
@@ -84,8 +86,19 @@ from .const import (
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
+    CONF_FAN_ENTITIES,
+    CONF_HEATER_ENTITIES,
+    CONF_INSIDE_HUMIDITY_ENTITY,
+    CONF_BACKUP_TEMP_ENTITIES,
+    CONF_INSIDE_TEMP_ENTITY,
+    CONF_LIGHT_ENTITY,
+    CONF_MISTER_ENTITIES,
     CONF_VALVE_ENTITY,
+    CONF_VENT_ENTITIES,
     CONF_WEATHER_ENTITY,
+    CONF_ZONE_TYPE,
+    DEFAULT_ZONE_TYPE,
+    ZONE_TYPE_OUTDOOR,
     DAILY_SHIFT_TIME,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
     DEEP_SOAK_MIN_PULSE_MINUTES,
@@ -308,6 +321,9 @@ class ZoneFlowController:
         self._frost_rechecks = 0
         self._frost_rechecking = False
         self._frost_notified: set[str] = set()
+        # Greenhouse / indoor climate control (1.6). Does nothing for a zone
+        # with no climate devices.
+        self.greenhouse = GreenhouseManager(self, lambda: STARTUP_GRACE_SECONDS)
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -323,10 +339,75 @@ class ZoneFlowController:
     # running controller kept using the original value forever. Fixed here
     # across the board rather than just for the new pump_id field below.
     @property
-    def valve_entity(self) -> str:
-        """The only entity that is truly mandatory -- ZoneFlow cannot
-        irrigate without something to open."""
-        return self.entry.options.get(CONF_VALVE_ENTITY, self.entry.data[CONF_VALVE_ENTITY])
+    def zone_type(self) -> str:
+        """outdoor / greenhouse / indoor. A zone made before 1.6 has none
+        stored and is an outdoor zone, exactly as it always was."""
+        return self.entry.options.get(CONF_ZONE_TYPE, self.entry.data.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE))
+
+    @property
+    def is_outdoor(self) -> bool:
+        return self.zone_type == ZONE_TYPE_OUTDOOR
+
+    @property
+    def valve_entity(self) -> str | None:
+        """What this zone waters through. Required for an outdoor zone; a
+        greenhouse or indoor zone may have none (climate control only), in
+        which case nothing here ever waters."""
+        return self.entry.options.get(CONF_VALVE_ENTITY, self.entry.data.get(CONF_VALVE_ENTITY)) or None
+
+    @property
+    def has_valve(self) -> bool:
+        return bool(self.valve_entity)
+
+    def _refuse_without_valve(self) -> None:
+        if not self.has_valve:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_has_no_valve")
+
+    def _climate_option(self, key: str) -> Any:
+        return self.entry.options.get(key, self.entry.data.get(key))
+
+    @property
+    def inside_temp_entity(self) -> str | None:
+        return self._climate_option(CONF_INSIDE_TEMP_ENTITY) or None
+
+    @property
+    def backup_temp_entities(self) -> list[str]:
+        return list(self._climate_option(CONF_BACKUP_TEMP_ENTITIES) or [])
+
+    @property
+    def inside_humidity_entity(self) -> str | None:
+        return self._climate_option(CONF_INSIDE_HUMIDITY_ENTITY) or None
+
+    @property
+    def light_entity(self) -> str | None:
+        return self._climate_option(CONF_LIGHT_ENTITY) or None
+
+    @property
+    def outside_temp_entity(self) -> str | None:
+        """The outside sensor itself. Outdoor zones water by it (that is
+        outdoor_temp_entity below); greenhouse and indoor zones keep it for
+        the ventilation gate (1.6), and water by the inside sensor."""
+        return self.entry.options.get(CONF_OUTDOOR_TEMP_ENTITY, self.entry.data.get(CONF_OUTDOOR_TEMP_ENTITY)) or None
+
+    @property
+    def fan_entities(self) -> list[str]:
+        return list(self._climate_option(CONF_FAN_ENTITIES) or [])
+
+    @property
+    def vent_entities(self) -> list[str]:
+        return list(self._climate_option(CONF_VENT_ENTITIES) or [])
+
+    @property
+    def mister_entities(self) -> list[str]:
+        return list(self._climate_option(CONF_MISTER_ENTITIES) or [])
+
+    @property
+    def heater_entities(self) -> list[str]:
+        return list(self._climate_option(CONF_HEATER_ENTITIES) or [])
+
+    @property
+    def has_climate_devices(self) -> bool:
+        return bool(self.fan_entities or self.vent_entities or self.mister_entities or self.heater_entities)
 
     @property
     def pump_power_entity(self) -> str | None:
@@ -349,12 +430,16 @@ class ZoneFlowController:
         """Optional. Without it, every rain-aware gate simply never fires
         -- rain_windows()/today_rain_mm() naturally return 0.0 for an
         empty tracker, which is the correct "assume no rain" fallback."""
+        if not self.is_outdoor:
+            return None  # a roof: no rain gauge
         return self.entry.options.get(CONF_RAIN_COUNTER_ENTITY, self.entry.data.get(CONF_RAIN_COUNTER_ENTITY))
 
     @property
     def outdoor_temp_entity(self) -> str | None:
         """Optional. Without it, the "Fallback / Manual Temperature" slider
         picks the hot/cool/normal tier -- see watering_temp."""
+        if not self.is_outdoor:
+            return self.inside_temp_entity  # under a roof, water by the inside temperature
         return self.entry.options.get(CONF_OUTDOOR_TEMP_ENTITY, self.entry.data.get(CONF_OUTDOOR_TEMP_ENTITY))
 
     @property
@@ -437,6 +522,8 @@ class ZoneFlowController:
 
     @property
     def weather_entity(self) -> str | None:
+        if not self.is_outdoor:
+            return None  # a roof: the outdoor forecast doesn't apply
         return self.entry.options.get(CONF_WEATHER_ENTITY, self.entry.data.get(CONF_WEATHER_ENTITY))
 
     @property
@@ -597,12 +684,13 @@ class ZoneFlowController:
         if state.abort_on:
             self._abort_event.set()
 
-        self._unsubs.append(
-            self._track_schedule(self.deep_soak_sun_mode, self.deep_soak_sun_offset_minutes, self.deep_soak_time, self._on_deep_soak_time)
-        )
-        self._unsubs.append(
-            self._track_schedule(self.routine_sun_mode, self.routine_sun_offset_minutes, self.routine_time, self._on_routine_time)
-        )
+        if self.has_valve:  # a climate-only zone never waters on a schedule
+            self._unsubs.append(
+                self._track_schedule(self.deep_soak_sun_mode, self.deep_soak_sun_offset_minutes, self.deep_soak_time, self._on_deep_soak_time)
+            )
+            self._unsubs.append(
+                self._track_schedule(self.routine_sun_mode, self.routine_sun_offset_minutes, self.routine_time, self._on_routine_time)
+            )
         shift_time = _parse_hms(DAILY_SHIFT_TIME)
         self._unsubs.append(
             async_track_time_change(
@@ -613,16 +701,17 @@ class ZoneFlowController:
                 second=shift_time.second,
             )
         )
-        self._unsubs.append(
-            async_track_state_change_event(self.hass, [self.valve_entity], self._on_valve_state_change)
-        )
-        # A valve that is already open when ZoneFlow starts (restored "on"
-        # after a restart mid-cycle) never produces an "on" state change for
-        # the listener above to see, so arm the stuck-valve watchdog for it
-        # here, from when it actually turned on.
-        valve_now = self.hass.states.get(self.valve_entity)
-        if valve_now is not None and valve_now.state == "on":
-            self._arm_valve_stuck_watchdog(valve_now.last_changed)
+        if self.has_valve:
+            self._unsubs.append(
+                async_track_state_change_event(self.hass, [self.valve_entity], self._on_valve_state_change)
+            )
+            # A valve that is already open when ZoneFlow starts (restored "on"
+            # after a restart mid-cycle) never produces an "on" state change for
+            # the listener above to see, so arm the stuck-valve watchdog for it
+            # here, from when it actually turned on.
+            valve_now = self.hass.states.get(self.valve_entity)
+            if valve_now is not None and valve_now.state == "on":
+                self._arm_valve_stuck_watchdog(valve_now.last_changed)
         if self.rain_counter_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -681,6 +770,7 @@ class ZoneFlowController:
             _schedule_on_startup()
         else:
             self._startup_unsub = self.hass.bus.async_listen_once("homeassistant_start", _schedule_on_startup)
+        await self.greenhouse.async_setup()
 
     async def async_unload(self) -> None:
         # A reload (saving the zone's settings, flipping its Deep Soak
@@ -688,6 +778,7 @@ class ZoneFlowController:
         # the valve closed and the lock released, so the reloaded zone
         # starts clean instead of racing an unsupervised old cycle.
         await self._interrupt_cycle("the zone was reloaded")
+        await self.greenhouse.async_unload()  # misters off first
         if self._startup_unsub is not None:
             self._startup_unsub()
             self._startup_unsub = None
@@ -714,6 +805,7 @@ class ZoneFlowController:
         self.store.closed = True
 
     async def _on_shutdown(self) -> None:
+        await self.greenhouse.async_shutdown()
         # Home Assistant gives shutdown jobs 20 s in all, so a tighter budget.
         await self._interrupt_cycle(
             "Home Assistant is shutting down",
@@ -1095,6 +1187,8 @@ class ZoneFlowController:
         """A slider was moved (number.py)."""
         if key == "flow_rate_mm_per_min":
             self._check_issues()  # a calibrated flow rate clears its repair at once
+        elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
+            self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
 
     def _schedule_resume(self) -> None:
         """Paused Until: switch Pause off by itself at that time."""
@@ -1128,6 +1222,7 @@ class ZoneFlowController:
         """The "Run Deep Soak Now" button and service: the scheduled cycle's
         own code and gates -- but a paused zone says so instead of silently
         doing nothing."""
+        self._refuse_without_valve()
         self._refuse_if_paused()
         self._manual_press = True
         try:
@@ -1138,6 +1233,7 @@ class ZoneFlowController:
     async def run_routine_now(self) -> None:
         """The "Run Routine Irrigation Now" button and service (see
         run_deep_soak_now). manual=True feeds self-tuning's "early" signal."""
+        self._refuse_without_valve()
         self._refuse_if_paused()
         self._manual_press = True
         try:
@@ -2588,7 +2684,7 @@ class ZoneFlowController:
     async def run_deep_soak(self) -> None:
         """Port of avocado_deep_soak. Called by the 05:00 trigger and by the
         manual 'Run Deep Soak Now' button/service — same code, same gates."""
-        if not self.deep_soak_enabled:
+        if not self.has_valve or not self.deep_soak_enabled:
             # Silent, like every other routine gate below -- a zone that has
             # deliberately turned this cycle off shouldn't get a log entry
             # every single day just for staying off. The manual "Run Deep
@@ -2779,6 +2875,8 @@ class ZoneFlowController:
         (if configured) goes on to force the cycle to run anyway. A manual
         press that was already due, or blocked earlier by the lock/snooze
         gate, never touches the streak."""
+        if not self.has_valve:
+            return  # a climate-only zone has nothing to water with
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
         last_run_ts = state.last_routine_ts or 0.0
@@ -3136,6 +3234,7 @@ class ZoneFlowController:
         dry-down/rain gate, so the physical valve + pump-power audit path can
         be verified before the real schedule runs unattended. Still goes
         through the mutex lock and the same watchdogs as a real cycle."""
+        self._refuse_without_valve()
         if self.store.state.lock_on or self._service_active:
             _LOGGER.warning("ZoneFlow: test pulse skipped, lock already held")
             return
@@ -3199,6 +3298,7 @@ class ZoneFlowController:
 
         Returns once the run has started; the run itself carries on in the
         background so a button press or switch doesn't hang."""
+        self._refuse_without_valve()
         state = self.store.state
         if self._stopping:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
@@ -3372,6 +3472,7 @@ class ZoneFlowController:
         ends a service run, so the valve doesn't keep running unlocked."""
         if self._service_active:
             self._service_stop.set()
+        await self.greenhouse.async_reset_mist_halt()  # a halted mister too
         await self._set_lock(False)
         await self._set_abort(False)
         await self._log_event(

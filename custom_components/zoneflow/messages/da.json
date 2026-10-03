@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: tid til gødskning",
       "message": "Planlagt til {date}. Tryk på Gødsket i dag, når det er gjort; næste dato beregnes derfra."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: fejlsikring for klimasensor",
+      "message": "Ingen indendørs temperatursensor virker. Forstøvere er slukket; udluftning og ventilatorer: {mode}; varmelegeme: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: klimastyring normal igen",
+      "message": "Den indendørs temperatursensor rapporterer igen."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} svarer ikke",
+      "message": "{entity} skiftede ikke som beordret, selv efter et andet forsøg."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: forstøver sad fast i tændt tilstand",
+      "message": "En forstøver forblev tændt ud over sin puls og blev slukket."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: forstøvning stoppet",
+      "message": "En forstøver ville ikke slukke, så forstøvning er stoppet. Kontrollér den, og tryk derefter på Nulstil vandingslås."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: bruger reserve temperatursensor",
+      "message": "Den primære indendørs temperatursensor ({entity}) holdt op med at virke. Klimastyringen fortsætter med reserven."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · på pause",
     "next": " · næste {when}",
     "zone_none": "{zone}: ingen vanding"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "udluftning åben, ventilatorer tændt",
+      "closed": "udluftning lukket, ventilatorer slukket",
+      "leave": "ladet være som de er"
+    },
+    "status": {
+      "starting": "Starter op",
+      "control_off": "Drivhusstyring er slukket",
+      "failsafe": "Fejlsikring: ingen indendørs temperatur (udluftning og ventilatorer: {mode}; varmelegeme: {heater})",
+      "mist_halted": "Forstøvning stoppet: tryk på Nulstil vandingslås",
+      "held": "{device} ladet være i {minutes} min (skiftet manuelt)",
+      "heating": "Opvarmning ({temp})",
+      "ventilating_temperature": "Udluftning: for varmt ({temp})",
+      "ventilating_humidity": "Udluftning: for fugtigt ({humidity})",
+      "misting": "Forstøvning ({temp}, {humidity})",
+      "gate_blocked": "Lufter ikke ud: udeluft ({outside}) er ikke koldere end indendørs ({temp})",
+      "idle": "Alt OK: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "slukket",
+      "limited": "tændt en del af tiden",
+      "outside": "tændt en del af tiden mens det er koldt udenfor"
+    }
   }
 }

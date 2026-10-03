@@ -74,8 +74,13 @@
 >   step, say so and ask whether to create them or which real ones to reuse,
 >   rather than picking for the person.
 > - Never disable, bypass, or suggest a workaround for a safety watchdog
->   (stuck-valve force-off, power-loss abort, stale-lock recovery). Not
->   configurable by design.
+>   (stuck-valve force-off, power-loss abort, stale-lock recovery) or a
+>   climate safety net (sensor failsafe, stuck-mister halt, the misting
+>   hourly limit, the startup grace). Not configurable by design. The
+>   climate settings that *are* the person's to choose (the Sensor Failsafe
+>   and Heater Failsafe selects, the temperature sliders) are covered in
+>   §7.11 -- offer them, but never set one to a less safe value to make a
+>   warning go away.
 > - Never edit `calculations.py` or any other integration source file as
 >   part of "setup" — this is entity selection + number tuning through the
 >   UI only, never a code change.
@@ -98,6 +103,14 @@ work out what to put in each field of that flow and each crop-relevant
 tunable number, and (b) either enter it yourself (if you have tool access
 to their Home Assistant — §1a) or tell the person exactly what to click and
 type (if you don't — §1).
+
+Since 1.6 a zone has a **type**: **outdoor** (what ZoneFlow has always
+been), **greenhouse** or **indoor**. Greenhouse and indoor zones can also
+run the *climate* of the space -- fans, vents, misters and a heater, driven
+by an inside temperature (and optionally humidity) sensor -- and the valve
+becomes optional, so a zone can be climate only. If the person has anything
+that is not an outdoor bed, read §7.11 before you start; it changes the
+questions in §1, the config flow in §1a/§4 and the checks in §8.
 
 ## 1. First questions — ask all together, before anything else
 
@@ -186,12 +199,31 @@ unanswered optional field is not the same as a "no."
    §6's growth-ramp curve later). Bring this research to the person as a
    suggestion they can confirm or correct, not as a silent internal
    decision.
-4. **Outdoors, in a greenhouse, or otherwise indoors?** Don't leave this
-   for later — it changes real decisions: whether the weather forecast
-   gate (§7.4/question 7 below) is even useful for this zone (it isn't,
-   for a greenhouse or indoor space), and what an "outdoor temperature"
-   sensor should actually be measuring for it (§2 has the full detail once
-   you know the answer).
+4. **Outdoors, in a greenhouse, or otherwise indoors?** This is the
+   zone's **type** and it comes first, because it decides the whole flow:
+   an outdoor zone has the rain gauge and the weather forecast gate; a
+   greenhouse or indoor zone has *no* rain gauge and no forecast (there is
+   a roof) but can control the climate. If the person says greenhouse or
+   indoor, also ask now, in the same breath:
+   - **Do they want ZoneFlow to control the climate** of the space, or only
+     water it? If climate: **which devices do they have** -- fans, vents
+     or roof windows, misters/foggers, a heater -- and what each one is in
+     Home Assistant (a switch, a cover, a fan, a climate entity)? Several
+     devices of the same kind are fine.
+   - **Which sensors**: an inside temperature sensor (needed for any
+     device), an inside humidity sensor (needed for misting by humidity
+     and humidity venting), a light sensor (optional, for misting by
+     light), and a real outside temperature sensor (optional, but it stops
+     the vents pulling hotter outside air in).
+   - **Does the zone also water?** If yes, it needs a valve like any zone;
+     if not, it is a climate-only zone.
+   - **If there is a heater:** ask whether it has its own thermostat, and
+     whether they have a second inside temperature sensor to use as a
+     backup (§7.11 explains why both matter -- say it plainly, it protects
+     the plants).
+   Rain that really reaches the plants (open sides, a rain shelter rather
+   than a closed house) means the zone should be **outdoor**; the zone type
+   can be changed later without losing anything.
 5. **Slope?** This one's easy to just ask outright rather than explain at
    length: is the ground this zone sits on flat, a slight slope, a
    moderate slope, or steep? (A person can usually answer this from memory
@@ -223,7 +255,7 @@ unanswered optional field is not the same as a "no."
 8. **Weather forecast gate?** Point this zone at a `weather.*` entity to
    hold off watering when rain is forecast (§7.4). Do they have one they'd
    like to use here? Skip offering this one at all if question 4 said
-   greenhouse/indoor (see §2 for why).
+   greenhouse/indoor (those zone types have no forecast gate).
 
 Carry all these answers forward — don't re-ask any of them later, and don't
 let §4's config-flow table talk you back into treating an unanswered field
@@ -241,8 +273,10 @@ as a default "no." Specifically:
   suggestions (weekly targets, root depth, split-cycle pulse tuning), §6a's
   deep-soak recommendation, and, if they turn on growth-stage auto-ramp
   (§6), which ramp profile fits.
-- **Environment (outdoor/greenhouse/indoor)** fills §2's greenhouse-specific
-  handling and rules the forecast gate in or out.
+- **Zone type (outdoor/greenhouse/indoor), the climate devices, the
+  sensors and the heater/backup-sensor answers** fill §7.11, change the
+  config flow (§1a, §4), and rule the rain gauge and forecast gate out
+  for greenhouse and indoor zones.
 - **Slope** fills straight into §4's "Slope" field — don't ask it again
   there.
 - **Dashboard and/or cheat sheet = yes (either one)** means: while walking
@@ -274,7 +308,9 @@ climate, temperature thresholds):
    includes a `flow_id` and the first form's `data_schema` (the zone-name
    step).
 2. `POST /api/config/config_entries/flow/<flow_id>` with body
-   `{"zone_name": "<the name you agreed on>", "plant": "<preset>"}` — the
+   `{"zone_name": "<the name you agreed on>", "plant": "<preset>", "zone_type": "<outdoor|greenhouse|indoor>"}`
+   — **for a greenhouse or indoor zone, read "Greenhouse and indoor zones"
+   right after this list: the steps that follow are different.** The
    preset is one of `custom` (no preset), `tomatoes`, `chilis`,
    `leafy_vegetables`, `herbs`, `strawberries`, `flowers`, `lawn`,
    `shrubs`, `young_tree`, `fruit_tree` (see Screen 1 below). The response is the second
@@ -317,6 +353,30 @@ climate, temperature thresholds):
    entity_id; check your tool's own parameters rather than assuming this
    shape). Neither counts as watering. Then read back the valve (and
    pump-power/flow-meter states, if configured) to confirm it actually ran.
+
+**Greenhouse and indoor zones** (`zone_type` is `greenhouse` or `indoor`)
+take a different path after step 2. Read each response's `data_schema`, as
+always; the steps are:
+
+- **`greenhouse_devices`** — the sensors and climate devices, all optional
+  and keyed `inside_temp_entity`, `backup_temp_entities` (a list),
+  `inside_humidity_entity`, `light_entity`, `outdoor_temp_entity` (the real
+  *outside* air here), and the device lists `fan_entities`, `vent_entities`,
+  `mister_entities`, `heater_entities`, plus `notify_entity` and
+  `unit_system`. Omit what is not there. A device needs the inside
+  temperature sensor (`inside_temp_required` otherwise), the backup
+  sensors cannot repeat the main one (`backup_same_as_inside`), and one
+  entity cannot be given two roles.
+- **`water_valve`** — `{"valve_entity": "switch.x"}`, or `{}` for a
+  climate-only zone (which then needs at least one device, or the form
+  answers `valve_or_device_required`).
+- **`watering`** — only when there is a valve: the same fields as §4's
+  screen 2 *without* the valve, rain gauge, outdoor temperature, weather,
+  notify, units and log-file fields.
+- **`climate`** — `{"climate": "<tropical|hot_dry|temperate|cool>"}`. For a
+  climate-only zone this ends the flow and creates the entry; with a valve
+  it continues to the temperature thresholds as in step 5. The climate also
+  seeds the zone's greenhouse sliders (§7.11).
 
 If your tool access is a higher-level MCP for Home Assistant rather than
 raw REST, look for whatever it calls "start config flow" / "add
@@ -379,7 +439,7 @@ once they've agreed to let you drive.
    setups run fine without either, they just lose that one safety net.
 
 4. Ask them, in one message, for the physical setup of the **first zone**
-   they want to configure — crop/plant and environment (outdoor/greenhouse/
+   they want to configure — crop/plant and zone type (outdoor/greenhouse/
    indoor) should already be in hand from §1's batch (questions 3 and 4);
    don't re-ask them here, just carry them forward and apply the
    greenhouse-specific handling below if relevant.
@@ -394,9 +454,10 @@ once they've agreed to let you drive.
    these as its own short yes/no, every time, for every zone:
    - **"Do you have a rain gauge?"** — either answer leads into §2a right
      below before moving on.
-   - **"Do you have an outdoor temperature sensor"** (or, for a greenhouse/
-     indoor zone, "one that reads this specific zone's actual growing-area
-     temperature, not the outside air")?
+   - **"Do you have an outdoor temperature sensor"** (for a greenhouse or
+     indoor zone this is the real *outside* air, used so the vents never
+     pull in hotter air; the temperature *inside* is asked for separately,
+     §7.11)?
    - **"Do you have a pump power sensor?"**
    - **"Do you have a flow meter?"** (if it's shared with other zones, ask
      where it's plumbed — §7.2a)
@@ -414,38 +475,15 @@ once they've agreed to let you drive.
    don't decide "no" on their behalf, and don't skip a search in §3 for one
    they said yes to just because it felt like extra steps.
 
-   **If this zone is a greenhouse/indoor setup:**
-   - **Always ask, explicitly, every time this comes up: "Can real rain
-     actually get into the greenhouse?"** (open roof vents, gaps, a
-     structure that's more of a rain shelter than sealed — versus a fully
-     enclosed structure that never sees outside weather). Never assume
-     either way and never skip the question because it feels obvious from
-     how the rest of the conversation has gone.
-   - **Default to skipping both the rain gauge and the weather forecast
-     gate for this zone unless the answer is a genuine yes.** These two
-     go together because they answer the same underlying question — does
-     outside weather reach these plants — so treat them as one decision,
-     not two separate ones to ask about independently:
-     - **Weather forecast gate**: don't offer it for this zone, even if
-       you already have a `weather.*` entity from another (outdoor) zone.
-       A forecast of rain outside doesn't mean this zone should hold off —
-       real rain never reaches these plants when the answer is no.
-     - **Rain gauge**: leave it unset for this zone by default. A
-       greenhouse zone that genuinely never sees the gauge tip would just
-       read zero rain forever, which is harmless but also pointless to
-       wire up — better to leave it unset and say so, so the person isn't
-       maintaining a sensor that can't do anything for this zone.
-   - **If the answer is yes** — vents open, the structure lets real rain
-     through — set up both the rain gauge and the weather forecast gate
-     for this zone exactly as you would for an outdoor zone; there's
-     nothing greenhouse-specific left to special-case once rain genuinely
-     reaches the plants.
-   - If they have an "outdoor temperature" sensor, make sure it's
-     whatever actually measures **this zone's real ambient conditions** —
-     a sensor physically inside the greenhouse, not a literal
-     outside-the-building sensor. A greenhouse commonly runs hotter than
-     the outside air, and that temperature is what drives the hot/cool
-     tier classification (§5) for this specific zone.
+   **If this zone is a greenhouse/indoor setup:** the questions above that
+   are about rain do not apply -- a greenhouse or indoor zone has no rain
+   gauge and no weather forecast gate (the setup form does not offer them).
+   Skip "Do you have a rain gauge?" and §2a for it, and do not suggest a
+   forecast source. If the person says real rain does reach these plants
+   (open sides, a rain shelter rather than a closed house), that zone is
+   better set up as **outdoor**, with the rain gauge and the forecast gate
+   as usual. Everything about the inside of the space -- its temperature
+   and humidity sensors, the climate devices -- is §7.11.
 
 ### 2a. Rain gauge: calibration, or building one if they don't have one
 
@@ -657,12 +695,17 @@ screen, not just this step.
 ## 4. Walk through the config flow
 
 In Home Assistant: **Settings → Devices & Services → Add Integration →
-"ZoneFlow Irrigation"**. It's four screens:
+"ZoneFlow Irrigation"**. For an outdoor zone it's four screens, below.
+(Greenhouse and indoor zones start the same way, with the zone type picked
+on screen 1, and then ask for their sensors and climate devices, whether
+there is a valve, the watering settings if there is, and the climate --
+§1a lists those steps and §7.11 says what to put in them.)
 
-**Screen 1 — zone name and what's planted.** `Zone name`: a short, human
-name (e.g. "Front Lawn", "Avocado Tree", "Herb Bed"). This becomes the
-device name in the HA UI and the default CSV log filename, so it must be
-distinct from any other zone's name. `What's planted`: pick the preset
+**Screen 1 — zone name, what's planted and where it grows.** `Zone name`:
+a short, human name (e.g. "Front Lawn", "Avocado Tree", "Herb Bed"). This
+becomes the device name in the HA UI and the default CSV log filename, so it
+must be distinct from any other zone's name. `Where it grows`: Outdoor,
+Greenhouse or Indoor (§7.11) -- from §1's answer. `What's planted`: pick the preset
 closest to the crop you researched (Tomatoes, Chilis / peppers, Leafy
 vegetables, Herbs, Strawberries, Flower bed, Lawn, Shrubs, Young tree,
 Established fruit tree) or "Something else". A preset pre-fills the weekly
@@ -1280,14 +1323,12 @@ Only set this up if the person wants ZoneFlow to skip a scheduled run when
 rain is forecast. Requires a `weather.*` entity (any integration that
 provides one — ask which weather integration they use, or find it via §3).
 
-**For a greenhouse/indoor zone, this is governed by the rain-can-enter
-question in §2** — always ask it, and default to skipping this gate
-(along with the rain gauge) unless the person confirms real rain reaches
-the zone. A forecast of rain outside is irrelevant to plants that never
-get rained on. If you're setting up multiple zones and only some are
-greenhouses, this is genuinely per-zone: an outdoor zone using the same
-`weather.*` entity is completely normal, you just don't offer or apply
-the gate to a sealed greenhouse zone.
+**A greenhouse or indoor zone has no forecast gate at all** — the setup
+form does not offer it, since a forecast of rain outside is irrelevant to
+plants under a roof. If the person says real rain does reach the zone, set
+it up as an outdoor zone instead. If you're setting up several zones and
+only some are greenhouses, this is per-zone: an outdoor zone using the
+same `weather.*` entity is completely normal.
 
 1. Set the zone's "Weather forecast source" field to that entity (in the
    config flow, or later via the integration's **Options** if already set up).
@@ -1708,6 +1749,172 @@ patch at the bottom of the fruit), fruit cracking, or scorched leaf edges.
 Suggest noting the start date and what they see in the zone's **Health
 Notes**, so they can compare next season.
 
+### 7.11 Greenhouse and indoor zones: climate control (1.6+)
+
+A zone whose **zone type** is *greenhouse* or *indoor* can run the climate of
+its space as well as (or instead of) watering it. Everything here is
+optional: a zone with no climate devices simply waters, and the valve is
+optional too -- a zone with devices and no valve is a **climate-only zone**.
+Ask §1's question 4 first; this section is for when the answer was not
+"outdoors".
+
+**What the person gets.** From the inside temperature (and humidity) sensor
+ZoneFlow switches four kinds of device, each of which can be several
+entities of different kinds (a switch, an `input_boolean`, a `fan`, a
+`cover` for roof windows, a `valve`, or a `climate` entity for a heater):
+
+| Role | Entities it accepts | What it does |
+|---|---|---|
+| Fans | `switch`, `input_boolean`, `fan` | on when it is hot (or humid) and outside air may be used |
+| Vents | `cover`, `switch`, `input_boolean` | open when warm (to *Vent Open Position*), also for humidity |
+| Misters | `switch`, `input_boolean`, `valve` | short pulses to cool and humidify, under hard limits |
+| Heater | `switch`, `input_boolean`, `climate` | on when it is cold |
+
+**Sensors.** *Inside temperature* is required for any device (and drives
+the zone's watering temperature tiers too). *Inside humidity* is needed for
+misting by humidity and for humidity venting. *Light* (illuminance or
+irradiance) is optional and only used to mist by light. *Outside
+temperature* is optional but strongly worth having: vents and fans open only
+when the outside air is cooler than inside by at least the **Outside Air
+Margin**, and close again when it is not cooler at all, so a hot afternoon
+never gets hotter air pumped in. Without an outside sensor that check is
+simply skipped.
+
+**The settings** (device page → Configuration; shown only when the hardware
+they act on is configured, so the page stays short). The climate chosen at
+setup seeds the first four:
+
+| Setting | Default (temperate) | Meaning |
+|---|---|---|
+| Heater On Below | 10 °C | the heater comes on below this, off again hysteresis above it |
+| Vents Open At | 25 °C | vents open at this, close at hysteresis below |
+| Fans On At | 28 °C | fans join in at this (never below the vent temperature) |
+| Climate Hysteresis | 1.5 °C | the gap that stops devices flapping |
+| Outside Air Margin | 1 °C | how much cooler outside must be before it is used |
+| Ventilate Above Humidity | 85 % | open up above this (not while heating, not when it would chill the house) |
+| Mist On Above Temperature | 30 °C | the temperature trigger for misting |
+| Mist On Below Humidity | 50 % | the humidity trigger |
+| Mist Light Level | 40 000 lx | the light trigger |
+| Misting Trigger (select) | Any trigger | any / temperature / humidity / light only |
+| Mist Minimum Temperature | 18 °C | no misting below this |
+| Mist Stop Humidity | 85 % | no misting at or above this |
+| Mist On Time / Mist Off Time | 10 s / 120 s | one pulse, and the pause before the next |
+| Max Misting Per Hour | 10 min | a hard cap; reaching it stops misting until the hour has room |
+| Mist At Night (switch) | off | misting is daytime only unless this is on |
+| Vent Open Position | 100 % | how far a cover opens |
+| Manual Hold Time | 60 min | how long a role is left alone after a person switches it by hand |
+
+Presets by climate: tropical heater 15, vents 28, fans 31, mist 32; hot
+summers 8 / 27 / 30 / 30; temperate 10 / 25 / 28 / 30; cool summers
+8 / 22 / 26 / 28 (all °C, shown in the zone's units). The form refuses
+settings that contradict each other (heating must end well before venting
+starts, fans at or after vents, the misting humidity trigger below the
+humidity stop). Adjust to the crop, as in §5, from the person's research:
+a tomato house, an orchid room and a seedling shelf want different numbers.
+
+**Misting is the part that can do real harm if a switch sticks**, so it is
+built defensively -- and none of this is configurable, so never promise
+otherwise: it pulses (never a long continuous run); each pulse's "off" is
+confirmed; a mister that will not switch off is retried once, then misting
+**halts** with a Repairs issue and a phone alert until the person presses
+**Reset Irrigation Lock**; a mister found on past its pulse is forced off;
+the hourly cap above is enforced; nothing mists at night by default, below
+the minimum temperature, while the heater is on, or in frost.
+
+**Failsafes -- say all of this to the person plainly**, because the
+heater is the one that matters:
+
+- *Sensor failsafe.* If the inside temperature sensor gives nothing usable
+  (unavailable, stale for 2 hours, or an impossible value) for **2
+  minutes**, control is on its failsafe: misters off immediately; vents and
+  fans follow the zone's **Sensor Failsafe** select (*Open vents, fans on*
+  / *Close vents, fans off* / *Leave as they are*; the default follows the
+  climate -- open for tropical and hot summers, closed otherwise); the
+  heater follows the **Heater Failsafe** select. A phone message goes out when the failsafe engages
+  (and another when it ends), a Repairs issue appears after 10 minutes, and
+  everything clears by itself when the sensor is back. Shorter dropouts change nothing.
+- *Heater Failsafe*: **Off**; **On part of the time** (10 minutes on in
+  every 20, whatever the weather); or **Part of the time while cold
+  outside** (the same duty cycle, only while the *outside* temperature is
+  below Heater On Below; the default when there is an outside sensor, and
+  *Off* when there is none). A heater that runs flat out with no
+  temperature reading can cook a greenhouse; one that stays off can freeze
+  it -- that is why it is part-time. Ask which risk worries the person more
+  (a winter frost, or a hot day with the heater on) and set the select to
+  match; the default is a sound choice for most.
+- *Backup sensors.* In the zone's devices form the person can add one or
+  more extra inside temperature sensors. If the main sensor stops, control
+  carries on with the first backup that works (no failsafe, a Repairs issue
+  and a message that it is on a backup); if main and backup read more than
+  5 °C apart for 30 minutes, ZoneFlow says so, because one of them is wrong.
+- *Hardware safety nets that ZoneFlow cannot replace.* **If there is a
+  heater, recommend -- as advice, in plain words -- two things the person
+  owns, not ZoneFlow:** (1) a **hardware frost thermostat** or a heater with
+  its own thermostat and over-temperature cut-out, wired in the heater's
+  power line, so frost protection and a hard maximum survive a crashed Home
+  Assistant, a dead Wi-Fi link or a failed sensor; and (2) a **backup
+  temperature sensor placed away from the main one** (the other end of the
+  house, at plant height, out of direct sun and away from the heater and the
+  vents), so a single stuck or misplaced sensor cannot blind the control.
+  Home Assistant switching a mains heater is convenient, not a safety
+  system. Don't lecture; say it once, and move on.
+- Also unconditional: nothing switches during Home Assistant's startup
+  grace (about 2 minutes); a heater ZoneFlow turned on is turned off again
+  when the zone is unloaded or Home Assistant stops (one a person turned on
+  is left alone); and a device that has just come back from *unavailable*
+  is not treated as someone switching it by hand.
+
+**Manual hold.** If a person switches a role's device by hand (or from
+another automation or app), ZoneFlow leaves that role alone for **Manual
+Hold Time** (default 60 minutes; 0 turns it off) and says so in the status
+-- it does not fight them. The exception is safety: the heater is still
+cut in a sensor failsafe set to *Off*, and a hand-switched mister is left
+on at most Max Misting Per Hour. There is no "resume now" button; the hold
+ends by itself. **Greenhouse Control** (switch) pauses the whole climate
+engine -- devices are left as they are -- for maintenance.
+
+**What to create and what it shows.** The zone gets **Greenhouse Status**
+(one sentence: what it is doing and why, or why it is not), **Inside VPD**
+(vapour pressure deficit, for information), **Misting Today**, and
+**Ventilation Allowed** (the outside-air check). The built-in card shows
+them with the climate settings under their own groups, and the overview
+card shows climate-only zones with their status.
+
+**Adding things later.** The person never has to redo the zone: **Configure**
+-> *Valve, sensors and climate devices* adds a sensor, a backup sensor or a
+device, and the settings that need it appear by themselves; **Configure** ->
+*Where it grows* changes the zone type (nothing is deleted, what the new
+type does not use is hidden, and it comes back if changed back; an outdoor
+zone needs a valve). An existing 1.5 zone is simply an outdoor zone.
+
+**A climate-only zone** has no valve, so it has no watering schedule, no
+rain, forecast, flow or pump settings and none of their sensors or buttons;
+the watering entities are hidden, and no irrigation Repairs issue is raised
+for it.
+
+**Verify (before you call it done).**
+
+1. Read the **Greenhouse Status** sensor: it should say what the inside
+   readings are (temperature and humidity) -- right after setup it shows
+   "starting" for the grace period, then "all fine" or what it is doing.
+   If it says the sensor is unusable, fix the sensor first.
+2. Check each device by **asking the person's yes first**, naming the
+   device and what it will do ("this will switch `switch.x` -- the heater --
+   on for a minute; is now safe?"): the least invasive way is to move one
+   setting for a moment so the zone acts (for example set *Fans On At* just
+   under the current inside temperature with *Vents Open At* below it,
+   confirm the fan switches, then put the setting back), or to switch the
+   device by hand and confirm ZoneFlow shows the Manual Hold. Never leave a
+   changed setting behind, and never move a safety-related setting (the
+   failsafe selects, the hourly mist cap) as part of a test.
+3. Open **Settings -> System -> Repairs**: nothing from ZoneFlow should be
+   there. (A "device is not responding" issue means ZoneFlow told a device
+   to move twice and it did not report the change -- check the device.)
+4. Walk through the failsafes and the two hardware recommendations above
+   with the person if there is a heater. That conversation is part of
+   setup, not an optional extra.
+
+
 ## 8. Verify before you're done
 
 Do not consider setup finished until these are confirmed for each zone:
@@ -1756,7 +1963,11 @@ Do not consider setup finished until these are confirmed for each zone:
    test pulse bypass every schedule and rain gate on purpose, so they're
    not representative of a real run — don't leave them thinking a
    successful check alone proves the rain logic works.
-5. **Check whether they said yes to a dashboard card and/or a cheat sheet
+5. **Greenhouse or indoor zone with climate devices:** do the checks in
+   §7.11's "Verify" list as well -- the status sensor, every device moving
+   when asked (with the person's yes first, same as the valve above), and
+   the Repairs page clean.
+6. **Check whether they said yes to a dashboard card and/or a cheat sheet
    back in §1's item 6.** For whichever one(s) they said yes to, setup is
    *not* finished until §9 and/or §9a are actually done and the person has
    the finished output in hand — not just noted as something you'll get
@@ -2265,7 +2476,11 @@ restated version of this whole guide.
 ## 9b. Updating an existing dashboard after a ZoneFlow update
 
 A dashboard using the built-in ZoneFlow card needs nothing: it picks up new
-entities by itself. What follows is for hand-built dashboards.
+entities by itself -- including, since 1.6, the climate rows (status,
+inside VPD, ventilation allowed, misting today), the Greenhouse Control
+switch and the climate settings groups of a greenhouse or indoor zone, and a
+greenhouse icon for a zone with no valve. (After an update, a hard refresh of
+the browser loads the new card.) What follows is for hand-built dashboards.
 
 If the person already has a ZoneFlow dashboard and has just updated
 ZoneFlow, check the release notes for that version (GitHub → Releases): each

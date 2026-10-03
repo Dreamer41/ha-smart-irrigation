@@ -6,11 +6,13 @@
         "description": "Gi vanningssonen et kort navn (f.eks. \"Plenen foran\", \"Avokadotreet\"). Vil du ha flere soner senere, legger du til integrasjonen på nytt.",
         "data": {
           "zone_name": "Sonenavn",
-          "plant": "Hva som vokser her"
+          "plant": "Hva som vokser her",
+          "zone_type": "Hvor det dyrkes"
         },
         "data_description": {
           "zone_name": "Blir enhetsnavnet til sonen og starten på entitetsnavnene, og vises i telefonvarsler. F.eks. \"Tomatbed\", \"Plenen foran\".",
-          "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside."
+          "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside.",
+          "zone_type": "Utendørs er slik ZoneFlow alltid har fungert. Drivhus og innendørssoner legger til klimastyring (vifter, lufting, tåkelegging, varmeovn), kan fungere uten ventil, og har hverken regnmåler eller værvarsel på grunn av taket."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Når snittet er under denne, bruker sonen det kjølige ukemålet. Midt imellom er normalt vær.",
           "fallback_temp": "Brukes når det ikke finnes noen ekte måling. Uten temperatursensor er dette din manuelle styring: skru opp i en hetebølge, ned i en kuldeperiode."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Klimaenheter og -sensorer",
+        "description": "Pek dette mot dine virkelige sensorer og enheter. Alle er valgfrie, men vifte, lufting, tåkelegging eller varmeovn krever innendørs temperatursensor. Du kan legge til eller endre dem senere under Konfigurer.",
+        "data": {
+          "inside_temp_entity": "Innvendig temperatursensor",
+          "inside_humidity_entity": "Innvendig fuktighetssensor (valgfritt)",
+          "light_entity": "Lyssensor (valgfritt)",
+          "outdoor_temp_entity": "Utvendig temperatursensor (valgfritt)",
+          "fan_entities": "Kjølevifter (valgfritt)",
+          "vent_entities": "Lufting (valgfritt)",
+          "mister_entities": "Tåkelegging / fukting (valgfritt)",
+          "heater_entities": "Varmeovn (valgfritt)",
+          "notify_entity": "Mottaker for telefonvarsling (valgfritt)",
+          "unit_system": "Enheter",
+          "backup_temp_entities": "Reserve for innvendig temperatursensor"
+        },
+        "data_description": {
+          "inside_temp_entity": "Temperatursensoren inne i drivhuset eller rommet. Nødvendig for vifte, lufting, tåkelegging eller varmeovn, og brukes også til vanning.",
+          "inside_humidity_entity": "En fuktighetssensor innendørs. Lar ZoneFlow lufte eller tåkelegge ut fra fuktighet og stoppe tåkelegging når det er fuktig nok.",
+          "light_entity": "En lyssensor (lux eller solstråling). Kan starte tåkelegging på lyse dager.",
+          "outdoor_temp_entity": "En utvendig temperatursensor. Med denne lufter ZoneFlow bare for å kjøle når uteluften er kaldere enn inne, slik at den aldri trekker inn varmere luft. Uten denne brukes bare innvendige målinger.",
+          "fan_entities": "Vifter som kjøler eller lufter ut. Enhver bryter, input_boolean eller vifte. Alle slås på samtidig.",
+          "vent_entities": "Tak- eller sideventiler: luker, eller brytere som åpner dem. Alle beveger seg samtidig.",
+          "mister_entities": "Tåkeleggere: en bryter eller ventil. ZoneFlow kjører dem i korte pulser og sørger alltid for at de slås av igjen.",
+          "heater_entities": "Varmeovner: en bryter eller en klimaenhet. Slås på når det blir for kaldt.",
+          "notify_entity": "Mottaker for telefonvarsling ved advarsler, som en defekt sensor. La stå tom for ingen.",
+          "unit_system": "Vis temperaturer i Celsius eller Fahrenheit. Automatisk følger Home Assistant.",
+          "backup_temp_entities": "Valgfritt, anbefales for drivhus med varmeovn. Ekstra innvendige temperatursensorer, helst plassert et stykke unna hovedsensoren. Hvis hovedsensoren slutter å fungere, fortsetter styringen med den første fungerende reservesensoren, og du får en melding."
+        }
+      },
+      "water_valve": {
+        "title": "Vanner denne sonen?",
+        "description": "Velg ventilbryteren hvis denne sonen vanner plantene sine. La stå tom for en ren klimasone (da trengs minst én enhet).",
+        "data": {
+          "valve_entity": "Ventilbryter (valgfritt)"
+        },
+        "data_description": {
+          "valve_entity": "Bryteren som åpner denne sonens ventil. La stå tom for en ren klimasone som ikke vanner."
+        }
+      },
+      "watering": {
+        "title": "Vanningsinnstillinger",
+        "description": "Vanningsinnstillingene for denne sonens ventil. Alt kan endres senere på sonens enhetsside.",
+        "data": {
+          "pump_power_entity": "Effektsensor for pumpe (valgfritt)",
+          "pump_id": "Delt pumpe-ID (valgfritt)",
+          "flow_meter_entity": "Vannmåler (valgfritt)",
+          "soil_moisture_entity": "Jordfuktighetssensor (valgfritt)",
+          "soil_type": "Jordtype",
+          "drainage": "Drenering",
+          "slope": "Helning",
+          "irrigation_method": "Vanningsmetode",
+          "growth_ramp_profile": "Automatisk opptrapping i vekstfase",
+          "deep_soak_enabled": "Aktiver dypvanning",
+          "deep_soak_time": "Tidsplan for dypvanning",
+          "routine_time": "Tidsplan for rutinevanning",
+          "deep_soak_sun_mode": "Utløser for dypvanning",
+          "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
+          "routine_sun_mode": "Utløser for rutinevanning",
+          "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)"
+        },
+        "data_description": {
+          "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk bruker strøm, og advarer deg hvis den ikke gjør det. La stå tom hvis du ikke har én.",
+          "pump_id": "Bare for soner som drives av samme pumpe: gi alle det samme navnet her (valgfritt navn, f.eks. „Pumpe A“), så bytter de på i stedet for å kjøre samtidig. La stå tom hvis denne sonen har egen pumpe eller vannforsyning.",
+          "flow_meter_entity": "En vannmåler som teller opp totalvolum (liter, gallons eller m³). ZoneFlow logger da hvor mye vann hver vanning faktisk brukte, advarer deg hvis pumpen kjørte uten vannbevegelse, og kan måle gjennomstrømningen for deg (Konfigurer → Gjennomstrømning).",
+          "soil_moisture_entity": "En jordfuktighetssensor (%) i røttenes sone. Tørr jord fremskynder rutinevanningen, fuktig jord hopper over den, og i mellomtiden avgjør den normale tidsplanen. Tørre og fuktige nivåer stilles inn på sonens enhetsside.",
+          "soil_type": "Bestemmer hvordan hver vanning deles opp i pulser, slik at vannet trekker inn i stedet for å renne av: ca. 3 mm per puls i leirjord, 15 mm i silt/muldjord, 30 mm i sandjord, med 30 minutters hvile mellom pulsene (én time i leirjord og leirholdig muldjord). „Usikker“ bruker en forsiktig middelvei. Du kan også endre det senere på sonens enhetsside.",
+          "drainage": "Tregt drenerende jord (et hardt, kompakt lag under) tar imot mindre vann per puls og får én times hvile mellom pulsene.",
+          "slope": "Vann renner av en helning før det trekker inn: en moderat helning legger til én puls per vanning, en bratt helning legger til to.",
+          "irrigation_method": "Hvordan vannet tilføres. Med dryppslange eller svetteslange i sandjord starter en ny sone med minst to pulser, slik at vannet holdes i rotsonen. Mengden vann som tilføres settes av gjennomstrømningen (Konfigurer → Gjennomstrømning).",
+          "growth_ramp_profile": "Gir unge planter mindre vann og øker til fullt ukentlig mål etter hvert som de vokser, regnet fra plante-/omplantingsdatoen på sonens enhetsside. Av: alltid fullt mål. Tilpasset: tegn din egen kurve på enhetssiden.",
+          "deep_soak_enabled": "En dypvanning er en stor, treig vanning med noen ukers mellomrom (14 dager som utgangspunkt) som fukter jorden dypt ned, slik at røttene søker dypt. Bra for trær, busker og stauder; slå det av for planter med grunne røtter som salat og urter. Rutinevanning kjører uansett.",
+          "deep_soak_time": "Når dypvanning starter de dagene den skal kjøre, dersom utløseren nedenfor er det faste tidspunktet. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
+          "routine_time": "Når ZoneFlow sjekker hver dag om det er tid for rutinevanning, og vanner dersom det er det. Hvor ofte det skjer følger været og det ukentlige målet ditt. Tidlig morgen er best.",
+          "deep_soak_sun_mode": "Start dypvanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
+          "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
+          "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
+          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt."
+        }
       }
     },
     "error": {
       "zone_name_required": "Sonenavnet kan ikke være tomt.",
       "cool_not_below_hot": "Grensen for kjølig må være lavere enn grensen for varmt.",
       "valve_already_used": "En annen ZoneFlow-sone bruker allerede denne ventilen.",
-      "csv_path_already_used": "En annen ZoneFlow-sone logger allerede til denne CSV-filen."
+      "csv_path_already_used": "En annen ZoneFlow-sone logger allerede til denne CSV-filen.",
+      "inside_temp_required": "Vifte, lufting, tåkelegging eller varmeovn krever innendørs temperatursensor.",
+      "device_in_two_roles": "Samme enhet er valgt for to ulike oppgaver.",
+      "device_already_used": "En annen ZoneFlow-sone bruker allerede en av disse enhetene.",
+      "valve_or_device_required": "Velg en ventil eller minst én klimaenhet.",
+      "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Soneinnstillinger (entiteter, jord, tidsplan…)",
           "flow_rate": "Vannmengde: regn den ut fra utløpene",
-          "flow_measure": "Vannmengde: mål den med vannmåleren"
+          "flow_measure": "Vannmengde: mål den med vannmåleren",
+          "greenhouse_devices": "Ventil, sensorer og klimaenheter",
+          "watering": "Vanningsinnstillinger",
+          "zone_type": "Sonetype"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "Arealet sonens utløp faktisk fukter. For dryppere ved enkeltplanter legger du sammen de våte flekkene rundt dem, ikke hele bedet."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Drivhus- og innendørsenheter",
+        "description": "Legg til eller endre ventil, sensorer og klimaenheter. Ingenting opprettes på nytt: det sonen ikke bruker blir skjult.",
+        "data": {
+          "valve_entity": "Ventilbryter (valgfritt)",
+          "inside_temp_entity": "Innvendig temperatursensor",
+          "inside_humidity_entity": "Innvendig fuktighetssensor (valgfritt)",
+          "light_entity": "Lyssensor (valgfritt)",
+          "outdoor_temp_entity": "Utvendig temperatursensor (valgfritt)",
+          "fan_entities": "Kjølevifter (valgfritt)",
+          "vent_entities": "Lufting (valgfritt)",
+          "mister_entities": "Tåkelegging / fukting (valgfritt)",
+          "heater_entities": "Varmeovn (valgfritt)",
+          "notify_entity": "Mottaker for telefonvarsling (valgfritt)",
+          "unit_system": "Enheter",
+          "backup_temp_entities": "Reserve for innvendig temperatursensor"
+        },
+        "data_description": {
+          "valve_entity": "Bryteren som åpner denne sonens ventil. La stå tom for en ren klimasone som ikke vanner.",
+          "inside_temp_entity": "Temperatursensoren inne i drivhuset eller rommet. Nødvendig for vifte, lufting, tåkelegging eller varmeovn, og brukes også til vanning.",
+          "inside_humidity_entity": "En fuktighetssensor innendørs. Lar ZoneFlow lufte eller tåkelegge ut fra fuktighet og stoppe tåkelegging når det er fuktig nok.",
+          "light_entity": "En lyssensor (lux eller solstråling). Kan starte tåkelegging på lyse dager.",
+          "outdoor_temp_entity": "En utvendig temperatursensor. Med denne lufter ZoneFlow bare for å kjøle når uteluften er kaldere enn inne, slik at den aldri trekker inn varmere luft. Uten denne brukes bare innvendige målinger.",
+          "fan_entities": "Vifter som kjøler eller lufter ut. Enhver bryter, input_boolean eller vifte. Alle slås på samtidig.",
+          "vent_entities": "Tak- eller sideventiler: luker, eller brytere som åpner dem. Alle beveger seg samtidig.",
+          "mister_entities": "Tåkeleggere: en bryter eller ventil. ZoneFlow kjører dem i korte pulser og sørger alltid for at de slås av igjen.",
+          "heater_entities": "Varmeovner: en bryter eller en klimaenhet. Slås på når det blir for kaldt.",
+          "notify_entity": "Mottaker for telefonvarsling ved advarsler, som en defekt sensor. La stå tom for ingen.",
+          "unit_system": "Vis temperaturer i Celsius eller Fahrenheit. Automatisk følger Home Assistant.",
+          "backup_temp_entities": "Valgfritt, anbefales for drivhus med varmeovn. Ekstra innvendige temperatursensorer, helst plassert et stykke unna hovedsensoren. Hvis hovedsensoren slutter å fungere, fortsetter styringen med den første fungerende reservesensoren, og du får en melding."
+        }
+      },
+      "zone_type": {
+        "title": "Sonetype",
+        "description": "Endre hvor denne sonen dyrkes. Ingenting slettes: det den nye typen ikke bruker skjules, og kommer tilbake hvis du endrer tilbake.",
+        "data": {
+          "zone_type": "Hvor det dyrkes"
+        },
+        "data_description": {
+          "zone_type": "Utendørs er slik ZoneFlow alltid har fungert. Drivhus og innendørssoner legger til klimastyring (vifter, lufting, tåkelegging, varmeovn), kan fungere uten ventil, og har hverken regnmåler eller værvarsel på grunn av taket."
+        }
+      },
+      "watering": {
+        "title": "Vanningsinnstillinger",
+        "description": "Vanningsinnstillingene for denne sonens ventil. Alt kan endres senere på sonens enhetsside.",
+        "data": {
+          "pump_power_entity": "Effektsensor for pumpe (valgfritt)",
+          "pump_id": "Delt pumpe-ID (valgfritt)",
+          "flow_meter_entity": "Vannmåler (valgfritt)",
+          "soil_moisture_entity": "Jordfuktighetssensor (valgfritt)",
+          "soil_type": "Jordtype",
+          "drainage": "Drenering",
+          "slope": "Helning",
+          "irrigation_method": "Vanningsmetode",
+          "growth_ramp_profile": "Automatisk opptrapping i vekstfase",
+          "deep_soak_enabled": "Aktiver dypvanning",
+          "deep_soak_time": "Tidsplan for dypvanning",
+          "routine_time": "Tidsplan for rutinevanning",
+          "deep_soak_sun_mode": "Utløser for dypvanning",
+          "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
+          "routine_sun_mode": "Utløser for rutinevanning",
+          "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)"
+        },
+        "data_description": {
+          "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk bruker strøm, og advarer deg hvis den ikke gjør det. La stå tom hvis du ikke har én.",
+          "pump_id": "Bare for soner som drives av samme pumpe: gi alle det samme navnet her (valgfritt navn, f.eks. „Pumpe A“), så bytter de på i stedet for å kjøre samtidig. La stå tom hvis denne sonen har egen pumpe eller vannforsyning.",
+          "flow_meter_entity": "En vannmåler som teller opp totalvolum (liter, gallons eller m³). ZoneFlow logger da hvor mye vann hver vanning faktisk brukte, advarer deg hvis pumpen kjørte uten vannbevegelse, og kan måle gjennomstrømningen for deg (Konfigurer → Gjennomstrømning).",
+          "soil_moisture_entity": "En jordfuktighetssensor (%) i røttenes sone. Tørr jord fremskynder rutinevanningen, fuktig jord hopper over den, og i mellomtiden avgjør den normale tidsplanen. Tørre og fuktige nivåer stilles inn på sonens enhetsside.",
+          "soil_type": "Bestemmer hvordan hver vanning deles opp i pulser, slik at vannet trekker inn i stedet for å renne av: ca. 3 mm per puls i leirjord, 15 mm i silt/muldjord, 30 mm i sandjord, med 30 minutters hvile mellom pulsene (én time i leirjord og leirholdig muldjord). „Usikker“ bruker en forsiktig middelvei. Du kan også endre det senere på sonens enhetsside.",
+          "drainage": "Tregt drenerende jord (et hardt, kompakt lag under) tar imot mindre vann per puls og får én times hvile mellom pulsene.",
+          "slope": "Vann renner av en helning før det trekker inn: en moderat helning legger til én puls per vanning, en bratt helning legger til två.",
+          "irrigation_method": "Hvordan vannet tilføres. Med dryppslange eller svetteslange i sandjord starter en ny sone med minst to pulser, slik at vannet holdes i rotsonen. Mengden vann som tilføres settes av gjennomstrømningen (Konfigurer → Gjennomstrømning).",
+          "growth_ramp_profile": "Gir unge planter mindre vann og øker til fullt ukentlig mål etter hvert som de vokser, regnet fra plante-/omplantingsdatoen på sonens enhetsside. Av: alltid fullt mål. Tilpasset: tegn din egen kurve på enhetssiden.",
+          "deep_soak_enabled": "En dypvanning er en stor, treig vanning med noen ukers mellomrom (14 dager som utgangspunkt) som fukter jorden dypt ned, slik at røttene søker dypt. Bra for trær, busker og stauder; slå det av for planter med grunne røtter som salat og urter. Rutinevanning kjører uansett.",
+          "deep_soak_time": "Når dypvanning starter de dagene den skal kjøre, dersom utløseren nedenfor er det faste tidspunktet. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
+          "routine_time": "Når ZoneFlow sjekker hver dag om det er tid for rutinevanning, og vanner dersom det er det. Hvor ofte det skjer følger været og det ukentlige målet ditt. Tidlig morgen er best.",
+          "deep_soak_sun_mode": "Start dypvanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
+          "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
+          "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
+          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "En annen ZoneFlow-sone bruker allerede denne ventilen.",
-      "csv_path_already_used": "En annen ZoneFlow-sone logger allerede til denne CSV-filen."
+      "csv_path_already_used": "En annen ZoneFlow-sone logger allerede til denne CSV-filen.",
+      "inside_temp_required": "Vifte, lufting, tåkelegging eller varmeovn krever innendørs temperatursensor.",
+      "device_in_two_roles": "Samme enhet er valgt for to ulike oppgaver.",
+      "device_already_used": "En annen ZoneFlow-sone bruker allerede en av disse enhetene.",
+      "valve_or_device_required": "Velg en ventil eller minst én klimaenhet.",
+      "valve_required_outdoor": "En utendørssone trenger en ventil. Legg til en under Ventil, sensorer og klimaenheter først.",
+      "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Busker / hekk",
         "young_tree": "Ungt tre (de første årene)",
         "fruit_tree": "Etablert frukttre"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Utendørs",
+        "greenhouse": "Drivhus",
+        "indoor": "Innendørs"
       }
     }
   },
@@ -417,6 +602,54 @@
       },
       "frost_guard_temp": {
         "name": "Frostvakt: temperatur"
+      },
+      "heat_temp": {
+        "name": "Varmeovn på under"
+      },
+      "vent_temp": {
+        "name": "Lufting åpnes ved"
+      },
+      "fan_temp": {
+        "name": "Vifter på ved"
+      },
+      "climate_hysteresis": {
+        "name": "Klimahysterese"
+      },
+      "outside_margin": {
+        "name": "Margin for uteluft"
+      },
+      "max_humidity": {
+        "name": "Luft ved fuktighet over"
+      },
+      "mist_temp": {
+        "name": "Tåkelegging på over temperatur"
+      },
+      "mist_min_humidity": {
+        "name": "Tåkelegging på under fuktighet"
+      },
+      "mist_stop_humidity": {
+        "name": "Stopp tåkelegging ved fuktighet"
+      },
+      "mist_min_temp": {
+        "name": "Minimumstemperatur for tåkelegging"
+      },
+      "mist_light_level": {
+        "name": "Lysnivå for tåkelegging"
+      },
+      "mist_on_seconds": {
+        "name": "Tid for tåkelegging på"
+      },
+      "mist_off_seconds": {
+        "name": "Tid for tåkelegging av"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Maks tåkelegging per time"
+      },
+      "vent_open_pct": {
+        "name": "Åpningsgrad for lufting"
+      },
+      "manual_hold_minutes": {
+        "name": "Tid for manuell overstyring"
       }
     },
     "datetime": {
@@ -477,6 +710,9 @@
       },
       "irrigation_abort": {
         "name": "Avbruddsflagg for vanning"
+      },
+      "ventilation_allowed": {
+        "name": "Lufting tillatt"
       }
     },
     "switch": {
@@ -491,6 +727,12 @@
       },
       "pause": {
         "name": "Pause"
+      },
+      "greenhouse_control": {
+        "name": "Drivhusstyring"
+      },
+      "mist_at_night": {
+        "name": "Tåkelegging om natten"
       }
     },
     "sensor": {
@@ -570,6 +812,15 @@
       },
       "next_fertilizing": {
         "name": "Neste gjødsling"
+      },
+      "greenhouse_status": {
+        "name": "Drivhusstatus"
+      },
+      "inside_vpd": {
+        "name": "Innvendig VPD"
+      },
+      "misting_today": {
+        "name": "Tåkelegging i dag"
       }
     },
     "select": {
@@ -687,6 +938,31 @@
           "moderate": "Middels helning",
           "steep": "Bratt helning"
         }
+      },
+      "misting_trigger": {
+        "name": "Utløser for tåkelegging",
+        "state": {
+          "any": "Enhver utløser",
+          "temperature": "Bare temperatur",
+          "humidity": "Bare fuktighet",
+          "light": "Bare lys"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Nødstyring for sensor",
+        "state": {
+          "open": "Åpne lufting, vifter på",
+          "closed": "Lukk lufting, vifter av",
+          "leave": "La stå som de er"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Nødstyring for varmeovn",
+        "state": {
+          "off": "Av",
+          "limited": "På deler av tiden",
+          "outside": "På deler av tiden ved kald uteluft"
+        }
       }
     },
     "text": {
@@ -802,6 +1078,9 @@
     },
     "summary_send_failed": {
       "message": "Ukesammendraget kunne ikke sendes: telefonvarselet mislyktes. Sjekk sonens telefon for varsler."
+    },
+    "zone_has_no_valve": {
+      "message": "Denne sonen har ingen ventil og kan ikke vanne. Legg til en ventil under Konfigurer hvis du ønsker det."
     }
   },
   "issues": {
@@ -824,6 +1103,30 @@
     "shared_valve": {
       "title": "{zone}: ventil delt med en annen sone",
       "description": "Sone {zone} og sone {other_zone} er begge konfigurert med samme ventilenhet ({entity}). Med mindre de også deler en pumpe-ID eller en pumpeeffektsensor, kan ZoneFlow ikke se at det er samme fysiske ventil, og hindrer dem ikke i å åpne den samtidig. Gi en av sonene sin egen ventil, eller sett samme pumpe-ID på begge under Konfigurer."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: innvendig temperatursensor fungerer ikke",
+      "description": "Den innvendige temperatursensoren i sonen {zone} ({entity}) har ikke levert brukbare målinger på en stund. Klimastyringen kjører derfor på nødstyring: tåkelegging og varmeovn er av, mens lufting og vifter følger innstillingen for nødstyring. Sjekk sensoren. Dette tilbakestilles automatisk når den rapporterer igjen."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: utvendig temperatursensor fungerer ikke",
+      "description": "Den utvendige temperatursensoren i sonen {zone} ({entity}) har ikke levert brukbare målinger på en stund. Lufting fortsetter ut fra kun innvendige målinger, så den kan ikke bekrefte at uteluften er kaldere. Sjekk sensoren. Dette tilbakestilles automatisk når den rapporterer igjen."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: en klimaenhet svarer ikke",
+      "description": "Sonen {zone} endret status på {devices}, men de rapporterte ikke endringen selv etter et nytt forsøk. Sjekk enheten og integrasjonen. Dette tilbakestilles automatisk når enhetene svarer."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: tåkelegging stoppet",
+      "description": "En tåkelegger i sonen {zone} ville ikke slå seg av ved beskjed. Tåkelegging er stoppet for å unngå oversvømmelse. Sjekk tåkeleggeren, og trykk deretter Tilbakestill vanningslås på sonen for å starte igjen."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: kjører på reserve-temperatursensor",
+      "description": "Hovedsensoren for innvendig temperatur i sonen {zone} ({entity}) har sluttet å fungere. Klimastyringen bruker nå en reservesensor. Sjekk hovedsensoren. Dette tilbakestilles automatisk når den rapporterer igjen."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: innvendige temperatursensorer er uenige",
+      "description": "Hovedsensoren for innvendig temperatur i sonen {zone} ({entity}) viser {main}, mens reservesensoren viser {backup}. Målingene har avveket mye fra hverandre over tid. En av dem er sannsynligvis feil eller uheldig plassert (i direkte sol eller ved varmeovnen). Sjekk begge. Dette tilbakestilles automatisk når de samsvarer."
     }
   }
 }

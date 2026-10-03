@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone} : c'est l'heure de l'engrais",
       "message": "Prévu le {date}. Appuyez sur Engrais apporté aujourd'hui une fois l'apport fait ; la date suivante sera calculée à partir de ce jour."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone} : sécurité du capteur climatique",
+      "message": "Aucun capteur de température intérieure ne fonctionne. Brumisateurs éteints ; ouvrants et ventilateurs : {mode} ; chauffage : {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone} : contrôle climatique de retour à la normale",
+      "message": "Le capteur de température intérieure émet de nouveau."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone} : {device} ne répond pas",
+      "message": "{entity} ne s'est pas activé comme demandé, même après un second essai."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone} : le brumisateur est resté bloqué allumé",
+      "message": "Un brumisateur est resté allumé au-delà de son impulsion et a été éteint."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone} : brumisation stoppée",
+      "message": "Un brumisateur ne s'éteignait pas, la brumisation a été stoppée. Vérifiez-le, puis appuyez sur Réinitialiser le verrouillage d'arrosage."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone} : utilisation du capteur de température de secours",
+      "message": "Le capteur principal de température intérieure ({entity}) ne fonctionne plus. Le contrôle climatique se poursuit avec le capteur de secours."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · en pause",
     "next": " · prochain {when}",
     "zone_none": "{zone} : aucun arrosage"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "ouvrants ouverts, ventilateurs allumés",
+      "closed": "ouvrants fermés, ventilateurs éteints",
+      "leave": "laissés en l'état"
+    },
+    "status": {
+      "starting": "Démarrage en cours",
+      "control_off": "Le contrôle de la serre est désactivé",
+      "failsafe": "Sécurité : pas de température intérieure (ouvrants et ventilateurs : {mode} ; chauffage : {heater})",
+      "mist_halted": "Brumisation stoppée : appuyez sur Réinitialiser le verrouillage d'arrosage",
+      "held": "{device} laissé en gestion manuelle pendant {minutes} min",
+      "heating": "Chauffage en cours ({temp})",
+      "ventilating_temperature": "Ventilation : trop chaud ({temp})",
+      "ventilating_humidity": "Ventilation : trop humide ({humidity})",
+      "misting": "Brumisation en cours ({temp}, {humidity})",
+      "gate_blocked": "Pas de ventilation : l'air extérieur ({outside}) n'est pas plus frais que l'intérieur ({temp})",
+      "idle": "Tout est normal : {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "éteint",
+      "limited": "allumé une partie du temps",
+      "outside": "allumé une partie du temps s'il fait froid dehors"
+    }
   }
 }

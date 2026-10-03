@@ -6,11 +6,13 @@
         "description": "Donnez un nom court à cette zone d'arrosage (ex. « Pelouse avant », « Avocatier »). Pour ajouter d'autres zones plus tard, ajoutez à nouveau cette intégration.",
         "data": {
           "zone_name": "Nom de la zone",
-          "plant": "Ce qui est planté"
+          "plant": "Ce qui est planté",
+          "zone_type": "Lieu de culture"
         },
         "data_description": {
           "zone_name": "Devient le nom de l'appareil de la zone et le début des noms de ses entités, et apparaît dans les messages sur le téléphone. Ex. « Carré de tomates », « Pelouse avant ».",
-          "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone."
+          "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone.",
+          "zone_type": "Extérieur correspond au fonctionnement historique de ZoneFlow. Les zones Serre et Intérieur ajoutent le contrôle du climat (ventilateurs, ouvrants, brumisation, chauffage), peuvent fonctionner sans vanne et ne disposent ni de pluviomètre ni de prévisions météo en raison du toit."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Quand cette moyenne est sous ce seuil, la zone utilise son Objectif hebdo – temps frais. Entre les deux, c'est un temps normal.",
           "fallback_temp": "Utilisée quand il n'y a pas de vraie mesure. Sans capteur de température, c'est votre réglage manuel : montez-la pendant une canicule, baissez-la pendant un coup de froid."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Appareils climatiques et capteurs",
+        "description": "Associez vos capteurs et appareils réels. Tous sont optionnels, mais un ventilateur, un ouvrant, un brumisateur ou un chauffage requiert le capteur de température intérieure. Vous pourrez les ajouter ou modifier plus tard dans Configurer.",
+        "data": {
+          "inside_temp_entity": "Capteur de température intérieure",
+          "inside_humidity_entity": "Capteur d'humidité intérieure (optionnel)",
+          "light_entity": "Capteur de luminosité (optionnel)",
+          "outdoor_temp_entity": "Capteur de température extérieure (optionnel)",
+          "fan_entities": "Ventilateurs de refroidissement (optionnel)",
+          "vent_entities": "Ouvrants (optionnel)",
+          "mister_entities": "Brumisation / nebulisation (optionnel)",
+          "heater_entities": "Chauffage (optionnel)",
+          "notify_entity": "Cible de notification sur téléphone (optionnel)",
+          "unit_system": "Unités",
+          "backup_temp_entities": "Capteurs de température intérieure de secours"
+        },
+        "data_description": {
+          "inside_temp_entity": "Le capteur de température dans la serre ou la pièce. Requis pour tout ventilateur, ouvrant, brumisateur ou chauffage, et utilisé aussi pour l'arrosage.",
+          "inside_humidity_entity": "Un capteur d'humidité intérieure. Permet à ZoneFlow de ventiler ou brumiser selon l'humidité et d'arrêter la brumisation quand l'air est assez humide.",
+          "light_entity": "Un capteur de luminosité (lux ou rayonnement solaire). Peut déclencher la brumisation les jours très ensoleillés.",
+          "outdoor_temp_entity": "Un capteur de température extérieure. Permet à ZoneFlow de ne ventiler pour refroidir que lorsque l'air extérieur est plus frais qu'à l'intérieur, évitant d'introduire de l'air plus chaud. Sans lui, le système se base uniquement sur les relevés intérieurs.",
+          "fan_entities": "Ventilateurs de refroidissement ou d'extraction. Tout interrupteur, boolean ou ventilateur. Ils s'activent tous ensemble.",
+          "vent_entities": "Ouvrants de toit ou latéraux : volets, ou interrupteurs qui les ouvrent. Ils se déplacent tous ensemble.",
+          "mister_entities": "Brumisateurs ou nébuliseurs : un interrupteur ou une vanne. ZoneFlow les fait fonctionner par courtes impulsions et s'assure qu'ils s'éteignent bien.",
+          "heater_entities": "Chauffages : un interrupteur ou une entité climatisation. Allumé lorsqu'il fait trop froid.",
+          "notify_entity": "Une cible de notification mobile pour les avertissements, tels qu'un dysfonctionnement de capteur. Laissez vide pour aucun.",
+          "unit_system": "Afficher les températures en Celsius ou Fahrenheit. Le choix Automatique suit la configuration de Home Assistant.",
+          "backup_temp_entities": "Optionnel, recommandé pour une serre avec chauffage. Capteurs de température intérieure supplémentaires, idéalement placés à l'écart du capteur principal. Si le capteur principal tombe en panne, le contrôle se poursuit avec le premier capteur de secours fonctionnel, et vous recevez une notification."
+        }
+      },
+      "water_valve": {
+        "title": "Cette zone arrose-t-elle ?",
+        "description": "Sélectionnez l'interrupteur de vanne si cette zone arrose ses plantes. Laissez-le vide pour une zone purement climatique (qui requiert alors au moins un appareil).",
+        "data": {
+          "valve_entity": "Interrupteur de vanne (optionnel)"
+        },
+        "data_description": {
+          "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone. Laissez vide pour une zone purement climatique qui n'arrose pas."
+        }
+      },
+      "watering": {
+        "title": "Paramètres d'arrosage",
+        "description": "Les paramètres d'arrosage pour la vanne de cette zone. Tout peut être modifié ultérieurement sur la page de l'appareil de la zone.",
+        "data": {
+          "pump_power_entity": "Capteur de puissance de la pompe (optionnel)",
+          "pump_id": "ID de pompe partagée (optionnel)",
+          "flow_meter_entity": "Débitmètre (optionnel)",
+          "soil_moisture_entity": "Capteur d'humidité du sol (optionnel)",
+          "soil_type": "Type de sol",
+          "drainage": "Drainage",
+          "slope": "Pente",
+          "irrigation_method": "Méthode d'arrosage",
+          "growth_ramp_profile": "Ajustement automatique selon la phase de croissance",
+          "deep_soak_enabled": "Activer le cycle d'arrosage en profondeur",
+          "deep_soak_time": "Heure programmée d'arrosage en profondeur",
+          "routine_time": "Heure programmée d'arrosage de routine",
+          "deep_soak_sun_mode": "Déclencheur d'arrosage en profondeur",
+          "deep_soak_sun_offset_minutes": "Décalage solaire d'arrosage en profondeur (minutes)",
+          "routine_sun_mode": "Déclencheur de routine",
+          "routine_sun_offset_minutes": "Décalage solaire de routine (minutes)"
+        },
+        "data_description": {
+          "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. depuis une prise connectée. À chaque arrosage, ZoneFlow vérifie si la pompe consomme réellement du courant et vous alerte si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
+          "pump_id": "Uniquement pour les zones alimentées par la même pompe : donnez-leur toutes le même nom ici (un nom quelconque, ex. \"Pompe A\") et elles fonctionneront à tour de rôle plutôt qu'en même temps. Laissez vide si cette zone possède sa propre pompe ou arrivée d'eau.",
+          "flow_meter_entity": "Un compteur d'eau qui cumule le volume total (litres, gallons ou m³). ZoneFlow enregistre alors le volume réel consommé par chaque arrosage, vous alerte si la pompe a tourné sans débit d'eau, et peut mesurer le débit pour vous (Configurer → Débit).",
+          "soil_moisture_entity": "Un capteur d'humidité du sol (%) dans la zone racinaire de cette zone. Un sol sec avance l'arrosage de routine, un sol humide le saute, et entre les deux, le planning habituel prend le relais. Les seuils sec et humide se règlent sur la page appareil de la zone.",
+          "soil_type": "Détermine la division de chaque arrosage en impulsions pour que l'eau pénètre au lieu de ruisseler : environ 3 mm par impulsion pour l'argile, 15 mm pour le limon, 30 mm pour le sable, avec 30 minutes d'infiltration entre les impulsions (une heure pour l'argile et le limon argileux). \"Incertain\" utilise une valeur intermédiaire prudente. Modifiable ultérieurement sur la page appareil.",
+          "drainage": "Un sol à drainage lent (couche dure et compacte en dessous) demande moins d'eau par impulsion et nécessite une heure de repos entre deux impulsions.",
+          "slope": "L'eau ruisselle sur une pente avant d'infiltrer : une pente modérée ajoute une impulsion à chaque arrosage, une pente forte en ajoute deux.",
+          "irrigation_method": "La manière dont l'eau est distribuée. En goutte-à-goutte ou tuyau micro-poreux sur sol sablonneux, une nouvelle zone démarre avec au moins deux impulsions pour maintenir l'eau dans la zone racinaire. Le volume délivré dépend du débit réglé (Configurer → Débit).",
+          "growth_ramp_profile": "Distribue moins d'eau aux jeunes plants et augmente la quantité jusqu'à l'objectif hebdomadaire complet au fil de leur croissance, à compter de la Date de plantation / rempotage définie sur la page appareil. Désactivé : toujours l'objectif complet. Personnalisé : tracez votre propre courbe sur la page appareil.",
+          "deep_soak_enabled": "Un arrosage en profondeur est un arrosage important et lent toutes les quelques semaines (14 jours au départ) qui humidifie le sol en profondeur pour inciter les racines à s'ancrer loin. Recommandé pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et aromatiques. L'arrosage de routine s'exécute dans les deux cas.",
+          "deep_soak_time": "Heure de début de l'arrosage en profondeur les jours prévus, lorsque son déclencheur ci-dessous est réglé sur l'heure fixe. Le tôt le matin est préférable : moins d'eau évaporée par le soleil et le vent.",
+          "routine_time": "Heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage de routine est nécessaire et arrose le cas échéant. La fréquence dépend de la météo et de votre objectif hebdomadaire. Le tôt le matin est préférable.",
+          "deep_soak_sun_mode": "Démarrer l'arrosage en profondeur à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
+          "deep_soak_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "routine_sun_mode": "Démarrer l'arrosage de routine à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
+          "routine_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe."
+        }
       }
     },
     "error": {
       "zone_name_required": "Le nom de la zone ne peut pas être vide.",
       "cool_not_below_hot": "Le seuil frais doit être inférieur au seuil chaud.",
       "valve_already_used": "Une autre zone ZoneFlow utilise déjà cette vanne.",
-      "csv_path_already_used": "Une autre zone ZoneFlow enregistre déjà dans ce fichier CSV."
+      "csv_path_already_used": "Une autre zone ZoneFlow enregistre déjà dans ce fichier CSV.",
+      "inside_temp_required": "Un ventilateur, ouvrant, brumisateur ou chauffage requiert le capteur de température intérieure.",
+      "device_in_two_roles": "La même entité a été choisie pour deux rôles différents.",
+      "device_already_used": "Une autre zone ZoneFlow utilise déjà l'un de ces appareils.",
+      "valve_or_device_required": "Sélectionnez une vanne ou au moins un appareil climatique.",
+      "backup_same_as_inside": "Un capteur de secours ne peut pas être le capteur de température intérieure principal."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Paramètres de la zone (entités, sol, programme…)",
           "flow_rate": "Débit : le calculer à partir des goutteurs",
-          "flow_measure": "Débit : le mesurer avec le débitmètre"
+          "flow_measure": "Débit : le mesurer avec le débitmètre",
+          "greenhouse_devices": "Vanne, capteurs et appareils climatiques",
+          "watering": "Paramètres d'arrosage",
+          "zone_type": "Type de zone"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "La surface que les goutteurs de la zone mouillent réellement. Pour des goutteurs au pied de plantes isolées, additionnez les surfaces mouillées autour d'elles, pas tout le massif."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Appareils de serre et d'intérieur",
+        "description": "Ajoutez ou modifiez la vanne, les capteurs et les appareils climatiques. Rien n'est recréé : ce qui n'est pas utilisé par la zone est masqué.",
+        "data": {
+          "valve_entity": "Interrupteur de vanne (optionnel)",
+          "inside_temp_entity": "Capteur de température intérieure",
+          "inside_humidity_entity": "Capteur d'humidité intérieure (optionnel)",
+          "light_entity": "Capteur de luminosité (optionnel)",
+          "outdoor_temp_entity": "Capteur de température extérieure (optionnel)",
+          "fan_entities": "Ventilateurs de refroidissement (optionnel)",
+          "vent_entities": "Ouvrants (optionnel)",
+          "mister_entities": "Brumisation / nebulisation (optionnel)",
+          "heater_entities": "Chauffage (optionnel)",
+          "notify_entity": "Cible de notification sur téléphone (optionnel)",
+          "unit_system": "Unités",
+          "backup_temp_entities": "Capteurs de température intérieure de secours"
+        },
+        "data_description": {
+          "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone. Laissez vide pour une zone purement climatique qui n'arrose pas.",
+          "inside_temp_entity": "Le capteur de température dans la serre ou la pièce. Requis pour tout ventilateur, ouvrant, brumisateur ou chauffage, et utilisé aussi pour l'arrosage.",
+          "inside_humidity_entity": "Un capteur d'humidité intérieure. Permet à ZoneFlow de ventiler ou brumiser selon l'humidité et d'arrêter la brumisation quand l'air est assez humide.",
+          "light_entity": "Un capteur de luminosité (lux ou rayonnement solaire). Peut déclencher la brumisation les jours très ensoleillés.",
+          "outdoor_temp_entity": "Un capteur de température extérieure. Permet à ZoneFlow de ne ventiler pour refroidir que lorsque l'air extérieur est plus frais qu'à l'intérieur, évitant d'introduire de l'air plus chaud. Sans lui, le système se base uniquement sur les relevés intérieurs.",
+          "fan_entities": "Ventilateurs de refroidissement ou d'extraction. Tout interrupteur, boolean ou ventilateur. Ils s'activent tous ensemble.",
+          "vent_entities": "Ouvrants de toit ou latéraux : volets, ou interrupteurs qui les ouvrent. Ils se déplacent tous ensemble.",
+          "mister_entities": "Brumisateurs ou nébuliseurs : un interrupteur ou une vanne. ZoneFlow les fait fonctionner par courtes impulsions et s'assure qu'ils s'éteignent bien.",
+          "heater_entities": "Chauffages : un interrupteur ou une entité climatisation. Allumé lorsqu'il fait trop froid.",
+          "notify_entity": "Une cible de notification mobile pour les avertissements, tels qu'un dysfonctionnement de capteur. Laissez vide pour aucun.",
+          "unit_system": "Afficher les températures en Celsius ou Fahrenheit. Le choix Automatique suit la configuration de Home Assistant.",
+          "backup_temp_entities": "Optionnel, recommandé pour une serre avec chauffage. Capteurs de température intérieure supplémentaires, idéalement placés à l'écart du capteur principal. Si le capteur principal tombe en panne, le contrôle se poursuit avec le premier capteur de secours fonctionnel, et vous recevez une notification."
+        }
+      },
+      "zone_type": {
+        "title": "Type de zone",
+        "description": "Modifiez le lieu de culture de cette zone. Rien n'est supprimé : ce qui n'est pas utilisé par le nouveau type est masqué, et réapparaît si vous revenez en arrière.",
+        "data": {
+          "zone_type": "Lieu de culture"
+        },
+        "data_description": {
+          "zone_type": "Extérieur correspond au fonctionnement historique de ZoneFlow. Les zones Serre et Intérieur ajoutent le contrôle du climat (ventilateurs, ouvrants, brumisation, chauffage), peuvent fonctionner sans vanne et ne disposent ni de pluviomètre ni de prévisions météo en raison du toit."
+        }
+      },
+      "watering": {
+        "title": "Paramètres d'arrosage",
+        "description": "Les paramètres d'arrosage pour la vanne de cette zone. Tout peut être modifié ultérieurement sur la page de l'appareil de la zone.",
+        "data": {
+          "pump_power_entity": "Capteur de puissance de la pompe (optionnel)",
+          "pump_id": "ID de pompe partagée (optionnel)",
+          "flow_meter_entity": "Débitmètre (optionnel)",
+          "soil_moisture_entity": "Capteur d'humidité du sol (optionnel)",
+          "soil_type": "Type de sol",
+          "drainage": "Drainage",
+          "slope": "Pente",
+          "irrigation_method": "Méthode d'arrosage",
+          "growth_ramp_profile": "Ajustement automatique selon la phase de croissance",
+          "deep_soak_enabled": "Activer le cycle d'arrosage en profondeur",
+          "deep_soak_time": "Heure programmée d'arrosage en profondeur",
+          "routine_time": "Heure programmée d'arrosage de routine",
+          "deep_soak_sun_mode": "Déclencheur d'arrosage en profondeur",
+          "deep_soak_sun_offset_minutes": "Décalage solaire d'arrosage en profondeur (minutes)",
+          "routine_sun_mode": "Déclencheur de routine",
+          "routine_sun_offset_minutes": "Décalage solaire de routine (minutes)"
+        },
+        "data_description": {
+          "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. depuis une prise connectée. À chaque arrosage, ZoneFlow vérifie si la pompe consomme réellement du courant et vous alerte si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
+          "pump_id": "Uniquement pour les zones alimentées par la même pompe : donnez-leur toutes le même nom ici (un nom quelconque, ex. \"Pompe A\") et elles fonctionneront à tour de rôle plutôt qu'en même temps. Laissez vide si cette zone possède sa propre pompe ou arrivée d'eau.",
+          "flow_meter_entity": "Un compteur d'eau qui cumule le volume total (litres, gallons ou m³). ZoneFlow enregistre alors le volume réel consommé par chaque arrosage, vous alerte si la pompe a tourné sans débit d'eau, et peut mesurer le débit pour vous (Configurer → Débit).",
+          "soil_moisture_entity": "Un capteur d'humidité du sol (%) dans la zone racinaire de cette zone. Un sol sec avance l'arrosage de routine, un sol humide le saute, et entre les deux, le planning habituel prend le relais. Les seuils sec et humide se règlent sur la page appareil de la zone.",
+          "soil_type": "Détermine la division de chaque arrosage en impulsions pour que l'eau pénètre au lieu de ruisseler : environ 3 mm par impulsion pour l'argile, 15 mm pour le limon, 30 mm pour le sable, avec 30 minutes d'infiltration entre les impulsions (une heure pour l'argile et le limon argileux). \"Incertain\" utilise une valeur intermédiaire prudente. Modifiable ultérieurement sur la page appareil.",
+          "drainage": "Un sol à drainage lent (couche dure et compacte en dessous) demande moins d'eau par impulsion et nécessite une heure de repos entre deux impulsions.",
+          "slope": "L'eau ruisselle sur une pente avant d'infiltrer : une pente modérée ajoute une impulsion à chaque arrosage, une pente forte en ajoute deux.",
+          "irrigation_method": "La manière dont l'eau est distribuée. En goutte-à-goutte ou tuyau micro-poreux sur sol sablonneux, une nouvelle zone démarre avec au moins deux impulsions pour maintenir l'eau dans la zone racinaire. Le volume délivré dépend du débit réglé (Configurer → Débit).",
+          "growth_ramp_profile": "Distribue moins d'eau aux jeunes plants et augmente la quantité jusqu'à l'objectif hebdomadaire complet au fil de leur croissance, à compter de la Date de plantation / rempotage définie sur la page appareil. Désactivé : toujours l'objectif complet. Personnalisé : tracez votre propre courbe sur la page appareil.",
+          "deep_soak_enabled": "Un arrosage en profondeur est un arrosage important et lent toutes les quelques semaines (14 jours au départ) qui humidifie le sol en profondeur pour inciter les racines à s'ancrer loin. Recommandé pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et aromatiques. L'arrosage de routine s'exécute dans les deux cas.",
+          "deep_soak_time": "Heure de début de l'arrosage en profondeur les jours prévus, lorsque son déclencheur ci-dessous est réglé sur l'heure fixe. Le tôt le matin est préférable : moins d'eau évaporée par le soleil et le vent.",
+          "routine_time": "Heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage de routine est nécessaire et arrose le cas échéant. La fréquence dépend de la météo et de votre objectif hebdomadaire. Le tôt le matin est préférable.",
+          "deep_soak_sun_mode": "Démarrer l'arrosage en profondeur à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
+          "deep_soak_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "routine_sun_mode": "Démarrer l'arrosage de routine à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
+          "routine_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Une autre zone ZoneFlow utilise déjà cette vanne.",
-      "csv_path_already_used": "Une autre zone ZoneFlow enregistre déjà dans ce fichier CSV."
+      "csv_path_already_used": "Une autre zone ZoneFlow enregistre déjà dans ce fichier CSV.",
+      "inside_temp_required": "Un ventilateur, ouvrant, brumisateur ou chauffage requiert le capteur de température intérieure.",
+      "device_in_two_roles": "La même entité a été choisie pour deux rôles différents.",
+      "device_already_used": "Une autre zone ZoneFlow utilise déjà l'un de ces appareils.",
+      "valve_or_device_required": "Sélectionnez une vanne ou au moins un appareil climatique.",
+      "valve_required_outdoor": "Une zone extérieure nécessite une vanne. Ajoutez-en une d'abord sous Vanne, capteurs et appareils climatiques.",
+      "backup_same_as_inside": "Un capteur de secours ne peut pas être le capteur de température intérieure principal."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Arbustes / haie",
         "young_tree": "Jeune arbre (premières années)",
         "fruit_tree": "Arbre fruitier établi"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Extérieur",
+        "greenhouse": "Serre",
+        "indoor": "Intérieur"
       }
     }
   },
@@ -417,6 +602,54 @@
       },
       "frost_guard_temp": {
         "name": "Seuil antigel"
+      },
+      "heat_temp": {
+        "name": "Chauffage sous"
+      },
+      "vent_temp": {
+        "name": "Ouvrants ouverts à"
+      },
+      "fan_temp": {
+        "name": "Ventilateurs allumés à"
+      },
+      "climate_hysteresis": {
+        "name": "Hystérésis climatique"
+      },
+      "outside_margin": {
+        "name": "Marge d'air extérieur"
+      },
+      "max_humidity": {
+        "name": "Ventiler au-dessus de l'humidité"
+      },
+      "mist_temp": {
+        "name": "Brumiser au-dessus de la température"
+      },
+      "mist_min_humidity": {
+        "name": "Brumiser en dessous de l'humidité"
+      },
+      "mist_stop_humidity": {
+        "name": "Arrêt de brumisation à l'humidité"
+      },
+      "mist_min_temp": {
+        "name": "Température minimale de brumisation"
+      },
+      "mist_light_level": {
+        "name": "Seuil de luminosité pour brumiser"
+      },
+      "mist_on_seconds": {
+        "name": "Durée d'activation de la brumisation"
+      },
+      "mist_off_seconds": {
+        "name": "Durée d'arrêt de la brumisation"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Brumisation max. par heure"
+      },
+      "vent_open_pct": {
+        "name": "Position d'ouverture des ouvrants"
+      },
+      "manual_hold_minutes": {
+        "name": "Durée du maintien manuel"
       }
     },
     "datetime": {
@@ -477,6 +710,9 @@
       },
       "irrigation_abort": {
         "name": "Indicateur d'arrêt d'arrosage"
+      },
+      "ventilation_allowed": {
+        "name": "Ventilation autorisée"
       }
     },
     "switch": {
@@ -491,6 +727,12 @@
       },
       "pause": {
         "name": "Pause"
+      },
+      "greenhouse_control": {
+        "name": "Contrôle de la serre"
+      },
+      "mist_at_night": {
+        "name": "Brumiser la nuit"
       }
     },
     "sensor": {
@@ -570,6 +812,15 @@
       },
       "next_fertilizing": {
         "name": "Prochain apport d'engrais"
+      },
+      "greenhouse_status": {
+        "name": "Statut de la serre"
+      },
+      "inside_vpd": {
+        "name": "VPD intérieur"
+      },
+      "misting_today": {
+        "name": "Brumisation aujourd'hui"
       }
     },
     "select": {
@@ -687,6 +938,31 @@
           "moderate": "Pente moyenne",
           "steep": "Pente forte"
         }
+      },
+      "misting_trigger": {
+        "name": "Déclencheur de brumisation",
+        "state": {
+          "any": "N'importe quel déclencheur",
+          "temperature": "Température uniquement",
+          "humidity": "Humidité uniquement",
+          "light": "Luminosité uniquement"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Sécurité capteur",
+        "state": {
+          "open": "Ouvrir les ouvrants, ventilateurs allumés",
+          "closed": "Fermer les ouvrants, ventilateurs éteints",
+          "leave": "Laisser en l'état"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Sécurité chauffage",
+        "state": {
+          "off": "Éteint",
+          "limited": "Allumé une partie du temps",
+          "outside": "Une partie du temps s'il fait froid dehors"
+        }
       }
     },
     "text": {
@@ -802,6 +1078,9 @@
     },
     "summary_send_failed": {
       "message": "Le résumé hebdomadaire n'a pas pu être envoyé : la notification sur le téléphone a échoué. Vérifiez la cible de notification de la zone."
+    },
+    "zone_has_no_valve": {
+      "message": "Cette zone n'a pas de vanne et ne peut donc pas arroser. Ajoutez une vanne sous Configurer si vous le souhaitez."
     }
   },
   "issues": {
@@ -824,6 +1103,30 @@
     "shared_valve": {
       "title": "{zone} : vanne partagée avec une autre zone",
       "description": "La zone {zone} et la zone {other_zone} sont toutes deux configurées avec la même entité de vanne ({entity}). À moins qu'elles ne partagent aussi un ID de pompe ou un capteur de puissance de pompe, ZoneFlow ne peut pas savoir qu'il s'agit de la même vanne physique et ne les empêchera pas de l'ouvrir en même temps. Donnez à l'une des zones sa propre vanne, ou définissez le même ID de pompe pour les deux sous Configurer."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone} : le capteur de température intérieure ne fonctionne pas",
+      "description": "Le capteur de température intérieure de la zone {zone} ({entity}) ne fournit plus de mesure exploitable depuis un moment. Le contrôle climatique est passé en mode sécurité : les brumisateurs et le chauffage sont éteints, et les ouvrants et ventilateurs suivent le paramètre Sécurité capteur. Vérifiez le capteur. Ce problème se résoudra de lui-même dès qu'il émettra à nouveau."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone} : le capteur de température extérieure ne fonctionne pas",
+      "description": "Le capteur de température extérieure de la zone {zone} ({entity}) ne fournit plus de mesure exploitable depuis un moment. La ventilation se poursuit sur la seule base des relevés intérieurs, sans pouvoir vérifier si l'air extérieur est plus frais. Vérifiez le capteur. Ce problème se résoudra de lui-même dès qu'il émettra à nouveau."
+    },
+    "greenhouse_device": {
+      "title": "{zone} : un appareil climatique ne répond pas",
+      "description": "La zone {zone} a commandé {devices} mais ils n'ont pas confirmé le changement, même après un second essai. Vérifiez l'appareil et son intégration. Ce problème se résoudra de lui-même dès que l'appareil répondra."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone} : brumisation stoppée",
+      "description": "Un brumisateur de la zone {zone} ne s'est pas éteint sur commande. La brumisation a été stoppée pour éviter toute inondation. Vérifiez le brumisateur, puis appuyez sur Réinitialiser le verrouillage d'arrosage sur la zone pour relancer la brumisation."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone} : fonctionnement sur le capteur de température de secours",
+      "description": "Le capteur de température intérieure principal de la zone {zone} ({entity}) a cessé de fonctionner, le contrôle climatique utilise donc un capteur de secours. Vérifiez le capteur principal. Ce problème se résoudra de lui-même dès qu'il émettra à nouveau."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone} : désaccord entre les capteurs de température intérieure",
+      "description": "Le capteur de température intérieure principal de la zone {zone} ({entity}) indique {main} tandis que le capteur de secours indique {backup}, avec un écart important depuis un moment. L'un d'eux est probablement défectueux ou mal positionné (ex. exposé directement au soleil ou près du chauffage). Vérifiez les deux. Ce problème se résoudra de lui-même lorsqu'ils seront de nouveau d'accord."
     }
   }
 }

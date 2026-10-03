@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: toca abonar",
       "message": "Previsto para el {date}. Pulsa Abonado hoy cuando lo hayas hecho; la próxima fecha se calcula a partir de ahí."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: a prueba de fallos de sensor de clima",
+      "message": "Ningún sensor de temperatura interior está funcionando. Los nebulizadores están apagados; rejillas y ventiladores: {mode}; calefactor: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: control de clima vuelto a la normalidad",
+      "message": "El sensor de temperatura interior vuelve a informar."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} no responde",
+      "message": "{entity} no cambió según lo ordenado, incluso tras un segundo intento."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: el nebulizador se quedó encendido",
+      "message": "Un nebulizador se mantuvo encendido más allá de su pulso y fue apagado."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: nebulización detenida",
+      "message": "Un nebulizador no se apagaba, por lo que se ha detenido la nebulización. Revíselo y presione Reiniciar bloqueo de riego."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: usando el sensor de temperatura de respaldo",
+      "message": "El sensor de temperatura interior principal ({entity}) dejó de funcionar. El control de clima continúa con el respaldo."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · en pausa",
     "next": " · próximo {when}",
     "zone_none": "{zone}: sin riego"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "rejillas abiertas, ventiladores encendidos",
+      "closed": "rejillas cerradas, ventiladores apagados",
+      "leave": "dejados como están"
+    },
+    "status": {
+      "starting": "Iniciando",
+      "control_off": "El control de invernadero está apagado",
+      "failsafe": "A prueba de fallos: sin temperatura interior (rejillas y ventiladores: {mode}; calefactor: {heater})",
+      "mist_halted": "Nebulización detenida: presione Reiniciar bloqueo de riego",
+      "held": "{device} dejado en reposo por {minutes} min (cambiado manualmente)",
+      "heating": "Calentando ({temp})",
+      "ventilating_temperature": "Ventilando: demasiado calor ({temp})",
+      "ventilating_humidity": "Ventilando: demasiado húmedo ({humidity})",
+      "misting": "Nebulizando ({temp}, {humidity})",
+      "gate_blocked": "Sin ventilar: aire exterior ({outside}) no es más frío que el interior ({temp})",
+      "idle": "Todo bien: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "apagado",
+      "limited": "encendido parte del tiempo",
+      "outside": "encendido parte del tiempo cuando hace frío fuera"
+    }
   }
 }

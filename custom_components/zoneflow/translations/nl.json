@@ -6,11 +6,13 @@
         "description": "Geef deze bewateringszone een korte naam (bv. \"Voortuin\", \"Avocadoboom\"). Wil je later meer zones? Voeg deze integratie dan opnieuw toe.",
         "data": {
           "zone_name": "Zonenaam",
-          "plant": "Wat staat er geplant"
+          "plant": "Wat staat er geplant",
+          "zone_type": "Waar er gekweekt wordt"
         },
         "data_description": {
           "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
-          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone."
+          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone.",
+          "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Ligt dat gemiddelde hieronder, dan gebruikt de zone \"Routine: weekdoel koel\". Daartussen is het normaal weer.",
           "fallback_temp": "Gebruikt als er geen echte meting is. Zonder temperatuursensor is dit je handmatige knop: hoger bij een hittegolf, lager bij een koude periode."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Klimaatapparaten en -sensoren",
+        "description": "Koppel dit aan uw echte sensoren en apparaten. Alles is optioneel, maar een ventilator, ventilatie, nevelinstallatie of verwarming heeft de binnentemperatuursensor nodig. U kunt ze later toevoegen of wijzigen via Configureren.",
+        "data": {
+          "inside_temp_entity": "Binnentemperatuursensor",
+          "inside_humidity_entity": "Binnenluchtvochtigheidssensor (optioneel)",
+          "light_entity": "Lichtsensor (optioneel)",
+          "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
+          "fan_entities": "Koelventilatoren (optioneel)",
+          "vent_entities": "Ventilatie (optioneel)",
+          "mister_entities": "Nevel / bevochtiging (optioneel)",
+          "heater_entities": "Verwarming (optioneel)",
+          "notify_entity": "Meldingenontvanger op telefoon (optioneel)",
+          "unit_system": "Eenheden",
+          "backup_temp_entities": "Reserve-binnentemperatuursensoren"
+        },
+        "data_description": {
+          "inside_temp_entity": "De temperatuursensor in de kas of ruimte. Nodig voor elke ventilator, ventilatie, nevelinstallatie of verwarming, en wordt ook gebruikt voor bewatering.",
+          "inside_humidity_entity": "Een luchtvochtigheidssensor binnen. Hiermee kan ZoneFlow ventileren of nevelen op basis van luchtvochtigheid en stoppen met nevelen als het vochtig genoeg is.",
+          "light_entity": "Een lichtsensor (lux of zonnestraling). Kan op zonnige dagen beginnen met nevelen.",
+          "outdoor_temp_entity": "Een temperatuursensor buiten. Hiermee ventileert ZoneFlow alleen om te koelen wanneer de buitenlucht koeler is dan binnen, zodat er nooit warmere lucht wordt binnengehaald. Zonder deze sensor werkt het alleen op basis van binnenmetingen.",
+          "fan_entities": "Ventilatoren die koelen of afzuigen. Elke schakelaar, input_boolean of ventilator. Ze schakelen allemaal tegelijk.",
+          "vent_entities": "Dak- of zijventilatie: luiken of schakelaars die ze openen. Ze bewegen allemaal tegelijk.",
+          "mister_entities": "Nevelaars of vernevelaars: een schakelaar of klep. ZoneFlow laat ze in korte pulsen werken en zorgt er altijd voor dat ze weer uitschakelen.",
+          "heater_entities": "Verwarmingen: een schakelaar of een klimaat-entiteit. Ingeschakeld als het te koud wordt.",
+          "notify_entity": "Een telefoon-meldingsdoel voor waarschuwingen, zoals een defecte sensor. Laat leeg voor geen.",
+          "unit_system": "Toon temperaturen in Celsius of Fahrenheit. Automatisch volgt Home Assistant.",
+          "backup_temp_entities": "Optioneel, aanbevolen voor een kas met verwarming. Extra temperatuursensoren binnen, bij voorkeur uit de buurt van de hoofdsensor. Als de hoofdsensor niet meer werkt, gaat de regeling door met de eerste werkende reservesensor en ontvangt u een bericht."
+        }
+      },
+      "water_valve": {
+        "title": "Bewatert deze zone?",
+        "description": "Kies de klepschakelaar als deze zone planten bewatert. Laat leeg voor een zone met alleen klimaatregeling (dan is er ten minste één apparaat nodig).",
+        "data": {
+          "valve_entity": "Klepschakelaar (optioneel)"
+        },
+        "data_description": {
+          "valve_entity": "De schakelaar die de klep van deze zone opent. Laat leeg voor een zone met alleen klimaatregeling die niet bewatert."
+        }
+      },
+      "watering": {
+        "title": "Bewateringsinstellingen",
+        "description": "De bewateringsinstellingen voor de klep van deze zone. Alles kan later worden gewijzigd op de apparaatpagina van de zone.",
+        "data": {
+          "pump_power_entity": "Vermogenssensor pomp (optioneel)",
+          "pump_id": "Gedeelde pomp-ID (optioneel)",
+          "flow_meter_entity": "Watermeter (optioneel)",
+          "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
+          "soil_type": "Bodemtype",
+          "drainage": "Drainage",
+          "slope": "Helling",
+          "irrigation_method": "Bewateringsmethode",
+          "growth_ramp_profile": "Automatische opbouw volgens groeifase",
+          "deep_soak_enabled": "Diepe bewatering inschakelen",
+          "deep_soak_time": "Geplande tijd diepe bewatering",
+          "routine_time": "Geplande tijd routinebewatering",
+          "deep_soak_sun_mode": "Trigger diepe bewatering",
+          "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
+          "routine_sun_mode": "Trigger routinebewatering",
+          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)"
+        },
+        "data_description": {
+          "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
+          "pump_id": "Alleen voor zones die op dezelfde pomp werken: geef ze hier allemaal dezelfde naam (elke naam, bijv. „Pomp A“), zodat ze om de beurt werken in plaats van tegelijkertijd. Laat leeg als deze zone een eigen pomp of watertoevoer heeft.",
+          "flow_meter_entity": "Een watermeter die het totale volume optelt (liter, gallon of m³). ZoneFlow registreert vervolgens hoeveel water elke bewatering daadwerkelijk heeft gebruikt, waarschuwt u als de pomp draaide maar er geen water stroomde, en kan het debiet voor u meten (Configureren → Debiet).",
+          "soil_moisture_entity": "Een bodemvochtsensor (%) in de wortelzone. Droge grond haalt de routinebewatering naar voren, natte grond slaat deze over, en daartussenin beslist het normale schema. De droge en natte niveaus staan op de apparaatpagina van de zone.",
+          "soil_type": "Bepaalt hoe elke bewatering in pulsen wordt opgedeeld, zodat het water intrekt in plaats van wegspoelt: ongeveer 3 mm per puls bij klei, 15 mm bij leem, 30 mm bij zand, met 30 minuten rust tussen de pulsen (een uur bij klei en kleileem). „Niet zeker“ gebruikt een voorzichtige middelste waarde. U kunt dit later ook wijzigen op de apparaatpagina van de zone.",
+          "drainage": "Slecht drainerende grond (een harde, compacte laag eronder) neemt minder water per puls op en krijgt een uur rust tussen pulsen.",
+          "slope": "Water loopt weg van een helling voordat het kan intrekken: een matige helling voegt één puls toe aan elke bewatering, een steile helling twee.",
+          "irrigation_method": "Hoe het water wordt toegediend. Bij druppelbuis of zweetslang op zandgrond start een nieuwe zone met ten minste twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er wordt gegeven, wordt ingesteld door het debiet (Configureren → Debiet).",
+          "growth_ramp_profile": "Geeft jonge planten minder water en bouwt dit op naar het volledige weekdoel naarmate ze ouder worden, geteld vanaf de Plant-/Verplantdatum op de apparaatpagina van de zone. Uit: altijd het volledige doel. Aangepast: teken uw eigen curve op de apparaatpagina.",
+          "deep_soak_enabled": "Een diepe bewatering is een grote, trage bewatering om de paar weken (om te beginnen elke 14 dagen) die de grond diep bevochtigt, zodat wortels diep groeien. Goed voor bomen, struiken en vaste planten; schakel dit uit voor planten met oppervlakkige wortels zoals sla en kruiden. De routinebewatering draait in beide gevallen.",
+          "deep_soak_time": "Wanneer de diepe bewatering begint op de dagen dat deze gepland is, als de onderstaande trigger een vaste tijd is. Vroeg in de morgen is het beste: minder waterverlies door zon en wind.",
+          "routine_time": "Wanneer ZoneFlow elke dag controleert of de routinebewatering nodig is, en bewatert als dat zo is. Hoe vaak dit nodig is, volgt het weer en uw weekdoel. Vroeg in de morgen is het beste.",
+          "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
+          "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
+          "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor or na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd."
+        }
       }
     },
     "error": {
       "zone_name_required": "Zonenaam mag niet leeg zijn.",
       "cool_not_below_hot": "De koele grens moet onder de warme grens liggen.",
       "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
-      "csv_path_already_used": "Een andere ZoneFlow-zone logt al naar dit CSV-bestand."
+      "csv_path_already_used": "Een andere ZoneFlow-zone logt al naar dit CSV-bestand.",
+      "inside_temp_required": "Een ventilator, ventilatie, nevelinstallatie of verwarming heeft de binnentemperatuursensor nodig.",
+      "device_in_two_roles": "Dezelfde entiteit is gekozen voor twee verschillende taken.",
+      "device_already_used": "Een andere ZoneFlow-zone gebruikt al een van deze apparaten.",
+      "valve_or_device_required": "Kies een klep, of ten minste één klimaatapparaat.",
+      "backup_same_as_inside": "Een reservesensor kan niet dezelfde zijn als de hoofd-binnentemperatuursensor."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Zone-instellingen (entiteiten, grond, schema…)",
           "flow_rate": "Debiet: berekenen uit de druppelaars",
-          "flow_measure": "Debiet: meten met de watermeter"
+          "flow_measure": "Debiet: meten met de watermeter",
+          "greenhouse_devices": "Klep, sensoren en klimaatapparaten",
+          "watering": "Bewateringsinstellingen",
+          "zone_type": "Zonetype"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "De oppervlakte die de druppelaars van de zone echt nat maken. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Kas- en binnenapparaten",
+        "description": "Voeg de klep, sensoren en klimaatapparaten toe of wijzig ze. Er wordt niets opnieuw aangemaakt: wat de zone niet gebruikt, wordt verborgen.",
+        "data": {
+          "valve_entity": "Klepschakelaar (optioneel)",
+          "inside_temp_entity": "Binnentemperatuursensor",
+          "inside_humidity_entity": "Binnenluchtvochtigheidssensor (optioneel)",
+          "light_entity": "Lichtsensor (optioneel)",
+          "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
+          "fan_entities": "Koelventilatoren (optioneel)",
+          "vent_entities": "Ventilatie (optioneel)",
+          "mister_entities": "Nevel / bevochtiging (optioneel)",
+          "heater_entities": "Verwarming (optioneel)",
+          "notify_entity": "Meldingenontvanger op telefoon (optioneel)",
+          "unit_system": "Eenheden",
+          "backup_temp_entities": "Reserve-binnentemperatuursensoren"
+        },
+        "data_description": {
+          "valve_entity": "De schakelaar die de klep van deze zone opent. Laat leeg voor een zone met alleen klimaatregeling die niet bewatert.",
+          "inside_temp_entity": "De temperatuursensor in de kas of ruimte. Nodig voor elke ventilator, ventilatie, nevelinstallatie en verwarming, en wordt ook gebruikt voor bewatering.",
+          "inside_humidity_entity": "Een luchtvochtigheidssensor binnen. Hiermee kan ZoneFlow ventileren of nevelen op basis van luchtvochtigheid en stoppen met nevelen als het vochtig genoeg is.",
+          "light_entity": "Een lichtsensor (lux of zonnestraling). Kan op zonnige dagen beginnen met nevelen.",
+          "outdoor_temp_entity": "Een temperatuursensor buiten. Hiermee ventileert ZoneFlow alleen om te koelen wanneer de buitenlucht koeler is dan binnen, zodat er nooit warmere lucht wordt binnengehaald. Zonder deze sensor werkt het alleen op basis van binnenmetingen.",
+          "fan_entities": "Ventilatoren die koelen of afzuigen. Elke schakelaar, input_boolean of ventilator. Ze schakelen allemaal tegelijk.",
+          "vent_entities": "Dak- of zijventilatie: luiken of schakelaars die ze openen. Ze bewegen allemaal tegelijk.",
+          "mister_entities": "Nevelaars of vernevelaars: een schakelaar of klep. ZoneFlow laat ze in korte pulsen werken en zorgt er altijd voor dat ze weer uitschakelen.",
+          "heater_entities": "Verwarmingen: een schakelaar of een klimaat-entiteit. Ingeschakeld als het te koud wordt.",
+          "notify_entity": "Een telefoon-meldingsdoel voor waarschuwingen, zoals een defecte sensor. Laat leeg voor geen.",
+          "unit_system": "Toon temperaturen in Celsius of Fahrenheit. Automatisch volgt Home Assistant.",
+          "backup_temp_entities": "Optioneel, aanbevolen voor een kas met verwarming. Extra temperatuursensoren binnen, bij voorkeur uit de buurt van de hoofdsensor. Als de hoofdsensor niet meer werkt, gaat de regeling door met de eerste werkende reservesensor en ontvangt u een bericht."
+        }
+      },
+      "zone_type": {
+        "title": "Zonetype",
+        "description": "Wijzig waar deze zone gekweekt wordt. Er wordt niets verwijderd: wat het nieuwe type niet gebruikt, wordt verborgen en keert terug als u het terugverandert.",
+        "data": {
+          "zone_type": "Waar er gekweekt wordt"
+        },
+        "data_description": {
+          "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak."
+        }
+      },
+      "watering": {
+        "title": "Bewateringsinstellingen",
+        "description": "De bewateringsinstellingen voor de klep van deze zone. Alles kan later worden gewijzigd op de apparaatpagina van de zone.",
+        "data": {
+          "pump_power_entity": "Vermogenssensor pomp (optioneel)",
+          "pump_id": "Gedeelde pomp-ID (optioneel)",
+          "flow_meter_entity": "Watermeter (optioneel)",
+          "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
+          "soil_type": "Bodemtype",
+          "drainage": "Drainage",
+          "slope": "Helling",
+          "irrigation_method": "Bewateringsmethode",
+          "growth_ramp_profile": "Automatische opbouw volgens groeifase",
+          "deep_soak_enabled": "Diepe bewatering inschakelen",
+          "deep_soak_time": "Geplande tijd diepe bewatering",
+          "routine_time": "Geplande tijd routinebewatering",
+          "deep_soak_sun_mode": "Trigger diepe bewatering",
+          "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
+          "routine_sun_mode": "Trigger routinebewatering",
+          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)"
+        },
+        "data_description": {
+          "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
+          "pump_id": "Alleen voor zones die op dezelfde pomp werken: geef ze hier allemaal dezelfde naam (elke naam, bijv. „Pomp A“), zodat ze om de beurt werken in plaats van tegelijkertijd. Laat leeg als deze zone een eigen pomp of watertoevoer heeft.",
+          "flow_meter_entity": "Een watermeter die het totale volume optelt (liter, gallon of m³). ZoneFlow registreert vervolgens hoeveel water elke bewatering daadwerkelijk heeft gebruikt, waarschuwt u als de pomp draaide maar er geen water stroomde, en kan het debiet voor u meten (Configureren → Debiet).",
+          "soil_moisture_entity": "Een bodemvochtsensor (%) in de wortelzone. Droge grond haalt de routinebewatering naar voren, natte grond slaat deze over, en daartussenin beslist het normale schema. De droge en natte niveaus staan op de apparaatpagina van de zone.",
+          "soil_type": "Bepaalt hoe elke bewatering in pulsen wordt opgedeeld, zodat het water intrekt in plaats van wegspoelt: ongeveer 3 mm per puls bij klei, 15 mm bij leem, 30 mm bij zand, met 30 minuten rust tussen de pulsen (een uur bij klei en kleileem). „Niet zeker“ gebruikt een voorzichtige middelste waarde. U kunt dit later ook wijzigen op de apparaatpagina van de zone.",
+          "drainage": "Slecht drainerende grond (een harde, compacte laag eronder) neemt minder water per puls op en krijgt een uur rust tussen pulsen.",
+          "slope": "Water loopt weg van een helling voordat het kan intrekken: een matige helling voegt één puls toe aan elke bewatering, een steile helling twee.",
+          "irrigation_method": "Hoe het water wordt toegediend. Bij druppelbuis of zweetslang op zandgrond start een nieuwe zone met ten minste twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er wordt gegeven, wordt ingesteld door het debiet (Configureren → Debiet).",
+          "growth_ramp_profile": "Geeft jonge planten minder water en bouwt dit op naar het volledige weekdoel naarmate ze ouder worden, geteld vanaf de Plant-/Verplantdatum op de apparaatpagina van de zone. Uit: altijd het volledige doel. Aangepast: teken uw eigen curve op de apparaatpagina.",
+          "deep_soak_enabled": "Een diepe bewatering is een grote, trage bewatering om de paar weken (om te beginnen elke 14 dagen) die de grond diep bevochtigt, zodat wortels diep groeien. Goed voor bomen, struiken en vaste planten; schakel dit uit voor planten met oppervlakkige wortels zoals sla en kruiden. De routinebewatering draait in beide gevallen.",
+          "deep_soak_time": "Wanneer de diepe bewatering begint op de dagen dat deze gepland is, als de onderstaande trigger een vaste tijd is. Vroeg in de morgen is het beste: minder waterverlies door zon en wind.",
+          "routine_time": "Wanneer ZoneFlow elke dag controleert of de routinebewatering nodig is, en bewatert als dat zo is. Hoe vaak dit nodig is, volgt het weer en uw weekdoel. Vroeg in de morgen is het beste.",
+          "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
+          "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
+          "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor of na zonsopgang or zonsondergang, zodat deze meebeweegt met de seizoenen.",
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
-      "csv_path_already_used": "Een andere ZoneFlow-zone logt al naar dit CSV-bestand."
+      "csv_path_already_used": "Een andere ZoneFlow-zone logt al naar dit CSV-bestand.",
+      "inside_temp_required": "Een ventilator, ventilatie, nevelinstallatie of verwarming heeft de binnentemperatuursensor nodig.",
+      "device_in_two_roles": "Dezelfde entiteit is gekozen voor twee verschillende taken.",
+      "device_already_used": "Een andere ZoneFlow-zone gebruikt al een van deze apparaten.",
+      "valve_or_device_required": "Kies een klep, of ten minste één klimaatapparaat.",
+      "valve_required_outdoor": "Een buitenzone heeft een klep nodig. Voeg er eerst een toe onder Klep, sensoren en klimaatapparaten.",
+      "backup_same_as_inside": "Een reservesensor kan niet dezelfde zijn als de hoofd-binnentemperatuursensor."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Heesters / haag",
         "young_tree": "Jonge boom (eerste jaren)",
         "fruit_tree": "Volgroeide fruitboom"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Buiten",
+        "greenhouse": "Kas",
+        "indoor": "Binnen"
       }
     }
   },
@@ -417,6 +602,54 @@
       },
       "frost_guard_temp": {
         "name": "Vorstbeveiliging temperatuur"
+      },
+      "heat_temp": {
+        "name": "Verwarming aan onder"
+      },
+      "vent_temp": {
+        "name": "Ventilatie open op"
+      },
+      "fan_temp": {
+        "name": "Ventilatoren aan op"
+      },
+      "climate_hysteresis": {
+        "name": "KlimaathystConfiguratie"
+      },
+      "outside_margin": {
+        "name": "Marge buitenlucht"
+      },
+      "max_humidity": {
+        "name": "Ventileren boven luchtvochtigheid"
+      },
+      "mist_temp": {
+        "name": "Nevelen aan boven temperatuur"
+      },
+      "mist_min_humidity": {
+        "name": "Nevelen aan onder luchtvochtigheid"
+      },
+      "mist_stop_humidity": {
+        "name": "Nevelen stoppen bij luchtvochtigheid"
+      },
+      "mist_min_temp": {
+        "name": "Minimumtemperatuur nevelen"
+      },
+      "mist_light_level": {
+        "name": "Lichtniveau nevelen"
+      },
+      "mist_on_seconds": {
+        "name": "Inschakeltijd nevelen"
+      },
+      "mist_off_seconds": {
+        "name": "Uitschakeltijd nevelen"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Max. nevelen per uur"
+      },
+      "vent_open_pct": {
+        "name": "Ventilatie openstand"
+      },
+      "manual_hold_minutes": {
+        "name": "Handmatige vasthoudtijd"
       }
     },
     "datetime": {
@@ -477,6 +710,9 @@
       },
       "irrigation_abort": {
         "name": "Bewatering afgebroken"
+      },
+      "ventilation_allowed": {
+        "name": "Ventilatie toegestaan"
       }
     },
     "switch": {
@@ -491,6 +727,12 @@
       },
       "pause": {
         "name": "Pauze"
+      },
+      "greenhouse_control": {
+        "name": "Kasregeling"
+      },
+      "mist_at_night": {
+        "name": "Nevelen 's nachts"
       }
     },
     "sensor": {
@@ -570,6 +812,15 @@
       },
       "next_fertilizing": {
         "name": "Volgende bemesting"
+      },
+      "greenhouse_status": {
+        "name": "Kasstatus"
+      },
+      "inside_vpd": {
+        "name": "Binnen-VPD"
+      },
+      "misting_today": {
+        "name": "Nevelen vandaag"
       }
     },
     "select": {
@@ -687,6 +938,31 @@
           "moderate": "Matig hellend",
           "steep": "Steil"
         }
+      },
+      "misting_trigger": {
+        "name": "Trigger nevelen",
+        "state": {
+          "any": "Elke trigger",
+          "temperature": "Alleen temperatuur",
+          "humidity": "Alleen luchtvochtigheid",
+          "light": "Alleen licht"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Noodbediening sensor",
+        "state": {
+          "open": "Ventilatie openen, ventilatoren aan",
+          "closed": "Ventilatie sluiten, ventilatoren uit",
+          "leave": "Laten zoals ze zijn"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Noodbediening verwarming",
+        "state": {
+          "off": "Uit",
+          "limited": "Deels van de tijd aan",
+          "outside": "Deels van de tijd aan bij koud weer buiten"
+        }
       }
     },
     "text": {
@@ -802,6 +1078,9 @@
     },
     "summary_send_failed": {
       "message": "Het weekoverzicht kon niet worden verstuurd: de melding naar de telefoon mislukte. Controleer het meldingsdoel van de zone."
+    },
+    "zone_has_no_valve": {
+      "message": "Deze zone heeft geen klep en kan dus niet bewateren. Voeg een klep toe onder Configureren als u dit wilt."
     }
   },
   "issues": {
@@ -824,6 +1103,30 @@
     "shared_valve": {
       "title": "{zone}: klep gedeeld met een andere zone",
       "description": "Zone {zone} en zone {other_zone} zijn beide geconfigureerd met dezelfde klep-entiteit ({entity}). Tenzij ze ook een Pomp-ID of pompvermogensensor delen, kan ZoneFlow niet zien dat het om dezelfde fysieke klep gaat en voorkomt het niet dat ze tegelijk wordt geopend. Geef een van de zones een eigen klep, of stel bij beide onder Configureren dezelfde Pomp-ID in."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: binnentemperatuursensor werkt niet",
+      "description": "De binnentemperatuursensor van zone {zone} ({entity}) heeft al een tijdje geen bruikbare waarde gegeven, dus de klimaatbeheersing staat op de noodbediening: de nevelaars en verwarming staan uit, en de ventilatie en ventilatoren volgen de instelling Noodbediening sensor. Controleer de sensor. Dit herstelt automatisch zodra deze weer rapporteert."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: buitentemperatuursensor werkt niet",
+      "description": "De buitentemperatuursensor van zone {zone} ({entity}) heeft al een tijdje geen bruikbare waarde gegeven. De ventilatie gaat door op basis van alleen binnenmetingen, dus er kan niet worden gecontroleerd of de buitenlucht koeler is. Controleer de sensor. Dit herstelt automatisch zodra deze weer rapporteert."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: een klimaatapparaat reageert niet",
+      "description": "Zone {zone} heeft de status van {devices} gewijzigd, maar ze hebben de verandering niet gerapporteerd, zelfs niet na een tweede poging. Controleer het apparaat en de integratie. Dit herstelt automatisch zodra de apparaten reageren."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: nevelen gestopt",
+      "description": "Een nevelaar van zone {zone} wilde niet uitschakelen toen dat werd gevraagd. Het nevelen is gestopt om overstroming te voorkomen. Controleer de nevelaar en druk vervolgens op Bewateringsslot opheffen bij de zone om weer te starten."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: werkt op reserve-temperatuursensor",
+      "description": "De hoofd-binnentemperatuursensor van zone {zone} ({entity}) werkt niet meer, dus de klimaatbeheersing maakt gebruik van een reservesensor. Controleer de hoofdsensor. Dit herstelt automatisch zodra deze weer rapporteert."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: binnentemperatuursensoren komen niet overeen",
+      "description": "De hoofd-binnentemperatuursensor van zone {zone} ({entity}) geeft {main} aan terwijl de reservesensor {backup} aangeeft, en ze lopen al een tijdje ver uiteen. Een van beide is waarschijnlijk defect of verkeerd geplaatst (in direct zonlicht, naast de verwarming). Controleer beide. Dit herstelt automatisch zodra ze weer overeenkomen."
     }
   }
 }

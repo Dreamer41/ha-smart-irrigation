@@ -19,7 +19,8 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import units
-from .const import CONF_INITIAL_NUMBERS, DOMAIN, MOISTURE_ONLY_NUMBERS, NUMBER_DEFAULTS, NUMBER_DEFS
+from . import greenhouse_logic
+from .const import CONF_INITIAL_NUMBERS, DOMAIN, GREENHOUSE_NUMBERS, MOISTURE_ONLY_NUMBERS, NUMBER_DEFAULTS, NUMBER_DEFS
 from .entity_cleanup import remove_entities
 
 
@@ -30,10 +31,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         # The moisture thresholds do nothing without a probe: don't create
         # them, and drop them if the probe was removed from this zone.
         remove_entities(hass, entry, "number", list(MOISTURE_ONLY_NUMBERS))
+    if controller.is_outdoor:
+        # The greenhouse sliders belong to greenhouse / indoor zones only.
+        remove_entities(hass, entry, "number", list(GREENHOUSE_NUMBERS))
     entities = [
         ZoneFlowNumber(entry, controller, key)
         for key in NUMBER_DEFS
-        if has_probe or key not in MOISTURE_ONLY_NUMBERS
+        if (has_probe or key not in MOISTURE_ONLY_NUMBERS)
+        and (key not in GREENHOUSE_NUMBERS or not controller.is_outdoor)
     ]
     async_add_entities(entities)
 
@@ -116,9 +121,29 @@ class ZoneFlowNumber(RestoreNumber):
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="cool_not_below_hot")
         if self._key == "hot_temp_threshold" and metric <= self._controller.number("cool_temp_threshold") + 0.01:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="cool_not_below_hot")
+        if self._key in GREENHOUSE_NUMBERS:
+            self._check_climate_order(metric)
         self.metric_value = metric
         self.async_write_ha_state()
         self._controller.number_changed(self._key)
+
+    def _check_climate_order(self, metric: float) -> None:
+        """Heating must stop well before venting starts, fans at or after
+        vents, misting's humidity band inside its stop (greenhouse_logic)."""
+        controller = self._controller
+        values = {
+            "heat_temp": controller.number("heat_temp"), "vent_temp": controller.number("vent_temp"),
+            "fan_temp": controller.number("fan_temp"), "hysteresis": controller.number("climate_hysteresis"),
+            "mist_min_humidity": controller.number("mist_min_humidity"),
+            "mist_stop_humidity": controller.number("mist_stop_humidity"),
+            "max_humidity": controller.number("max_humidity"),
+        }
+        field = "hysteresis" if self._key == "climate_hysteresis" else self._key
+        if field in values:
+            values[field] = metric
+        error = greenhouse_logic.check_setpoints(greenhouse_logic.Settings(**values))
+        if error is not None:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key=error)
 
     async def async_set_metric_value(self, value: float) -> None:
         """Set in metric regardless of display units (self-tuning, presets)."""

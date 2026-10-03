@@ -6,11 +6,13 @@
         "description": "Anna tälle kasteluvyöhykkeelle lyhyt nimi (esim. \"Etunurmikko\", \"Avokadopuu\"). Lisää vyöhykkeitä myöhemmin lisäämällä tämä integraatio uudelleen.",
         "data": {
           "zone_name": "Vyöhykkeen nimi",
-          "plant": "Mitä on istutettu"
+          "plant": "Mitä on istutettu",
+          "zone_type": "Kasvupaikka"
         },
         "data_description": {
           "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
-          "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla."
+          "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla.",
+          "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Kun keskiarvo on tämän rajan alla, vyöhyke käyttää asetusta Viikkotavoite: viileä sää. Niiden välissä sää on normaali.",
           "fallback_temp": "Käytetään, kun todellista lukemaa ei ole. Ilman lämpötila-anturia tämä on käsisäätösi: nosta sitä helleaallon ajaksi, laske kylmän jakson ajaksi."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Ilmastolaitteet ja anturit",
+        "description": "Yhdistä tämä todellisiin antureihisi ja laitteisiisi. Kaikki ovat valinnaisia, mutta tuuletin, tuuletusluukku, sumutin tai lämmitin tarvitsee sisälämpötila-anturin. Voit lisätä tai muuttaa niitä myöhemmin kohdassa Asetukset.",
+        "data": {
+          "inside_temp_entity": "Sisälämpötila-anturi",
+          "inside_humidity_entity": "Sisäkosteusanturi (valinnainen)",
+          "light_entity": "Valoisuusanturi (valinnainen)",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
+          "fan_entities": "Jäähdytystuulettimet (valinnainen)",
+          "vent_entities": "Tuuletusluukut (valinnainen)",
+          "mister_entities": "Sumutus / kostutus (valinnainen)",
+          "heater_entities": "Lämmitin (valinnainen)",
+          "notify_entity": "Puhelinilmoitusten kohde (valinnainen)",
+          "unit_system": "Yksiköt",
+          "backup_temp_entities": "Sisälämpötilan vara-anturit"
+        },
+        "data_description": {
+          "inside_temp_entity": "Kasvihuoneen tai huoneen sisälämpötila-anturi. Tarvitaan tuulettimelle, tuuletusluukulle, sumuttimelle tai lämmittimelle, ja sitä käytetään myös kasteluun.",
+          "inside_humidity_entity": "Sisätilan kosteusanturi. Mahdollistaa ZoneFlown tuuletuksen tai sumutuksen kosteuden mukaan sekä sumutuksen pysäyttämisen, kun ilmanala on riittävän kostea.",
+          "light_entity": "Valoisuusanturi (lux tai auringonsäteily). Voi käynnistää sumutuksen kirkkaina päivinä.",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi. Sen avulla ZoneFlow tuulettaa jäähdyttääkseen vain silloin, kun ulkoilma on sisäilmaa viileämpää, jottei se koskaan vedä sisään kuumempaa ilmaa. Ilman sitä se toimii pelkkien sisäarvojen perusteella.",
+          "fan_entities": "Jäähdyttävät tai poistavat tuulettimet. Mikä tahansa kytkin, input boolean tai tuuletin. Ne kytkeytyvät kaikki yhdessä.",
+          "vent_entities": "Katto- tai sivutuulutusluukut: kaihtimet/suojat tai ne avaavat kytkimet. Ne liikkuvat kaikki yhdessä.",
+          "mister_entities": "Sumuttimet tai kostuttimet: kytkin tai venttiili. ZoneFlow käyttää niitä lyhyissä pulsseissa ja varmistaa aina, että ne jäävät pois päältä.",
+          "heater_entities": "Lämmittimet: kytkin tai ilmastointilaite. Kytketään päälle, kun tulee liian kylmä.",
+          "notify_entity": "Puhelimen ilmoituskohde varoituksia varten, kuten anturiviassa. Jätä tyhjäksi, jos et halua ilmoituksia.",
+          "unit_system": "Näytä lämpötilat Celsiuksina tai Fahrenheiteina. Automaattinen noudattaa Home Assistantin asetusta.",
+          "backup_temp_entities": "Valinnainen, suositellaan lämmittimellä varustettuun kasvihuoneeseen. Ylimääräiset sisälämpötila-anturit, jotka kannattaa sijoittaa kauas pääanturista. Jos pääanturi lakkaa toimimasta, säätö jatkuu ensimmäisellä toimivalla varalaitteella ja saat viestin."
+        }
+      },
+      "water_valve": {
+        "title": "Kasteleeko tämä vyöhyke?",
+        "description": "Valitse venttiilikytkin, jos tämä vyöhyke kastelee kasvejaan. Jätä tyhjäksi pelkälle ilmastovyöhykkeelle (tällöin se tarvitsee vähintään yhden laitteen).",
+        "data": {
+          "valve_entity": "Venttiilikytkin (valinnainen)"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin. Jätä tyhjäksi pelkälle ilmastovyöhykkeelle, joka ei kastele."
+        }
+      },
+      "watering": {
+        "title": "Kasteluasetukset",
+        "description": "Kasteluasetukset tämän vyöhykkeen venttiilille. Kaikkea voi muuttaa myöhemmin vyöhykkeen laitesivulla.",
+        "data": {
+          "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
+          "pump_id": "Jaettu pumpun tunniste (valinnainen)",
+          "flow_meter_entity": "Virtausmittari (valinnainen)",
+          "soil_moisture_entity": "Maaperän kosteusanturi (valinnainen)",
+          "soil_type": "Maaperätyyppi",
+          "drainage": "Ojitustilanne / Veden läpäisevyys",
+          "slope": "Rinne / Kallistus",
+          "irrigation_method": "Kastelutapa",
+          "growth_ramp_profile": "Kasvuvaiheen automaattinen säätö",
+          "deep_soak_enabled": "Ota käyttöön syväkastelusykli",
+          "deep_soak_time": "Syväkastelun aikataulutettu aika",
+          "routine_time": "Rutiinikastelun aikataulutettu aika",
+          "deep_soak_sun_mode": "Syväkastelun käynnistys",
+          "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
+          "routine_sun_mode": "Rutiinikastelun käynnistys",
+          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)"
+        },
+        "data_description": {
+          "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, ottaako pumppu todella virtaa, ja varoittaa, jos se ei ota. Jätä tyhjäksi, jos sellaista ei ole.",
+          "pump_id": "Vain vyöhykkeille, jotka toimivat samasta pumpusta: anna kaikille sama nimi tähän (mikä tahansa nimi, esim. \"Pumppu A\"), niin ne vuorottelevat samanaikaisen toiminnan sijaan. Jätä tyhjäksi, jos vyöhykkeellä on oma pumppu tai vedenottopiste.",
+          "flow_meter_entity": "Vesimittari, joka laskee kokonaismäärän (litroina, gallonoina tai kuutiometreinä). ZoneFlow kirjaa sitten ylös, kuinka paljon vettä kukin kastelu todella käytti, varoittaa, jos pumppu pyöri mutta vesi ei liikkunut, ja voi mitata virtausnopeuden puolestasi (Asetukset → Virtausnopeus).",
+          "soil_moisture_entity": "Maaperän kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa rutiinikastelua, märkä maa jättää sen väliin, ja siltä väliltä normaali aikataulu ratkaisee. Kuiva- ja märkärajat löytyvät vyöhykkeen laitesivulta.",
+          "soil_type": "Määrittää, miten kukin kastelu jaetaan pulsseihin, jotta vesi imeytyy maahan valumisen sijaan: noin 3 mm pulssia kohden savimaalla, 15 mm hietamaalla, 30 mm hiekalla, ja pulssien välissä on 30 minuutin imeytymistauko (tunti savella ja saviliesulla). \"Ei varmaa\" käyttää varovaista keskiarvoa. Voit muuttaa tätä myöhemmin vyöhykkeen laitesivulla.",
+          "drainage": "Hitaasti vettä läpäisevä maaperä (kova, tiivis kerros alla) ottaa vähemmän vettä pulssia kohden ja saa tunnin imeytymistauon pulssien välillä.",
+          "slope": "Vesi valuu rinteestä pois ennen imeytymistä: kohtalainen rinne lisää yhden pulssien jokaiseen kasteluun, jyrkkä rinne kaksi.",
+          "irrigation_method": "Miten vesi toimitetaan. Tiputuskastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke alkaa vähintään kahdella pulssilla, jotta vesi pysyy juuristoalueella. Annettavan veden määrä asetetaan virtausnopeudella (Asetukset → Virtausnopeus).",
+          "growth_ramp_profile": "Antaa nuorille kasveille vähemmän vettä ja kasvattaa sen täyteen viikoittaiseen tavoitteeseen niiden varttuessa, laskettuna vyöhykkeen laitesivun Istutus-/Siirtoistutuspäivämäärästä. Pois: aina täysi tavoite. Mukautettu: piirrä oma käyrä laitesivulla.",
+          "deep_soak_enabled": "Syväkastelu on suuri, hidas kastelu parin viikon välein (aluksi 14 päivää), joka kastelee maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; kytke pois matalajuurisille kasveille, kuten salaatille ja yrteille. Rutiinikastelu pyörii silti.",
+          "deep_soak_time": "Milloin syväkastelu alkaa kastelupäivinä, kun sen käynnistin alla on kiinteä aika. Varhainen aamu on paras: vähemmän vettä menetetään auringon ja tuulen vuoksi.",
+          "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko rutiinikastelu ajankohtaista, ja kastelee tarvittaessa. Kastelutiheys riippuu säästä ja viikoittaisesta tavoitteestasi. Varhainen aamu on paras.",
+          "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
+          "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
+          "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
+        }
       }
     },
     "error": {
       "zone_name_required": "Vyöhykkeen nimi ei voi olla tyhjä.",
       "cool_not_below_hot": "Viileän sään rajan on oltava kuuman sään rajaa alempi.",
       "valve_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo tätä venttiiliä.",
-      "csv_path_already_used": "Toinen ZoneFlow-vyöhyke kirjoittaa jo tähän CSV-tiedostoon."
+      "csv_path_already_used": "Toinen ZoneFlow-vyöhyke kirjoittaa jo tähän CSV-tiedostoon.",
+      "inside_temp_required": "Tuuletin, tuuletusluukku, sumutin tai lämmitin tarvitsee sisälämpötila-anturin.",
+      "device_in_two_roles": "Sama entiteetti on valittu kahteen eri tehtävään.",
+      "device_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo jotakin näistä laitteista.",
+      "valve_or_device_required": "Valitse venttiili tai vähintään yksi ilmastolaite.",
+      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Vyöhykkeen asetukset (entiteetit, maa, aikataulu…)",
           "flow_rate": "Virtaama: laske suuttimista",
-          "flow_measure": "Virtaama: mittaa virtausmittarilla"
+          "flow_measure": "Virtaama: mittaa virtausmittarilla",
+          "greenhouse_devices": "Venttiili, anturit ja ilmastolaitteet",
+          "watering": "Kasteluasetukset",
+          "zone_type": "Vyöhyketyyppi"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "Ala, jonka vyöhykkeen suuttimet oikeasti kastelevat. Jos tippusuuttimet ovat yksittäisten kasvien juurella, laske yhteen kasvien ympärille kastuvat alueet, älä koko penkkiä."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Kasvihuone- ja sisätilalaitteet",
+        "description": "Lisää tai muuta venttiiliä, antureita ja ilmastolaitteita. Mitään ei luoda uudelleen: se, mitä vyöhyke ei käytä, piilotetaan.",
+        "data": {
+          "valve_entity": "Venttiilikytkin (valinnainen)",
+          "inside_temp_entity": "Sisälämpötila-anturi",
+          "inside_humidity_entity": "Sisäkosteusanturi (valinnainen)",
+          "light_entity": "Valoisuusanturi (valinnainen)",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
+          "fan_entities": "Jäähdytystuulettimet (valinnainen)",
+          "vent_entities": "Tuuletusluukut (valinnainen)",
+          "mister_entities": "Sumutus / kostutus (valinnainen)",
+          "heater_entities": "Lämmitin (valinnainen)",
+          "notify_entity": "Puhelinilmoitusten kohde (valinnainen)",
+          "unit_system": "Yksiköt",
+          "backup_temp_entities": "Sisälämpötilan vara-anturit"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin. Jätä tyhjäksi pelkälle ilmastovyöhykkeelle, joka ei kastele.",
+          "inside_temp_entity": "Kasvihuoneen tai huoneen sisälämpötila-anturi. Tarvitaan tuulettimelle, tuuletusluukulle, sumuttimelle tai lämmittimelle, ja sitä käytetään myös kasteluun.",
+          "inside_humidity_entity": "Sisätilan kosteusanturi. Mahdollistaa ZoneFlown tuuletuksen tai sumutuksen kosteuden mukaan sekä sumutuksen pysäyttämisen, kun ilmanala on riittävän kostea.",
+          "light_entity": "Valoisuusanturi (lux tai auringonsäteily). Voi käynnistää sumutuksen kirkkaina päivinä.",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi. Sen avulla ZoneFlow tuulettaa jäähdyttääkseen vain silloin, kun ulkoilma on sisäilmaa viileämpää, jottei se koskaan vedä sisään kuumempaa ilmaa. Ilman sitä se toimii pelkkien sisäarvojen perusteella.",
+          "fan_entities": "Jäähdyttävät tai poistavat tuulettimet. Mikä tahansa kytkin, input boolean tai tuuletin. Ne kytkeytyvät kaikki yhdessä.",
+          "vent_entities": "Katto- tai sivutuulutusluukut: kaihtimet/suojat tai ne avaavat kytkimet. Ne liikkuvat kaikki yhdessä.",
+          "mister_entities": "Sumuttimet tai kostuttimet: kytkin tai venttiili. ZoneFlow käyttää niitä lyhyissä pulsseissa ja varmistaa aina, että ne jäävät pois päältä.",
+          "heater_entities": "Lämmittimet: kytkin tai ilmastointilaite. Kytketään päälle, kun tulee liian kylmä.",
+          "notify_entity": "Puhelimen ilmoituskohde varoituksia varten, kuten anturiviassa. Jätä tyhjäksi, jos et halua ilmoituksia.",
+          "unit_system": "Näytä lämpötilat Celsiuksina tai Fahrenheiteina. Automaattinen noudattaa Home Assistantin asetusta.",
+          "backup_temp_entities": "Valinnainen, suositellaan lämmittimellä varustettuun kasvihuoneeseen. Ylimääräiset sisälämpötila-anturit, jotka kannattaa sijoittaa kauas pääanturista. Jos pääanturi lakkaa toimimasta, säätö jatkuu ensimmäisellä toimivalla varalaitteella ja saat viestin."
+        }
+      },
+      "zone_type": {
+        "title": "Vyöhyketyyppi",
+        "description": "Muuta tämän vyöhykkeen kasvupaikkaa. Mitään ei poisteta: se, mitä uusi tyyppi ei käytä, piilotetaan, ja se palaa näkyviin, jos vaihdat takaisin.",
+        "data": {
+          "zone_type": "Kasvupaikka"
+        },
+        "data_description": {
+          "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi."
+        }
+      },
+      "watering": {
+        "title": "Kasteluasetukset",
+        "description": "Kasteluasetukset tämän vyöhykkeen venttiilille. Kaikkea voi muuttaa myöhemmin vyöhykkeen laitesivulla.",
+        "data": {
+          "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
+          "pump_id": "Jaettu pumpun tunniste (valinnainen)",
+          "flow_meter_entity": "Virtausmittari (valinnainen)",
+          "soil_moisture_entity": "Maaperän kosteusanturi (valinnainen)",
+          "soil_type": "Maaperätyyppi",
+          "drainage": "Ojitustilanne / Veden läpäisevyys",
+          "slope": "Rinne / Kallistus",
+          "irrigation_method": "Kastelutapa",
+          "growth_ramp_profile": "Kasvuvaiheen automaattinen säätö",
+          "deep_soak_enabled": "Ota käyttöön syväkastelusykli",
+          "deep_soak_time": "Syväkastelun aikataulutettu aika",
+          "routine_time": "Rutiinikastelun aikataulutettu aika",
+          "deep_soak_sun_mode": "Syväkastelun käynnistys",
+          "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
+          "routine_sun_mode": "Rutiinikastelun käynnistys",
+          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)"
+        },
+        "data_description": {
+          "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, ottaako pumppu todella virtaa, ja varoittaa, jos se ei ota. Jätä tyhjäksi, jos sellaista ei ole.",
+          "pump_id": "Vain vyöhykkeille, jotka toimivat samasta pumpusta: anna kaikille sama nimi tähän (mikä tahansa nimi, esim. \"Pumppu A\"), niin ne vuorottelevat samanaikaisen toiminnan sijaan. Jätä tyhjäksi, jos vyöhykkeellä on oma pumppu tai vedenottopiste.",
+          "flow_meter_entity": "Vesimittari, joka laskee kokonaismäärän (litroina, gallonoina tai kuutiometreinä). ZoneFlow kirjaa sitten ylös, kuinka paljon vettä kukin kastelu todella käytti, varoittaa, jos pumppu pyöri mutta vesi ei liikkunut, ja voi mitata virtausnopeuden puolestasi (Asetukset → Virtausnopeus).",
+          "soil_moisture_entity": "Maaperän kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa rutiinikastelua, märkä maa jättää sen väliin, ja siltä väliltä normaali aikataulu ratkaisee. Kuiva- ja märkärajat löytyvät vyöhykkeen laitesivulta.",
+          "soil_type": "Määrittää, miten kukin kastelu jaetaan pulsseihin, jotta vesi imeytyy maahan valumisen sijaan: noin 3 mm pulssia kohden savimaalla, 15 mm hietamaalla, 30 mm hiekalla, ja pulssien välissä on 30 minuutin imeytymistauko (tunti savella ja saviliesulla). \"Ei varmaa\" käyttää varovaista keskiarvoa. Voit muuttaa tätä myöhemmin vyöhykkeen laitesivulla.",
+          "drainage": "Hitaasti vettä läpäisevä maaperä (kova, tiivis kerros alla) ottaa vähemmän vettä pulssia kohden ja saa tunnin imeytymistauon pulssien välillä.",
+          "slope": "Vesi valuu rinteestä pois ennen imeytymistä: kohtalainen rinne lisää yhden pulssien jokaiseen kasteluun, jyrkkä rinne kaksi.",
+          "irrigation_method": "Miten vesi toimitetaan. Tiputuskastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke alkaa vähintään kahdella pulssilla, jotta vesi pysyy juuristoalueella. Annettavan veden määrä asetetaan virtausnopeudella (Asetukset → Virtausnopeus).",
+          "growth_ramp_profile": "Antaa nuorille kasveille vähemmän vettä ja kasvattaa sen täyteen viikoittaiseen tavoitteeseen niiden varttuessa, laskettuna vyöhykkeen laitesivun Istutus-/Siirtoistutuspäivämäärästä. Pois: aina täysi tavoite. Mukautettu: piirrä oma käyrä laitesivulla.",
+          "deep_soak_enabled": "Syväkastelu on suuri, hidas kastelu parin viikon välein (aluksi 14 päivää), joka kastelee maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; kytke pois matalajuurisille kasveille, kuten salaatille ja yrteille. Rutiinikastelu pyörii silti.",
+          "deep_soak_time": "Milloin syväkastelu alkaa kastelupäivinä, kun sen käynnistin alla on kiinteä aika. Varhainen aamu on paras: vähemmän vettä menetetään auringon ja tuulen vuoksi.",
+          "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko rutiinikastelu ajankohtaista, ja kastelee tarvittaessa. Kastelutiheys riippuu säästä ja viikoittaisesta tavoitteestasi. Varhainen aamu on paras.",
+          "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
+          "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
+          "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo tätä venttiiliä.",
-      "csv_path_already_used": "Toinen ZoneFlow-vyöhyke kirjoittaa jo tähän CSV-tiedostoon."
+      "csv_path_already_used": "Toinen ZoneFlow-vyöhyke kirjoittaa jo tähän CSV-tiedostoon.",
+      "inside_temp_required": "Tuuletin, tuuletusluukku, sumutin tai lämmitin tarvitsee sisälämpötila-anturin.",
+      "device_in_two_roles": "Sama entiteetti on valittu kahteen eri tehtävään.",
+      "device_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo jotakin näistä laitteista.",
+      "valve_or_device_required": "Valitse venttiili tai vähintään yksi ilmastolaite.",
+      "valve_required_outdoor": "Ulkovyöhyke tarvitsee venttiilin. Lisää sellainen ensin kohdassa Venttiili, anturit ja ilmastolaitteet.",
+      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Pensaat / pensasaita",
         "young_tree": "Nuori puu (ensimmäiset vuodet)",
         "fruit_tree": "Vakiintunut hedelmäpuu"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Ulkona",
+        "greenhouse": "Kasvihuone",
+        "indoor": "Sisällä"
       }
     }
   },
@@ -417,6 +602,54 @@
       },
       "frost_guard_temp": {
         "name": "Hallasuojan lämpötila"
+      },
+      "heat_temp": {
+        "name": "Lämmitin päälle alle lämpötilassa"
+      },
+      "vent_temp": {
+        "name": "Tuuletusluukut auki lämpötilassa"
+      },
+      "fan_temp": {
+        "name": "Tuulettimet päälle lämpötilassa"
+      },
+      "climate_hysteresis": {
+        "name": "Ilmastosäädön hystereesi"
+      },
+      "outside_margin": {
+        "name": "Ulkoilman lämpötilaero"
+      },
+      "max_humidity": {
+        "name": "Tuuleta kosteuden ylittäessä"
+      },
+      "mist_temp": {
+        "name": "Sumutus päälle lämpötilan ylittäessä"
+      },
+      "mist_min_humidity": {
+        "name": "Sumutus päälle kosteuden alittaessa"
+      },
+      "mist_stop_humidity": {
+        "name": "Sumutuksen pysäytyskosteus"
+      },
+      "mist_min_temp": {
+        "name": "Sumutuksen minimilämpötila"
+      },
+      "mist_light_level": {
+        "name": "Sumutuksen valoisuustaso"
+      },
+      "mist_on_seconds": {
+        "name": "Sumutusaika päällä"
+      },
+      "mist_off_seconds": {
+        "name": "Sumutusaika pois"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Enimmäissumutus tunnissa"
+      },
+      "vent_open_pct": {
+        "name": "Tuuletusluukun avautuma"
+      },
+      "manual_hold_minutes": {
+        "name": "Manuaalisen ohituksen kesto"
       }
     },
     "datetime": {
@@ -477,6 +710,9 @@
       },
       "irrigation_abort": {
         "name": "Kastelun keskeytysmerkintä"
+      },
+      "ventilation_allowed": {
+        "name": "Tuuletus sallittu"
       }
     },
     "switch": {
@@ -491,6 +727,12 @@
       },
       "pause": {
         "name": "Tauko"
+      },
+      "greenhouse_control": {
+        "name": "Kasvihuoneen säätö"
+      },
+      "mist_at_night": {
+        "name": "Sumuta yöllä"
       }
     },
     "sensor": {
@@ -570,6 +812,15 @@
       },
       "next_fertilizing": {
         "name": "Seuraava lannoitus"
+      },
+      "greenhouse_status": {
+        "name": "Kasvihuoneen tila"
+      },
+      "inside_vpd": {
+        "name": "Sisätilan VPD"
+      },
+      "misting_today": {
+        "name": "Sumutus tänään"
       }
     },
     "select": {
@@ -687,6 +938,31 @@
           "moderate": "Kohtalainen rinne",
           "steep": "Jyrkkä rinne"
         }
+      },
+      "misting_trigger": {
+        "name": "Sumutuksen käynnistin",
+        "state": {
+          "any": "Mikä tahansa käynnistin",
+          "temperature": "Vain lämpötila",
+          "humidity": "Vain kosteus",
+          "light": "Vain valoisuus"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Anturin vikatilasuojaus",
+        "state": {
+          "open": "Avaa luukut, tuulettimet päälle",
+          "closed": "Sulje luukut, tuulettimet pois",
+          "leave": "Jätä nykyiseen tilaan"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Lämmittimen vikatilasuojaus",
+        "state": {
+          "off": "Pois päältä",
+          "limited": "Päällä osan ajasta",
+          "outside": "Päällä osan ajasta, kun ulkona on kylmä"
+        }
       }
     },
     "text": {
@@ -802,6 +1078,9 @@
     },
     "summary_send_failed": {
       "message": "Viikkoyhteenvetoa ei voitu lähettää: ilmoitus puhelimeen epäonnistui. Tarkista vyöhykkeen ilmoituskohde."
+    },
+    "zone_has_no_valve": {
+      "message": "Tällä vyöhykkeellä ei ole venttiiliä, joten se ei voi kastella. Lisää venttiili kohdassa Asetukset, jos haluat kastelun."
     }
   },
   "issues": {
@@ -824,6 +1103,30 @@
     "shared_valve": {
       "title": "{zone}: venttiili jaettu toisen vyöhykkeen kanssa",
       "description": "Vyöhykkeet {zone} ja {other_zone} on molemmat määritetty käyttämään samaa venttiiliä ({entity}). Ellei niillä ole myös samaa pumpun tunnusta tai pumpun tehoanturia, ZoneFlow ei voi tietää, että kyse on samasta fyysisestä venttiilistä, eikä estä niitä avaamasta sitä samaan aikaan. Anna toiselle vyöhykkeelle oma venttiili tai aseta molemmille sama pumpun tunnus Määritä-valikossa."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: sisälämpötila-anturi ei toimi",
+      "description": "Vyöhykkeen {zone} sisälämpötila-anturi ({entity}) ei ole antanut käyttökelpoista lukemaa vähään aikaan, joten ilmastonsäätö on vikatilassa: sumuttimet ja lämmitin ovat pois päältä, ja tuuletusluukut sekä tuulettimet noudattavat Anturin vikatilasuojaus -asetusta. Tarkista anturi. Tämä kuittaantuu itsestään, kun se alkaa taas raportoida."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: ulkolämpötila-anturi ei toimi",
+      "description": "Vyöhykkeen {zone} ulkolämpötila-anturi ({entity}) ei ole antanut käyttökelpoista lukemaa vähään aikaan. Tuuletus jatkuu vain sisälukemien perusteella, joten se ei pysty varmistamaan ulkoilman viileyttä. Tarkista anturi. Tämä kuittaantuu itsestään, kun se alkaa taas raportoida."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: ilmastolaite ei vastaa",
+      "description": "Vyöhyke {zone} kytki laitteensa {devices}, mutta ne eivät ilmoittaneet muutoksesta edes toisen yrityksen jälkeen. Tarkista laite ja sen integraatio. Tämä kuittaantuu itsestään, kun laitteet vastaavat."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: sumutus pysäytetty",
+      "description": "Vyöhykkeen {zone} sumutin ei sammunut käskettäessä, joten sumutus on pysäytetty kasteluvahingon välttämiseksi. Tarkista sumutin ja paina sitten vyöhykkeen Nollaa kastelulukitus -painiketta aloittaaksesi sumutuksen uudelleen."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: toimii vara-anturin varassa",
+      "description": "Vyöhykkeen {zone} pääasiallinen sisälämpötila-anturi ({entity}) on lakannut toimimasta, joten ilmastonsäätö käyttää vara-anturia. Tarkista pääanturi. Tämä kuittaantuu itsestään, kun se alkaa taas raportoida."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: sisälämpötila-antureiden lukemat poikkeavat",
+      "description": "Vyöhykkeen {zone} pääasiallinen sisälämpötila-anturi ({entity}) näyttää lukemaa {main}, kun taas vara-anturi näyttää lukemaa {backup}, ja ne ovat poikenneet toisistaan huomattavasti jo jonkin aikaa. Toinen niistä on todennäköisesti viallinen tai sijoitettu huonosti (suoraan auringonpaisteeseen, lämmittimen viereen). Tarkista molemmat. Tämä kuittaantuu itsestään, kun lukemat vastaavat toisiaan."
     }
   }
 }

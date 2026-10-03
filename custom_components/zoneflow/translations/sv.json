@@ -6,11 +6,13 @@
         "description": "Ge den här bevattningszonen ett kort namn (t.ex. ”Gräsmattan”, ”Avokadoträdet”). Vill du lägga till fler zoner senare lägger du till den här integrationen igen.",
         "data": {
           "zone_name": "Zonnamn",
-          "plant": "Vad som växer här"
+          "plant": "Vad som växer här",
+          "zone_type": "Där det växer"
         },
         "data_description": {
           "zone_name": "Blir zonens enhetsnamn och början på dess entitetsnamn, och syns i mobilmeddelanden. T.ex. ”Tomatbädden”, ”Gräsmattan”.",
-          "plant": "Fyller i rimliga startvärden för den här växten: veckomål för vatten, växtfaktor, djupvattning och upptrappning. ”Något annat” utgår från allmänna värden. Allt kan ändras senare på zonens enhetssida."
+          "plant": "Fyller i rimliga startvärden för den här växten: veckomål för vatten, växtfaktor, djupvattning och upptrappning. ”Något annat” utgår från allmänna värden. Allt kan ändras senare på zonens enhetssida.",
+          "zone_type": "Utomhus är hur ZoneFlow alltid har fungerat. Växthus och inomhuszoner lägger till klimatstyrning (fläktar, vädring, dimmning, värmare), kan fungera utan ventil och har ingen regnmätare eller prognos på grund av taket."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "När medelvärdet ligger under den här gränsen använder zonen ”Rutin: veckomål vid svalka”. Däremellan räknas vädret som normalt.",
           "fallback_temp": "Används när det inte finns något riktigt värde. Utan temperatursensor är det här din manuella styrning: höj den vid värmebölja, sänk den vid köldknäpp."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Klimatenheter och givare",
+        "description": "Peka detta mot dina riktiga givare och enheter. Alla är valfria, men en fläkt, vädring, dimmning eller värmare behöver innetemperaturgivaren. Du kan lägga till eller ändra dem senare under Konfigurera.",
+        "data": {
+          "inside_temp_entity": "Innetemperaturgivare",
+          "inside_humidity_entity": "Innefuktighetsgivare (valfritt)",
+          "light_entity": "Ljusgivare (valfritt)",
+          "outdoor_temp_entity": "Utetemperaturgivare (valfritt)",
+          "fan_entities": "Kylfläktar (valfritt)",
+          "vent_entities": "Vädring (valfritt)",
+          "mister_entities": "Dimmning / dimspridning (valfritt)",
+          "heater_entities": "Värmare (valfritt)",
+          "notify_entity": "Mottagare för telefonnotis (valfritt)",
+          "unit_system": "Enheter",
+          "backup_temp_entities": "Reservgivare för innetemperatur"
+        },
+        "data_description": {
+          "inside_temp_entity": "Temperaturgivaren inuti växthuset eller rummet. Krävs för fläkt, vädring, dimmning eller värmare, och används även för vattning.",
+          "inside_humidity_entity": "En fuktighetsgivare inomhus. Gör att ZoneFlow kan vädra eller dimma baserat på fuktighet och stoppa dimmning när det är tillräckligt fuktigt.",
+          "light_entity": "En ljusgivare (lux eller solstrålning). Kan starta dimmning på ljusa dagar.",
+          "outdoor_temp_entity": "En temperaturgivare utomhus. Med den vädrar ZoneFlow bara för att kyla när uteluften är kallare än inne, så att den aldrig drar in varmare luft. Utan den fungerar den enbart utifrån inneläsningar.",
+          "fan_entities": "Fläktar som kyler eller ventilerar ut. Vilken brytare, hjälpbrytare eller fläkt som helst. Alla slås på och av tillsammans.",
+          "vent_entities": "Tak- eller sidovädring: solskydd/luckor eller brytare som öppnar dem. Alla rör sig tillsammans.",
+          "mister_entities": "Dimmare eller dimspridare: en brytare eller ventil. ZoneFlow kör dem i korta impulser och ser alltid till att de stängs av.",
+          "heater_entities": "Värmare: en brytare eller en klimatenhet. Slås på när det blir för kallt.",
+          "notify_entity": "Mottagare för telefonnotis för varningar, till exempel om en givare slutar fungera. Lämna tomt om du inte vill ha någon.",
+          "unit_system": "Visa temperaturer i Celsius eller Fahrenheit. Automatisk följer Home Assistant.",
+          "backup_temp_entities": "Valfritt, rekommenderas för växthus med värmare. Extra temperaturgivare inomhus, helst placerade en bit från huvudgivaren. Om huvudgivaren slutar fungera fortsätter styrningen med den första fungerande reservgivaren och du får ett meddelande."
+        }
+      },
+      "water_valve": {
+        "title": "Vattnar den här zonen?",
+        "description": "Välj ventilbrytaren om den här zonen vattnar sina växter. Lämna tomt för en zon med enbart klimatstyrning (då krävs minst en enhet).",
+        "data": {
+          "valve_entity": "Ventilbrytare (valfritt)"
+        },
+        "data_description": {
+          "valve_entity": "Brytaren som öppnar zonens ventil. Lämna tomt för en zon med enbart klimatstyrning som inte vattnar."
+        }
+      },
+      "watering": {
+        "title": "Bevattningsinställningar",
+        "description": "Bevattningsinställningarna för den här zonens ventil. Allt kan ändras senare på zonens enhetssida.",
+        "data": {
+          "pump_power_entity": "Effektgivare för pump (valfritt)",
+          "pump_id": "Delat pump-ID (valfritt)",
+          "flow_meter_entity": "Flödesmätare (valfritt)",
+          "soil_moisture_entity": "Jordfuktighetsgivare (valfritt)",
+          "soil_type": "Jordtyp",
+          "drainage": "Dränering",
+          "slope": "Lutning",
+          "irrigation_method": "Bevattningsmetod",
+          "growth_ramp_profile": "Automatisk upptrappning efter tillväxtfas",
+          "deep_soak_enabled": "Aktivera djupvattningscykeln",
+          "deep_soak_time": "Schemalagd tid för djupvattning",
+          "routine_time": "Schemalagd tid för rutinbevattning",
+          "deep_soak_sun_mode": "Utlösare för djupvattning",
+          "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
+          "routine_sun_mode": "Utlösare för rutinbevattning",
+          "routine_sun_offset_minutes": "Solförskjutning för rutinbevattning (minuter)"
+        },
+        "data_description": {
+          "pump_power_entity": "En effektgivare (W) på pumpen, t.ex. från en smart plug. Under varje bevattning kontrollerar ZoneFlow att pumpen faktiskt drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
+          "pump_id": "Endast för zoner som drivs av samma pump: ge alla samma namn här (valfritt namn, t.ex. ”Pump A”) så turas de om i stället för att köra samtidigt. Lämna tomt om den här zonen har en egen pump eller vattenförsörjning.",
+          "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar sedan hur mycket vatten varje bevattning faktiskt förbrukade, varnar dig om pumpen gick men inget vatten rörde sig, och kan mäta flödeshastigheten åt dig (Konfigurera → Flödeshastighet).",
+          "soil_moisture_entity": "En jordfuktighetsgivare (%) i den här zonens rotzon. Torr jord tidigarelägger rutinbevattningen, fuktig jord hoppar över den och däremellan avgör det vanliga schemat. Nivåerna för torrt och fuktigt finns på zonens enhetssida.",
+          "soil_type": "Bestämmer hur varje bevattning delas upp i impulser så att vattnet tränger in i stället för att rinna av: cirka 3 mm per impuls i lerjord, 15 mm i mjäla/jord, 30 mm i sandjord, med 30 minuters blötläggning mellan impulserna (en timme i lerjord och lerig mjäla). ”Osäker” använder ett försiktigt medelvärde. Du kan ändra det senare på zonens enhetssida.",
+          "drainage": "Trögt dränerad jord (ett hårt, kompakt lager under) tar emot mindre vatten per impuls och får en timmes blötläggning mellan impulserna.",
+          "slope": "Vatten rinner av en sluttning innan det tränger in: en måttlig lutning lägger till en impuls till varje bevattning, en brant lägger till två.",
+          "irrigation_method": "Hur vattnet tillförs. Med droppslang eller sipperslang i sandjord börjar en ny zon med minst två impulser så att vattnet stannar i rotzonen. Hur mycket vatten den ger ställs in av flödeshastigheten (Konfigurera → Flödeshastighet).",
+          "growth_ramp_profile": "Ger unga växter mindre vatten och ökar till det fulla veckomålet när de blir äldre, räknat från Planterings-/omplanteringsdatumet på zonens enhetssida. Av: alltid fullt mål. Anpassad: rita din egen kurva på enhetssidan.",
+          "deep_soak_enabled": "En djupvattning är en stor, långsam bevattning med några veckors mellanrum (14 dagar som start) som fuktar jorden djupt ner så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av för grundrotade växter som sallat och örter. Rutinbevattningen körs oavsett.",
+          "deep_soak_time": "När djupvattningen startar de dagar den ska köras, om utlösaren nedan är inställd på en fast tid. Tidig morgon är bäst: mindre vatten går förlorat till sol och vind.",
+          "routine_time": "När ZoneFlow varje dag kontrollerar om det är dags för rutinbevattning och vattnar om så är fallet. Hur ofta det är dags beror på vädret och ditt veckomål. Tidig morgon är bäst.",
+          "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
+          "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
+          "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång so att den följer årstiderna.",
+          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid."
+        }
       }
     },
     "error": {
       "zone_name_required": "Zonnamnet får inte vara tomt.",
       "cool_not_below_hot": "Gränsen för svalt måste vara lägre än gränsen för varmt.",
       "valve_already_used": "En annan ZoneFlow-zon använder redan denna ventil.",
-      "csv_path_already_used": "En annan ZoneFlow-zon loggar redan till den här CSV-filen."
+      "csv_path_already_used": "En annan ZoneFlow-zon loggar redan till den här CSV-filen.",
+      "inside_temp_required": "En fläkt, vädring, dimmning eller värmare behöver innetemperaturgivaren.",
+      "device_in_two_roles": "Samma entitet har valts för två olika uppgifter.",
+      "device_already_used": "En annan ZoneFlow-zon använder redan en av dessa enheter.",
+      "valve_or_device_required": "Välj en ventil eller minst en klimatenhet.",
+      "backup_same_as_inside": "En reservgivare kan inte vara samma som huvudgivaren för innetemperatur."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Zoninställningar (entiteter, jord, schema…)",
           "flow_rate": "Flöde: räkna ut från dropparna",
-          "flow_measure": "Flöde: mät med flödesmätaren"
+          "flow_measure": "Flöde: mät med flödesmätaren",
+          "greenhouse_devices": "Ventil, givare och klimatenheter",
+          "watering": "Bevattningsinställningar",
+          "zone_type": "Zontyp"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "Ytan som zonens droppare faktiskt väter. För droppare vid enskilda plantor räknar du ihop de blöta fläckarna runt dem, inte hela bädden."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Växthus- och inomhusenheter",
+        "description": "Lägg till eller ändra ventil, givare och klimatenheter. Inget skapas om: det som zonen inte använder döljs.",
+        "data": {
+          "valve_entity": "Ventilbrytare (valfritt)",
+          "inside_temp_entity": "Innetemperaturgivare",
+          "inside_humidity_entity": "Innefuktighetsgivare (valfritt)",
+          "light_entity": "Ljusgivare (valfritt)",
+          "outdoor_temp_entity": "Utetemperaturgivare (valfritt)",
+          "fan_entities": "Kylfläktar (valfritt)",
+          "vent_entities": "Vädring (valfritt)",
+          "mister_entities": "Dimmning / dimspridning (valfritt)",
+          "heater_entities": "Värmare (valfritt)",
+          "notify_entity": "Mottagare för telefonnotis (valfritt)",
+          "unit_system": "Enheter",
+          "backup_temp_entities": "Reservgivare för innetemperatur"
+        },
+        "data_description": {
+          "valve_entity": "Brytaren som öppnar zonens ventil. Lämna tomt för en zon med enbart klimatstyrning som inte vattnar.",
+          "inside_temp_entity": "Temperaturgivaren inuti växthuset eller rummet. Krävs för fläkt, vädring, dimmning eller värmare, och används även för vattning.",
+          "inside_humidity_entity": "En fuktighetsgivare inomhus. Gör att ZoneFlow kan vädra eller dimma baserat på fuktighet och stoppa dimmning när det är tillräckligt fuktigt.",
+          "light_entity": "En ljusgivare (lux eller solstrålning). Kan starta dimmning på ljusa dagar.",
+          "outdoor_temp_entity": "En temperaturgivare utomhus. Med den vädrar ZoneFlow bara för att kyla när uteluften är kallare än inne, så att den aldrig drar in varmare luft. Utan den fungerar den enbart utifrån inneläsningar.",
+          "fan_entities": "Fläktar som kyler eller ventilerar ut. Vilken brytare, hjälpbrytare eller fläkt som helst. Alla slås på och av tillsammans.",
+          "vent_entities": "Tak- eller sidovädring: solskydd/luckor eller brytare som öppnar dem. Alla rör sig tillsammans.",
+          "mister_entities": "Dimmare eller dimspridare: en brytare eller ventil. ZoneFlow kör dem i korta impulser och ser alltid till att de stängs av.",
+          "heater_entities": "Värmare: en brytare eller en klimatenhet. Slås på när det blir för kallt.",
+          "notify_entity": "Mottagare för telefonnotis för varningar, till exempel om en givare slutar fungera. Lämna tomt om du inte vill ha någon.",
+          "unit_system": "Visa temperaturer i Celsius eller Fahrenheit. Automatisk följer Home Assistant.",
+          "backup_temp_entities": "Valfritt, rekommenderas för växthus med värmare. Extra temperaturgivare inomhus, helst placerade en bit från huvudgivaren. Om huvudgivaren slutar fungera fortsätter styrningen med den första fungerande reservgivaren och du får ett meddelande."
+        }
+      },
+      "zone_type": {
+        "title": "Zontyp",
+        "description": "Ändra var den här zonen växer. Inget raderas: det som den nya typen inte använder döljs och kommer tillbaka om du ändrar tillbaka.",
+        "data": {
+          "zone_type": "Där det växer"
+        },
+        "data_description": {
+          "zone_type": "Utomhus är hur ZoneFlow alltid har fungerat. Växthus och inomhuszoner lägger till klimatstyrning (fläktar, vädring, dimmning, värmare), kan fungera utan ventil och har ingen regnmätare eller prognos på grund av taket."
+        }
+      },
+      "watering": {
+        "title": "Bevattningsinställningar",
+        "description": "Bevattningsinställningarna för den här zonens ventil. Allt kan ändras senare på zonens enhetssida.",
+        "data": {
+          "pump_power_entity": "Effektgivare för pump (valfritt)",
+          "pump_id": "Delat pump-ID (valfritt)",
+          "flow_meter_entity": "Flödesmätare (valfritt)",
+          "soil_moisture_entity": "Jordfuktighetsgivare (valfritt)",
+          "soil_type": "Jordtyp",
+          "drainage": "Dränering",
+          "slope": "Lutning",
+          "irrigation_method": "Bevattningsmetod",
+          "growth_ramp_profile": "Automatisk upptrappning efter tillväxtfas",
+          "deep_soak_enabled": "Aktivera djupvattningscykeln",
+          "deep_soak_time": "Schemalagd tid för djupvattning",
+          "routine_time": "Schemalagd tid för rutinbevattning",
+          "deep_soak_sun_mode": "Utlösare för djupvattning",
+          "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
+          "routine_sun_mode": "Utlösare för rutinbevattning",
+          "routine_sun_offset_minutes": "Soltidsförskjutning för rutinbevattning (minuter)"
+        },
+        "data_description": {
+          "pump_power_entity": "En effektgivare (W) på pumpen, t.ex. från en smart plug. Under varje bevattning kontrollerar ZoneFlow att pumpen faktiskt drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
+          "pump_id": "Endast för zoner som drivs av samma pump: ge alla samma namn här (valfritt namn, t.ex. ”Pump A”) så turas de om i stället för att köra samtidigt. Lämna tomt om den här zonen har en egen pump eller vattenförsörjning.",
+          "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar sedan hur mycket vatten varje bevattning faktiskt förbrukade, varnar dig om pumpen gick men inget vatten rörde sig, och kan mäta flödeshastigheten åt dig (Konfigurera → Flödeshastighet).",
+          "soil_moisture_entity": "En jordfuktighetsgivare (%) i den här zonens rotzon. Torr jord tidigarelägger rutinbevattningen, fuktig jord hoppar över den och däremellan avgör det vanliga schemat. Nivåerna för torrt och fuktigt finns på zonens enhetssida.",
+          "soil_type": "Bestämmer hur varje bevattning delas upp i impulser så att vattnet tränger in i stället för att rinna av: cirka 3 mm per impuls i lerjord, 15 mm i mjäla/jord, 30 mm i sandjord, med 30 minuters blötläggning mellan impulserna (en timme i lerjord och lerig mjäla). ”Osäker” använder ett försiktigt medelvärde. Du kan ändra det senare på zonens enhetssida.",
+          "drainage": "Trögt dränerad jord (ett hårt, kompakt lager under) tar emot mindre vatten per impuls och får en timmes blötläggning mellan impulserna.",
+          "slope": "Vatten rinner av en sluttning innan det tränger in: en måttlig lutning lägger till en impuls till varje bevattning, en brant lägger till två.",
+          "irrigation_method": "Hur vattnet tillförs. Med droppslang eller sipperslang i sandjord börjar en ny zon med minst två impulser så att vattnet stannar i rotzonen. Hur mycket vatten den ger ställs in av flödeshastigheten (Konfigurera → Flödeshastighet).",
+          "growth_ramp_profile": "Ger unga växter mindre vatten och ökar till det fulla veckomålet när de blir äldre, räknat från Planterings-/omplanteringsdatumet på zonens enhetssida. Av: alltid fullt mål. Anpassad: rita din egen kurva på enhetssidan.",
+          "deep_soak_enabled": "En djupvattning är en stor, långsam bevattning med några veckors mellanrum (14 dagar som start) som fuktar jorden djupt ner så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av för grundrotade växter som sallat och örter. Rutinbevattningen körs oavsett.",
+          "deep_soak_time": "När djupvattningen startar de dagar den ska köras, om utlösaren nedan är inställd på en fast tid. Tidig morgon är bäst: mindre vatten går förlorat till sol och vind.",
+          "routine_time": "När ZoneFlow varje dag kontrollerar om det är dags för rutinbevattning och vattnar om så är fallet. Hur ofta det är dags beror på vädret och ditt veckomål. Tidig morgon är bäst.",
+          "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
+          "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
+          "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
+          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "En annan ZoneFlow-zon använder redan denna ventil.",
-      "csv_path_already_used": "En annan ZoneFlow-zon loggar redan till den här CSV-filen."
+      "csv_path_already_used": "En annan ZoneFlow-zon loggar redan till den här CSV-filen.",
+      "inside_temp_required": "En fläkt, vädring, dimmning eller värmare behöver innetemperaturgivaren.",
+      "device_in_two_roles": "Samma entitet har valts för två olika uppgifter.",
+      "device_already_used": "En annan ZoneFlow-zon använder redan en av dessa enheter.",
+      "valve_or_device_required": "Välj en ventil eller minst en klimatenhet.",
+      "valve_required_outdoor": "En utomhuszon behöver en ventil. Lägg till en under Ventil, givare och klimatenheter först.",
+      "backup_same_as_inside": "En reservgivare kan inte vara samma som huvudgivaren för innetemperatur."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Buskar / häck",
         "young_tree": "Ungt träd (första åren)",
         "fruit_tree": "Etablerat fruktträd"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Utomhus",
+        "greenhouse": "Växthus",
+        "indoor": "Inomhus"
       }
     }
   },
@@ -417,6 +602,54 @@
       },
       "frost_guard_temp": {
         "name": "Frostskydd: temperatur"
+      },
+      "heat_temp": {
+        "name": "Värmare på under"
+      },
+      "vent_temp": {
+        "name": "Vädring öppnar vid"
+      },
+      "fan_temp": {
+        "name": "Fläktar på vid"
+      },
+      "climate_hysteresis": {
+        "name": "Klimathysteres"
+      },
+      "outside_margin": {
+        "name": "Marginal för uteluft"
+      },
+      "max_humidity": {
+        "name": "Vädra över fuktighet"
+      },
+      "mist_temp": {
+        "name": "Dimmning på över temperatur"
+      },
+      "mist_min_humidity": {
+        "name": "Dimmning på under fuktighet"
+      },
+      "mist_stop_humidity": {
+        "name": "Stoppa dimmning vid fuktighet"
+      },
+      "mist_min_temp": {
+        "name": "Minsta temperatur för dimmning"
+      },
+      "mist_light_level": {
+        "name": "Ljusnivå för dimmning"
+      },
+      "mist_on_seconds": {
+        "name": "Tid för dimmning på"
+      },
+      "mist_off_seconds": {
+        "name": "Tid för dimmning av"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Max dimmning per timme"
+      },
+      "vent_open_pct": {
+        "name": "Vädringens öppningsläge"
+      },
+      "manual_hold_minutes": {
+        "name": "Tid för manuell spärr"
       }
     },
     "datetime": {
@@ -477,6 +710,9 @@
       },
       "irrigation_abort": {
         "name": "Avbrottsflagga"
+      },
+      "ventilation_allowed": {
+        "name": "Vädring tillåten"
       }
     },
     "switch": {
@@ -491,6 +727,12 @@
       },
       "pause": {
         "name": "Paus"
+      },
+      "greenhouse_control": {
+        "name": "Växthusstyrning"
+      },
+      "mist_at_night": {
+        "name": "Dimma på natten"
       }
     },
     "sensor": {
@@ -570,6 +812,15 @@
       },
       "next_fertilizing": {
         "name": "Nästa gödsling"
+      },
+      "greenhouse_status": {
+        "name": "Växthusstatus"
+      },
+      "inside_vpd": {
+        "name": "Inomhus-VPD"
+      },
+      "misting_today": {
+        "name": "Dimmning i dag"
       }
     },
     "select": {
@@ -687,6 +938,31 @@
           "moderate": "Måttlig lutning",
           "steep": "Brant lutning"
         }
+      },
+      "misting_trigger": {
+        "name": "Utlösare för dimmning",
+        "state": {
+          "any": "Valfri utlösare",
+          "temperature": "Endast temperatur",
+          "humidity": "Endast fuktighet",
+          "light": "Endast ljus"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Säkerhetsläge för givare",
+        "state": {
+          "open": "Öppna vädring, fläktar på",
+          "closed": "Stäng vädring, fläktar av",
+          "leave": "Lämna som de är"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Säkerhetsläge för värmare",
+        "state": {
+          "off": "Av",
+          "limited": "På en del av tiden",
+          "outside": "En del av tiden vid kyla ute"
+        }
       }
     },
     "text": {
@@ -802,6 +1078,9 @@
     },
     "summary_send_failed": {
       "message": "Veckosammanfattningen kunde inte skickas: aviseringen till telefonen misslyckades. Kontrollera zonens mobil för aviseringar."
+    },
+    "zone_has_no_valve": {
+      "message": "Den här zonen har ingen ventil och kan inte vattna. Lägg till en ventil under Konfigurera om du vill det."
     }
   },
   "issues": {
@@ -824,6 +1103,30 @@
     "shared_valve": {
       "title": "{zone}: ventil delad med en annan zon",
       "description": "Zon {zone} och zon {other_zone} är båda konfigurerade med samma ventilenhet ({entity}). Om de inte också delar ett pump-ID eller en pumpeffektsensor kan ZoneFlow inte avgöra att det är samma fysiska ventil och hindrar dem inte från att öppna den samtidigt. Ge en av zonerna en egen ventil, eller ange samma pump-ID för båda under Konfigurera."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: innetemperaturgivaren fungerar inte",
+      "description": "Innetemperaturgivaren i zon {zone} ({entity}) har inte lämnat ett användbart värde på ett tag, så klimatstyrningen körs i säkerhetsläge: dimmare och värmare är avstängda, och vädring och fläktar följer inställningen för Säkerhetsläge för givare. Kontrollera givaren. Detta rensas automatiskt så fort den rapporterar igen."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: utetemperaturgivaren fungerar inte",
+      "description": "Utetemperaturgivaren i zon {zone} ({entity}) har inte lämnat ett användbart värde på ett tag. Vädringen fortsätter enbart utifrån inneläsningar, så den kan inte kontrollera om uteluften är kallare. Kontrollera givaren. Detta rensas automatiskt så fort den rapporterar igen."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: en klimatenhet svarar inte",
+      "description": "Zon {zone} ändrade läge på sina {devices} men de rapporterade inte ändringen, inte en efter ett andra försök. Kontrollera enheten och dess integration. Detta rensas automatiskt så fort enheterna svarar."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: dimmning stoppad",
+      "description": "En dimmare i zon {zone} stängdes inte av på begäran, så dimmningen har stoppats för att undvika översvämning. Kontrollera dimmaren och tryck sedan på Återställ bevattningslås på zonen för att starta dimmningen igen."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: körs på reservtemperaturgivaren",
+      "description": "Huvudgivaren för innetemperatur i zon {zone} ({entity}) har slutat fungera, så klimatstyrningen använder en reservgivare. Kontrollera huvudgivaren. Detta rensas automatiskt så fort den rapporterar igen."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: innetemperaturgivarna stämmer inte överens",
+      "description": "Huvudgivaren för innetemperatur i zon {zone} ({entity}) visar {main} medan reservgivaren visar {backup}, och de har haft stor skillnad ett tag. En av dem visar sannolikt fel eller är dåligt placerad (i direkt sol, bredvid värmaren). Kontrollera båda. Detta rensas automatiskt så fort de visar lika."
     }
   }
 }

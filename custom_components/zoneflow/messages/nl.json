@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: tijd om te bemesten",
       "message": "Gepland op {date}. Druk op Vandaag bemest als het klaar is; de volgende datum wordt vanaf dan berekend."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: noodbediening klimaatsensor",
+      "message": "Geen enkele binnentemperatuursensor werkt. Nevelaars staan uit; ventilatie en ventilatoren: {mode}; verwarming: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: klimaatbeheersing weer normaal",
+      "message": "De binnentemperatuursensor rapporteert weer."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} reageert niet",
+      "message": "{entity} is niet geschakeld zoals opgedragen, zelfs niet na een tweede poging."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: nevelaar bleef aanstaan",
+      "message": "Een nevelaar bleef aanstaan na de pulstijd en is uitgeschakeld."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: nevelen gestopt",
+      "message": "Een nevelaar wilde niet uitschakelen, dus het nevelen is gestopt. Controleer de nevelaar en druk op Bewateringsslot opheffen."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: reserve-temperatuursensor in gebruik",
+      "message": "De hoofd-binnentemperatuursensor ({entity}) werkt niet meer. De klimaatbeheersing gaat door met de reservesensor."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · gepauzeerd",
     "next": " · volgende {when}",
     "zone_none": "{zone}: geen water"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "ventilatie open, ventilatoren aan",
+      "closed": "ventilatie gesloten, ventilatoren uit",
+      "leave": "gelaten zoals ze zijn"
+    },
+    "status": {
+      "starting": "Opstarten",
+      "control_off": "Kasregeling staat uit",
+      "failsafe": "Noodbediening: geen binnentemperatuur (ventilatie en ventilatoren: {mode}; verwarming: {heater})",
+      "mist_halted": "Nevelen gestopt: druk op Bewateringsslot opheffen",
+      "held": "{device} gerustgelaten gedurende {minutes} min (handmatig geschakeld)",
+      "heating": "Verwarmen ({temp})",
+      "ventilating_temperature": "Ventileren: te warm ({temp})",
+      "ventilating_humidity": "Ventileren: te vochtig ({humidity})",
+      "misting": "Nevelen ({temp}, {humidity})",
+      "gate_blocked": "Niet ventileren: buitenlucht ({outside}) is niet koeler dan binnen ({temp})",
+      "idle": "Alles in orde: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "uit",
+      "limited": "deels van de tijd aan",
+      "outside": "deels van de tijd aan bij koud weer buiten"
+    }
   }
 }

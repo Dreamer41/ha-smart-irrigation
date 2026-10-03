@@ -11,6 +11,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
+from .entity_cleanup import remove_entities
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
@@ -19,6 +20,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowLockBinarySensor(entry, controller),
         ZoneFlowAbortBinarySensor(entry, controller),
     ]
+    if controller.is_outdoor:
+        remove_entities(hass, entry, "binary_sensor", ["ventilation_allowed"])
+    else:
+        entities.append(ZoneFlowVentilationAllowedBinarySensor(entry, controller))
     async_add_entities(entities)
 
 
@@ -57,3 +62,35 @@ class ZoneFlowAbortBinarySensor(_Base):
     @property
     def is_on(self) -> bool:
         return self._controller.store.state.abort_on
+
+
+class ZoneFlowVentilationAllowedBinarySensor(_Base):
+    """On while outside air may be used to cool or dry (it is cooler than
+    inside by the margin, or there is no outside sensor); off when it would
+    only bring in hotter air."""
+
+    _attr_icon = "mdi:window-open-variant"
+    _attr_should_poll = False
+    _attr_entity_category = None
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_ventilation_allowed"
+        self._attr_translation_key = "ventilation_allowed"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self._changed))
+
+    def _changed(self) -> None:
+        if self.hass is not None:
+            self.async_write_ha_state()
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.greenhouse.ventilation_allowed()
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        decision = self._controller.greenhouse._decision
+        return {"gate": decision.gate if decision else None}

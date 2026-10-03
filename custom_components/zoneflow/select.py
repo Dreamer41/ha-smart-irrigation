@@ -69,7 +69,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import visibility
+from . import greenhouse_logic, visibility
+from .entity_cleanup import remove_entities
 from .const import (
     DEMAND_MODEL_OPTIONS,
     DOMAIN,
@@ -91,8 +92,18 @@ from .const import (
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     controller = hass.data[DOMAIN][entry.entry_id]
+    climate: list = []
+    if controller.is_outdoor:
+        remove_entities(hass, entry, "select", ["misting_trigger", "ventilation_failsafe", "heater_failsafe"])
+    else:
+        climate = [
+            ZoneFlowMistingTriggerSelect(entry, controller),
+            ZoneFlowVentilationFailsafeSelect(entry, controller),
+            ZoneFlowHeaterFailsafeSelect(entry, controller),
+        ]
     async_add_entities(
         [
+            *climate,
             ZoneFlowSoilTypeSelect(entry, controller),
             ZoneFlowDrainageSelect(entry, controller),
             ZoneFlowSlopeSelect(entry, controller),
@@ -414,3 +425,78 @@ class ZoneFlowWeeklySummarySelect(_Base):
             await self._controller.reset_summary()  # the first one covers from now
         await self._controller.store.async_save()
         self.async_write_ha_state()
+
+
+class ZoneFlowMistingTriggerSelect(_Base):
+    """What starts misting: any trigger, or only temperature, humidity or
+    light. A trigger whose sensor the zone doesn't have never counts."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:sprinkler-variant"
+    _attr_options = greenhouse_logic.MIST_TRIGGER_OPTIONS
+    _attr_translation_key = "misting_trigger"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_misting_trigger"
+
+    @property
+    def current_option(self) -> str:
+        value = self._controller.store.state.mist_trigger
+        return value if value in self._attr_options else greenhouse_logic.MIST_TRIGGER_ANY
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.mist_trigger = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.greenhouse.async_evaluate("setting")
+
+
+class ZoneFlowVentilationFailsafeSelect(_Base):
+    """What the vents and fans do when the inside temperature sensor stops
+    reporting: open, closed, or left as they are. Misters and the heater
+    always go off."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:shield-alert-outline"
+    _attr_options = greenhouse_logic.FAILSAFE_OPTIONS
+    _attr_translation_key = "ventilation_failsafe"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_ventilation_failsafe"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.greenhouse.failsafe_mode()
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.ventilation_failsafe = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.greenhouse.async_evaluate("setting")
+
+
+class ZoneFlowHeaterFailsafeSelect(_Base):
+    """What the heater does when no inside temperature sensor works: off,
+    limited (on part of the time), or limited only while it is cold
+    outside. Never on all the time with nothing measuring."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:radiator-off"
+    _attr_options = greenhouse_logic.HEATER_FAILSAFE_OPTIONS
+    _attr_translation_key = "heater_failsafe"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_heater_failsafe"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.greenhouse.heater_failsafe_mode()
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.heater_failsafe = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.greenhouse.async_evaluate("setting")

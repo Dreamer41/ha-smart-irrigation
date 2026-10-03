@@ -12,7 +12,7 @@
  *
  * Also here: zoneflow-overview-card, every zone in one table (further down).
  */
-const CARD_VERSION = "1.5.1";
+const CARD_VERSION = "1.6.0";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -45,7 +45,9 @@ const I18N = {
       "history": "History",
       "safety": "Safety limits and pump",
       "notifications": "Notifications",
-      "more": "More"
+      "more": "More",
+      "climate": "Climate control",
+      "misting": "Misting"
     },
     "overview": {
       "title": "Garden",
@@ -96,7 +98,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Fine-tunes the routine watering amount for your soil cover, -50% to +70%. Positive for exposed soil that dries fast, negative for water-holding soil such as heavy clay or shade. Large negative values cut watering a lot: use them only if your soil stays wet, and watch it for a week or two.",
       "rain_eff_low": "Share of light rain that actually reaches the roots. The rest runs off or evaporates.",
       "rain_eff_mid": "Share of moderate rain that actually reaches the roots. The rest runs off or evaporates.",
-      "rain_eff_high": "Share of heavy rain that actually reaches the roots. The rest runs off or evaporates."
+      "rain_eff_high": "Share of heavy rain that actually reaches the roots. The rest runs off or evaporates.",
+      "heat_temp": "The heater switches on when the inside temperature falls below this, and off again a little above it (see Climate Hysteresis).",
+      "vent_temp": "Vents open when the inside temperature reaches this, and only when the outside air is cooler than inside.",
+      "fan_temp": "Fans switch on at this inside temperature (at or above the vent temperature), and only when the outside air is cooler than inside.",
+      "climate_hysteresis": "The gap between a device switching on and off, so it doesn't flick on and off around one temperature.",
+      "outside_margin": "Ventilation starts only when the outside air is at least this much cooler than inside, so it never pulls in hotter air.",
+      "max_humidity": "Vents and fans also run when the inside humidity is above this, unless it is cold.",
+      "mist_temp": "Misting can start when the inside temperature is at or above this.",
+      "mist_min_humidity": "Misting can start when the inside humidity falls to this or lower.",
+      "mist_stop_humidity": "Misting never runs when the inside humidity is at or above this.",
+      "mist_min_temp": "No misting below this inside temperature.",
+      "mist_light_level": "Misting can start when the light reading reaches this level (needs a light sensor).",
+      "mist_on_seconds": "How long each misting pulse lasts.",
+      "mist_off_seconds": "The rest between misting pulses.",
+      "max_mist_minutes_per_hour": "A hard limit on misting in any 60 minutes. A mister switched on by hand also goes off after this long.",
+      "vent_open_pct": "How far a vent opens (for vents that can be set to a position).",
+      "manual_hold_minutes": "After you switch a device by hand, ZoneFlow leaves it alone for this long. 0 means it takes charge again at once.",
+      "ventilation_failsafe": "What vents and fans do when no inside temperature sensor is working. Misters always go off.",
+      "heater_failsafe": "What the heater does when no inside temperature sensor is working. It never runs non-stop without a sensor.",
+      "misting_trigger": "What starts misting: any of the triggers, or only temperature, humidity or light."
     },
     "close": "Close",
     "device_page": "Open the device page",
@@ -132,7 +153,9 @@ const I18N = {
       "history": "Verlauf",
       "safety": "Sicherheitslimits und Pumpe",
       "notifications": "Benachrichtigungen",
-      "more": "Mehr"
+      "more": "Mehr",
+      "climate": "Klimasteuerung",
+      "misting": "Vernebelung"
     },
     "overview": {
       "title": "Garten",
@@ -187,7 +210,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Feinanpassung der täglichen Bewässerungsmenge je nach Bodenbedeckung (-50 % bis +70 %). Positive Werte für schnell trocknende Böden, negative Werte für wasserspeichernde Böden (z. B. lehmig oder schattig). Starke negative Anpassungen reduzieren die Wassermenge erheblich – bitte beobachten Sie die Pflanzen in den ersten zwei Wochen gut.",
       "rain_eff_low": "Anteil leichten Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
       "rain_eff_mid": "Anteil mäßigen Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
-      "rain_eff_high": "Anteil starken Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab."
+      "rain_eff_high": "Anteil starken Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
+      "heat_temp": "Die Heizung schaltet sich ein, wenn die Innentemperatur unter diesen Wert fällt, und etwas darüber wieder aus (siehe Klima-Hysterese).",
+      "vent_temp": "Lüftungen öffnen sich, wenn die Innentemperatur diesen Wert erreicht und die Außenluft kühler ist als innen.",
+      "fan_temp": "Lüfter schalten sich bei dieser Innentemperatur ein (bei oder über der Lüftungstemperatur) und nur, wenn die Außenluft kühler ist als innen.",
+      "climate_hysteresis": "Die Spanne zwischen Ein- und Ausschalten eines Geräts, damit es nicht ständig um eine Temperatur herum schaltet.",
+      "outside_margin": "Die Belüftung startet nur, wenn die Außenluft mindestens um diesen Wert kühler ist als innen, damit nie heißere Luft angesaugt wird.",
+      "max_humidity": "Lüfter und Lüftungen laufen auch, wenn die Innenfeuchtigkeit über diesem Wert liegt, außer es ist kalt.",
+      "mist_temp": "Die Vernebelung kann starten, wenn die Innentemperatur diesen Wert erreicht oder überschreitet.",
+      "mist_min_humidity": "Die Vernebelung kann starten, wenn die Innenfeuchtigkeit auf diesen Wert oder darunter fällt.",
+      "mist_stop_humidity": "Die Vernebelung läuft niemals, wenn die Innenfeuchtigkeit diesen Wert erreicht oder überschreitet.",
+      "mist_min_temp": "Keine Vernebelung unterhalb dieser Innentemperatur.",
+      "mist_light_level": "Die Vernebelung kann starten, wenn der Lichtwert diesen Pegel erreicht (erfordert einen Lichtsensor).",
+      "mist_on_seconds": "Wie lange jeder Vernebelungsimpuls dauert.",
+      "mist_off_seconds": "Die Pause zwischen den Vernebelungsimpulsen.",
+      "max_mist_minutes_per_hour": "Eine feste Obergrenze für die Vernebelung innerhalb von 60 Minuten. Ein manuell eingeschalteter Vernebler schaltet sich nach dieser Zeit ebenfalls aus.",
+      "vent_open_pct": "Wie weit eine Lüftung öffnet (für Lüftungen, die auf eine bestimmte Position eingestellt werden können).",
+      "manual_hold_minutes": "Nachdem Sie ein Gerät manuell geschaltet haben, lässt ZoneFlow es für diese Dauer unverändert. 0 bedeutet, dass sofort wieder die automatische Steuerung übernimmt.",
+      "ventilation_failsafe": "Was Lüftungen und Lüfter tun, wenn kein Innen-Temperatursensor funktioniert. Vernebler schalten sich immer aus.",
+      "heater_failsafe": "Was die Heizung tut, wenn kein Innen-Temperatursensor funktioniert. Ohne Sensor läuft sie niemals ununterbrochen.",
+      "misting_trigger": "Was die Vernebelung startet: jeder beliebige Auslöser oder nur Temperatur, Feuchtigkeit oder Licht."
     }
   },
   "es": {
@@ -219,7 +261,9 @@ const I18N = {
       "history": "Historial",
       "safety": "Límites de seguridad y bomba",
       "notifications": "Notificaciones",
-      "more": "Más"
+      "more": "Más",
+      "climate": "Control de clima",
+      "misting": "Nebulización"
     },
     "overview": {
       "title": "Jardín",
@@ -274,7 +318,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Ajuste fino del riego habitual según la cobertura del suelo (-50% a +70%). Los valores positivos son para suelos expuestos que se secan rápido; los negativos, para suelos que retienen humedad (arcillosos o en sombra). Ajustes negativos altos reducen bastante el riego: úselos solo si el suelo permanece húmedo y observe la evolución durante un par de semanas.",
       "rain_eff_low": "Proporción de lluvia débil que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
       "rain_eff_mid": "Proporción de lluvia moderada que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
-      "rain_eff_high": "Proporción de lluvia intensa que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía."
+      "rain_eff_high": "Proporción de lluvia intensa que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
+      "heat_temp": "El calefactor se enciende cuando la temperatura interior cae por debajo de esto, y se apaga un poco por encima (consulte Histéresis de clima).",
+      "vent_temp": "Las rejillas se abren cuando la temperatura interior alcanza este valor, y solo si el aire exterior es más frío que el interior.",
+      "fan_temp": "Los ventiladores se encienden a esta temperatura interior (a la par o por encima de la temperatura de las rejillas), y solo si el aire exterior es más frío que el interior.",
+      "climate_hysteresis": "El desfase entre el encendido y apagado de un dispositivo para evitar interrupciones constantes cerca de una misma temperatura.",
+      "outside_margin": "La ventilación solo comienza si el aire exterior está al menos así de más frío que el interior, para no introducir aire más caliente.",
+      "max_humidity": "Los ventiladores y rejillas también funcionan cuando la humedad interior supera este límite, a menos que haga frío.",
+      "mist_temp": "La nebulización puede empezar cuando la temperatura interior está en o por encima de este valor.",
+      "mist_min_humidity": "La nebulización puede empezar cuando la humedad interior desciende a este valor o menos.",
+      "mist_stop_humidity": "La nebulización nunca se activa si la humedad interior alcanza o supera este límite.",
+      "mist_min_temp": "Sin nebulización por debajo de esta temperatura interior.",
+      "mist_light_level": "La nebulización puede empezar cuando el nivel de luz alcance este valor (requiere un sensor de luz).",
+      "mist_on_seconds": "Duración de cada pulso de nebulización.",
+      "mist_off_seconds": "Pausa de reposo entre pulsos de nebulización.",
+      "max_mist_minutes_per_hour": "Límite máximo de nebulización en un periodo de 60 minutos. Un nebulizador encendido manualmente se apaga también tras este periodo.",
+      "vent_open_pct": "Cuánto abre una rejilla (para rejillas con posición regulable).",
+      "manual_hold_minutes": "Tras cambiar un dispositivo a mano, ZoneFlow lo dejará sin tocar durante este tiempo. 0 significa que retoma el control de inmediato.",
+      "ventilation_failsafe": "Qué hacen las rejillas y ventiladores cuando no funciona ningún sensor de temperatura interior. Los nebulizadores siempre se apagan.",
+      "heater_failsafe": "Qué hace el calefactor cuando no funciona ningún sensor de temperatura interior. Nunca funciona de forma continua sin un sensor.",
+      "misting_trigger": "Qué inicia la nebulización: cualquiera de los activadores, o solo la temperatura, humedad o luz."
     }
   },
   "fi": {
@@ -306,7 +369,9 @@ const I18N = {
       "history": "Historia",
       "safety": "Turvarajat ja pumppu",
       "notifications": "Ilmoitukset",
-      "more": "Lisää"
+      "more": "Lisää",
+      "climate": "Ilmastonsäätö",
+      "misting": "Sumutus"
     },
     "overview": {
       "title": "Puutarha",
@@ -361,7 +426,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Säätää rutiinikastelun määrää maaperän katteen mukaan (-50 % – +70 %). Positiivinen arvo sopii nopeasti kuivuvalle paljaalle maalle, negatiivinen arvo vettä pidättävälle maalle (kuten savimaalle tai varjoisalle paikalle). Suuret negatiiviset arvot leikkaavat kastelua huomattavasti: käytä niitä vain, jos maa pysyy märkänä, ja seuraa tilannetta viikko tai kaksi.",
       "rain_eff_low": "Kevyen sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
       "rain_eff_mid": "Kohtalaisen sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
-      "rain_eff_high": "Runsaan sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois."
+      "rain_eff_high": "Runsaan sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
+      "heat_temp": "Lämmitin kytkeytyy päälle, kun sisälämpötila laskee tämän alle, ja sammuu hieman sen yläpuolella (katso Ilmastosäädön hystereesi).",
+      "vent_temp": "Tuuletusluukut avautuvat, kun sisälämpötila saavuttaa tämän arvon, ja vain silloin, kun ulkoilma on sisäilmaa viileämpää.",
+      "fan_temp": "Tuulettimet kytkeytyvät päälle tässä sisälämpötilassa (tuuletusluukun lämpötilassa tai sen yläpuolella) ja vain silloin, kun ulkoilma on sisäilmaa viileämpää.",
+      "climate_hysteresis": "Ero laitteen kytkeytymisen ja sammumisen välillä, jotta se ei edestakaisin kytkeydy tietyn lämpötilan ympärillä.",
+      "outside_margin": "Tuuletus alkaa vasta, kun ulkoilma on vähintään näin paljon sisäilmaa viileämpää, jottei se koskaan vedä sisään kuumempaa ilmaa.",
+      "max_humidity": "Tuulettimet ja tuuletusluukut toimivat myös silloin, kun sisäilman kosteus ylittää tämän, ellei ole kylmä.",
+      "mist_temp": "Sumutus voi alkaa, kun sisälämpötila on tämä tai enemmän.",
+      "mist_min_humidity": "Sumutus voi alkaa, kun sisäilman kosteus laskee tähän tai alemmas.",
+      "mist_stop_humidity": "Sumutus ei koskaan pyöri, kun sisäilman kosteus on tämä tai enemmän.",
+      "mist_min_temp": "Ei sumutusta tämän sisälämpötilan alapuolella.",
+      "mist_light_level": "Sumutus voi alkaa, kun valoisuuslukema saavuttaa tämän tason (tarvitsee valoisuusanturin).",
+      "mist_on_seconds": "Kuinka kauan kukin sumutuspulssi kestää.",
+      "mist_off_seconds": "Tauko sumutuspulssien välillä.",
+      "max_mist_minutes_per_hour": "Tiukka enimmäisraja sumutukselle minkä tahansa 60 minuutin jakson aikana. Käsin päälle kytketty sumutin sammuu myös tämän ajan kuluttua.",
+      "vent_open_pct": "Kuinka paljon tuuletusluukku avautuu (luukuille, jotka voidaan asettaa tiettyyn asentoon).",
+      "manual_hold_minutes": "Kun kytket laitteen käsin, ZoneFlow jättää sen rauhaan näin pitkäksi aikaa. 0 tarkoittaa, että se ottaa ohjat välittömästi takaisin.",
+      "ventilation_failsafe": "Mitä tuuletusluukut ja tuulettimet tekevät, kun mikään sisälämpötila-anturi ei toimi. Sumuttimet sammuvat aina.",
+      "heater_failsafe": "Mitä lämmitin tekee, kun mikään sisälämpötila-anturi ei toimi. Se ei koskaan pyöri taukoamatta ilman anturia.",
+      "misting_trigger": "Mikä käynnistää sumutuksen: mikä tahansa käynnistimistä tai vain lämpötila, kosteus tai valoisuus."
     }
   },
   "fr": {
@@ -393,7 +477,9 @@ const I18N = {
       "history": "Historique",
       "safety": "Limites de sécurité et pompe",
       "notifications": "Notifications",
-      "more": "Plus"
+      "more": "Plus",
+      "climate": "Contrôle du climat",
+      "misting": "Brumisation"
     },
     "overview": {
       "title": "Jardin",
@@ -448,7 +534,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Ajustement précis de l'arrosage quotidien selon la couverture du sol (de -50% à +70%). Valeurs positives pour les sols nus séchant vite, négatives pour les sols retenant l'eau (argileux ou à l'ombre). Des valeurs fortement négatives réduisent nettement l'arrosage : à n'utiliser que si le sol reste très humide, en observant le résultat sur une à deux semaines.",
       "rain_eff_low": "Proportion de pluie faible atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
       "rain_eff_mid": "Proportion de pluie modérée atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
-      "rain_eff_high": "Proportion de pluie forte atteignant réellement les racines. Le reste s'évapore ou ruisselle."
+      "rain_eff_high": "Proportion de pluie forte atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
+      "heat_temp": "Le chauffage s'allume lorsque la température intérieure descend sous ce seuil, et s'éteint un peu au-dessus (voir Hystérésis climatique).",
+      "vent_temp": "Les ouvrants s'ouvrent lorsque la température intérieure atteint ce seuil, et uniquement si l'air extérieur est plus frais qu'à l'intérieur.",
+      "fan_temp": "Les ventilateurs s'allument à cette température intérieure (égale ou supérieure à la température des ouvrants), et uniquement si l'air extérieur est plus frais qu'à l'intérieur.",
+      "climate_hysteresis": "L'écart entre le déclenchement et l'arrêt d'un appareil, pour éviter les oscillations rapides autour de la température consigne.",
+      "outside_margin": "La ventilation ne démarre que si l'air extérieur est au moins aussi plus frais que l'intérieur, afin de ne jamais faire entrer d'air plus chaud.",
+      "max_humidity": "Les ventilateurs et ouvrants s'activent aussi quand l'humidité intérieure dépasse ce seuil, sauf s'il fait froid.",
+      "mist_temp": "La brumisation peut démarrer si la température intérieure est supérieure ou égale à ce seuil.",
+      "mist_min_humidity": "La brumisation peut démarrer quand l'humidité intérieure tombe à ce niveau ou en dessous.",
+      "mist_stop_humidity": "La brumisation s'arrête systématiquement dès que l'humidité intérieure atteint ou dépasse ce seuil.",
+      "mist_min_temp": "Pas de brumisation en dessous de cette température intérieure.",
+      "mist_light_level": "La brumisation peut démarrer lorsque la luminosité atteint ce niveau (nécessite un capteur de luminosité).",
+      "mist_on_seconds": "Durée de chaque impulsion de brumisation.",
+      "mist_off_seconds": "Durée du temps de repos entre deux impulsions de brumisation.",
+      "max_mist_minutes_per_hour": "Limite stricte de brumisation sur une période glissante de 60 minutes. Un brumisateur allumé manuellement s'éteint aussi passé ce délai.",
+      "vent_open_pct": "Pourcentage d'ouverture de l'ouvrant (pour les ouvrants dont la position est réglable).",
+      "manual_hold_minutes": "Après une action manuelle sur un appareil, ZoneFlow le laisse inchangé pendant cette durée. 0 réactive le contrôle automatique immédiatement.",
+      "ventilation_failsafe": "Comportement des ouvrants et ventilateurs en cas de panne du capteur de température intérieure. Les brumisateurs s'éteignent toujours.",
+      "heater_failsafe": "Comportement du chauffage en cas de panne du capteur de température intérieure. Il ne fonctionne jamais en continu sans capteur.",
+      "misting_trigger": "Conditions de démarrage de la brumisation : n'importe quel déclencheur, ou exclusivement température, humidité ou luminosité."
     }
   },
   "it": {
@@ -480,7 +585,9 @@ const I18N = {
       "history": "Cronologia",
       "safety": "Limiti di sicurezza e pompa",
       "notifications": "Notifiche",
-      "more": "Altro"
+      "more": "Altro",
+      "climate": "Controllo climatico",
+      "misting": "Nebulizzazione"
     },
     "overview": {
       "title": "Giardino",
@@ -535,7 +642,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Regolazione fine dell'irrigazione quotidiana in base alla copertura del suolo (-50% a +70%). Valori positivi per terreni esposti ad asciugatura rapida; valori negativi per terreni a forte ritenzione idrica (come argilla o zone d'ombra). Valori fortemente negativi riducono parecchio l'irrigazione: utilizzare solo se il terreno rimane molto umido e monitorare per una o due settimane.",
       "rain_eff_low": "Quota di pioggia debole che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
       "rain_eff_mid": "Quota di pioggia moderata che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
-      "rain_eff_high": "Quota di pioggia intensa che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento."
+      "rain_eff_high": "Quota di pioggia intensa che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
+      "heat_temp": "Il riscaldatore si accende quando la temperatura interna scende sotto questo valore e si spegne poco sopra (vedi Isteresi climatica).",
+      "vent_temp": "Le aperture si aprono quando la temperatura interna raggiunge questo valore, e solo se l’aria esterna è più fresca di quella interna.",
+      "fan_temp": "Le ventole si attivano a questa temperatura interna (pari o superiore a quella delle aperture), e solo se l’aria esterna è più fresca di quella interna.",
+      "climate_hysteresis": "Lo scarto tra l’accensione e lo spegnimento di un dispositivo, per evitare continue attivazioni intorno a una singola temperatura.",
+      "outside_margin": "La ventilazione si avvia solo se l’aria esterna è più fresca di quella interna di almeno questo valore, evitando di introdurre aria più calda.",
+      "max_humidity": "Aperture e ventole si attivano anche quando l’umidità interna supera questo valore, a meno che non faccia freddo.",
+      "mist_temp": "La nebulizzazione può avviarsi quando la temperatura interna raggiunge o supera questo valore.",
+      "mist_min_humidity": "La nebulizzazione può avviarsi quando l’umidità interna scende a questo valore o al di sotto.",
+      "mist_stop_humidity": "La nebulizzazione non si attiva mai se l’umidità interna è pari o superiore a questo valore.",
+      "mist_min_temp": "Nessuna nebulizzazione al di sotto di questa temperatura interna.",
+      "mist_light_level": "La nebulizzazione può avviarsi quando la luminosità raggiunge questo livello (richiede un sensore di luminosità).",
+      "mist_on_seconds": "Durata di ciascun impulso di nebulizzazione.",
+      "mist_off_seconds": "Pausa tra gli impulsi di nebulizzazione.",
+      "max_mist_minutes_per_hour": "Limite massimo di nebulizzazione in un intervallo di 60 minuti. Anche un nebulizzatore attivato manualmente si spegne dopo questo tempo.",
+      "vent_open_pct": "Grado di apertura di una finestra di ventilazione (per aperture posizionabili).",
+      "manual_hold_minutes": "Dopo aver azionato manualmente un dispositivo, ZoneFlow non interviene per questo intervallo di tempo. 0 indica che riprende subito il controllo.",
+      "ventilation_failsafe": "Comportamento di aperture e ventole quando nessun sensore di temperatura interna funziona. I nebulizzatori si spengono sempre.",
+      "heater_failsafe": "Comportamento del riscaldatore quando nessun sensore di temperatura interna funziona. Non rimane mai in funzione continua senza sensore.",
+      "misting_trigger": "Cosa avvia la nebulizzazione: qualsiasi condizione, oppure solo temperatura, umidità o luminosità."
     }
   },
   "nl": {
@@ -567,7 +693,9 @@ const I18N = {
       "history": "Geschiedenis",
       "safety": "Veiligheidslimieten en pomp",
       "notifications": "Meldingen",
-      "more": "Meer"
+      "more": "Meer",
+      "climate": "Klimaatbeheersing",
+      "misting": "Nevelen"
     },
     "overview": {
       "title": "Tuin",
@@ -622,7 +750,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Fijnafstemming van de dagelijkse bewatering op basis van de bodembedekking (-50% tot +70%). Positief voor onbedekte grond die snel uitdroogt, negatief voor watervasthoudende grond (zoals zware klei of schaduwrijke zones). Grote negatieve waarden verminderen de bewatering sterk: gebruik dit alleen als de grond erg nat blijft en houd het een à twee weken in de gaten.",
       "rain_eff_low": "Het deel van lichte regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
       "rain_eff_mid": "Het deel van matige regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
-      "rain_eff_high": "Het deel van zware regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg."
+      "rain_eff_high": "Het deel van zware regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
+      "heat_temp": "De verwarming schakelt in wanneer de binnentemperatuur hieronder zakt, en weer uit iets erboven (zie Klimaathysterese).",
+      "vent_temp": "Ventilatie opent wanneer de binnentemperatuur dit bereikt, en alleen wanneer de buitenlucht koeler is dan binnen.",
+      "fan_temp": "Ventilatoren schakelen in bij deze binnentemperatuur (op of boven de ventilatietemperatuur), en alleen wanneer de buitenlucht koeler is dan binnen.",
+      "climate_hysteresis": "Het verschil tussen het in- en uitschakelen van een apparaat, zodat het niet continu aan- en uitschakelt rond één temperatuur.",
+      "outside_margin": "Ventilatie start alleen wanneer de buitenlucht minstens zo veel koeler is dan binnen, zodat er nooit warmere lucht wordt binnengehaald.",
+      "max_humidity": "Ventilatie en ventilatoren draaien ook wanneer de luchtvochtigheid binnen hierboven is, tenzij het koud is.",
+      "mist_temp": "Nevelen kan starten wanneer de binnentemperatuur op of boven dit niveau is.",
+      "mist_min_humidity": "Nevelen kan starten wanneer de luchtvochtigheid binnen daalt tot dit niveau of lager.",
+      "mist_stop_humidity": "Nevelen draait nooit wanneer de luchtvochtigheid binnen op of boven dit niveau is.",
+      "mist_min_temp": "Geen nevelen onder deze binnentemperatuur.",
+      "mist_light_level": "Nevelen kan starten wanneer de lichtmeting dit niveau bereikt (lichtsensor vereist).",
+      "mist_on_seconds": "Hoe lang elke nevelpuls duurt.",
+      "mist_off_seconds": "De rusttijd tussen nevelpulsen.",
+      "max_mist_minutes_per_hour": "Een harde limiet voor nevelen in een periode van 60 minuten. Een handmatig ingeschakelde nevelaar gaat na deze tijd ook uit.",
+      "vent_open_pct": "Hoe ver een ventilatie opent (voor ventilaties die op een stand ingesteld kunnen worden).",
+      "manual_hold_minutes": "Nadat u een apparaat handmatig schakelt, laat ZoneFlow het zo lang met rust. 0 betekent dat het het beheer direct weer overneemt.",
+      "ventilation_failsafe": "Wat ventilatie en ventilatoren doen als er geen binnentemperatuursensor werkt. Nevelaars gaan altijd uit.",
+      "heater_failsafe": "Wat de verwarming doet als er geen binnentemperatuursensor werkt. Deze draait nooit ononderbroken zonder sensor.",
+      "misting_trigger": "Wat het nevelen start: elke willekeurige trigger, of alleen temperatuur, luchtvochtigheid of licht."
     }
   },
   "pl": {
@@ -654,7 +801,9 @@ const I18N = {
       "history": "Historia",
       "safety": "Limity bezpieczeństwa i pompa",
       "notifications": "Powiadomienia",
-      "more": "Więcej"
+      "more": "Więcej",
+      "climate": "Sterowanie klimatem",
+      "misting": "Zamgławianie"
     },
     "overview": {
       "title": "Ogród",
@@ -709,7 +858,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Precyzyjna korekta dawki nawadniania w zależności od przykrycia gleby (od -50% do +70%). Wartości dodatnie stosuj dla odsłoniętej, szybko schnącej gleby; ujemne dla gleb zatrzymujących wilgoć (np. gliniastych lub zacienionych). Znaczne wartości ujemne mocno ograniczają podlewanie – stosuj je tylko, gdy gleba długo pozostaje wilgotna i obserwuj rośliny przez 1-2 tygodnie.",
       "rain_eff_low": "Część opadów lekkiego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
       "rain_eff_mid": "Część opadów umiarkowanego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
-      "rain_eff_high": "Część opadów ulewnego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa."
+      "rain_eff_high": "Część opadów ulewnego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
+      "heat_temp": "Grzejnik włącza się, gdy temperatura wewnętrzna spadnie poniżej tej wartości, i wyłącza nieco powyżej niej (patrz Histereza klimatu).",
+      "vent_temp": "Wietrzniki otwierają się, gdy temperatura wewnętrzna osiągnie tę wartość, i tylko wtedy, gdy powietrze na zewnątrz jest chłodniejsze niż wewnątrz.",
+      "fan_temp": "Wentylatory włączają się przy tej temperaturze wewnętrznej (równej lub wyższej od temperatury otwarcia wietrzników) i tylko wtedy, gdy powietrze na zewnątrz jest chłodniejsze niż wewnątrz.",
+      "climate_hysteresis": "Różnica między włączeniem a wyłączeniem urządzenia, zapobiegająca ciągłemu przełączaniu wokół jednej wartości temperatury.",
+      "outside_margin": "Wentylacja uruchamia się tylko wtedy, gdy powietrze na zewnątrz jest o co najmniej tyle chłodniejsze niż wewnątrz, dzięki czemu nigdy nie wciąga gorącego powietrza.",
+      "max_humidity": "Wentylatory i wietrzniki działają również wtedy, gdy wilgotność wewnętrzna przekracza tę wartość, chyba że jest zimno.",
+      "mist_temp": "Zamgławianie może się rozpocząć, gdy temperatura wewnętrzna jest równa tej wartości lub wyższa.",
+      "mist_min_humidity": "Zamgławianie może się rozpocząć, gdy wilgotność wewnętrzna spadnie do tej wartości lub niżej.",
+      "mist_stop_humidity": "Zamgławianie nigdy nie działa, gdy wilgotność wewnętrzna jest równa tej wartości lub wyższa.",
+      "mist_min_temp": "Brak zamgławiania poniżej tej temperatury wewnętrznej.",
+      "mist_light_level": "Zamgławianie może się rozpocząć, gdy poziom światła osiągnie tę wartość (wymaga czujnika światła).",
+      "mist_on_seconds": "Czas trwania każdego impulsu zamgławiania.",
+      "mist_off_seconds": "Przerwa między impulsami zamgławiania.",
+      "max_mist_minutes_per_hour": "Sztywny limit zamgławiania w ciągu dowolnych 60 minut. Zamgławiacz włączony ręcznie również wyłącza się po tym czasie.",
+      "vent_open_pct": "Stopień otwarcia wietrznika (dla wietrzników z możliwością ustawienia pozycji).",
+      "manual_hold_minutes": "Po ręcznym przełączeniu urządzenia ZoneFlow pozostawia je bez zmian przez ten czas. 0 oznacza, że natychmiast ponownie przejmuje kontrolę.",
+      "ventilation_failsafe": "Co robią wietrzniki i wentylatory, gdy żaden czujnik temperatury wewnętrznej nie działa. Zamgławiacze zawsze się wyłączają.",
+      "heater_failsafe": "Co robi grzejnik, gdy żaden czujnik temperatury wewnętrznej nie działa. Nigdy nie działa bez przerwy bez czujnika.",
+      "misting_trigger": "Co uruchamia zamgławianie: dowolny z wyzwalaczy lub tylko temperatura, wilgotność bądź światło."
     }
   },
   "pt": {
@@ -741,7 +909,9 @@ const I18N = {
       "history": "Histórico",
       "safety": "Limites de segurança e bomba",
       "notifications": "Notificações",
-      "more": "Mais"
+      "more": "Mais",
+      "climate": "Controlo de clima",
+      "misting": "Nebulização"
     },
     "overview": {
       "title": "Jardim",
@@ -796,7 +966,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Ajuste fino da rega diária com base na cobertura do solo (-50% a +70%). Valores positivos destinam-se a solos expostos que secam rápido; valores negativos para solos que retêm humidade (como argilosos ou à sombra). Ajustes negativos elevados reduzem bastante a rega: utilize-os apenas se o solo se mantiver húmido e monitorize durante uma ou duas semanas.",
       "rain_eff_low": "Percentagem de chuva fraca que chega efetivamente às raízes. O restante evapora ou escorre.",
       "rain_eff_mid": "Percentagem de chuva moderada que chega efetivamente às raízes. O restante evapora ou escorre.",
-      "rain_eff_high": "Percentagem de chuva forte que chega efetivamente às raízes. O restante evapora ou escorre."
+      "rain_eff_high": "Percentagem de chuva forte que chega efetivamente às raízes. O restante evapora ou escorre.",
+      "heat_temp": "O aquecedor liga-se quando a temperatura interior desce abaixo deste valor e desliga-se um pouco acima (consulte Histerese do clima).",
+      "vent_temp": "As aberturas abrem quando a temperatura interior atinge este valor e apenas quando o ar exterior está mais frio do que o interior.",
+      "fan_temp": "Os ventiladores ligam-se a esta temperatura interior (igual ou superior à temperatura das aberturas) e apenas quando o ar exterior está mais frio do que o interior.",
+      "climate_hysteresis": "O intervalo entre um dispositivo ligar e desligar, evitando alternâncias constantes perto de uma mesma temperatura.",
+      "outside_margin": "A ventilação só começa quando o ar exterior está pelo menos esta quantidade mais frio do que o interior, para nunca introduzir ar mais quente.",
+      "max_humidity": "Os ventiladores e aberturas também funcionam quando a humidade interior está acima deste valor, a menos que esteja frio.",
+      "mist_temp": "A nebulização pode iniciar quando a temperatura interior for igual ou superior a este valor.",
+      "mist_min_humidity": "A nebulização pode iniciar quando a humidade interior descer até este valor ou inferior.",
+      "mist_stop_humidity": "A nebulização nunca é executada quando a humidade interior for igual ou superior a este valor.",
+      "mist_min_temp": "Sem nebulização abaixo desta temperatura interior.",
+      "mist_light_level": "A nebulização pode iniciar quando a leitura de luz atingir este nível (requer sensor de luz).",
+      "mist_on_seconds": "Duração de cada impulso de nebulização.",
+      "mist_off_seconds": "Intervalo de descanso entre impulsos de nebulização.",
+      "max_mist_minutes_per_hour": "Limite máximo de nebulização em qualquer janela de 60 minutos. Um nebulizador ligado manualmente também se desliga após este tempo.",
+      "vent_open_pct": "O quanto uma abertura se abre (para aberturas com regulação de posição).",
+      "manual_hold_minutes": "Após alterar um dispositivo manualmente, o ZoneFlow deixa-o inalterado durante este tempo. 0 significa que retoma o controlo imediatamente.",
+      "ventilation_failsafe": "O que as aberturas e ventiladores fazem quando nenhum sensor de temperatura interior está a funcionar. Os nebulizadores desligam-se sempre.",
+      "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interior está a funcionar. Nunca funciona ininterruptamente sem um sensor.",
+      "misting_trigger": "O que inicia a nebulização: qualquer um dos gatilhos ou apenas temperatura, humidade ou luz."
     }
   },
   "sv": {
@@ -828,7 +1017,9 @@ const I18N = {
       "history": "Historik",
       "safety": "Säkerhetsgränser och pump",
       "notifications": "Aviseringar",
-      "more": "Mer"
+      "more": "Mer",
+      "climate": "Klimatstyrning",
+      "misting": "Dimmning"
     },
     "overview": {
       "title": "Trädgård",
@@ -883,7 +1074,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Finjustering av den dagliga bevattningen baserat på marktäckning (-50 % till +70 %). Positiva värden för bar jord som torkar snabbt, negativa för vattenhållande jord (t.ex. styv lera eller skuggiga lägen). Stora negativa värden minskar bevattningen avsevärt: använd dem endast om jorden förblir fuktig och följ upp under en till två veckor.",
       "rain_eff_low": "Andel av lätt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
       "rain_eff_mid": "Andel av måttligt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
-      "rain_eff_high": "Andel av kraftigt regn som faktiskt når rötterna. Resten dunstar eller rinner av."
+      "rain_eff_high": "Andel av kraftigt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
+      "heat_temp": "Värmaren slås på när innetemperaturen sjunker under detta och stängs av igen lite ovanför (se Klimathysteres).",
+      "vent_temp": "Vädringen öppnas när innetemperaturen når detta, och endast när uteluften är kallare än inne.",
+      "fan_temp": "Fläktarna slås på vid denna innetemperatur (vid eller över vädringstemperaturen), och endast när uteluften är kallare än inne.",
+      "climate_hysteresis": "Skillnaden mellan att en enhet slås på och av, så att den inte slår på och av hela tiden kring samma temperatur.",
+      "outside_margin": "Vädringen startar bara när uteluften är minst så här mycket kallare än inne, så att den aldrig drar in varmare luft.",
+      "max_humidity": "Vädring och fläktar körs också när fuktigheten inne är över detta, såvida det inte är kallt.",
+      "mist_temp": "Dimmning kan starta när innetemperaturen är vid eller över detta.",
+      "mist_min_humidity": "Dimmning kan starta när innetemperaturen sjunker till detta eller lägre.",
+      "mist_stop_humidity": "Dimmning körs aldrig när fuktigheten inne är vid eller över detta.",
+      "mist_min_temp": "Ingen dimmning under denna innetemperatur.",
+      "mist_light_level": "Dimmning kan starta när ljusvärdet når denna nivå (kräver en ljusgivare).",
+      "mist_on_seconds": "Hur länge varje dimmimpuls varar.",
+      "mist_off_seconds": "Pausen mellan dimmimpulser.",
+      "max_mist_minutes_per_hour": "En fast gräns för dimmning under valfria 60 minuter. En dimmare som slås på manuellt stängs också av efter denna tid.",
+      "vent_open_pct": "Hur mycket en vädring öppnas (för vädring som kan ställas in i ett visst läge).",
+      "manual_hold_minutes": "När du ändrar en enhet manuellt lämnar ZoneFlow den i fred så här länge. 0 innebär att den tar över styrningen igen direkt.",
+      "ventilation_failsafe": "Vad vädring och fläktar gör när ingen innetemperaturgivare fungerar. Dimmare stängs alltid av.",
+      "heater_failsafe": "Vad värmaren gör när ingen innetemperaturgivare fungerar. Den körs aldrig oavbrutet utan en givare.",
+      "misting_trigger": "Vad som startar dimmning: någon av utlösarna, eller enbart temperatur, fuktighet eller ljus."
     }
   },
   "cs": {
@@ -915,7 +1125,9 @@ const I18N = {
       "history": "Historie",
       "safety": "Bezpečnostní limity a čerpadlo",
       "notifications": "Oznámení",
-      "more": "Další"
+      "more": "Další",
+      "climate": "Řízení klimatu",
+      "misting": "Mlžení"
     },
     "overview": {
       "title": "Zahrada",
@@ -970,7 +1182,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Jemné doladění denní závlahy podle pokryvu půdy (-50 % až +70 %). Kladné hodnoty pro odhalenou půdu, která rychle vysychá; záporné hodnoty pro půdu zadržující vodu (např. těžká jílovitá nebo ve stínu). Výrazně záporné hodnoty značně omezí zálivku: používejte je pouze v případě, že půda zůstává mokrá, a stav týden až dva sledujte.",
       "rain_eff_low": "Podíl mírného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
       "rain_eff_mid": "Podíl středně silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
-      "rain_eff_high": "Podíl silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří."
+      "rain_eff_high": "Podíl silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
+      "heat_temp": "Topení se zapne, když vnitřní teplota klesne pod tuto hodnotu, a vypne se o něco výše (viz Hystereze klimatu).",
+      "vent_temp": "Větrací otvory se otevřou, když vnitřní teplota dosáhne této hodnoty, a pouze tehdy, když je venkovní vzduch chladnější než vnitřní.",
+      "fan_temp": "Ventilátory se zapnou při této vnitřní teplotě (při nebo nad teplotou otevření větrání) a pouze tehdy, když je venkovní vzduch chladnější než vnitřní.",
+      "climate_hysteresis": "Rozdíl mezi zapnutím a vypnutím zařízení, aby se nepravidelně nepřepínalo kolem jedné hodnoty teploty.",
+      "outside_margin": "Větrání se spustí pouze v případě, že venkovní vzduch je o tuto hodnotu chladnější než vnitřní, aby se nevpouštěl teplejší vzduch.",
+      "max_humidity": "Ventilátory a větrací otvory běží také tehdy, když je vnitřní vlhkost nad touto hodnotou, pokud není chladno.",
+      "mist_temp": "Mlžení se může spustit, když je vnitřní teplota na této hodnotě nebo vyšší.",
+      "mist_min_humidity": "Mlžení se může spustit, když vnitřní vlhkost klesne na tuto hodnotu nebo nižší.",
+      "mist_stop_humidity": "Mlžení se nikdy nespustí, když je vnitřní vlhkost na této hodnotě nebo vyšší.",
+      "mist_min_temp": "Mlžení je zakázáno pod touto vnitřní teplotou.",
+      "mist_light_level": "Mlžení se může spustit, když úroveň osvětlení dosáhne této hodnoty (vyžaduje snímač osvětlení).",
+      "mist_on_seconds": "Jak dlouho trvá jeden pulz mlžení.",
+      "mist_off_seconds": "Pauza mezi pulzy mlžení.",
+      "max_mist_minutes_per_hour": "Pevný limit mlžení během libovolných 60 minut. Mlžovač zapnutý ručně se po této době také vypne.",
+      "vent_open_pct": "Míra otevření větracího otvoru (pro otvory, u kterých lze nastavit polohu).",
+      "manual_hold_minutes": "Po ručním přepnutí zařízení je ZoneFlow ponechá bez zásahu po tuto dobu. Hodnota 0 znamená okamžité převzetí řízení.",
+      "ventilation_failsafe": "Co dělají větrací otvory a ventilátory, když nefunguje žádný snímač vnitřní teploty. Mlžovače se vždy vypnou.",
+      "heater_failsafe": "Co dělá topení, když nefunguje žádný snímač vnitřní teploty. Bez snímače nikdy neběží nepřetržitě.",
+      "misting_trigger": "Co spouští mlžení: jakýkoli ze spouštěčů, nebo pouze teplota, vlhkost či světlo."
     }
   },
   "da": {
@@ -1002,7 +1233,9 @@ const I18N = {
       "history": "Historik",
       "safety": "Sikkerhedsgrænser og pumpe",
       "notifications": "Notifikationer",
-      "more": "Mere"
+      "more": "Mere",
+      "climate": "Klimastyring",
+      "misting": "Forstøvning"
     },
     "overview": {
       "title": "Have",
@@ -1057,7 +1290,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Finjustering af den daglige vanding baseret på jorddække (-50% til +70%). Positive værdier er til bar jord, der tørrer hurtigt ud; negative værdier er til vandholdende jord (f.eks. tung lerjord eller skyggefulde områder). Store negative værdier reducerer vandingen markant: brug dem kun, hvis jorden forbliver våd, og hold øje med det i 1-2 uger.",
       "rain_eff_low": "Andel af let regn, der reelt når rødderne. Resten fordamper eller løber af.",
       "rain_eff_mid": "Andel af moderat regn, der reelt når rødderne. Resten fordamper eller løber af.",
-      "rain_eff_high": "Andel af kraftig regn, der reelt når rødderne. Resten fordamper eller løber af."
+      "rain_eff_high": "Andel af kraftig regn, der reelt når rødderne. Resten fordamper eller løber af.",
+      "heat_temp": "Varmelegemet tændes, når den indendørs temperatur falder til under dette, og slukker igen lidt over (se Klimahysterese).",
+      "vent_temp": "Udluftningen åbnes, når den indendørs temperatur når dette, og kun når udeluften er koldere end indeluften.",
+      "fan_temp": "Ventilatorer tændes ved denne indendørstemperatur (ved eller over udluftningstemperaturen), og kun når udeluften er koldere end indeluften.",
+      "climate_hysteresis": "Forskellen mellem at en enhed tændes og slukkes, så den ikke konstant tænder og slukker omkring den samme temperatur.",
+      "outside_margin": "Ventilation starter kun, når udeluften er mindst så meget koldere end indeluften, så der aldrig trækkes varmere luft ind.",
+      "max_humidity": "Ventilatorer og udluftning kører også, når den indendørs fugtighed er over dette, medmindre det er koldt.",
+      "mist_temp": "Forstøvning kan starte, når den indendørs temperatur er på eller over dette.",
+      "mist_min_humidity": "Forstøvning kan starte, når den indendørs fugtighed falder til dette eller lavere.",
+      "mist_stop_humidity": "Forstøvning kører aldrig, når den indendørs fugtighed er på eller over dette.",
+      "mist_min_temp": "Ingen forstøvning under denne indendørstemperatur.",
+      "mist_light_level": "Forstøvning kan starte, når lysmålingen når dette niveau (kræver en lyssensor).",
+      "mist_on_seconds": "Hvor længe hver forstøvningspuls varer.",
+      "mist_off_seconds": "Pausen mellem forstøvningspulser.",
+      "max_mist_minutes_per_hour": "En fast grænse for forstøvning inden for en periode på 60 minutter. En forstøver skiftet manuelt slukker også efter så lang tid.",
+      "vent_open_pct": "Hvor meget en udluftning åbner (for udluftninger der kan indstilles til en position).",
+      "manual_hold_minutes": "Efter du har skiftet en enhed manuelt, lader ZoneFlow den være i dette tidsrum. 0 betyder, at den tager over igen med det samme.",
+      "ventilation_failsafe": "Hvad udluftning og ventilatorer gør, når ingen indendørs temperatursensor virker. Forstøvere slukker altid.",
+      "heater_failsafe": "Hvad varmelegemet gør, når ingen indendørs temperatursensor virker. Det kører aldrig uafbrudt uden en sensor.",
+      "misting_trigger": "Hvad der starter forstøvningen: enhver af udløserne, eller kun temperatur, fugtighed eller lys."
     }
   },
   "hu": {
@@ -1089,7 +1341,9 @@ const I18N = {
       "history": "Előzmények",
       "safety": "Biztonsági korlátok és szivattyú",
       "notifications": "Értesítések",
-      "more": "Egyéb"
+      "more": "Egyéb",
+      "climate": "Klímaszabályozás",
+      "misting": "Párásítás"
     },
     "overview": {
       "title": "Kert",
@@ -1144,7 +1398,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "A napi öntözési mennyiség finomhangolása a talajtakarástól függően (-50% és +70% között). Pozitív érték a gyorsan kiszáradó, csupasz talajhoz; negatív érték a jó víztartó talajhoz (pl. kötött agyag vagy árnyékos terület). A nagy negatív értékek jelentősen csökkentik az öntözést: csak akkor használja, ha a talaj tartósan nedves marad, és figyelje a növényeket 1-2 hétig.",
       "rain_eff_low": "A gyenge eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
       "rain_eff_mid": "A mérsékelt eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
-      "rain_eff_high": "A heves eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik."
+      "rain_eff_high": "A heves eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
+      "heat_temp": "A fűtés bekapcsol, ha a belső hőmérséklet ez alá esik, és kikapcsol kevéssel felette (lásd Klíma hiszterézis).",
+      "vent_temp": "A szellőzők akkor nyitnak ki, ha a belső hőmérséklet eléri ezt az értéket, és csak akkor, ha a külső levegő hűvösebb a belsőnél.",
+      "fan_temp": "A ventilátorok ezen belső hőmérsékleten kapcsolnak be (a szellőzési hőmérsékleten vagy afelett), és csak akkor, ha a külső levegő hűvösebb a belsőnél.",
+      "climate_hysteresis": "Az eszköz be- és kikapcsolása közötti különbség, így nem kapcsolgat folyamatosan egyetlen hőmérsékletérték körül.",
+      "outside_margin": "A szellőztetés csak akkor indul el, ha a külső levegő legalább ennyivel hűvösebb a belsőnél, így soha nem szív be melegebb levegőt.",
+      "max_humidity": "A szellőzők és ventilátorok akkor is működnek, ha a belső páratartalom ez felett van, kivéve, ha hideg van.",
+      "mist_temp": "A párásítás akkor indulhat el, ha a belső hőmérséklet eléri vagy meghaladja ezt az értéket.",
+      "mist_min_humidity": "A párásítás akkor indulhat el, ha a belső páratartalom erre a szintre vagy ez alá esik.",
+      "mist_stop_humidity": "A párásítás soha nem működik, ha a belső páratartalom eléri ezt az értéket vagy afelett van.",
+      "mist_min_temp": "Ezen belső hőmérséklet alatt nincs párásítás.",
+      "mist_light_level": "A párásítás akkor indulhat el, ha a fénymérés eléri ezt a szintet (fényérzékelőt igényel).",
+      "mist_on_seconds": "Milyen hosszú egy-egy párásítási impulzus.",
+      "mist_off_seconds": "A párásítási impulzusok közötti szünet ideje.",
+      "max_mist_minutes_per_hour": "Szigorú korlát a párásításra bármely 60 perces időszakban. A kézzel bekapcsolt párásító is kikapcsol ennyi idő után.",
+      "vent_open_pct": "Mennyire nyíljon ki a szellőző (pozicionálható szellőzők esetén).",
+      "manual_hold_minutes": "Miután kézzel átkapcsol egy eszközt, a ZoneFlow ennyi ideig békén hagyja. A 0 azt jelenti, hogy azonnal visszaveszi a vezérlést.",
+      "ventilation_failsafe": "Mit tegyenek a szellőzők és ventilátorok, ha nem működik belső hőmérséklet-érzékelő. A párásítók mindig kikapcsolnak.",
+      "heater_failsafe": "Mit tegyen a fűtés, ha nem működik belső hőmérséklet-érzékelő. Érzékelő nélkül soha nem működik folyamatosan.",
+      "misting_trigger": "Mi indítja el a párásítást: az indítók bármelyike, vagy csak a hőmérséklet, a páratartalom vagy a fény."
     }
   },
   "nb": {
@@ -1176,7 +1449,9 @@ const I18N = {
       "history": "Historikk",
       "safety": "Sikkerhetsgrenser og pumpe",
       "notifications": "Varsler",
-      "more": "Mer"
+      "more": "Mer",
+      "climate": "Klimastyring",
+      "misting": "Tåkelegging"
     },
     "overview": {
       "title": "Hage",
@@ -1231,7 +1506,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Finjustering av den daglige vanningen basert på dekke (-50 % til +70 %). Positive verdier brukes for bar jord som tørker raskt; negative verdier for jord som holder på fuktigheten (som tung leirjord eller i skygge). Store negative verdier reduserer vanningen betraktelig: bruk dette kun dersom jorden forblir våt, og følg med i en uke eller to.",
       "rain_eff_low": "Andel av lett regn som faktisk når røttene. Resten fordamper eller renner vekk.",
       "rain_eff_mid": "Andel av moderat regn som faktisk når røttene. Resten fordamper eller renner vekk.",
-      "rain_eff_high": "Andel av kraftig regn som faktisk når røttene. Resten fordamper eller renner vekk."
+      "rain_eff_high": "Andel av kraftig regn som faktisk når røttene. Resten fordamper eller renner vekk.",
+      "heat_temp": "Varmeovnen slås på når innendørstemperaturen faller under dette, og av igjen litt over (se Klimahysterese).",
+      "vent_temp": "Lufting åpnes når innendørstemperaturen når dette, og bare når uteluften er kaldere enn inne.",
+      "fan_temp": "Vifter slås på ved denne innendørstemperaturen (ved eller over luftingstemperaturen), og bare når uteluften er kaldere enn inne.",
+      "climate_hysteresis": "Avstanden mellom at en enhet slås på og av, slik at den ikke vipper fram og tilbake rundt én temperatur.",
+      "outside_margin": "Lufting starter bare når uteluften er minst så mye kaldere enn inne, slik at varmere luft aldri trekkes inn.",
+      "max_humidity": "Lufting og vifter kjører også når fuktigheten inne er over dette, med mindre det er kaldt.",
+      "mist_temp": "Tåkelegging kan starte når innendørstemperaturen er ved eller over dette.",
+      "mist_min_humidity": "Tåkelegging kan starte når fuktigheten inne faller til dette eller lavere.",
+      "mist_stop_humidity": "Tåkelegging kjører aldri når fuktigheten inne er ved eller over dette.",
+      "mist_min_temp": "Ingen tåkelegging under denne innendørstemperaturen.",
+      "mist_light_level": "Tåkelegging kan starte når lysmålingen når dette nivået (krever lyssensor).",
+      "mist_on_seconds": "Hvor lenge hver tåkeleggingspuls varer.",
+      "mist_off_seconds": "Hvilepause mellom tåkeleggingspulser.",
+      "max_mist_minutes_per_hour": "En øvre grense for tåkelegging i løpet av en 60-minutters periode. En tåkelegger slått på manuelt slås også av etter så lang tid.",
+      "vent_open_pct": "Hvor mye luftingen åpner seg (for ventiler som kan stilles inn i posisjon).",
+      "manual_hold_minutes": "Etter at du slår på en enhet manuelt, lar ZoneFlow den være i fred så lenge. 0 betyr at den tar over styringen igjen med en gang.",
+      "ventilation_failsafe": "Hva lufting og vifter gjør når ingen innvendig temperatursensor fungerer. Tåkeleggere slås alltid av.",
+      "heater_failsafe": "Hva varmeovnen gjør når ingen innvendig temperatursensor fungerer. Den kjører aldri uavbrutt uten sensor.",
+      "misting_trigger": "Hva som starter tåkelegging: enhver utløser, eller bare temperatur, fuktighet eller lys."
     }
   },
   "pt-BR": {
@@ -1263,7 +1557,9 @@ const I18N = {
       "history": "Histórico",
       "safety": "Limites de segurança e bomba",
       "notifications": "Notificações",
-      "more": "Mais"
+      "more": "Mais",
+      "climate": "Controle de clima",
+      "misting": "Nebulização"
     },
     "overview": {
       "title": "Jardim",
@@ -1318,7 +1614,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Ajuste fino da irrigação diária com base na cobertura do solo (-50% a +70%). Valores positivos são para solos expostos que secam rápido; valores negativos para solos que retêm umidade (como argilosos ou na sombra). Ajustes negativos altos reduzem bastante a irrigação: use-os apenas se o solo permanecer úmido e observe o resultado por uma ou duas semanas.",
       "rain_eff_low": "Proporção de chuva fraca que realmente atinge as raízes. O restante evapora ou escorre.",
       "rain_eff_mid": "Proporção de chuva moderada que realmente atinge as raízes. O restante evapora ou escorre.",
-      "rain_eff_high": "Proporção de chuva forte que realmente atinge as raízes. O restante evapora ou escorre."
+      "rain_eff_high": "Proporção de chuva forte que realmente atinge as raízes. O restante evapora ou escorre.",
+      "heat_temp": "O aquecedor liga quando a temperatura interna cai abaixo disto e desliga um pouco acima (veja Histerese do Clima).",
+      "vent_temp": "Aberturas de ventilação abrem quando a temperatura interna atinge este valor, e apenas quando o ar externo estiver mais frio que o interno.",
+      "fan_temp": "Ventiladores ligam nesta temperatura interna (na temperatura de ventilação ou acima), e apenas quando o ar externo estiver mais frio que o interno.",
+      "climate_hysteresis": "O intervalo entre um dispositivo ligar e desligar, para não oscilar em torno de uma mesma temperatura.",
+      "outside_margin": "A ventilação só começa quando o ar externo estiver pelo menos este valor mais frio que o interno, evitando puxar ar mais quente.",
+      "max_humidity": "Ventiladores e aberturas de ventilação também funcionam quando a umidade interna está acima disto, a menos que esteja frio.",
+      "mist_temp": "A nebulização pode iniciar quando a temperatura interna estiver igual ou acima disto.",
+      "mist_min_humidity": "A nebulização pode iniciar quando a umidade interna cair para isto ou menos.",
+      "mist_stop_humidity": "A nebulização nunca roda quando a umidade interna está igual ou acima disto.",
+      "mist_min_temp": "Sem nebulização abaixo desta temperatura interna.",
+      "mist_light_level": "A nebulização pode iniciar quando a leitura de luz atingir este nível (necessita de sensor de luz).",
+      "mist_on_seconds": "Duração de cada pulso de nebulização.",
+      "mist_off_seconds": "Tempo de descanso entre pulsos de nebulização.",
+      "max_mist_minutes_per_hour": "Limite máximo de nebulização a cada 60 minutos. Um nebulizador ligado manualmente também desliga após esse tempo.",
+      "vent_open_pct": "Quanto uma abertura de ventilação abre (para aberturas ajustáveis por posição).",
+      "manual_hold_minutes": "Após você acionar um dispositivo manualmente, o ZoneFlow o mantém inalterado por este tempo. 0 significa que ele retoma o controle imediatamente.",
+      "ventilation_failsafe": "O que aberturas e ventiladores fazem quando nenhum sensor de temperatura interna funciona. Nebulizadores sempre desligam.",
+      "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interna funciona. Ele nunca roda continuamente sem um sensor.",
+      "misting_trigger": "O que inicia a nebulização: qualquer um dos gatilhos ou apenas temperatura, umidade ou luminosidade."
     }
   },
   "ru": {
@@ -1350,7 +1665,9 @@ const I18N = {
       "history": "История",
       "safety": "Защитные лимиты и насос",
       "notifications": "Уведомления",
-      "more": "Ещё"
+      "more": "Ещё",
+      "climate": "Управление климатом",
+      "misting": "Туманообразование"
     },
     "overview": {
       "title": "Сад",
@@ -1405,7 +1722,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Точная настройка ежедневного полива в зависимости от покрытия почвы (от -50% до +70%). Положительные значения — для открытой, быстро сохнущей почвы; отрицательные — для влагоемких почв (глинистых или в тени). Сильно отрицательные значения существенно снижают полив: используйте их только если почва остается сырой, и наблюдайте за состоянием в течение 1-2 недель.",
       "rain_eff_low": "Доля слабого дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
       "rain_eff_mid": "Доля умеренного дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
-      "rain_eff_high": "Доля сильного дождя, которая реально доходит до корней. Остальное испаряется или стекает."
+      "rain_eff_high": "Доля сильного дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
+      "heat_temp": "Обогреватель включается, когда температура внутри опускается ниже этого значения, и отключается чуть выше него (см. Гистерезис климата).",
+      "vent_temp": "Форточки открываются при достижении этой температуры внутри и только если воздух снаружи прохладнее внутреннего.",
+      "fan_temp": "Вентиляторы включаются при этой температуре внутри (не ниже температуры открытия форточек) и только если воздух снаружи прохладнее внутреннего.",
+      "climate_hysteresis": "Интервал между включением и выключением устройства для предотвращения частых срабатываний около порогового значения.",
+      "outside_margin": "Проветривание начинается, только если воздух снаружи холоднее внутреннего минимум на эту величину, исключая забор жаркого воздуха.",
+      "max_humidity": "Форточки и вентиляторы также работают при превышении этой влажности внутри, если не холодно.",
+      "mist_temp": "Туманообразование запускается, если температура внутри достигла или превысила это значение.",
+      "mist_min_humidity": "Туманообразование запускается, если влажность внутри опустилась до этого значения или ниже.",
+      "mist_stop_humidity": "Туманообразование отключается при достижении этой влажности внутри или выше.",
+      "mist_min_temp": "Запрет туманообразования при температуре внутри ниже этого значения.",
+      "mist_light_level": "Туманообразование запускается при достижении этого уровня освещенности (требуется датчик освещенности).",
+      "mist_on_seconds": "Длительность одного импульса подачи тумана.",
+      "mist_off_seconds": "Длительность паузы между импульсами тумана.",
+      "max_mist_minutes_per_hour": "Лимит суммарного времени работы тумана за любой 60-минутный интервал. Ручное включение тумана также выключается по истечении этого времени.",
+      "vent_open_pct": "Степень открытия форточки (для форточек с поддержкой точного позиционирования).",
+      "manual_hold_minutes": "После ручного переключения устройства ZoneFlow не вмешивается в его работу указанное время. Значение 0 сразу возвращает автоматическое управление.",
+      "ventilation_failsafe": "Поведение форточек и вентиляторов при отказе датчика температуры внутри. Туманообразование всегда отключается.",
+      "heater_failsafe": "Поведение обогревателя при отказе датчика температуры внутри. Без датчика непрерывная работа запрещена.",
+      "misting_trigger": "Условие запуска тумана: любое из условий либо только температура, влажность или освещенность."
     }
   },
   "sk": {
@@ -1437,7 +1773,9 @@ const I18N = {
       "history": "História",
       "safety": "Bezpečnostné limity a čerpadlo",
       "notifications": "Oznámenia",
-      "more": "Viac"
+      "more": "Viac",
+      "climate": "Riadenie klímy",
+      "misting": "Zahmlievanie"
     },
     "overview": {
       "title": "Záhrada",
@@ -1492,7 +1830,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Jemné doladenie dennej závlahy podľa pokrytia pôdy (-50 % až +70 %). Kladné hodnoty pre odhalenú pôdu, ktorá rýchlo schne; záporné hodnoty pre pôdu zadržiavajúcu vodu (napr. ťažká ílovitá alebo v tieni). Výrazne záporné hodnoty značne obmedzia zálievku: používajte ich len vtedy, ak pôda zostáva mokrá, a stav týždeň až dva sledujte.",
       "rain_eff_low": "Podiel mierneho dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
       "rain_eff_mid": "Podiel stredne silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
-      "rain_eff_high": "Podiel silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí."
+      "rain_eff_high": "Podiel silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
+      "heat_temp": "Ohrievač sa zapne, keď vnútorná teplota klesne pod túto hodnotu, a vypne o niečo vyššie (pozri Hysterézia klímy).",
+      "vent_temp": "Vetranie sa otvorí, keď vnútorná teplota dosiahne túto hodnotu, a iba vtedy, keď je vonkajší vzduch chladnejší ako vnútorný.",
+      "fan_temp": "Ventilátory sa zapnú pri tejto vnútornej teplote (pri alebo nad teplotou vetrania) a iba vtedy, keď je vonkajší vzduch chladnejší ako vnútorný.",
+      "climate_hysteresis": "Medzera medzi zapnutím a vypnutím zariadenia, aby sa nezapínalo a nevypínalo neustále okolo jednej teploty.",
+      "outside_margin": "Vetranie sa spustí iba vtedy, keď je vonkajší vzduch aspoň o toliko chladnejší ako vnútorný, aby sa nikdy nevťahoval horúcejší vzduch.",
+      "max_humidity": "Ventilátory a vetranie bežia aj vtedy, keď je vnútorná vlhkosť nad touto hodnotou, pokiaľ nie je chladno.",
+      "mist_temp": "Zahmlievanie sa môže spustiť, keď je vnútorná teplota na alebo nad touto hodnotou.",
+      "mist_min_humidity": "Zahmlievanie sa môže spustiť, keď vnútorná vlhkosť klesne na túto alebo nižšiu hodnotu.",
+      "mist_stop_humidity": "Zahmlievanie nikdy nebeží, keď je vnútorná vlhkosť na alebo nad touto hodnotou.",
+      "mist_min_temp": "Žiadne zahmlievanie pod touto vnútornou teplotou.",
+      "mist_light_level": "Zahmlievanie sa môže spustiť, keď hodnota osvetlenia dosiahne túto úroveň (vyžaduje senzor osvetlenia).",
+      "mist_on_seconds": "Ako dlho trvá každý impulz zahmlievania.",
+      "mist_off_seconds": "Pauza medzi impulzmi zahmlievania.",
+      "max_mist_minutes_per_hour": "Pevný limit pre zahmlievanie počas akýchkoľvek 60 minút. Zahmlievač zapnutý ručne sa po tomto čase tiež vypne.",
+      "vent_open_pct": "Ako veľmi sa vetranie otvorí (pre vetranie, ktoré je možné nastaviť do polohy).",
+      "manual_hold_minutes": "Po ručnom prepnutí zariadenia ho ZoneFlow nechá bez zásahu na túto dobu. 0 znamená, že sa hneď znova ujme riadenia.",
+      "ventilation_failsafe": "Čo robia vetranie a ventilátory, keď nefunguje žiaden senzor vnútornej teploty. Zahmlievače sa vždy vypnú.",
+      "heater_failsafe": "Čo robí ohrievač, keď nefunguje žiaden senzor vnútornej teploty. Bez senzora nikdy nebeží nepretržite.",
+      "misting_trigger": "Čo spúšťa zahmlievanie: akýkoľvek zo spúšťačov, alebo iba teplota, vlhkosť či svetlo."
     }
   },
   "uk": {
@@ -1524,7 +1881,9 @@ const I18N = {
       "history": "Історія",
       "safety": "Запобіжні ліміти й насос",
       "notifications": "Сповіщення",
-      "more": "Більше"
+      "more": "Більше",
+      "climate": "Клімат-контроль",
+      "misting": "Туманоутворення"
     },
     "overview": {
       "title": "Сад",
@@ -1579,7 +1938,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "Точне налаштування щоденного поливу залежно від покриття ґрунту (від -50% до +70%). Додатні значення — для відкритого ґрунту, що швидко висихає; від'ємні — для ґрунту, що добре утримує вологу (наприклад, глинистого або в тіні). Значні від'ємні значення суттєво зменшують полив: використовуйте їх лише якщо ґрунт залишається вологим, і спостерігайте протягом 1-2 тижнів.",
       "rain_eff_low": "Частка слабкого дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
       "rain_eff_mid": "Частка помірного дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
-      "rain_eff_high": "Частка сильного дощу, яка дійсно досягає коріння. Решта випаровується або стікає."
+      "rain_eff_high": "Частка сильного дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
+      "heat_temp": "Обігрівач вмикається, коли температура всередині падає нижче цього значення, і вимикається трохи вище за нього (див. «Гістерезис клімату»).",
+      "vent_temp": "Кватирки відкриваються, коли температура всередині досягає цього значення, і лише якщо повітря зовні холодніше за внутрішнє.",
+      "fan_temp": "Вентилятори вмикаються при цій температурі всередині (рівній або вищій за температуру відкриття кватирок) і лише якщо повітря зовні холодніше.",
+      "climate_hysteresis": "Інтервал між увімкненням і вимкненням пристрою, щоб запобігти частому спрацьовуванню біля однієї точки температури.",
+      "outside_margin": "Провітрювання починається лише тоді, коли зовнішнє повітря холодніше за внутрішнє щонайменше на це значення, щоб не затягувати спеку.",
+      "max_humidity": "Вентилятори та кватирки також працюють, коли вологість всередині перевищує це значення, якщо надворі не холодно.",
+      "mist_temp": "Туманоутворення може вмикатися, коли температура всередині досягає цього значення або вища за нього.",
+      "mist_min_humidity": "Туманоутворення може вмикатися, коли вологість всередині падає до цього значення або нижче.",
+      "mist_stop_humidity": "Туманоутворення ніколи не працює, якщо вологість всередині досягає цього значення або перевищує його.",
+      "mist_min_temp": "Туманоутворення заборонено при температурі всередині нижче цієї межі.",
+      "mist_light_level": "Туманоутворення може вмикатися при досягненні цього рівня освітленості (потрібен датчик освітленості).",
+      "mist_on_seconds": "Тривалість кожного імпульсу туманоутворення.",
+      "mist_off_seconds": "Тривалість паузи між імпульсами туманоутворення.",
+      "max_mist_minutes_per_hour": "Строге обмеження загального часу туманоутворення за будь-які 60 хвилин. Туманоутворювач, увімкнений вручну, також вимкнеться після цього часу.",
+      "vent_open_pct": "Ступінь відкриття кватирок (для кватирок із підтримкою позиціонування).",
+      "manual_hold_minutes": "Після ручного перемикання пристрою ZoneFlow не змінюватиме його стан протягом цього часу. Значення 0 означає миттєве повернення під керування автоматики.",
+      "ventilation_failsafe": "Дія кватирок і вентиляторів при несправності всіх внутрішніх датчиків температури. Туманоутворювачі завжди вимикаються.",
+      "heater_failsafe": "Дія обігрівача при несправності всіх внутрішніх датчиків температури. Він ніколи не працює безперервно без датчика.",
+      "misting_trigger": "Що саме запускає туманоутворення: будь-який із тригерів або лише температура, вологість чи освітленість."
     }
   },
   "zh-Hans": {
@@ -1611,7 +1989,9 @@ const I18N = {
       "history": "历史",
       "safety": "安全限制与水泵",
       "notifications": "通知",
-      "more": "更多"
+      "more": "更多",
+      "climate": "环境控制",
+      "misting": "喷雾"
     },
     "overview": {
       "title": "花园",
@@ -1666,7 +2046,26 @@ const I18N = {
       "mulch_et_adjustment_pct": "根据土壤覆盖情况微调日常灌水量（-50% 至 +70%）。正值适用于干燥快的裸露土壤，负值适用于保水性强的土壤（如重黏土或阴凉区域）。较大的负值会大幅减少灌水量：仅建议在土壤持续湿润时使用，并观察一至两周。",
       "rain_eff_low": "小雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
       "rain_eff_mid": "中雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
-      "rain_eff_high": "大雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。"
+      "rain_eff_high": "大雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
+      "heat_temp": "当室内温度低于此值时开启加热器，高于此值一定幅度时再次关闭（参见“气候控制迟滞”）。",
+      "vent_temp": "当室内温度达到此值且室外空气比室内凉爽时，打开通风口。",
+      "fan_temp": "当室内温度达到此值（高于或等于通风口打开温度）且室外空气比室内凉爽时，开启风扇。",
+      "climate_hysteresis": "设备开启和关闭之间的温度差，防止设备在单一温度点附近频繁开关。",
+      "outside_margin": "仅当室外空气至少比室内凉爽此数值时才开启通风，以防吸入更热的空气。",
+      "max_humidity": "当室内湿度高于此值且天气不冷时，也将运行通风口和风扇。",
+      "mist_temp": "当室内温度达到或高于此值时可以启动喷雾。",
+      "mist_min_humidity": "当室内湿度降至或低于此值时可以启动喷雾。",
+      "mist_stop_humidity": "当室内湿度达到或高于此值时，绝不运行喷雾。",
+      "mist_min_temp": "低于此室内温度时不进行喷雾。",
+      "mist_light_level": "当光照读数达到此数值时可以启动喷雾（需要光照传感器）。",
+      "mist_on_seconds": "每次喷雾脉冲的持续时间。",
+      "mist_off_seconds": "喷雾脉冲之间的休息间隔。",
+      "max_mist_minutes_per_hour": "任何 60 分钟内喷雾总时长的硬性限制。手动开启的喷雾器也会在此时长后自动关闭。",
+      "vent_open_pct": "通风口打开的位置程度（适用于支持设置位置的通风口）。",
+      "manual_hold_minutes": "手动切换设备后，ZoneFlow 将在此时长内保持该状态不干预。设为 0 表示立即重新接管。",
+      "ventilation_failsafe": "当没有可用的室内温度传感器时通风口和风扇的动作。喷雾器将始终关闭。",
+      "heater_failsafe": "当没有可用的室内温度传感器时加热器的动作。在没有传感器的情况下，它绝不会不间断连续运行。",
+      "misting_trigger": "触发喷雾的条件：满足任意触发条件，或仅限温度、湿度或光照。"
     }
   }
 };
@@ -1675,6 +2074,11 @@ const I18N = {
 // listed lands by its category: settings -> "More", diagnostics ->
 // Diagnostics, everyday -> Now. So entities added later appear by themselves.
 const NOW = [
+  // Greenhouse / indoor zones (1.6)
+  "sensor.greenhouse_status",
+  "sensor.inside_vpd",
+  "binary_sensor.ventilation_allowed",
+  "sensor.misting_today",
   "sensor.soil_moisture",
   "sensor.soil_moisture_status",
   "sensor.next_irrigation_estimate",
@@ -1693,9 +2097,19 @@ const ONLY_WHEN = {
   // Once a first feed is recorded.
   "sensor.next_fertilizing": (state) => state && !["unknown", "unavailable"].includes(state.state),
 };
-const CONTROLS = ["switch.pause", "datetime.paused_until", "switch.deficit_mode"];
+const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const SETTINGS_GROUPS = [
+  ["climate", [
+    "number.heat_temp", "number.vent_temp", "number.fan_temp", "number.climate_hysteresis",
+    "number.outside_margin", "number.max_humidity", "number.vent_open_pct", "number.manual_hold_minutes",
+    "select.ventilation_failsafe", "select.heater_failsafe",
+  ]],
+  ["misting", [
+    "select.misting_trigger", "switch.mist_at_night", "number.mist_temp", "number.mist_min_humidity",
+    "number.mist_stop_humidity", "number.mist_min_temp", "number.mist_light_level",
+    "number.mist_on_seconds", "number.mist_off_seconds", "number.max_mist_minutes_per_hour",
+  ]],
   ["amounts", [
     "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
     "number.target_weekly_cool_mm", "select.demand_model", "number.crop_coefficient",
@@ -1918,7 +2332,10 @@ class ZoneFlowCard extends HTMLElement {
     const header = document.createElement("div");
     header.className = "header";
     const icon = document.createElement("ha-icon");
-    icon.setAttribute("icon", this._config.icon || "mdi:sprinkler-variant");
+    icon.setAttribute(
+      "icon",
+      this._config.icon || (visible["sensor.greenhouse_status"] && !visible["sensor.status"] ? "mdi:greenhouse" : "mdi:sprinkler-variant")
+    );
     const title = document.createElement("div");
     title.className = "title";
     title.textContent = this._config.title || device?.name_by_user || device?.name || t(hass, "zone");
@@ -2154,11 +2571,13 @@ class ZoneFlowCard extends HTMLElement {
     const hass = this._hass;
     for (const row of this._rows || []) row.hass = hass;
     if (!this._statusEl) return;
-    const status = hass.states[visible["sensor.status"]?.entity_id];
+    // A zone that waters shows its watering status; one that only
+    // controls the climate shows the climate status.
+    const status = hass.states[(visible["sensor.status"] || visible["sensor.greenhouse_status"])?.entity_id];
     const code = status?.attributes?.code;
     this._statusEl.textContent = status ? status.state : "";
     this._statusEl.classList.toggle("warn", ["lock_held", "refused_daily_cap", "refused_runtime_cap",
-      "refused_deep_soak_cap", "interrupted"].includes(code));
+      "refused_deep_soak_cap", "interrupted", "failsafe", "mist_halted"].includes(code));
   }
 }
 
@@ -2205,6 +2624,21 @@ class ZoneFlowCardEditor extends HTMLElement {
 // ---------------------------------------------------------------------------
 
 // Status code -> [short label, icon, is a warning].
+// Climate-only zones (no valve): the status text comes from the zone itself
+// (already in the user's language); only the icon and warning are chosen here.
+const CLIMATE_STATUS = {
+  climate_failsafe: ["mdi:alert-circle-outline", true],
+  climate_mist_halted: ["mdi:alert-circle-outline", true],
+  climate_heating: ["mdi:radiator", false],
+  climate_ventilating_temperature: ["mdi:fan", false],
+  climate_ventilating_humidity: ["mdi:fan", false],
+  climate_misting: ["mdi:water-outline", false],
+  climate_held: ["mdi:hand-back-right-outline", false],
+  climate_control_off: ["mdi:power-off", false],
+  climate_gate_blocked: ["mdi:window-closed-variant", false],
+  climate_idle: ["mdi:check-circle-outline", false],
+};
+
 const STATUS_LABELS = {
   watering: ["watering", "mdi:water", false],
   service_run: ["service_run", "mdi:wrench-clock", false],
@@ -2344,15 +2778,20 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const last = measured && !measured.hidden ? measured.entity_id : estimate?.entity_id;
       const button = keyed["button.run_routine"]?.entity_id;
       const plant = status?.attributes?.plant;
+      // A zone with no valve to water has no irrigation status: it shows
+      // its climate status instead.
+      const climateEntry = keyed["sensor.greenhouse_status"];
+      const climate = climateEntry && !climateEntry.hidden && keyed["sensor.status"]?.hidden ? climateEntry : null;
+      const climateState = climate ? hass.states[climate.entity_id] : null;
       const feed = hass.states[keyed["sensor.next_fertilizing"]?.entity_id];
       return {
         ...zone,
-        icon: this._config.icons?.[zone.device_id] || PLANT_ICONS[plant] || DEFAULT_ZONE_ICON,
-        code: status?.attributes?.code,
-        text: status?.state,
-        next: status?.attributes?.next_watering,
-        last,
-        button,
+        icon: this._config.icons?.[zone.device_id] || (climate ? "mdi:greenhouse" : PLANT_ICONS[plant] || DEFAULT_ZONE_ICON),
+        code: climate ? `climate_${climateState?.attributes?.code || ""}` : status?.attributes?.code,
+        text: climate ? climateState?.state : status?.state,
+        next: climate ? undefined : status?.attributes?.next_watering,
+        last: climate ? undefined : last,
+        button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
       };
@@ -2572,7 +3011,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
     for (const zone of zones) {
       const row = this._rows?.[zone.device_id];
       if (!row) continue;
-      const [labelKey, icon, warn] = STATUS_LABELS[zone.code] || [null, "mdi:help-circle-outline", false];
+      const climateLook = CLIMATE_STATUS[zone.code];
+      const [labelKey, icon, warn] = climateLook
+        ? [null, climateLook[0], climateLook[1]]
+        : STATUS_LABELS[zone.code] || [null, "mdi:help-circle-outline", false];
       row.statusIcon.setAttribute("icon", icon);
       row.statusText.textContent = labelKey ? t(hass, `overview.labels.${labelKey}`) : zone.text || "—";
       row.status.title = zone.text || "";
