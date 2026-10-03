@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Trvanie ručného podržania"
+      },
+      "sensor_offline_hours": {
+        "name": "Senzor offline po"
       }
     },
     "datetime": {

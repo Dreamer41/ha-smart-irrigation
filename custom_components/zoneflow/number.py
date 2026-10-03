@@ -104,7 +104,12 @@ class ZoneFlowNumber(RestoreNumber):
             # First time: the value chosen at setup (the climate step), else
             # the default. The fallback temperature of a zone set up before
             # it existed is seeded by ZoneFlowController._seed_fallback_temp.
-            initial = (self._entry.data.get(CONF_INITIAL_NUMBERS) or {}).get(self._key)
+            # Setup's values, then any added later (an outdoor zone changed to
+            # a greenhouse is seeded from its climate, config_flow zone_type).
+            initial = {
+                **(self._entry.data.get(CONF_INITIAL_NUMBERS) or {}),
+                **(self._entry.options.get(CONF_INITIAL_NUMBERS) or {}),
+            }.get(self._key)
             if initial is not None:
                 self.metric_value = float(initial)
             elif self._key == "fallback_temp":

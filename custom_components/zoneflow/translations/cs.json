@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Doba ruční blokace"
+      },
+      "sensor_offline_hours": {
+        "name": "Senzor offline po"
       }
     },
     "datetime": {

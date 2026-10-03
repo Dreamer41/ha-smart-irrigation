@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Manual Hold Time"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensor Offline After"
       }
     },
     "datetime": {

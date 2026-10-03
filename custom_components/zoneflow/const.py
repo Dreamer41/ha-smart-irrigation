@@ -467,6 +467,7 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "max_mist_minutes_per_hour": ("Max Misting Per Hour", 1.0, 60.0, 1.0, "min"),
     "vent_open_pct": ("Vent Open Position", 10.0, 100.0, 5.0, "%"),
     "manual_hold_minutes": ("Manual Hold Time", 0.0, 480.0, 5.0, "min"),
+    "sensor_offline_hours": ("Sensor Offline After", 1.0, 24.0, 1.0, "h"),
 }
 
 NUMBER_DEFAULTS: dict[str, float] = {
@@ -539,6 +540,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "max_mist_minutes_per_hour": 10.0,
     "vent_open_pct": 100.0,
     "manual_hold_minutes": 60.0,
+    "sensor_offline_hours": 4.0,
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"
@@ -727,6 +729,7 @@ GREENHOUSE_NUMBERS = (
     "heat_temp", "vent_temp", "fan_temp", "climate_hysteresis", "outside_margin", "max_humidity",
     "mist_temp", "mist_min_humidity", "mist_stop_humidity", "mist_min_temp", "mist_light_level",
     "mist_on_seconds", "mist_off_seconds", "max_mist_minutes_per_hour", "vent_open_pct", "manual_hold_minutes",
+    "sensor_offline_hours",
 )
 # Seeded from the climate preset at setup (greenhouse_logic.PRESET_SETPOINTS).
 GREENHOUSE_PRESET_NUMBER_KEYS = ("heat_temp", "vent_temp", "fan_temp", "mist_temp")
@@ -734,8 +737,8 @@ GREENHOUSE_PRESET_NUMBER_KEYS = ("heat_temp", "vent_temp", "fan_temp", "mist_tem
 # How the climate engine behaves (greenhouse.py).
 GREENHOUSE_EVAL_SECONDS = 30  # re-evaluate this often, and on any sensor change
 GREENHOUSE_SENSOR_GRACE_SECONDS = 120  # a sensor dropout shorter than this changes nothing
-GREENHOUSE_INSIDE_STALE_SECONDS = 2 * 3600  # no report for this long = failed sensor
-GREENHOUSE_OUTSIDE_STALE_SECONDS = 4 * 3600
+# A sensor with no report for "Sensor Offline After" hours counts as failed.
+GREENHOUSE_SERVICE_TIMEOUT_SECONDS = 15  # a device call that hangs longer has failed
 GREENHOUSE_INSIDE_TEMP_RANGE = (-30.0, 70.0)  # outside this a reading is a glitch, not a temperature
 GREENHOUSE_OUTSIDE_TEMP_RANGE = (-50.0, 70.0)
 GREENHOUSE_ISSUE_SENSOR_SECONDS = 600  # Repairs issue after this long on failsafe

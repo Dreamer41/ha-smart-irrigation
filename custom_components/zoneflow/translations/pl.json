@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Czas wstrzymania ręcznego"
+      },
+      "sensor_offline_hours": {
+        "name": "Czujnik offline po"
       }
     },
     "datetime": {

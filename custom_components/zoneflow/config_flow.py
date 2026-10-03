@@ -640,9 +640,17 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             if new_type == ZONE_TYPE_OUTDOOR and not self._has_valve():
                 errors["base"] = "valve_required_outdoor"
             else:
-                return self.async_create_entry(
-                    title="", data={**self._config_entry.options, CONF_ZONE_TYPE: new_type}
-                )
+                options = {**self._config_entry.options, CONF_ZONE_TYPE: new_type}
+                if new_type != ZONE_TYPE_OUTDOOR:
+                    # The heat / vent / fan / mist temperatures start from the
+                    # zone's climate, as at setup (only used by sliders that
+                    # have no value yet).
+                    preset = greenhouse_logic.preset_settings(self._merged().get(CONF_CLIMATE))
+                    options[CONF_INITIAL_NUMBERS] = {
+                        **{key: preset[key] for key in GREENHOUSE_PRESET_NUMBER_KEYS},
+                        **(options.get(CONF_INITIAL_NUMBERS) or {}),
+                    }
+                return self.async_create_entry(title="", data=options)
         return self.async_show_form(
             step_id="zone_type",
             data_schema=vol.Schema(

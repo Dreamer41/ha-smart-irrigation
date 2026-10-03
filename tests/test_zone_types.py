@@ -386,3 +386,20 @@ async def test_outdoor_settings_save_keeps_the_zone_type_option(hass, fake_valve
     assert result["type"] == FlowResultType.CREATE_ENTRY
     await hass.async_block_till_done()  # the update listener reloads the zone
     assert entry.options[CONF_ZONE_TYPE] == "outdoor" and entry.options["marker"] == 1
+
+
+@pytest.mark.asyncio
+async def test_outdoor_zone_changed_to_greenhouse_starts_from_its_climate_preset(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_CLIMATE
+
+    await _seed(hass)
+    entry = make_entry(hass, **{CONF_CLIMATE: "tropical"})
+    await _setup(hass, entry)
+    menu = await _menu(hass, entry)
+    form = await hass.config_entries.options.async_configure(menu["flow_id"], {"next_step_id": "zone_type"})
+    done = await hass.config_entries.options.async_configure(form["flow_id"], {CONF_ZONE_TYPE: "greenhouse"})
+    assert done["type"] == FlowResultType.CREATE_ENTRY
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller.number("heat_temp") == 15.0  # tropical, not the temperate default of 10
+    assert controller.number("vent_temp") == 28.0

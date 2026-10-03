@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Tempo di blocco manuale"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensore offline dopo"
       }
     },
     "datetime": {

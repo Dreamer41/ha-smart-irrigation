@@ -24,7 +24,10 @@ then pick *Greenhouse* or *Indoor* under **Where it grows**. ZoneFlow asks for:
    - *Fans* (`switch`, `input_boolean`, `fan`), *Vents* (`cover`, `switch`,
      `input_boolean`), *Misters* (`switch`, `input_boolean`, `valve`),
      *Heaters* (`switch`, `input_boolean`, `climate`). Several of each, of
-     mixed kinds, are fine.
+     mixed kinds, are fine. A simple space heater on a smart plug or relay
+     (Shelly, Sonoff and the like) is a `switch`; a `climate` heater is
+     switched between heat and off, and its own thermostat setting still
+     applies.
 2. **Does this zone water?** Pick the valve, or leave it empty for a
    climate-only zone (which needs at least one device).
 3. **Watering settings** (only with a valve), then the **climate**, which
@@ -60,7 +63,8 @@ readings with the zone's settings:
 The **Greenhouse Status** sensor says what it is doing and why, **Inside VPD**
 shows the vapour pressure deficit (for information), **Misting Today** and
 **Ventilation Allowed** complete the picture, and **Greenhouse Control**
-pauses the whole climate engine for maintenance. The ZoneFlow card shows all
+pauses the whole climate engine for maintenance (devices are left as they
+are, except a heater ZoneFlow switched on, which goes off). The ZoneFlow card shows all
 of it, with the climate settings under their own groups.
 
 ## Settings
@@ -82,6 +86,7 @@ of it, with the climate settings under their own groups.
 | Max Misting Per Hour | 10 min | 1–60 |
 | Vent Open Position | 100 % | 10–100 |
 | Manual Hold Time | 60 min | 0–480 |
+| Sensor Offline After | 4 h | 1–24 |
 
 The climate you pick at setup seeds the heater, vent, fan and misting
 temperatures: tropical 15 / 28 / 31 / 32 °C, hot summers 8 / 27 / 30 / 30,
@@ -92,15 +97,17 @@ below the humidity stop).
 
 ## When you switch a device yourself
 
-If you (or another automation or app) switch a role's device by hand,
-ZoneFlow leaves that role alone for *Manual Hold Time* and says so in the
+If you switch a role's device yourself -- in Home Assistant, with a wall
+button, in the device's own app -- or another automation does, ZoneFlow
+leaves that role alone for *Manual Hold Time* and says so in the
 status. A device coming back from "unavailable" is not treated as someone
 switching it. There is no "resume now" button; the hold ends by itself.
 
 ## Protecting the plants
 
-**If the inside temperature sensor fails** (unavailable, no report for 2
-hours, or an impossible value) for 2 minutes, ZoneFlow switches to its
+**If the inside temperature sensor fails** (unavailable, no report for
+*Sensor Offline After* -- 4 hours unless you change it -- or an impossible
+value) for 2 minutes, ZoneFlow switches to its
 failsafe: misters off immediately; vents and fans follow **Sensor
 Failsafe** (*Open vents, fans on* / *Close vents, fans off* / *Leave as they
 are*; the default follows your climate); the heater follows **Heater
@@ -111,6 +118,9 @@ Failsafe**:
 - **Part of the time while cold outside** — the same, but only while the
   outside temperature is below *Heater On Below* (the default when you have an
   outside sensor; off when you don't).
+
+While that heater is allowed to run because it is cold outside, the vents
+stay shut and the fans off, whatever *Sensor Failsafe* says.
 
 You get a phone message when the failsafe starts and when it ends, and a
 Repairs issue after 10 minutes. Shorter dropouts change nothing.
@@ -155,3 +165,6 @@ If you have a heater:
   press **Reset Irrigation Lock**.
 - A device is left alone for an hour: you switched it (or something else
   did); see "When you switch a device yourself".
+- *Failsafe* when nothing is wrong: a sensor that only reports when its
+  value changes can stay quiet for hours in a steady room. Raise *Sensor
+  Offline After*.

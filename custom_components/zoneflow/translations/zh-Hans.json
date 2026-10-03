@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "手动干预保持时间"
+      },
+      "sensor_offline_hours": {
+        "name": "传感器离线判定时间"
       }
     },
     "datetime": {

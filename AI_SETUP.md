@@ -1761,7 +1761,8 @@ Ask §1's question 4 first; this section is for when the answer was not
 **What the person gets.** From the inside temperature (and humidity) sensor
 ZoneFlow switches four kinds of device, each of which can be several
 entities of different kinds (a switch, an `input_boolean`, a `fan`, a
-`cover` for roof windows, a `valve`, or a `climate` entity for a heater):
+`cover` for roof windows, a `valve`, or a `climate` entity for a heater; a
+plain space heater on a Shelly or Sonoff plug is simply a `switch`):
 
 | Role | Entities it accepts | What it does |
 |---|---|---|
@@ -1803,6 +1804,7 @@ setup seeds the first four:
 | Mist At Night (switch) | off | misting is daytime only unless this is on |
 | Vent Open Position | 100 % | how far a cover opens |
 | Manual Hold Time | 60 min | how long a role is left alone after a person switches it by hand |
+| Sensor Offline After | 4 h | a sensor silent this long counts as offline (raise it if a steady sensor gives false failsafes) |
 
 Presets by climate: tropical heater 15, vents 28, fans 31, mist 32; hot
 summers 8 / 27 / 30 / 30; temperate 10 / 25 / 28 / 30; cool summers
@@ -1825,7 +1827,8 @@ the minimum temperature, while the heater is on, or in frost.
 heater is the one that matters:
 
 - *Sensor failsafe.* If the inside temperature sensor gives nothing usable
-  (unavailable, stale for 2 hours, or an impossible value) for **2
+  (unavailable, silent for *Sensor Offline After* -- 4 hours by default --
+  or an impossible value) for **2
   minutes**, control is on its failsafe: misters off immediately; vents and
   fans follow the zone's **Sensor Failsafe** select (*Open vents, fans on*
   / *Close vents, fans off* / *Leave as they are*; the default follows the
@@ -1841,7 +1844,9 @@ heater is the one that matters:
   temperature reading can cook a greenhouse; one that stays off can freeze
   it -- that is why it is part-time. Ask which risk worries the person more
   (a winter frost, or a hot day with the heater on) and set the select to
-  match; the default is a sound choice for most.
+  match; the default is a sound choice for most. While that heater may run
+  because it is known to be cold outside, the vents stay shut and the fans
+  off, whatever Sensor Failsafe says.
 - *Backup sensors.* In the zone's devices form the person can add one or
   more extra inside temperature sensors. If the main sensor stops, control
   carries on with the first backup that works (no failsafe, a Repairs issue
@@ -1870,8 +1875,10 @@ Hold Time** (default 60 minutes; 0 turns it off) and says so in the status
 -- it does not fight them. The exception is safety: the heater is still
 cut in a sensor failsafe set to *Off*, and a hand-switched mister is left
 on at most Max Misting Per Hour. There is no "resume now" button; the hold
-ends by itself. **Greenhouse Control** (switch) pauses the whole climate
-engine -- devices are left as they are -- for maintenance.
+ends by itself. A wall button, the device's own app or another automation
+counts as a person too. **Greenhouse Control** (switch) pauses the whole
+climate engine for maintenance -- devices are left as they are, except a
+heater ZoneFlow switched on, which is switched off.
 
 **What to create and what it shows.** The zone gets **Greenhouse Status**
 (one sentence: what it is doing and why, or why it is not), **Inside VPD**

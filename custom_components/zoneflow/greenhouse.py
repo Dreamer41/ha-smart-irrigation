@@ -10,10 +10,14 @@ Safety rules this module keeps:
     switches it off first. A mister that will not switch off halts misting
     (and tells the person) until Reset Irrigation Lock is pressed.
   * A mister found on at startup is switched off.
-  * An inside sensor that is unavailable, stale or implausible puts the zone
-    in failsafe (after a short grace): misters and heater off, vents and fans
-    as the zone's "Ventilation if sensor fails" setting says.
-  * Restart/unload leaves fans, vents and heater as they are.
+  * An inside sensor that is unavailable, silent for "Sensor Offline After"
+    or implausible puts the zone in failsafe (after a short grace): misters
+    off, the heater as "Heater Failsafe" says, vents and fans as "Sensor
+    Failsafe" says (shut while the failsafe heater may run).
+  * A heater ZoneFlow switched on is switched off at unload, shutdown and
+    "Greenhouse Control" off; fans and vents are left as they are.
+  * Only greenhouse and indoor zones run any of this.
+  * Every device call has a time limit (actuators.py).
 """
 from __future__ import annotations
 
@@ -34,7 +38,6 @@ from .const import (
     CONF_CLIMATE,
     GREENHOUSE_CONFIRM_SECONDS,
     GREENHOUSE_EVAL_SECONDS,
-    GREENHOUSE_INSIDE_STALE_SECONDS,
     GREENHOUSE_INSIDE_TEMP_RANGE,
     GREENHOUSE_ISSUE_OUTSIDE_SECONDS,
     GREENHOUSE_ISSUE_SENSOR_SECONDS,
@@ -43,7 +46,6 @@ from .const import (
     GREENHOUSE_MANUAL_GRACE_SECONDS,
     GREENHOUSE_MIN_TIMES,
     GREENHOUSE_MIST_STUCK_MARGIN_SECONDS,
-    GREENHOUSE_OUTSIDE_STALE_SECONDS,
     GREENHOUSE_OUTSIDE_TEMP_RANGE,
     GREENHOUSE_SENSOR_GRACE_SECONDS,
     LEVEL_INFO,
@@ -88,6 +90,7 @@ class GreenhouseManager:
         self._readings: gl.Readings | None = None
         self._commanded: dict[str, tuple[bool, float]] = {}
         self._unresponsive: set[str] = set()
+        self._position_sent: dict[str, tuple[float, float]] = {}
         self._inside_bad_since: float | None = None
         self._outside_bad_since: float | None = None
         self._failsafe_active = False
@@ -109,7 +112,9 @@ class GreenhouseManager:
     # ------------------------------------------------------------------
     @property
     def active(self) -> bool:
-        return self.c.has_climate_devices
+        # An outdoor zone never runs the climate engine, even with devices
+        # left in its settings from when it was a greenhouse.
+        return self.c.has_climate_devices and not self.c.is_outdoor
 
     def _role_entities(self, role: str) -> list[str]:
         return list(getattr(self.c, ROLE_ENTITIES[role]))
@@ -199,9 +204,15 @@ class GreenhouseManager:
         role = self._role_of(entity)
         if on is None or role is None:
             return
+        if role == "misters" and not on and not event.context.user_id:
+            # A mister going off by itself (its own auto-off timer, a cut-out)
+            # is the safe direction and no hold: the pulse loop sees it.
+            return
         now = time.time()
         commanded = self._commanded.get(entity)
-        manual = bool(event.context.user_id)
+        # Not ZoneFlow's command: a person (the HA app, a wall button, the
+        # device's own app) or another automation.
+        manual = bool(event.context.user_id) or commanded is None
         if commanded is not None:
             was_on, when = commanded
             if on == was_on or now - when < GREENHOUSE_MANUAL_GRACE_SECONDS:
@@ -309,11 +320,11 @@ class GreenhouseManager:
 
     def _read(self, now: float) -> gl.Readings:
         c = self.c
-        primary = self._number_from(
-            c.inside_temp_entity, *GREENHOUSE_INSIDE_TEMP_RANGE, GREENHOUSE_INSIDE_STALE_SECONDS, temperature=True
-        )
+        # Silent this long = offline ("Sensor Offline After", hours).
+        stale = c.number("sensor_offline_hours") * 3600
+        primary = self._number_from(c.inside_temp_entity, *GREENHOUSE_INSIDE_TEMP_RANGE, stale, temperature=True)
         backups = [
-            self._number_from(e, *GREENHOUSE_INSIDE_TEMP_RANGE, GREENHOUSE_INSIDE_STALE_SECONDS, temperature=True)
+            self._number_from(e, *GREENHOUSE_INSIDE_TEMP_RANGE, stale, temperature=True)
             for e in c.backup_temp_entities
         ]
         backup = next((value for value in backups if value is not None), None)
@@ -321,11 +332,9 @@ class GreenhouseManager:
         # The main sensor while it works; else the first backup that does.
         inside = primary if primary is not None else backup
         self._inside_source = "primary" if primary is not None else ("backup" if backup is not None else None)
-        outside = self._number_from(
-            c.outside_temp_entity, *GREENHOUSE_OUTSIDE_TEMP_RANGE, GREENHOUSE_OUTSIDE_STALE_SECONDS, temperature=True
-        )
-        humidity = self._number_from(c.inside_humidity_entity, 0.0, 100.0, GREENHOUSE_INSIDE_STALE_SECONDS, temperature=False)
-        light = self._number_from(c.light_entity, 0.0, 1e9, GREENHOUSE_OUTSIDE_STALE_SECONDS, temperature=False)
+        outside = self._number_from(c.outside_temp_entity, *GREENHOUSE_OUTSIDE_TEMP_RANGE, stale, temperature=True)
+        humidity = self._number_from(c.inside_humidity_entity, 0.0, 100.0, stale, temperature=False)
+        light = self._number_from(c.light_entity, 0.0, 1e9, stale, temperature=False)
         sun = self.hass.states.get("sun.sun")
         guard = c.frost_guard_c()
         return gl.Readings(
@@ -398,6 +407,10 @@ class GreenhouseManager:
 
         await self._failsafe_notices(decision, now)
         await self._issues(now)
+        if decision.control_off:
+            # Paused: nothing watches the temperature, so a heater ZoneFlow
+            # switched on doesn't stay on (one a person switched is theirs).
+            await self._heater_off_if_ours()
 
         # Cooling off before heating on, so they never fight.
         force = decision.failsafe or decision.control_off
@@ -439,6 +452,8 @@ class GreenhouseManager:
         if not mismatch:
             self._unresponsive.discard(role)
             self._set_device_issue()
+            if role == "vents" and desired:
+                await self._adjust_vent_positions(known, now)
             return
         role_on = any(on for _e, on in known)
         if desired != role_on:
@@ -449,6 +464,29 @@ class GreenhouseManager:
             self.c.store.state.gh_changed_ts[role] = now
         await self._command(role, mismatch, desired, now)
         await self._log(f"{ROLE_LABEL[role]} {'On' if desired else 'Off'}", "OK")
+
+    async def _adjust_vent_positions(self, known: list[tuple[str, bool]], now: float) -> None:
+        """Vents already open but not at Vent Open Position (the slider was
+        changed): move the ones that can be set to a position. Each target
+        is sent once per 10 minutes, so a vent that stops short of it is not
+        pestered every evaluation."""
+        target = self.c.number("vent_open_pct")
+        for entity, on in known:
+            if not on or entity.split(".", 1)[0] != "cover":
+                continue
+            state = self.hass.states.get(entity)
+            if state is None or state.state != "open":  # not while it is moving
+                continue
+            if not int(state.attributes.get("supported_features", 0)) & actuators.COVER_SET_POSITION:
+                continue
+            position = state.attributes.get("current_position")
+            if not isinstance(position, (int, float)) or abs(position - target) <= 5:
+                continue
+            sent = self._position_sent.get(entity)
+            if sent is not None and sent[0] == target and now - sent[1] < 600:
+                continue
+            self._position_sent[entity] = (target, now)
+            await self._command("vents", [entity], True, now)
 
     async def _command(self, role: str, entities: list[str], on: bool, now: float) -> None:
         context = Context()
@@ -478,23 +516,30 @@ class GreenhouseManager:
     async def _confirm(self, role: str, on: bool, attempt: int) -> None:
         """A device told to move must report it. One retry, then a Repairs
         issue and a phone message."""
-        if self._stopping or self._held(role, time.time()) > 0:
-            return
-        entities = self._role_entities(role)
-        wrong = [e for e in entities if actuators.entity_is_on(self.hass, e) is not on and e in self._commanded]
-        wrong = [e for e in wrong if self._commanded[e][0] == on]
-        if not wrong:
-            self._unresponsive.discard(role)
-            self._set_device_issue()
-            return
-        if attempt == 0:
-            await self._command(role, wrong, on, time.time())
-            self._timer(GREENHOUSE_CONFIRM_SECONDS, lambda _now: self.hass.async_create_task(self._confirm(role, on, 1)))
-            return
-        if role not in self._unresponsive:
-            self._unresponsive.add(role)
-            self._set_device_issue()
-            await self._notice("greenhouse_device", LEVEL_WARNING, device=ROLE_LABEL[role], entity=", ".join(wrong))
+        async with self._lock:  # not in the middle of an evaluation
+            if self._stopping or self._held(role, time.time()) > 0:
+                return
+            decision = self._decision
+            wanted = getattr(decision, role, None) if decision is not None else None
+            if wanted is not on:
+                return  # the situation changed since the command: the evaluation decides now
+            entities = self._role_entities(role)
+            wrong = [e for e in entities if actuators.entity_is_on(self.hass, e) is not on and e in self._commanded]
+            wrong = [e for e in wrong if self._commanded[e][0] == on]
+            if not wrong:
+                self._unresponsive.discard(role)
+                self._set_device_issue()
+                return
+            if attempt == 0:
+                await self._command(role, wrong, on, time.time())
+                self._timer(
+                    GREENHOUSE_CONFIRM_SECONDS, lambda _now: self.hass.async_create_task(self._confirm(role, on, 1))
+                )
+                return
+            if role not in self._unresponsive:
+                self._unresponsive.add(role)
+                self._set_device_issue()
+                await self._notice("greenhouse_device", LEVEL_WARNING, device=ROLE_LABEL[role], entity=", ".join(wrong))
 
     def _set_device_issue(self) -> None:
         names = ", ".join(ROLE_LABEL[r] for r in sorted(self._unresponsive))
@@ -521,6 +566,8 @@ class GreenhouseManager:
             await self._misters_off("failsafe" if decision.failsafe else "idle", ignore_hold=decision.failsafe)
             return
         if self._mist_task is None or self._mist_task.done():
+            if not any(actuators.entity_is_on(self.hass, e) is not None for e in self._role_entities("misters")):
+                return  # every mister offline: nothing to start (and nothing to log each time)
             self._mist_stop.clear()
             self._mist_task = self.c.entry.async_create_background_task(
                 self.hass, self._mist_loop(), name=f"zoneflow_mist_{self.c.entry.entry_id}"
@@ -646,7 +693,12 @@ class GreenhouseManager:
             e for e in self._role_entities("heater")
             if self._commanded.get(e, (False, 0.0))[0] and actuators.entity_is_on(self.hass, e) is True
         ]
+        if ours:
+            self.c.store.state.gh_changed_ts["heater"] = time.time()
+            if not self._stopping:
+                await self._log("Heater Off", "OK")
         for entity in ours:
+            self._commanded[entity] = (False, time.time())  # ours, not a person's (see _command)
             try:
                 await actuators.async_set(self.hass, entity, False, context=Context())
             except Exception as err:  # noqa: BLE001
@@ -751,9 +803,12 @@ class GreenhouseManager:
                 self._on_backup_since = now
                 await self._log("Backup Temperature Sensor In Use", "WARNING")
                 await self._notice("greenhouse_backup_sensor", LEVEL_WARNING, entity=c.inside_temp_entity or "")
-        elif self._on_backup_since is not None and self._inside_source == "primary":
+        elif self._on_backup_since is not None:
+            # Back on the main sensor, or no sensor at all (failsafe has
+            # taken over): either way no longer "running on a backup".
             self._on_backup_since = None
-            await self._log("Main Temperature Sensor Back", "OK")
+            if self._inside_source == "primary":
+                await self._log("Main Temperature Sensor Back", "OK")
         issues._set(
             self.hass, c, ISSUE_ON_BACKUP,
             self._on_backup_since is not None and now - self._on_backup_since >= GREENHOUSE_ISSUE_SENSOR_SECONDS,

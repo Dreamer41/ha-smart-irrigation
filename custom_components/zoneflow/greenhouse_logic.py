@@ -12,10 +12,11 @@ supervision.
 
 Order of priority, highest first:
   1. control off        -> misters off, everything else left alone
-  2. failsafe           -> inside temperature lost: misters off, vents/fans
-                           per "Sensor Failsafe", heater per "Heater Failsafe"
-                           (off / limited duty / limited duty while cold
-                           outside)
+  2. failsafe           -> inside temperature lost: misters off, heater per
+                           "Heater Failsafe" (off / limited duty / limited
+                           duty while cold outside), vents/fans per "Sensor
+                           Failsafe" -- but closed/off whenever that heater
+                           duty is in force (never heat the outside air)
   3. heating            -> heater on => vents closed, fans off, no misting
   4. cooling / humidity ventilation, through the outside-air gate
   5. misting            -> triggers, then hard blocks
@@ -170,25 +171,36 @@ def _latch(previous: bool, on: bool, off: bool) -> bool:
     return previous
 
 
-def _failsafe_heater(s: Settings, hw: Hardware, r: Readings, was_cold: bool) -> tuple[bool, bool]:
-    """(heater on?, cold-outside latch) with no inside temperature.
+def _failsafe_heater(s: Settings, hw: Hardware, r: Readings, was_cold: bool) -> tuple[bool, bool, bool]:
+    """(heater on?, cold-outside latch, cold outside?) with no inside
+    temperature.
 
     "limited": on for the first part of every period, whatever the weather.
     "outside": the same, but only while outside is below Heater On Below
     (off again once it is that plus the hysteresis). If the outside sensor
     has failed too it can't tell, so it heats limited -- the cold is the
     danger this mode was chosen for. Without an outside sensor at all: off.
+
+    The third value says it is known to be cold outside (the latch, kept
+    while the outside sensor is out) and the heater may run: the vents are
+    then kept shut through the whole duty cycle. When it isn't known to be
+    cold, the vents follow Sensor Failsafe even while a "limited" heater
+    runs -- a heater in a shut house on a hot day is the bigger danger.
     """
     mode = s.heater_failsafe
     duty_on = (r.failsafe_seconds % FAILSAFE_HEAT_PERIOD_SECONDS) < FAILSAFE_HEAT_ON_SECONDS
+    cold = was_cold
+    if hw.outside_sensor and r.outside_temp is not None:
+        cold = _latch(was_cold, on=r.outside_temp < s.heat_temp, off=r.outside_temp >= s.heat_temp + s.hysteresis)
+    if not hw.outside_sensor:
+        cold = False
     if mode == HEATER_FAILSAFE_LIMITED:
-        return duty_on, False
+        return duty_on, cold, cold
     if mode != HEATER_FAILSAFE_OUTSIDE or not hw.outside_sensor:
-        return False, False
+        return False, cold, False
     if r.outside_temp is None:
-        return duty_on, was_cold
-    cold = _latch(was_cold, on=r.outside_temp < s.heat_temp, off=r.outside_temp >= s.heat_temp + s.hysteresis)
-    return cold and duty_on, cold
+        return duty_on, cold, cold
+    return cold and duty_on, cold, cold
 
 
 def check_setpoints(s: Settings) -> str | None:
@@ -290,7 +302,9 @@ def decide(
     t = r.inside_temp
     if t is None:
         vent = {FAILSAFE_OPEN: True, FAILSAFE_CLOSED: False}.get(s.ventilation_failsafe)
-        heater, cold = _failsafe_heater(s, hw, r, previous.failsafe_cold)
+        heater, cold, heating = _failsafe_heater(s, hw, r, previous.failsafe_cold)
+        if heating and vent:
+            vent = False  # "open" is for the heat; it is cold, and the heater runs
         # Latches are reset so control restarts from the readings, not from
         # what it was doing before the sensor failed.
         return Decision(

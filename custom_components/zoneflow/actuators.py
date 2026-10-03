@@ -9,18 +9,27 @@ knows how to turn each domain on or off and how to tell whether it is on:
   cover                          open_cover / close_cover, or set_cover_position
                                  when asked for a part-open position it supports
   climate (heater)               set_hvac_mode heat / off
+
+Every call has a time limit: a device that never answers must not stall the
+climate engine (or a mister's off command) for ever.
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from homeassistant.core import Context, HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
+from .const import GREENHOUSE_SERVICE_TIMEOUT_SECONDS
+
 _LOGGER = logging.getLogger(__name__)
 
 OFFLINE = ("unavailable", "unknown")
 COVER_SET_POSITION = 4  # CoverEntityFeature.SET_POSITION
+# A climate entity counts as a heater that is on only in these modes ("cool"
+# or "fan_only", set by a person, is not ZoneFlow's heater running).
+CLIMATE_HEAT_MODES = ("heat", "heat_cool", "auto")
 
 
 def entity_is_on(hass: HomeAssistant, entity_id: str) -> bool | None:
@@ -43,7 +52,7 @@ def state_is_on(entity_id: str, state) -> bool | None:
     if domain == "valve":
         return state.state in ("open", "opening")
     if domain == "climate":
-        return state.state != "off"
+        return state.state in CLIMATE_HEAT_MODES
     return state.state == "on"
 
 
@@ -81,13 +90,19 @@ def _hvac_mode(hass: HomeAssistant, entity_id: str, on: bool) -> str:
         return "off"
     state = hass.states.get(entity_id)
     modes = list(state.attributes.get("hvac_modes", [])) if state else []
-    for wanted in ("heat", "heat_cool", "auto"):
+    for wanted in CLIMATE_HEAT_MODES:
         if wanted in modes:
             return wanted
     return "heat"
 
 
 async def _call(hass, domain, service, entity_id, context, **data) -> None:
-    await hass.services.async_call(
-        domain, service, {"entity_id": entity_id, **data}, blocking=True, context=context
-    )
+    try:
+        async with asyncio.timeout(GREENHOUSE_SERVICE_TIMEOUT_SECONDS):
+            await hass.services.async_call(
+                domain, service, {"entity_id": entity_id, **data}, blocking=True, context=context
+            )
+    except TimeoutError as err:
+        raise HomeAssistantError(
+            f"{entity_id} did not answer {domain}.{service} within {GREENHOUSE_SERVICE_TIMEOUT_SECONDS} s"
+        ) from err

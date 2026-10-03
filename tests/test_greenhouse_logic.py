@@ -336,3 +336,46 @@ def test_heater_failsafe_outside_without_outside_sensor_is_off():
 def test_failsafe_never_mists_whatever_the_heater_does():
     d = _fs("limited", inside_humidity=20, outside_temp=0)
     assert d.mist is False and d.failsafe is True
+
+
+# ------------------------------------------------------------ review fixes (1.6.0)
+
+def _failsafe(outside, mode, vent=gl.FAILSAFE_OPEN):
+    s = Settings(heat_temp=10, vent_temp=25, fan_temp=28, hysteresis=1.5,
+                 ventilation_failsafe=vent, heater_failsafe=mode)
+    return decide(s, ALL, Readings(inside_temp=None, outside_temp=outside, failsafe_seconds=0), Latches())
+
+
+@pytest.mark.parametrize("mode", [gl.HEATER_FAILSAFE_LIMITED, gl.HEATER_FAILSAFE_OUTSIDE])
+def test_failsafe_heating_in_the_cold_keeps_the_vents_shut(mode):
+    d = _failsafe(outside=2, mode=mode)
+    assert d.heater is True
+    assert d.vents is False and d.fans is False
+
+
+def test_failsafe_vents_follow_the_setting_when_it_is_not_cold():
+    d = _failsafe(outside=30, mode=gl.HEATER_FAILSAFE_LIMITED)
+    assert d.heater is True  # "limited" heats whatever the weather ...
+    assert d.vents is True and d.fans is True  # ... but a shut hot house is the bigger danger
+
+
+def test_failsafe_heater_off_leaves_vents_to_the_setting():
+    d = _failsafe(outside=2, mode=gl.HEATER_FAILSAFE_OFF)
+    assert d.heater is False and d.vents is True
+
+
+def test_failsafe_vents_stay_shut_through_the_heaters_off_part():
+    s = Settings(heat_temp=10, hysteresis=1.5, ventilation_failsafe=gl.FAILSAFE_OPEN,
+                 heater_failsafe=gl.HEATER_FAILSAFE_OUTSIDE)
+    d = decide(s, ALL, Readings(inside_temp=None, outside_temp=2, failsafe_seconds=900), Latches())
+    assert d.heater is False and d.vents is False
+
+
+def test_climate_heater_in_cool_mode_is_not_a_heater_that_is_on():
+    from homeassistant.core import State
+
+    from custom_components.zoneflow import actuators
+
+    assert actuators.state_is_on("climate.h", State("climate.h", "heat")) is True
+    assert actuators.state_is_on("climate.h", State("climate.h", "cool")) is False
+    assert actuators.state_is_on("climate.h", State("climate.h", "off")) is False

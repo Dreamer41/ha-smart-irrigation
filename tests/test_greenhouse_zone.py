@@ -176,6 +176,8 @@ async def test_failsafe_closed_mode_closes_vents(hass, devices):
     c = await _ready(hass, entry)
     hass.states.async_set(VENT, "open")
     hass.states.async_set(FAN, "on")
+    await hass.async_block_till_done()
+    c.store.state.gh_hold_until.clear()  # set up as the starting state, not a person's switching
     c.store.state.ventilation_failsafe = "closed"
     hass.states.async_set(INSIDE_TEMP, "unavailable")
     c.greenhouse._started = True
@@ -489,3 +491,206 @@ async def test_backup_sensor_checks_in_the_setup_form(hass):
         hass, {CONF_INSIDE_TEMP_ENTITY: INSIDE_TEMP, CONF_BACKUP_TEMP_ENTITIES: [INSIDE_TEMP]}
     ) == {CONF_BACKUP_TEMP_ENTITIES: "backup_same_as_inside"}
     assert _climate_errors(hass, {CONF_INSIDE_TEMP_ENTITY: INSIDE_TEMP, CONF_BACKUP_TEMP_ENTITIES: [BACKUP]}) == {}
+
+
+# ------------------------------------------------------------ review fixes (1.6.0)
+
+@pytest.mark.asyncio
+async def test_zone_changed_to_outdoor_no_longer_runs_the_climate_engine(hass, devices):
+    from custom_components.zoneflow.const import CONF_VALVE_ENTITY, CONF_ZONE_TYPE
+
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    assert c.greenhouse.active
+    hass.config_entries.async_update_entry(
+        entry, options={**entry.options, CONF_ZONE_TYPE: "outdoor", CONF_VALVE_ENTITY: "switch.gh_valve"}
+    )
+    hass.states.async_set("switch.gh_valve", "off")
+    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    c = hass.data[DOMAIN][entry.entry_id]
+    assert not c.greenhouse.active
+    devices.clear()
+    hass.states.async_set(INSIDE_TEMP, "3")
+    await _go(c)
+    assert not [call for call in devices if call[2] in (FAN, VENT, HEATER, MISTER)]
+    assert hass.states.get(HEATER).state == "off"
+
+
+@pytest.mark.asyncio
+async def test_a_device_that_never_answers_does_not_stall_the_engine(hass, devices, monkeypatch):
+    from custom_components.zoneflow import actuators
+
+    monkeypatch.setattr(actuators, "GREENHOUSE_SERVICE_TIMEOUT_SECONDS", 0.2)
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+
+    async def _hang(call):
+        await asyncio.sleep(3600)
+
+    hass.services.async_register("switch", "turn_on", _hang)
+    hass.states.async_set(INSIDE_TEMP, "3")
+    await asyncio.wait_for(_go(c), timeout=5)  # returns: the hung call timed out
+    assert c.greenhouse._decision.heater is True
+    assert not c.greenhouse._lock.locked()
+
+
+@pytest.mark.asyncio
+async def test_control_off_switches_off_a_heater_zoneflow_turned_on(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "5")
+    await _go(c)
+    assert hass.states.get(HEATER).state == "on"
+    c.store.state.greenhouse_enabled = False
+    await c.greenhouse.async_evaluate("test")
+    await hass.async_block_till_done()
+    assert hass.states.get(HEATER).state == "off"
+    assert c.greenhouse._held("heater", time.time()) == 0  # ZoneFlow's own off, not a manual hold
+
+
+@pytest.mark.asyncio
+async def test_control_off_leaves_a_heater_a_person_switched_on(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    c.store.state.greenhouse_enabled = False
+    hass.states.async_set(INSIDE_TEMP, "20")
+    hass.states.async_set(HEATER, "on", context=Context(user_id="person"))
+    await hass.async_block_till_done()
+    await _go(c)
+    assert hass.states.get(HEATER).state == "on"
+
+
+@pytest.mark.asyncio
+async def test_wall_button_or_other_automation_is_a_manual_hold(hass, devices):
+    """No HA user and never commanded by ZoneFlow (a Shelly button, the
+    device's own app, another automation): still a person's choice."""
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "20")
+    await _go(c)
+    hass.states.async_set(FAN, "on")  # no context user, no ZoneFlow command
+    await hass.async_block_till_done()
+    assert c.greenhouse._held("fans", time.time()) > 0
+    await c.greenhouse.async_evaluate("test")
+    assert hass.states.get(FAN).state == "on"
+
+
+@pytest.mark.asyncio
+async def test_sensor_offline_after_is_adjustable(hass, devices, monkeypatch):
+    from datetime import timedelta
+
+    from custom_components.zoneflow import greenhouse as gh_module
+
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "20")
+    await hass.async_block_till_done()
+    real_now = gh_module.dt_util.utcnow
+    monkeypatch.setattr(gh_module.dt_util, "utcnow", lambda: real_now() + timedelta(hours=3))
+    assert c.greenhouse._read(time.time()).inside_temp == 20.0  # default 4 h: still fine
+    monkeypatch.setattr(gh_module.dt_util, "utcnow", lambda: real_now() + timedelta(hours=5))
+    assert c.greenhouse._read(time.time()).inside_temp is None  # silent 5 h: offline
+    c.numbers["sensor_offline_hours"].metric_value = 6.0
+    assert c.greenhouse._read(time.time()).inside_temp == 20.0
+
+
+@pytest.mark.asyncio
+async def test_offline_misters_do_not_start_a_misting_loop(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(MISTER, "unavailable")
+    hass.states.async_set(INSIDE_TEMP, "33")  # misting by temperature
+    hass.states.async_set(INSIDE_HUM, "40")
+    await _go(c)
+    await c.greenhouse.async_evaluate("test")
+    assert c.greenhouse._decision.mist is True
+    assert c.greenhouse._mist_task is None
+
+
+# ------------------------------------------------- review fixes, second batch
+
+@pytest.mark.asyncio
+async def test_a_mister_switching_itself_off_is_not_a_manual_hold(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    await _go(c)
+    c.greenhouse._commanded[MISTER] = (True, time.time() - 100)  # a pulse ZoneFlow began a while ago
+    hass.states.async_set(MISTER, "on")
+    await hass.async_block_till_done()
+    hass.states.async_set(MISTER, "off")  # its own auto-off timer, no person involved
+    await hass.async_block_till_done()
+    assert c.greenhouse._held("misters", time.time()) == 0
+
+
+@pytest.mark.asyncio
+async def test_a_person_switching_a_mister_on_is_still_a_hold(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    await _go(c)
+    hass.states.async_set(MISTER, "on", context=Context(user_id="person"))
+    await hass.async_block_till_done()
+    assert c.greenhouse._held("misters", time.time()) > 0
+
+
+@pytest.mark.asyncio
+async def test_backup_issue_clears_when_both_sensors_are_gone(hass, devices):
+    from custom_components.zoneflow.const import CONF_BACKUP_TEMP_ENTITIES
+
+    entry = _entry(hass, **{CONF_BACKUP_TEMP_ENTITIES: ["sensor.gh_backup"]})
+    hass.states.async_set("sensor.gh_backup", "20")
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "unavailable")
+    await _go(c)
+    assert c.greenhouse._inside_source == "backup"
+    assert c.greenhouse._on_backup_since is not None
+    hass.states.async_set("sensor.gh_backup", "unavailable")
+    await c.greenhouse.async_evaluate("test")
+    assert c.greenhouse._inside_source is None
+    assert c.greenhouse._on_backup_since is None  # failsafe has taken over; not "on a backup"
+
+
+@pytest.mark.asyncio
+async def test_a_late_confirmation_does_not_resend_a_command_no_longer_wanted(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "5")
+    await _go(c)
+    assert hass.states.get(HEATER).state == "on"
+    # The heater was commanded on; it then stops reporting "on" and the zone
+    # warms up, so the evaluation now wants it off. The old confirm must not
+    # command it on again.
+    hass.states.async_set(HEATER, "off")
+    hass.states.async_set(INSIDE_TEMP, "20")
+    await c.greenhouse.async_evaluate("test")
+    devices.clear()
+    await c.greenhouse._confirm("heater", True, 0)
+    assert not [call for call in devices if call[1] == "turn_on" and call[2] == HEATER]
+
+
+@pytest.mark.asyncio
+async def test_changing_vent_open_position_moves_vents_that_are_already_open(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    positions = []
+
+    async def _set_position(call):
+        positions.append(call.data["position"])
+        hass.states.async_set(
+            VENT, "open",
+            {"supported_features": 4, "current_position": call.data["position"]}, context=call.context,
+        )
+
+    hass.services.async_register("cover", "set_cover_position", _set_position)
+    hass.states.async_set(INSIDE_TEMP, "30")
+    hass.states.async_set(OUTSIDE, "20")
+    hass.states.async_set(VENT, "open", {"supported_features": 4, "current_position": 100})
+    await hass.async_block_till_done()
+    c.store.state.gh_hold_until.clear()  # starting state, not a person's switching
+    await _go(c)
+    assert positions == []  # already where it should be
+    c.numbers["vent_open_pct"].metric_value = 50.0
+    await c.greenhouse.async_evaluate("test")
+    assert positions == [50]
+    await c.greenhouse.async_evaluate("test")
+    assert positions == [50]  # sent once, not every evaluation

@@ -93,7 +93,7 @@ GH_MIST = {
 }
 GH_MIST_HUMIDITY = {("number", "mist_min_humidity"), ("number", "mist_stop_humidity")}
 GH_LIGHT = {("number", "mist_light_level")}
-GH_ANY_DEVICE = {("number", "climate_hysteresis"), ("number", "manual_hold_minutes")}
+GH_ANY_DEVICE = {("number", "climate_hysteresis"), ("number", "manual_hold_minutes"), ("number", "sensor_offline_hours")}
 GH_ALL = _GH_NUMBERS | GH_ALWAYS | GH_HEAT | GH_VENT | GH_OUTSIDE | GH_HUMIDITY | GH_MIST
 
 # What a zone without a valve still shows: its phone-message setting and the

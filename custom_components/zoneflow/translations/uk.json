@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Час ручного утримання"
+      },
+      "sensor_offline_hours": {
+        "name": "Датчик офлайн через"
       }
     },
     "datetime": {

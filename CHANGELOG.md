@@ -11,9 +11,12 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 - **New**: the valve is optional — a **climate-only zone** has no watering at all, and its watering settings, sensors, buttons and Repairs issues are hidden
 - **New**: outside-air check — vents and fans only open when the outside air is cooler than inside, so a hot afternoon never gets hotter air
 - **New**: misting by temperature, humidity or light, in short pulses with hard limits: confirmed off, one retry, then it halts until Reset Irrigation Lock, stuck-mister watchdog, Max Misting Per Hour, no misting at night / when cold / while heating / in frost
-- **New**: failsafes — if the inside sensor fails, misters go off, vents and fans follow **Sensor Failsafe**, and the heater follows **Heater Failsafe** (off, part of the time, or part of the time while cold outside; 10 minutes on in every 20)
+- **New**: failsafes — if the inside sensor fails (unavailable, or silent for **Sensor Offline After**, 4 hours by default), misters go off, vents and fans follow **Sensor Failsafe**, and the heater follows **Heater Failsafe** (off, part of the time, or part of the time while cold outside; 10 minutes on in every 20). While that heater may run in the cold, the vents stay shut
+- **New**: every device command has a time limit, so a device that never answers can't stall the climate control
 - **New**: **backup inside temperature sensors** — control carries on with the first working one, and you are told if main and backup disagree by more than 5 °C for 30 minutes
-- **New**: Manual Hold — a device you switch by hand is left alone for a set time; a device coming back from unavailable is not mistaken for you
+- **New**: Manual Hold — a device you switch yourself (in Home Assistant, with a wall button or the device's own app) or another automation switches is left alone for a set time; a device coming back from unavailable is not mistaken for you
+- **New**: changing **Vent Open Position** moves vents that are already open; an outdoor zone changed to a greenhouse starts from its climate's temperatures
+- **New**: turning **Greenhouse Control** off switches off a heater ZoneFlow had switched on
 - **New**: Greenhouse Status, Inside VPD, Misting Today and Ventilation Allowed sensors, the Greenhouse Control switch, and about 20 climate settings that appear only when the hardware they act on is set up
 - **New**: add or change sensors, backup sensors and devices later under Configure → Valve, sensors and climate devices — no re-setup
 - **New**: the ZoneFlow card and overview card show climate zones (status, climate settings groups, greenhouse icon for valveless zones)

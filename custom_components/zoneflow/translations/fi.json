@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Manuaalisen ohituksen kesto"
+      },
+      "sensor_offline_hours": {
+        "name": "Anturin katkosraja"
       }
     },
     "datetime": {

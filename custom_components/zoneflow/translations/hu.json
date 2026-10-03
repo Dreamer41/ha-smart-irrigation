@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Kézi tartási idő"
+      },
+      "sensor_offline_hours": {
+        "name": "Érzékelő offline ennyi után"
       }
     },
     "datetime": {

@@ -650,6 +650,9 @@
       },
       "manual_hold_minutes": {
         "name": "Tid för manuell spärr"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensor offline efter"
       }
     },
     "datetime": {
