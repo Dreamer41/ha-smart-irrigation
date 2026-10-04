@@ -1260,6 +1260,9 @@
     },
     "manual_rain_too_old": {
       "message": "Regn kan anges som mest 14 dagar bakåt."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {

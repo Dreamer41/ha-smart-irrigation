@@ -1260,6 +1260,9 @@
     },
     "manual_rain_too_old": {
       "message": "Dážď je možné zadať maximálne 14 dní spevane."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {

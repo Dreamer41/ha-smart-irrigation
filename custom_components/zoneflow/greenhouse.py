@@ -27,6 +27,7 @@ import logging
 import time
 from typing import TYPE_CHECKING, Any, Callable
 
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.core import Context, Event, HomeAssistant, callback
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.event import async_call_later, async_track_state_change_event, async_track_time_interval
@@ -36,6 +37,7 @@ import homeassistant.util.dt as dt_util
 from . import actuators, greenhouse_logic as gl, issues, messages, units
 from .const import (
     CONF_CLIMATE,
+    DOMAIN,
     GREENHOUSE_CONFIRM_SECONDS,
     GREENHOUSE_EVAL_SECONDS,
     GREENHOUSE_INSIDE_TEMP_RANGE,
@@ -251,7 +253,10 @@ class GreenhouseManager:
         """The Resume Automatic button: every manual hold ends now."""
         state = self.c.store.state
         if not state.gh_hold_until:
-            return
+            # Nothing was switched by hand: say so (Home Assistant shows
+            # this as a message), and look at the climate again anyway.
+            await self.async_evaluate("resume")
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="nothing_on_hold")
         state.gh_hold_until.clear()
         await self.c.store.async_save()
         await self._log("Automatic Resumed", "INFO")

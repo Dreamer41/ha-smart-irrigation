@@ -143,3 +143,17 @@ async def test_manual_hold_time_carries_over_to_auto_resume_after(hass, devices,
     assert c.number("auto_resume_hours") == hours
     assert registry.async_get(old.entity_id) is None  # the old slider is gone
     assert greenhouse.NO_AUTO_RESUME_SECONDS > 0
+
+
+@pytest.mark.asyncio
+async def test_pressing_resume_with_nothing_on_hold_says_so(hass, devices):
+    from homeassistant.exceptions import ServiceValidationError
+
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "20")
+    await _go(c)
+    assert not c.store.state.gh_hold_until
+    with pytest.raises(ServiceValidationError) as err:
+        await _press(hass, entry, "resume_automatic")
+    assert err.value.translation_key == "nothing_on_hold"

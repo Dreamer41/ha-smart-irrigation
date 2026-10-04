@@ -1260,6 +1260,9 @@
     },
     "manual_rain_too_old": {
       "message": "Déšť lze zadat maximálně 14 dní zpětně."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {

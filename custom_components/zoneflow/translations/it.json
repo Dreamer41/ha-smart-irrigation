@@ -1260,6 +1260,9 @@
     },
     "manual_rain_too_old": {
       "message": "La pioggia può essere inserita al massimo fino a 14 giorni fa."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {

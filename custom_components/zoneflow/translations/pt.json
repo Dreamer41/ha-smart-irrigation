@@ -1260,6 +1260,9 @@
     },
     "manual_rain_too_old": {
       "message": "A chuva pode ser registrada no máximo com 14 dias de antecedência."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
