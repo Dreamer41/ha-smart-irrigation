@@ -10,7 +10,8 @@
  * (hidden entities) stays out. Rows are Home Assistant's own entity rows,
  * so units, sliders, toggles and more-info work as everywhere else.
  *
- * Also here: zoneflow-overview-card, every zone in one table (further down).
+ * Also here: zoneflow-overview-card, every zone in one table (further down),
+ * and a dashboard strategy that builds a whole dashboard from the zones.
  */
 const CARD_VERSION = "1.6.0";
 
@@ -3234,6 +3235,81 @@ class ZoneFlowOverviewCardEditor extends HTMLElement {
   }
 }
 
+// A ready-made dashboard: an overview tab and one tab per zone, built from
+// the zones that exist each time the dashboard opens -- so a new zone
+// appears by itself. Settings -> Dashboards -> Add dashboard -> new from
+// scratch, then in its raw editor:
+//
+//   strategy:
+//     type: custom:zoneflow
+//
+// (Home Assistant's own "take control" turns it into a normal dashboard to
+// edit by hand.) The tabs reuse the two cards above.
+function slug(text) {
+  return String(text || "zone")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "zone";
+}
+
+function zoneIcon(hass, zone) {
+  const registry = Object.values(hass.entities || {});
+  // Greenhouse and indoor zones have a climate status of their own.
+  const climate = registry.some(
+    (e) => e.platform === "zoneflow" && e.device_id === zone.device_id && e.translation_key === "greenhouse_status"
+  );
+  if (climate) return "mdi:greenhouse";
+  const plant = hass.states?.[zone.status]?.attributes?.plant;
+  return PLANT_ICONS[plant] || DEFAULT_ZONE_ICON;
+}
+
+function buildDashboard(hass) {
+  const zones = allZones(hass).sort((a, b) => a.name.localeCompare(b.name, hass.locale?.language || undefined));
+  const views = [];
+  if (!zones.length) {
+    return {
+      title: "ZoneFlow",
+      views: [{
+        title: "ZoneFlow",
+        path: "zoneflow",
+        icon: DEFAULT_ZONE_ICON,
+        cards: [{ type: "markdown", content: "No ZoneFlow zones yet. Add one under Settings → Devices & services." }],
+      }],
+    };
+  }
+  views.push({
+    title: t(hass, "overview.title"),
+    path: "overview",
+    icon: "mdi:view-dashboard-outline",
+    cards: [{ type: "custom:zoneflow-overview-card" }],
+  });
+  const used = new Set(["overview"]);
+  for (const zone of zones) {
+    let path = slug(zone.name);
+    for (let n = 2; used.has(path); n += 1) path = `${slug(zone.name)}-${n}`;
+    used.add(path);
+    views.push({
+      title: zone.name,
+      path,
+      icon: zoneIcon(hass, zone),
+      cards: [{ type: "custom:zoneflow-card", device_id: zone.device_id }],
+    });
+  }
+  return { title: "ZoneFlow", views };
+}
+
+class ZoneFlowDashboardStrategy extends HTMLElement {
+  static async generate(config, hass) {
+    return buildDashboard(hass);
+  }
+
+  static async generateDashboard(info) {
+    return buildDashboard(info.hass);
+  }
+}
+
 // Defined as soon as this file loads -- and again if Home Assistant's
 // frontend replaces the page's custom-element registry afterwards (it can
 // install a scoped-registry polyfill after early-loaded modules like this
@@ -3243,6 +3319,8 @@ const ELEMENTS = [
   ["zoneflow-card-editor", ZoneFlowCardEditor],
   ["zoneflow-overview-card", ZoneFlowOverviewCard],
   ["zoneflow-overview-card-editor", ZoneFlowOverviewCardEditor],
+  // The dashboard strategy: `strategy: {type: custom:zoneflow}`.
+  ["ll-strategy-dashboard-zoneflow", ZoneFlowDashboardStrategy],
 ];
 function defineElements() {
   for (const [tag, cls] of ELEMENTS) {

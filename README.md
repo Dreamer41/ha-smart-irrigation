@@ -255,6 +255,19 @@ and both zones get less water than their calibrated runtime assumes.
 
 ## Dashboard
 
+**A whole dashboard, built for you (1.6.1).** Settings → Dashboards → **Add
+dashboard** → *New dashboard from scratch*, open it, ⋮ → **Raw configuration
+editor**, and replace everything with:
+
+```yaml
+strategy:
+  type: custom:zoneflow
+```
+
+You get an **overview** tab and **one tab per zone** with the full ZoneFlow
+card. It is built from your zones each time the dashboard opens, so a new
+zone appears by itself. To edit it by hand later, ⋮ → **Take control**.
+
 **The ZoneFlow card comes with the integration** — nothing to install or
 add as a resource. Edit a dashboard → **Add card** → **ZoneFlow zone** →
 pick the zone. Or in YAML:

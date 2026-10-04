@@ -2448,6 +2448,20 @@ as polished as a purpose-built dashboard (gauges, sparklines, a custom
 panel) — if they want that, it's a separate, bigger undertaking outside
 what this integration ships with.
 
+**Quickest option (1.6.1+): the auto-generated dashboard.** Instead of
+placing cards, the person can add a dashboard (Settings -> Dashboards -> Add
+dashboard -> New dashboard from scratch, then ⋮ -> Raw configuration editor)
+with just:
+
+```yaml
+strategy:
+  type: custom:zoneflow
+```
+
+It builds an overview tab plus one tab per zone (the ZoneFlow card) from the
+zones that exist each time it opens, so new zones appear by themselves.
+Offer it first; build cards by hand only if they want a custom layout.
+
 ## 9a. Optional finishing touch: a plain-language cheat sheet
 
 This only applies if the person said yes to it back in §1's item 6 —
