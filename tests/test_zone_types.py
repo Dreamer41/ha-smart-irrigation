@@ -405,3 +405,37 @@ async def test_outdoor_zone_changed_to_greenhouse_starts_from_its_climate_preset
     controller = hass.data[DOMAIN][entry.entry_id]
     assert controller.number("heat_temp") == 15.0  # tropical, not the temperate default of 10
     assert controller.number("vent_temp") == 28.0
+
+
+# ------------------------------------------- a greenhouse that waters with a probe
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("moisture", "runs"), [("10", True), ("80", False)])
+async def test_greenhouse_with_valve_and_soil_probe_waters_by_the_moisture(hass, fake_valve_services, moisture, runs):
+    """A greenhouse or indoor zone with a valve waters like an outdoor zone,
+    including by its soil-moisture probe: dry soil waters early, wet soil
+    skips."""
+    from unittest.mock import AsyncMock
+
+    probe = "sensor.gh_soil_moisture"
+    await _seed(hass)
+    hass.states.async_set(probe, moisture)
+    entry = make_entry(
+        hass, **{CONF_ZONE_TYPE: "greenhouse", CONF_INSIDE_TEMP_ENTITY: INSIDE_TEMP, "soil_moisture_entity": probe}
+    )
+    controller = await _setup(hass, entry)
+    assert controller.has_valve and controller.soil_moisture_entity == probe
+    registry = {(e.domain, e.translation_key): e for e in _reg(hass, entry)}
+    # The probe's own settings and sensors are shown, not hidden.
+    assert registry[("sensor", "soil_moisture")].hidden_by is None
+    assert registry[("number", "soil_moisture_dry_pct")].hidden_by is None
+    # Last watering just now (the interval is not due): only the probe can start one.
+    import homeassistant.util.dt as dt_util
+
+    controller.store.state.last_routine_ts = dt_util.utcnow().timestamp() if runs else 0.0
+    controller.store.state.last_significant_rain_ts = 0.0
+    spy = AsyncMock(return_value=True)
+    controller._run_pulses = spy
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert spy.called is runs

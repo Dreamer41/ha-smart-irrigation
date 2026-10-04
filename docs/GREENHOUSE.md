@@ -10,6 +10,26 @@ them.
 Greenhouse and indoor zones have no rain gauge and no weather forecast (there
 is a roof). If real rain does reach your plants, set the zone up as outdoor.
 
+## Watering a greenhouse or indoor zone
+
+Pick a **valve** and the zone waters in the same way as an outdoor zone,
+with everything under *Watering settings*:
+
+- the **soil-moisture probe** (optional): dry soil waters early, wet soil
+  skips, with the same dry and wet thresholds as outdoors;
+- soil type, drainage, slope, irrigation method, the routine and deep soak
+  times (or sunrise/sunset offsets), the growth ramp, pump power sensor,
+  flow meter and the pump sharing between zones;
+- the weekly water targets, ET curve, mulch, deficit mode, pause and
+  snooze, and the service runs.
+
+What is different under a roof: **no rain credit and no forecast** (no rain
+gauge or weather service is asked for, so Weather Underground rain and
+manual rain don't apply), **no frost guard**, and the hot / cool / normal
+water target follows the **inside temperature** instead of an outside one.
+A probe is the best way to water a greenhouse: rain never tops it up, so
+the soil's own reading is the truth.
+
 ## Set it up
 
 **Settings → Devices & Services → Add Integration → ZoneFlow Irrigation**,

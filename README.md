@@ -138,7 +138,11 @@ zone. Besides watering, ZoneFlow can then run the climate of the space:
   short supervised pulses with an hourly cap.
 - **An outside-air check** so ventilation never pulls in hotter air (needs
   an outside temperature sensor; optional).
-- **No valve needed**: a climate-only zone has no watering at all.
+- **Watering too**: give the zone a valve and it waters like an outdoor
+  zone, including a soil-moisture probe (dry soil waters early, wet soil
+  skips); the water target follows the inside temperature, with no rain
+  credit or forecast. **No valve needed** for a climate-only zone, which has
+  no watering at all.
 - **Failsafes**: if the inside sensor fails, misters stop, vents and fans
   follow your **Sensor Failsafe** choice and the heater follows the **Heater
   Failsafe** (off, part of the time, or part of the time while cold
