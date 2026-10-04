@@ -10,7 +10,9 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from . import frontend, issues, summary, visibility
+import homeassistant.util.dt as dt_util
+
+from . import frontend, issues, summary, units, visibility
 from .const import DOMAIN, PLATFORMS
 from .controller import ZoneFlowController
 
@@ -20,6 +22,7 @@ SERVICE_RESET_LOCK = "reset_lock"
 SERVICE_TEST_PULSE = "test_pulse"
 SERVICE_SNOOZE_TODAY = "snooze_today"
 SERVICE_SEND_WEEKLY_SUMMARY = "send_weekly_summary"
+SERVICE_ADD_RAIN = "add_rain"
 
 # These five are domain-level services, not entity-platform services, so
 # Home Assistant's automatic area/device -> entity expansion (the thing
@@ -48,6 +51,16 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 TEST_PULSE_SCHEMA = vol.Schema(
     {
         vol.Optional("seconds", default=10): vol.All(int, vol.Range(min=1, max=120)),
+        **_ZONE_TARGET_FIELDS,
+    }
+)
+
+
+ADD_RAIN_SCHEMA = vol.Schema(
+    {
+        # In the zone's units: mm, or inches on an imperial zone.
+        vol.Required("amount"): vol.All(vol.Coerce(float), vol.Range(min=0.01, max=500)),
+        vol.Optional("when"): cv.datetime,
         **_ZONE_TARGET_FIELDS,
     }
 )
@@ -160,6 +173,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_TEST_PULSE, _handle_test_pulse, schema=TEST_PULSE_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_SNOOZE_TODAY, _handle_snooze_today, schema=ZONE_TARGET_SCHEMA)
 
+        async def _handle_add_rain(call: ServiceCall) -> None:
+            controller = _resolve_controller(hass, call)
+            amount_mm = units.to_metric("manual_rain_mm", call.data["amount"], controller.imperial)
+            when = call.data.get("when")
+            when_ts = None
+            if when is not None:
+                when_ts = dt_util.as_utc(when).timestamp()
+            await controller.add_manual_rain(amount_mm, when_ts)
+
+        hass.services.async_register(DOMAIN, SERVICE_ADD_RAIN, _handle_add_rain, schema=ADD_RAIN_SCHEMA)
+
         async def _handle_send_weekly_summary(call: ServiceCall) -> None:
             # Now, to every phone with a zone that has a weekly summary set --
             # a preview; the weekly counts carry on until the real one.
@@ -193,6 +217,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_TEST_PULSE,
                 SERVICE_SNOOZE_TODAY,
                 SERVICE_SEND_WEEKLY_SUMMARY,
+                SERVICE_ADD_RAIN,
             ):
                 hass.services.async_remove(DOMAIN, service)
             summary.async_teardown(hass)

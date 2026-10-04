@@ -653,6 +653,9 @@
       },
       "sensor_offline_hours": {
         "name": "Senzor offline po"
+      },
+      "manual_rain_mm": {
+        "name": "Manual Rain"
       }
     },
     "datetime": {
@@ -705,6 +708,9 @@
       },
       "mark_watered": {
         "name": "Označiť ako zaliate"
+      },
+      "add_manual_rain": {
+        "name": "Add Manual Rain"
       }
     },
     "binary_sensor": {
@@ -1052,6 +1058,28 @@
     "send_weekly_summary": {
       "name": "Odoslať týždenný súhrn teraz",
       "description": "Hneď odošle týždenný súhrn do každého telefónu, ktorý má zónu s nastaveným dňom Týždenného súhrnu – ako ukážku; týždenné počty pokračujú až do plánovaného súhrnu."
+    },
+    "add_rain": {
+      "name": "Add Rain",
+      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "fields": {
+        "amount": {
+          "name": "Amount",
+          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+        },
+        "when": {
+          "name": "When",
+          "description": "When the rain fell (default now). At most 14 days back."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1112,18 @@
     },
     "zone_has_no_valve": {
       "message": "Táto zóna nemá ventil, takže nemôže zavlažovať. Ak chcete, pridajte ventil v časti Konfigurácia."
+    },
+    "manual_rain_zero": {
+      "message": "Set the Manual Rain amount above 0 first."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Manual rain is only for outdoor zones."
+    },
+    "manual_rain_future": {
+      "message": "Rain can't be entered for a time in the future."
+    },
+    "manual_rain_too_old": {
+      "message": "Rain can be entered at most 14 days back."
     }
   },
   "issues": {

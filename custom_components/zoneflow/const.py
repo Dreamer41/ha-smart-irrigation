@@ -361,6 +361,9 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "deep_soak_rain_threshold": ("Deep Soak Rain Ceiling (14d)", 0.0, 100.0, 5.0, "mm"),
     "rain_mm_per_tip": ("Rain Gauge mm per Tip (Calibration)", 0.05, 1.0, 0.001, "mm"),
     "preirrigation_rain_threshold_mm": ("Pre-Irrigation Cancel Threshold (30min)", 0.5, 20.0, 0.5, "mm"),
+    # Manual rain (1.6.1): the amount the "Add Manual Rain" button adds,
+    # back to 0 after each press (controller.add_manual_rain_from_number).
+    "manual_rain_mm": ("Manual Rain", 0.0, 200.0, 0.5, "mm"),
     # Only matter when another zone shares this zone's pump-power entity --
     # see ZoneFlowController._get_pump_lock. Default 0 on both means no
     # behavior change for a single-zone/independent-pump setup.
@@ -494,6 +497,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "deep_soak_rain_threshold": 40.0,
     "rain_mm_per_tip": 0.3,
     "preirrigation_rain_threshold_mm": 3.0,
+    "manual_rain_mm": 0.0,
     "pump_preamble_seconds": 0.0,
     "pump_postamble_seconds": 0.0,
     "forecast_rain_threshold_mm": 3.0,

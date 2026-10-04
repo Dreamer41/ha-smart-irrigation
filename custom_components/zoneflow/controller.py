@@ -43,7 +43,7 @@ import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, units
+from . import calculations as calc, issues, messages, units, visibility
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
@@ -141,6 +141,7 @@ from .const import (
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
 )
+from .rain_tracker import MANUAL_RAIN_MAX_AGE_MINUTES, SHORT_RAIN_WINDOWS
 from .state_store import IrrigationStateStore
 
 SIGNIFICANT_RAIN_ALERT_QUIET_SECONDS = 24 * 3600
@@ -887,7 +888,7 @@ class ZoneFlowController:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
             self.hass.async_create_task(self.store.async_save())
-            self._check_significant_rain(tracker)
+            self._check_significant_rain()
         elif not tracker.samples:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
@@ -899,13 +900,16 @@ class ZoneFlowController:
             return
         self._sync_rain_from_counter_state(new_state)
 
-    def _check_significant_rain(self, tracker) -> None:
-        """Port of avocado_significant_rain_logger (edge-triggered)."""
+    def _check_significant_rain(self) -> None:
+        """Port of avocado_significant_rain_logger (edge-triggered). Reads
+        the combined rain (gauge and manual), so heavy rain entered by hand
+        restarts the dry-down too."""
         now_ts = dt_util.utcnow().timestamp()
+        windows = self.rain_windows()
         checks = {
-            "24h": (tracker.window_sum_mm(24 * 60, now_ts), SIGNIFICANT_RAIN_24H_MM),
-            "4d": (tracker.window_sum_mm(4 * 24 * 60, now_ts), SIGNIFICANT_RAIN_4D_MM),
-            "7d": (tracker.window_sum_mm(7 * 24 * 60, now_ts), SIGNIFICANT_RAIN_7D_MM),
+            "24h": (windows["24h"], SIGNIFICANT_RAIN_24H_MM),
+            "4d": (windows["4d"], SIGNIFICANT_RAIN_4D_MM),
+            "7d": (windows["7d"], SIGNIFICANT_RAIN_7D_MM),
         }
         state = self.store.state
         fired = False
@@ -1036,8 +1040,15 @@ class ZoneFlowController:
         self.hass.async_create_task(self.store.async_save())
 
     def today_rain_mm(self) -> float:
+        """Today's rain: the gauge's, or the manual entries' when they say
+        more (the higher of the two, never the sum -- see add_manual_rain)."""
         state = self.store.state
-        return max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
+        gauge = max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
+        if not state.manual_rain_samples:
+            return gauge
+        midnight = dt_util.start_of_local_day().timestamp()
+        manual = state.manual_rain_tracker().sum_between_mm(midnight, dt_util.utcnow().timestamp())
+        return max(gauge, manual)
 
     def avg_peak_temp(self) -> float | None:
         """Average of the real daily peaks recorded in the last 3 days, or
@@ -1494,8 +1505,18 @@ class ZoneFlowController:
         return sorted(points, key=lambda p: p[0])
 
     def rain_windows(self) -> dict[str, float]:
+        """Rain per rolling window: the gauge's, or the manual entries' when
+        they say more. The short "raining now" windows are the gauge's
+        alone -- manual rain is entered after the fact."""
         now_ts = dt_util.utcnow().timestamp()
-        return self.store.state.rain_tracker().all_windows_mm(now_ts)
+        state = self.store.state
+        windows = state.rain_tracker().all_windows_mm(now_ts)
+        if state.manual_rain_samples:
+            manual = state.manual_rain_tracker().all_windows_mm(now_ts)
+            for name, value in manual.items():
+                if name not in SHORT_RAIN_WINDOWS:
+                    windows[name] = max(windows[name], value)
+        return windows
 
     def rain_since(self, since_ts: float) -> float:
         """Actual measured rain (mm) between `since_ts` and now -- used by
@@ -1503,7 +1524,11 @@ class ZoneFlowController:
         opposed to the fixed rolling windows in rain_windows()."""
         now_ts = dt_util.utcnow().timestamp()
         window_minutes = max(now_ts - since_ts, 0.0) / 60.0
-        return self.store.state.rain_tracker().window_sum_mm(window_minutes, now_ts)
+        state = self.store.state
+        gauge = state.rain_tracker().window_sum_mm(window_minutes, now_ts)
+        if not state.manual_rain_samples:
+            return gauge
+        return max(gauge, state.manual_rain_tracker().window_sum_mm(window_minutes, now_ts))
 
     # ------------------------------------------------------------------
     # Lock / abort helpers
@@ -3538,6 +3563,75 @@ class ZoneFlowController:
             notify_phone=False,
             phone_title="",
             phone_msg="",
+        )
+
+    @property
+    def manual_rain_available(self) -> bool:
+        """Manual rain is for outdoor zones without a rain gauge."""
+        return self.is_outdoor and not self.rain_counter_entity
+
+    async def add_manual_rain_from_number(self) -> None:
+        """The "Add Manual Rain" button: adds the Manual Rain number's
+        amount now, then sets the number back to 0."""
+        amount = self.number("manual_rain_mm")
+        if amount <= 0:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_zero")
+        await self.add_manual_rain(amount)
+        entity = self.numbers.get("manual_rain_mm")
+        if entity is not None:
+            await entity.async_set_metric_value(0.0)
+
+    async def add_manual_rain(self, amount_mm: float, when_ts: float | None = None) -> None:
+        """Rain read by hand from a simple gauge: `amount_mm` that fell at
+        `when_ts` (default now, at most 14 days back). It counts like gauge
+        rain for the rain credit, the rolling windows, deep soak and the
+        dry-down -- but not for the 30-minute "raining now" checks, as it
+        is entered after the fact. If the zone also has a rain gauge, the
+        higher of the two counts, never the sum, so nothing is counted
+        twice."""
+        if not self.is_outdoor:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_not_outdoor")
+        if amount_mm <= 0:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_zero")
+        now_ts = dt_util.utcnow().timestamp()
+        when = now_ts if when_ts is None else when_ts
+        if when > now_ts + 60:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_future")
+        if when < now_ts - MANUAL_RAIN_MAX_AGE_MINUTES * 60:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_too_old")
+        when = min(when, now_ts)
+        state = self.store.state
+        tracker = state.manual_rain_tracker()
+        tracker.insert(when, amount_mm)
+        state.save_manual_rain_tracker(tracker)
+        # Rain on an earlier day: that day's total in the rain-credit history.
+        day = dt_util.as_local(dt_util.utc_from_timestamp(when)).date()
+        days_back = (dt_util.now().date() - day).days
+        if 1 <= days_back <= len(state.rain_day_history_mm):
+            start = dt_util.start_of_local_day(day).timestamp()
+            end = dt_util.start_of_local_day(day + timedelta(days=1)).timestamp()
+            index = days_back - 1
+            state.rain_day_history_mm[index] = max(
+                state.rain_day_history_mm[index], tracker.sum_between_mm(start, end)
+            )
+        first = not state.manual_rain_used
+        state.manual_rain_used = True
+        self._check_significant_rain()
+        await self.store.async_save()
+        if first:
+            # The rain sensors are worth showing now (visibility.py).
+            await visibility.async_apply(self.hass, self.entry, self)
+        self._notify_status()
+        await self._log_event(
+            event_type="Manual Rain Added",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+            extra_log=f"{amount_mm:.1f} mm on {day.isoformat()}",
         )
 
     # ------------------------------------------------------------------

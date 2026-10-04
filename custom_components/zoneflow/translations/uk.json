@@ -653,6 +653,9 @@
       },
       "sensor_offline_hours": {
         "name": "Датчик офлайн через"
+      },
+      "manual_rain_mm": {
+        "name": "Manual Rain"
       }
     },
     "datetime": {
@@ -705,6 +708,9 @@
       },
       "mark_watered": {
         "name": "Позначити полив"
+      },
+      "add_manual_rain": {
+        "name": "Add Manual Rain"
       }
     },
     "binary_sensor": {
@@ -1052,6 +1058,28 @@
     "send_weekly_summary": {
       "name": "Надіслати тижневий підсумок зараз",
       "description": "Надсилає тижневий підсумок зараз на кожен телефон, для якого є зона із заданим днем тижневого підсумку -- це попередній перегляд; лічильники тижня тривають до планового підсумку."
+    },
+    "add_rain": {
+      "name": "Add Rain",
+      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "fields": {
+        "amount": {
+          "name": "Amount",
+          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+        },
+        "when": {
+          "name": "When",
+          "description": "When the rain fell (default now). At most 14 days back."
+        },
+        "device_id": {
+          "name": "Пристрій зони",
+          "description": "Пристрій зони. Потрібен, лише якщо налаштовано 2+ зони."
+        },
+        "entity_id": {
+          "name": "Сутність зони",
+          "description": "Будь-яка сутність пристрою зони (замість «Пристрій зони»)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1112,18 @@
     },
     "zone_has_no_valve": {
       "message": "Ця зона не має клапана, тому не може здійснювати полив. Додайте клапан у меню «Налаштувати», якщо це необхідно."
+    },
+    "manual_rain_zero": {
+      "message": "Set the Manual Rain amount above 0 first."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Manual rain is only for outdoor zones."
+    },
+    "manual_rain_future": {
+      "message": "Rain can't be entered for a time in the future."
+    },
+    "manual_rain_too_old": {
+      "message": "Rain can be entered at most 14 days back."
     }
   },
   "issues": {

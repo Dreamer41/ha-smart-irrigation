@@ -653,6 +653,9 @@
       },
       "sensor_offline_hours": {
         "name": "传感器离线判定时间"
+      },
+      "manual_rain_mm": {
+        "name": "Manual Rain"
       }
     },
     "datetime": {
@@ -705,6 +708,9 @@
       },
       "mark_watered": {
         "name": "标记为已浇水"
+      },
+      "add_manual_rain": {
+        "name": "Add Manual Rain"
       }
     },
     "binary_sensor": {
@@ -1052,6 +1058,28 @@
     "send_weekly_summary": {
       "name": "立即发送每周总结",
       "description": "立即向所有设置了“每周总结”日期的区域所对应的手机发送每周总结——仅作预览；本周的统计会继续累计，直到计划发送的那一次。"
+    },
+    "add_rain": {
+      "name": "Add Rain",
+      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "fields": {
+        "amount": {
+          "name": "Amount",
+          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+        },
+        "when": {
+          "name": "When",
+          "description": "When the rain fell (default now). At most 14 days back."
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "该区域的设备。仅在配置了 2 个或更多区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1112,18 @@
     },
     "zone_has_no_valve": {
       "message": "该分区未配置阀门，因此无法进行浇水。如果需要浇水，请在“配置”中添加阀门。"
+    },
+    "manual_rain_zero": {
+      "message": "Set the Manual Rain amount above 0 first."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Manual rain is only for outdoor zones."
+    },
+    "manual_rain_future": {
+      "message": "Rain can't be entered for a time in the future."
+    },
+    "manual_rain_too_old": {
+      "message": "Rain can be entered at most 14 days back."
     }
   },
   "issues": {

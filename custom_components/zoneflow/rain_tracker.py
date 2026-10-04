@@ -28,6 +28,11 @@ RAIN_WINDOWS_MINUTES = {
     "7d": 7 * 24 * 60,
     "14d": 14 * 24 * 60,
 }
+# The "raining now" windows: only rain known to be recent counts here, so
+# manual rain (entered after the fact) is left out of them.
+SHORT_RAIN_WINDOWS = {"15min", "30min", "60min"}
+# Manual rain can be entered this far back (the longest window above).
+MANUAL_RAIN_MAX_AGE_MINUTES = 14 * 24 * 60
 # How long raw tip samples are kept before being pruned (must cover the
 # longest rolling window above, i.e. 14 days) plus slack.
 RAIN_SAMPLE_RETENTION_MINUTES = 15 * 24 * 60
@@ -73,6 +78,35 @@ class RainWindowTracker:
             else:
                 break
         return max(latest - baseline, 0.0)
+
+    def insert(self, ts: float, mm: float) -> None:
+        """Add `mm` of rain at `ts`, which may be in the past (manual rain
+        entered later): every later sample moves up by `mm`, so the total
+        stays monotonic and every window that covers `ts` gains `mm`."""
+        index = 0
+        while index < len(self.samples) and self.samples[index][0] <= ts:
+            index += 1
+        before = self.samples[index - 1][1] if index else (self.samples[0][1] if self.samples else 0.0)
+        new = [(ts, before + mm)]
+        if not index:
+            new.insert(0, (ts - 1.0, before))  # a baseline, so windows see the step
+        self.samples = self.samples[:index] + new + [(t, c + mm) for t, c in self.samples[index:]]
+        self.prune(max(ts, self.samples[-1][0]))
+
+    def sum_between_mm(self, start_ts: float, end_ts: float) -> float:
+        """Rain between two times (e.g. one past local day)."""
+        if not self.samples:
+            return 0.0
+
+        def at(when: float) -> float:
+            value = self.samples[0][1]
+            for t, c in self.samples:
+                if t > when:
+                    break
+                value = c
+            return value
+
+        return max(at(end_ts) - at(start_ts), 0.0)
 
     def all_windows_mm(self, now_ts: float) -> dict[str, float]:
         return {name: self.window_sum_mm(minutes, now_ts) for name, minutes in RAIN_WINDOWS_MINUTES.items()}

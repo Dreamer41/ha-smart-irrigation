@@ -33,6 +33,15 @@ RAIN_GAUGE = {
     ("sensor", "rain_past_14d"),
     ("sensor", "rain_today"),
 }
+# Manual rain (1.6.1): for outdoor zones without a rain gauge. Once rain
+# has been entered, the rain sensors that read it are shown as well (not
+# the gauge's calibration, nor the 30-minute ones manual rain never feeds).
+MANUAL_RAIN = {("number", "manual_rain_mm"), ("button", "add_manual_rain")}
+RAIN_GAUGE_ONLY = {
+    ("number", "rain_mm_per_tip"),
+    ("number", "preirrigation_rain_threshold_mm"),
+    ("sensor", "rain_past_30min"),
+}
 PUMP_POWER = {("number", "pump_min_watts")}
 SHARED_PUMP = {("number", "pump_preamble_seconds"), ("number", "pump_postamble_seconds")}
 TEMPERATURE = {
@@ -132,7 +141,9 @@ def hidden_for(controller) -> set[tuple[str, str]]:
     if not controller.weather_entity:
         hidden |= FORECAST
     if not controller.rain_counter_entity:
-        hidden |= RAIN_GAUGE
+        hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
+    if not controller.manual_rain_available:
+        hidden |= MANUAL_RAIN
     if not controller.pump_power_entity:
         hidden |= PUMP_POWER
     if (

@@ -31,6 +31,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowButton(entry, controller, "fertilized_today", "Fertilized Today", controller.fertilized_today),
             # Watered by hand: counts as the last watering (no valve time).
             ZoneFlowButton(entry, controller, "mark_watered", "Mark Watered", controller.mark_watered),
+            # Rain read from a simple gauge: adds the Manual Rain number.
+            ZoneFlowButton(entry, controller, "add_manual_rain", "Add Manual Rain", controller.add_manual_rain_from_number),
             # Service / check runs: never counted as watering (see
             # controller.start_service_run).
             *(

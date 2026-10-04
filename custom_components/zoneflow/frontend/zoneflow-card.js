@@ -115,6 +115,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "A hard limit on misting in any 60 minutes. A mister switched on by hand also goes off after this long.",
       "vent_open_pct": "How far a vent opens (for vents that can be set to a position).",
       "manual_hold_minutes": "After you switch a device by hand, ZoneFlow leaves it alone for this long. 0 means it takes charge again at once.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "A sensor that sends nothing for this many hours counts as offline, and the climate control goes to its failsafe. Raise it if a steady sensor causes false warnings.",
       "ventilation_failsafe": "What vents and fans do when no inside temperature sensor is working. Misters always go off.",
       "heater_failsafe": "What the heater does when no inside temperature sensor is working. It never runs non-stop without a sensor.",
@@ -123,7 +124,8 @@ const I18N = {
     "close": "Close",
     "device_page": "Open the device page",
     "fertilized": "Fertilized",
-    "mark_watered": "Mark watered"
+    "mark_watered": "Mark watered",
+    "add_rain": "Add rain"
   },
   "de": {
     "now": "Jetzt",
@@ -200,6 +202,7 @@ const I18N = {
     "device_page": "Geräteseite öffnen",
     "fertilized": "Gedüngt",
     "mark_watered": "Als bewässert markieren",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Gibt den Wasserbedarf der Pflanze im Vergleich zur Referenz-Evapotranspiration (ET0) an. Höhere Werte bedeuten mehr Wasser, niedrigere weniger.",
       "flow_rate_mm_per_min": "Gibt an, wie viel Wasser das Bewässerungssystem pro Minute abgibt (in mm/min). Dieser Wert bestimmt die Laufzeit pro Durchgang. Messung per Durchflussmesser oder Behälter und Stoppuhr.",
@@ -228,6 +231,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Eine feste Obergrenze für die Vernebelung innerhalb von 60 Minuten. Ein manuell eingeschalteter Vernebler schaltet sich nach dieser Zeit ebenfalls aus.",
       "vent_open_pct": "Wie weit eine Lüftung öffnet (für Lüftungen, die auf eine bestimmte Position eingestellt werden können).",
       "manual_hold_minutes": "Nachdem Sie ein Gerät manuell geschaltet haben, lässt ZoneFlow es für diese Dauer unverändert. 0 bedeutet, dass sofort wieder die automatische Steuerung übernimmt.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Ein Sensor, der so viele Stunden nichts sendet, gilt als offline, und die Klimasteuerung geht in den Notbetrieb. Erhöhen Sie den Wert, wenn ein gleichmäßig messender Sensor Fehlalarme auslöst.",
       "ventilation_failsafe": "Was Lüftungen und Lüfter tun, wenn kein Innen-Temperatursensor funktioniert. Vernebler schalten sich immer aus.",
       "heater_failsafe": "Was die Heizung tut, wenn kein Innen-Temperatursensor funktioniert. Ohne Sensor läuft sie niemals ununterbrochen.",
@@ -309,6 +313,7 @@ const I18N = {
     "device_page": "Abrir la página del dispositivo",
     "fertilized": "Abonado",
     "mark_watered": "Marcar como regado",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Indica las necesidades de agua de la planta en comparación con la evapotranspiración de referencia (ET0). Un valor más alto requiere más agua; uno más bajo, menos.",
       "flow_rate_mm_per_min": "Caudal que aporta el sistema de riego en mm por minuto. Determina la duración de cada sesión. Puede medirlo con un caudalímetro o usando un recipiente y un cronómetro.",
@@ -337,6 +342,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Límite máximo de nebulización en un periodo de 60 minutos. Un nebulizador encendido manualmente se apaga también tras este periodo.",
       "vent_open_pct": "Cuánto abre una rejilla (para rejillas con posición regulable).",
       "manual_hold_minutes": "Tras cambiar un dispositivo a mano, ZoneFlow lo dejará sin tocar durante este tiempo. 0 significa que retoma el control de inmediato.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Un sensor que no envía nada durante estas horas se considera sin conexión y el control del clima pasa a su modo de seguridad. Auméntalo si un sensor estable provoca avisos falsos.",
       "ventilation_failsafe": "Qué hacen las rejillas y ventiladores cuando no funciona ningún sensor de temperatura interior. Los nebulizadores siempre se apagan.",
       "heater_failsafe": "Qué hace el calefactor cuando no funciona ningún sensor de temperatura interior. Nunca funciona de forma continua sin un sensor.",
@@ -418,6 +424,7 @@ const I18N = {
     "device_page": "Avaa laitesivu",
     "fertilized": "Lannoita",
     "mark_watered": "Merkitse kastelluksi",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Kasvin vedenkulutus verrattuna vertailuevapotranspiraatioon (ET0). Suurempi arvo tarkoittaa suurempaa veden tarvetta, pienempi vähempää.",
       "flow_rate_mm_per_min": "Sadetuksen tai kastelun määrä millimetreinä minuutissa. Määrittää kastelukerran keston. Voit mitata arvon virtausmittarilla tai astialla ja sekuntikellolla.",
@@ -446,6 +453,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Tiukka enimmäisraja sumutukselle minkä tahansa 60 minuutin jakson aikana. Käsin päälle kytketty sumutin sammuu myös tämän ajan kuluttua.",
       "vent_open_pct": "Kuinka paljon tuuletusluukku avautuu (luukuille, jotka voidaan asettaa tiettyyn asentoon).",
       "manual_hold_minutes": "Kun kytket laitteen käsin, ZoneFlow jättää sen rauhaan näin pitkäksi aikaa. 0 tarkoittaa, että se ottaa ohjat välittömästi takaisin.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Anturi, joka ei lähetä mitään näin moneen tuntiin, katsotaan poissaolevaksi, ja ilmastonohjaus siirtyy vikatilaan. Nosta arvoa, jos tasaisesti mittaava anturi aiheuttaa vääriä varoituksia.",
       "ventilation_failsafe": "Mitä tuuletusluukut ja tuulettimet tekevät, kun mikään sisälämpötila-anturi ei toimi. Sumuttimet sammuvat aina.",
       "heater_failsafe": "Mitä lämmitin tekee, kun mikään sisälämpötila-anturi ei toimi. Se ei koskaan pyöri taukoamatta ilman anturia.",
@@ -527,6 +535,7 @@ const I18N = {
     "device_page": "Ouvrir la page de l'appareil",
     "fertilized": "Engrais apporté",
     "mark_watered": "Marquer comme arrosé",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Besoins en eau de la plante par rapport à l'évapotranspiration de référence (ET0). Une valeur plus élevée augmente l'arrosage, une valeur plus basse le réduit.",
       "flow_rate_mm_per_min": "Pluviométrie du système d'arrosage en mm par minute. Détermine la durée de chaque cycle. À mesurer avec un débitmètre ou un récipient et un chronomètre.",
@@ -555,6 +564,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Limite stricte de brumisation sur une période glissante de 60 minutes. Un brumisateur allumé manuellement s'éteint aussi passé ce délai.",
       "vent_open_pct": "Pourcentage d'ouverture de l'ouvrant (pour les ouvrants dont la position est réglable).",
       "manual_hold_minutes": "Après une action manuelle sur un appareil, ZoneFlow le laisse inchangé pendant cette durée. 0 réactive le contrôle automatique immédiatement.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Un capteur qui n'envoie rien pendant ce nombre d'heures est considéré hors ligne, et le contrôle climatique passe en mode de sécurité. Augmentez cette valeur si un capteur stable provoque de fausses alertes.",
       "ventilation_failsafe": "Comportement des ouvrants et ventilateurs en cas de panne du capteur de température intérieure. Les brumisateurs s'éteignent toujours.",
       "heater_failsafe": "Comportement du chauffage en cas de panne du capteur de température intérieure. Il ne fonctionne jamais en continu sans capteur.",
@@ -636,6 +646,7 @@ const I18N = {
     "device_page": "Apri la pagina del dispositivo",
     "fertilized": "Concimato",
     "mark_watered": "Segna come annaffiato",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Fabbisogno idrico della pianta rispetto all'evapotraspirazione di riferimento (ET0). Valori più alti indicano maggiore fabbisogno d'acqua, valori più bassi minore.",
       "flow_rate_mm_per_min": "Tasso di erogazione dell'impianto di irrigazione espresso in mm al minuto. Determina la durata di ciascuna sessione. Può essere misurato con un flussometro oppure con un contenitore e un cronometro.",
@@ -664,6 +675,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Limite massimo di nebulizzazione in un intervallo di 60 minuti. Anche un nebulizzatore attivato manualmente si spegne dopo questo tempo.",
       "vent_open_pct": "Grado di apertura di una finestra di ventilazione (per aperture posizionabili).",
       "manual_hold_minutes": "Dopo aver azionato manualmente un dispositivo, ZoneFlow non interviene per questo intervallo di tempo. 0 indica che riprende subito il controllo.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Un sensore che non invia nulla per queste ore è considerato offline e il controllo del clima passa alla modalità di sicurezza. Aumentalo se un sensore stabile causa falsi avvisi.",
       "ventilation_failsafe": "Comportamento di aperture e ventole quando nessun sensore di temperatura interna funziona. I nebulizzatori si spengono sempre.",
       "heater_failsafe": "Comportamento del riscaldatore quando nessun sensore di temperatura interna funziona. Non rimane mai in funzione continua senza sensore.",
@@ -745,6 +757,7 @@ const I18N = {
     "device_page": "Apparaatpagina openen",
     "fertilized": "Bemest",
     "mark_watered": "Markeer als bewaterd",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Bepaalt de waterbehoefte van het gewas ten opzichte van de referentie-evapotranspiratie (ET0). Hoger = meer water, lager = minder water.",
       "flow_rate_mm_per_min": "De neerslagsnelheid van je irrigatiesysteem in mm per minuut. Dit bepaalt de duur van elke sproeibeurt. Te meten met een stroommeter of met een opvangbakje en een stopwatch.",
@@ -773,6 +786,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Een harde limiet voor nevelen in een periode van 60 minuten. Een handmatig ingeschakelde nevelaar gaat na deze tijd ook uit.",
       "vent_open_pct": "Hoe ver een ventilatie opent (voor ventilaties die op een stand ingesteld kunnen worden).",
       "manual_hold_minutes": "Nadat u een apparaat handmatig schakelt, laat ZoneFlow het zo lang met rust. 0 betekent dat het het beheer direct weer overneemt.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Een sensor die zo veel uur niets stuurt, geldt als offline en de klimaatregeling gaat naar de noodstand. Verhoog dit als een stabiele sensor valse waarschuwingen geeft.",
       "ventilation_failsafe": "Wat ventilatie en ventilatoren doen als er geen binnentemperatuursensor werkt. Nevelaars gaan altijd uit.",
       "heater_failsafe": "Wat de verwarming doet als er geen binnentemperatuursensor werkt. Deze draait nooit ononderbroken zonder sensor.",
@@ -854,6 +868,7 @@ const I18N = {
     "device_page": "Otwórz stronę urządzenia",
     "fertilized": "Nawożono",
     "mark_watered": "Oznacz jako podlane",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Określa zapotrzebowanie rośliny na wodę w stosunku do ewapotranspiracji wskaźnikowej (ET0). Wyższa wartość = więcej wody, niższa = mniej.",
       "flow_rate_mm_per_min": "Wydajność systemu nawadniania wyrażona w mm na minutę. Wyznacza czas trwania pojedynczego cyklu. Można ją zmierzyć przepływomierzem lub pojemnikiem i stoperem.",
@@ -882,6 +897,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Sztywny limit zamgławiania w ciągu dowolnych 60 minut. Zamgławiacz włączony ręcznie również wyłącza się po tym czasie.",
       "vent_open_pct": "Stopień otwarcia wietrznika (dla wietrzników z możliwością ustawienia pozycji).",
       "manual_hold_minutes": "Po ręcznym przełączeniu urządzenia ZoneFlow pozostawia je bez zmian przez ten czas. 0 oznacza, że natychmiast ponownie przejmuje kontrolę.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Czujnik, który nie wysyła nic przez tyle godzin, jest uznawany za offline, a sterowanie klimatem przechodzi w tryb awaryjny. Zwiększ tę wartość, jeśli stabilny czujnik powoduje fałszywe ostrzeżenia.",
       "ventilation_failsafe": "Co robią wietrzniki i wentylatory, gdy żaden czujnik temperatury wewnętrznej nie działa. Zamgławiacze zawsze się wyłączają.",
       "heater_failsafe": "Co robi grzejnik, gdy żaden czujnik temperatury wewnętrznej nie działa. Nigdy nie działa bez przerwy bez czujnika.",
@@ -963,6 +979,7 @@ const I18N = {
     "device_page": "Abrir a página do dispositivo",
     "fertilized": "Adubado",
     "mark_watered": "Marcar como regado",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Indica a necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
       "flow_rate_mm_per_min": "Taxa de precipitação da rega em mm por minuto. Define a duração de cada ciclo. Pode medir com um caudalímetro ou com um recipiente e um cronómetro.",
@@ -991,6 +1008,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Limite máximo de nebulização em qualquer janela de 60 minutos. Um nebulizador ligado manualmente também se desliga após este tempo.",
       "vent_open_pct": "O quanto uma abertura se abre (para aberturas com regulação de posição).",
       "manual_hold_minutes": "Após alterar um dispositivo manualmente, o ZoneFlow deixa-o inalterado durante este tempo. 0 significa que retoma o controlo imediatamente.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Um sensor que não envia nada durante estas horas é considerado offline e o controlo do clima passa ao modo de segurança. Aumente o valor se um sensor estável causar avisos falsos.",
       "ventilation_failsafe": "O que as aberturas e ventiladores fazem quando nenhum sensor de temperatura interior está a funcionar. Os nebulizadores desligam-se sempre.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interior está a funcionar. Nunca funciona ininterruptamente sem um sensor.",
@@ -1072,6 +1090,7 @@ const I18N = {
     "device_page": "Öppna enhetssidan",
     "fertilized": "Gödslat",
     "mark_watered": "Markera som vattnad",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Växtens vattenbehov i jämförelse med referensevapotranspiration (ET0). Högre värde innebär mer vatten, lägre värde mindre.",
       "flow_rate_mm_per_min": "Bevattningssystemets flöde i mm per minut. Detta bestämmer bevattningstiden för varje pass. Mät med flödesmätare eller behållare och tidtagarur.",
@@ -1100,6 +1119,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "En fast gräns för dimmning under valfria 60 minuter. En dimmare som slås på manuellt stängs också av efter denna tid.",
       "vent_open_pct": "Hur mycket en vädring öppnas (för vädring som kan ställas in i ett visst läge).",
       "manual_hold_minutes": "När du ändrar en enhet manuellt lämnar ZoneFlow den i fred så här länge. 0 innebär att den tar över styrningen igen direkt.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "En sensor som inte skickar något på så här många timmar räknas som offline, och klimatstyrningen går till sitt nödläge. Höj värdet om en stabil sensor ger falska varningar.",
       "ventilation_failsafe": "Vad vädring och fläktar gör när ingen innetemperaturgivare fungerar. Dimmare stängs alltid av.",
       "heater_failsafe": "Vad värmaren gör när ingen innetemperaturgivare fungerar. Den körs aldrig oavbrutet utan en givare.",
@@ -1181,6 +1201,7 @@ const I18N = {
     "device_page": "Otevřít stránku zařízení",
     "fertilized": "Pohnojeno",
     "mark_watered": "Označit jako zalité",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Vyjadřuje nároky rostliny na vodu v porovnání s referenční evapotranspirací (ET0). Vyšší hodnota znamená více vody, nižší méně.",
       "flow_rate_mm_per_min": "Intenzita závlahy v mm za minutu. Určuje délku jednoho zavlažovacího cyklu. Změřte průtokoměrem nebo pomocí nádoby a stopek.",
@@ -1209,6 +1230,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Pevný limit mlžení během libovolných 60 minut. Mlžovač zapnutý ručně se po této době také vypne.",
       "vent_open_pct": "Míra otevření větracího otvoru (pro otvory, u kterých lze nastavit polohu).",
       "manual_hold_minutes": "Po ručním přepnutí zařízení je ZoneFlow ponechá bez zásahu po tuto dobu. Hodnota 0 znamená okamžité převzetí řízení.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Senzor, který tolik hodin nic nepošle, se považuje za offline a řízení klimatu přejde do nouzového režimu. Zvyšte hodnotu, pokud stabilní senzor způsobuje falešná varování.",
       "ventilation_failsafe": "Co dělají větrací otvory a ventilátory, když nefunguje žádný snímač vnitřní teploty. Mlžovače se vždy vypnou.",
       "heater_failsafe": "Co dělá topení, když nefunguje žádný snímač vnitřní teploty. Bez snímače nikdy neběží nepřetržitě.",
@@ -1290,6 +1312,7 @@ const I18N = {
     "device_page": "Åbn enhedssiden",
     "fertilized": "Gødsket",
     "mark_watered": "Markér som vandet",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Viser plantens vandbehov sammenlignet med reference-evapotranspiration (ET0). Højere værdi betyder mere vand, lavere betyder mindre.",
       "flow_rate_mm_per_min": "Vandtilførsel fra vandingssystemet i mm pr. minut. Det bestemmer varigheden af hver vanding. Måles med en flowmåler eller en beholder og et stopur.",
@@ -1318,6 +1341,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "En fast grænse for forstøvning inden for en periode på 60 minutter. En forstøver skiftet manuelt slukker også efter så lang tid.",
       "vent_open_pct": "Hvor meget en udluftning åbner (for udluftninger der kan indstilles til en position).",
       "manual_hold_minutes": "Efter du har skiftet en enhed manuelt, lader ZoneFlow den være i dette tidsrum. 0 betyder, at den tager over igen med det samme.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "En sensor, der ikke sender noget i så mange timer, regnes som offline, og klimastyringen går i nøddrift. Hæv værdien, hvis en stabil sensor giver falske advarsler.",
       "ventilation_failsafe": "Hvad udluftning og ventilatorer gør, når ingen indendørs temperatursensor virker. Forstøvere slukker altid.",
       "heater_failsafe": "Hvad varmelegemet gør, når ingen indendørs temperatursensor virker. Det kører aldrig uafbrudt uden en sensor.",
@@ -1399,6 +1423,7 @@ const I18N = {
     "device_page": "Eszközoldal megnyitása",
     "fertilized": "Tápanyag pótolva",
     "mark_watered": "Megjelölés öntözöttként",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "A növény vízigénye a referencia-párolgáshoz (ET0) képest. A magasabb érték több, az alacsonyabb kevesebb vizet jelent.",
       "flow_rate_mm_per_min": "A öntözőrendszer csapadékintenzitása mm/percben. Ez határozza meg az egyes öntözések időtartamát. Áramlásmérővel, vagy edénnyel és stopperórával mérhető.",
@@ -1427,6 +1452,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Szigorú korlát a párásításra bármely 60 perces időszakban. A kézzel bekapcsolt párásító is kikapcsol ennyi idő után.",
       "vent_open_pct": "Mennyire nyíljon ki a szellőző (pozicionálható szellőzők esetén).",
       "manual_hold_minutes": "Miután kézzel átkapcsol egy eszközt, a ZoneFlow ennyi ideig békén hagyja. A 0 azt jelenti, hogy azonnal visszaveszi a vezérlést.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Az az érzékelő, amely ennyi órán át nem küld semmit, offline-nak számít, és a klímavezérlés vészüzemmódba lép. Növelje az értéket, ha egy egyenletesen mérő érzékelő téves figyelmeztetéseket okoz.",
       "ventilation_failsafe": "Mit tegyenek a szellőzők és ventilátorok, ha nem működik belső hőmérséklet-érzékelő. A párásítók mindig kikapcsolnak.",
       "heater_failsafe": "Mit tegyen a fűtés, ha nem működik belső hőmérséklet-érzékelő. Érzékelő nélkül soha nem működik folyamatosan.",
@@ -1508,6 +1534,7 @@ const I18N = {
     "device_page": "Åpne enhetssiden",
     "fertilized": "Gjødslet",
     "mark_watered": "Merk som vannet",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Plantens vannbehov sammenlignet med referanse-evapotranspirasjon (ET0). Høyere verdi gir mer vann, lavere gir mindre.",
       "flow_rate_mm_per_min": "Vanningssystemets vanntilførsel i mm per minutt. Dette bestemmer varigheten på hver vanning. Kan måles med mengdemåler eller med en beholder og stoppeklokke.",
@@ -1536,6 +1563,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "En øvre grense for tåkelegging i løpet av en 60-minutters periode. En tåkelegger slått på manuelt slås også av etter så lang tid.",
       "vent_open_pct": "Hvor mye luftingen åpner seg (for ventiler som kan stilles inn i posisjon).",
       "manual_hold_minutes": "Etter at du slår på en enhet manuelt, lar ZoneFlow den være i fred så lenge. 0 betyr at den tar over styringen igjen med en gang.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "En sensor som ikke sender noe på så mange timer, regnes som frakoblet, og klimastyringen går i nøddrift. Øk verdien hvis en stabil sensor gir falske varsler.",
       "ventilation_failsafe": "Hva lufting og vifter gjør når ingen innvendig temperatursensor fungerer. Tåkeleggere slås alltid av.",
       "heater_failsafe": "Hva varmeovnen gjør når ingen innvendig temperatursensor fungerer. Den kjører aldri uavbrutt uten sensor.",
@@ -1617,6 +1645,7 @@ const I18N = {
     "device_page": "Abrir a página do dispositivo",
     "fertilized": "Adubado",
     "mark_watered": "Marcar como regado",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
       "flow_rate_mm_per_min": "Taxa de precipitação da irrigação em mm por minuto. Determina a duração de cada ciclo. Pode ser medida com um medidor de vazão ou usando um recipiente e um cronômetro.",
@@ -1645,6 +1674,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Limite máximo de nebulização a cada 60 minutos. Um nebulizador ligado manualmente também desliga após esse tempo.",
       "vent_open_pct": "Quanto uma abertura de ventilação abre (para aberturas ajustáveis por posição).",
       "manual_hold_minutes": "Após você acionar um dispositivo manualmente, o ZoneFlow o mantém inalterado por este tempo. 0 significa que ele retoma o controle imediatamente.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Um sensor que não envia nada por estas horas é considerado offline, e o controle do clima entra no modo de segurança. Aumente o valor se um sensor estável causar alertas falsos.",
       "ventilation_failsafe": "O que aberturas e ventiladores fazem quando nenhum sensor de temperatura interna funciona. Nebulizadores sempre desligam.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interna funciona. Ele nunca roda continuamente sem um sensor.",
@@ -1726,6 +1756,7 @@ const I18N = {
     "device_page": "Открыть страницу устройства",
     "fertilized": "Подкормлено",
     "mark_watered": "Отметить полив",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Потребность растения в воде по сравнению с эталонной эвапотранспирацией (ET0). Чем выше значение, тем больше воды требуется.",
       "flow_rate_mm_per_min": "Интенсивность полива в мм/мин. Определяет продолжительность одного сеанса. Можно измерить расходомером или с помощью емкости и секундомера.",
@@ -1754,6 +1785,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Лимит суммарного времени работы тумана за любой 60-минутный интервал. Ручное включение тумана также выключается по истечении этого времени.",
       "vent_open_pct": "Степень открытия форточки (для форточек с поддержкой точного позиционирования).",
       "manual_hold_minutes": "После ручного переключения устройства ZoneFlow не вмешивается в его работу указанное время. Значение 0 сразу возвращает автоматическое управление.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Датчик, который ничего не передаёт столько часов, считается офлайн, и управление климатом переходит в аварийный режим. Увеличьте значение, если стабильный датчик вызывает ложные предупреждения.",
       "ventilation_failsafe": "Поведение форточек и вентиляторов при отказе датчика температуры внутри. Туманообразование всегда отключается.",
       "heater_failsafe": "Поведение обогревателя при отказе датчика температуры внутри. Без датчика непрерывная работа запрещена.",
@@ -1835,6 +1867,7 @@ const I18N = {
     "device_page": "Otvoriť stránku zariadenia",
     "fertilized": "Pohnojené",
     "mark_watered": "Označiť ako zaliate",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Vyjadruje potrebu vody pre rastlinu v porovnaní s referenčnou evapotranspiráciou (ET0). Vyššia hodnota znamená viac vody, nižšia menej.",
       "flow_rate_mm_per_min": "Intenzita zavlažovania v mm za minútu. Určuje dĺžku jedného cyklu. Zmerajte ju prietokomerom alebo pomocou nádoby a stopiek.",
@@ -1863,6 +1896,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Pevný limit pre zahmlievanie počas akýchkoľvek 60 minút. Zahmlievač zapnutý ručne sa po tomto čase tiež vypne.",
       "vent_open_pct": "Ako veľmi sa vetranie otvorí (pre vetranie, ktoré je možné nastaviť do polohy).",
       "manual_hold_minutes": "Po ručnom prepnutí zariadenia ho ZoneFlow nechá bez zásahu na túto dobu. 0 znamená, že sa hneď znova ujme riadenia.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Senzor, ktorý toľko hodín nič nepošle, sa považuje za offline a riadenie klímy prejde do núdzového režimu. Zvýšte hodnotu, ak stabilný senzor spôsobuje falošné varovania.",
       "ventilation_failsafe": "Čo robia vetranie a ventilátory, keď nefunguje žiaden senzor vnútornej teploty. Zahmlievače sa vždy vypnú.",
       "heater_failsafe": "Čo robí ohrievač, keď nefunguje žiaden senzor vnútornej teploty. Bez senzora nikdy nebeží nepretržite.",
@@ -1944,6 +1978,7 @@ const I18N = {
     "device_page": "Відкрити сторінку пристрою",
     "fertilized": "Підживлено",
     "mark_watered": "Позначити полив",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "Потреба рослини у воді порівняно з еталонною евапотранспірацією (ET0). Вище значення означає більше води, нижче — менше.",
       "flow_rate_mm_per_min": "Інтенсивність поливу в мм за хвилину. Визначає тривалість кожного сеансу. Можна виміряти витратоміром або за допомогою ємності та секундоміра.",
@@ -1972,6 +2007,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "Строге обмеження загального часу туманоутворення за будь-які 60 хвилин. Туманоутворювач, увімкнений вручну, також вимкнеться після цього часу.",
       "vent_open_pct": "Ступінь відкриття кватирок (для кватирок із підтримкою позиціонування).",
       "manual_hold_minutes": "Після ручного перемикання пристрою ZoneFlow не змінюватиме його стан протягом цього часу. Значення 0 означає миттєве повернення під керування автоматики.",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "Датчик, який нічого не передає стільки годин, вважається офлайн, і керування кліматом переходить в аварійний режим. Збільште значення, якщо стабільний датчик спричиняє хибні попередження.",
       "ventilation_failsafe": "Дія кватирок і вентиляторів при несправності всіх внутрішніх датчиків температури. Туманоутворювачі завжди вимикаються.",
       "heater_failsafe": "Дія обігрівача при несправності всіх внутрішніх датчиків температури. Він ніколи не працює безперервно без датчика.",
@@ -2053,6 +2089,7 @@ const I18N = {
     "device_page": "打开设备页面",
     "fertilized": "已施肥",
     "mark_watered": "标记为已浇水",
+    "add_rain": "Add rain",
     "tips": {
       "crop_coefficient": "衡量植物相比于基准蒸散发量 (ET0) 的需水程度。数值越高需水量越大，越低则越小。",
       "flow_rate_mm_per_min": "灌溉系统的喷灌强度（毫米/分钟）。该参数决定每次灌溉的持续时长。可使用流量计或利用测量容器与秒表测定。",
@@ -2081,6 +2118,7 @@ const I18N = {
       "max_mist_minutes_per_hour": "任何 60 分钟内喷雾总时长的硬性限制。手动开启的喷雾器也会在此时长后自动关闭。",
       "vent_open_pct": "通风口打开的位置程度（适用于支持设置位置的通风口）。",
       "manual_hold_minutes": "手动切换设备后，ZoneFlow 将在此时长内保持该状态不干预。设为 0 表示立即重新接管。",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "传感器在这么多小时内没有任何上报即视为离线，气候控制将进入故障安全模式。如果数值稳定的传感器引起误报，请调高此值。",
       "ventilation_failsafe": "当没有可用的室内温度传感器时通风口和风扇的动作。喷雾器将始终关闭。",
       "heater_failsafe": "当没有可用的室内温度传感器时加热器的动作。在没有传感器的情况下，它绝不会不间断连续运行。",
@@ -2169,6 +2207,7 @@ const HANDLED = new Set([
   "sensor.status", "button.run_routine", "button.run_deep_soak", "button.snooze_today",
   "button.reset_lock", "switch.service_mode", "button.service_run_1_min", "button.service_run_5_min",
   "button.service_run_10_min", "button.fertilized_today", "button.mark_watered",
+  "number.manual_rain_mm", "button.add_manual_rain",
 ]);
 
 function t(hass, key) {
@@ -2397,6 +2436,10 @@ class ZoneFlowCard extends HTMLElement {
         ["button.mark_watered", t(hass, "mark_watered"), "mdi:watering-can-outline"],
       ]),
       ...rows(CONTROLS),
+      // Manual rain (outdoor zones without a rain gauge): the amount, then
+      // the button that records it.
+      ...rows(["number.manual_rain_mm"]),
+      ...buttons([["button.add_manual_rain", t(hass, "add_rain"), "mdi:weather-pouring"]]),
     ];
     const minutes = t(hass, "min");
     const service = [
