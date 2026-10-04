@@ -531,6 +531,21 @@ once they've agreed to let you drive.
      already on hand or costs only a few dollars, versus buying an entire
      wireless rain-gauge console.
 
+   **No gauge and no plan to get one?** Two lighter options (1.6.1+):
+   - **Manual rain**: a person who reads a simple gauge by hand enters it
+     with the zone's **Manual Rain** number and **Add Manual Rain** button,
+     or the `zoneflow.add_rain` service (amount, optional "when", up to 14
+     days back).
+   - **Weather Underground rain (experimental)**: borrows rain from 1-3
+     private stations within a few km. Before suggesting it, tell them the
+     two checks in this order, so they don't waste time: **FIRST** look on
+     the wunderground.com map for stations near the garden that report rain
+     -- if there are none, stop; **SECOND**, the free API key requires their
+     own station uploading at least temperature and humidity (e.g. the
+     ha-weather-uploader HACS integration). Only for zones without a rain
+     gauge, only for rain deduction, not 100 % reliable. Full guide:
+     docs/WEATHER-UNDERGROUND.md.
+
    Either way, say plainly that this is a "worth adding for reliability"
    recommendation, not a blocker — a zone runs fine with no rain gauge at
    all, on the temperature-driven schedule alone, and setup can absolutely

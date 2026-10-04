@@ -22,9 +22,15 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, units
+from . import calculations as calc, greenhouse_logic, units, wu_logic
 
 from .const import (
+    CONF_ENTRY_TYPE,
+    CONF_USE_WU,
+    CONF_WU_API_KEY,
+    CONF_WU_RADIUS_KM,
+    CONF_WU_STATIONS,
+    ENTRY_TYPE_WU,
     CLIMATE_NUMBER_KEYS,
     CLIMATE_OPTIONS,
     CLIMATE_PRESETS,
@@ -362,6 +368,89 @@ def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     }
 
 
+# --- Weather Underground rain (1.6.1, experimental) -----------------------
+# One shared entry (wu.py) for outdoor zones without a rain gauge. Offered
+# once a zone exists; the first screen says to check the WU map for nearby
+# stations first, and that the free API key needs a station of your own
+# uploading at least temperature and humidity.
+
+
+def _is_wu_entry(entry) -> bool:
+    return entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_WU
+
+
+def _wu_key_schema(defaults: dict[str, Any]) -> vol.Schema:
+    return vol.Schema(
+        {
+            vol.Required(CONF_WU_API_KEY, default=defaults.get(CONF_WU_API_KEY, "")): selector.TextSelector(
+                selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+            ),
+            vol.Required(
+                CONF_WU_RADIUS_KM, default=defaults.get(CONF_WU_RADIUS_KM, wu_logic.RADIUS_DEFAULT_KM)
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=wu_logic.RADIUS_MIN_KM,
+                    max=wu_logic.RADIUS_MAX_KM,
+                    step=0.5,
+                    unit_of_measurement="km",
+                    mode=selector.NumberSelectorMode.SLIDER,
+                )
+            ),
+        }
+    )
+
+
+async def _wu_candidates(hass, api_key: str, radius_km: float) -> tuple[list[dict[str, Any]], str | None]:
+    """Stations within the radius with today's rain, or an error key."""
+    from . import wu
+
+    try:
+        stations = await wu.async_nearby_stations(hass, api_key)
+    except wu.InvalidKey:
+        return [], "wu_invalid_key"
+    except wu.CannotConnect:
+        return [], "wu_cannot_connect"
+    stations = [s for s in stations if s["distance_km"] <= radius_km]
+    if not stations:
+        return [], "wu_no_stations"
+    for station in stations:
+        try:
+            obs = await wu.async_current(hass, api_key, station["id"])
+        except (wu.InvalidKey, wu.CannotConnect):
+            obs = None
+        station["rain_today"] = None if obs is None else obs.total_mm
+    return stations, None
+
+
+def _wu_station_schema(candidates: list[dict[str, Any]], chosen: list[str]) -> vol.Schema:
+    options = [
+        selector.SelectOptionDict(
+            value=s["id"],
+            label=(
+                f"{s['id']} ({s['name']}) - {s['distance_km']:.1f} km - "
+                + ("no recent report" if s.get("rain_today") is None else f"{s['rain_today']:.1f} mm today")
+            ),
+        )
+        for s in candidates
+    ]
+    return vol.Schema(
+        {
+            vol.Required(CONF_WU_STATIONS, default=chosen): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=options, multiple=True, mode=selector.SelectSelectorMode.LIST)
+            )
+        }
+    )
+
+
+def _wu_picked(candidates: list[dict[str, Any]], ids: list[str]) -> tuple[list[dict[str, Any]], str | None]:
+    if not 1 <= len(ids) <= wu_logic.MAX_STATIONS:
+        return [], "wu_pick_1_to_3"
+    by_id = {s["id"]: s for s in candidates}
+    return [
+        {k: by_id[i][k] for k in ("id", "name", "latitude", "longitude", "distance_km")} for i in ids if i in by_id
+    ], None
+
+
 class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
@@ -371,8 +460,65 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._data: dict[str, Any] = {}
         self._climate: str = DEFAULT_CLIMATE
         self._zone_type: str = DEFAULT_ZONE_TYPE
+        self._menu_done = False
+        self._wu: dict[str, Any] = {}
+        self._wu_candidates: list[dict[str, Any]] = []
+
+    def _offer_wu(self) -> bool:
+        """Weather Underground rain is offered once a zone exists, and only
+        one per Home Assistant."""
+        entries = self.hass.config_entries.async_entries(DOMAIN)
+        return any(not _is_wu_entry(e) for e in entries) and not any(_is_wu_entry(e) for e in entries)
+
+    async def async_step_start(self, user_input: dict[str, Any] | None = None):
+        return self.async_show_menu(step_id="start", menu_options=["zone", "weather_underground"])
+
+    async def async_step_zone(self, user_input: dict[str, Any] | None = None):
+        self._menu_done = True
+        return await self.async_step_user()
+
+    async def async_step_weather_underground(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            await self.async_set_unique_id(ENTRY_TYPE_WU)
+            self._abort_if_unique_id_configured()
+            self._wu = dict(user_input)
+            candidates, error = await _wu_candidates(
+                self.hass, user_input[CONF_WU_API_KEY].strip(), float(user_input[CONF_WU_RADIUS_KM])
+            )
+            if error:
+                errors["base"] = error
+            else:
+                self._wu_candidates = candidates
+                return await self.async_step_wu_stations()
+        return self.async_show_form(
+            step_id="weather_underground", data_schema=_wu_key_schema(self._wu), errors=errors
+        )
+
+    async def async_step_wu_stations(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            stations, error = _wu_picked(self._wu_candidates, user_input[CONF_WU_STATIONS])
+            if error:
+                errors["base"] = error
+            else:
+                return self.async_create_entry(
+                    title="Weather Underground rain",
+                    data={
+                        CONF_ENTRY_TYPE: ENTRY_TYPE_WU,
+                        CONF_WU_API_KEY: self._wu[CONF_WU_API_KEY].strip(),
+                        CONF_WU_RADIUS_KM: float(self._wu[CONF_WU_RADIUS_KM]),
+                        CONF_WU_STATIONS: stations,
+                    },
+                )
+        nearest = [s["id"] for s in self._wu_candidates[: wu_logic.MAX_STATIONS]]
+        return self.async_show_form(
+            step_id="wu_stations", data_schema=_wu_station_schema(self._wu_candidates, nearest), errors=errors
+        )
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
+        if user_input is None and not self._menu_done and self._offer_wu():
+            return await self.async_step_start()
         errors: dict[str, str] = {}
         if user_input is not None:
             zone_name = user_input[CONF_ZONE_NAME].strip()
@@ -591,7 +737,60 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
+        if _is_wu_entry(config_entry):
+            return WeatherUndergroundOptionsFlow(config_entry)
         return ZoneFlowOptionsFlow(config_entry)
+
+
+class WeatherUndergroundOptionsFlow(config_entries.OptionsFlow):
+    """Configure the Weather Underground entry: key, radius and stations."""
+
+    def __init__(self, config_entry) -> None:
+        self._config_entry = config_entry
+        self._wu: dict[str, Any] = {}
+        self._candidates: list[dict[str, Any]] = []
+
+    def _merged(self) -> dict[str, Any]:
+        return {**self._config_entry.data, **self._config_entry.options}
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        # Its own step id: "init" is the zones' Configure menu.
+        return await self.async_step_wu_key()
+
+    async def async_step_wu_key(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            self._wu = dict(user_input)
+            candidates, error = await _wu_candidates(
+                self.hass, user_input[CONF_WU_API_KEY].strip(), float(user_input[CONF_WU_RADIUS_KM])
+            )
+            if error:
+                errors["base"] = error
+            else:
+                self._candidates = candidates
+                return await self.async_step_wu_stations()
+        return self.async_show_form(step_id="wu_key", data_schema=_wu_key_schema(self._wu or self._merged()), errors=errors)
+
+    async def async_step_wu_stations(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            stations, error = _wu_picked(self._candidates, user_input[CONF_WU_STATIONS])
+            if error:
+                errors["base"] = error
+            else:
+                return self.async_create_entry(
+                    title="",
+                    data={
+                        CONF_WU_API_KEY: self._wu[CONF_WU_API_KEY].strip(),
+                        CONF_WU_RADIUS_KM: float(self._wu[CONF_WU_RADIUS_KM]),
+                        CONF_WU_STATIONS: stations,
+                    },
+                )
+        current = [s["id"] for s in self._merged().get(CONF_WU_STATIONS) or []]
+        chosen = [i for i in current if any(s["id"] == i for s in self._candidates)]
+        return self.async_show_form(
+            step_id="wu_stations", data_schema=_wu_station_schema(self._candidates, chosen), errors=errors
+        )
 
 
 class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
@@ -623,8 +822,25 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         controller = self._controller()
         if has_valve and controller is not None and controller.flow_meter_entity:
             options.append("flow_measure")
+        if outdoor and not self._merged().get(CONF_RAIN_COUNTER_ENTITY) and any(
+            _is_wu_entry(e) for e in self.hass.config_entries.async_entries(DOMAIN)
+        ):
+            options.append("weather_underground")
         options.append("zone_type")
         return self.async_show_menu(step_id="init", menu_options=options)
+
+    async def async_step_weather_underground(self, user_input: dict[str, Any] | None = None):
+        """Use the shared Weather Underground rain (zones without a gauge)."""
+        if user_input is not None:
+            return self.async_create_entry(
+                title="", data={**self._config_entry.options, CONF_USE_WU: bool(user_input[CONF_USE_WU])}
+            )
+        return self.async_show_form(
+            step_id="weather_underground",
+            data_schema=vol.Schema(
+                {vol.Required(CONF_USE_WU, default=bool(self._merged().get(CONF_USE_WU, False))): bool}
+            ),
+        )
 
     async def async_step_zone_type(self, user_input: dict[str, Any] | None = None):
         """Change where the zone grows. Nothing is deleted: what the new

@@ -99,7 +99,7 @@ manual, goes through the same pipeline:
 | Entity | Adds | Without it |
 |---|---|---|
 | `switch.*` valve | — | **required** |
-| Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains |
+| Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains — or enter rain by hand (**Manual Rain** + **Add Manual Rain**, or the `zoneflow.add_rain` service), or borrow it from nearby stations ([Weather Underground rain](docs/WEATHER-UNDERGROUND.md), experimental) |
 | Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard, frost guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
 | Soil-moisture probe (`sensor.*`, %) | dry soil waters early, wet soil skips | the modeled schedule alone |
 | Pump power sensor | per-pulse "is the pump really running" audit | no low-power warning |

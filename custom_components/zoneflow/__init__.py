@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
+from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
@@ -13,7 +13,7 @@ from homeassistant.helpers import entity_registry as er
 import homeassistant.util.dt as dt_util
 
 from . import frontend, issues, summary, units, visibility
-from .const import DOMAIN, PLATFORMS
+from .const import CONF_ENTRY_TYPE, DOMAIN, ENTRY_TYPE_WU, PLATFORMS, WU_DATA_KEY
 from .controller import ZoneFlowController
 
 SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
@@ -125,7 +125,33 @@ def _resolve_controller(hass: HomeAssistant, call: ServiceCall) -> ZoneFlowContr
     return controllers[next(iter(matched_entry_ids))]
 
 
+def is_wu_entry(entry: ConfigEntry) -> bool:
+    """The shared Weather Underground rain entry (wu.py), not a zone."""
+    return entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_WU
+
+
+WU_PLATFORMS = [Platform.SENSOR]
+
+
+async def _async_setup_wu(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    from .wu import WURainSource
+
+    source = WURainSource(hass, entry)
+    hass.data[WU_DATA_KEY] = source
+    await source.async_setup()
+    await hass.config_entries.async_forward_entry_setups(entry, WU_PLATFORMS)
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+    # The zones that use it start reading its rain now (their rain sensors
+    # and status).
+    for controller in hass.data.get(DOMAIN, {}).values():
+        if controller.uses_wu:
+            controller.on_wu_rain()
+    return True
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    if is_wu_entry(entry):
+        return await _async_setup_wu(hass, entry)
     hass.data.setdefault(DOMAIN, {})
     controller = ZoneFlowController(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = controller
@@ -203,6 +229,13 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    if is_wu_entry(entry):
+        unloaded = await hass.config_entries.async_unload_platforms(entry, WU_PLATFORMS)
+        if unloaded:
+            source = hass.data.pop(WU_DATA_KEY, None)
+            if source is not None:
+                await source.async_unload()
+        return unloaded
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded and entry.disabled_by is not None:
         issues.async_remove(hass, entry.entry_id)  # a disabled zone has nothing to fix
@@ -227,7 +260,16 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """A zone was deleted: clear its Repairs issues. The last one also takes
     the dashboard card's loader away (frontend.py)."""
+    if is_wu_entry(entry):
+        from homeassistant.helpers import issue_registry as ir
+
+        from .wu import ISSUE_NO_DATA
+
+        ir.async_delete_issue(hass, DOMAIN, ISSUE_NO_DATA)
+        return
     issues.async_remove(hass, entry.entry_id)
-    others = [e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id]
+    others = [
+        e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id and not is_wu_entry(e)
+    ]
     if not others:
         await frontend.async_remove_loader(hass)

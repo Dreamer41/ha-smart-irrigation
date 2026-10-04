@@ -191,6 +191,8 @@ async def test_zone_without_valve_survives_restart_of_the_zone(hass, fake_valve_
 
 async def _start_non_outdoor(hass, zone_type="greenhouse"):
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    if result["type"] == "menu":  # a zone already exists: add a zone
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "zone"})
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_ZONE_NAME: "Tunnel", CONF_PLANT: "tomatoes", CONF_ZONE_TYPE: zone_type}
     )

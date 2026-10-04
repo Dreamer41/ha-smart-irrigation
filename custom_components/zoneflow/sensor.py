@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -28,6 +28,11 @@ def _label(raw: str) -> str:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    if entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_WU:
+        from .wu_sensor import async_setup_wu_sensors
+
+        async_setup_wu_sensors(hass, entry, async_add_entities)
+        return
     controller = hass.data[DOMAIN][entry.entry_id]
     entities: list[SensorEntity] = [
         ZoneFlowRainWindowSensor(entry, controller, window) for window in RAIN_WINDOW_SENSORS

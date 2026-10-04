@@ -172,6 +172,35 @@
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Add a zone",
+          "weather_underground": "Set up Weather Underground rain"
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground rain (experimental)",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "data": {
+          "api_key": "API key",
+          "radius_km": "Search radius"
+        },
+        "data_description": {
+          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
+          "radius_km": "Stations further away than this are not offered: their rain is not local."
+        }
+      },
+      "wu_stations": {
+        "title": "Pick 1-3 stations",
+        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable.",
+        "data": {
+          "stations": "Stations"
+        },
+        "data_description": {
+          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+        }
       }
     },
     "error": {
@@ -183,7 +212,14 @@
       "device_in_two_roles": "Sama entiteetti on valittu kahteen eri tehtävään.",
       "device_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo jotakin näistä laitteista.",
       "valve_or_device_required": "Valitse venttiili tai vähintään yksi ilmastolaite.",
-      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi."
+      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi.",
+      "wu_invalid_key": "Weather Underground refused the API key.",
+      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
+      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
+      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+    },
+    "abort": {
+      "already_configured": "Weather Underground rain is already set up."
     }
   },
   "options": {
@@ -196,7 +232,8 @@
           "flow_measure": "Virtaama: mittaa virtausmittarilla",
           "greenhouse_devices": "Venttiili, anturit ja ilmastolaitteet",
           "watering": "Kasteluasetukset",
-          "zone_type": "Vyöhyketyyppi"
+          "zone_type": "Vyöhyketyyppi",
+          "weather_underground": "Weather Underground rain"
         }
       },
       "settings": {
@@ -356,6 +393,38 @@
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
         }
+      },
+      "wu_key": {
+        "title": "Weather Underground rain (experimental)",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "data": {
+          "api_key": "API key",
+          "radius_km": "Search radius"
+        },
+        "data_description": {
+          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
+          "radius_km": "Stations further away than this are not offered: their rain is not local."
+        }
+      },
+      "wu_stations": {
+        "title": "Pick 1-3 stations",
+        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable.",
+        "data": {
+          "stations": "Stations"
+        },
+        "data_description": {
+          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground rain",
+        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "data": {
+          "use_weather_underground": "Use Weather Underground rain"
+        },
+        "data_description": {
+          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+        }
       }
     },
     "abort": {
@@ -374,7 +443,11 @@
       "device_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo jotakin näistä laitteista.",
       "valve_or_device_required": "Valitse venttiili tai vähintään yksi ilmastolaite.",
       "valve_required_outdoor": "Ulkovyöhyke tarvitsee venttiilin. Lisää sellainen ensin kohdassa Venttiili, anturit ja ilmastolaitteet.",
-      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi."
+      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi.",
+      "wu_invalid_key": "Weather Underground refused the API key.",
+      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
+      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
+      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
     }
   },
   "selector": {
@@ -833,6 +906,12 @@
       },
       "forecast_skip_hit_rate": {
         "name": "Forecast Skip Hit Rate"
+      },
+      "wu_rain_today": {
+        "name": "Rain today"
+      },
+      "wu_station": {
+        "name": "Station {station}"
       }
     },
     "select": {
@@ -1173,6 +1252,10 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: sisälämpötila-antureiden lukemat poikkeavat",
       "description": "Vyöhykkeen {zone} pääasiallinen sisälämpötila-anturi ({entity}) näyttää lukemaa {main}, kun taas vara-anturi näyttää lukemaa {backup}, ja ne ovat poikenneet toisistaan huomattavasti jo jonkin aikaa. Toinen niistä on todennäköisesti viallinen tai sijoitettu huonosti (suoraan auringonpaisteeseen, lämmittimen viereen). Tarkista molemmat. Tämä kuittaantuu itsestään, kun lukemat vastaavat toisiaan."
+    },
+    "weather_underground_no_data": {
+      "title": "Weather Underground rain: no data",
+      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
     }
   }
 }

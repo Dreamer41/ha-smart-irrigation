@@ -46,6 +46,17 @@ CONF_PUMP_POWER_ENTITY = "pump_power_entity"  # optional -- backs the pump-audit
 # groups unrelated zones together (see the lock-key fallback order in
 # ZoneFlowController._pump_lock_key).
 CONF_PUMP_ID = "pump_id"
+# Weather Underground rain (1.6.1, experimental): one shared config entry
+# (entry_type below) holds the API key and the chosen stations (wu.py);
+# an outdoor zone without a rain gauge opts in with CONF_USE_WU.
+CONF_ENTRY_TYPE = "entry_type"
+ENTRY_TYPE_WU = "weather_underground"
+CONF_WU_API_KEY = "api_key"
+CONF_WU_RADIUS_KM = "radius_km"
+CONF_WU_STATIONS = "stations"
+CONF_USE_WU = "use_weather_underground"
+WU_DATA_KEY = "zoneflow_weather_underground"
+REPAIR_WU_NO_DATA_SECONDS = 6 * 3600
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
 CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
 CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter

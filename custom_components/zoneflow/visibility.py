@@ -141,7 +141,11 @@ def hidden_for(controller) -> set[tuple[str, str]]:
     hidden = set(ADVANCED)
     if not controller.weather_entity:
         hidden |= FORECAST
-    if not controller.rain_counter_entity:
+    if controller.uses_wu:
+        # Weather Underground rain feeds every rain sensor and threshold,
+        # the 30-minute ones too (fresh rain around a watering).
+        hidden.add(("number", "rain_mm_per_tip"))
+    elif not controller.rain_counter_entity:
         hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
     if not controller.manual_rain_available:
         hidden |= MANUAL_RAIN
