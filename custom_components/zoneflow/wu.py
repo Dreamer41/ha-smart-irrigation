@@ -152,6 +152,7 @@ class WURainSource:
         self.stations = {sid: wl.StationState.from_dict(data) for sid, data in (raw.get("stations") or {}).items()}
         self.last_poll_ts = raw.get("last_poll_ts")
         self.last_good_ts = raw.get("last_good_ts")
+        self.used_station_ids = list(raw.get("used_station_ids") or [])
         # First poll shortly after start (Home Assistant is busy at startup).
         self._schedule(dt_util.utcnow().timestamp() + 30)
 
@@ -169,6 +170,7 @@ class WURainSource:
                 "stations": {sid: state.as_dict() for sid, state in self.stations.items()},
                 "last_poll_ts": self.last_poll_ts,
                 "last_good_ts": self.last_good_ts,
+                "used_station_ids": self.used_station_ids,
             }
         )
 
@@ -250,6 +252,14 @@ class WURainSource:
                 await self._poll()
             finally:
                 self._schedule_next()
+            # After scheduling, so the sensors show the next poll time too.
+            for listener in list(self._listeners):
+                try:
+                    listener()
+                except Exception:  # noqa: BLE001
+                    _LOGGER.exception("ZoneFlow: could not update after a Weather Underground poll")
+            for zone in self._zones():
+                zone.on_wu_rain()
 
     async def _poll(self) -> None:
         stations = [s["id"] for s in self.station_info]
@@ -284,13 +294,6 @@ class WURainSource:
             self.record.add(now_ts, rain, fresh)
         self._update_issue(now_ts)
         await self._async_save()
-        for listener in list(self._listeners):
-            try:
-                listener()
-            except Exception:  # noqa: BLE001
-                _LOGGER.exception("ZoneFlow: could not update after a Weather Underground poll")
-        for zone in self._zones():
-            zone.on_wu_rain()
 
     def _update_issue(self, now_ts: float) -> None:
         since = self.last_good_ts
