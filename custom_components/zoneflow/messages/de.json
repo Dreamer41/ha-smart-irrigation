@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: Zeit zum Düngen",
       "message": "Fällig am {date}. Drück nach dem Düngen auf Heute gedüngt – der nächste Termin wird ab dann berechnet."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: Klimasensor-Ausfallsicherung",
+      "message": "Kein Innen-Temperatursensor funktioniert. Vernebler sind aus; Lüftungen und Lüfter: {mode}; Heizung: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: Klimasteuerung wieder normal",
+      "message": "Der Innen-Temperatursensor meldet wieder Werte."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} reagiert nicht",
+      "message": "{entity} hat sich auch nach einem zweiten Versuch nicht wie befohlen geschaltet."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: Vernebler war dauerhaft eingeschaltet",
+      "message": "Ein Vernebler blieb über seine Impulsdauer hinaus eingeschaltet und wurde abgeschaltet."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: Vernebelung gestoppt",
+      "message": "Ein Vernebler ließ sich nicht ausschalten. Die Vernebelung wurde gestoppt. Prüfen Sie das Gerät und drücken Sie anschließend 'Bewässerungssperre zurücksetzen'."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: Verwende Backup-Temperatursensor",
+      "message": "Der Haupt-Innen-Temperatursensor ({entity}) funktioniert nicht mehr. Die Klimasteuerung wird mit dem Backup-Sensor fortgesetzt."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · pausiert",
     "next": " · nächste: {when}",
     "zone_none": "{zone}: keine Bewässerung"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "Lüftungen offen, Lüfter ein",
+      "closed": "Lüftungen geschlossen, Lüfter aus",
+      "leave": "unverändert belassen"
+    },
+    "status": {
+      "starting": "Wird gestartet",
+      "control_off": "Gewächshaussteuerung ist aus",
+      "failsafe": "Ausfallsicherung: Keine Innentemperatur (Lüftungen und Lüfter: {mode}; Heizung: {heater})",
+      "mist_halted": "Vernebelung gestoppt: 'Bewässerungssperre zurücksetzen' drücken",
+      "held": "{device} für {minutes} Min. unverändert belassen (manuell geschaltet)",
+      "heating": "Heizen ({temp})",
+      "ventilating_temperature": "Lüften: zu warm ({temp})",
+      "ventilating_humidity": "Lüften: zu feucht ({humidity})",
+      "misting": "Vernebeln ({temp}, {humidity})",
+      "gate_blocked": "Keine Lüftung: Außenluft ({outside}) ist nicht kühler als Innenluft ({temp})",
+      "idle": "Alles bestens: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "aus",
+      "limited": "teilweise eingeschaltet",
+      "outside": "teilweise eingeschaltet, wenn es draußen kalt ist"
+    }
   }
 }

@@ -25,10 +25,15 @@ DEPTH_KEYS = {
 # Emitter application rate: mm/min <-> in/h (the usual drip rating in the US).
 FLOW_KEYS = {"flow_rate_mm_per_min"}
 # Temperature thresholds: °C <-> °F.
-TEMP_KEYS = {"hot_temp_threshold", "cool_temp_threshold", "fallback_temp", "frost_guard_temp"}
+TEMP_KEYS = {
+    "hot_temp_threshold", "cool_temp_threshold", "fallback_temp", "frost_guard_temp",
+    "heat_temp", "vent_temp", "fan_temp", "mist_temp", "mist_min_temp",
+}
+# Temperature DIFFERENCES: °C <-> °F without the +32 offset.
+DELTA_KEYS = {"climate_hysteresis", "outside_margin"}
 
-IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "temp": "°F"}
-IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "temp": 0.5}
+IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "temp": "°F", "delta": "°F"}
+IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "temp": 0.5, "delta": 0.5}
 # rain_mm_per_tip is tiny (0.2-0.5 mm = 0.008-0.02 in), so finer steps.
 IMPERIAL_STEP_OVERRIDE = {"rain_mm_per_tip": 0.001}
 
@@ -45,6 +50,8 @@ def kind(key: str) -> str | None:
         return "flow"
     if key in TEMP_KEYS:
         return "temp"
+    if key in DELTA_KEYS:
+        return "delta"
     return None
 
 
@@ -56,6 +63,8 @@ def to_display(key: str, metric_value: float, imperial: bool) -> float:
         return metric_value / MM_PER_INCH
     if k == "flow":
         return metric_value * 60 / MM_PER_INCH
+    if k == "delta":
+        return metric_value * 9 / 5
     return metric_value * 9 / 5 + 32
 
 
@@ -67,6 +76,8 @@ def to_metric(key: str, display_value: float, imperial: bool) -> float:
         return display_value * MM_PER_INCH
     if k == "flow":
         return display_value * MM_PER_INCH / 60
+    if k == "delta":
+        return display_value * 5 / 9
     return (display_value - 32) * 5 / 9
 
 

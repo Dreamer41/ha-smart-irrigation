@@ -211,6 +211,29 @@ class IrrigationState:
     self_tune_early_streak: int = 0
     self_tune_skip_streak: int = 0
 
+    # --- 1.6 greenhouse / indoor climate (greenhouse.py) ---
+    # The Greenhouse control switch: off leaves every device alone (misters
+    # are switched off first).
+    greenhouse_enabled: bool = True
+    mist_at_night: bool = False
+    mist_trigger: str = "any"
+    # "" = follow the climate preset; else open / closed / leave.
+    ventilation_failsafe: str = ""
+    # "" = off, or follow the outside temperature when there is an outside
+    # sensor; else off / limited / outside (greenhouse_logic).
+    heater_failsafe: str = ""
+    # Misting pulses of the last hour: [end_ts, seconds], and today's total.
+    mist_pulses: list[list[float]] = field(default_factory=list)
+    mist_today_date_iso: str | None = None
+    mist_today_seconds: float = 0.0
+    # Misting stopped by itself because a mister would not switch off: it
+    # stays stopped until Reset Irrigation Lock is pressed.
+    mist_halted: bool = False
+    # Per role: when ZoneFlow last changed it (minimum on / off times) and
+    # until when a person's own switching is respected (manual hold).
+    gh_changed_ts: dict[str, float] = field(default_factory=dict)
+    gh_hold_until: dict[str, float] = field(default_factory=dict)
+
     def rain_tracker(self) -> RainWindowTracker:
         return RainWindowTracker.from_persisted(self.rain_samples)
 

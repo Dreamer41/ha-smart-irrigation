@@ -6,11 +6,13 @@
         "description": "为这个灌溉区域起一个简短的名称（例如“前院草坪”“牛油果树”）。以后要添加更多区域，再次添加此集成即可。",
         "data": {
           "zone_name": "区域名称",
-          "plant": "种植的作物"
+          "plant": "种植的作物",
+          "zone_type": "种植环境"
         },
         "data_description": {
           "zone_name": "将作为该区域的设备名称和实体名称的开头，也会出现在手机消息中。例如“番茄畦”“前院草坪”。",
-          "plant": "为这种作物填入合适的初始值：每周水量目标、作物系数、深层浇灌和生长期递增。“其他”则从通用值开始。所有值以后都可以在该区域的设备页面上修改。"
+          "plant": "为这种作物填入合适的初始值：每周水量目标、作物系数、深层浇灌和生长期递增。“其他”则从通用值开始。所有值以后都可以在该区域的设备页面上修改。",
+          "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。"
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "该平均值低于此值时，该区域使用凉爽每周目标。两者之间为正常天气。",
           "fallback_temp": "没有实际读数时使用。没有温度传感器时，这就是您的手动控制：热浪时调高，寒潮时调低。"
         }
+      },
+      "greenhouse_devices": {
+        "title": "环境设备与传感器",
+        "description": "请绑定您的实际传感器和设备。所有项目均为可选，但风扇、通风口、喷雾器或加热器需要绑定室内温度传感器。您稍后可以在“配置”中添加或修改它们。",
+        "data": {
+          "inside_temp_entity": "室内温度传感器",
+          "inside_humidity_entity": "室内湿度传感器（可选）",
+          "light_entity": "光照传感器（可选）",
+          "outdoor_temp_entity": "室外温度传感器（可选）",
+          "fan_entities": "降温风扇（可选）",
+          "vent_entities": "通风口（可选）",
+          "mister_entities": "喷雾 / 加湿（可选）",
+          "heater_entities": "加热器（可选）",
+          "notify_entity": "手机通知接收端（可选）",
+          "unit_system": "单位",
+          "backup_temp_entities": "备用室内温度传感器"
+        },
+        "data_description": {
+          "inside_temp_entity": "温室或房间内部的温度传感器。任何风扇、通风口、喷雾器或加热器都需要它，同时也用于浇水控制。",
+          "inside_humidity_entity": "室内的湿度传感器。允许 ZoneFlow 根据湿度进行通风或喷雾，并在足够湿润时停止喷雾。",
+          "light_entity": "光照传感器（勒克斯或太阳辐射）。可在阳光强烈时启动喷雾。",
+          "outdoor_temp_entity": "室外的温度传感器。配备后，ZoneFlow 仅在室外空气比室内凉爽时才开窗通风降温，绝不会吸入更热的空气。若未配置，则仅根据室内读数运行。",
+          "fan_entities": "用于降温或排气的风扇。可以是任何开关、虚拟开关（input boolean）或风扇实体。它们将同时联动开关。",
+          "vent_entities": "顶部或侧面通风口：风闸，或用于打开它们的开关。它们将同时联动动作。",
+          "mister_entities": "喷雾器或造雾器：开关或阀门。ZoneFlow 会以短脉冲方式运行它们，并始终确保最终处于关闭状态。",
+          "heater_entities": "加热器：开关或空调/恒温器实体。当天气过冷时自动开启。",
+          "notify_entity": "用于接收警告（例如传感器故障）的手机通知目标。留空则不发送通知。",
+          "unit_system": "以摄氏度或华氏度显示温度。“自动”模式将遵循 Home Assistant 的系统设置。",
+          "backup_temp_entities": "可选，建议配备加热器的温室使用。室内额外的温度传感器，最好放置在远离主传感器的地方。如果主传感器停止工作，控制系统将自动切换至第一个可用的备用传感器，并向您发送通知。"
+        }
+      },
+      "water_valve": {
+        "title": "此分区是否需要浇水？",
+        "description": "如果此分区需要为植物浇水，请选择阀门开关。如果是仅控制环境的分区，请留空（此时需要至少绑定一个环境设备）。",
+        "data": {
+          "valve_entity": "阀门开关（可选）"
+        },
+        "data_description": {
+          "valve_entity": "用于打开此分区阀门的开关。如果是无需浇水的纯环境控制分区，请留空。"
+        }
+      },
+      "watering": {
+        "title": "浇水设置",
+        "description": "此分区阀门的浇水设置。所有选项稍后均可在分区的设备页面上进行修改。",
+        "data": {
+          "pump_power_entity": "水泵功率传感器（可选）",
+          "pump_id": "共享水泵 ID（可选）",
+          "flow_meter_entity": "水流量计（可选）",
+          "soil_moisture_entity": "土壤湿度传感器（可选）",
+          "soil_type": "土壤类型",
+          "drainage": "排水性能",
+          "slope": "坡度",
+          "irrigation_method": "灌溉方式",
+          "growth_ramp_profile": "生长阶段自动渐增",
+          "deep_soak_enabled": "启用深层浸润循环",
+          "deep_soak_time": "深层浸润计划时间",
+          "routine_time": "常规灌溉计划时间",
+          "deep_soak_sun_mode": "深层浸润触发方式",
+          "deep_soak_sun_offset_minutes": "深层浸润日出/日落偏移（分钟）",
+          "routine_sun_mode": "常规浇水触发方式",
+          "routine_sun_offset_minutes": "常规浇水日出/日落偏移（分钟）"
+        },
+        "data_description": {
+          "pump_power_entity": "水泵上的功率传感器（W），例如智能插座。每次浇水期间，ZoneFlow 会检查水泵是否真的在消耗功率，若未消耗则发出警告。如果没有请留空。",
+          "pump_id": "仅适用于共享同一个水泵的分区：在此输入相同的名称（任意名称，例如“水泵 A”），它们将轮流运行而不是同时启动。如果此分区有独立水泵或水源，请留空。",
+          "flow_meter_entity": "累计总用水量的水表（升、加仑或 m³）。ZoneFlow 将记录每次浇水的实际用水量，并在水泵运行但无水流时发出警告，还可为您测量水流速率（配置 → 水流速率）。",
+          "soil_moisture_entity": "位于该分区根系区域的土壤湿度传感器（%）。土壤干燥会提前执行常规浇水，土壤湿润则会跳过浇水，介于两者之间时由常规计划决定。干燥和湿润阈值可在分区设备页面上设置。",
+          "soil_type": "决定每次浇水如何拆分为多个脉冲，以便水分充分渗透而不是流失：黏土每次脉冲约 3 mm，壤土 15 mm，沙土 30 mm，脉冲之间浸泡间隔为 30 分钟（黏土和黏壤土为 1 小时）。选择“不确定”将使用谨慎的中间值。您稍后也可以在分区的设备页面上进行修改。",
+          "drainage": "排水缓慢的土壤（下方有坚硬致密的土层）每次脉冲给水量较少，且脉冲之间需要浸泡 1 小时。",
+          "slope": "坡地上的水在渗透前容易流失：中等坡度每次浇水增加一个脉冲，陡坡增加两个脉冲。",
+          "irrigation_method": "水流的输送方式。在沙质土壤上使用滴灌或渗水管时，新分区将至少从两个脉冲开始，以确保水分保留在根系区域。具体的给水量由流量设定（配置 → 水流速率）。",
+          "growth_ramp_profile": "为幼苗提供较少的水量，并随着植物生长逐渐增加至每周完整目标量，时间从分区设备页面上的“种植/移植日期”开始计算。关闭：始终使用完整目标量。自定义：在设备页面上绘制您自己的曲线。",
+          "deep_soak_enabled": "深层浸润是指每隔几周（初始为 14 天）进行一次大水量、慢速的浇水，使土壤深层湿润，促进根系向下生长。非常适合树木、灌木和多年生植物；对于沙拉蔬菜和香草等浅根植物，请将其关闭。无论是否启用，常规浇水都会正常运行。",
+          "deep_soak_time": "当深层浸润到期的那天，且下方的触发方式设为固定时间时的启动时间。清晨是最佳选择：阳光和风导致的水分蒸发较少。",
+          "routine_time": "ZoneFlow 每天检查常规浇水是否到期的固定时间，若到期则执行浇水。到期频率取决于天气和您的每周目标量。清晨是最佳选择。",
+          "deep_soak_sun_mode": "在上述固定时间启动深层浸润，或在日出/日落之前或之后启动，以便随季节自动调整。",
+          "deep_soak_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
+          "routine_sun_mode": "在上述固定时间启动常规浇水，或在日出/日落之前或之后启动，以便随季节自动调整。",
+          "routine_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。"
+        }
       }
     },
     "error": {
       "zone_name_required": "区域名称不能为空。",
       "cool_not_below_hot": "凉爽阈值必须低于炎热阈值。",
       "valve_already_used": "另一个 ZoneFlow 区域已在使用此阀门。",
-      "csv_path_already_used": "另一个 ZoneFlow 区域已在写入此 CSV 文件。"
+      "csv_path_already_used": "另一个 ZoneFlow 区域已在写入此 CSV 文件。",
+      "inside_temp_required": "风扇、通风口、喷雾器或加热器需要绑定室内温度传感器。",
+      "device_in_two_roles": "同一个实体被分配给了两个不同的用途。",
+      "device_already_used": "另一个 ZoneFlow 分区已经使用了这些设备中的某一个。",
+      "valve_or_device_required": "请选择一个阀门，或至少选择一个环境控制设备。",
+      "backup_same_as_inside": "备用传感器不能与主室内温度传感器相同。"
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "区域设置（实体、土壤、计划……）",
           "flow_rate": "流量：根据灌水器计算",
-          "flow_measure": "流量：用水表测量"
+          "flow_measure": "流量：用水表测量",
+          "greenhouse_devices": "阀门、传感器与环境设备",
+          "watering": "浇水设置",
+          "zone_type": "分区类型"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "该区域灌水器实际浇湿的面积。对于单株植物旁的滴头，请把它们周围的湿润区域加起来，而不是整个苗床。"
         }
+      },
+      "greenhouse_devices": {
+        "title": "温室与室内设备",
+        "description": "添加或更改阀门、传感器和环境设备。不会重新创建任何内容：该分区未使用的项目将被隐藏。",
+        "data": {
+          "valve_entity": "阀门开关（可选）",
+          "inside_temp_entity": "室内温度传感器",
+          "inside_humidity_entity": "室内湿度传感器（可选）",
+          "light_entity": "光照传感器（可选）",
+          "outdoor_temp_entity": "室外温度传感器（可选）",
+          "fan_entities": "降温风扇（可选）",
+          "vent_entities": "通风口（可选）",
+          "mister_entities": "喷雾 / 加湿（可选）",
+          "heater_entities": "加热器（可选）",
+          "notify_entity": "手机通知接收端（可选）",
+          "unit_system": "单位",
+          "backup_temp_entities": "备用室内温度传感器"
+        },
+        "data_description": {
+          "valve_entity": "用于打开此分区阀门的开关。如果是无需浇水的纯环境控制分区，请留空。",
+          "inside_temp_entity": "温室或房间内部的温度传感器。任何风扇、通风口、喷雾器或加热器都需要它，同时也用于浇水控制。",
+          "inside_humidity_entity": "室内的湿度传感器。允许 ZoneFlow 根据湿度进行通风或喷雾，并在足够湿润时停止喷雾。",
+          "light_entity": "光照传感器（勒克斯或太阳辐射）。可在阳光强烈时启动喷雾。",
+          "outdoor_temp_entity": "室外的温度传感器。配备后，ZoneFlow 仅在室外空气比室内凉爽时才开窗通风降温，绝不会吸入更热的空气。若未配置，则仅根据室内读数运行。",
+          "fan_entities": "用于降温或排气的风扇。可以是任何开关、虚拟开关（input boolean）或风扇实体。它们将同时联动开关。",
+          "vent_entities": "顶部或侧面通风口：风闸，或用于打开它们的开关。它们将同时联动动作。",
+          "mister_entities": "喷雾器或造雾器：开关或阀门。ZoneFlow 会以短脉冲方式运行它们，并始终确保最终处于关闭状态。",
+          "heater_entities": "加热器：开关或空调/恒温器实体。当天气过冷时自动开启。",
+          "notify_entity": "用于接收警告（例如传感器故障）的手机通知目标。留空则不发送通知。",
+          "unit_system": "以摄氏度或华氏度显示温度。“自动”模式将遵循 Home Assistant 的系统设置。",
+          "backup_temp_entities": "可选，建议配备加热器的温室使用。室内额外的温度传感器，最好放置在远离主传感器的地方。如果主传感器停止工作，控制系统将自动切换至第一个可用的备用传感器，并向您发送通知。"
+        }
+      },
+      "zone_type": {
+        "title": "分区类型",
+        "description": "更改此分区的种植环境。不会删除任何内容：新类型未使用的项目将被隐藏，如果切换回来将重新显示。",
+        "data": {
+          "zone_type": "种植环境"
+        },
+        "data_description": {
+          "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。"
+        }
+      },
+      "watering": {
+        "title": "浇水设置",
+        "description": "此分区阀门的浇水设置。所有选项稍后均可在分区的设备页面上进行修改。",
+        "data": {
+          "pump_power_entity": "水泵功率传感器（可选）",
+          "pump_id": "共享水泵 ID（可选）",
+          "flow_meter_entity": "水流量计（可选）",
+          "soil_moisture_entity": "土壤湿度传感器（可选）",
+          "soil_type": "土壤类型",
+          "drainage": "排水性能",
+          "slope": "坡度",
+          "irrigation_method": "灌溉方式",
+          "growth_ramp_profile": "生长阶段自动渐增",
+          "deep_soak_enabled": "启用深层浸润循环",
+          "deep_soak_time": "深层浸润计划时间",
+          "routine_time": "常规灌溉计划时间",
+          "deep_soak_sun_mode": "深层浸润触发方式",
+          "deep_soak_sun_offset_minutes": "深层浸润日出/日落偏移（分钟）",
+          "routine_sun_mode": "常规浇水触发方式",
+          "routine_sun_offset_minutes": "常规浇水日出/日落偏移（分钟）"
+        },
+        "data_description": {
+          "pump_power_entity": "水泵上的功率传感器（W），例如智能插座。每次浇水期间，ZoneFlow 会检查水泵是否真的在消耗功率，若未消耗则发出警告。如果没有请留空。",
+          "pump_id": "仅适用于共享同一个水泵的分区：在此输入相同的名称（任意名称，例如“水泵 A”），它们将轮流运行而不是同时启动。如果此分区有独立水泵或水源，请留空。",
+          "flow_meter_entity": "累计总用水量的水表（升、加仑或 m³）。ZoneFlow 将记录每次浇水的实际用水量，并在水泵运行但无水流时发出警告，还可为您测量水流速率（配置 → 水流速率）。",
+          "soil_moisture_entity": "位于该分区根系区域的土壤湿度传感器（%）。土壤干燥会提前执行常规浇水，土壤湿润则会跳过浇水，介于两者之间时由常规计划决定。干燥和湿润阈值可在分区设备页面上设置。",
+          "soil_type": "决定每次浇水 how 拆分为多个脉冲，以便水分充分渗透而不是流失：黏土每次脉冲约 3 mm，壤土 15 mm，沙土 30 mm，脉冲之间浸泡间隔为 30 分钟（黏土和黏壤土为 1 小时）。选择“不确定”将使用谨慎的中间值。您稍后也可以在分区的设备页面上进行修改。",
+          "drainage": "排水缓慢的土壤（下方有坚硬致密的土层）每次脉冲给水量较少，且脉冲之间需要浸泡 1 小时。",
+          "slope": "坡地上的水在渗透前容易流失：中等坡度每次浇水增加一个脉冲，陡坡增加两个脉冲。",
+          "irrigation_method": "水流的输送方式。在沙质土壤上使用滴灌或渗水管时，新分区将至少从两个脉冲开始，以确保水分保留在根系区域。具体的给水量由流量设定（配置 → 水流速率）。",
+          "growth_ramp_profile": "为幼苗提供较少的水量，并随着植物生长逐渐增加至每周完整目标量，时间从分区设备页面上的“种植/移植日期”开始计算。关闭：始终使用完整目标量。自定义：在设备页面上绘制您自己的曲线。",
+          "deep_soak_enabled": "深层浸润是指每隔几周（初始为 14 天）进行一次大水量、慢速的浇水，使土壤深层湿润，促进根系向下生长。非常适合树木、灌木和多年生植物；对于沙拉蔬菜和香草等浅根植物，请将其关闭。无论是否启用，常规浇水都会正常运行。",
+          "deep_soak_time": "当深层浸润到期的那天，且下方的触发方式设为固定时间时的启动时间。清晨是最佳选择：阳光和风导致的水分蒸发较少。",
+          "routine_time": "ZoneFlow 每天检查常规浇水是否到期的固定时间，若到期则执行浇水。到期频率取决于天气和您的每周目标量。清晨是最佳选择。",
+          "deep_soak_sun_mode": "在上述固定时间启动深层浸润，或在日出/日落之前或之后启动，以便随季节自动调整。",
+          "deep_soak_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
+          "routine_sun_mode": "在上述固定时间启动常规浇水，或在日出/日落之前或之后启动，以便随季节自动调整。",
+          "routine_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。"
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "另一个 ZoneFlow 区域已在使用此阀门。",
-      "csv_path_already_used": "另一个 ZoneFlow 区域已在写入此 CSV 文件。"
+      "csv_path_already_used": "另一个 ZoneFlow 区域已在写入此 CSV 文件。",
+      "inside_temp_required": "风扇、通风口、喷雾器或加热器需要绑定室内温度传感器。",
+      "device_in_two_roles": "同一个实体被分配给了两个不同的用途。",
+      "device_already_used": "另一个 ZoneFlow 分区已经使用了这些设备中的某一个。",
+      "valve_or_device_required": "请选择一个阀门，或至少选择一个环境控制设备。",
+      "valve_required_outdoor": "室外分区必须配置阀门。请先在“阀门、传感器与环境设备”中添加一个阀门。",
+      "backup_same_as_inside": "备用传感器不能与主室内温度传感器相同。"
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "灌木/绿篱",
         "young_tree": "幼树（头几年）",
         "fruit_tree": "成年果树"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "室外",
+        "greenhouse": "温室",
+        "indoor": "室内"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "防霜保护温度"
+      },
+      "heat_temp": {
+        "name": "低于此温度开启加热"
+      },
+      "vent_temp": {
+        "name": "达到此温度打开通风口"
+      },
+      "fan_temp": {
+        "name": "达到此温度开启风扇"
+      },
+      "climate_hysteresis": {
+        "name": "气候控制迟滞（回差）"
+      },
+      "outside_margin": {
+        "name": "内外温差门槛"
+      },
+      "max_humidity": {
+        "name": "高于此湿度开启通风"
+      },
+      "mist_temp": {
+        "name": "高于此温度开启喷雾"
+      },
+      "mist_min_humidity": {
+        "name": "低于此湿度开启喷雾"
+      },
+      "mist_stop_humidity": {
+        "name": "达到此湿度停止喷雾"
+      },
+      "mist_min_temp": {
+        "name": "喷雾最低允许温度"
+      },
+      "mist_light_level": {
+        "name": "喷雾光照强度门槛"
+      },
+      "mist_on_seconds": {
+        "name": "单次喷雾持续时间"
+      },
+      "mist_off_seconds": {
+        "name": "喷雾间隔暂停时间"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "每小时最大喷雾时长"
+      },
+      "vent_open_pct": {
+        "name": "通风口开度"
+      },
+      "manual_hold_minutes": {
+        "name": "手动干预保持时间"
+      },
+      "sensor_offline_hours": {
+        "name": "传感器离线判定时间"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "灌溉中止标志"
+      },
+      "ventilation_allowed": {
+        "name": "允许通风"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "暂停"
+      },
+      "greenhouse_control": {
+        "name": "温室控制开关"
+      },
+      "mist_at_night": {
+        "name": "夜间喷雾"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "下次施肥"
+      },
+      "greenhouse_status": {
+        "name": "温室状态"
+      },
+      "inside_vpd": {
+        "name": "室内 VPD"
+      },
+      "misting_today": {
+        "name": "今日喷雾时长"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "中等坡度",
           "steep": "陡坡"
         }
+      },
+      "misting_trigger": {
+        "name": "喷雾触发条件",
+        "state": {
+          "any": "满足任意条件",
+          "temperature": "仅限温度",
+          "humidity": "仅限湿度",
+          "light": "仅限光照"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "传感器故障通风保护",
+        "state": {
+          "open": "打开通风口，开启风扇",
+          "closed": "关闭通风口，关闭风扇",
+          "leave": "保持现有状态"
+        }
+      },
+      "heater_failsafe": {
+        "name": "传感器故障加热保护",
+        "state": {
+          "off": "关闭",
+          "limited": "部分时间开启",
+          "outside": "仅室外寒冷时部分时间开启"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "无法发送每周总结：手机通知失败。请检查该区域的通知目标。"
+    },
+    "zone_has_no_valve": {
+      "message": "该分区未配置阀门，因此无法进行浇水。如果需要浇水，请在“配置”中添加阀门。"
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}：阀门与另一个区域共用",
       "description": "区域 {zone} 和区域 {other_zone} 配置了相同的阀门实体（{entity}）。除非它们还共用同一个水泵 ID 或水泵功率传感器，否则 ZoneFlow 无法识别这是同一个物理阀门，也不会阻止它们同时打开它。请为其中一个区域指定专属阀门，或在“配置”中为两者设置相同的水泵 ID。"
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}：室内温度传感器未工作",
+      "description": "分区 {zone} 的室内温度传感器（{entity}）已有一段时间未提供可用读数，因此环境控制已进入保护模式：喷雾器和加热器已关闭，通风口和风扇正在遵循“传感器故障通风保护”设置。请检查传感器。一旦恢复上报，此警告将自动清除。"
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}：室外温度传感器未工作",
+      "description": "分区 {zone} 的室外温度传感器（{entity}）已有一段时间未提供可用读数。通风控制将仅根据室内读数运行，无法确认室外空气是否更凉爽。请检查传感器。一旦恢复上报，此警告将自动清除。"
+    },
+    "greenhouse_device": {
+      "title": "{zone}：环境控制设备无响应",
+      "description": "分区 {zone} 已切换其 {devices} 的状态，但重试一次后设备仍未上报状态更改。请检查设备及其集成。一旦设备正常响应，此警告将自动清除。"
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}：喷雾已停止",
+      "description": "分区 {zone} 的喷雾器在收到关闭指令后未关闭，为防止积水泛滥已强制停止喷雾。请检查喷雾器，然后在该分区页面上点击“重置灌溉锁定”以重新开始喷雾。"
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}：正在使用备用温度传感器运行",
+      "description": "分区 {zone} 的主室内温度传感器（{entity}）已停止工作，环境控制系统已自动切换至备用传感器。请检查主传感器。一旦主传感器恢复上报，此警告将自动清除。"
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}：室内温度传感器读数不一致",
+      "description": "分区 {zone} 的主室内温度传感器（{entity}）读数为 {main}，而备用传感器读数为 {backup}，两者偏差较大且已持续一段时间。其中一个传感器可能存在故障或位置摆放不当（例如处于阳光直射下或紧挨着加热器）。请检查这两个传感器。一旦读数恢复一致，此警告将自动清除。"
     }
   }
 }

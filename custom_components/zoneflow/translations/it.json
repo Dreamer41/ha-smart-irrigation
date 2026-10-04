@@ -6,11 +6,13 @@
         "description": "Dai a questa zona di irrigazione un nome breve (es. \"Prato davanti\", \"Avocado\"). Per aggiungere altre zone in seguito, aggiungi di nuovo questa integrazione.",
         "data": {
           "zone_name": "Nome della zona",
-          "plant": "Cosa è piantato"
+          "plant": "Cosa è piantato",
+          "zone_type": "Dove cresce"
         },
         "data_description": {
           "zone_name": "Diventa il nome del dispositivo della zona e l'inizio dei nomi delle sue entità, e compare nei messaggi sul telefono. Es. \"Aiuola pomodori\", \"Prato davanti\".",
-          "plant": "Precompila valori di partenza adatti a questa coltura: obiettivi settimanali d'acqua, coefficiente colturale, irrigazione profonda e aumento graduale secondo la crescita. \"Altro\" parte da valori generici. Puoi cambiarli tutti in seguito nella pagina del dispositivo della zona."
+          "plant": "Precompila valori di partenza adatti a questa coltura: obiettivi settimanali d'acqua, coefficiente colturale, irrigazione profonda e aumento graduale secondo la crescita. \"Altro\" parte da valori generici. Puoi cambiarli tutti in seguito nella pagina del dispositivo della zona.",
+          "zone_type": "All’aperto è il funzionamento classico di ZoneFlow. Le zone in serra e al chiuso aggiungono il controllo climatico (ventole, aperture, nebulizzazione, riscaldamento), possono funzionare senza valvola e non hanno pluviometro o previsioni a causa del tetto."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Quando quella media è sotto questo valore, la zona usa il suo Obiettivo settimanale fresco. Nel mezzo il tempo è normale.",
           "fallback_temp": "Si usa quando non c'è una lettura reale. Senza sensore di temperatura è il tuo comando manuale: alzala per un'ondata di caldo, abbassala per un'ondata di freddo."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Dispositivi e sensori climatici",
+        "description": "Associa i tuoi sensori e dispositivi reali. Tutti sono opzionali, ma ventola, apertura, nebulizzatore o riscaldatore richiedono il sensore di temperatura interna. Potrai aggiungerli o modificarli in seguito su Configura.",
+        "data": {
+          "inside_temp_entity": "Sensore di temperatura interna",
+          "inside_humidity_entity": "Sensore di umidità interna (opzionale)",
+          "light_entity": "Sensore di luminosità (opzionale)",
+          "outdoor_temp_entity": "Sensore di temperatura esterna (opzionale)",
+          "fan_entities": "Ventole di raffreddamento (opzionali)",
+          "vent_entities": "Aperture di ventilazione (opzionali)",
+          "mister_entities": "Nebulizzazione / umidificazione (opzionale)",
+          "heater_entities": "Riscaldatore (opzionale)",
+          "notify_entity": "Destinatario notifiche telefono (opzionale)",
+          "unit_system": "Unità di misura",
+          "backup_temp_entities": "Sensori di temperatura interna di riserva"
+        },
+        "data_description": {
+          "inside_temp_entity": "Il sensore di temperatura all’interno della serra o della stanza. Necessario per ventole, aperture, nebulizzatori o riscaldatori, e utilizzato anche per l’irrigazione.",
+          "inside_humidity_entity": "Un sensore di umidità interna. Consente a ZoneFlow di ventilare o nebulizzare in base all’umidità e di interrompere la nebulizzazione quando è abbastanza umido.",
+          "light_entity": "Un sensore di luminosità (lux o radiazione solare). Può avviare la nebulizzazione nelle giornate molto luminose.",
+          "outdoor_temp_entity": "Un sensore di temperatura esterna. Con esso, ZoneFlow ventila per raffreddare solo quando l’aria esterna è più fresca di quella interna, evitando di introdurre aria più calda. Senza di esso, si basa solo sulle letture interne.",
+          "fan_entities": "Ventole di raffreddamento o estrazione. Qualsiasi interruttore, input boolean o ventola. Si attivano tutte insieme.",
+          "vent_entities": "Aperture sul tetto o laterali: coperture o interruttori che le aprono. Si muovono tutte insieme.",
+          "mister_entities": "Nebulizzatori: un interruttore o una valvola. ZoneFlow li aziona con brevi impulsi e assicura sempre che vengano spenti.",
+          "heater_entities": "Riscaldatori: un interruttore o un’entità climate. Si accende quando fa troppo freddo.",
+          "notify_entity": "Un destinatario di notifiche sullo smartphone per gli avvisi, come un sensore guasto. Lascia vuoto per nessuno.",
+          "unit_system": "Mostra le temperature in Celsius o Fahrenheit. L’impostazione automatica segue Home Assistant.",
+          "backup_temp_entities": "Opzionale, consigliato per serre con riscaldatore. Sensori di temperatura interna aggiuntivi, da posizionare preferibilmente lontano da quello principale. Se il sensore principale smette di funzionare, il controllo prosegue con il primo sensore di riserva funzionante e riceverai un messaggio."
+        }
+      },
+      "water_valve": {
+        "title": "Questa zona irriga?",
+        "description": "Seleziona l’interruttore della valvola se questa zona irriga le piante. Lascialo vuoto per una zona solo climatica (in tal caso necessita di almeno un dispositivo).",
+        "data": {
+          "valve_entity": "Interruttore valvola (opzionale)"
+        },
+        "data_description": {
+          "valve_entity": "L’interruttore che apre la valvola di questa zona. Lascia vuoto per una zona solo climatica senza irrigazione."
+        }
+      },
+      "watering": {
+        "title": "Impostazioni di irrigazione",
+        "description": "Le impostazioni di irrigazione per la valvola di questa zona. Tutto può essere modificato in seguito nella pagina del dispositivo della zona.",
+        "data": {
+          "pump_power_entity": "Sensore potenza pompa (opzionale)",
+          "pump_id": "ID pompa condivisa (opzionale)",
+          "flow_meter_entity": "Flussometro (opzionale)",
+          "soil_moisture_entity": "Sensore umidità del suolo (opzionale)",
+          "soil_type": "Tipo di terreno",
+          "drainage": "Drenaggio",
+          "slope": "Pendenza",
+          "irrigation_method": "Metodo di irrigazione",
+          "growth_ramp_profile": "Rampa automatica fase di crescita",
+          "deep_soak_enabled": "Abilita ciclo di bagnatura profonda",
+          "deep_soak_time": "Orario bagnatura profonda",
+          "routine_time": "Orario irrigazione di routine",
+          "deep_soak_sun_mode": "Attivazione bagnatura profonda",
+          "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
+          "routine_sun_mode": "Attivazione routine",
+          "routine_sun_offset_minutes": "Scostamento solare routine (minuti)"
+        },
+        "data_description": {
+          "pump_power_entity": "Un sensore di potenza (W) sulla pompa, ad es. da una presa intelligente. Durante ogni irrigazione ZoneFlow verifica che la pompa assorba effettivamente potenza e ti avvisa se non lo fa. Lascia vuoto se non ne hai uno.",
+          "pump_id": "Solo per le zone che funzionano con la stessa pompa: assegna a tutte lo stesso nome qui (qualsiasi nome, ad es. «Pompa A») e si alterneranno invece di funzionare contemporaneamente. Lascia vuoto se questa zona ha una propria pompa o alimentazione idrica.",
+          "flow_meter_entity": "Un contatore dell’acqua che calcola il volume totale (litri, galloni o m³). ZoneFlow registra la quantità di acqua effettivamente utilizzata da ogni irrigazione, ti avvisa se la pompa è in funzione ma l’acqua non scorre e può misurare la portata per te (Configura → Portata).",
+          "soil_moisture_entity": "Un sensore di umidità del suolo (%) nella zona radicolare di questa zona. Il terreno asciutto anticipa l’irrigazione di routine, il terreno umido la salta e nei casi intermedi decide la pianificazione normale. I livelli di asciutto e umido si trovano nella pagina del dispositivo della zona.",
+          "soil_type": "Determina come ogni irrigazione viene suddivisa in impulsi, in modo che l’acqua penetri anziché scorrere via: circa 3 mm per impulso su argilla, 15 mm su limo, 30 mm su sabbia, con una pausa di 30 minuti tra gli impulsi (un’ora su argilla e limo argilloso). «Non sono sicuro» utilizza un valore medio prudente. Puoi anche modificarlo in seguito nella pagina del dispositivo della zona.",
+          "drainage": "Un terreno a drenaggio lento (uno strato duro e compatto sottostante) assorbe meno acqua per impulso e richiede un’ora di pausa tra gli impulsi.",
+          "slope": "L’acqua scorre via da un pendio prima di essere assorbita: una pendenza moderata aggiunge un impulso a ogni irrigazione, una pendenza ripida ne aggiunge due.",
+          "irrigation_method": "Modalità di erogazione dell’acqua. Con manichetta gocciolante o ala gocciolante su terreno sabbioso, una nuova zona parte con almeno due impulsi affinché l’acqua rimanga nella zona radicolare. La quantità di acqua erogata è impostata dalla portata (Configura → Portata).",
+          "growth_ramp_profile": "Fornisce meno acqua alle piante giovani e la aumenta fino all’obiettivo settimanale completo man mano che crescono, a partire dalla Data di piantumazione / trapianto indicata nella pagina del dispositivo. Disattivato: sempre l’obiettivo completo. Personalizzato: disegna la tua curva nella pagina del dispositivo.",
+          "deep_soak_enabled": "La bagnatura profonda è un’irrigazione abbondante e lenta ogni paio di settimane (14 giorni per iniziare) che inumidisce il terreno in profondità per far sviluppare le radici verso il basso. Ottimo per alberi, arbusti e piante perenni; disattivala per piante a radice superficiale come insalata ed erbe aromatiche. L’irrigazione di routine viene eseguita comunque.",
+          "deep_soak_time": "Orario di avvio della bagnatura profonda nei giorni previsti, quando la relativa attivazione qui sotto è impostata su un orario fisso. Il mattino presto è l’ideale: meno acqua persa per sole e vento.",
+          "routine_time": "Ora in cui ZoneFlow controlla ogni giorno se l’irrigazione di routine è dovuta, ed esegue l’irrigazione in caso affermativo. La frequenza dipende dal meteo e dall’obiettivo settimanale. Il mattino presto è l’ideale.",
+          "deep_soak_sun_mode": "Avvia la bagnatura profonda all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
+          "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
+          "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
+          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso."
+        }
       }
     },
     "error": {
       "zone_name_required": "Il nome della zona non può essere vuoto.",
       "cool_not_below_hot": "La soglia del fresco deve essere inferiore alla soglia del caldo.",
       "valve_already_used": "Un'altra zona ZoneFlow usa già questa valvola.",
-      "csv_path_already_used": "Un'altra zona ZoneFlow scrive già in questo file CSV."
+      "csv_path_already_used": "Un'altra zona ZoneFlow scrive già in questo file CSV.",
+      "inside_temp_required": "Una ventola, un’apertura, un nebulizzatore o un riscaldatore richiedono il sensore di temperatura interna.",
+      "device_in_two_roles": "La stessa entità è stata scelta per due ruoli diversi.",
+      "device_already_used": "Un’altra zona ZoneFlow sta già utilizzando uno di questi dispositivi.",
+      "valve_or_device_required": "Scegli una valvola o almeno un dispositivo climatico.",
+      "backup_same_as_inside": "Un sensore di riserva non può essere il sensore di temperatura interna principale."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Impostazioni della zona (entità, terreno, orari…)",
           "flow_rate": "Portata: calcolala dagli erogatori",
-          "flow_measure": "Portata: misurala con il flussometro"
+          "flow_measure": "Portata: misurala con il flussometro",
+          "greenhouse_devices": "Valvola, sensori e dispositivi climatici",
+          "watering": "Impostazioni di irrigazione",
+          "zone_type": "Tipo di zona"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "L'area che gli erogatori della zona bagnano davvero. Per i gocciolatori su singole piante, somma le chiazze bagnate intorno a loro, non l'intera aiuola."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Dispositivi per serra e interni",
+        "description": "Aggiungi o modifica la valvola, i sensori e i dispositivi climatici. Nulla viene ricreato: ciò che la zona non usa viene nascosto.",
+        "data": {
+          "valve_entity": "Interruttore valvola (opzionale)",
+          "inside_temp_entity": "Sensore di temperatura interna",
+          "inside_humidity_entity": "Sensore di umidità interna (opzionale)",
+          "light_entity": "Sensore di luminosità (opzionale)",
+          "outdoor_temp_entity": "Sensore di temperatura esterna (opzionale)",
+          "fan_entities": "Ventole di raffreddamento (opzionali)",
+          "vent_entities": "Aperture di ventilazione (opzionali)",
+          "mister_entities": "Nebulizzazione / umidificazione (opzionale)",
+          "heater_entities": "Riscaldatore (opzionale)",
+          "notify_entity": "Destinatario notifiche telefono (opzionale)",
+          "unit_system": "Unità di misura",
+          "backup_temp_entities": "Sensori di temperatura interna di riserva"
+        },
+        "data_description": {
+          "valve_entity": "L’interruttore che apre la valvola di questa zona. Lascia vuoto per una zona solo climatica senza irrigazione.",
+          "inside_temp_entity": "Il sensore di temperatura all’interno della serra o della stanza. Necessario per ventole, aperture, nebulizzatori o riscaldatori, e utilizzato anche per l’irrigazione.",
+          "inside_humidity_entity": "Un sensore di umidità interna. Consente a ZoneFlow di ventilare o nebulizzare in base all’umidità e di interrompere la nebulizzazione quando è abbastanza umido.",
+          "light_entity": "Un sensore di luminosità (lux o radiazione solare). Può avviare la nebulizzazione nelle giornate molto luminose.",
+          "outdoor_temp_entity": "Un sensore di temperatura esterna. Con esso, ZoneFlow ventila per raffreddare solo quando l’aria esterna è più fresca di quella interna, evitando di introdurre aria più calda. Senza di esso, si basa solo sulle letture interne.",
+          "fan_entities": "Ventole di raffreddamento o estrazione. Qualsiasi interruttore, input boolean o ventola. Si attivano tutte insieme.",
+          "vent_entities": "Aperture sul tetto o laterali: coperture o interruttori che le aprono. Si muovono tutte insieme.",
+          "mister_entities": "Nebulizzatori: un interruttore o una valvola. ZoneFlow li aziona con brevi impulsi e assicura sempre che vengano spenti.",
+          "heater_entities": "Riscaldatori: un interruttore o un’entità climate. Si accende quando fa troppo freddo.",
+          "notify_entity": "Un destinatario di notifiche sullo smartphone per gli avvisi, come un sensore guasto. Lascia vuoto per nessuno.",
+          "unit_system": "Mostra le temperature in Celsius o Fahrenheit. L’impostazione automatica segue Home Assistant.",
+          "backup_temp_entities": "Opzionale, consigliato per serre con riscaldatore. Sensori di temperatura interna aggiuntivi, da posizionare preferibilmente lontano da quello principale. Se il sensore principale smette di funzionare, il controllo prosegue con il primo sensore di riserva funzionante e riceverai un messaggio."
+        }
+      },
+      "zone_type": {
+        "title": "Tipo di zona",
+        "description": "Modifica il luogo in cui cresce questa zona. Nulla viene eliminato: ciò che il nuovo tipo non utilizza viene nascosto e riapparirà se si torna indietro.",
+        "data": {
+          "zone_type": "Dove cresce"
+        },
+        "data_description": {
+          "zone_type": "All’aperto è il funzionamento classico di ZoneFlow. Le zone in serra e al chiuso aggiungono il controllo climatico (ventole, aperture, nebulizzazione, riscaldamento), possono funzionare senza valvola e non hanno pluviometro o previsioni a causa del tetto."
+        }
+      },
+      "watering": {
+        "title": "Impostazioni di irrigazione",
+        "description": "Le impostazioni di irrigazione per la valvola di questa zona. Tutto può essere modificato in seguito nella pagina del dispositivo della zona.",
+        "data": {
+          "pump_power_entity": "Sensore potenza pompa (opzionale)",
+          "pump_id": "ID pompa condivisa (opzionale)",
+          "flow_meter_entity": "Flussometro (opzionale)",
+          "soil_moisture_entity": "Sensore umidità del suolo (opzionale)",
+          "soil_type": "Tipo di terreno",
+          "drainage": "Drenaggio",
+          "slope": "Pendenza",
+          "irrigation_method": "Metodo di irrigazione",
+          "growth_ramp_profile": "Rampa automatica fase di crescita",
+          "deep_soak_enabled": "Abilita ciclo di bagnatura profonda",
+          "deep_soak_time": "Orario bagnatura profonda",
+          "routine_time": "Orario irrigazione di routine",
+          "deep_soak_sun_mode": "Attivazione bagnatura profonda",
+          "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
+          "routine_sun_mode": "Attivazione routine",
+          "routine_sun_offset_minutes": "Scostamento solare routine (minuti)"
+        },
+        "data_description": {
+          "pump_power_entity": "Un sensore di potenza (W) sulla pompa, ad es. da una presa intelligente. Durante ogni irrigazione ZoneFlow verifica che la pompa assorba effettivamente potenza e ti avvisa se non lo fa. Lascia vuoto se non ne hai uno.",
+          "pump_id": "Solo per le zone che funzionano con la stessa pompa: assegna a tutte lo stesso nome qui (qualsiasi nome, ad es. «Pompa A») e si alterneranno invece di funzionare contemporaneamente. Lascia vuoto se questa zona ha una propria pompa o alimentazione idrica.",
+          "flow_meter_entity": "Un contatore dell’acqua che calcola il volume totale (litri, galloni o m³). ZoneFlow registra la quantità di acqua effettivamente utilizzata da ogni irrigazione, ti avvisa se la pompa è in funzione ma l’acqua non scorre e può misurare la portata per te (Configura → Portata).",
+          "soil_moisture_entity": "Un sensore di umidità del suolo (%) nella zona radicolare di questa zona. Il terreno asciutto anticipa l’irrigazione di routine, il terreno umido la salta e nei casi intermedi decide la pianificazione normale. I livelli di asciutto e umido si trovano nella pagina del dispositivo della zona.",
+          "soil_type": "Determina come ogni irrigazione viene suddivisa in impulsi, in modo che l’acqua penetri anziché scorrere via: circa 3 mm per impulso su argilla, 15 mm su limo, 30 mm su sabbia, con una pausa di 30 minuti tra gli impulsi (un’ora su argilla e limo argilloso). «Non sono sicuro» utilizza un valore medio prudente. Puoi anche modificarlo in seguito nella pagina del dispositivo della zona.",
+          "drainage": "Un terreno a drenaggio lento (uno strato duro e compatto sottostante) assorbe meno acqua per impulso e richiede un’ora di pausa tra gli impulsi.",
+          "slope": "L’acqua scorre via da un pendio prima di essere assorbita: una pendenza moderata aggiunge un impulso a ogni irrigazione, una pendenza ripida ne aggiunge due.",
+          "irrigation_method": "Modalità di erogazione dell’acqua. Con manichetta gocciolante o ala gocciolante su terreno sabbioso, una nuova zona parte con almeno due impulsi affinché l’acqua rimanga nella zona radicolare. La quantità di acqua erogata è impostata dalla portata (Configura → Portata).",
+          "growth_ramp_profile": "Fornisce meno acqua alle piante giovani e la aumenta fino all’obiettivo settimanale completo man mano che crescono, a partire dalla Data di piantumazione / trapianto indicata nella pagina del dispositivo. Disattivato: sempre l’obiettivo completo. Personalizzato: disegna la tua curva nella pagina del dispositivo.",
+          "deep_soak_enabled": "La bagnatura profonda è un’irrigazione abbondante e lenta ogni paio di settimane (14 giorni per iniziare) che inumidisce il terreno in profondità per far sviluppare le radici verso il basso. Ottimo per alberi, arbusti e piante perenni; disattivala per piante a radice superficiale come insalata ed erbe aromatiche. L’irrigazione di routine viene eseguita comunque.",
+          "deep_soak_time": "Orario di avvio della bagnatura profonda nei giorni previsti, quando la relativa attivazione qui sotto è impostata su un orario fisso. Il mattino presto è l’ideale: meno acqua persa per sole e vento.",
+          "routine_time": "Ora in cui ZoneFlow controlla ogni giorno se l’irrigazione di routine è dovuta, ed esegue l’irrigazione in caso affermativo. La frequenza dipende dal meteo e dall’obiettivo settimanale. Il mattino presto è l’ideale.",
+          "deep_soak_sun_mode": "Avvia la bagnatura profonda all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
+          "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
+          "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
+          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Un'altra zona ZoneFlow usa già questa valvola.",
-      "csv_path_already_used": "Un'altra zona ZoneFlow scrive già in questo file CSV."
+      "csv_path_already_used": "Un'altra zona ZoneFlow scrive già in questo file CSV.",
+      "inside_temp_required": "Una ventola, un’apertura, un nebulizzatore o un riscaldatore richiedono il sensore di temperatura interna.",
+      "device_in_two_roles": "La stessa entità è stata scelta per due ruoli diversi.",
+      "device_already_used": "Un’altra zona ZoneFlow sta già utilizzando uno di questi dispositivi.",
+      "valve_or_device_required": "Scegli una valvola o almeno un dispositivo climatico.",
+      "valve_required_outdoor": "Una zona all’aperto necessita di una valvola. Aggiungine una prima sotto Valvola, sensori e dispositivi climatici.",
+      "backup_same_as_inside": "Un sensore di riserva non può essere il sensore di temperatura interna principale."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Arbusti / siepe",
         "young_tree": "Albero giovane (primi anni)",
         "fruit_tree": "Albero da frutto adulto"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "All’aperto",
+        "greenhouse": "Serra",
+        "indoor": "Al chiuso"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Soglia antigelo"
+      },
+      "heat_temp": {
+        "name": "Riscaldatore attivo sotto"
+      },
+      "vent_temp": {
+        "name": "Apertura ventilazione a"
+      },
+      "fan_temp": {
+        "name": "Ventole attive a"
+      },
+      "climate_hysteresis": {
+        "name": "Isteresi climatica"
+      },
+      "outside_margin": {
+        "name": "Margine aria esterna"
+      },
+      "max_humidity": {
+        "name": "Ventila sopra umidità"
+      },
+      "mist_temp": {
+        "name": "Nebulizza sopra temperatura"
+      },
+      "mist_min_humidity": {
+        "name": "Nebulizza sotto umidità"
+      },
+      "mist_stop_humidity": {
+        "name": "Soglia arresto nebulizzazione"
+      },
+      "mist_min_temp": {
+        "name": "Temperatura minima nebulizzazione"
+      },
+      "mist_light_level": {
+        "name": "Livello luminosità nebulizzazione"
+      },
+      "mist_on_seconds": {
+        "name": "Tempo attivazione nebulizzazione"
+      },
+      "mist_off_seconds": {
+        "name": "Tempo disattivazione nebulizzazione"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Nebulizzazione max all’ora"
+      },
+      "vent_open_pct": {
+        "name": "Posizione apertura ventilazione"
+      },
+      "manual_hold_minutes": {
+        "name": "Tempo di blocco manuale"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensore offline dopo"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Segnale di interruzione irrigazione"
+      },
+      "ventilation_allowed": {
+        "name": "Ventilazione consentita"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Pausa"
+      },
+      "greenhouse_control": {
+        "name": "Controllo serra"
+      },
+      "mist_at_night": {
+        "name": "Nebulizzazione notturna"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Prossima concimazione"
+      },
+      "greenhouse_status": {
+        "name": "Stato serra"
+      },
+      "inside_vpd": {
+        "name": "VPD interno"
+      },
+      "misting_today": {
+        "name": "Nebulizzazione oggi"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Pendenza moderata",
           "steep": "Forte pendenza"
         }
+      },
+      "misting_trigger": {
+        "name": "Attivazione nebulizzazione",
+        "state": {
+          "any": "Qualsiasi attivazione",
+          "temperature": "Solo temperatura",
+          "humidity": "Solo umidità",
+          "light": "Solo luce"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Protezione sensore",
+        "state": {
+          "open": "Apri aperture, ventole accese",
+          "closed": "Chiudi aperture, ventole spente",
+          "leave": "Lascia così come sono"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Protezione riscaldatore",
+        "state": {
+          "off": "Spento",
+          "limited": "Acceso parte del tempo",
+          "outside": "Acceso parte del tempo se freddo fuori"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "Non è stato possibile inviare il riepilogo settimanale: la notifica al telefono non è riuscita. Controlla la destinazione delle notifiche della zona."
+    },
+    "zone_has_no_valve": {
+      "message": "Questa zona non ha una valvola, quindi non può irrigare. Aggiungi una valvola sotto Configura se desideri farlo."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}: valvola condivisa con un'altra zona",
       "description": "La zona {zone} e la zona {other_zone} sono entrambe configurate con la stessa entità valvola ({entity}). A meno che non condividano anche un ID pompa o un sensore di potenza della pompa, ZoneFlow non può capire che si tratta della stessa valvola fisica e non impedirà che vengano aperte contemporaneamente. Assegna a una delle due zone una valvola propria, oppure imposta lo stesso ID pompa su entrambe in Configura."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: sensore di temperatura interna non funzionante",
+      "description": "Il sensore di temperatura interna della zona {zone} ({entity}) non fornisce una lettura valida da un po’ di tempo, quindi il controllo climatico è in modalità di protezione: nebulizzatori e riscaldatore sono spenti, mentre aperture e ventole seguono l’impostazione Protezione sensore. Controlla il sensore. Il problema si risolverà automaticamente non appena invierà nuovamente i dati."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: sensore di temperatura esterna non funzionante",
+      "description": "Il sensore di temperatura esterna della zona {zone} ({entity}) non fornisce una lettura valida da un po’ di tempo. La ventilazione prosegue basandosi solo sulle letture interne, quindi non può verificare se l’aria esterna è più fresca. Controlla il sensore. Il problema si risolverà automaticamente non appena invierà nuovamente i dati."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: un dispositivo climatico non risponde",
+      "description": "La zona {zone} ha azionato {devices} ma non hanno segnalato la modifica, anche dopo un secondo tentativo. Controlla il dispositivo e la relativa integrazione. Il problema si risolverà automaticamente non appena i dispositivi risponderanno."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: nebulizzazione interrotta",
+      "description": "Un nebulizzatore della zona {zone} non si è spento al comando inviato, quindi la nebulizzazione è stata interrotta per evitare allagamenti. Controlla il nebulizzatore, poi premi Ripristina blocco irrigazione nella zona per riavviare la nebulizzazione."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: funzionamento con sensore di temperatura di riserva",
+      "description": "Il sensore di temperatura interna principale della zona {zone} ({entity}) ha smesso di funzionare, quindi il controllo climatico sta utilizzando un sensore di riserva. Controlla il sensore principale. Il problema si risolverà automaticamente non appena tornerà a inviare dati."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: disaccordo tra i sensori di temperatura interna",
+      "description": "Il sensore di temperatura interna principale della zona {zone} ({entity}) rileva {main} mentre quello di riserva rileva {backup}, e la differenza persiste da un po’ di tempo. Uno dei due è probabilmente errato o posizionato male (al sole diretto, vicino al riscaldatore). Controlla entrambi. Il problema si risolverà automaticamente non appena le letture coincideranno."
     }
   }
 }

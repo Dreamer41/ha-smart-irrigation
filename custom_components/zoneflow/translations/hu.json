@@ -6,11 +6,13 @@
         "description": "Adj ennek az öntözési zónának egy rövid nevet (pl. \"Előkert gyepe\", \"Avokádófa\"). Később további zónákhoz add hozzá újra ezt az integrációt.",
         "data": {
           "zone_name": "Zóna neve",
-          "plant": "Mi van ültetve"
+          "plant": "Mi van ültetve",
+          "zone_type": "A növények helye"
         },
         "data_description": {
           "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
-          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán."
+          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán.",
+          "zone_type": "A kültéri mód a ZoneFlow eredeti működése. Az üvegházi és beltéri zónák klímaszabályozást is biztosítanak (ventilátorok, szellőzők, párásítás, fűtés), szelep nélkül is működhetnek, valamint a tető miatt nincs esőmérőjük sem időjárás-előrejelzésük."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Ha ez az átlag ez alatt van, a zóna a hűvös időre szóló heti célt használja. A kettő között normál az idő.",
           "fallback_temp": "Akkor számít, ha nincs valódi mérés. Hőmérséklet-érzékelő nélkül ez a kézi szabályozód: hőségben emeld, hidegben csökkentsd."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Klímaeszközök és érzékelők",
+        "description": "Párosítsa a valós érzékelőivel és eszközeivel. Mindegyik választható, de a ventilátornak, szellőzőnek, párásítónak vagy fűtésnek szüksége van a belső hőmérséklet-érzékelőre. Később a Beállítások menüben módosíthatja őket.",
+        "data": {
+          "inside_temp_entity": "Belső hőmérséklet-érzékelő",
+          "inside_humidity_entity": "Belső páratartalom-érzékelő (szabadon választható)",
+          "light_entity": "Fényérzékelő (szabadon választható)",
+          "outdoor_temp_entity": "Külső hőmérséklet-érzékelő (szabadon választható)",
+          "fan_entities": "Hűtőventilátorok (szabadon választható)",
+          "vent_entities": "Szellőzők (szabadon választható)",
+          "mister_entities": "Párásítás / ködképzés (szabadon választható)",
+          "heater_entities": "Fűtés (szabadon választható)",
+          "notify_entity": "Telefon értesítési célpont (szabadon választható)",
+          "unit_system": "Mértékegységek",
+          "backup_temp_entities": "Tartalék belső hőmérséklet-érzékelők"
+        },
+        "data_description": {
+          "inside_temp_entity": "Az üvegházban vagy helyiségben lévő hőmérséklet-érzékelő. Szükséges a ventilátorhoz, szellőzőhöz, párásítóhoz vagy fűtéshez, és az öntözéshez is használatos.",
+          "inside_humidity_entity": "Egy belső páratartalom-érzékelő. Lehetővé teszi a ZoneFlow számára a páratartalom alapján történő szellőztetést vagy párásítást, valamint a párásítás leállítását, ha elég nedves a levegő.",
+          "light_entity": "Egy fényérzékelő (lux vagy napsugárzás). Napos időben elindíthatja a párásítást.",
+          "outdoor_temp_entity": "Egy külső hőmérséklet-érzékelő. Ezzel a ZoneFlow csak akkor szellőztet hűtés céljából, ha a külső levegő hűvösebb a belsőnél, így soha nem szív be melegebb levegőt. Enélkül csak a belső mérésekre támaszkodik.",
+          "fan_entities": "Hűtő- vagy elszívó ventilátorok. Bármilyen kapcsoló, input boolean vagy ventilátor. Egyszerre kapcsolnak.",
+          "vent_entities": "Tető- vagy oldalszellőzők: árnyékolók vagy kapcsolók, amelyek kinyitják őket. Egyszerre mozognak.",
+          "mister_entities": "Párásítók vagy ködképzők: egy kapcsoló vagy szelep. A ZoneFlow rövid impulzusokban működteti őket, és mindig gondoskodik a kikapcsolásukról.",
+          "heater_entities": "Fűtőtestek: egy kapcsoló vagy klíma entitás. Bekapcsol, ha túl hideg lesz.",
+          "notify_entity": "Telefon értesítési célpont figyelmeztetésekhez, például hibás érzékelő esetén. Hagyja üresen, ha nem kéri.",
+          "unit_system": "A hőmérséklet megjelenítése Celsius vagy Fahrenheit fokban. Az automatikus beállítás követi a Home Assistant rendszert.",
+          "backup_temp_entities": "Szabadon választható, de fűtéssel rendelkező üvegházhoz ajánlott. További belső hőmérséklet-érzékelők, amelyeket érdemes a főérzékelőtől távol elhelyezni. Ha a főérzékelő leáll, a vezérlés az első működő tartalékkal folytatódik, és Ön értesítést kap."
+        }
+      },
+      "water_valve": {
+        "title": "Öntöz ez a zóna?",
+        "description": "Válassza ki a szelepet, ha ez a zóna öntözi a növényeit. Hagyja üresen, ha csak klímazónáról van szó (ekkor legalább egy eszközre szükség van).",
+        "data": {
+          "valve_entity": "Szelep kapcsoló (szabadon választható)"
+        },
+        "data_description": {
+          "valve_entity": "A kapcsoló, amely kinyitja ezen zóna szelepét. Hagyja üresen a csak klímát vezérlő, öntözés nélküli zónáknál."
+        }
+      },
+      "watering": {
+        "title": "Öntözési beállítások",
+        "description": "A zóna szelepének öntözési beállításai. Minden módosítható később a zóna eszközoldalán.",
+        "data": {
+          "pump_power_entity": "Szivattyú teljesítményérzékelő (szabadon választható)",
+          "pump_id": "Megosztott szivattyú azonosító (szabadon választható)",
+          "flow_meter_entity": "Áramlásmérő (szabadon választható)",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (szabadon választható)",
+          "soil_type": "Talajtípus",
+          "drainage": "Vízelvezetés",
+          "slope": "Lejtő",
+          "irrigation_method": "Öntözési módszer",
+          "growth_ramp_profile": "Növekedési fázis szerinti automatikus skálázás",
+          "deep_soak_enabled": "Mélyöntözési ciklus engedélyezése",
+          "deep_soak_time": "Mélyöntözés ütemezett ideje",
+          "routine_time": "Rendszeres öntözés ütemezett ideje",
+          "deep_soak_sun_mode": "Mélyöntözés indítása",
+          "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
+          "routine_sun_mode": "Rendszeres öntözés indítása",
+          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)"
+        },
+        "data_description": {
+          "pump_power_entity": "Egy teljesítményérzékelő (W) a szivattyún, pl. egy okoskonnektorból. Minden öntözés során a ZoneFlow ellenőrzi, hogy a szivattyú valóban vesz-e fel áramot, és figyelmeztet, ha nem. Hagyja üresen, ha nincs ilyenje.",
+          "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adjon meg mindegyiknek azonos nevet itt (bármilyen nevet, pl. „A szivattyú”), így váltásban futnak ahelyett, hogy egyszerre működnének. Hagyja üresen, ha a zóna saját szivattyúval vagy vízellátással rendelkezik.",
+          "flow_meter_entity": "Egy vízmérő, amely méri a teljes térfogatot (liter, gallon vagy m³). A ZoneFlow ezután rögzíti, hogy az egyes öntözések mennyi vizet használtak fel valójában, figyelmeztet, ha a szivattyú járt, de nem folyt víz, és mérheti az áramlási sebességet is (Beállítások → Áramlási sebesség).",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (%) ezen zóna gyökérzónájában. A száraz talaj előrehozza a rendszeres öntözést, a nedves talaj kihagyja, míg a kettő között a normál ütemezés dönt. A száraz és nedves szintek a zóna eszközoldalán találhatók.",
+          "soil_type": "Meghatározza, hogyan oszlik fel az egyes öntözés impulzusokra, hogy a víz elfolyás helyett beszivárogjon: kb. 3 mm impulzusonként agyagon, 15 mm vályogon, 30 mm homokon, az impulzusok között 30 perces áztatással (egy óra agyag és agyagos vályog esetén). A „Nem biztos” lehetőség egy óvatos középértéket használ. Később a zóna eszközoldalán is módosíthatja.",
+          "drainage": "A lassan elvezető talaj (alatta kemény, tömör réteggel) impulzusonként kevesebb vizet vesz fel, és az impulzusok között egyórás áztatást kap.",
+          "slope": "A víz lefolyik a lejtőn, mielőtt beszívódna: a mérsékelt lejtő egy impulzust, a meredek lejtő két impulzust ad hozzá minden öntözéshez.",
+          "irrigation_method": "A víz kijuttatásának módja. Csepegtető vagy szivárogtató tömlő esetén homokos talajon az új zóna legalább két impulzussal indul, hogy a víz a gyökérzónában maradjon. A kijuttatott víz mennyiségét az áramlási sebesség határozza meg (Beállítások → Áramlási sebesség).",
+          "growth_ramp_profile": "A fiatal növényeknek kevesebb vizet ad, majd ahogy öregszenek, növeli azt a teljes heti célértékig, a zóna eszközoldalán megadott Ültetés / Átültetés dátumától számítva. Kikapcsolva: mindig a teljes célérték. Egyéni: rajzolja meg saját görbéjét az eszközoldalon.",
+          "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés kéthetente (kezdésként 14 naponta), amely mélyen megnedvesíti a talajt, hogy a gyökerek mélyre nőjenek. Jó fákhoz, cserjékhez és évelőkhöz; kapcsolja ki az olyan sekély gyökerű növényeknél, mint a saláta és a fűszernövények. A rendszeres öntözés mindenképpen lefut.",
+          "deep_soak_time": "Mikor kezdődik a mélyöntözés az esedékes napokon, ha az alábbi indító rögzített időpontra van állítva. A kora reggel a legjobb: kevesebb víz vész kárba a nap és a szél miatt.",
+          "routine_time": "Mikor ellenőrzi a ZoneFlow minden nap, hogy esedékes-e a rendszeres öntözés, és öntöz, ha igen. Az esedékesség gyakorisága az időjárástól és a heti célértéktől függ. A kora reggel a legjobb.",
+          "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
+          "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
+          "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos."
+        }
       }
     },
     "error": {
       "zone_name_required": "A zóna neve nem lehet üres.",
       "cool_not_below_hot": "A hűvös küszöbnek a meleg küszöb alatt kell lennie.",
       "valve_already_used": "Egy másik ZoneFlow zóna már használja ezt a szelepet.",
-      "csv_path_already_used": "Egy másik ZoneFlow zóna már ebbe a CSV-fájlba naplóz."
+      "csv_path_already_used": "Egy másik ZoneFlow zóna már ebbe a CSV-fájlba naplóz.",
+      "inside_temp_required": "A ventilátornak, szellőzőnek, párásítónak vagy fűtésnek szüksége van a belső hőmérséklet-érzékelőre.",
+      "device_in_two_roles": "Ugyanaz az entitás van kiválasztva két különböző feladatra.",
+      "device_already_used": "Egy másik ZoneFlow zóna már használja ezen eszközök egyikét.",
+      "valve_or_device_required": "Válasszon egy szelepet vagy legalább egy klímaeszközt.",
+      "backup_same_as_inside": "A tartalék érzékelő nem lehet ugyanaz, mint a fő belső hőmérséklet-érzékelő."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Zóna beállításai (entitások, talaj, ütemezés…)",
           "flow_rate": "Vízhozam: kiszámítás a csepegtetők alapján",
-          "flow_measure": "Vízhozam: mérés az átfolyásmérővel"
+          "flow_measure": "Vízhozam: mérés az átfolyásmérővel",
+          "greenhouse_devices": "Szelep, érzékelők és klímaeszközök",
+          "watering": "Öntözési beállítások",
+          "zone_type": "Zónatípus"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "A zóna csepegtetői által valóban nedvesített terület. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük lévő nedves foltokat add össze, ne az egész ágyást."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Üvegházi és beltéri eszközök",
+        "description": "Adja hozzá vagy módosítsa a szelepet, érzékelőket és klímaeszközöket. Semmi sem törlődik: amit a zóna nem használ, az rejtve marad.",
+        "data": {
+          "valve_entity": "Szelep kapcsoló (szabadon választható)",
+          "inside_temp_entity": "Belső hőmérséklet-érzékelő",
+          "inside_humidity_entity": "Belső páratartalom-érzékelő (szabadon választható)",
+          "light_entity": "Fényérzékelő (szabadon választható)",
+          "outdoor_temp_entity": "Külső hőmérséklet-érzékelő (szabadon választható)",
+          "fan_entities": "Hűtőventilátorok (szabadon választható)",
+          "vent_entities": "Szellőzők (szabadon választható)",
+          "mister_entities": "Párásítás / ködképzés (szabadon választható)",
+          "heater_entities": "Fűtés (szabadon választható)",
+          "notify_entity": "Telefon értesítési célpont (szabadon választható)",
+          "unit_system": "Mértékegységek",
+          "backup_temp_entities": "Tartalék belső hőmérséklet-érzékelők"
+        },
+        "data_description": {
+          "valve_entity": "A kapcsoló, amely kinyitja ezen zóna szelepét. Hagyja üresen a csak klímát vezérlő, öntözés nélküli zónáknál.",
+          "inside_temp_entity": "Az üvegházban vagy helyiségben lévő hőmérséklet-érzékelő. Szükséges a ventilátorhoz, szellőzőhöz, párásítóhoz vagy fűtéshez, és az öntözéshez is használatos.",
+          "inside_humidity_entity": "Egy belső páratartalom-érzékelő. Lehetővé teszi a ZoneFlow számára a páratartalom alapján történő szellőztetést vagy párásítást, valamint a párásítás leállítását, ha elég nedves a levegő.",
+          "light_entity": "Egy fényérzékelő (lux vagy napsugárzás). Napos időben elindíthatja a párásítást.",
+          "outdoor_temp_entity": "Egy külső hőmérséklet-érzékelő. Ezzel a ZoneFlow csak akkor szellőztet hűtés céljából, ha a külső levegő hűvösebb a belsőnél, így soha nem szív be melegebb levegőt. Enélkül csak a belső mérésekre támaszkodik.",
+          "fan_entities": "Hűtő- vagy elszívó ventilátorok. Bármilyen kapcsoló, input boolean vagy ventilátor. Egyszerre kapcsolnak.",
+          "vent_entities": "Tető- vagy oldalszellőzők: árnyékolók vagy kapcsolók, amelyek kinyitják őket. Egyszerre mozognak.",
+          "mister_entities": "Párásítók vagy ködképzők: egy kapcsoló vagy szelep. A ZoneFlow rövid impulzusokban működteti őket, és mindig gondoskodik a kikapcsolásukról.",
+          "heater_entities": "Fűtőtestek: egy kapcsoló vagy klíma entitás. Bekapcsol, ha túl hideg lesz.",
+          "notify_entity": "Telefon értesítési célpont figyelmeztetésekhez, például hibás érzékelő esetén. Hagyja üresen, ha nem kéri.",
+          "unit_system": "A hőmérséklet megjelenítése Celsius vagy Fahrenheit fokban. Az automatikus beállítás követi a Home Assistant rendszert.",
+          "backup_temp_entities": "Szabadon választható, de fűtéssel rendelkező üvegházhoz ajánlott. További belső hőmérséklet-érzékelők, amelyeket érdemes a főérzékelőtől távol elhelyezni. Ha a főérzékelő leáll, a vezérlés az első működő tartalékkal folytatódik, és Ön értesítést kap."
+        }
+      },
+      "zone_type": {
+        "title": "Zónatípus",
+        "description": "Változtassa meg, hol nőnek a zóna növényei. Semmi sem törlődik: amit az új típus nem használ, az rejtve marad, és visszatér, ha visszaváltja.",
+        "data": {
+          "zone_type": "A növények helye"
+        },
+        "data_description": {
+          "zone_type": "A kültéri mód a ZoneFlow eredeti működése. Az üvegházi és beltéri zónák klímaszabályozást is biztosítanak (ventilátorok, szellőzők, párásítás, fűtés), szelep nélkül is működhetnek, valamint a tető miatt nincs esőmérőjük sem időjárás-előrejelzésük."
+        }
+      },
+      "watering": {
+        "title": "Öntözési beállítások",
+        "description": "A zóna szelepének öntözési beállításai. Minden módosítható később a zóna eszközoldalán.",
+        "data": {
+          "pump_power_entity": "Szivattyú teljesítményérzékelő (szabadon választható)",
+          "pump_id": "Megosztott szivattyú azonosító (szabadon választható)",
+          "flow_meter_entity": "Áramlásmérő (szabadon választható)",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (szabadon választható)",
+          "soil_type": "Talajtípus",
+          "drainage": "Vízelvezetés",
+          "slope": "Lejtő",
+          "irrigation_method": "Öntözési módszer",
+          "growth_ramp_profile": "Növekedési fázis szerinti automatikus skálázás",
+          "deep_soak_enabled": "Mélyöntözési ciklus engedélyezése",
+          "deep_soak_time": "Mélyöntözés ütemezett ideje",
+          "routine_time": "Rendszeres öntözés ütemezett ideje",
+          "deep_soak_sun_mode": "Mélyöntözés indítása",
+          "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
+          "routine_sun_mode": "Rendszeres öntözés indítása",
+          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)"
+        },
+        "data_description": {
+          "pump_power_entity": "Egy teljesítményérzékelő (W) a szivattyún, pl. egy okoskonnektorból. Minden öntözés során a ZoneFlow ellenőrzi, hogy a szivattyú valóban vesz-e fel áramot, és figyelmeztet, ha nem. Hagyja üresen, ha nincs ilyenje.",
+          "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adjon meg mindegyiknek azonos nevet itt (bármilyen nevet, pl. „A szivattyú”), így váltásban futnak ahelyett, hogy egyszerre működnének. Hagyja üresen, ha a zóna saját szivattyúval vagy vízellátással rendelkezik.",
+          "flow_meter_entity": "Egy vízmérő, amely méri a teljes térfogatot (liter, gallon vagy m³). A ZoneFlow ezután rögzíti, hogy az egyes öntözések mennyi vizet használtak fel valójában, figyelmeztet, ha a szivattyú járt, de nem folyt víz, és mérheti az áramlási sebességet is (Beállítások → Áramlási sebesség).",
+          "soil_moisture_entity": "Talajnedvesség-érzékelő (%) ezen zóna gyökérzónájában. A száraz talaj előrehozza a rendszeres öntözést, a nedves talaj kihagyja, míg a kettő között a normál ütemezés dönt. A száraz és nedves szintek a zóna eszközoldalán találhatók.",
+          "soil_type": "Meghatározza, hogyan oszlik fel az egyes öntözés impulzusokra, hogy a víz elfolyás helyett beszivárogjon: kb. 3 mm impulzusonként agyagon, 15 mm vályogon, 30 mm homokon, az impulzusok között 30 perces áztatással (egy óra agyag és agyagos vályog esetén). A „Nem biztos” lehetőség egy óvatos középértéket használ. Később a zóna eszközoldalán is módosíthatja.",
+          "drainage": "A lassan elvezető talaj (alatta kemény, tömör réteggel) impulzusonként kevesebb vizet vesz fel, és az impulzusok között egyórás áztatást kap.",
+          "slope": "A víz lefolyik a lejtőn, mielőtt beszívódna: a mérsékelt lejtő egy impulzust, a meredek lejtő két impulzust ad hozzá minden öntözéshez.",
+          "irrigation_method": "A víz kijuttatásának módja. Csepegtető vagy szivárogtató tömlő esetén homokos talajon az új zóna legalább két impulzussal indul, hogy a víz a gyökérzónában maradjon. A kijuttatott víz mennyiségét az áramlási sebesség határozza meg (Beállítások → Áramlási sebesség).",
+          "growth_ramp_profile": "A fiatal növényeknek kevesebb vizet ad, majd ahogy öregszenek, növeli azt a teljes heti célértékig, a zóna eszközoldalán megadott Ültetés / Átültetés dátumától számítva. Kikapcsolva: mindig a teljes célérték. Egyéni: rajzolja meg saját görbéjét az eszközoldalon.",
+          "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés kéthetente (kezdésként 14 naponta), amely mélyen megnedvesíti a talajt, hogy a gyökerek mélyre nőjenek. Jó fákhoz, cserjékhez és évelőkhöz; kapcsolja ki az olyan sekély gyökerű növényeknél, mint a saláta és a fűszernövények. A rendszeres öntözés mindenképpen lefut.",
+          "deep_soak_time": "Mikor kezdődik a mélyöntözés az esedékes napokon, ha az alábbi indító rögzített időpontra van állítva. A kora reggel a legjobb: kevesebb víz vész kárba a nap és a szél miatt.",
+          "routine_time": "Mikor ellenőrzi a ZoneFlow minden nap, hogy esedékes-e a rendszeres öntözés, és öntöz, ha igen. Az esedékesség gyakorisága az időjárástól és a heti célértéktől függ. A kora reggel a legjobb.",
+          "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
+          "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
+          "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Egy másik ZoneFlow zóna már használja ezt a szelepet.",
-      "csv_path_already_used": "Egy másik ZoneFlow zóna már ebbe a CSV-fájlba naplóz."
+      "csv_path_already_used": "Egy másik ZoneFlow zóna már ebbe a CSV-fájlba naplóz.",
+      "inside_temp_required": "A ventilátornak, szellőzőnek, párásítónak vagy fűtésnek szüksége van a belső hőmérséklet-érzékelőre.",
+      "device_in_two_roles": "Ugyanaz az entitás van kiválasztva két különböző feladatra.",
+      "device_already_used": "Egy másik ZoneFlow zóna már használja ezen eszközök egyikét.",
+      "valve_or_device_required": "Válasszon egy szelepet vagy legalább egy klímaeszközt.",
+      "valve_required_outdoor": "A kültéri zónához szelep szükséges. Először adjon hozzá egyet a Szelep, érzékelők és klímaeszközök menüpontban.",
+      "backup_same_as_inside": "A tartalék érzékelő nem lehet ugyanaz, mint a fő belső hőmérséklet-érzékelő."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Cserjék / sövény",
         "young_tree": "Fiatal fa (első évek)",
         "fruit_tree": "Kifejlett gyümölcsfa"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Kültéri",
+        "greenhouse": "Üvegház",
+        "indoor": "Beltéri"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Fagyvédelmi hőmérséklet"
+      },
+      "heat_temp": {
+        "name": "Fűtés bekapcsolása ez alatt"
+      },
+      "vent_temp": {
+        "name": "Szellőzők nyitása ekkor"
+      },
+      "fan_temp": {
+        "name": "Ventilátorok bekapcsolása ekkor"
+      },
+      "climate_hysteresis": {
+        "name": "Klíma hiszterézis"
+      },
+      "outside_margin": {
+        "name": "Külső levegő margó"
+      },
+      "max_humidity": {
+        "name": "Szellőztetés ezen páratartalom felett"
+      },
+      "mist_temp": {
+        "name": "Párásítás bekapcsolása ezen hőmérséklet felett"
+      },
+      "mist_min_humidity": {
+        "name": "Párásítás bekapcsolása ezen páratartalom alatt"
+      },
+      "mist_stop_humidity": {
+        "name": "Párásítás leállítási páratartalom"
+      },
+      "mist_min_temp": {
+        "name": "Párásítás minimális hőmérséklete"
+      },
+      "mist_light_level": {
+        "name": "Párásítás fényerősségi szintje"
+      },
+      "mist_on_seconds": {
+        "name": "Párásítás időtartama"
+      },
+      "mist_off_seconds": {
+        "name": "Párásítás szüneteltetése"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Maximális párásítás óránként"
+      },
+      "vent_open_pct": {
+        "name": "Szellőző nyitási pozíciója"
+      },
+      "manual_hold_minutes": {
+        "name": "Kézi tartási idő"
+      },
+      "sensor_offline_hours": {
+        "name": "Érzékelő offline ennyi után"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Öntözés megszakítva jelző"
+      },
+      "ventilation_allowed": {
+        "name": "Szellőztetés engedélyezve"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Szüneteltetés"
+      },
+      "greenhouse_control": {
+        "name": "Üvegház vezérlése"
+      },
+      "mist_at_night": {
+        "name": "Párásítás éjszaka"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Következő tápanyag-utánpótlás"
+      },
+      "greenhouse_status": {
+        "name": "Üvegház állapota"
+      },
+      "inside_vpd": {
+        "name": "Belső VPD"
+      },
+      "misting_today": {
+        "name": "Párásítás ma"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Közepes lejtő",
           "steep": "Meredek lejtő"
         }
+      },
+      "misting_trigger": {
+        "name": "Párásítás indítója",
+        "state": {
+          "any": "Bármely indító",
+          "temperature": "Csak hőmérséklet",
+          "humidity": "Csak páratartalom",
+          "light": "Csak fény"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Érzékelő hibavédelme",
+        "state": {
+          "open": "Szellőzők nyitva, ventilátorok be",
+          "closed": "Szellőzők zárva, ventilátorok ki",
+          "leave": "Maradjon jelenlegi állapotban"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Fűtés hibavédelme",
+        "state": {
+          "off": "Ki",
+          "limited": "Az idő egy részében bekapcsolva",
+          "outside": "Az idő egy részében bekapcsolva, ha kint hideg van"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "A heti összesítőt nem sikerült elküldeni: a telefonos értesítés hibát adott. Ellenőrizd a zóna értesítési célját."
+    },
+    "zone_has_no_valve": {
+      "message": "Ez a zóna nem rendelkezik szeleppel, így nem tud öntözni. Adjon hozzá egy szelepet a Beállítások menüben, ha szeretné."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}: szelep megosztva egy másik zónával",
       "description": "A(z) {zone} és a(z) {other_zone} zóna is ugyanazt a szelep entitást ({entity}) használja. Hacsak nem osztoznak egy szivattyú-azonosítón vagy szivattyú-teljesítmény érzékelőn is, a ZoneFlow nem tudja megállapítani, hogy ugyanarról a fizikai szelepről van szó, és nem akadályozza meg, hogy egyszerre nyissák ki. Adj az egyik zónának saját szelepet, vagy állíts be mindkettőn azonos szivattyú-azonosítót a Konfigurálásban."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: a belső hőmérséklet-érzékelő nem működik",
+      "description": "A(z) {zone} zóna belső hőmérséklet-érzékelője ({entity}) egy ideje nem ad használható értéket, így a klímaszabályozás hibavédelmi üzemmódban van: a párásítók és a fűtés ki vannak kapcsolva, a szellőzők és ventilátorok pedig az Érzékelő hibavédelme beállítást követik. Ellenőrizze az érzékelőt. Ez a probléma magától megszűnik, amint újra jelent az érzékelő."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: a külső hőmérséklet-érzékelő nem működik",
+      "description": "A(z) {zone} zóna külső hőmérséklet-érzékelője ({entity}) egy ideje nem ad használható értéket. A szellőztetés csak a belső mérések alapján folytatódik, így nem tudja ellenőrizni, hogy a külső levegő hűvösebb-e. Ellenőrizze az érzékelőt. Ez a probléma magától megszűnik, amint újra jelent az érzékelő."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: egy klímaeszköz nem válaszol",
+      "description": "A(z) {zone} zóna átkapcsolta a következőt: {devices}, de azok második próbálkozásra sem jelentették a változást. Ellenőrizze az eszközt és annak integrációját. Ez a probléma magától megszűnik, amint az eszközök válaszolnak."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: a párásítás leállt",
+      "description": "A(z) {zone} zóna párásítója nem kapcsolódott ki az utasításra, ezért a párásítás leállt a túlöntözés elkerülése érdekében. Ellenőrizze a párásítót, majd nyomja meg az Öntözési zárolás alaphelyzetbe állítása gombot a zónánál a párásítás újrakezdéséhez."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: a tartalék hőmérséklet-érzékelő használatban",
+      "description": "A(z) {zone} zóna elsődleges belső hőmérséklet-érzékelője ({entity}) leállt, ezért a klímaszabályozás tartalék érzékelőt használ. Ellenőrizze az elsődleges érzékelőt. Ez a probléma magától megszűnik, amint az újra jelent."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: a belső hőmérséklet-érzékelők eltérnek",
+      "description": "A(z) {zone} zóna elsődleges belső hőmérséklet-érzékelője ({entity}) {main} értéket mutat, míg a tartalék {backup} értéket, és egy ideje jelentős az eltérés. Az egyik valószínűleg hibás vagy rossz helyre van szerelve (közvetlen napsütésben, fűtőtest mellett). Ellenőrizze mindkettőt. Ez a probléma magától megszűnik, amint egyeznek az értékek."
     }
   }
 }

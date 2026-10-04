@@ -14,7 +14,7 @@ from __future__ import annotations
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from .const import GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 
 # (platform, translation key) of each group, and when it has nothing to do.
 FORECAST = {
@@ -76,6 +76,56 @@ ADVANCED = {
 }
 
 
+# The greenhouse / indoor climate entities (1.6), each shown only when the
+# hardware or sensor it acts on is configured.
+_GH_NUMBERS = {("number", key) for key in GREENHOUSE_NUMBERS}
+GH_ALWAYS = {("switch", "greenhouse_control"), ("sensor", "greenhouse_status")}
+GH_HEAT = {("number", "heat_temp"), ("select", "heater_failsafe")}
+GH_VENT = {("number", "vent_temp"), ("number", "vent_open_pct"), ("select", "ventilation_failsafe")}
+GH_FAN = {("number", "fan_temp")}
+GH_OUTSIDE = {("number", "outside_margin"), ("binary_sensor", "ventilation_allowed")}
+GH_HUMIDITY = {("number", "max_humidity"), ("sensor", "inside_vpd")}
+GH_MIST = {
+    ("number", "mist_temp"), ("number", "mist_min_humidity"), ("number", "mist_stop_humidity"),
+    ("number", "mist_min_temp"), ("number", "mist_light_level"), ("number", "mist_on_seconds"),
+    ("number", "mist_off_seconds"), ("number", "max_mist_minutes_per_hour"),
+    ("switch", "mist_at_night"), ("select", "misting_trigger"), ("sensor", "misting_today"),
+}
+GH_MIST_HUMIDITY = {("number", "mist_min_humidity"), ("number", "mist_stop_humidity")}
+GH_LIGHT = {("number", "mist_light_level")}
+GH_ANY_DEVICE = {("number", "climate_hysteresis"), ("number", "manual_hold_minutes"), ("number", "sensor_offline_hours")}
+GH_ALL = _GH_NUMBERS | GH_ALWAYS | GH_HEAT | GH_VENT | GH_OUTSIDE | GH_HUMIDITY | GH_MIST
+
+# What a zone without a valve still shows: its phone-message setting and the
+# climate entities (the reset button too, when it has misters).
+KEEP_WITHOUT_VALVE = {("select", "notifications")} | GH_ALL
+
+
+def _greenhouse_hidden(controller) -> set[tuple[str, str]]:
+    hidden: set[tuple[str, str]] = set()
+    fans, vents = bool(controller.fan_entities), bool(controller.vent_entities)
+    misters, heater = bool(controller.mister_entities), bool(controller.heater_entities)
+    if not heater:
+        hidden |= GH_HEAT
+    if not vents:
+        hidden |= GH_VENT
+    if not fans:
+        hidden |= GH_FAN
+    if not (fans or vents) or not controller.outside_temp_entity:
+        hidden |= GH_OUTSIDE
+    if not controller.inside_humidity_entity:
+        hidden |= GH_HUMIDITY | GH_MIST_HUMIDITY
+    elif not (fans or vents):
+        hidden.add(("number", "max_humidity"))
+    if not misters:
+        hidden |= GH_MIST
+    if not controller.light_entity:
+        hidden |= GH_LIGHT
+    if not (fans or vents or misters or heater):
+        hidden |= GH_ANY_DEVICE
+    return hidden
+
+
 def hidden_for(controller) -> set[tuple[str, str]]:
     """The entities that do nothing for this zone right now."""
     hidden = set(ADVANCED)
@@ -101,6 +151,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= FLOW_METER
     if not controller.deep_soak_enabled:
         hidden |= DEEP_SOAK
+    if not controller.is_outdoor:
+        hidden |= _greenhouse_hidden(controller)
     profile = controller.growth_ramp_profile
     if profile == GROWTH_RAMP_OFF:
         hidden |= GROWTH_RAMP | CUSTOM_RAMP
@@ -116,6 +168,16 @@ async def async_apply(hass: HomeAssistant, entry, controller) -> None:
     state = controller.store.state
     previous = {tuple(item) for item in state.auto_hidden}
     registry = er.async_get(hass)
+    if not controller.has_valve:
+        # A climate-only zone never waters: hide all the watering entities
+        # (they come back by themselves if a valve is added later).
+        wanted |= {
+            (reg_entry.domain, reg_entry.translation_key)
+            for reg_entry in er.async_entries_for_config_entry(registry, entry.entry_id)
+            if reg_entry.translation_key
+        } - KEEP_WITHOUT_VALVE
+        if controller.mister_entities:
+            wanted.discard(("button", "reset_lock"))
     for reg_entry in er.async_entries_for_config_entry(registry, entry.entry_id):
         key = (reg_entry.domain, reg_entry.translation_key)
         if key in wanted and key not in previous and reg_entry.hidden_by is None:

@@ -22,7 +22,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, units
+from . import calculations as calc, greenhouse_logic, units
 
 from .const import (
     CLIMATE_NUMBER_KEYS,
@@ -30,7 +30,9 @@ from .const import (
     CLIMATE_PRESETS,
     CONF_CLIMATE,
     CONF_CSV_PATH,
+    CONF_BACKUP_TEMP_ENTITIES,
     CONF_INITIAL_NUMBERS,
+    GREENHOUSE_PRESET_NUMBER_KEYS,
     CONF_PLANT,
     FLOW_MEASURE_MINUTES,
     PLANT_CUSTOM,
@@ -58,7 +60,20 @@ from .const import (
     CONF_SOIL_TYPE,
     CONF_VALVE_ENTITY,
     CONF_WEATHER_ENTITY,
+    CONF_FAN_ENTITIES,
+    CONF_HEATER_ENTITIES,
+    CONF_INSIDE_HUMIDITY_ENTITY,
+    CONF_INSIDE_TEMP_ENTITY,
+    CONF_LIGHT_ENTITY,
+    CONF_MISTER_ENTITIES,
+    CONF_VENT_ENTITIES,
     CONF_ZONE_NAME,
+    CONF_ZONE_TYPE,
+    DEFAULT_ZONE_TYPE,
+    DEVICE_ROLE_DOMAINS,
+    DEVICE_ROLE_KEYS,
+    ZONE_TYPE_OPTIONS,
+    ZONE_TYPE_OUTDOOR,
     DEFAULT_CLIMATE,
     DEFAULT_CSV_PATH,
     DEFAULT_DEEP_SOAK_ENABLED,
@@ -245,6 +260,95 @@ def _duplicate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | Non
     return errors
 
 
+# What the watering step of a greenhouse or indoor zone leaves out: the
+# valve has its own step, a roof has no rain gauge or forecast, watering goes
+# by the inside temperature sensor, and the notify target, units and log file
+# are settled with the climate hardware.
+_WATERING_LEAVES_OUT = {
+    CONF_VALVE_ENTITY,
+    CONF_RAIN_COUNTER_ENTITY,
+    CONF_OUTDOOR_TEMP_ENTITY,
+    CONF_WEATHER_ENTITY,
+    CONF_NOTIFY_ENTITY,
+    CONF_UNIT_SYSTEM,
+    CONF_CSV_PATH,
+}
+
+
+def _watering_schema(defaults: dict[str, Any]) -> vol.Schema:
+    """The watering settings of a greenhouse or indoor zone that has a valve."""
+    base = _schema(defaults)
+    return vol.Schema({key: value for key, value in base.schema.items() if str(key.schema) not in _WATERING_LEAVES_OUT})
+
+
+def _optional_list_key(defaults: dict[str, Any], conf_key: str):
+    value = defaults.get(conf_key)
+    if value:
+        return vol.Optional(conf_key, description={"suggested_value": list(value)})
+    return vol.Optional(conf_key)
+
+
+def _devices_schema(defaults: dict[str, Any], *, with_valve: bool) -> vol.Schema:
+    """Sensors and climate devices of a greenhouse or indoor zone. Setup asks
+    for the valve in its own step (with_valve False); Configure shows it here."""
+    fields: dict[Any, Any] = {}
+    if with_valve:
+        fields[_optional_entity_key(defaults, CONF_VALVE_ENTITY)] = selector.EntitySelector(
+            selector.EntitySelectorConfig(domain="switch")
+        )
+    fields[_optional_entity_key(defaults, CONF_INSIDE_TEMP_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+    )
+    fields[_optional_list_key(defaults, CONF_BACKUP_TEMP_ENTITIES)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="temperature", multiple=True)
+    )
+    fields[_optional_entity_key(defaults, CONF_INSIDE_HUMIDITY_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="humidity")
+    )
+    fields[_optional_entity_key(defaults, CONF_LIGHT_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class=["illuminance", "irradiance"])
+    )
+    fields[_optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+    )
+    for role in DEVICE_ROLE_KEYS:
+        fields[_optional_list_key(defaults, role)] = selector.EntitySelector(
+            selector.EntitySelectorConfig(domain=DEVICE_ROLE_DOMAINS[role], multiple=True)
+        )
+    fields[_optional_entity_key(defaults, CONF_NOTIFY_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="notify")
+    )
+    fields[vol.Required(CONF_UNIT_SYSTEM, default=defaults.get(CONF_UNIT_SYSTEM, units.UNIT_SYSTEM_AUTO))] = (
+        selector.SelectSelector(
+            selector.SelectSelectorConfig(options=units.UNIT_SYSTEM_OPTIONS, translation_key="unit_system")
+        )
+    )
+    return vol.Schema(fields)
+
+
+def _climate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | None = None) -> dict[str, str]:
+    """Climate devices need the inside temperature sensor; one entity can't
+    play two roles or belong to two zones."""
+    errors: dict[str, str] = {}
+    devices = [entity for role in DEVICE_ROLE_KEYS for entity in (data.get(role) or [])]
+    backups = list(data.get(CONF_BACKUP_TEMP_ENTITIES) or [])
+    if (devices or backups) and not data.get(CONF_INSIDE_TEMP_ENTITY):
+        errors[CONF_INSIDE_TEMP_ENTITY] = "inside_temp_required"
+    elif data.get(CONF_INSIDE_TEMP_ENTITY) in backups:
+        errors[CONF_BACKUP_TEMP_ENTITIES] = "backup_same_as_inside"
+    elif len(devices) != len(set(devices)):
+        errors["base"] = "device_in_two_roles"
+    else:
+        for entry in hass.config_entries.async_entries(DOMAIN):
+            if entry.entry_id == exclude_entry_id:
+                continue
+            other = {**entry.data, **entry.options}
+            if set(devices) & {entity for role in DEVICE_ROLE_KEYS for entity in (other.get(role) or [])}:
+                errors["base"] = "device_already_used"
+                break
+    return errors
+
+
 def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     """A new zone's cycle-and-soak starting values from its soil, drainage
     and irrigation method: the pulse-count settings (the minimum; each
@@ -270,6 +374,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._plant: str = PLANT_CUSTOM
         self._data: dict[str, Any] = {}
         self._climate: str = DEFAULT_CLIMATE
+        self._zone_type: str = DEFAULT_ZONE_TYPE
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         errors: dict[str, str] = {}
@@ -280,6 +385,9 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 self._zone_name = zone_name
                 self._plant = user_input.get(CONF_PLANT, PLANT_CUSTOM)
+                self._zone_type = user_input.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+                if self._zone_type != ZONE_TYPE_OUTDOOR:
+                    return await self.async_step_greenhouse_devices()
                 return await self.async_step_entities()
         return self.async_show_form(
             step_id="user",
@@ -290,6 +398,11 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     # pulses, deep soak and growth ramp (PLANT_PRESETS).
                     vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
+                    ),
+                    # Where it grows: outdoor is how ZoneFlow has always
+                    # worked; greenhouse and indoor zones add climate control.
+                    vol.Required(CONF_ZONE_TYPE, default=self._zone_type): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),
                 }
             ),
@@ -320,6 +433,93 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+    async def async_step_greenhouse_devices(self, user_input: dict[str, Any] | None = None):
+        """Greenhouse / indoor zones: the inside sensors and the climate
+        devices (fans, vents, misting, heater). All optional, except that a
+        device needs the inside temperature."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = _climate_errors(self.hass, user_input)
+            if not errors:
+                self._data = {**self._data, **user_input}
+                return await self.async_step_water_valve()
+        defaults = {**self._data, **(user_input or {})}
+        return self.async_show_form(
+            step_id="greenhouse_devices",
+            data_schema=_devices_schema(defaults, with_valve=False),
+            errors=errors,
+        )
+
+    async def async_step_water_valve(self, user_input: dict[str, Any] | None = None):
+        """Does this zone water too? A valve means yes; leave it empty for a
+        climate-only zone (then it needs at least one climate device)."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            valve = user_input.get(CONF_VALVE_ENTITY)
+            has_devices = any(self._data.get(role) for role in DEVICE_ROLE_KEYS)
+            if valve:
+                errors = _duplicate_errors(self.hass, {CONF_VALVE_ENTITY: valve})
+            elif not has_devices:
+                errors["base"] = "valve_or_device_required"
+            if not errors:
+                if valve:
+                    self._data = {**self._data, CONF_VALVE_ENTITY: valve}
+                    return await self.async_step_watering()
+                return await self.async_step_climate()
+        return self.async_show_form(
+            step_id="water_valve",
+            data_schema=vol.Schema(
+                {
+                    _optional_entity_key({}, CONF_VALVE_ENTITY): selector.EntitySelector(
+                        selector.EntitySelectorConfig(domain="switch")
+                    )
+                }
+            ),
+            errors=errors,
+        )
+
+    def _create_climate_only(self):
+        """A zone with no valve: it never waters, so none of the watering
+        settings are asked for; they get their ordinary defaults."""
+        data = {
+            **self._data,
+            CONF_ZONE_NAME: self._zone_name,
+            CONF_PLANT: self._plant,
+            CONF_ZONE_TYPE: self._zone_type,
+            CONF_CLIMATE: self._climate,
+            CONF_CSV_PATH: f"/config/zoneflow_{slugify(self._zone_name)}.csv",
+            CONF_DEEP_SOAK_ENABLED: False,
+            CONF_DEEP_SOAK_TIME: DEFAULT_DEEP_SOAK_TIME,
+            CONF_ROUTINE_TIME: DEFAULT_ROUTINE_TIME,
+            CONF_INITIAL_NUMBERS: self._greenhouse_numbers(),
+        }
+        return self.async_create_entry(title=self._zone_name, data=data)
+
+    def _greenhouse_numbers(self) -> dict[str, float]:
+        """Starting heat / vent / fan / mist setpoints for the chosen climate."""
+        preset = greenhouse_logic.preset_settings(self._climate)
+        return {key: preset[key] for key in GREENHOUSE_PRESET_NUMBER_KEYS}
+
+    async def async_step_watering(self, user_input: dict[str, Any] | None = None):
+        """Greenhouse / indoor zone with a valve: the watering settings."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
+                if len(user_input[key].split(":")) == 2:
+                    user_input[key] = f"{user_input[key]}:00"
+            self._data = {
+                **self._data,
+                **user_input,
+                CONF_ZONE_NAME: self._zone_name,
+                CONF_CSV_PATH: f"/config/zoneflow_{slugify(self._zone_name)}.csv",
+            }
+            return await self.async_step_climate()
+        defaults: dict[str, Any] = {}
+        if (preset := PLANT_PRESETS.get(self._plant)) is not None:
+            defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
+            defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
+        return self.async_show_form(step_id="watering", data_schema=_watering_schema(defaults), errors=errors)
+
     def _imperial(self) -> bool:
         """The zone's display units, decided the same way the controller
         does (units option, else Home Assistant's own unit system)."""
@@ -334,6 +534,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Pick the climate; it pre-fills the temperature sliders next."""
         if user_input is not None:
             self._climate = user_input[CONF_CLIMATE]
+            if self._zone_type != ZONE_TYPE_OUTDOOR and not self._data.get(CONF_VALVE_ENTITY):
+                return self._create_climate_only()  # nothing to water: no watering temperatures
             return await self.async_step_temperatures()
         return self.async_show_form(
             step_id="climate",
@@ -363,6 +565,9 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_CLIMATE: self._climate,
                     CONF_INITIAL_NUMBERS: {**plant_numbers, **_site_numbers(self._data), **metric},
                 }
+                if self._zone_type != ZONE_TYPE_OUTDOOR:
+                    data[CONF_ZONE_TYPE] = self._zone_type
+                    data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
                 return self.async_create_entry(title=self._zone_name, data=data)
         preset = CLIMATE_PRESETS[self._climate]
         schema = {}
@@ -402,12 +607,108 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
     def _controller(self):
         return self.hass.data.get(DOMAIN, {}).get(self._config_entry.entry_id)
 
+    def _merged(self) -> dict[str, Any]:
+        return {**self._config_entry.data, **self._config_entry.options}
+
+    def _zone_type(self) -> str:
+        return self._merged().get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+
+    def _has_valve(self) -> bool:
+        return bool(self._merged().get(CONF_VALVE_ENTITY))
+
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
-        options = ["settings", "flow_rate"]
+        outdoor = self._zone_type() == ZONE_TYPE_OUTDOOR
+        has_valve = self._has_valve()
+        options = ["settings"] if outdoor else ["greenhouse_devices"]
+        if not outdoor and has_valve:
+            options.append("watering")
+        if has_valve:
+            options.append("flow_rate")
         controller = self._controller()
-        if controller is not None and controller.flow_meter_entity:
+        if has_valve and controller is not None and controller.flow_meter_entity:
             options.append("flow_measure")
+        options.append("zone_type")
         return self.async_show_menu(step_id="init", menu_options=options)
+
+    async def async_step_zone_type(self, user_input: dict[str, Any] | None = None):
+        """Change where the zone grows. Nothing is deleted: what the new
+        type doesn't use is hidden, and comes back if the type is changed
+        back."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            new_type = user_input[CONF_ZONE_TYPE]
+            if new_type == ZONE_TYPE_OUTDOOR and not self._has_valve():
+                errors["base"] = "valve_required_outdoor"
+            else:
+                options = {**self._config_entry.options, CONF_ZONE_TYPE: new_type}
+                if new_type != ZONE_TYPE_OUTDOOR:
+                    # The heat / vent / fan / mist temperatures start from the
+                    # zone's climate, as at setup (only used by sliders that
+                    # have no value yet).
+                    preset = greenhouse_logic.preset_settings(self._merged().get(CONF_CLIMATE))
+                    options[CONF_INITIAL_NUMBERS] = {
+                        **{key: preset[key] for key in GREENHOUSE_PRESET_NUMBER_KEYS},
+                        **(options.get(CONF_INITIAL_NUMBERS) or {}),
+                    }
+                return self.async_create_entry(title="", data=options)
+        return self.async_show_form(
+            step_id="zone_type",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_ZONE_TYPE, default=self._zone_type()): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
+                    )
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_greenhouse_devices(self, user_input: dict[str, Any] | None = None):
+        """Greenhouse / indoor zones: the valve (optional), inside sensors
+        and climate devices, changeable any time without re-creating the zone."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = _climate_errors(self.hass, user_input, exclude_entry_id=self._config_entry.entry_id)
+            if not errors:
+                if user_input.get(CONF_VALVE_ENTITY):
+                    errors = _duplicate_errors(
+                        self.hass, {CONF_VALVE_ENTITY: user_input[CONF_VALVE_ENTITY]},
+                        exclude_entry_id=self._config_entry.entry_id,
+                    )
+                elif not any(user_input.get(role) for role in DEVICE_ROLE_KEYS):
+                    errors["base"] = "valve_or_device_required"
+            if not errors:
+                # A cleared entry is left out of the form's answer: store it
+                # as empty, or the zone would fall back to the setup value.
+                for key in (
+                    CONF_VALVE_ENTITY, CONF_INSIDE_TEMP_ENTITY, CONF_INSIDE_HUMIDITY_ENTITY, CONF_LIGHT_ENTITY,
+                    CONF_OUTDOOR_TEMP_ENTITY, CONF_NOTIFY_ENTITY,
+                ):
+                    user_input.setdefault(key, None)
+                for role in (*DEVICE_ROLE_KEYS, CONF_BACKUP_TEMP_ENTITIES):
+                    user_input.setdefault(role, [])
+                return self.async_create_entry(title="", data={**self._config_entry.options, **user_input})
+        defaults = {**self._merged(), **(user_input or {})}
+        return self.async_show_form(
+            step_id="greenhouse_devices",
+            data_schema=_devices_schema(defaults, with_valve=True),
+            errors=errors,
+        )
+
+    async def async_step_watering(self, user_input: dict[str, Any] | None = None):
+        """Greenhouse / indoor zone with a valve: the watering settings
+        (the same as an outdoor zone's, without rain gauge and forecast)."""
+        if user_input is not None:
+            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
+                if len(user_input[key].split(":")) == 2:
+                    user_input[key] = f"{user_input[key]}:00"
+            await self._apply_site(user_input)
+            return self.async_create_entry(title="", data={**self._config_entry.options, **user_input})
+        defaults = self._merged()
+        controller = self._controller()
+        if controller is not None:
+            defaults.update({CONF_SOIL_TYPE: controller.soil_type, CONF_DRAINAGE: controller.drainage, CONF_SLOPE: controller.slope})
+        return self.async_show_form(step_id="watering", data_schema=_watering_schema(defaults))
 
     async def async_step_flow_rate(self, user_input: dict[str, Any] | None = None):
         """Work the emitter flow rate out from the emitters: how many, how
@@ -508,7 +809,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
                 for key in OPTIONAL_ENTITY_KEYS:
                     user_input.setdefault(key, None)
                 await self._apply_site(user_input)
-                return self.async_create_entry(title="", data=user_input)
+                # Keep what other Configure steps stored (the zone type).
+                return self.async_create_entry(title="", data={**self._config_entry.options, **user_input})
         defaults = {**self._config_entry.data, **self._config_entry.options, **(user_input or {})}
         controller = self.hass.data.get(DOMAIN, {}).get(self._config_entry.entry_id)
         if controller is not None and not user_input:

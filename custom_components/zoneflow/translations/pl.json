@@ -6,11 +6,13 @@
         "description": "Nadaj tej strefie nawadniania krótką nazwę (np. „Trawnik przed domem”, „Awokado”). Aby dodać kolejne strefy, dodaj tę integrację ponownie.",
         "data": {
           "zone_name": "Nazwa strefy",
-          "plant": "Co tu rośnie"
+          "plant": "Co tu rośnie",
+          "zone_type": "Miejsce uprawy"
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
-          "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy."
+          "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy.",
+          "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Gdy ta średnia jest niższa, strefa stosuje ustawienie „Dawka tygodniowa – chłód”. Pomiędzy jest normalna pogoda.",
           "fallback_temp": "Używana, gdy brak prawdziwego odczytu. Bez czujnika temperatury to Twoje ręczne sterowanie: podnieś ją na czas upałów, obniż na czas chłodów."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Urządzenia klimatyzacyjne i czujniki",
+        "description": "Wskaż swoje rzeczywiste czujniki i urządzenia. Wszystkie są opcjonalne, ale wentylator, okno, zamgławiacz lub grzejnik wymagają wewnętrznego czujnika temperatury. Możesz je dodać lub zmienić później w sekcji Konfiguracja.",
+        "data": {
+          "inside_temp_entity": "Czujnik temperatury wewnętrznej",
+          "inside_humidity_entity": "Czujnik wilgotności wewnętrznej (opcjonalnie)",
+          "light_entity": "Czujnik natężenia światła (opcjonalnie)",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
+          "fan_entities": "Wentylatory chłodzące (opcjonalnie)",
+          "vent_entities": "Wietrzniki / okna (opcjonalnie)",
+          "mister_entities": "Zamgławianie / zraszanie (opcjonalnie)",
+          "heater_entities": "Grzejnik (opcjonalnie)",
+          "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
+          "unit_system": "Jednostki",
+          "backup_temp_entities": "Zapasowe czujniki temperatury wewnętrznej"
+        },
+        "data_description": {
+          "inside_temp_entity": "Czujnik temperatury wewnątrz szklarni lub pomieszczenia. Wymagany dla każdego wentylatora, okna, zamgławiacza lub grzejnika, używany również do nawadniania.",
+          "inside_humidity_entity": "Czujnik wilgotności wewnątrz. Pozwala ZoneFlow wietrzyć lub zamgławiać na podstawie wilgotności i zatrzymywać zamgławianie, gdy jest wystarczająco wilgotno.",
+          "light_entity": "Czujnik światła (lux lub promieniowanie słoneczne). Może uruchamiać zamgławianie w jasne dni.",
+          "outdoor_temp_entity": "Czujnik temperatury na zewnątrz. Dzięki niemu ZoneFlow wentyluje w celu schłodzenia tylko wtedy, gdy powietrze na zewnątrz jest chłodniejsze niż wewnątrz, dzięki czemu nigdy nie wciąga gorącego powietrza. Bez niego działa wyłącznie na podstawie odczytów wewnętrznych.",
+          "fan_entities": "Wentylatory chłodzące lub wyciągowe. Dowolny przełącznik, zmienna pomocnicza (input_boolean) lub wentylator. Przełączają się wszystkie razem.",
+          "vent_entities": "Okno dachowe lub boczne: rolety/pulpity sterujące lub przełączniki, które je otwierają. Wszystkie poruszają się razem.",
+          "mister_entities": "Zamgławiacze lub zraszacze: przełącznik lub zawór. ZoneFlow uruchamia je w krótkich impulsach i zawsze upewnia się, że zostaną wyłączone.",
+          "heater_entities": "Grzejniki: przełącznik lub encja klimatyzacji. Włączane, gdy zrobi się zbyt zimno.",
+          "notify_entity": "Cel powiadomień telefonicznych dla ostrzeżeń, takich jak awaria czujnika. Pozostaw puste, jeśli brak.",
+          "unit_system": "Wyświetlanie temperatury w stopniach Celsjusza lub Fahrenheita. Ustawienie automatyczne podąża za Home Assistant.",
+          "backup_temp_entities": "Opcjonalnie, zalecane dla szklarni z grzejnikiem. Dodatkowe czujniki temperatury wewnątrz, najlepiej umieszczone z dala od głównego. Jeśli główny czujnik przestanie działać, sterowanie jest kontynuowane z pierwszym działającym czujnikiem zapasowym i otrzymujesz wiadomość."
+        }
+      },
+      "water_valve": {
+        "title": "Czy ta strefa jest podlewana?",
+        "description": "Wybierz przełącznik zaworu, jeśli ta strefa podlewa rośliny. Pozostaw puste dla strefy wyłącznie klimatycznej (wtedy wymaga co najmniej jednego urządzenia).",
+        "data": {
+          "valve_entity": "Przełącznik zaworu (opcjonalnie)"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, który otwiera zawór tej strefy. Pozostaw puste dla strefy wyłącznie klimatycznej, która nie podlewa."
+        }
+      },
+      "watering": {
+        "title": "Ustawienia podawania wody",
+        "description": "Ustawienia podawania wody dla zaworu tej strefy. Wszystko można zmienić później na stronie urządzenia strefy.",
+        "data": {
+          "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
+          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie)",
+          "flow_meter_entity": "Przepływomierz (opcjonalnie)",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
+          "soil_type": "Rodzaj gleby",
+          "drainage": "Drenaż",
+          "slope": "Nachylenie terenu",
+          "irrigation_method": "Metoda nawadniania",
+          "growth_ramp_profile": "Automatyczne dostosowanie do fazy wzrostu",
+          "deep_soak_enabled": "Włącz cykl głębokiego nawadniania",
+          "deep_soak_time": "Czas harmonogramu głębokiego nawadniania",
+          "routine_time": "Czas harmonogramu rutynowego nawadniania",
+          "deep_soak_sun_mode": "Wyzwalacz głębokiego nawadniania",
+          "deep_soak_sun_offset_minutes": "przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
+          "routine_sun_mode": "Wyzwalacz rutynowy",
+          "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)"
+        },
+        "data_description": {
+          "pump_power_entity": "Czujnik poboru mocy (W) pompy, np. z inteligentnego gniazdka. Podczas każdego podawania wody ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega, jeśli tak nie jest. Pozostaw puste, jeśli nie posiadasz.",
+          "pump_id": "Tylko dla stref zasilanych z tej samej pompy: nadaj im wszystkim tę samą nazwę w tym miejscu (dowolną nazwę, np. „Pompa A”), a będą działać naprzemiennie zamiast jednocześnie. Pozostaw puste, jeśli ta strefa ma własną pompę lub źródło wody.",
+          "flow_meter_entity": "Licznik wody zliczający całkowitą objętość (litry, galony lub m³). ZoneFlow rejestruje wtedy, ile wody naprawdę zużyło każde podlewanie, ostrzega, jeśli pompa pracowała, ale woda nie przepływała, oraz może zmierzyć natężenie przepływu (Konfiguracja → Natężenie przepływu).",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (%) w strefie korzeniowej tej strefy. Sucha gleba przyspiesza rutynowe podlewanie, wilgotna gleba je pomija, a pomiędzy nimi decyduje normalny harmonogram. Poziomy suchej i wilgotnej gleby znajdują się na stronie urządzenia strefy.",
+          "soil_type": "Decyduje o tym, jak każde podlewanie jest dzielone na impulsy, aby woda wsiąkała zamiast spływać: około 3 mm na impuls dla gliny, 15 mm dla gleby średniej (mączystej), 30 mm dla piasku, z 30-minutową przerwą na wsiąkanie między impulsami (godzina dla gliny i gleby gliniastej). Wybór „Nie mam pewności” używa ostrożnej wartości średniej. Możesz to również zmienić później na stronie urządzenia strefy.",
+          "drainage": "Gleba o wolnym drenażu (z twardą, zbitą warstwą pod spodem) pobiera mniej wody na impuls i otrzymuje godzinną przerwę na wsiąkanie między impulsami.",
+          "slope": "Woda spływa ze zbocza, zanim wsiąknie: umiarkowane nachylenie dodaje jeden impuls do każdego podlewania, strome dodaje dwa.",
+          "irrigation_method": "Sposób dostarczania wody. W przypadku nawadniania kropelkowego lub węża pocącego na piaszczystej glebie nowa strefa rozpoczyna się od co najmniej dwóch impulsów, dzięki czemu woda pozostaje w strefie korzeniowej. Ilość dostarczanej wody jest ustawiana przez natężenie przepływu (Konfiguracja → Natężenie przepływu).",
+          "growth_ramp_profile": "Podaje młodym roślinom mniej wody i zwiększa ją do pełnego tygodniowego celu w miarę ich wzrostu, licząc od daty sadzenia / przesadzenia na stronie urządzenia strefy. Wyłączone: zawsze pełny cel. Niestandardowy: narysuj własną krzywą na stronie urządzenia.",
+          "deep_soak_enabled": "Głębokie nawadnianie to duże, powolne podlewanie co kilka tygodni (na początek co 14 dni), które zwilża glebę w głębokich warstwach, dzięki czemu korzenie rosną głęboko. Dobre dla drzew, krzewów i bylin; wyłącz dla roślin o płytkich korzeniach, takich jak sałata i zioła. Rutynowe podlewanie działa w obu przypadkach.",
+          "deep_soak_time": "Kiedy rozpoczyna się głębokie nawadnianie w zaplanowane dni, gdy jego wyzwalaczem poniżej jest stała godzina. Najlepszy jest wczesny poranek: mniej wody ucieka przez słońce i wiatr.",
+          "routine_time": "Kiedy ZoneFlow sprawdza każdego dnia, czy przypada rutynowe podlewanie, i podlewa, jeśli tak jest. Częstotliwość zależy od pogody i tygodniowego celu. Najlepszy jest wczesny poranek.",
+          "deep_soak_sun_mode": "Uruchom głębokie nawadnianie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
+          "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
+          "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
+          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie."
+        }
       }
     },
     "error": {
       "zone_name_required": "Nazwa strefy nie może być pusta.",
       "cool_not_below_hot": "Próg chłodu musi być niższy niż próg upału.",
       "valve_already_used": "Inna strefa ZoneFlow już korzysta z tego zaworu.",
-      "csv_path_already_used": "Inna strefa ZoneFlow już zapisuje do tego pliku CSV."
+      "csv_path_already_used": "Inna strefa ZoneFlow już zapisuje do tego pliku CSV.",
+      "inside_temp_required": "Wentylator, okno, zamgławiacz lub grzejnik wymagają czujnika temperatury wewnętrznej.",
+      "device_in_two_roles": "Ta sama encja została wybrana do dwóch różnych zadań.",
+      "device_already_used": "Inna strefa ZoneFlow używa już jednego z tych urządzeń.",
+      "valve_or_device_required": "Wybierz zawór lub co najmniej jedno urządzenie klimatyzacyjne.",
+      "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Ustawienia strefy (encje, gleba, harmonogram…)",
           "flow_rate": "Wydajność: oblicz na podstawie emiterów",
-          "flow_measure": "Wydajność: zmierz przepływomierzem"
+          "flow_measure": "Wydajność: zmierz przepływomierzem",
+          "greenhouse_devices": "Zawór, czujniki i urządzenia klimatyzacyjne",
+          "watering": "Ustawienia podawania wody",
+          "zone_type": "Typ strefy"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "Powierzchnia, którą emitery strefy faktycznie zwilżają. Przy kroplownikach pod pojedynczymi roślinami zsumuj mokre plamy wokół nich, a nie całą grządkę."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Urządzenia szklarniowe i domowe",
+        "description": "Dodaj lub zmień zawór, czujniki i urządzenia klimatyzacyjne. Nic nie jest tworzone na nowo: to, czego strefa nie używa, zostaje ukryte.",
+        "data": {
+          "valve_entity": "Przełącznik zaworu (opcjonalnie)",
+          "inside_temp_entity": "Czujnik temperatury wewnętrznej",
+          "inside_humidity_entity": "Czujnik wilgotności wewnętrznej (opcjonalnie)",
+          "light_entity": "Czujnik natężenia światła (opcjonalnie)",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
+          "fan_entities": "Wentylatory chłodzące (opcjonalnie)",
+          "vent_entities": "Wietrzniki / okna (opcjonalnie)",
+          "mister_entities": "Zamgławianie / zraszanie (opcjonalnie)",
+          "heater_entities": "Grzejnik (opcjonalnie)",
+          "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
+          "unit_system": "Jednostki",
+          "backup_temp_entities": "Zapasowe czujniki temperatury wewnętrznej"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, który otwiera zawór tej strefy. Pozostaw puste dla strefy wyłącznie klimatycznej, która nie podlewa.",
+          "inside_temp_entity": "Czujnik temperatury wewnątrz szklarni lub pomieszczenia. Wymagany dla każdego wentylatora, okna, zamgławiacza lub grzejnika, używany również do nawadniania.",
+          "inside_humidity_entity": "Czujnik wilgotności wewnątrz. Pozwala ZoneFlow wietrzyć lub zamgławiać na podstawie wilgotności i zatrzymywać zamgławianie, gdy jest wystarczająco wilgotno.",
+          "light_entity": "Czujnik światła (lux lub promieniowanie słoneczne). Może uruchamiać zamgławianie w jasne dni.",
+          "outdoor_temp_entity": "Czujnik temperatury na zewnątrz. Dzięki niemu ZoneFlow wentyluje w celu schłodzenia tylko wtedy, gdy powietrze na zewnątrz jest chłodniejsze niż wewnątrz, dzięki czemu nigdy nie wciąga gorącego powietrza. Bez niego działa wyłącznie na podstawie odczytów wewnętrznych.",
+          "fan_entities": "Wentylatory chłodzące lub wyciągowe. Dowolny przełącznik, zmienna pomocnicza (input_boolean) lub wentylator. Przełączają się wszystkie razem.",
+          "vent_entities": "Okno dachowe lub boczne: rolety/pulpity sterujące lub przełączniki, które je otwierają. Wszystkie poruszają się razem.",
+          "mister_entities": "Zamgławiacze lub zraszacze: przełącznik lub zawór. ZoneFlow uruchamia je w krótkich impulsach i zawsze upewnia się, że zostaną wyłączone.",
+          "heater_entities": "Grzejniki: przełącznik lub encja klimatyzacji. Włączane, gdy zrobi się zbyt zimno.",
+          "notify_entity": "Cel powiadomień telefonicznych dla ostrzeżeń, takich jak awaria czujnika. Pozostaw puste, jeśli brak.",
+          "unit_system": "Wyświetlanie temperatury w stopniach Celsjusza lub Fahrenheita. Ustawienie automatyczne podąża za Home Assistant.",
+          "backup_temp_entities": "Opcjonalnie, zalecane dla szklarni z grzejnikiem. Dodatkowe czujniki temperatury wewnątrz, najlepiej umieszczone z dala od głównego. Jeśli główny czujnik przestanie działać, sterowanie jest kontynuowane z pierwszym działającym czujnikiem zapasowym i otrzymujesz wiadomość."
+        }
+      },
+      "zone_type": {
+        "title": "Typ strefy",
+        "description": "Zmień miejsce uprawy w tej strefie. Nic nie zostanie usunięte: to, czego nowy typ nie używa, zostaje ukryte i powróci, jeśli zmienisz ustawienie z powrotem.",
+        "data": {
+          "zone_type": "Miejsce uprawy"
+        },
+        "data_description": {
+          "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody."
+        }
+      },
+      "watering": {
+        "title": "Ustawienia podawania wody",
+        "description": "Ustawienia podawania wody dla zaworu tej strefy. Wszystko można zmienić później na stronie urządzenia strefy.",
+        "data": {
+          "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
+          "pump_id": "Identyfikator wspólnej pompy (opcjonalnie)",
+          "flow_meter_entity": "Przepływomierz (opcjonalnie)",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
+          "soil_type": "Rodzaj gleby",
+          "drainage": "Drenaż",
+          "slope": "Nachylenie terenu",
+          "irrigation_method": "Metoda nawadniania",
+          "growth_ramp_profile": "Automatyczne dostosowanie do fazy wzrostu",
+          "deep_soak_enabled": "Włącz cykl głębokiego nawadniania",
+          "deep_soak_time": "Czas harmonogramu głębokiego nawadniania",
+          "routine_time": "Czas harmonogramu rutynowego nawadniania",
+          "deep_soak_sun_mode": "Wyzwalacz głębokiego nawadniania",
+          "deep_soak_sun_offset_minutes": "Przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
+          "routine_sun_mode": "Wyzwalacz rutynowy",
+          "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)"
+        },
+        "data_description": {
+          "pump_power_entity": "Czujnik poboru mocy (W) pompy, np. z inteligentnego gniazdka. Podczas każdego podawania wody ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega, jeśli tak nie jest. Pozostaw puste, jeśli nie posiadasz.",
+          "pump_id": "Tylko dla stref zasilanych z tej samej pompy: nadaj im wszystkim tę samą nazwę w tym miejscu (dowolną nazwę, np. „Pompa A”), a będą działać naprzemiennie zamiast jednocześnie. Pozostaw puste, jeśli ta strefa ma własną pompę lub źródło wody.",
+          "flow_meter_entity": "Licznik wody zliczający całkowitą objętość (litry, galony lub m³). ZoneFlow rejestruje wtedy, ile wody naprawdę zużyło każde podlewanie, ostrzega, jeśli pompa pracowała, ale woda nie przepływała, oraz może zmierzyć natężenie przepływu (Konfiguracja → Natężenie przepływu).",
+          "soil_moisture_entity": "Czujnik wilgotności gleby (%) w strefie korzeniowej tej strefy. Sucha gleba przyspiesza rutynowe podlewanie, wilgotna gleba je pomija, a pomiędzy nimi decyduje normalny harmonogram. Poziomy suchej i wilgotnej gleby znajdują się na stronie urządzenia strefy.",
+          "soil_type": "Decyduje o tym, jak każde podlewanie jest dzielone na impulsy, aby woda wsiąkała zamiast spływać: około 3 mm na impuls dla gliny, 15 mm dla gleby średniej (mączystej), 30 mm dla piasku, z 30-minutową przerwą na wsiąkanie między impulsami (godzina dla gliny i gleby gliniastej). Wybór „Nie mam pewności” używa ostrożnej wartości średniej. Możesz to również zmienić później na stronie urządzenia strefy.",
+          "drainage": "Gleba o wolnym drenażu (z twardą, zbitą warstwą pod spodem) pobiera mniej wody na impuls i otrzymuje godzinną przerwę na wsiąkanie między impulsami.",
+          "slope": "Woda spływa ze zbocza, zanim wsiąknie: umiarkowane nachylenie dodaje jeden impuls do każdego podlewania, strome dodaje dwa.",
+          "irrigation_method": "Sposób dostarczania wody. W przypadku nawadniania kropelkowego lub węża pocącego na piaszczystej glebie nowa strefa rozpoczyna się od co najmniej dwóch impulsów, dzięki czemu woda pozostaje w strefie korzeniowej. Ilość dostarczanej wody jest ustawiana przez natężenie przepływu (Konfiguracja → Natężenie przepływu).",
+          "growth_ramp_profile": "Podaje młodym roślinom mniej wody i zwiększa ją do pełnego tygodniowego celu w miarę ich wzrostu, licząc od daty sadzenia / przesadzenia na stronie urządzenia strefy. Wyłączone: zawsze pełny cel. Niestandardowy: narysuj własną krzywą na stronie urządzenia.",
+          "deep_soak_enabled": "Głębokie nawadnianie to duże, powolne podlewanie co kilka tygodni (na początek co 14 dni), które zwilża glebę w głębokich warstwach, dzięki czemu korzenie rosną głęboko. Dobre dla drzew, krzewów i bylin; wyłącz dla roślin o płytkich korzeniach, takich jak sałata i zioła. Rutynowe podlewanie działa w obu przypadkach.",
+          "deep_soak_time": "Kiedy rozpoczyna się głębokie nawadnianie w zaplanowane dni, gdy jego wyzwalaczem poniżej jest stała godzina. Najlepszy jest wczesny poranek: mniej wody ucieka przez słońce i wiatr.",
+          "routine_time": "Kiedy ZoneFlow sprawdza każdego dnia, czy przypada rutynowe podlewanie, i podlewa, jeśli tak jest. Częstotliwość zależy od pogody i tygodniowego celu. Najlepszy jest wczesny poranek.",
+          "deep_soak_sun_mode": "Uruchom głębokie nawadnianie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
+          "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
+          "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
+          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Inna strefa ZoneFlow już korzysta z tego zaworu.",
-      "csv_path_already_used": "Inna strefa ZoneFlow już zapisuje do tego pliku CSV."
+      "csv_path_already_used": "Inna strefa ZoneFlow już zapisuje do tego pliku CSV.",
+      "inside_temp_required": "Wentylator, okno, zamgławiacz lub grzejnik wymagają czujnika temperatury wewnętrznej.",
+      "device_in_two_roles": "Ta sama encja została wybrana do dwóch różnych zadań.",
+      "device_already_used": "Inna strefa ZoneFlow używa już jednego z tych urządzeń.",
+      "valve_or_device_required": "Wybierz zawór lub co najmniej jedno urządzenie klimatyzacyjne.",
+      "valve_required_outdoor": "Strefa zewnętrzna wymaga zaworu. Najpierw dodaj go w sekcji Zawór, czujniki i urządzenia klimatyzacyjne.",
+      "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Krzewy / żywopłot",
         "young_tree": "Młode drzewo (pierwsze lata)",
         "fruit_tree": "Dorosłe drzewo owocowe"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Na zewnątrz",
+        "greenhouse": "Szklarnia",
+        "indoor": "Wewnątrz"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Próg przymrozkowy"
+      },
+      "heat_temp": {
+        "name": "Włącz grzejnik poniżej"
+      },
+      "vent_temp": {
+        "name": "Otwórz wietrzniki przy"
+      },
+      "fan_temp": {
+        "name": "Włącz wentylatory przy"
+      },
+      "climate_hysteresis": {
+        "name": "Histereza klimatu"
+      },
+      "outside_margin": {
+        "name": "Margines powietrza zewnętrznego"
+      },
+      "max_humidity": {
+        "name": "Wietrz powyżej wilgotności"
+      },
+      "mist_temp": {
+        "name": "Zamgławiaj powyżej temperatury"
+      },
+      "mist_min_humidity": {
+        "name": "Zamgławiaj poniżej wilgotności"
+      },
+      "mist_stop_humidity": {
+        "name": "Wilgotność zatrzymania zamgławiania"
+      },
+      "mist_min_temp": {
+        "name": "Minimalna temperatura zamgławiania"
+      },
+      "mist_light_level": {
+        "name": "Poziom światła zamgławiania"
+      },
+      "mist_on_seconds": {
+        "name": "Czas włączenia zamgławiania"
+      },
+      "mist_off_seconds": {
+        "name": "Czas wyłączenia zamgławiania"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Maks. zamgławianie na godzinę"
+      },
+      "vent_open_pct": {
+        "name": "Pozycja otwarcia wietrzników"
+      },
+      "manual_hold_minutes": {
+        "name": "Czas wstrzymania ręcznego"
+      },
+      "sensor_offline_hours": {
+        "name": "Czujnik offline po"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Flaga przerwania podlewania"
+      },
+      "ventilation_allowed": {
+        "name": "Wentylacja dozwolona"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Pauza"
+      },
+      "greenhouse_control": {
+        "name": "Sterowanie szklarnią"
+      },
+      "mist_at_night": {
+        "name": "Zamgławianie w nocy"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Następne nawożenie"
+      },
+      "greenhouse_status": {
+        "name": "Stan szklarni"
+      },
+      "inside_vpd": {
+        "name": "VPD wewnątrz"
+      },
+      "misting_today": {
+        "name": "Dzisiejsze zamgławianie"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Umiarkowane nachylenie",
           "steep": "Duże nachylenie"
         }
+      },
+      "misting_trigger": {
+        "name": "Wyzwalacz zamgławiania",
+        "state": {
+          "any": "Dowolny wyzwalacz",
+          "temperature": "Tylko temperatura",
+          "humidity": "Tylko wilgotność",
+          "light": "Tylko światło"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Tryb awaryjny czujnika",
+        "state": {
+          "open": "Otwórz okna, włącz wentylatory",
+          "closed": "Zamknij okna, wyłącz wentylatory",
+          "leave": "Pozostaw bez zmian"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Tryb awaryjny grzejnika",
+        "state": {
+          "off": "Wyłączony",
+          "limited": "Włączony przez część czasu",
+          "outside": "Część czasu, gdy na zewnątrz jest zimno"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "Nie udało się wysłać podsumowania tygodnia: powiadomienie na telefon nie powiodło się. Sprawdź cel powiadomień strefy."
+    },
+    "zone_has_no_valve": {
+      "message": "Ta strefa nie ma zaworu, więc nie może podlewać. Dodaj zawór w sekcji Konfiguracja, jeśli tego chcesz."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}: zawór współdzielony z inną strefą",
       "description": "Strefa {zone} i strefa {other_zone} są skonfigurowane z tym samym zaworem ({entity}). Jeśli nie mają też tego samego identyfikatora pompy lub czujnika mocy pompy, ZoneFlow nie może rozpoznać, że to ten sam fizyczny zawór, i nie zapobiegnie ich jednoczesnemu otwarciu. Przypisz jednej ze stref własny zawór albo ustaw taki sam identyfikator pompy dla obu w Konfiguracji."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: czujnik temperatury wewnętrznej nie działa",
+      "description": "Czujnik temperatury wewnętrznej w strefie {zone} ({entity}) nie podał użytecznego odczytu od pewnego czasu, więc sterowanie klimatem przeszło w tryb awaryjny: zamgławiacze i grzejnik są wyłączone, a wietrzniki i wentylatory podążają za ustawieniem Tryb awaryjny czujnika. Sprawdź czujnik. Problem ustąpi samoistnie, gdy czujnik ponownie wyśle odczyt."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: czujnik temperatury zewnętrznej nie działa",
+      "description": "Czujnik temperatury zewnętrznej w strefie {zone} ({entity}) nie podał użytecznego odczytu od pewnego czasu. Wentylacja działa wyłącznie na podstawie odczytów wewnętrznych, więc nie może sprawdzić, czy powietrze na zewnątrz jest chłodniejsze. Sprawdź czujnik. Problem ustąpi samoistnie, gdy czujnik ponownie wyśle odczyt."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: urządzenie klimatyzacyjne nie odpowiada",
+      "description": "Strefa {zone} przełączyła swoje {devices}, ale nie zgłosiły one zmiany, nawet po drugiej próbie. Sprawdź urządzenie i jego integrację. Problem ustąpi samoistnie, gdy urządzenia odpowiedzą."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: zamgławianie zatrzymane",
+      "description": "Zamgławiacz w strefie {zone} nie chciał się wyłączyć po wydaniu polecenia, więc zamgławianie zostało zatrzymane, aby uniknąć zalania. Sprawdź zamgławiacz, a następnie naciśnij Zresetuj blokadę nawadniania w danej strefie, aby wznowić zamgławianie."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: działanie na zapasowym czujniku temperatury",
+      "description": "Główny czujnik temperatury wewnętrznej w strefie {zone} ({entity}) przestał działać, więc sterowanie klimatem używa czujnika zapasowego. Sprawdź główny czujnik. Problem ustąpi samoistnie, gdy ponownie wyśle odczyt."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: czujniki temperatury wewnętrznej wskazują różne wartości",
+      "description": "Główny czujnik temperatury wewnętrznej w strefie {zone} ({entity}) wskazuje {main}, podczas gdy zapasowy wskazuje {backup}, i różnią się znacznie od dłuższego czasu. Jeden z nich jest prawdopodobnie uszkodzony lub źle umieszczony (w bezpośrednim słońcu, obok grzejnika). Sprawdź oba. Problem ustąpi samoistnie, gdy zaczną się zgadzać."
     }
   }
 }

@@ -22,18 +22,22 @@ import homeassistant.util.dt as dt_util
 
 from .const import CONF_DEEP_SOAK_ENABLED, DOMAIN
 from .controller import ZoneFlowController
+from .entity_cleanup import remove_entities
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
     controller: ZoneFlowController = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(
-        [
-            ZoneFlowDeepSoakEnabledSwitch(entry, controller),
-            ZoneFlowDeficitModeSwitch(entry, controller),
-            ZoneFlowServiceModeSwitch(entry, controller),
-            ZoneFlowPauseSwitch(entry, controller),
-        ]
-    )
+    entities = [
+        ZoneFlowDeepSoakEnabledSwitch(entry, controller),
+        ZoneFlowDeficitModeSwitch(entry, controller),
+        ZoneFlowServiceModeSwitch(entry, controller),
+        ZoneFlowPauseSwitch(entry, controller),
+    ]
+    if controller.is_outdoor:
+        remove_entities(hass, entry, "switch", ["greenhouse_control", "mist_at_night"])
+    else:
+        entities += [ZoneFlowGreenhouseControlSwitch(entry, controller), ZoneFlowMistAtNightSwitch(entry, controller)]
+    async_add_entities(entities)
 
 
 class ZoneFlowServiceModeSwitch(SwitchEntity):
@@ -179,3 +183,63 @@ class ZoneFlowPauseSwitch(SwitchEntity):
     async def async_turn_off(self, **kwargs) -> None:
         await self._controller.set_paused(False)
         self.async_write_ha_state()
+
+
+class ZoneFlowGreenhouseControlSwitch(SwitchEntity):
+    """Greenhouse control: off leaves every climate device alone (misters
+    are switched off first). See greenhouse.GreenhouseManager."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:greenhouse"
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_greenhouse_control"
+        self._attr_translation_key = "greenhouse_control"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.store.state.greenhouse_enabled
+
+    async def _set(self, value: bool) -> None:
+        self._controller.store.state.greenhouse_enabled = value
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.greenhouse.async_evaluate("control")
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._set(True)
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._set(False)
+
+
+class ZoneFlowMistAtNightSwitch(SwitchEntity):
+    """Allow misting after sunset (off by default: wet leaves at night)."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:weather-night"
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_mist_at_night"
+        self._attr_translation_key = "mist_at_night"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.store.state.mist_at_night
+
+    async def _set(self, value: bool) -> None:
+        self._controller.store.state.mist_at_night = value
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        await self._controller.greenhouse.async_evaluate("setting")
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._set(True)
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._set(False)

@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: hora de adubar",
       "message": "Previsto para {date}. Carregue em Adubado hoje quando terminar; a próxima data é calculada a partir daí."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: proteção do sensor de clima",
+      "message": "Nenhum sensor de temperatura interior está a funcionar. Nebulizadores desligados; aberturas e ventiladores: {mode}; aquecedor: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: controlo de clima normalizado",
+      "message": "O sensor de temperatura interior está a reportar novamente."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} não responde",
+      "message": "{entity} não alterou o estado conforme solicitado, mesmo após uma segunda tentativa."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: nebulizador ficou encravado ligado",
+      "message": "Um nebulizador permaneceu ligado após o seu impulso e foi desligado."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: nebulização interrompida",
+      "message": "Um nebulizador não desligou, pelo que a nebulização foi interrompida. Verifique-o e prima Repor bloqueio de rega."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: a utilizar o sensor de temperatura de reserva",
+      "message": "O sensor de temperatura interior principal ({entity}) deixou de funcionar. O controlo de clima continua com o de reserva."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · em pausa",
     "next": " · próxima {when}",
     "zone_none": "{zone}: sem rega"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "aberturas abertas, ventiladores ligados",
+      "closed": "aberturas fechadas, ventiladores desligados",
+      "leave": "mantidos como estão"
+    },
+    "status": {
+      "starting": "A iniciar",
+      "control_off": "O controlo da estufa está desligado",
+      "failsafe": "Modo de segurança: sem temperatura interior (aberturas e ventiladores: {mode}; aquecedor: {heater})",
+      "mist_halted": "Nebulização interrompida: prima Repor bloqueio de rega",
+      "held": "{device} mantido inalterado por {minutes} min (alterado manualmente)",
+      "heating": "A aquecer ({temp})",
+      "ventilating_temperature": "A ventilar: demasiado quente ({temp})",
+      "ventilating_humidity": "A ventilar: demasiado húmido ({humidity})",
+      "misting": "A nebulizar ({temp}, {humidity})",
+      "gate_blocked": "Sem ventilação: o ar exterior ({outside}) não está mais frio do que o interior ({temp})",
+      "idle": "Tudo normal: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "desligado",
+      "limited": "ligado parte do tempo",
+      "outside": "ligado parte do tempo enquanto estive frio lá fora"
+    }
   }
 }

@@ -6,11 +6,13 @@
         "description": "Give this irrigation zone a short name (e.g. \"Front Lawn\", \"Avocado Tree\"). To add more zones later, add this integration again.",
         "data": {
           "zone_name": "Zone name",
-          "plant": "What's planted"
+          "plant": "What's planted",
+          "zone_type": "Where it grows"
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
-          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page."
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
+          "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof."
         }
       },
       "entities": {
@@ -90,19 +92,110 @@
           "cool_temp_threshold": "When that average is below this, the zone uses its Cool weekly target. In between is normal weather.",
           "fallback_temp": "Used when there's no real reading. Without a temperature sensor this is your manual control: raise it for a heat wave, lower it for a cold spell."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Climate devices and sensors",
+        "description": "Point this at your real sensors and devices. All are optional, but a fan, vent, mister or heater needs the inside temperature sensor. You can add or change them later under Configure.",
+        "data": {
+          "inside_temp_entity": "Inside temperature sensor",
+          "inside_humidity_entity": "Inside humidity sensor (optional)",
+          "light_entity": "Light sensor (optional)",
+          "outdoor_temp_entity": "Outside temperature sensor (optional)",
+          "fan_entities": "Cooling fans (optional)",
+          "vent_entities": "Vents (optional)",
+          "mister_entities": "Misting / fogging (optional)",
+          "heater_entities": "Heater (optional)",
+          "notify_entity": "Phone notify target (optional)",
+          "unit_system": "Units",
+          "backup_temp_entities": "Backup inside temperature sensors"
+        },
+        "data_description": {
+          "inside_temp_entity": "The temperature sensor inside the greenhouse or room. Needed for any fan, vent, mister or heater, and used for watering too.",
+          "inside_humidity_entity": "A humidity sensor inside. Lets ZoneFlow vent or mist by humidity and stop misting when it is damp enough.",
+          "light_entity": "A light sensor (lux or solar radiation). Can start misting on bright days.",
+          "outdoor_temp_entity": "A temperature sensor outside. With it, ZoneFlow only ventilates to cool when the outside air is cooler than inside, so it never pulls hotter air in. Without it, it works from the inside readings only.",
+          "fan_entities": "Fans that cool or exhaust. Any switch, input boolean or fan. They all switch together.",
+          "vent_entities": "Roof or side vents: covers, or switches that open them. They all move together.",
+          "mister_entities": "Misters or foggers: a switch or valve. ZoneFlow runs them in short pulses and always makes sure they end up off.",
+          "heater_entities": "Heaters: a switch, or a climate entity. Switched on when it gets too cold.",
+          "notify_entity": "A phone notification target for warnings, such as a failed sensor. Leave empty for none.",
+          "unit_system": "Show temperatures in Celsius or Fahrenheit. Automatic follows Home Assistant.",
+          "backup_temp_entities": "Optional, recommended for a greenhouse with a heater. Extra temperature sensors inside, best placed away from the main one. If the main sensor stops working, control carries on with the first backup that works, and you get a message."
+        }
+      },
+      "water_valve": {
+        "title": "Does this zone water?",
+        "description": "Pick the valve switch if this zone waters its plants. Leave it empty for a climate-only zone (then it needs at least one device).",
+        "data": {
+          "valve_entity": "Valve switch (optional)"
+        },
+        "data_description": {
+          "valve_entity": "The switch that opens this zone's valve. Leave empty for a climate-only zone that doesn't water."
+        }
+      },
+      "watering": {
+        "title": "Watering settings",
+        "description": "The watering settings for this zone's valve. Everything can be changed later on the zone's device page.",
+        "data": {
+          "pump_power_entity": "Pump power sensor (optional)",
+          "pump_id": "Shared pump ID (optional)",
+          "flow_meter_entity": "Flow meter (optional)",
+          "soil_moisture_entity": "Soil moisture sensor (optional)",
+          "soil_type": "Soil type",
+          "drainage": "Drainage",
+          "slope": "Slope",
+          "irrigation_method": "Irrigation method",
+          "growth_ramp_profile": "Growth-stage auto-ramp",
+          "deep_soak_enabled": "Enable the deep soak cycle",
+          "deep_soak_time": "Deep soak schedule time",
+          "routine_time": "Routine irrigation schedule time",
+          "deep_soak_sun_mode": "Deep soak trigger",
+          "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
+          "routine_sun_mode": "Routine trigger",
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+        },
+        "data_description": {
+          "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
+          "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
+          "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
+          "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
+          "soil_type": "Decides how each watering is split into pulses, so the water soaks in instead of running off: about 3 mm per pulse on clay, 15 mm on loam, 30 mm on sand, with a 30-minute soak between pulses (an hour on clay and clay loam). \"Not sure\" uses a cautious middle value. You can also change it later on the zone's device page.",
+          "drainage": "Slow-draining soil (a hard, compact layer underneath) takes less water per pulse and gets an hour's soak between pulses.",
+          "slope": "Water runs off a slope before it soaks in: a moderate slope adds one pulse to each watering, a steep one two.",
+          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate).",
+          "growth_ramp_profile": "Gives young plants less water and grows it to the full weekly target as they get older, counted from the Planting / Transplant Date on the zone's device page. Off: always the full target. Custom: draw your own curve on the device page.",
+          "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
+          "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
+          "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
+        }
       }
     },
     "error": {
       "zone_name_required": "Zone name can't be empty.",
       "cool_not_below_hot": "The cool threshold has to be below the hot threshold.",
       "valve_already_used": "Another ZoneFlow zone already uses this valve.",
-      "csv_path_already_used": "Another ZoneFlow zone already logs to this CSV file."
+      "csv_path_already_used": "Another ZoneFlow zone already logs to this CSV file.",
+      "inside_temp_required": "A fan, vent, mister or heater needs the inside temperature sensor.",
+      "device_in_two_roles": "The same entity is chosen for two different jobs.",
+      "device_already_used": "Another ZoneFlow zone already uses one of these devices.",
+      "valve_or_device_required": "Choose a valve, or at least one climate device.",
+      "backup_same_as_inside": "A backup sensor can't be the main inside temperature sensor."
     }
   },
   "options": {
     "error": {
       "valve_already_used": "Another ZoneFlow zone already uses this valve.",
-      "csv_path_already_used": "Another ZoneFlow zone already logs to this CSV file."
+      "csv_path_already_used": "Another ZoneFlow zone already logs to this CSV file.",
+      "inside_temp_required": "A fan, vent, mister or heater needs the inside temperature sensor.",
+      "device_in_two_roles": "The same entity is chosen for two different jobs.",
+      "device_already_used": "Another ZoneFlow zone already uses one of these devices.",
+      "valve_or_device_required": "Choose a valve, or at least one climate device.",
+      "valve_required_outdoor": "An outdoor zone needs a valve. Add one under Valve, sensors and climate devices first.",
+      "backup_same_as_inside": "A backup sensor can't be the main inside temperature sensor."
     },
     "step": {
       "init": {
@@ -110,7 +203,10 @@
         "menu_options": {
           "settings": "Zone settings (entities, soil, schedule…)",
           "flow_rate": "Flow rate: work it out from the emitters",
-          "flow_measure": "Flow rate: measure it with the flow meter"
+          "flow_measure": "Flow rate: measure it with the flow meter",
+          "greenhouse_devices": "Valve, sensors and climate devices",
+          "watering": "Watering settings",
+          "zone_type": "Zone type"
         }
       },
       "settings": {
@@ -187,6 +283,88 @@
         },
         "data_description": {
           "area": "The area the zone's emitters actually wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
+        }
+      },
+      "greenhouse_devices": {
+        "title": "Greenhouse and indoor devices",
+        "description": "Add or change the valve, sensors and climate devices. Nothing is re-created: what the zone doesn't use is hidden.",
+        "data": {
+          "valve_entity": "Valve switch (optional)",
+          "inside_temp_entity": "Inside temperature sensor",
+          "inside_humidity_entity": "Inside humidity sensor (optional)",
+          "light_entity": "Light sensor (optional)",
+          "outdoor_temp_entity": "Outside temperature sensor (optional)",
+          "fan_entities": "Cooling fans (optional)",
+          "vent_entities": "Vents (optional)",
+          "mister_entities": "Misting / fogging (optional)",
+          "heater_entities": "Heater (optional)",
+          "notify_entity": "Phone notify target (optional)",
+          "unit_system": "Units",
+          "backup_temp_entities": "Backup inside temperature sensors"
+        },
+        "data_description": {
+          "valve_entity": "The switch that opens this zone's valve. Leave empty for a climate-only zone that doesn't water.",
+          "inside_temp_entity": "The temperature sensor inside the greenhouse or room. Needed for any fan, vent, mister or heater, and used for watering too.",
+          "inside_humidity_entity": "A humidity sensor inside. Lets ZoneFlow vent or mist by humidity and stop misting when it is damp enough.",
+          "light_entity": "A light sensor (lux or solar radiation). Can start misting on bright days.",
+          "outdoor_temp_entity": "A temperature sensor outside. With it, ZoneFlow only ventilates to cool when the outside air is cooler than inside, so it never pulls hotter air in. Without it, it works from the inside readings only.",
+          "fan_entities": "Fans that cool or exhaust. Any switch, input boolean or fan. They all switch together.",
+          "vent_entities": "Roof or side vents: covers, or switches that open them. They all move together.",
+          "mister_entities": "Misters or foggers: a switch or valve. ZoneFlow runs them in short pulses and always makes sure they end up off.",
+          "heater_entities": "Heaters: a switch, or a climate entity. Switched on when it gets too cold.",
+          "notify_entity": "A phone notification target for warnings, such as a failed sensor. Leave empty for none.",
+          "unit_system": "Show temperatures in Celsius or Fahrenheit. Automatic follows Home Assistant.",
+          "backup_temp_entities": "Optional, recommended for a greenhouse with a heater. Extra temperature sensors inside, best placed away from the main one. If the main sensor stops working, control carries on with the first backup that works, and you get a message."
+        }
+      },
+      "zone_type": {
+        "title": "Zone type",
+        "description": "Change where this zone grows. Nothing is deleted: what the new type doesn't use is hidden, and returns if you change it back.",
+        "data": {
+          "zone_type": "Where it grows"
+        },
+        "data_description": {
+          "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof."
+        }
+      },
+      "watering": {
+        "title": "Watering settings",
+        "description": "The watering settings for this zone's valve. Everything can be changed later on the zone's device page.",
+        "data": {
+          "pump_power_entity": "Pump power sensor (optional)",
+          "pump_id": "Shared pump ID (optional)",
+          "flow_meter_entity": "Flow meter (optional)",
+          "soil_moisture_entity": "Soil moisture sensor (optional)",
+          "soil_type": "Soil type",
+          "drainage": "Drainage",
+          "slope": "Slope",
+          "irrigation_method": "Irrigation method",
+          "growth_ramp_profile": "Growth-stage auto-ramp",
+          "deep_soak_enabled": "Enable the deep soak cycle",
+          "deep_soak_time": "Deep soak schedule time",
+          "routine_time": "Routine irrigation schedule time",
+          "deep_soak_sun_mode": "Deep soak trigger",
+          "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
+          "routine_sun_mode": "Routine trigger",
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+        },
+        "data_description": {
+          "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
+          "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
+          "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
+          "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
+          "soil_type": "Decides how each watering is split into pulses, so the water soaks in instead of running off: about 3 mm per pulse on clay, 15 mm on loam, 30 mm on sand, with a 30-minute soak between pulses (an hour on clay and clay loam). \"Not sure\" uses a cautious middle value. You can also change it later on the zone's device page.",
+          "drainage": "Slow-draining soil (a hard, compact layer underneath) takes less water per pulse and gets an hour's soak between pulses.",
+          "slope": "Water runs off a slope before it soaks in: a moderate slope adds one pulse to each watering, a steep one two.",
+          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate).",
+          "growth_ramp_profile": "Gives young plants less water and grows it to the full weekly target as they get older, counted from the Planting / Transplant Date on the zone's device page. Off: always the full target. Custom: draw your own curve on the device page.",
+          "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
+          "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
+          "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
         }
       }
     },
@@ -281,6 +459,13 @@
         "shrubs": "Shrubs / hedge",
         "young_tree": "Young tree (first years)",
         "fruit_tree": "Established fruit tree"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Outdoor",
+        "greenhouse": "Greenhouse",
+        "indoor": "Indoor"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Frost Guard Temperature"
+      },
+      "heat_temp": {
+        "name": "Heater On Below"
+      },
+      "vent_temp": {
+        "name": "Vents Open At"
+      },
+      "fan_temp": {
+        "name": "Fans On At"
+      },
+      "climate_hysteresis": {
+        "name": "Climate Hysteresis"
+      },
+      "outside_margin": {
+        "name": "Outside Air Margin"
+      },
+      "max_humidity": {
+        "name": "Ventilate Above Humidity"
+      },
+      "mist_temp": {
+        "name": "Mist On Above Temperature"
+      },
+      "mist_min_humidity": {
+        "name": "Mist On Below Humidity"
+      },
+      "mist_stop_humidity": {
+        "name": "Mist Stop Humidity"
+      },
+      "mist_min_temp": {
+        "name": "Mist Minimum Temperature"
+      },
+      "mist_light_level": {
+        "name": "Mist Light Level"
+      },
+      "mist_on_seconds": {
+        "name": "Mist On Time"
+      },
+      "mist_off_seconds": {
+        "name": "Mist Off Time"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Max Misting Per Hour"
+      },
+      "vent_open_pct": {
+        "name": "Vent Open Position"
+      },
+      "manual_hold_minutes": {
+        "name": "Manual Hold Time"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensor Offline After"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Irrigation Abort Flag"
+      },
+      "ventilation_allowed": {
+        "name": "Ventilation Allowed"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Pause"
+      },
+      "greenhouse_control": {
+        "name": "Greenhouse Control"
+      },
+      "mist_at_night": {
+        "name": "Mist At Night"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Next Fertilizing"
+      },
+      "greenhouse_status": {
+        "name": "Greenhouse Status"
+      },
+      "inside_vpd": {
+        "name": "Inside VPD"
+      },
+      "misting_today": {
+        "name": "Misting Today"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Moderate slope",
           "steep": "Steep slope"
         }
+      },
+      "misting_trigger": {
+        "name": "Misting Trigger",
+        "state": {
+          "any": "Any trigger",
+          "temperature": "Temperature only",
+          "humidity": "Humidity only",
+          "light": "Light only"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Sensor Failsafe",
+        "state": {
+          "open": "Open vents, fans on",
+          "closed": "Close vents, fans off",
+          "leave": "Leave as they are"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Heater Failsafe",
+        "state": {
+          "off": "Off",
+          "limited": "On part of the time",
+          "outside": "Part of the time while cold outside"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "The weekly summary couldn't be sent: the phone notification failed. Check the zone's notify target."
+    },
+    "zone_has_no_valve": {
+      "message": "This zone has no valve, so it can't water. Add a valve under Configure if you want it to."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "flow_rate_default": {
       "title": "{zone}: calibrate the emitter flow rate",
       "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: inside temperature sensor not working",
+      "description": "The inside temperature sensor of zone {zone} ({entity}) has not given a usable reading for a while, so the climate control is on its failsafe: the misters and heater are off, and the vents and fans follow the Sensor Failsafe setting. Check the sensor. This clears by itself once it reports again."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: outside temperature sensor not working",
+      "description": "The outside temperature sensor of zone {zone} ({entity}) has not given a usable reading for a while. Ventilation carries on from the inside readings only, so it can't check that the outside air is cooler. Check the sensor. This clears by itself once it reports again."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: a climate device is not responding",
+      "description": "Zone {zone} switched its {devices} but they did not report the change, even after a second try. Check the device and its integration. This clears by itself once the devices respond."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: misting stopped",
+      "description": "A mister of zone {zone} would not switch off when told to, so misting has been stopped to avoid flooding. Check the mister, then press Reset Irrigation Lock on the zone to start misting again."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: running on the backup temperature sensor",
+      "description": "The main inside temperature sensor of zone {zone} ({entity}) has stopped working, so the climate control is using a backup sensor. Check the main sensor. This clears by itself once it reports again."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: inside temperature sensors disagree",
+      "description": "The main inside temperature sensor of zone {zone} ({entity}) reads {main} while the backup reads {backup}, and they have been far apart for a while. One of them is probably wrong or badly placed (in direct sun, next to the heater). Check both. This clears by itself once they agree."
     }
   }
 }

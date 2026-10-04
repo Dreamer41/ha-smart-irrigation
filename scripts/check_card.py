@@ -231,9 +231,89 @@ def main() -> int:
         check(counts[0] == counts[1], f"no stray rows after quick reconfiguring ({counts[0]} tracked, {counts[1]} shown)")
         browser.close()
         check_overview(pw, check, args)
+        check_greenhouse(pw, check)
 
     print(f"\n{len(failures)} failed" if failures else "\nall card checks passed")
     return 1 if failures else 0
+
+
+def greenhouse_hass() -> dict:
+    """A climate-only zone (no valve): the irrigation status is hidden."""
+    keys = [
+        ("sensor", "status", None, True), ("button", "run_routine", None, True),
+        ("sensor", "greenhouse_status", None, False), ("sensor", "inside_vpd", None, False),
+        ("binary_sensor", "ventilation_allowed", None, False), ("switch", "greenhouse_control", None, False),
+        ("number", "heat_temp", "config", False), ("number", "vent_temp", "config", False),
+        ("select", "heater_failsafe", "config", False), ("select", "ventilation_failsafe", "config", False),
+        ("select", "misting_trigger", "config", False), ("number", "mist_temp", "config", False),
+        ("switch", "mist_at_night", "config", False), ("select", "notifications", "config", False),
+    ]
+    entities, states = {}, {}
+    for domain, key, category, hidden in keys:
+        entity_id = f"{domain}.tunnel_{key}"
+        entities[entity_id] = {"entity_id": entity_id, "device_id": "gh", "platform": "zoneflow",
+                               "translation_key": key, "entity_category": category, "hidden": hidden}
+        states[entity_id] = {"entity_id": entity_id, "state": "on", "attributes": {"friendly_name": f"Tunnel {key}"}}
+    states["sensor.tunnel_greenhouse_status"].update(
+        state="Heating (8.5 \u00b0C)", attributes={"code": "heating", "friendly_name": "Tunnel greenhouse_status"})
+    return {"entities": entities, "states": states, "locale": {"language": "en"},
+            "devices": {"gh": {"id": "gh", "name": "Tunnel", "name_by_user": None}}, "config": {"time_zone": "UTC"}}
+
+
+def check_greenhouse(pw, check) -> None:
+    browser = pw.chromium.launch()
+    page = browser.new_page()
+    page.route("http://card.test/", lambda route: route.fulfill(body=HARNESS, content_type="text/html"))
+    page.route("http://card.test/card.js", lambda route: route.fulfill(path=str(CARD), content_type="text/javascript"))
+    page.goto("http://card.test/")
+    hass = greenhouse_hass()
+    page.evaluate(
+        """(hass) => {
+            const card = document.createElement('zoneflow-card');
+            card.setConfig({device_id: 'gh'});
+            card.hass = hass;
+            window._card = card;
+            document.body.appendChild(card);
+        }""",
+        hass,
+    )
+    page.wait_for_timeout(300)
+    shown = page.evaluate(JS_SECTIONS)
+    check(shown["status"] == "Heating (8.5 \u00b0C)", "greenhouse: the status line is the climate status")
+    icon = page.evaluate("() => window._card.shadowRoot.querySelector('.header ha-icon').getAttribute('icon')")
+    check(icon == "mdi:greenhouse", "greenhouse: greenhouse icon without a valve")
+    now = shown["sections"].get("Now", [])
+    check(now[:3] == ["greenhouse_status", "inside_vpd", "ventilation_allowed"], "greenhouse: climate rows in Now")
+    check("greenhouse_control" in shown["sections"].get("Controls", [""])[0:1], "greenhouse: control switch in Controls")
+    check("Water now" not in " ".join(shown["sections"].get("Controls", [])), "greenhouse: no watering buttons")
+    check(page.evaluate("() => window._card.shadowRoot.querySelector('.status').classList.contains('warn')") is False,
+          "greenhouse: heating is not a warning")
+    popups = page.evaluate(JS_POPUPS)
+    groups = popups["Settings"]["groups"]
+    check(groups[:2] == ["Climate control", "Misting"], "greenhouse: climate and misting settings groups first")
+    check("heater_failsafe" in popups["Settings"]["rows"] and "mist_temp" in popups["Settings"]["rows"],
+          "greenhouse: its settings are in the popup")
+    hass["states"]["sensor.tunnel_greenhouse_status"]["attributes"]["code"] = "failsafe"
+    page.evaluate("(hass) => { window._card.hass = hass; }", hass)
+    page.wait_for_timeout(100)
+    check(page.evaluate("() => window._card.shadowRoot.querySelector('.status').classList.contains('warn')"),
+          "greenhouse: failsafe is shown as a warning")
+    # In the overview: the climate status, the greenhouse icon, no water button action.
+    ov = overview_hass()
+    ov["entities"].update(hass["entities"]); ov["states"].update(hass["states"]); ov["devices"].update(hass["devices"])
+    page.evaluate(
+        """(hass) => { const c = document.createElement('zoneflow-overview-card'); c.setConfig({}); c.hass = hass;
+            c.id = 'ov'; document.body.appendChild(c); }""",
+        ov,
+    )
+    page.wait_for_timeout(300)
+    rows = {r["name"]: r for r in page.evaluate(JS_OVERVIEW)}
+    tunnel = rows.get("Tunnel", {})
+    check(tunnel.get("icon") == "mdi:greenhouse" and tunnel.get("status") == "Heating (8.5 \u00b0C)" or tunnel.get("warn"),
+          "overview: a climate-only zone shows its climate status")
+    check(tunnel.get("water_disabled") is True and tunnel.get("next") == "\u2014", "overview: nothing to water, no next watering")
+    check(tunnel.get("warn") is True, "overview: failsafe is a warning")
+    browser.close()
 
 
 def overview_hass() -> dict:

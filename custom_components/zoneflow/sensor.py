@@ -47,6 +47,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowDeficitStatusSensor(entry, controller),
         ZoneFlowStatusSensor(entry, controller),
     ]
+    if controller.is_outdoor:
+        remove_entities(hass, entry, "sensor", ["greenhouse_status", "inside_vpd", "misting_today"])
+    else:
+        entities += [
+            ZoneFlowGreenhouseStatusSensor(entry, controller),
+            ZoneFlowInsideVpdSensor(entry, controller),
+            ZoneFlowMistingTodaySensor(entry, controller),
+        ]
     if controller.soil_moisture_entity:
         entities += [
             ZoneFlowSoilMoistureSensor(entry, controller),
@@ -656,3 +664,96 @@ class ZoneFlowStatusSensor(_Base):
         # For the overview card's default icon (the plant preset at setup).
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
         return attributes
+
+
+class ZoneFlowGreenhouseStatusSensor(_Base):
+    """The greenhouse in one sentence (heating, ventilating and why, misting,
+    failsafe, manual hold...). The `code` attribute is the same as a stable
+    key for automations and conditional cards."""
+
+    _attr_icon = "mdi:greenhouse"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_greenhouse_status"
+        self._attr_translation_key = "greenhouse_status"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self._changed))
+
+    @callback
+    def _changed(self) -> None:
+        if self.hass is not None:
+            self.async_write_ha_state()
+
+    _status: dict | None = None
+
+    @property
+    def native_value(self) -> str:
+        self._status = self._controller.greenhouse.status()
+        return self._status["text"][:255]
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        status = self._status or self._controller.greenhouse.status()
+        return {key: value for key, value in status.items() if key != "text"}
+
+
+class ZoneFlowInsideVpdSensor(_Base):
+    """Vapour pressure deficit of the inside air, from the inside temperature
+    and humidity (display only; nothing is controlled by it)."""
+
+    _attr_icon = "mdi:water-percent"
+    _attr_native_unit_of_measurement = "kPa"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_inside_vpd"
+        self._attr_translation_key = "inside_vpd"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self._changed))
+
+    @callback
+    def _changed(self) -> None:
+        if self.hass is not None:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self) -> float | None:
+        r = self._controller.greenhouse._readings
+        if r is None or r.inside_temp is None or r.inside_humidity is None:
+            return None
+        from . import greenhouse_logic
+
+        return greenhouse_logic.vpd_kpa(r.inside_temp, r.inside_humidity)
+
+
+class ZoneFlowMistingTodaySensor(_Base):
+    """Minutes the misters ran today."""
+
+    _attr_icon = "mdi:water-sync"
+    _attr_native_unit_of_measurement = "min"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_misting_today"
+        self._attr_translation_key = "misting_today"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self._changed))
+
+    @callback
+    def _changed(self) -> None:
+        if self.hass is not None:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self) -> float:
+        state = self._controller.store.state
+        if state.mist_today_date_iso != dt_util.now().date().isoformat():
+            return 0.0
+        return round(state.mist_today_seconds / 60.0, 1)

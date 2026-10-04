@@ -6,11 +6,13 @@
         "description": "Dê um nome curto a esta zona de rega (ex.: \"Jardim da frente\", \"Abacateiro\"). Para adicionar mais zonas, adicione esta integração novamente.",
         "data": {
           "zone_name": "Nome da zona",
-          "plant": "O que está plantado"
+          "plant": "O que está plantado",
+          "zone_type": "Onde cultiva"
         },
         "data_description": {
           "zone_name": "Passa a ser o nome do dispositivo da zona e o início dos nomes das suas entidades, e aparece nas mensagens do telefone. Ex.: \"Canteiro de tomates\", \"Jardim da frente\".",
-          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente cultural, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona."
+          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente cultural, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona.",
+          "zone_type": "O modo exterior é como o ZoneFlow sempre funcionou. As zonas de estufa e interior adicionam controlo de clima (ventiladores, janelas de aberturas, nebulização, aquecedor), podem funcionar sem válvula e não têm medidor de chuva nem previsão devido ao teto."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Quando essa média fica abaixo deste valor, a zona usa a \"Rotina: meta semanal (fresco)\". Entre os dois, o tempo é normal.",
           "fallback_temp": "Usada quando não há leitura real. Sem sensor de temperatura, é o seu ajuste manual: suba-a numa onda de calor, baixe-a num período frio."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Dispositivos de clima e sensores",
+        "description": "Associe aos seus sensores e dispositivos reais. Todos são opcionais, mas um ventilador, abertura, nebulizador ou aquecedor precisa do sensor de temperatura interior. Pode adicioná-los ou alterá-los mais tarde em Configurar.",
+        "data": {
+          "inside_temp_entity": "Sensor de temperatura interior",
+          "inside_humidity_entity": "Sensor de humidade interior (opcional)",
+          "light_entity": "Sensor de luz (opcional)",
+          "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
+          "fan_entities": "Ventiladores de arrefecimento (opcional)",
+          "vent_entities": "Aberturas de ventilação (opcional)",
+          "mister_entities": "Nebulização / humidificação (opcional)",
+          "heater_entities": "Aquecedor (opcional)",
+          "notify_entity": "Destino de notificação no telemóvel (opcional)",
+          "unit_system": "Unidades",
+          "backup_temp_entities": "Sensores de temperatura interior de reserva"
+        },
+        "data_description": {
+          "inside_temp_entity": "O sensor de temperatura dentro da estufa ou divisão. Necessário para qualquer ventilador, abertura, nebulizador ou aquecedor, e também utilizado para a rega.",
+          "inside_humidity_entity": "Um sensor de humidade interior. Permite ao ZoneFlow ventilar ou nebulizar por humidade e parar a nebulização quando estiver suficientemente húmido.",
+          "light_entity": "Um sensor de luz (lux ou radiação solar). Pode iniciar a nebulização em dias de muita luminosidade.",
+          "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow apenas ventila para arrefecer quando o ar exterior é mais frio do que o interior, para nunca introduzir ar mais quente. Sem ele, funciona apenas com as leituras interiores.",
+          "fan_entities": "Ventiladores que arrefecem ou extraem ar. Qualquer interruptor, booleano de entrada ou ventilador. Mudarão todos em conjunto.",
+          "vent_entities": "Aberturas no teto ou laterais: persianas/coberturas ou interruptores que as abrem. Movem-se todas em conjunto.",
+          "mister_entities": "Nebulizadores: um interruptor ou válvula. O ZoneFlow executa-os em impulsos curtos e garante sempre que terminam desligados.",
+          "heater_entities": "Aquecedores: um interruptor ou uma entidade de clima. Ligados quando fica demasiado frio.",
+          "notify_entity": "Um destino de notificação no telemóvel para avisos, como a falha de um sensor. Deixe em branco se não pretender nenhum.",
+          "unit_system": "Mostrar temperaturas em Celsius ou Fahrenheit. A opção automática segue o Home Assistant.",
+          "backup_temp_entities": "Opcional, recomendado para estufas com aquecedor. Sensores de temperatura interiores adicionais, de preferência colocados longe do principal. Se o sensor principal deixar de funcionar, o controlo continua com o primeiro sensor de reserva operacional e recebe uma mensagem."
+        }
+      },
+      "water_valve": {
+        "title": "Esta zona faz rega?",
+        "description": "Escolha o interruptor da válvula se esta zona regar plantas. Deixe em branco para uma zona apenas de clima (nesse caso necessita de pelo menos um dispositivo).",
+        "data": {
+          "valve_entity": "Interruptor da válvula (opcional)"
+        },
+        "data_description": {
+          "valve_entity": "O interruptor que abre a válvula desta zona. Deixe em branco para uma zona apenas de clima que não rega."
+        }
+      },
+      "watering": {
+        "title": "Definições de rega",
+        "description": "As definições de rega para a válvula desta zona. Tudo pode ser alterado mais tarde na página do dispositivo da zona.",
+        "data": {
+          "pump_power_entity": "Sensor de potência da bomba (opcional)",
+          "pump_id": "ID da bomba partilhada (opcional)",
+          "flow_meter_entity": "Medidor de fluxo (opcional)",
+          "soil_moisture_entity": "Sensor de humidade do solo (opcional)",
+          "soil_type": "Tipo de solo",
+          "drainage": "Drenagem",
+          "slope": "Inclinação",
+          "irrigation_method": "Método de rega",
+          "growth_ramp_profile": "Ajuste automático à fase de crescimento",
+          "deep_soak_enabled": "Ativar o ciclo de rega profunda",
+          "deep_soak_time": "Hora da rega profunda programada",
+          "routine_time": "Hora da rega de rotina programada",
+          "deep_soak_sun_mode": "Gatilho da rega profunda",
+          "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
+          "routine_sun_mode": "Gatilho de rotina",
+          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)"
+        },
+        "data_description": {
+          "pump_power_entity": "Um sensor de potência (W) na bomba, ex.: de uma tomada inteligente. Durante cada rega, o ZoneFlow verifica se a bomba consome energia e avisa se tal não acontecer. Deixe em branco se não tiver um.",
+          "pump_id": "Apenas para zonas que funcionam a partir da mesma bomba: atribua a todas o mesmo nome aqui (qualquer nome, ex.: «Bomba A») e elas alternarão em vez de funcionarem ao mesmo tempo. Deixe em branco se esta zona tiver a sua própria bomba ou abastecimento de água.",
+          "flow_meter_entity": "Um medidor de água que contabiliza o volume total (litros, galões ou m³). O ZoneFlow regista o volume real utilizado em cada rega, avisa se a bomba funcionou sem fluxo de água e pode medir o fluxo para si (Configurar → Fluxo).",
+          "soil_moisture_entity": "Um sensor de humidade do solo (%) na zona radicular desta zona. O solo seco antecipa a rega de rotina, o solo húmido ignora-a e, no meio, o agendamento normal decide. Os níveis de seco e húmido estão na página do dispositivo da zona.",
+          "soil_type": "Decide como cada rega é dividida em impulsos, para que a água se infiltre em vez de escorrer: cerca de 3 mm por impulso em argila, 15 mm em franco e 30 mm em areia, com uma pausa de absorção de 30 minutos entre impulsos (uma hora em argila e franco-argiloso). A opção «Não tenho a certeza» utiliza um valor médio cauteloso. Também pode alterá-lo mais tarde na página do dispositivo da zona.",
+          "drainage": "Um solo de drenagem lenta (com uma camada dura e compacta por baixo) recebe menos água por impulso e tem uma pausa de absorção de uma hora entre impulsos.",
+          "slope": "A água escorre numa inclinação antes de ser absorvida: uma inclinação moderada adiciona um impulso a cada rega, uma inclinação acentuada adiciona dois.",
+          "irrigation_method": "Como a água é entregue. Com gota-a-gota ou mangueira de gotejamento em solo arenoso, uma nova zona começa com pelo menos dois impulsos, garantindo que a água permanece na zona radicular. A quantidade de água fornecida é definida pelo fluxo (Configurar → Fluxo).",
+          "growth_ramp_profile": "Fornece menos água às plantas jovens e aumenta até à meta semanal total à medida que crescem, contando a partir da Data de Plantio / Transplante na página do dispositivo da zona. Desligado: sempre a meta total. Personalizado: desenhe a sua própria curva na página do dispositivo.",
+          "deep_soak_enabled": "Uma rega profunda é uma rega grande e lenta realizada a cada poucas semanas (14 dias para começar) que molha o solo em profundidade, para que as raízes cresçam fundas. Adequada para árvores, arbustos e plantas perenes; desligue para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina é executada de qualquer forma.",
+          "deep_soak_time": "Quando a rega profunda se inicia nos dias agendados, caso o gatilho abaixo seja a hora fixa. O início da manhã é ideal: reduz a perda de água pelo sol e vento.",
+          "routine_time": "Quando o ZoneFlow verifica diariamente se a rega de rotina é necessária e realiza a rega se for o caso. A frequência depende do tempo e da sua meta semanal. O início da manhã é ideal.",
+          "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
+          "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
+          "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa."
+        }
       }
     },
     "error": {
       "zone_name_required": "O nome da zona não pode ficar vazio.",
       "cool_not_below_hot": "O limite de tempo fresco tem de ficar abaixo do limite de tempo quente.",
       "valve_already_used": "Outra zona ZoneFlow já usa esta válvula.",
-      "csv_path_already_used": "Outra zona ZoneFlow já regista neste ficheiro CSV."
+      "csv_path_already_used": "Outra zona ZoneFlow já regista neste ficheiro CSV.",
+      "inside_temp_required": "Um ventilador, abertura, nebulizador ou aquecedor precisa do sensor de temperatura interior.",
+      "device_in_two_roles": "A mesma entidade foi escolhida para duas funções diferentes.",
+      "device_already_used": "Outra zona ZoneFlow já utiliza um destes dispositivos.",
+      "valve_or_device_required": "Escolha uma válvula ou pelo menos um dispositivo de clima.",
+      "backup_same_as_inside": "Um sensor de reserva não pode ser o sensor de temperatura interior principal."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Definições da zona (entidades, solo, horário…)",
           "flow_rate": "Fluxo: calcular a partir dos emissores",
-          "flow_measure": "Fluxo: medir com o medidor de fluxo"
+          "flow_measure": "Fluxo: medir com o medidor de fluxo",
+          "greenhouse_devices": "Válvula, sensores e dispositivos de clima",
+          "watering": "Definições de rega",
+          "zone_type": "Tipo de zona"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "A área que os emissores da zona molham realmente. Para gotejadores junto a plantas isoladas, some as manchas molhadas à volta delas, não o canteiro inteiro."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Dispositivos de estufa e interior",
+        "description": "Adicione ou altere a válvula, sensores e dispositivos de clima. Nada é recriado: o que a zona não utilizar fica oculto.",
+        "data": {
+          "valve_entity": "Interruptor da válvula (opcional)",
+          "inside_temp_entity": "Sensor de temperatura interior",
+          "inside_humidity_entity": "Sensor de humidade interior (opcional)",
+          "light_entity": "Sensor de luz (opcional)",
+          "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
+          "fan_entities": "Ventiladores de arrefecimento (opcional)",
+          "vent_entities": "Aberturas de ventilação (opcional)",
+          "mister_entities": "Nebulização / humidificação (opcional)",
+          "heater_entities": "Aquecedor (opcional)",
+          "notify_entity": "Destino de notificação no telemóvel (opcional)",
+          "unit_system": "Unidades",
+          "backup_temp_entities": "Sensores de temperatura interior de reserva"
+        },
+        "data_description": {
+          "valve_entity": "O interruptor que abre a válvula desta zona. Deixe em branco para uma zona apenas de clima que não rega.",
+          "inside_temp_entity": "O sensor de temperatura dentro da estufa ou divisão. Necessário para qualquer ventilador, abertura, nebulizador ou aquecedor, e também utilizado para a rega.",
+          "inside_humidity_entity": "Um sensor de humidade interior. Permite ao ZoneFlow ventilar ou nebulizar por humidade e parar a nebulização quando estiver suficientemente húmido.",
+          "light_entity": "Um sensor de luz (lux ou radiação solar). Pode iniciar a nebulização em dias de muita luminosidade.",
+          "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow apenas ventila para arrefecer quando o ar exterior é mais frio do que o interior, para nunca introduzir ar mais quente. Sem ele, funciona apenas com as leituras interiores.",
+          "fan_entities": "Ventiladores que arrefecem ou extraem ar. Qualquer interruptor, booleano de entrada ou ventilador. Mudarão todos em conjunto.",
+          "vent_entities": "Aberturas no teto ou laterais: persianas/coberturas ou interruptores que as abrem. Movem-se todas em conjunto.",
+          "mister_entities": "Nebulizadores: um interruptor ou válvula. O ZoneFlow executa-os em impulsos curtos e garante sempre que terminam desligados.",
+          "heater_entities": "Aquecedores: um interruptor ou uma entidade de clima. Ligados quando fica demasiado frio.",
+          "notify_entity": "Um destino de notificação no telemóvel para avisos, como a falha de um sensor. Deixe em branco se não pretender nenhum.",
+          "unit_system": "Mostrar temperaturas em Celsius ou Fahrenheit. A opção automática segue o Home Assistant.",
+          "backup_temp_entities": "Opcional, recomendado para estufas com aquecedor. Sensores de temperatura interiores adicionais, de preferência colocados longe do principal. Se o sensor principal deixar de funcionar, o controlo continua com o primeiro sensor de reserva operacional e recebe uma mensagem."
+        }
+      },
+      "zone_type": {
+        "title": "Tipo de zona",
+        "description": "Altere o local onde esta zona cultiva. Nada é eliminado: o que o novo tipo não utilizar fica oculto e regressa se alterar de novo.",
+        "data": {
+          "zone_type": "Onde cultiva"
+        },
+        "data_description": {
+          "zone_type": "O modo exterior é como o ZoneFlow sempre funcionou. As zonas de estufa e interior adicionam controlo de clima (ventiladores, janelas de aberturas, nebulização, aquecedor), podem funcionar sem válvula e não têm medidor de chuva nem previsão devido ao teto."
+        }
+      },
+      "watering": {
+        "title": "Definições de rega",
+        "description": "As definições de rega para a válvula desta zona. Tudo pode ser alterado mais tarde na página do dispositivo da zona.",
+        "data": {
+          "pump_power_entity": "Sensor de potência da bomba (opcional)",
+          "pump_id": "ID da bomba partilhada (opcional)",
+          "flow_meter_entity": "Medidor de fluxo (opcional)",
+          "soil_moisture_entity": "Sensor de humidade do solo (opcional)",
+          "soil_type": "Tipo de solo",
+          "drainage": "Drenagem",
+          "slope": "Inclinação",
+          "irrigation_method": "Método de rega",
+          "growth_ramp_profile": "Ajuste automático à fase de crescimento",
+          "deep_soak_enabled": "Ativar o ciclo de rega profunda",
+          "deep_soak_time": "Hora da rega profunda programada",
+          "routine_time": "Hora da rega de rotina programada",
+          "deep_soak_sun_mode": "Gatilho da rega profunda",
+          "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
+          "routine_sun_mode": "Gatilho de rotina",
+          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)"
+        },
+        "data_description": {
+          "pump_power_entity": "Um sensor de potência (W) na bomba, ex.: de uma tomada inteligente. Durante cada rega, o ZoneFlow verifica se a bomba consome energia e avisa se tal não acontecer. Deixe em branco se não tiver um.",
+          "pump_id": "Apenas para zonas que funcionam a partir da mesma bomba: atribua a todas o mesmo nome aqui (qualquer nome, ex.: «Bomba A») e elas alternarão em vez de funcionarem ao mesmo tempo. Deixe em branco se esta zona tiver a sua própria bomba ou abastecimento de água.",
+          "flow_meter_entity": "Um medidor de água que contabiliza o volume total (litros, galões ou m³). O ZoneFlow regista o volume real utilizado em cada rega, avisa se a bomba funcionou sem fluxo de água e pode medir o fluxo para si (Configurar → Fluxo).",
+          "soil_moisture_entity": "Um sensor de humidade do solo (%) na zona radicular desta zona. O solo seco antecipa a rega de rotina, o solo húmido ignora-a e, no meio, o agendamento normal decide. Os níveis de seco e húmido estão na página do dispositivo da zona.",
+          "soil_type": "Decide como cada rega é dividida em impulsos, para que a água se infiltre em vez de escorrer: cerca de 3 mm por impulso em argila, 15 mm em franco e 30 mm em areia, com uma pausa de absorção de 30 minutos entre impulsos (uma hora em argila e franco-argiloso). A opção «Não tenho a certeza» utiliza um valor médio cauteloso. Também pode alterá-lo mais tarde na página do dispositivo da zona.",
+          "drainage": "Um solo de drenagem lenta (com uma camada dura e compacta por baixo) recebe menos água por impulso e tem uma pausa de absorção de uma hora entre impulsos.",
+          "slope": "A água escorre numa inclinação antes de ser absorvida: uma inclinação moderada adiciona um impulso a cada rega, uma inclinação acentuada adiciona dois.",
+          "irrigation_method": "Como a água é entregue. Com gota-a-gota ou mangueira de gotejamento em solo arenoso, uma nova zona começa com pelo menos dois impulsos, garantindo que a água permanece na zona radicular. A quantidade de água fornecida é definida pelo fluxo (Configurar → Fluxo).",
+          "growth_ramp_profile": "Fornece menos água às plantas jovens e aumenta até à meta semanal total à medida que crescem, contando a partir da Data de Plantio / Transplante na página do dispositivo da zona. Desligado: sempre a meta total. Personalizado: desenhe a sua própria curva na página do dispositivo.",
+          "deep_soak_enabled": "Uma rega profunda é uma rega grande e lenta realizada a cada poucas semanas (14 dias para começar) que molha o solo em profundidade, para que as raízes cresçam fundas. Adequada para árvores, arbustos e plantas perenes; desligue para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina é executada de qualquer forma.",
+          "deep_soak_time": "Quando a rega profunda se inicia nos dias agendados, caso o gatilho abaixo seja a hora fixa. O início da manhã é ideal: reduz a perda de água pelo sol e vento.",
+          "routine_time": "Quando o ZoneFlow verifica diariamente se a rega de rotina é necessária e realiza a rega se for o caso. A frequência depende do tempo e da sua meta semanal. O início da manhã é ideal.",
+          "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
+          "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
+          "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Outra zona ZoneFlow já usa esta válvula.",
-      "csv_path_already_used": "Outra zona ZoneFlow já regista neste ficheiro CSV."
+      "csv_path_already_used": "Outra zona ZoneFlow já regista neste ficheiro CSV.",
+      "inside_temp_required": "Um ventilador, abertura, nebulizador ou aquecedor precisa do sensor de temperatura interior.",
+      "device_in_two_roles": "A mesma entidade foi escolhida para duas funções diferentes.",
+      "device_already_used": "Outra zona ZoneFlow já utiliza um destes dispositivos.",
+      "valve_or_device_required": "Escolha uma válvula ou pelo menos um dispositivo de clima.",
+      "valve_required_outdoor": "Uma zona exterior precisa de uma válvula. Adicione uma primeiro em Válvula, sensores e dispositivos de clima.",
+      "backup_same_as_inside": "Um sensor de reserva não pode ser o sensor de temperatura interior principal."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Arbustos / sebe",
         "young_tree": "Árvore jovem (primeiros anos)",
         "fruit_tree": "Árvore frutífera adulta"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Exterior",
+        "greenhouse": "Estufa",
+        "indoor": "Interior"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Temperatura de proteção contra geada"
+      },
+      "heat_temp": {
+        "name": "Ligar aquecedor abaixo de"
+      },
+      "vent_temp": {
+        "name": "Abrir aberturas a"
+      },
+      "fan_temp": {
+        "name": "Ligar ventiladores a"
+      },
+      "climate_hysteresis": {
+        "name": "Histerese do clima"
+      },
+      "outside_margin": {
+        "name": "Margem de ar exterior"
+      },
+      "max_humidity": {
+        "name": "Ventilar acima da humidade"
+      },
+      "mist_temp": {
+        "name": "Nebulizar acima da temperatura"
+      },
+      "mist_min_humidity": {
+        "name": "Nebulizar abaixo da humidade"
+      },
+      "mist_stop_humidity": {
+        "name": "Humidade para parar nebulização"
+      },
+      "mist_min_temp": {
+        "name": "Temperatura mínima para nebulização"
+      },
+      "mist_light_level": {
+        "name": "Nível de luz para nebulização"
+      },
+      "mist_on_seconds": {
+        "name": "Tempo de nebulização ligada"
+      },
+      "mist_off_seconds": {
+        "name": "Tempo de nebulização desligada"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Nebulização máxima por hora"
+      },
+      "vent_open_pct": {
+        "name": "Posição de abertura das aberturas"
+      },
+      "manual_hold_minutes": {
+        "name": "Tempo de retenção manual"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensor offline após"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Sinal de interrupção da rega"
+      },
+      "ventilation_allowed": {
+        "name": "Ventilação permitida"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Pausa"
+      },
+      "greenhouse_control": {
+        "name": "Controlo da estufa"
+      },
+      "mist_at_night": {
+        "name": "Nebulizar à noite"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Próxima adubação"
+      },
+      "greenhouse_status": {
+        "name": "Estado da estufa"
+      },
+      "inside_vpd": {
+        "name": "VPD interior"
+      },
+      "misting_today": {
+        "name": "Nebulização hoje"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Moderadamente inclinado",
           "steep": "Muito inclinado"
         }
+      },
+      "misting_trigger": {
+        "name": "Gatilho de nebulização",
+        "state": {
+          "any": "Qualquer gatilho",
+          "temperature": "Apenas temperatura",
+          "humidity": "Apenas humidade",
+          "light": "Apenas luz"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Proteção do sensor",
+        "state": {
+          "open": "Abrir aberturas, ventiladores ligados",
+          "closed": "Fechar aberturas, ventiladores desligados",
+          "leave": "Manter como estão"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Proteção do aquecedor",
+        "state": {
+          "off": "Desligado",
+          "limited": "Ligado parte do tempo",
+          "outside": "Parte do tempo enquanto estive frio lá fora"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "Não foi possível enviar o resumo semanal: a notificação para o telemóvel falhou. Verifique o destino de notificações da zona."
+    },
+    "zone_has_no_valve": {
+      "message": "Esta zona não tem válvula, pelo que não pode regar. Adicione uma válvula em Configurar se pretender regar."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}: válvula partilhada com outra zona",
       "description": "A zona {zone} e a zona {other_zone} estão ambas configuradas com a mesma entidade de válvula ({entity}). A menos que também partilhem um ID de bomba ou um sensor de potência da bomba, o ZoneFlow não consegue saber que é a mesma válvula física e não as impedirá de a abrir ao mesmo tempo. Atribua a uma das zonas a sua própria válvula, ou defina o mesmo ID de bomba em ambas em Configurar."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: sensor de temperatura interior avariado",
+      "description": "O sensor de temperatura interior da zona {zone} ({entity}) não fornece uma leitura válida há algum tempo, pelo que o controlo de clima está em modo de segurança: os nebulizadores e o aquecedor estão desligados e as aberturas e ventiladores seguem a definição de Proteção do sensor. Verifique o sensor. Isto resolve-se automaticamente assim que voltar a comunicar."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: sensor de temperatura exterior avariado",
+      "description": "O sensor de temperatura exterior da zona {zone} ({entity}) não fornece uma leitura válida há algum tempo. A ventilação continua apenas com base nas leituras interiores, pelo que não consegue verificar se o ar exterior está mais frio. Verifique o sensor. Isto resolve-se automaticamente assim que voltar a comunicar."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: um dispositivo de clima não responde",
+      "description": "A zona {zone} alterou o estado de {devices}, mas estes não reportaram a alteração, mesmo após uma segunda tentativa. Verifique o dispositivo e a sua integração. Isto resolve-se automaticamente assim que os dispositivos responderem."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: nebulização interrompida",
+      "description": "Um nebulizador da zona {zone} não desligou quando solicitado, pelo que a nebulização foi interrompida para evitar inundações. Verifique o nebulizador e prima Repor bloqueio de rega na zona para retomar a nebulização."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: a funcionar com o sensor de temperatura de reserva",
+      "description": "O sensor de temperatura interior principal da zona {zone} ({entity}) deixou de funcionar, pelo que o controlo de clima está a utilizar o sensor de reserva. Verifique o sensor principal. Isto resolve-se automaticamente assim que voltar a comunicar."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: sensores de temperatura interior com divergência",
+      "description": "O sensor de temperatura interior principal da zona {zone} ({entity}) regista {main} enquanto o de reserva regista {backup}, e têm estado muito divergentes há algum tempo. Um deles está provavelmente incorreto ou mal posicionado (exposto ao sol direto, junto ao aquecedor). Verifique ambos. Isto resolve-se automaticamente assim que concordarem."
     }
   }
 }

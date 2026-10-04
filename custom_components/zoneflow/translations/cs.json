@@ -6,11 +6,13 @@
         "description": "Pojmenujte tuto zavlažovací zónu krátce (např. \"Trávník před domem\", \"Avokádo\"). Další zóny přidáte později opětovným přidáním této integrace.",
         "data": {
           "zone_name": "Název zóny",
-          "plant": "Co je zasazeno"
+          "plant": "Co je zasazeno",
+          "zone_type": "Kde roste"
         },
         "data_description": {
           "zone_name": "Stane se názvem zařízení zóny a začátkem názvů jejích entit a zobrazuje se ve zprávách na telefon. Např. \"Záhon rajčat\", \"Trávník před domem\".",
-          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu: týdenní cíle vody, plodinový koeficient, hloubkovou zálivku a růstovou křivku. \"Něco jiného\" začne od obecných hodnot. Vše můžete později změnit na stránce zařízení zóny."
+          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu: týdenní cíle vody, plodinový koeficient, hloubkovou zálivku a růstovou křivku. \"Něco jiného\" začne od obecných hodnot. Vše můžete později změnit na stránce zařízení zóny.",
+          "zone_type": "Venkovní prostředí je způsob, jakým ZoneFlow fungoval dosud. Skleníkové a vnitřní zóny přidávají řízení klimatu (ventilátory, větrací otvory, mlžení, topení), mohou fungovat bez ventilu a kvůli střeše nemají srážkoměr ani předpověď počasí."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Když je tento průměr pod touto hodnotou, zóna použije týdenní cíl pro chladno. Mezi tím je normální počasí.",
           "fallback_temp": "Použije se, když chybí skutečné měření. Bez senzoru teploty je to vaše ruční ovládání: při vlně veder ji zvyšte, při ochlazení snižte."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Klimatická zařízení a snímače",
+        "description": "Nasměrujte toto na vaše skutečné snímače a zařízení. Všechna jsou volitelná, ale ventilátor, větrací otvor, mlžovač nebo topení vyžadují vnitřní snímač teploty. Později je můžete přidat nebo změnit v nabídce Nastavit.",
+        "data": {
+          "inside_temp_entity": "Snímač vnitřní teploty",
+          "inside_humidity_entity": "Snímač vnitřní vlhkosti (volitelné)",
+          "light_entity": "Snímač osvětlení (volitelné)",
+          "outdoor_temp_entity": "Snímač venkovní teploty (volitelné)",
+          "fan_entities": "Chladicí ventilátory (volitelné)",
+          "vent_entities": "Větrací otvory (volitelné)",
+          "mister_entities": "Mlžení / zamlžování (volitelné)",
+          "heater_entities": "Topení (volitelné)",
+          "notify_entity": "Cíl oznámení do telefonu (volitelné)",
+          "unit_system": "Jednotky",
+          "backup_temp_entities": "Záložní snímače vnitřní teploty"
+        },
+        "data_description": {
+          "inside_temp_entity": "Snímač teploty uvnitř skleníku nebo místnosti. Vyžadováno pro jakýkoli ventilátor, větrací otvor, mlžovač nebo topení, používá se také pro zavlažování.",
+          "inside_humidity_entity": "Snímač vlhkosti uvnitř. Umožňuje ZoneFlow větrat nebo mlžit podle vlhkosti a zastavit mlžení, jakmile je dostatečně vlhko.",
+          "light_entity": "Snímač osvětlení (luxy nebo sluneční záření). Může spustit mlžení za jasných dnů.",
+          "outdoor_temp_entity": "Snímač teploty venku. S ním ZoneFlow větrá za účelem chlazení pouze tehdy, když je venkovní vzduch chladnější než vnitřní, takže nikdy nevpouští teplejší vzduch. Bez něj pracuje pouze na základě vnitřních hodnot.",
+          "fan_entities": "Ventilátory, které chladí nebo odsávají. Jakýkoli spínač, vstupní boolean nebo ventilátor. Spínají se všechny společně.",
+          "vent_entities": "Střešní nebo boční větrací otvory: rolety/kryty nebo spínače, které je otevírají. Pohybují se všechny společně.",
+          "mister_entities": "Mlžovače nebo zamlžovače: spínač nebo ventil. ZoneFlow je spouští v krátkých pulzech a vždy se ujistí, že zůstanou vypnuté.",
+          "heater_entities": "Topení: spínač nebo klimatická jednotka. Zapne se, když je příliš chladno.",
+          "notify_entity": "Cíl oznámení do telefonu pro varování, jako je selhání snímače. Ponechte prázdné pro žádná oznámení.",
+          "unit_system": "Zobrazit teploty v stupních Celsia nebo Fahrenheita. Automaticky řízeno podle Home Assistant.",
+          "backup_temp_entities": "Volitelné, doporučeno pro skleník s topením. Další snímače teploty uvnitř, nejlépe umístěné dále od hlavního. Pokud hlavní snímač přestane fungovat, řízení pokračuje s prvním funkčním záložním snímačem a obdržíte zprávu."
+        }
+      },
+      "water_valve": {
+        "title": "Zavlažuje tato zóna?",
+        "description": "Vyberte spínač ventilu, pokud tato zóna zavlažuje rostliny. Ponechte prázdné pro zónu pouze s řízením klimatu (pak vyžaduje alespoň jedno zařízení).",
+        "data": {
+          "valve_entity": "Spínač ventilu (volitelné)"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, který otevírá ventil této zóny. Ponechte prázdné pro zónu pouze s řízením klimatu, která nezavlažuje."
+        }
+      },
+      "watering": {
+        "title": "Nastavení zavlažování",
+        "description": "Nastavení zavlažování pro ventil této zóny. Vše lze později změnit na stránce zařízení zóny.",
+        "data": {
+          "pump_power_entity": "Snímač příkonu čerpadla (volitelné)",
+          "pump_id": "Sdílené ID čerpadla (volitelné)",
+          "flow_meter_entity": "Průtokoměr (volitelné)",
+          "soil_moisture_entity": "Snímač vlhkosti půdy (volitelné)",
+          "soil_type": "Typ půdy",
+          "drainage": "Odvodnění",
+          "slope": "Svažitost",
+          "irrigation_method": "Způsob zavlažování",
+          "growth_ramp_profile": "Automatické přizpůsobení fázi růstu",
+          "deep_soak_enabled": "Povolit cyklus hlubokého namáčení",
+          "deep_soak_time": "Plánovaný čas hlubokého namáčení",
+          "routine_time": "Plánovaný čas běžného zavlažování",
+          "deep_soak_sun_mode": "Spouštěč hlubokého namáčení",
+          "deep_soak_sun_offset_minutes": "Časový posun hlubokého namáčení vůči slunci (minuty)",
+          "routine_sun_mode": "Běžný spouštěč",
+          "routine_sun_offset_minutes": "Časový posun běžného zavlažování vůči slunci (minuty)"
+        },
+        "data_description": {
+          "pump_power_entity": "Snímač příkonu (W) na čerpadle, např. z chytré zásuvky. Během každého zavlažování ZoneFlow kontroluje, zda čerpadlo skutečně odebírá energii, a varuje vás, pokud tomu tak není. Ponechte prázdné, pokud nemáte.",
+          "pump_id": "Pouze pro zóny spuštěné z jednoho čerpadla: dejte všem stejný název (jakýkoli název, např. \"Čerpadlo A\") a budou se střídat, místo aby běžely současně. Ponechte prázdné, pokud má zóna vlastní čerpadlo nebo přívod vody.",
+          "flow_meter_entity": "Vodoměr, který přičítá celkový objem (litry, galony nebo m³). ZoneFlow pak zaznamenává, kolik vody každé zavlažování skutečně spotřebovalo, varuje vás, pokud čerpadlo běželo, ale voda netekla, a může změřit průtok za vás (Nastavit → Průtok).",
+          "soil_moisture_entity": "Snímač vlhkosti půdy (%) v kořenové zóně. Suchá půda posune běžné zavlažování dopředu, mokrá půda jej vynechá a mezitím rozhoduje běžný plán. Úrovně pro sucho a mokro jsou na stránce zařízení zóny.",
+          "soil_type": "Určuje, jak je každé zavlažování rozděleno do pulzů, aby se voda vsákla a neodtékala: přibližně 3 mm na pulz u jílu, 15 mm u hlinité půdy, 30 mm u písku, s 30minutovým vsakováním mezi pulzy (hodina u jílu a jílovité hlíny). Možnost \"Nevím\" použije opatrnou střední hodnotu. Později ji můžete změnit na stránce zařízení zóny.",
+          "drainage": "Pomalé odvodnění půdy (tvrdá, kompaktní vrstva pod ní) vyžaduje méně vody na pulz a má hodinovou pauzu na vsáknutí mezi pulzy.",
+          "slope": "Voda stéká ze svahu dříve, než se vsákne: mírný svah přidá jeden pulz ke každému zavlažování, prudký dva.",
+          "irrigation_method": "Jak je voda dodávána. Při kapkové závlaze nebo průsakovém potrubí na písčité půdě začíná nová zóna s alespoň dvěma pulzy, aby voda zůstala v kořenové zóně. Množství dodané vody nastavuje průtok (Nastavit → Průtok).",
+          "growth_ramp_profile": "Podává mladým rostlinám méně vody a zvyšuje dávku na plný týdenní cíl, jak rostou, počítáno od data výsadby/přesazení na stránce zařízení zóny. Vypnuto: vždy plný cíl. Vlastní: nakreslete si vlastní křivku na stránce zařízení.",
+          "deep_soak_enabled": "Hluboké namáčení je velké, pomalé zavlažování jednou za pár týdnů (na začátku 14 dní), které prolije půdu hluboko do dna, takže kořeny rostou hluboko. Vhodné pro stromy, keře a trvalky; vypněte pro rostliny s plytkými kořeny jako salát a bylinky. Běžné zavlažování běží v obou případech.",
+          "deep_soak_time": "Kdy začne hluboké namáčení v plánovaný den, pokud je níže nastaven pevný čas. Nejlepší je brzy ráno: méně vody se odpaří sluncem a větrem.",
+          "routine_time": "Kdy ZoneFlow každý den kontroluje, zda je čas na běžné zavlažování, a v případě potřeby zavlažuje. Jak často k němu dochází, závisí na počasí a vašem týdenním cíli. Nejlepší je brzy ráno.",
+          "deep_soak_sun_mode": "Spustit hluboké namáčení v pevně stanoveném čase výše, nebo před/po východu či západu slunce, aby se přizpůsobovalo ročním obdobím.",
+          "deep_soak_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase.",
+          "routine_sun_mode": "Spustit běžné zavlažování v pevně stanoveném čase výše, nebo před/po východu či západu slunce, aby se přizpůsobovalo ročním obdobím.",
+          "routine_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase."
+        }
       }
     },
     "error": {
       "zone_name_required": "Název zóny nesmí být prázdný.",
       "cool_not_below_hot": "Práh chladna musí být nižší než práh horka.",
       "valve_already_used": "Jiná zóna ZoneFlow už tento ventil používá.",
-      "csv_path_already_used": "Jiná zóna ZoneFlow už zapisuje do tohoto souboru CSV."
+      "csv_path_already_used": "Jiná zóna ZoneFlow už zapisuje do tohoto souboru CSV.",
+      "inside_temp_required": "Ventilátor, větrací otvor, mlžovač nebo topení vyžadují snímač vnitřní teploty.",
+      "device_in_two_roles": "Stejná entita je vybrána pro dvě různé úlohy.",
+      "device_already_used": "Jedno z těchto zařízení již používá jiná zóna ZoneFlow.",
+      "valve_or_device_required": "Vyberte ventil nebo alespoň jedno klimatické zařízení.",
+      "backup_same_as_inside": "Záložní snímač nemůže být hlavním snímačem vnitřní teploty."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Nastavení zóny (entity, půda, plán…)",
           "flow_rate": "Průtok: vypočítat z emitorů",
-          "flow_measure": "Průtok: změřit průtokoměrem"
+          "flow_measure": "Průtok: změřit průtokoměrem",
+          "greenhouse_devices": "Ventil, snímače a klimatická zařízení",
+          "watering": "Nastavení zavlažování",
+          "zone_type": "Typ zóny"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "Plocha, kterou emitory zóny opravdu zvlhčí. U kapkovačů u jednotlivých rostlin sečtěte mokré plochy kolem nich, ne celý záhon."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Skleníková a vnitřní zařízení",
+        "description": "Přidejte nebo změňte ventil, snímače a klimatická zařízení. Nic se znovu nevytváří: to, co zóna nepoužívá, je skryto.",
+        "data": {
+          "valve_entity": "Spínač ventilu (volitelné)",
+          "inside_temp_entity": "Snímač vnitřní teploty",
+          "inside_humidity_entity": "Snímač vnitřní vlhkosti (volitelné)",
+          "light_entity": "Snímač osvětlení (volitelné)",
+          "outdoor_temp_entity": "Snímač venkovní teploty (volitelné)",
+          "fan_entities": "Chladicí ventilátory (volitelné)",
+          "vent_entities": "Větrací otvory (volitelné)",
+          "mister_entities": "Mlžení / zamlžování (volitelné)",
+          "heater_entities": "Topení (volitelné)",
+          "notify_entity": "Cíl oznámení do telefonu (volitelné)",
+          "unit_system": "Jednotky",
+          "backup_temp_entities": "Záložní snímače vnitřní teploty"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, který otevírá ventil této zóny. Ponechte prázdné pro zónu pouze s řízením klimatu, která nezavlažuje.",
+          "inside_temp_entity": "Snímač teploty uvnitř skleníku nebo místnosti. Vyžadováno pro jakýkoli ventilátor, větrací otvor, mlžovač nebo topení, používá se také pro zavlažování.",
+          "inside_humidity_entity": "Snímač vlhkosti uvnitř. Umožňuje ZoneFlow větrat nebo mlžit podle vlhkosti a zastavit mlžení, jakmile je dostatečně vlhko.",
+          "light_entity": "Snímač osvětlení (luxy nebo sluneční záření). Může spustit mlžení za jasných dnů.",
+          "outdoor_temp_entity": "Snímač teploty venku. S ním ZoneFlow větrá za účelem chlazení pouze tehdy, když je venkovní vzduch chladnější než vnitřní, takže nikdy nevpouští teplejší vzduch. Bez něj pracuje pouze na základě vnitřních hodnot.",
+          "fan_entities": "Ventilátory, které chladí nebo odsávají. Jakýkoli spínač, vstupní boolean nebo ventilátor. Spínají se všechny společně.",
+          "vent_entities": "Střešní nebo boční větrací otvory: rolety/kryty nebo spínače, které je otevírají. Pohybují se všechny společně.",
+          "mister_entities": "Mlžovače nebo zamlžovače: spínač nebo ventil. ZoneFlow je spouští v krátkých pulzech a vždy se ujistí, že zůstanou vypnuté.",
+          "heater_entities": "Topení: spínač nebo klimatická jednotka. Zapne se, když je příliš chladno.",
+          "notify_entity": "Cíl oznámení do telefonu pro varování, jako je selhání snímače. Ponechte prázdné pro žádná oznámení.",
+          "unit_system": "Zobrazit teploty v stupních Celsia nebo Fahrenheita. Automaticky řízeno podle Home Assistant.",
+          "backup_temp_entities": "Volitelné, doporučeno pro skleník s topením. Další snímače teploty uvnitř, nejlépe umístěné dále od hlavního. Pokud hlavní snímač přestane fungovat, řízení pokračuje s prvním funkčním záložním snímačem a obdržíte zprávu."
+        }
+      },
+      "zone_type": {
+        "title": "Typ zóny",
+        "description": "Změňte prostředí, kde tato zóna roste. Nic se nesmaže: to, co nový typ nepoužívá, se skryje a vrátí se, pokud to změníte zpět.",
+        "data": {
+          "zone_type": "Kde roste"
+        },
+        "data_description": {
+          "zone_type": "Venkovní prostředí je způsob, jakým ZoneFlow fungoval dosud. Skleníkové a vnitřní zóny přidávají řízení klimatu (ventilátory, větrací otvory, mlžení, topení), mohou fungovat bez ventilu a kvůli střeše nemají srážkoměr ani předpověď počasí."
+        }
+      },
+      "watering": {
+        "title": "Nastavení zavlažování",
+        "description": "Nastavení zavlažování pro ventil této zóny. Vše lze později změnit na stránce zařízení zóny.",
+        "data": {
+          "pump_power_entity": "Snímač příkonu čerpadla (volitelné)",
+          "pump_id": "Sdílené ID čerpadla (volitelné)",
+          "flow_meter_entity": "Průtokoměr (volitelné)",
+          "soil_moisture_entity": "Snímač vlhkosti půdy (volitelné)",
+          "soil_type": "Typ půdy",
+          "drainage": "Odvodnění",
+          "slope": "Svažitost",
+          "irrigation_method": "Způsob zavlažování",
+          "growth_ramp_profile": "Automatické přizpůsobení fázi růstu",
+          "deep_soak_enabled": "Povolit cyklus hlubokého namáčení",
+          "deep_soak_time": "Plánovaný čas hlubokého namáčení",
+          "routine_time": "Plánovaný čas běžného zavlažování",
+          "deep_soak_sun_mode": "Spouštěč hlubokého namáčení",
+          "deep_soak_sun_offset_minutes": "Časový posun hlubokého namáčení vůči slunci (minuty)",
+          "routine_sun_mode": "Běžný spouštěč",
+          "routine_sun_offset_minutes": "Časový posun běžného zavlažování vůči slunci (minuty)"
+        },
+        "data_description": {
+          "pump_power_entity": "Snímač příkonu (W) na čerpadle, např. z chytré zásuvky. Během každého zavlažování ZoneFlow kontroluje, zda čerpadlo skutečně odebírá energii, a varuje vás, pokud tomu tak není. Ponechte prázdné, pokud nemáte.",
+          "pump_id": "Pouze pro zóny spuštěné z jednoho čerpadla: dejte všem stejný název (jakýkoli název, např. \"Čerpadlo A\") a budou se střídat, místo aby běžely současně. Ponechte prázdné, pokud má zóna vlastní čerpadlo nebo přívod vody.",
+          "flow_meter_entity": "Vodoměr, který přičítá celkový objem (litry, galony nebo m³). ZoneFlow pak zaznamenává, kolik vody každé zavlažování skutečně spotřebovalo, varuje vás, pokud čerpadlo běželo, ale voda netekla, a může změřit průtok za vás (Nastavit → Průtok).",
+          "soil_moisture_entity": "Snímač vlhkosti půdy (%) v kořenové zóně. Suchá půda posune běžné zavlažování dopředu, mokrá půda jej vynechá a mezitím rozhoduje běžný plán. Úrovně pro sucho a mokro jsou na stránce zařízení zóny.",
+          "soil_type": "Určuje, jak je každé zavlažování rozděleno do pulzů, aby se voda vsákla a neodtékala: přibližně 3 mm na pulz u jílu, 15 mm u hlinité půdy, 30 mm u písku, s 30minutovým vsakováním mezi pulzy (hodina u jílu a jílovité hlíny). Možnost \"Nevím\" použije opatrnou střední hodnotu. Později ji můžete změnit na stránce zařízení zóny.",
+          "drainage": "Pomalé odvodnění půdy (tvrdá, kompaktní vrstva pod ní) vyžaduje méně vody na pulz a má hodinovou pauzu na vsáknutí mezi pulzy.",
+          "slope": "Voda stéká ze svahu dříve, než se vsákne: mírný svah přidá jeden pulz ke každému zavlažování, prudký dva.",
+          "irrigation_method": "Jak je voda dodávána. Při kapkové závlaze nebo průsakovém potrubí na písčité půdě začíná nová zóna s alespoň dvěma pulzy, aby voda zůstala v kořenové zóně. Množství dodané vody nastavuje průtok (Nastavit → Průtok).",
+          "growth_ramp_profile": "Podává mladým rostlinám méně vody a zvyšuje dávku na plný týdenní cíl, jak rostou, počítáno od data výsadby/přesazení na stránce zařízení zóny. Vypnuto: vždy plný cíl. Vlastní: nakreslete si vlastní křivku na stránce zařízení.",
+          "deep_soak_enabled": "Hluboké namáčení je velké, pomalé zavlažování jednou za pár týdnů (na začátku 14 dní), které prolije půdu hluboko do dna, takže kořeny rostou hluboko. Vhodné pro stromy, keře a trvalky; vypněte pro rostliny s plytkými kořeny jako salát a bylinky. Běžné zavlažování běží v obou případech.",
+          "deep_soak_time": "Kdy začne hluboké namáčení v plánovaný den, pokud je níže nastaven pevný čas. Nejlepší je brzy ráno: méně vody se odpaří sluncem a větrem.",
+          "routine_time": "Kdy ZoneFlow každý den kontroluje, zda je čas na běžné zavlažování, a v případě potřeby zavlažuje. Jak často k němu dochází, závisí na počasí a vašem týdenním cíli. Nejlepší je brzy ráno.",
+          "deep_soak_sun_mode": "Spustit hluboké namáčení v pevně stanoveném čase výše, nebo před/po východu či západu slunce, aby se přizpůsobovalo ročním obdobím.",
+          "deep_soak_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase.",
+          "routine_sun_mode": "Spustit běžné zavlažování v pevně stanoveném čase výše, nebo před/po východu či západu slunce, aby se přizpůsobovalo ročním obdobím.",
+          "routine_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Jiná zóna ZoneFlow už tento ventil používá.",
-      "csv_path_already_used": "Jiná zóna ZoneFlow už zapisuje do tohoto souboru CSV."
+      "csv_path_already_used": "Jiná zóna ZoneFlow už zapisuje do tohoto souboru CSV.",
+      "inside_temp_required": "Ventilátor, větrací otvor, mlžovač nebo topení vyžadují snímač vnitřní teploty.",
+      "device_in_two_roles": "Stejná entita je vybrána pro dvě různé úlohy.",
+      "device_already_used": "Jedno z těchto zařízení již používá jiná zóna ZoneFlow.",
+      "valve_or_device_required": "Vyberte ventil nebo alespoň jedno klimatické zařízení.",
+      "valve_required_outdoor": "Venkovní zóna vyžaduje ventil. Nejdříve jej přidejte v sekci Ventil, snímače a klimatická zařízení.",
+      "backup_same_as_inside": "Záložní snímač nemůže být hlavním snímačem vnitřní teploty."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Keře / živý plot",
         "young_tree": "Mladý strom (první roky)",
         "fruit_tree": "Vzrostlý ovocný strom"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Venkovní",
+        "greenhouse": "Skleník",
+        "indoor": "Vnitřní"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Teplota ochrany před mrazem"
+      },
+      "heat_temp": {
+        "name": "Topení zapnout pod"
+      },
+      "vent_temp": {
+        "name": "Větrací otvory otevřít při"
+      },
+      "fan_temp": {
+        "name": "Ventilátory zapnout při"
+      },
+      "climate_hysteresis": {
+        "name": "Hystereze klimatu"
+      },
+      "outside_margin": {
+        "name": "Rozdíl venkovní teploty"
+      },
+      "max_humidity": {
+        "name": "Větrat při vlhkosti nad"
+      },
+      "mist_temp": {
+        "name": "Mlžení zapnout nad teplotou"
+      },
+      "mist_min_humidity": {
+        "name": "Mlžení zapnout pod vlhkostí"
+      },
+      "mist_stop_humidity": {
+        "name": "Cílová vlhkost pro zastavení mlžení"
+      },
+      "mist_min_temp": {
+        "name": "Minimální teplota pro mlžení"
+      },
+      "mist_light_level": {
+        "name": "Úroveň osvětlení pro mlžení"
+      },
+      "mist_on_seconds": {
+        "name": "Doba zapnutí mlžení"
+      },
+      "mist_off_seconds": {
+        "name": "Doba vypnutí mlžení"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Maximální doba mlžení za hodinu"
+      },
+      "vent_open_pct": {
+        "name": "Poloha otevření větracího otvoru"
+      },
+      "manual_hold_minutes": {
+        "name": "Doba ruční blokace"
+      },
+      "sensor_offline_hours": {
+        "name": "Senzor offline po"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Příznak přerušení zavlažování"
+      },
+      "ventilation_allowed": {
+        "name": "Větrání povoleno"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Pozastavení"
+      },
+      "greenhouse_control": {
+        "name": "Řízení skleníku"
+      },
+      "mist_at_night": {
+        "name": "Mlžit v noci"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Další hnojení"
+      },
+      "greenhouse_status": {
+        "name": "Stav skleníku"
+      },
+      "inside_vpd": {
+        "name": "Vnitřní VPD"
+      },
+      "misting_today": {
+        "name": "Mlžení dnes"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Střední svah",
           "steep": "Prudký svah"
         }
+      },
+      "misting_trigger": {
+        "name": "Spouštěč mlžení",
+        "state": {
+          "any": "Jakýkoli spouštěč",
+          "temperature": "Pouze teplota",
+          "humidity": "Pouze vlhkost",
+          "light": "Pouze světlo"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Nouzový režim snímače",
+        "state": {
+          "open": "Otevřít otvory, zapnout ventilátory",
+          "closed": "Zavřít otvory, vypnout ventilátory",
+          "leave": "Ponechat v aktuálním stavu"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Nouzový režim topení",
+        "state": {
+          "off": "Vypnuto",
+          "limited": "Zapnuto po část času",
+          "outside": "Zapnuto po část času, když je venku chladno"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "Týdenní souhrn se nepodařilo odeslat: oznámení na telefon selhalo. Zkontrolujte cíl oznámení zóny."
+    },
+    "zone_has_no_valve": {
+      "message": "Tato zóna nemá žádný ventil, takže nemůže zavlažovat. Pokud chcete zavlažovat, přidejte ventil v nabídce Nastavit."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}: ventil sdílený s jinou zónou",
       "description": "Zóna {zone} a zóna {other_zone} jsou obě nastaveny se stejnou entitou ventilu ({entity}). Pokud nesdílejí i ID čerpadla nebo senzor výkonu čerpadla, ZoneFlow nepozná, že jde o stejný fyzický ventil, a nezabrání jejich současnému otevření. Přiřaďte jedné ze zón vlastní ventil, nebo v Konfiguraci nastavte oběma stejné ID čerpadla."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: snímač vnitřní teploty nefunguje",
+      "description": "Snímač vnitřní teploty zóny {zone} ({entity}) neposkytl delší dobu použitelnou hodnotu, takže řízení klimatu je v nouzovém režimu: mlžovače a topení jsou vypnuté a větrací otvory s ventilátory se řídí nastavením Nouzový režim snímače. Zkontrolujte snímač. Problém se automaticky vyřeší, jakmile začne znovu hlásit hodnoty."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: snímač venkovní teploty nefunguje",
+      "description": "Snímač venkovní teploty zóny {zone} ({entity}) neposkytl delší dobu použitelnou hodnotu. Větrání pokračuje pouze na základě vnitřních hodnot, takže nelze ověřit, zda je venkovní vzduch chladnější. Zkontrolujte snímač. Problém se automaticky vyřeší, jakmile začne znovu hlásit hodnoty."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: klimatické zařízení neodpovídá",
+      "description": "Zóna {zone} přepla zařízení {devices}, ale ta nenahlásila změnu ani po druhém pokusu. Zkontrolujte zařízení a jeho integraci. Problém se automaticky vyřeší, jakmile zařízení začnou odpovídat."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: mlžení zastaveno",
+      "description": "Mlžovač v zóně {zone} se po příkazu nevypnul, proto bylo mlžení zastaveno, aby se zabránilo přelití vodou. Zkontrolujte mlžovač a poté stiskněte Obnovit zámek zavlažování na zóně pro obnovení mlžení."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: provoz na záložní snímač teploty",
+      "description": "Hlavní snímač vnitřní teploty zóny {zone} ({entity}) přestal fungovat, takže řízení klimatu používá záložní snímač. Zkontrolujte hlavní snímač. Problém se automaticky vyřeší, jakmile začne znovu hlásit hodnoty."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: snímače vnitřní teploty nesouhlasí",
+      "description": "Hlavní snímač vnitřní teploty zóny {zone} ({entity}) ukazuje {main}, zatímco záložní ukazuje {backup}, a jejich hodnoty se výrazně liší po delší dobu. Jeden z nich je pravděpodobně vadný nebo špatně umístěný (na přímém slunci, vedle topení). Zkontrolujte oba snímače. Problém se automaticky vyřeší, jakmile se shodnou."
     }
   }
 }

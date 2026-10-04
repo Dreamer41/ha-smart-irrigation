@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: lannoituksen aika",
       "message": "Ajankohta: {date}. Paina Lannoitettu tänään, kun lannoitus on tehty; seuraava päivä lasketaan siitä eteenpäin."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: ilmastointianturin vikatila",
+      "message": "Mikään sisälämpötila-anturi ei toimi. Sumuttimet ovat pois päältä; tuuletusluukut ja tuulettimet: {mode}; lämmitin: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: ilmastonsäätö palautunut normaaliksi",
+      "message": "Sisälämpötila-anturi lähettää taas tietoja."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} ei vastaa",
+      "message": "Laite {entity} ei kytkeytynyt komentojen mukaan edes toisen yrityksen jälkeen."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: sumutin jäi päälle",
+      "message": "Sumutin pysyi päällä pulssin keston päätyttyä ja se sammutettiin pakkotoimisesti."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: sumutus pysäytetty",
+      "message": "Sumutin ei sammunut, joten sumutus on pysäytetty. Tarkista se ja paina sitten Nollaa kastelulukitus."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: käytössä vara-anturi",
+      "message": "Ensisijainen sisälämpötila-anturi ({entity}) lakkasi toimimasta. Ilmastonsäätö jatkuu vara-anturin avulla."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · tauolla",
     "next": " · seuraava {when}",
     "zone_none": "{zone}: ei kastelua"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "luukut auki, tuulettimet päällä",
+      "closed": "luukut kiinni, tuulettimet pois",
+      "leave": "jätetty nykyiseen tilaan"
+    },
+    "status": {
+      "starting": "Käynnistyy",
+      "control_off": "Kasvihuoneen säätö on pois päältä",
+      "failsafe": "Vikatila: ei sisälämpötilaa (luukut ja tuulettimet: {mode}; lämmitin: {heater})",
+      "mist_halted": "Sumutus pysäytetty: paina Nollaa kastelulukitus",
+      "held": "{device} jätetty rauhaan {minutes} minuutiksi (kytketty käsin)",
+      "heating": "Lämmittää ({temp})",
+      "ventilating_temperature": "Tuulettaa: liian lämmin ({temp})",
+      "ventilating_humidity": "Tuulettaa: liian kostea ({humidity})",
+      "misting": "Sumuttaa ({temp}, {humidity})",
+      "gate_blocked": "Ei tuuleteta: ulkoilma ({outside}) ei ole viileämpää kuin sisäilma ({temp})",
+      "idle": "Kaikki hyvin: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "pois päältä",
+      "limited": "päällä osan ajasta",
+      "outside": "päällä osan ajasta, kun ulkona on kylmä"
+    }
   }
 }

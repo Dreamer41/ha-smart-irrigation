@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: čas pohnojit",
       "message": "Termín: {date}. Po pohnojení stiskněte Dnes pohnojeno; další termín se spočítá od toho dne."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: nouzový režim snímače klimatu",
+      "message": "Žádný snímač vnitřní teploty nefunguje. Mlžovače jsou vypnuté; větrání a ventilátory: {mode}; topení: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: řízení klimatu je opět v normálu",
+      "message": "Snímač vnitřní teploty opět hlásí hodnoty."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} neodpovídá",
+      "message": "Zařízení {entity} se nepřeplo podle příkazu ani po druhém pokusu."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: mlžovač zůstal zaseknutý v zapnutém stavu",
+      "message": "Mlžovač zůstal zapnutý i po skončení pulzu a byl vypnut."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: mlžení zastaveno",
+      "message": "Mlžovač se nevypnul, proto bylo mlžení zastaveno. Zkontrolujte jej a poté stiskněte Obnovit zámek zavlažování."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: používá se záložní snímač teploty",
+      "message": "Hlavní snímač vnitřní teploty ({entity}) přestal fungovat. Řízení klimatu pokračuje se záložním snímačem."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · pozastaveno",
     "next": " · další {when}",
     "zone_none": "{zone}: bez zálivky"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "otvory otevřené, ventilátory zapnuté",
+      "closed": "otvory zavřené, ventilátory vypnuté",
+      "leave": "ponechány v aktuálním stavu"
+    },
+    "status": {
+      "starting": "Spouštění",
+      "control_off": "Řízení skleníku je vypnuté",
+      "failsafe": "Nouzový režim: chybí vnitřní teplota (otvory a ventilátory: {mode}; topení: {heater})",
+      "mist_halted": "Mlžení zastaveno: stiskněte Obnovit zámek zavlažování",
+      "held": "Zařízení {device} ponecháno v ručním režimu na {minutes} min (změněno ručně)",
+      "heating": "Topení ({temp})",
+      "ventilating_temperature": "Větrání: příliš horko ({temp})",
+      "ventilating_humidity": "Větrání: příliš vlhko ({humidity})",
+      "misting": "Mlžení ({temp}, {humidity})",
+      "gate_blocked": "Nevětrá se: venkovní vzduch ({outside}) není chladnější než vnitřní ({temp})",
+      "idle": "Vše v pořádku: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "vypnuto",
+      "limited": "zapnuto po část času",
+      "outside": "zapnuto po část času, když je venku chladno"
+    }
   }
 }

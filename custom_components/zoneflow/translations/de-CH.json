@@ -6,11 +6,13 @@
         "description": "Gib dieser Bewässerungszone einen kurzen Namen (z. B. „Rasen vorne“, „Avocadobaum“). Für weitere Zonen füge diese Integration später einfach erneut hinzu.",
         "data": {
           "zone_name": "Zonenname",
-          "plant": "Was hier wächst"
+          "plant": "Was hier wächst",
+          "zone_type": "Anbauort"
         },
         "data_description": {
           "zone_name": "Wird zum Gerätenamen der Zone und zum Anfang ihrer Entitätsnamen und erscheint in Handy-Nachrichten. Z. B. „Tomatenbeet“, „Rasen vorne“.",
-          "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern."
+          "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern.",
+          "zone_type": "Außenbereich ist die bisherige Funktionsweise von ZoneFlow. Gewächshaus- und Innenraumbereiche fügen eine Klimasteuerung hinzu (Lüfter, Belüftung, Vernebelung, Heizung), können ohne Ventil arbeiten und haben aufgrund des Dachs keinen Regensensor oder Wetterbericht."
         }
       },
       "entities": {
@@ -90,13 +92,98 @@
           "cool_temp_threshold": "Liegt dieser Durchschnitt unter diesem Wert, nutzt die Zone „Routine: Wochenziel kühl“. Alles dazwischen gilt als normales Wetter.",
           "fallback_temp": "Gilt, wenn es keinen echten Messwert gibt. Ohne Temperatursensor ist das deine manuelle Steuerung: bei Hitzewelle erhöhen, bei Kälteeinbruch senken."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Klimageräte und Sensoren",
+        "description": "Weisen Sie hier Ihre realen Sensoren und Geräte zu. Alle sind optional, aber Lüfter, Belüftung, Vernebler oder Heizung benötigen den Innen-Temperatursensor. Sie können diese später unter Konfigurieren hinzufügen oder ändern.",
+        "data": {
+          "inside_temp_entity": "Innen-Temperatursensor",
+          "inside_humidity_entity": "Innen-Feuchtigkeitssensor (optional)",
+          "light_entity": "Lichtsensor (optional)",
+          "outdoor_temp_entity": "Außen-Temperatursensor (optional)",
+          "fan_entities": "Kühlgebläse (optional)",
+          "vent_entities": "Lüftungen (optional)",
+          "mister_entities": "Vernebelung / Befeuchtung (optional)",
+          "heater_entities": "Heizung (optional)",
+          "notify_entity": "Ziel für Benachrichtigungen (optional)",
+          "unit_system": "Einheiten",
+          "backup_temp_entities": "Backup-Innen-Temperatursensoren"
+        },
+        "data_description": {
+          "inside_temp_entity": "Der Temperatursensor im Gewächshaus oder Raum. Erforderlich für Lüfter, Belüftung, Vernebler oder Heizung und wird auch für die Bewässerung verwendet.",
+          "inside_humidity_entity": "Ein Feuchtigkeitssensor für innen. Ermöglicht ZoneFlow das Lüften oder Vernebeln nach Luftfeuchtigkeit und stoppt das Vernebeln, wenn es feucht genug ist.",
+          "light_entity": "Ein Lichtsensor (Lux oder Sonnenstrahlung). Kann an hellen Tagen die Vernebelung starten.",
+          "outdoor_temp_entity": "Ein Temperatursensor für draußen. Damit lüftet ZoneFlow nur dann zur Kühlung, wenn die Außenluft kühler ist als die Innenluft, sodass nie heißere Luft angesaugt wird. Ohne ihn wird nur nach den Innenmesswerten gearbeitet.",
+          "fan_entities": "Lüfter zur Kühlung oder Entlüftung. Jeder Schalter, Input Boolean oder Lüfter. Sie schalten alle zusammen.",
+          "vent_entities": "Dach- oder Seitenlüftungen: Abdeckungen oder Schalter, die sie öffnen. Sie bewegen sich alle zusammen.",
+          "mister_entities": "Vernebler oder Sprüher: ein Schalter oder Ventil. ZoneFlow betreibt sie in kurzen Impulsen und stellt immer sicher, dass sie ausgeschaltet werden.",
+          "heater_entities": "Heizungen: ein Schalter oder eine Klima-Entität. Wird eingeschaltet, wenn es zu kalt wird.",
+          "notify_entity": "Ein Benachrichtigungsziel für Warnungen, z. B. bei einem Sensorausfall. Für keine Benachrichtigungen leer lassen.",
+          "unit_system": "Temperaturen in Celsius oder Fahrenheit anzeigen. Bei 'Automatisch' wird die Einstellung von Home Assistant verwendet.",
+          "backup_temp_entities": "Optional, empfohlen für ein Gewächshaus mit Heizung. Zusätzliche Temperatursensoren innen, am besten entfernt vom Hauptsensor platziert. Fällt der Hauptsensor aus, wird die Steuerung mit dem ersten funktionierenden Backup-Sensor fortgesetzt und Sie erhalten eine Nachricht."
+        }
+      },
+      "water_valve": {
+        "title": "Wird diese Zone bewässert?",
+        "description": "Wählen Sie den Ventilschalter, wenn diese Zone ihre Pflanzen bewässert. Lassen Sie ihn für eine reine Klimazone leer (dann wird mindestens ein Gerät benötigt).",
+        "data": {
+          "valve_entity": "Ventilschalter (optional)"
+        },
+        "data_description": {
+          "valve_entity": "Der Schalter, der das Ventil dieser Zone öffnet. Für eine reine Klimazone ohne Bewässerung leer lassen."
+        }
+      },
+      "watering": {
+        "title": "Bewässerungseinstellungen",
+        "description": "Die Bewässerungseinstellungen für das Ventil dieser Zone. Alles kann später auf der Geräteseite der Zone geändert werden.",
+        "data": {
+          "pump_power_entity": "Pumpen-Leistungssensor (optional)",
+          "pump_id": "Gemeinsame Pumpen-ID (optional)",
+          "flow_meter_entity": "Durchflussmesser (optional)",
+          "soil_moisture_entity": "Bodenfeuchtigkeitssensor (optional)",
+          "soil_type": "Bodenart",
+          "drainage": "Drainage",
+          "slope": "Hangneigung",
+          "irrigation_method": "Bewässerungsmethode",
+          "growth_ramp_profile": "Automatische Anpassung nach Wachstumsphase",
+          "deep_soak_enabled": "Tiefenbewässerungszyklus aktivieren",
+          "deep_soak_time": "Uhrzeit für Tiefenbewässerung",
+          "routine_time": "Uhrzeit für Routinebewässerung",
+          "deep_soak_sun_mode": "Auslöser für Tiefenbewässerung",
+          "deep_soak_sun_offset_minutes": "Sonnenversatz für Tiefenbewässerung (Minuten)",
+          "routine_sun_mode": "Auslöser für Routinebewässerung",
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+        },
+        "data_description": {
+          "pump_power_entity": "Ein Leistungssensor (W) an der Pumpe, z. B. von einer smarten Steckdose. Bei jeder Bewässerung prüft ZoneFlow, ob die Pumpe tatsächlich Strom zieht, und warnt Sie, falls nicht. Leer lassen, wenn nicht vorhanden.",
+          "pump_id": "Nur für Zonen, die mit derselben Pumpe betrieben werden: Geben Sie allen hier denselben Namen (beliebiger Name, z. B. „Pumpe A“), damit sie sich abwechseln, anstatt gleichzeitig zu laufen. Leer lassen, wenn diese Zone eine eigene Pumpe oder Wasserversorgung hat.",
+          "flow_meter_entity": "Ein Wasserzähler, der das Gesamtvolumen (Liter, Gallonen oder m³) aufsummiert. ZoneFlow protokolliert dann, wie viel Wasser bei jeder Bewässerung tatsächlich verbraucht wurde, warnt Sie, wenn die Pumpe lief, aber kein Wasser floss, und kann die Durchflussrate für Sie messen (Konfigurieren → Durchflussrate).",
+          "soil_moisture_entity": "Ein Bodenfeuchtigkeitssensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, feuchter Boden überspringt sie, und dazwischen entscheidet der normale Zeitplan. Die Werte für trocken und feucht befinden sich auf der Geräteseite der Zone.",
+          "soil_type": "Bestimmt, wie jede Bewässerung in Impulse unterteilt wird, damit das Wasser einsickert statt abzulaufen: ca. 3 mm pro Impuls bei Ton, 15 mm bei Lehm, 30 mm bei Sand, mit 30 Minuten Pause zwischen den Impulsen (eine Stunde bei Ton und Tonlehm). „Nicht sicher“ verwendet einen vorsichtigen Mittelwert. Kann später auf der Geräteseite der Zone geändert werden.",
+          "drainage": "Schlecht entwässernder Boden (eine harte, kompakte Schicht darunter) nimmt weniger Wasser pro Impuls auf und erhält eine Stunde Pause zwischen den Impulsen.",
+          "slope": "Wasser läuft an Hängen ab, bevor es einsickert: Eine moderate Neigung fügt jedem Bewässerungsdurchgang einen Impuls hinzu, eine steile Neigung zwei.",
+          "irrigation_method": "Wie das Wasser zugeführt wird. Bei Tröpfchenbewässerung oder Perlschläuchen auf sandigem Boden startet eine neue Zone mit mindestens zwei Impulsen, damit das Wasser im Wurzelbereich bleibt. Die Wassermenge wird über die Durchflussrate eingestellt (Konfigurieren → Durchflussrate).",
+          "growth_ramp_profile": "Gibt jungen Pflanzen weniger Wasser und steigert die Menge mit zunehmendem Alter bis zum vollen Wochenziel, gezählt ab dem Pflanz-/Umpflanzdatum auf der Geräteseite der Zone. Aus: immer das volle Ziel. Benutzerdefiniert: Zeichnen Sie Ihre eigene Kurve auf der Geräteseite.",
+          "deep_soak_enabled": "Eine Tiefenbewässerung ist eine große, langsame Bewässerung alle paar Wochen (zu Beginn alle 14 Tage), die den Boden tief durchfeuchtet, damit die Wurzeln tief wachsen. Gut für Bäume, Sträucher und Stauden; für flach wurzelnde Pflanzen wie Salat und Kräuter ausschalten. Die Routinebewässerung läuft unabhängig davon.",
+          "deep_soak_time": "Wann die Tiefenbewässerung an den fälligen Tagen beginnt, sofern unten eine feste Uhrzeit als Auslöser gewählt ist. Der frühe Morgen ist am besten: weniger Wasserverlust durch Sonne und Wind.",
+          "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und gegebenenfalls gießt. Die Häufigkeit richtet sich nach dem Wetter und Ihrem Wochenziel. Der frühe Morgen ist am besten.",
+          "deep_soak_sun_mode": "Startet die Tiefenbewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
+          "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
+          "routine_sun_mode": "Startet die Routinebewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
+          "routine_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet."
+        }
       }
     },
     "error": {
       "zone_name_required": "Der Zonenname darf nicht leer sein.",
       "cool_not_below_hot": "Die Kühl-Schwelle muss unter der Heiß-Schwelle liegen.",
       "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
-      "csv_path_already_used": "Eine andere ZoneFlow-Zone protokolliert bereits in diese CSV-Datei."
+      "csv_path_already_used": "Eine andere ZoneFlow-Zone protokolliert bereits in diese CSV-Datei.",
+      "inside_temp_required": "Ein Lüfter, eine Belüftung, ein Vernebler oder eine Heizung benötigt den Innen-Temperatursensor.",
+      "device_in_two_roles": "Dieselbe Entität wurde für zwei verschiedene Aufgaben ausgewählt.",
+      "device_already_used": "Eine andere ZoneFlow-Zone verwendet bereits eines dieser Geräte.",
+      "valve_or_device_required": "Wählen Sie ein Ventil oder mindestens ein Klimagerät aus.",
+      "backup_same_as_inside": "Ein Backup-Sensor kann nicht der Haupt-Innen-Temperatursensor sein."
     }
   },
   "options": {
@@ -106,7 +193,10 @@
         "menu_options": {
           "settings": "Zoneneinstellungen (Entitäten, Boden, Zeitplan …)",
           "flow_rate": "Durchflussrate: aus den Tropfern berechnen",
-          "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen"
+          "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen",
+          "greenhouse_devices": "Ventil, Sensoren und Klimageräte",
+          "watering": "Bewässerungseinstellungen",
+          "zone_type": "Zonentyp"
         }
       },
       "settings": {
@@ -184,6 +274,88 @@
         "data_description": {
           "area": "Die Fläche, die die Tropfer der Zone wirklich benetzen. Bei Tropfern an Einzelpflanzen zählst du die nassen Stellen um sie herum zusammen, nicht das ganze Beet."
         }
+      },
+      "greenhouse_devices": {
+        "title": "Gewächshaus- und Innenraumgeräte",
+        "description": "Fügen Sie das Ventil, Sensoren und Klimageräte hinzu oder ändern Sie diese. Es wird nichts neu erstellt: Was die Zone nicht verwendet, wird ausgeblendet.",
+        "data": {
+          "valve_entity": "Ventilschalter (optional)",
+          "inside_temp_entity": "Innen-Temperatursensor",
+          "inside_humidity_entity": "Innen-Feuchtigkeitssensor (optional)",
+          "light_entity": "Lichtsensor (optional)",
+          "outdoor_temp_entity": "Außen-Temperatursensor (optional)",
+          "fan_entities": "Kühlgebläse (optional)",
+          "vent_entities": "Lüftungen (optional)",
+          "mister_entities": "Vernebelung / Befeuchtung (optional)",
+          "heater_entities": "Heizung (optional)",
+          "notify_entity": "Ziel für Benachrichtigungen (optional)",
+          "unit_system": "Einheiten",
+          "backup_temp_entities": "Backup-Innen-Temperatursensoren"
+        },
+        "data_description": {
+          "valve_entity": "Der Schalter, der das Ventil dieser Zone öffnet. Für eine reine Klimazone ohne Bewässerung leer lassen.",
+          "inside_temp_entity": "Der Temperatursensor im Gewächshaus oder Raum. Erforderlich für Lüfter, Belüftung, Vernebler oder Heizung und wird auch für die Bewässerung verwendet.",
+          "inside_humidity_entity": "Ein Feuchtigkeitssensor für innen. Ermöglicht ZoneFlow das Lüften oder Vernebeln nach Luftfeuchtigkeit und stoppt das Vernebeln, wenn es feucht genug ist.",
+          "light_entity": "Ein Lichtsensor (Lux oder Sonnenstrahlung). Kann an hellen Tagen die Vernebelung starten.",
+          "outdoor_temp_entity": "Ein Temperatursensor für draußen. Damit lüftet ZoneFlow nur dann zur Kühlung, wenn die Außenluft kühler ist als die Innenluft, sodass nie heißere Luft angesaugt wird. Ohne ihn wird nur nach den Innenmesswerten gearbeitet.",
+          "fan_entities": "Lüfter zur Kühlung oder Entlüftung. Jeder Schalter, Input Boolean oder Lüfter. Sie schalten alle zusammen.",
+          "vent_entities": "Dach- oder Seitenlüftungen: Abdeckungen oder Schalter, die sie öffnen. Sie bewegen sich alle zusammen.",
+          "mister_entities": "Vernebler oder Sprüher: ein Schalter oder Ventil. ZoneFlow betreibt sie in kurzen Impulsen und stellt immer sicher, dass sie ausgeschaltet werden.",
+          "heater_entities": "Heizungen: ein Schalter oder eine Klima-Entität. Wird eingeschaltet, wenn es zu kalt wird.",
+          "notify_entity": "Ein Benachrichtigungsziel für Warnungen, z. B. bei einem Sensorausfall. Für keine Benachrichtigungen leer lassen.",
+          "unit_system": "Temperaturen in Celsius oder Fahrenheit anzeigen. Bei 'Automatisch' wird die Einstellung von Home Assistant verwendet.",
+          "backup_temp_entities": "Optional, empfohlen für ein Gewächshaus mit Heizung. Zusätzliche Temperatursensoren innen, am besten entfernt vom Hauptsensor platziert. Fällt der Hauptsensor aus, wird die Steuerung mit dem ersten funktionierenden Backup-Sensor fortgesetzt und Sie erhalten eine Nachricht."
+        }
+      },
+      "zone_type": {
+        "title": "Zonentyp",
+        "description": "Ändern Sie den Anbauort dieser Zone. Es wird nichts gelöscht: Was der neue Typ nicht verwendet, wird ausgeblendet und erscheint wieder, wenn Sie zurückwechseln.",
+        "data": {
+          "zone_type": "Anbauort"
+        },
+        "data_description": {
+          "zone_type": "Außenbereich ist die bisherige Funktionsweise von ZoneFlow. Gewächshaus- und Innenraumbereiche fügen eine Klimasteuerung hinzu (Lüfter, Belüftung, Vernebelung, Heizung), können ohne Ventil arbeiten und haben aufgrund des Dachs keinen Regensensor oder Wetterbericht."
+        }
+      },
+      "watering": {
+        "title": "Bewässerungseinstellungen",
+        "description": "Die Bewässerungseinstellungen für das Ventil dieser Zone. Alles kann später auf der Geräteseite der Zone geändert werden.",
+        "data": {
+          "pump_power_entity": "Pumpen-Leistungssensor (optional)",
+          "pump_id": "Gemeinsame Pumpen-ID (optional)",
+          "flow_meter_entity": "Durchflussmesser (optional)",
+          "soil_moisture_entity": "Bodenfeuchtigkeitssensor (optional)",
+          "soil_type": "Bodenart",
+          "drainage": "Drainage",
+          "slope": "Hangneigung",
+          "irrigation_method": "Bewässerungsmethode",
+          "growth_ramp_profile": "Automatische Anpassung nach Wachstumsphase",
+          "deep_soak_enabled": "Tiefenbewässerungszyklus aktivieren",
+          "deep_soak_time": "Uhrzeit für Tiefenbewässerung",
+          "routine_time": "Uhrzeit für Routinebewässerung",
+          "deep_soak_sun_mode": "Auslöser für Tiefenbewässerung",
+          "deep_soak_sun_offset_minutes": "Sonnenversatz für Tiefenbewässerung (Minuten)",
+          "routine_sun_mode": "Auslöser für Routinebewässerung",
+          "routine_sun_offset_minutes": "Sonnenversatz für Routinebewässerung (Minuten)"
+        },
+        "data_description": {
+          "pump_power_entity": "Ein Leistungssensor (W) an der Pumpe, z. B. von einer smarten Steckdose. Bei jeder Bewässerung prüft ZoneFlow, ob die Pumpe tatsächlich Strom zieht, und warnt Sie, falls nicht. Leer lassen, wenn nicht vorhanden.",
+          "pump_id": "Nur für Zonen, die mit derselben Pumpe betrieben werden: Geben Sie allen hier denselben Namen (beliebiger Name, z. B. „Pumpe A“), damit sie sich abwechseln, anstatt gleichzeitig zu laufen. Leer lassen, wenn diese Zone eine eigene Pumpe oder Wasserversorgung hat.",
+          "flow_meter_entity": "Ein Wasserzähler, der das Gesamtvolumen (Liter, Gallonen oder m³) aufsummiert. ZoneFlow protokolliert dann, wie viel Wasser bei jeder Bewässerung tatsächlich verbraucht wurde, warnt Sie, wenn die Pumpe lief, aber kein Wasser floss, und kann die Durchflussrate für Sie messen (Konfigurieren → Durchflussrate).",
+          "soil_moisture_entity": "Ein Bodenfeuchtigkeitssensor (%) im Wurzelbereich dieser Zone. Trockener Boden zieht die Routinebewässerung vor, feuchter Boden überspringt sie, und dazwischen entscheidet der normale Zeitplan. Die Werte für trocken und feucht befinden sich auf der Geräteseite der Zone.",
+          "soil_type": "Bestimmt, wie jede Bewässerung in Impulse unterteilt wird, damit das Wasser einsickert statt abzulaufen: ca. 3 mm pro Impuls bei Ton, 15 mm bei Lehm, 30 mm bei Sand, mit 30 Minuten Pause zwischen den Impulsen (eine Stunde bei Ton und Tonlehm). „Nicht sicher“ verwendet einen vorsichtigen Mittelwert. Kann später auf der Geräteseite der Zone geändert werden.",
+          "drainage": "Schlecht entwässernder Boden (eine harte, kompakte Schicht darunter) nimmt weniger Wasser pro Impuls auf und erhält eine Stunde Pause zwischen den Impulsen.",
+          "slope": "Wasser läuft an Hängen ab, bevor es einsickert: Eine moderate Neigung fügt jedem Bewässerungsdurchgang einen Impuls hinzu, eine steile Neigung zwei.",
+          "irrigation_method": "Wie das Wasser zugeführt wird. Bei Tröpfchenbewässerung oder Perlschläuchen auf sandigem Boden startet eine neue Zone mit mindestens zwei Impulsen, damit das Wasser im Wurzelbereich bleibt. Die Wassermenge wird über die Durchflussrate eingestellt (Konfigurieren → Durchflussrate).",
+          "growth_ramp_profile": "Gibt jungen Pflanzen weniger Wasser und steigert die Menge mit zunehmendem Alter bis zum vollen Wochenziel, gezählt ab dem Pflanz-/Umpflanzdatum auf der Geräteseite der Zone. Aus: immer das volle Ziel. Benutzerdefiniert: Zeichnen Sie Ihre eigene Kurve auf der Geräteseite.",
+          "deep_soak_enabled": "Eine Tiefenbewässerung ist eine große, langsame Bewässerung alle paar Wochen (zu Beginn alle 14 Tage), die den Boden tief durchfeuchtet, damit die Wurzeln tief wachsen. Gut für Bäume, Sträucher und Stauden; für flach wurzelnde Pflanzen wie Salat und Kräuter ausschalten. Die Routinebewässerung läuft unabhängig davon.",
+          "deep_soak_time": "Wann die Tiefenbewässerung an den fälligen Tagen beginnt, sofern unten eine feste Uhrzeit als Auslöser gewählt ist. Der frühe Morgen ist am besten: weniger Wasserverlust durch Sonne und Wind.",
+          "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und gegebenenfalls gießt. Die Häufigkeit richtet sich nach dem Wetter und Ihrem Wochenziel. Der frühe Morgen ist am besten.",
+          "deep_soak_sun_mode": "Startet die Tiefenbewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
+          "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
+          "routine_sun_mode": "Startet die Routinebewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
+          "routine_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet."
+        }
       }
     },
     "abort": {
@@ -196,7 +368,13 @@
     },
     "error": {
       "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
-      "csv_path_already_used": "Eine andere ZoneFlow-Zone protokolliert bereits in diese CSV-Datei."
+      "csv_path_already_used": "Eine andere ZoneFlow-Zone protokolliert bereits in diese CSV-Datei.",
+      "inside_temp_required": "Ein Lüfter, eine Belüftung, ein Vernebler oder eine Heizung benötigt den Innen-Temperatursensor.",
+      "device_in_two_roles": "Dieselbe Entität wurde für zwei verschiedene Aufgaben ausgewählt.",
+      "device_already_used": "Eine andere ZoneFlow-Zone verwendet bereits eines dieser Geräte.",
+      "valve_or_device_required": "Wählen Sie ein Ventil oder mindestens ein Klimagerät aus.",
+      "valve_required_outdoor": "Ein Außenbereich benötigt ein Ventil. Fügen Sie zuerst eines unter Ventil, Sensoren und Klimageräte hinzu.",
+      "backup_same_as_inside": "Ein Backup-Sensor kann nicht der Haupt-Innen-Temperatursensor sein."
     }
   },
   "selector": {
@@ -281,6 +459,13 @@
         "shrubs": "Sträucher / Hecke",
         "young_tree": "Junger Baum (erste Jahre)",
         "fruit_tree": "Eingewachsener Obstbaum"
+      }
+    },
+    "zone_type": {
+      "options": {
+        "outdoor": "Außenbereich",
+        "greenhouse": "Gewächshaus",
+        "indoor": "Innenraum"
       }
     }
   },
@@ -417,6 +602,57 @@
       },
       "frost_guard_temp": {
         "name": "Frostschutz-Temperatur"
+      },
+      "heat_temp": {
+        "name": "Heizung ein unter"
+      },
+      "vent_temp": {
+        "name": "Lüftungen öffnen bei"
+      },
+      "fan_temp": {
+        "name": "Lüfter ein bei"
+      },
+      "climate_hysteresis": {
+        "name": "Klima-Hysterese"
+      },
+      "outside_margin": {
+        "name": "Außenluft-Toleranz"
+      },
+      "max_humidity": {
+        "name": "Lüften über Luftfeuchtigkeit"
+      },
+      "mist_temp": {
+        "name": "Vernebelung ein über Temperatur"
+      },
+      "mist_min_humidity": {
+        "name": "Vernebelung ein unter Luftfeuchtigkeit"
+      },
+      "mist_stop_humidity": {
+        "name": "Vernebelungs-Stopp-Luftfeuchtigkeit"
+      },
+      "mist_min_temp": {
+        "name": "Vernebelung Mindesttemperatur"
+      },
+      "mist_light_level": {
+        "name": "Vernebelung Lichtwert"
+      },
+      "mist_on_seconds": {
+        "name": "Vernebelung Einschaltdauer"
+      },
+      "mist_off_seconds": {
+        "name": "Vernebelung Ausschaltdauer"
+      },
+      "max_mist_minutes_per_hour": {
+        "name": "Max. Vernebelung pro Stunde"
+      },
+      "vent_open_pct": {
+        "name": "Lüftung Öffnungsposition"
+      },
+      "manual_hold_minutes": {
+        "name": "Manuelle Haltezeit"
+      },
+      "sensor_offline_hours": {
+        "name": "Sensor offline nach"
       }
     },
     "datetime": {
@@ -477,6 +713,9 @@
       },
       "irrigation_abort": {
         "name": "Abbruch-Markierung Bewässerung"
+      },
+      "ventilation_allowed": {
+        "name": "Lüftung erlaubt"
       }
     },
     "switch": {
@@ -491,6 +730,12 @@
       },
       "pause": {
         "name": "Pause"
+      },
+      "greenhouse_control": {
+        "name": "Gewächshaussteuerung"
+      },
+      "mist_at_night": {
+        "name": "Nachts vernebeln"
       }
     },
     "sensor": {
@@ -570,6 +815,15 @@
       },
       "next_fertilizing": {
         "name": "Nächste Düngung"
+      },
+      "greenhouse_status": {
+        "name": "Gewächshaus-Status"
+      },
+      "inside_vpd": {
+        "name": "Innen-VPD"
+      },
+      "misting_today": {
+        "name": "Vernebelung heute"
       }
     },
     "select": {
@@ -687,6 +941,31 @@
           "moderate": "Mäßig geneigt",
           "steep": "Steil"
         }
+      },
+      "misting_trigger": {
+        "name": "Vernebelungsauslöser",
+        "state": {
+          "any": "Jeder Auslöser",
+          "temperature": "Nur Temperatur",
+          "humidity": "Nur Feuchtigkeit",
+          "light": "Nur Licht"
+        }
+      },
+      "ventilation_failsafe": {
+        "name": "Sensor-Ausfallsicherung",
+        "state": {
+          "open": "Lüftungen öffnen, Lüfter ein",
+          "closed": "Lüftungen schließen, Lüfter aus",
+          "leave": "Unverändert lassen"
+        }
+      },
+      "heater_failsafe": {
+        "name": "Heizungs-Ausfallsicherung",
+        "state": {
+          "off": "Aus",
+          "limited": "Teilweise eingeschaltet",
+          "outside": "Teilweise eingeschaltet, wenn es draußen kalt ist"
+        }
       }
     },
     "text": {
@@ -802,6 +1081,9 @@
     },
     "summary_send_failed": {
       "message": "Die Wochenübersicht konnte nicht gesendet werden: Die Benachrichtigung ans Handy ist fehlgeschlagen. Prüfe das Benachrichtigungsziel der Zone."
+    },
+    "zone_has_no_valve": {
+      "message": "Diese Zone hat kein Ventil und kann daher nicht bewässern. Fügen Sie unter Konfigurieren ein Ventil hinzu, wenn Sie dies wünschen."
     }
   },
   "issues": {
@@ -824,6 +1106,30 @@
     "shared_valve": {
       "title": "{zone}: Ventil wird mit einer anderen Zone geteilt",
       "description": "Zone {zone} und Zone {other_zone} sind beide mit derselben Ventil-Entität ({entity}) konfiguriert. Sofern sie nicht auch eine Pump-ID oder einen Pumpenleistungssensor teilen, kann ZoneFlow nicht erkennen, dass es sich um dasselbe physische Ventil handelt, und verhindert nicht, dass beide es gleichzeitig öffnen. Geben Sie einer der Zonen ein eigenes Ventil, oder legen Sie unter Konfigurieren für beide dieselbe Pump-ID fest."
+    },
+    "greenhouse_sensor": {
+      "title": "{zone}: Innen-Temperatursensor funktioniert nicht",
+      "description": "Der Innen-Temperatursensor der Zone {zone} ({entity}) hat seit längerer Zeit keine nutzbaren Werte geliefert. Die Klimasteuerung befindet sich in der Ausfallsicherung: Vernebler und Heizung sind aus, Lüftungen und Lüfter folgen der Einstellung für Sensor-Ausfallsicherung. Prüfen Sie den Sensor. Das Problem behebt sich von selbst, sobald er wieder Werte meldet."
+    },
+    "greenhouse_outside_sensor": {
+      "title": "{zone}: Außen-Temperatursensor funktioniert nicht",
+      "description": "Der Außen-Temperatursensor der Zone {zone} ({entity}) hat seit längerer Zeit keine nutzbaren Werte geliefert. Die Belüftung wird nur anhand der Innenwerte fortgesetzt, sodass nicht geprüft werden kann, ob die Außenluft kühler ist. Prüfen Sie den Sensor. Das Problem behebt sich von selbst, sobald er wieder Werte meldet."
+    },
+    "greenhouse_device": {
+      "title": "{zone}: Ein Klimagerät reagiert nicht",
+      "description": "Zone {zone} hat {devices} geschaltet, aber diese haben die Änderung auch nach einem zweiten Versuch nicht gemeldet. Prüfen Sie das Gerät und dessen Integration. Das Problem behebt sich von selbst, sobald die Geräte reagieren."
+    },
+    "greenhouse_mist_halted": {
+      "title": "{zone}: Vernebelung gestoppt",
+      "description": "Ein Vernebler der Zone {zone} ließ sich beim Ausschalten nicht abschalten. Die Vernebelung wurde gestoppt, um Überschwemmungen zu vermeiden. Prüfen Sie den Vernebler und drücken Sie anschließend 'Bewässerungssperre zurücksetzen' bei der Zone, um die Vernebelung wieder zu starten."
+    },
+    "greenhouse_on_backup_sensor": {
+      "title": "{zone}: Betrieb über Backup-Temperatursensor",
+      "description": "Der Haupt-Innen-Temperatursensor der Zone {zone} ({entity}) funktioniert nicht mehr. Die Klimasteuerung verwendet daher einen Backup-Sensor. Prüfen Sie den Hauptsensor. Das Problem behebt sich von selbst, sobald er wieder Werte meldet."
+    },
+    "greenhouse_sensor_mismatch": {
+      "title": "{zone}: Innen-Temperatursensoren weichen voneinander ab",
+      "description": "Der Haupt-Innen-Temperatursensor der Zone {zone} ({entity}) misst {main}, während der Backup-Sensor {backup} misst. Beide Werte weichen seit Längerem stark voneinander ab. Einer von ihnen ist wahrscheinlich defekt oder falsch platziert (z. B. in direkter Sonne oder neben der Heizung). Prüfen Sie beide Sensoren. Das Problem behebt sich von selbst, sobald sie wieder übereinstimmen."
     }
   }
 }

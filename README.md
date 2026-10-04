@@ -3,7 +3,8 @@
 **Website:** [zoneflowirrigation.com](https://zoneflowirrigation.com/)
 
 **ZoneFlow is a smart irrigation integration for Home Assistant** for
-gardens, lawns, vegetable beds, fruit trees and other plants (install with
+gardens, lawns, vegetable beds, fruit trees and other plants, and — new in
+1.6 — for the climate of a greenhouse or indoor grow space (install with
 HACS). It works out when and how much each zone needs — from the plant,
 the soil, the slope, the temperature and the rain, and optionally a
 soil-moisture probe, a flow meter and the weather forecast — and tells you
@@ -28,6 +29,11 @@ breaking the zone.
   a running cycle.
 - **Says why**: a plain-language Status per zone ("Skipped: the soil is
   wet (72%)"), phone notifications and a weekly summary.
+- **Greenhouse and indoor climate control** (1.6): fans, vents, misters and
+  a heater from an inside temperature (and humidity) sensor, with an
+  outside-air check, supervised misting, sensor failsafes and backup
+  sensors. The valve is optional — see
+  [docs/GREENHOUSE.md](docs/GREENHOUSE.md).
 - **Safety first**: runtime caps, stuck-valve watchdog, pump and flow
   checks, power-loss handling — a cycle always ends with the valve closed.
 - **Built-in dashboard cards**, flow-rate calibration helper, fertilizing
@@ -119,6 +125,37 @@ the whole garden); the valve and a soil probe belong to one zone.
 - **Flow meter:** the no-flow check is skipped rather than raising a false
   alarm.
 - **Weather:** the forecast gate fails open and never blocks a run.
+
+## Greenhouse and indoor zones (1.6)
+
+Pick **Greenhouse** or **Indoor** under *Where it grows* when you add a
+zone. Besides watering, ZoneFlow can then run the climate of the space:
+
+- **Fans, vents, misters and a heater**, any number of each, from switches,
+  input booleans, fans, covers, valves and climate entities.
+- **Cold**: the heater comes on below a temperature you set. **Warm**: vents
+  open, then fans join. **Humid**: it ventilates. **Dry or hot**: it mists, in
+  short supervised pulses with an hourly cap.
+- **An outside-air check** so ventilation never pulls in hotter air (needs
+  an outside temperature sensor; optional).
+- **No valve needed**: a climate-only zone has no watering at all.
+- **Failsafes**: if the inside sensor fails, misters stop, vents and fans
+  follow your **Sensor Failsafe** choice and the heater follows the **Heater
+  Failsafe** (off, part of the time, or part of the time while cold
+  outside). Add a **backup inside sensor** and control carries on with it.
+- A device you switch by hand is left alone for a while (**Manual Hold**).
+
+Greenhouse and indoor zones have no rain gauge or weather forecast (there is
+a roof); if rain does reach your plants, set the zone up as outdoor. Existing
+zones are outdoor zones and don't change. Add sensors or devices later under
+**Configure**, no re-setup.
+
+> **If you have a heater:** home automation is convenient, not a safety
+> system. Put a **hardware frost thermostat** in the heater's power line (or
+> use a heater with its own thermostat and over-temperature cut-out), and
+> add a **backup temperature sensor placed away from the main one**.
+
+Full details, settings and troubleshooting: **[docs/GREENHOUSE.md](docs/GREENHOUSE.md)**.
 
 ## Multiple irrigation zones and shared pumps
 

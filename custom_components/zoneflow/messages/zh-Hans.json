@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}：该施肥了",
       "message": "应于 {date} 施肥。完成后请按“今天已施肥”，下次日期将从当天起计算。"
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}：环境传感器故障保护",
+      "message": "没有可用的室内温度传感器。喷雾已关闭；通风口和风扇：{mode}；加热器：{heater}。"
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}：环境控制恢复正常",
+      "message": "室内温度传感器已恢复数据上报。"
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}：{device} 无响应",
+      "message": "重试一次后，{entity} 仍未按指令完成切换。"
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}：喷雾器卡在开启状态",
+      "message": "喷雾器运行时间已超出设定的脉冲时长，已被强制关闭。"
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}：喷雾已停止",
+      "message": "喷雾器无法关闭，已停止喷雾功能。请进行检查，然后点击“重置灌溉锁定”。"
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}：正在使用备用温度传感器",
+      "message": "主室内温度传感器（{entity}）已停止工作。环境控制已切换至备用传感器继续运行。"
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · 已暂停",
     "next": " · 下次 {when}",
     "zone_none": "{zone}：未浇水"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "通风口打开，风扇开启",
+      "closed": "通风口关闭，风扇关闭",
+      "leave": "保持现有状态"
+    },
+    "status": {
+      "starting": "正在启动",
+      "control_off": "温室控制已关闭",
+      "failsafe": "保护模式：无室内温度数据（通风口和风扇：{mode}；加热器：{heater}）",
+      "mist_halted": "喷雾已停止：请点击“重置灌溉锁定”",
+      "held": "{device} 已保持手动状态 {minutes} 分钟（由手动切换）",
+      "heating": "正在加热（{temp}）",
+      "ventilating_temperature": "正在通风：温度过高（{temp}）",
+      "ventilating_humidity": "正在通风：湿度过高（{humidity}）",
+      "misting": "正在喷雾（{temp}，{humidity}）",
+      "gate_blocked": "未进行通风：室外空气（{outside}）不比室内（{temp}）凉爽",
+      "idle": "一切正常：{temp}，{humidity}"
+    },
+    "heater_mode": {
+      "off": "关闭",
+      "limited": "部分时间开启",
+      "outside": "仅室外寒冷时部分时间开启"
+    }
   }
 }

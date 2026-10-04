@@ -42,6 +42,12 @@ ALL_KEYS = (
     "notify_missing",
     "flow_rate_default",
     "shared_valve",
+    "greenhouse_sensor",
+    "greenhouse_outside_sensor",
+    "greenhouse_device",
+    "greenhouse_mist_halted",
+    "greenhouse_on_backup_sensor",
+    "greenhouse_sensor_mismatch",
     *(f"sensor_offline_{r}" for r in SENSOR_ROLES),
 )
 # Flow rates within this of the default count as "never calibrated" (an
@@ -163,7 +169,7 @@ def async_check(controller: ZoneFlowController) -> None:
 
     flow = controller.numbers.get("flow_rate_mm_per_min")
     value = getattr(flow, "metric_value", None)
-    untouched = value is not None and abs(value - NUMBER_DEFAULTS["flow_rate_mm_per_min"]) < FLOW_DEFAULT_TOLERANCE
+    untouched = controller.has_valve and value is not None and abs(value - NUMBER_DEFAULTS["flow_rate_mm_per_min"]) < FLOW_DEFAULT_TOLERANCE
     _set(
         hass,
         controller,

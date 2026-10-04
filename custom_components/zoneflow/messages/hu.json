@@ -136,6 +136,30 @@
     "fertilize_due": {
       "title": "🌱 {zone}: ideje a tápanyag-utánpótlásnak",
       "message": "Esedékes: {date}. Ha megvan, nyomd meg a Mai tápanyag-utánpótlás kész gombot; a következő dátum ettől számolódik."
+    },
+    "greenhouse_failsafe": {
+      "title": "⚠️ {zone}: klímaérzékelő hibavédelem",
+      "message": "Egyetlen belső hőmérséklet-érzékelő sem működik. A párásítók ki vannak kapcsolva; szellőzők és ventilátorok: {mode}; fűtés: {heater}."
+    },
+    "greenhouse_recovered": {
+      "title": "✅ {zone}: a klímaszabályozás újra normális",
+      "message": "A belső hőmérséklet-érzékelő újra jelent."
+    },
+    "greenhouse_device": {
+      "title": "⚠️ {zone}: {device} nem válaszol",
+      "message": "{entity} nem kapcsolódott át a parancsnak megfelelően, még második próbálkozásra sem."
+    },
+    "greenhouse_mist_stuck": {
+      "title": "⚠️ {zone}: a párásító bekapcsolva maradt",
+      "message": "Egy párásító az impulzusidőn túl is bekapcsolva maradt, ezért ki lett kapcsolva."
+    },
+    "greenhouse_mist_halted": {
+      "title": "🚨 {zone}: a párásítás leállt",
+      "message": "Egy párásító nem kapcsolódott ki, ezért a párásítás leállt. Ellenőrizze, majd nyomja meg az Öntözési zárolás alaphelyzetbe állítása gombot."
+    },
+    "greenhouse_backup_sensor": {
+      "title": "⚠️ {zone}: tartalék hőmérséklet-érzékelő használatban",
+      "message": "A fő belső hőmérséklet-érzékelő ({entity}) leállt. A klímaszabályozás a tartalék érzékelővel folytatódik."
     }
   },
   "notes": {
@@ -188,5 +212,30 @@
     "paused": " · szüneteltetve",
     "next": " · következő: {when}",
     "zone_none": "{zone}: nem volt öntözés"
+  },
+  "greenhouse": {
+    "failsafe_mode": {
+      "open": "szellőzők nyitva, ventilátorok be",
+      "closed": "szellőzők zárva, ventilátorok ki",
+      "leave": "változatlanul hagyva"
+    },
+    "status": {
+      "starting": "Indítás",
+      "control_off": "Üvegház vezérlése kikapcsolva",
+      "failsafe": "Hibavédelem: nincs belső hőmérséklet (szellőzők és ventilátorok: {mode}; fűtés: {heater})",
+      "mist_halted": "Párásítás leállt: nyomja meg az Öntözési zárolás alaphelyzetbe állítása gombot",
+      "held": "{device} békén hagyva {minutes} percig (kézzel átkapcsolva)",
+      "heating": "Fűtés ({temp})",
+      "ventilating_temperature": "Szellőztetés: túl meleg ({temp})",
+      "ventilating_humidity": "Szellőztetés: túl párás ({humidity})",
+      "misting": "Párásítás ({temp}, {humidity})",
+      "gate_blocked": "Nincs szellőztetés: a külső levegő ({outside}) nem hűvösebb a belsőnél ({temp})",
+      "idle": "Minden rendben: {temp}, {humidity}"
+    },
+    "heater_mode": {
+      "off": "kikapcsolva",
+      "limited": "az idő egy részében bekapcsolva",
+      "outside": "az idő egy részében bekapcsolva, ha kint hideg van"
+    }
   }
 }

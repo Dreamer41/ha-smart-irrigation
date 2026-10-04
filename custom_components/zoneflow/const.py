@@ -450,6 +450,24 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # below this (needs a temperature sensor). At its lowest it's off. See
     # controller._frost_blocks.
     "frost_guard_temp": ("Frost Guard Temperature", -10.0, 10.0, 0.5, "°C"),
+    # --- 1.6 greenhouse / indoor climate (only created for those zones) ---
+    "heat_temp": ("Heater On Below", 0.0, 30.0, 0.5, "°C"),
+    "vent_temp": ("Vents Open At", 10.0, 40.0, 0.5, "°C"),
+    "fan_temp": ("Fans On At", 10.0, 45.0, 0.5, "°C"),
+    "climate_hysteresis": ("Climate Hysteresis", 0.5, 5.0, 0.5, "°C"),
+    "outside_margin": ("Outside Air Margin", 0.0, 10.0, 0.5, "°C"),
+    "max_humidity": ("Ventilate Above Humidity", 50.0, 100.0, 1.0, "%"),
+    "mist_temp": ("Mist On Above Temperature", 15.0, 45.0, 0.5, "°C"),
+    "mist_min_humidity": ("Mist On Below Humidity", 20.0, 90.0, 1.0, "%"),
+    "mist_stop_humidity": ("Mist Stop Humidity", 50.0, 100.0, 1.0, "%"),
+    "mist_min_temp": ("Mist Minimum Temperature", 5.0, 30.0, 0.5, "°C"),
+    "mist_light_level": ("Mist Light Level", 1000.0, 150000.0, 1000.0, "lx"),
+    "mist_on_seconds": ("Mist On Time", 3.0, 300.0, 1.0, "s"),
+    "mist_off_seconds": ("Mist Off Time", 10.0, 3600.0, 10.0, "s"),
+    "max_mist_minutes_per_hour": ("Max Misting Per Hour", 1.0, 60.0, 1.0, "min"),
+    "vent_open_pct": ("Vent Open Position", 10.0, 100.0, 5.0, "%"),
+    "manual_hold_minutes": ("Manual Hold Time", 0.0, 480.0, 5.0, "min"),
+    "sensor_offline_hours": ("Sensor Offline After", 1.0, 24.0, 1.0, "h"),
 }
 
 NUMBER_DEFAULTS: dict[str, float] = {
@@ -506,6 +524,23 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "mulch_et_adjustment_pct": 20.0,
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
+    "heat_temp": 10.0,
+    "vent_temp": 25.0,
+    "fan_temp": 28.0,
+    "climate_hysteresis": 1.5,
+    "outside_margin": 1.0,
+    "max_humidity": 85.0,
+    "mist_temp": 30.0,
+    "mist_min_humidity": 50.0,
+    "mist_stop_humidity": 85.0,
+    "mist_min_temp": 18.0,
+    "mist_light_level": 40000.0,
+    "mist_on_seconds": 10.0,
+    "mist_off_seconds": 120.0,
+    "max_mist_minutes_per_hour": 10.0,
+    "vent_open_pct": 100.0,
+    "manual_hold_minutes": 60.0,
+    "sensor_offline_hours": 4.0,
 }
 
 EVENT_LOG = f"{DOMAIN}_log_event"
@@ -656,3 +691,67 @@ FLOW_MEASURE_MINUTES = 10
 # and the meter's last report waited for up to this long.
 FLOW_MEASURE_MIN_MINUTES = 5
 FLOW_METER_SETTLE_SECONDS = 60
+
+# --- 1.6: zone type and greenhouse / indoor climate hardware ----------------
+# A zone with no zone type stored is an outdoor zone and behaves exactly as in
+# 1.5.1 (nothing is migrated). Greenhouse and indoor zones may have no valve
+# (climate control only), have no rain gauge or forecast (a roof), and read
+# their temperature for watering from the inside sensor.
+CONF_ZONE_TYPE = "zone_type"
+ZONE_TYPE_OUTDOOR = "outdoor"
+ZONE_TYPE_GREENHOUSE = "greenhouse"
+ZONE_TYPE_INDOOR = "indoor"
+ZONE_TYPE_OPTIONS = [ZONE_TYPE_OUTDOOR, ZONE_TYPE_GREENHOUSE, ZONE_TYPE_INDOOR]
+DEFAULT_ZONE_TYPE = ZONE_TYPE_OUTDOOR
+
+CONF_INSIDE_TEMP_ENTITY = "inside_temp_entity"  # required for any climate device
+CONF_INSIDE_HUMIDITY_ENTITY = "inside_humidity_entity"
+CONF_LIGHT_ENTITY = "light_entity"
+# Extra inside temperature sensors: used, in order, when the main one fails.
+CONF_BACKUP_TEMP_ENTITIES = "backup_temp_entities"
+# Climate device roles: any number of entities each (a list of entity ids).
+CONF_FAN_ENTITIES = "fan_entities"
+CONF_VENT_ENTITIES = "vent_entities"
+CONF_MISTER_ENTITIES = "mister_entities"
+CONF_HEATER_ENTITIES = "heater_entities"
+DEVICE_ROLE_KEYS = (CONF_FAN_ENTITIES, CONF_VENT_ENTITIES, CONF_MISTER_ENTITIES, CONF_HEATER_ENTITIES)
+# What each role accepts (entity domains).
+DEVICE_ROLE_DOMAINS: dict[str, list[str]] = {
+    CONF_FAN_ENTITIES: ["switch", "input_boolean", "fan"],
+    CONF_VENT_ENTITIES: ["cover", "switch", "input_boolean"],
+    CONF_MISTER_ENTITIES: ["switch", "input_boolean", "valve"],
+    CONF_HEATER_ENTITIES: ["switch", "input_boolean", "climate"],
+}
+
+# The greenhouse sliders: created only for greenhouse / indoor zones, and
+# shown only when the hardware they act on is configured (visibility.py).
+GREENHOUSE_NUMBERS = (
+    "heat_temp", "vent_temp", "fan_temp", "climate_hysteresis", "outside_margin", "max_humidity",
+    "mist_temp", "mist_min_humidity", "mist_stop_humidity", "mist_min_temp", "mist_light_level",
+    "mist_on_seconds", "mist_off_seconds", "max_mist_minutes_per_hour", "vent_open_pct", "manual_hold_minutes",
+    "sensor_offline_hours",
+)
+# Seeded from the climate preset at setup (greenhouse_logic.PRESET_SETPOINTS).
+GREENHOUSE_PRESET_NUMBER_KEYS = ("heat_temp", "vent_temp", "fan_temp", "mist_temp")
+
+# How the climate engine behaves (greenhouse.py).
+GREENHOUSE_EVAL_SECONDS = 30  # re-evaluate this often, and on any sensor change
+GREENHOUSE_SENSOR_GRACE_SECONDS = 120  # a sensor dropout shorter than this changes nothing
+# A sensor with no report for "Sensor Offline After" hours counts as failed.
+GREENHOUSE_SERVICE_TIMEOUT_SECONDS = 15  # a device call that hangs longer has failed
+GREENHOUSE_INSIDE_TEMP_RANGE = (-30.0, 70.0)  # outside this a reading is a glitch, not a temperature
+GREENHOUSE_OUTSIDE_TEMP_RANGE = (-50.0, 70.0)
+GREENHOUSE_ISSUE_SENSOR_SECONDS = 600  # Repairs issue after this long on failsafe
+GREENHOUSE_ISSUE_OUTSIDE_SECONDS = 1800
+GREENHOUSE_SENSOR_MISMATCH_C = 5.0  # main and backup further apart than this ...
+GREENHOUSE_SENSOR_MISMATCH_SECONDS = 1800  # ... for this long: Repairs issue
+GREENHOUSE_MANUAL_GRACE_SECONDS = 60  # a device's own slow report after our command isn't a person
+GREENHOUSE_CONFIRM_SECONDS = 30  # a device told to move has this long to report it
+GREENHOUSE_MIST_STUCK_MARGIN_SECONDS = 60  # a mister on this much past its pulse is forced off
+# Minimum time a device stays on / off (seconds), per role.
+GREENHOUSE_MIN_TIMES: dict[str, tuple[float, float]] = {
+    "fans": (120.0, 120.0),
+    "vents": (180.0, 180.0),
+    "heater": (300.0, 300.0),
+    "misters": (0.0, 0.0),  # pulses are paced by the on/off time sliders
+}
