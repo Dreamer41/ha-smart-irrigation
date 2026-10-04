@@ -35,6 +35,34 @@ LOADER_FILE = "zoneflow-loader.js"
 LOADER_URL = f"/local/{LOADER_DIR}/{LOADER_FILE}"
 _DONE_KEY = "zoneflow_frontend_registered"
 
+# The dashboard strategy (`strategy: {type: custom:zoneflow}`). Home Assistant
+# waits only 5 seconds for a strategy's element to exist, and the card file
+# can be later than that on the first page after a restart or an update, which
+# showed "Timeout waiting for strategy element". So the loader (listed in the
+# Resources, loaded from the first second) defines the element at once; it
+# hands the work to the real strategy in the card file when that is there.
+STRATEGY_JS = """\
+const defineStrategy = () => {
+  const tag = "ll-strategy-dashboard-zoneflow";
+  if (window.customElements.get(tag)) return;
+  try {
+    window.customElements.define(tag, class extends HTMLElement {
+      static async generate(config, hass) {
+        for (let waited = 0; !window.__zoneflowDashboardStrategy; waited += 250) {
+          if (waited >= 60000) throw new Error("The ZoneFlow card did not load.");
+          await new Promise((resolve) => setTimeout(resolve, 250));
+        }
+        return window.__zoneflowDashboardStrategy.generate(config, hass);
+      }
+    });
+  } catch (err) {
+    // Known to the registry already: nothing to do.
+  }
+};
+defineStrategy();
+for (const delay of [250, 1000, 3000, 10000]) setTimeout(defineStrategy, delay);
+"""
+
 LOADER_JS = f"""\
 // ZoneFlow Irrigation: loads the ZoneFlow dashboard cards.
 // Written by the ZoneFlow integration and listed under Settings ->
@@ -42,7 +70,7 @@ LOADER_JS = f"""\
 //
 // Home Assistant can show a dashboard while it is still starting, before
 // ZoneFlow has loaded. This keeps trying until the cards are there.
-const base = "{CARD_URL}";
+{STRATEGY_JS}const base = "{CARD_URL}";
 const query = new URL(import.meta.url).search;
 let tries = 0;
 const load = () => {{

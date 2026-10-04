@@ -88,3 +88,54 @@ def test_no_zones_shows_a_friendly_page(tmp_path):
     out = _run(tmp_path, {"entities": {}, "states": {}, "devices": {}, "locale": {"language": "en"}})
     assert len(out["views"]) == 1
     assert out["views"][0]["cards"][0]["type"] == "markdown"
+
+
+STUB_HARNESS = r"""
+const vm = require("vm");
+const registry = {};
+let timers = 0;
+const sandbox = {
+  window: { customElements: { get: (t) => registry[t], define: (t, c) => { registry[t] = c; } } },
+  HTMLElement: class {},
+  setTimeout: (fn, ms) => globalThis.setTimeout(fn, Math.min(ms, 5)),
+  Promise, Error, console,
+};
+sandbox.window.setTimeout = sandbox.setTimeout;
+vm.createContext(sandbox);
+vm.runInContext(process.argv[2], sandbox);
+const stub = registry["ll-strategy-dashboard-zoneflow"];
+(async () => {
+  if (!stub) { console.log("NO ELEMENT"); return; }
+  // The real strategy arrives later than the page asked for it.
+  const pending = stub.generate({ type: "custom:zoneflow" }, { who: "hass" });
+  setTimeout(() => {
+    sandbox.window.__zoneflowDashboardStrategy = {
+      generate: async (config, hass) => ({ views: ["from the real strategy"], config, hass }),
+    };
+  }, 30);
+  const out = await pending;
+  console.log(JSON.stringify(out));
+})();
+"""
+
+
+def test_the_loader_registers_the_strategy_at_once_and_waits_for_the_card(tmp_path):
+    """Home Assistant waits only 5 s for a strategy element; the loader
+    defines it immediately and hands over once the card file has loaded."""
+    from custom_components.zoneflow import frontend
+
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    harness = tmp_path / "stub.js"
+    harness.write_text(STUB_HARNESS, encoding="utf-8")
+    done = subprocess.run(
+        ["node", str(harness), frontend.STRATEGY_JS], capture_output=True, text=True, timeout=60, check=True
+    )
+    out = json.loads(done.stdout.strip().splitlines()[-1])
+    assert out["views"] == ["from the real strategy"]
+    assert out["config"] == {"type": "custom:zoneflow"} and out["hass"] == {"who": "hass"}
+
+
+def test_the_card_file_hands_its_strategy_to_the_loader_stub():
+    card = CARD.read_text(encoding="utf-8")
+    assert "window.__zoneflowDashboardStrategy = ZoneFlowDashboardStrategy" in card

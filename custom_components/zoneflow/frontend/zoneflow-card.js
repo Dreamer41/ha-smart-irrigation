@@ -3309,6 +3309,9 @@ class ZoneFlowDashboardStrategy extends HTMLElement {
     return buildDashboard(info.hass);
   }
 }
+// The loader (frontend.py) registers the element early, because Home
+// Assistant waits only 5 s for it; it hands over to this one.
+window.__zoneflowDashboardStrategy = ZoneFlowDashboardStrategy;
 
 // Defined as soon as this file loads -- and again if Home Assistant's
 // frontend replaces the page's custom-element registry afterwards (it can
