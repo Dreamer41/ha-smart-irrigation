@@ -230,8 +230,8 @@
       "misting": "Forstøvning ({temp}, {humidity})",
       "gate_blocked": "Lufter ikke ud: udeluft ({outside}) er ikke koldere end indendørs ({temp})",
       "idle": "Alt OK: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} skiftet manuelt: automatik igen {time}",
+      "held_until_resume": "{device} skiftet manuelt: automatik igen når du trykker på Genoptag automatik"
     },
     "heater_mode": {
       "off": "slukket",

@@ -230,8 +230,8 @@
       "misting": "Párásítás ({temp}, {humidity})",
       "gate_blocked": "Nincs szellőztetés: a külső levegő ({outside}) nem hűvösebb a belsőnél ({temp})",
       "idle": "Minden rendben: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} kézzel kapcsolva: automatika újra ekkor: {time}",
+      "held_until_resume": "{device} kézzel kapcsolva: az automatika az Automatika folytatása gomb megnyomásakor tér vissza"
     },
     "heater_mode": {
       "off": "kikapcsolva",

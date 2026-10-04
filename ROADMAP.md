@@ -2,53 +2,10 @@
 
 Ideas queued for upcoming releases.
 
-## 1.6.1 (planned)
-
-**Rain from nearby Weather Underground stations (experimental).** An opt-in rain source
-for outdoor zones without a rain gauge. It is marked *experimental*: the
-data is not 100 % accurate, but it is closer to the ground than model data
-such as Open-Meteo, which is not measured by gauges.
-
-- **Check first, key second.** The docs and the setup screen start with:
-  look at the Weather Underground map for stations within about 2 km that
-  report rain. If there are none, stop; use your own gauge, the manual
-  entry below, or the forecast.
-- **Getting a key.** Register your own station on wunderground.com and
-  upload outdoor temperature and humidity (a full weather station or a rain
-  gauge is not needed). The easy way is the
-  [ha-weather-uploader](https://github.com/lancer73/ha-weather-uploader)
-  HACS integration (about every 5 minutes); a plain web-request example goes
-  in the docs too. The API key comes from the WU account. Three separate
-  secrets: Station ID and Station Key (to upload), API key (to read rain;
-  the only one ZoneFlow stores, in the config entry, never in YAML).
-- **Close stations only.** A small radius (a few km); stations further away
-  are rejected because their rain is not local. If none is close enough, the
-  feature says so and stays off.
-- **Several stations.** With 2-3 close stations ZoneFlow uses the median of
-  their rain totals, so one broken gauge cannot fool it. One station is
-  allowed but flagged as lower confidence. Silent, stuck or outlying
-  stations are ignored.
-- **Polling** about every 2 hours, plus once just after local midnight for
-  the day's final total. Feeds the same rain credit as a gauge; the status
-  shows where the rain figure came from.
-- **Look at the data.** Each station's current reading is shown at setup and
-  in the status so the person can check it looks right before trusting it.
-- **Manual rain entry** for old-style gauges you read and empty yourself: a
-  number field plus a button, and a service for automations. The entry is
-  timestamped and counts as rain credit, without double counting rain that
-  a station or sensor already reported for the same period.
-- **Did the skip pay off?** A small journal records, for each watering
-  skipped because rain was forecast, how much rain actually came (station
-  or manual entry).
-- An auto-generated ZoneFlow dashboard ("strategy") with a tab per zone,
-  reusing the ZoneFlow card.
-
 ## Next update
 
 - The Status sentence with the expected amount ("Next watering Mon 05:30,
   about 12 mm").
-- Greenhouse: a **Resume automatic** button that ends a manual hold at once
-  (today the hold ends by itself after Manual Hold Time).
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
   inside the notifications and the status, not only the sentences around
   them.
@@ -56,6 +13,24 @@ such as Open-Meteo, which is not measured by gauges.
   machine translated).
 
 ## Shipped
+
+### 1.6.1 — rain without a gauge, Resume Automatic and a ready-made dashboard
+
+- **Weather Underground rain (experimental)**: an outdoor zone without a rain
+  gauge can borrow rain from 1-3 private stations within 2 km (nearer is
+  better), set up once for the whole Home Assistant. Only for rain
+  deduction; the docs say to check the Weather Underground map first, and
+  that the free API key needs your own station uploading temperature and
+  humidity. Polls every 2 hours, every 10 minutes around a watering.
+- **Manual rain**: enter rain read from a simple gauge (number + button, or
+  the `zoneflow.add_rain` service), up to 14 days back.
+- **Forecast Skip Hit Rate**: judges each watering skipped for forecast rain
+  48 hours later against the rain that really fell.
+- **Resume Automatic**: a button that ends a manual hold at once, an **Auto
+  Resume** switch and **Auto Resume After** (0.5-24 h) replacing Manual Hold
+  Time; a heater switched on by hand is taken back when it gets too hot.
+- **Auto-generated dashboard**: `strategy: {type: custom:zoneflow}` gives an
+  overview tab and one tab per zone.
 
 ### 1.6.0 — greenhouse and indoor climate control
 

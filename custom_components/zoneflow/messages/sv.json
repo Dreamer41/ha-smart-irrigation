@@ -230,8 +230,8 @@
       "misting": "Dimmar ({temp}, {humidity})",
       "gate_blocked": "Vädrar inte: uteluften ({outside}) är inte kallare än inne ({temp})",
       "idle": "Allt väl: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} ändrad manuellt: automatik igen {time}",
+      "held_until_resume": "{device} ändrad manuellt: automatik igen när du trycker på Återgå till automatik"
     },
     "heater_mode": {
       "off": "av",

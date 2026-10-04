@@ -230,8 +230,8 @@
       "misting": "Zamgławianie ({temp}, {humidity})",
       "gate_blocked": "Brak wentylacji: powietrze na zewnątrz ({outside}) nie jest chłodniejsze niż wewnątrz ({temp})",
       "idle": "Wszystko w normie: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} przełączone ręcznie: powrót do automatyki {time}",
+      "held_until_resume": "{device} przełączone ręcznie: powrót do automatyki po naciśnięciu Wznów automatykę"
     },
     "heater_mode": {
       "off": "wyłączony",

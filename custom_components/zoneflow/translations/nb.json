@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Legg til en sone",
+          "weather_underground": "Sett opp Weather Underground-regn"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground regn (eksperimentell)",
+        "description": "Henter regnavlesninger fra private værstasjoner i nærheten av hagen din, for utendørssoner UTEN regnmåler. Har du en regnmåler? Da trenger du ikke dette.\n\n**Sjekk først** kartet på wunderground.com for stasjoner innenfor et par km fra hagen din som rapporterer regn. Hvis det ikke finnes noen, stopp her.\n\n**For det andre** krever den gratis API-nøkkelen en egen stasjon: registrer en på wunderground.com og last opp minst utetemperatur og luftfuktighet (for eksempel med ha-weather-uploader-integrasjonen). API-nøkkelen finner du deretter på Weather Underground-kontoen din.\n\nAvlesningene brukes kun til regnkreditt. De er ikke 100 % nøyaktige, og mindre nøyaktige jo lenger unna stasjonene er fra sonene dine.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API-nøkkel",
+          "radius_km": "Søkeradius"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Fra Weather Underground-kontoen din (API Keys). Lagres kun i denne oppføringen.",
+          "radius_km": "0,5–2 km, nærmere er bedre: regn kan variere mye over et par km. Over 1 km bør du følge med på hvordan avlesningene stemmer med regnet hos deg."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Velg 1–3 stasjoner",
+        "description": "Stasjoner innenfor radiusen, nærmeste først, med dagens regn. Velg opptil 3. Med 3 bruker ZoneFlow den midterste avlesningen; med 2 den laveste; 1 stasjon fungerer, men er mindre pålitelig. For stasjoner over 1 km unna bør du sammenligne avlesningene deres med regnet hos deg en stund før du stoler på dem.",
         "data": {
-          "stations": "Stations"
+          "stations": "Stasjoner"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Opptil 3. Sjekk at hver stasjons regn i dag ser riktig ut før du stoler på den."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "En annen ZoneFlow-sone bruker allerede en av disse enhetene.",
       "valve_or_device_required": "Velg en ventil eller minst én klimaenhet.",
       "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground avviste API-nøkkelen.",
+      "wu_cannot_connect": "Klarte ikke å koble til Weather Underground. Prøv igjen senere.",
+      "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
+      "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "Weather Underground-regn er allerede satt opp."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Ventil, sensorer og klimaenheter",
           "watering": "Vanningsinnstillinger",
           "zone_type": "Sonetype",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Weather Underground-regn"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground regn (eksperimentell)",
+        "description": "Henter regnavlesninger fra private værstasjoner i nærheten av hagen din, for utendørssoner UTEN regnmåler. Har du en regnmåler? Da trenger du ikke dette.\n\n**Sjekk først** kartet på wunderground.com for stasjoner innenfor et par km fra hagen din som rapporterer regn. Hvis det ikke finnes noen, stopp her.\n\n**For det andre** krever den gratis API-nøkkelen en egen stasjon: registrer en på wunderground.com og last opp minst utetemperatur og luftfuktighet (for eksempel med ha-weather-uploader-integrasjonen). API-nøkkelen finner du deretter på Weather Underground-kontoen din.\n\nAvlesningene brukes kun til regnkreditt. De er ikke 100 % nøyaktige, og mindre nøyaktige jo lenger unna stasjonene er fra sonene dine.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API-nøkkel",
+          "radius_km": "Søkeradius"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Fra Weather Underground-kontoen din (API Keys). Lagres kun i denne oppføringen.",
+          "radius_km": "0,5–2 km, nærmere er bedre: regn kan variere mye over et par km. Over 1 km bør du følge med på hvordan avlesningene stemmer med regnet hos deg."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Velg 1–3 stasjoner",
+        "description": "Stasjoner innenfor radiusen, nærmeste først, med dagens regn. Velg opptil 3. Med 3 bruker ZoneFlow den midterste avlesningen; med 2 den laveste; 1 stasjon fungerer, men er mindre pålitelig. For stasjoner over 1 km unna bør du sammenligne avlesningene deres med regnet hos deg en stund før du stoler på dem.",
         "data": {
-          "stations": "Stations"
+          "stations": "Stasjoner"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Opptil 3. Sjekk at hver stasjons regn i dag ser riktig ut før du stoler på den."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Weather Underground-regn",
+        "description": "Bruk regnet fra Weather Underground-stasjonene for denne sonen (den har ingen regnmåler). Eksperimentell: ikke 100 % nøyaktig.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Bruk Weather Underground-regn"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Kun for soner uten regnmåler. Sett opp Weather Underground-oppføringen først."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Velg en ventil eller minst én klimaenhet.",
       "valve_required_outdoor": "En utendørssone trenger en ventil. Legg til en under Ventil, sensorer og klimaenheter først.",
       "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground avviste API-nøkkelen.",
+      "wu_cannot_connect": "Klarte ikke å koble til Weather Underground. Prøv igjen senere.",
+      "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
+      "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Sensor frakoblet etter"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Manuell regn"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Automatisk gjenoptakelse etter"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Merk som vannet"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Legg til manuell regn"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Gjenoppta automatikk"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Tåkelegging om natten"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Automatisk gjenoptakelse"
       }
     },
     "sensor": {
@@ -911,13 +911,13 @@
         "name": "Tåkelegging i dag"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Treffprosent for prognoseoverhopp"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Regn i dag"
       },
       "wu_station": {
-        "name": "Station {station}"
+        "name": "Stasjon {station}"
       }
     },
     "select": {
@@ -1148,16 +1148,16 @@
       "description": "Sender ukesammendraget nå til alle telefoner som har en sone med valgt dag for Ukesammendrag -- en forhåndsvisning; ukens tall telles videre frem til det planlagte sammendraget."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Legg til regn",
+      "description": "Registrerer regn avlest manuelt fra en enkel regnmåler. Teller som regnmålerregn for regnkreditt, dypvanning og uttørking, men ikke for de 30-minutters «det regner nå»-kontrollene. I en sone med egen regnmåler gjelder den høyeste av de to verdiene, aldri summen.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Mengde",
+          "description": "Regn i sonens enheter (mm, eller tommer i en imperial sone)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Når",
+          "description": "Når regnet falt (standard er nå). Mye 14 dager bakover."
         },
         "device_id": {
           "name": "Soneenhet",
@@ -1202,16 +1202,16 @@
       "message": "Denne sonen har ingen ventil og kan ikke vanne. Legg til en ventil under Konfigurer hvis du ønsker det."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Angi først mengden for Manuell regn til mer enn 0."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "Manuell regn gjelder kun for utendørssoner."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Regn kan ikke angis for et fremtidig tidspunkt."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "Regn kan angis for høyst 14 dager siden."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "Hovedsensoren for innvendig temperatur i sonen {zone} ({entity}) viser {main}, mens reservesensoren viser {backup}. Målingene har avveket mye fra hverandre over tid. En av dem er sannsynligvis feil eller uheldig plassert (i direkte sol eller ved varmeovnen). Sjekk begge. Dette tilbakestilles automatisk når de samsvarer."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Weather Underground regn: ingen data",
+      "description": "Ingen av de valgte Weather Underground-stasjonene har sendt en brukbar regnavlesning på {hours} timer, så soner som bruker den fungerer som om de ikke har noen regnmåler. Sjekk stasjonene på wunderground.com, eller velg andre under Konfigurer for Weather Underground-oppføringen. Dette løser seg selv når dataene er tilbake."
     }
   }
 }

@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Ajouter une zone",
+          "weather_underground": "Configurer la pluie Weather Underground"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Pluie Weather Underground (expérimental)",
+        "description": "Récupère les relevés de pluie des stations météo privées situées à proximité de votre jardin pour les zones extérieures SANS pluviomètre. Vous avez un pluviomètre ? Vous n'avez pas besoin de ceci.\n\n**D'abord**, vérifiez sur la carte de wunderground.com s'il existe des stations à quelques kilomètres de votre jardin qui rapportent de la pluie. S'il n'y en a pas, arrêtez-vous ici.\n\n**Ensuite**, la clé API gratuite nécessite votre propre station : enregistrez-en une sur wunderground.com et transmettez au moins la température et l'humidité extérieures (par exemple avec l'intégration ha-weather-uploader). La clé API se trouve ensuite dans votre compte Weather Underground.\n\nLes relevés servent uniquement au crédit de pluie. Ils ne sont pas précis à 100 %, et le sont d'autant moins que les stations sont éloignées de vos zones.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Clé API",
+          "radius_km": "Rayon de recherche"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Depuis votre compte Weather Underground (API Keys). Stocké uniquement dans cette entrée.",
+          "radius_km": "0,5 à 2 km, le plus proche est le mieux : la pluie peut varier considérablement sur quelques km. Au-delà de 1 km, surveillez la correspondance entre les relevés et la pluie chez vous."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Choisissez 1 à 3 stations",
+        "description": "Stations dans le rayon, la plus proche en premier, avec la pluie d'aujourd'hui. Choisissez jusqu'à 3 stations. Avec 3, ZoneFlow utilise le relevé intermédiaire ; avec 2, le plus bas ; 1 station fonctionne mais est moins fiable. Pour les stations situées à plus de 1 km, comparez leurs relevés avec la pluie chez vous pendant un moment avant de leur faire confiance.",
         "data": {
           "stations": "Stations"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Jusqu'à 3. Vérifiez que la pluie d'aujourd'hui pour chaque station semble correcte avant de lui faire confiance."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "Une autre zone ZoneFlow utilise déjà l'un de ces appareils.",
       "valve_or_device_required": "Sélectionnez une vanne ou au moins un appareil climatique.",
       "backup_same_as_inside": "Un capteur de secours ne peut pas être le capteur de température intérieure principal.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground a refusé la clé API.",
+      "wu_cannot_connect": "Impossible dijoindre Weather Underground. Réessayez plus tard.",
+      "wu_no_stations": "Aucune station dans le rayon. Sans station à proximité, cette fonctionnalité ne sera d'aucune utilité.",
+      "wu_pick_1_to_3": "Choisissez 1, 2 ou 3 stations."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "La pluie Weather Underground est déjà configurée."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Vanne, capteurs et appareils climatiques",
           "watering": "Paramètres d'arrosage",
           "zone_type": "Type de zone",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Pluie Weather Underground"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Pluie Weather Underground (expérimental)",
+        "description": "Récupère les relevés de pluie des stations météo privées situées à proximité de votre jardin pour les zones extérieures SANS pluviomètre. Vous avez un pluviomètre ? Vous n'avez pas besoin de ceci.\n\n**D'abord**, vérifiez sur la carte de wunderground.com s'il existe des stations à quelques kilomètres de votre jardin qui rapportent de la pluie. S'il n'y en a pas, arrêtez-vous ici.\n\n**Ensuite**, la clé API gratuite nécessite votre propre station : enregistrez-en une sur wunderground.com et transmettez au moins la température et l'humidité extérieures (par exemple avec l'intégration ha-weather-uploader). La clé API se trouve ensuite dans votre compte Weather Underground.\n\nLes relevés servent uniquement au crédit de pluie. Ils ne sont pas précis à 100 %, et le sont d'autant moins que les stations sont éloignées de vos zones.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Clé API",
+          "radius_km": "Rayon de recherche"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Depuis votre compte Weather Underground (API Keys). Stocké uniquement dans cette entrée.",
+          "radius_km": "0,5 à 2 km, le plus proche est le mieux : la pluie peut varier considérablement sur quelques km. Au-delà de 1 km, surveillez la correspondance entre les relevés et la pluie chez vous."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Choisissez 1 à 3 stations",
+        "description": "Stations dans le rayon, la plus proche en premier, avec la pluie d'aujourd'hui. Choisissez jusqu'à 3 stations. Avec 3, ZoneFlow utilise le relevé intermédiaire ; avec 2, le plus bas ; 1 station fonctionne mais est moins fiable. Pour les stations situées à plus de 1 km, comparez leurs relevés avec la pluie chez vous pendant un moment avant de leur faire confiance.",
         "data": {
           "stations": "Stations"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Jusqu'à 3. Vérifiez que la pluie d'aujourd'hui pour chaque station semble correcte avant de lui faire confiance."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Pluie Weather Underground",
+        "description": "Utiliser la pluie des stations Weather Underground pour cette zone (elle n'a pas de pluviomètre). Expérimental : pas précis à 100 %.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Utiliser la pluie Weather Underground"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Uniquement pour les zones sans pluviomètre. Configurez d'abord l'entrée Weather Underground."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Sélectionnez une vanne ou au moins un appareil climatique.",
       "valve_required_outdoor": "Une zone extérieure nécessite une vanne. Ajoutez-en une d'abord sous Vanne, capteurs et appareils climatiques.",
       "backup_same_as_inside": "Un capteur de secours ne peut pas être le capteur de température intérieure principal.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground a refusé la clé API.",
+      "wu_cannot_connect": "Impossible dijoindre Weather Underground. Réessayez plus tard.",
+      "wu_no_stations": "Aucune station dans le rayon. Sans station à proximité, cette fonctionnalité ne sera d'aucune utilité.",
+      "wu_pick_1_to_3": "Choisissez 1, 2 ou 3 stations."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Capteur hors ligne après"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Pluie manuelle"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Reprise automatique après"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Marquer comme arrosé"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Ajouter de la pluie manuelle"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Reprendre en automatique"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Brumiser la nuit"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Reprise automatique"
       }
     },
     "sensor": {
@@ -911,10 +911,10 @@
         "name": "Brumisation aujourd'hui"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Taux de réussite des sauts selon prévisions"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Pluie aujourd'hui"
       },
       "wu_station": {
         "name": "Station {station}"
@@ -1148,16 +1148,16 @@
       "description": "Envoie maintenant le résumé hebdomadaire à chaque téléphone ayant une zone avec un jour de Résumé hebdomadaire défini — un aperçu ; les compteurs de la semaine continuent jusqu'à l'envoi programmé."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Ajouter de la pluie",
+      "description": "Enregistre la pluie relevée manuellement sur un pluviomètre manuel. Elle compte comme la pluie d'un pluviomètre pour le crédit de pluie, l'arrosage en profondeur et le ressuyage, mais pas pour les vérifications de 30 minutes « il pleut ». Dans une zone équipée de son propre pluviomètre, la valeur la plus élevée des deux est retenue, jamais la somme.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Quantité",
+          "description": "Pluie dans les unités de la zone (mm, ou pouces dans une zone impériale)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Quand",
+          "description": "Quand la pluie est tombée (par défaut maintenant). Au maximum 14 jours en arrière."
         },
         "device_id": {
           "name": "Appareil de la zone",
@@ -1202,16 +1202,16 @@
       "message": "Cette zone n'a pas de vanne et ne peut donc pas arroser. Ajoutez une vanne sous Configurer si vous le souhaitez."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Réglez d'abord la quantité de Pluie manuelle au-dessus de 0."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "La pluie manuelle s'applique uniquement aux zones extérieures."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Impossible d'enregistrer de la pluie pour une date ou heure future."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "La pluie peut être saisie au maximum 14 jours en arrière."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "Le capteur de température intérieure principal de la zone {zone} ({entity}) indique {main} tandis que le capteur de secours indique {backup}, avec un écart important depuis un moment. L'un d'eux est probablement défectueux ou mal positionné (ex. exposé directement au soleil ou près du chauffage). Vérifiez les deux. Ce problème se résoudra de lui-même lorsqu'ils seront de nouveau d'accord."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Pluie Weather Underground : aucune donnée",
+      "description": "Aucune des stations Weather Underground sélectionnées n'a envoyé de relevé de pluie exploitable depuis {hours} heures, donc les zones qui l'utilisent fonctionnent comme si elles n'avaient pas de pluviomètre. Vérifiez les stations sur wunderground.com, ou choisissez-en d'autres sous Configurer dans l'entrée Weather Underground. Ce problème se résoudra automatiquement dès le retour des données."
     }
   }
 }

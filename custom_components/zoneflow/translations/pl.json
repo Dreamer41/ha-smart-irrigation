@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Dodaj strefę",
+          "weather_underground": "Skonfiguruj deszcz Weather Underground"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Deszcz Weather Underground (eksperymentalne)",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Klucz API",
+          "radius_km": "Promień wyszukiwania"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Wybierz 1–3 stacje",
+        "description": "Stacje w promieniu, najbliższe jako pierwsze, z dzisiejszym deszczem. Wybierz maksymalnie 3. Przy 3 stacjach ZoneFlow używa środkowego odczytu; przy 2 – niższego; 1 stacja działa, ale jest mniej niezawodna. W przypadku stacji oddalonych o ponad 1 km porównuj ich odczyty z deszczem u Siebie przez pewien czas, zanim im zaufasz.",
         "data": {
-          "stations": "Stations"
+          "stations": "Stacje"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Maksymalnie 3. Przed zaufaniem sprawdź, czy dzisiejszy deszcz na każdej stacji wygląda prawidłowo."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "Inna strefa ZoneFlow używa już jednego z tych urządzeń.",
       "valve_or_device_required": "Wybierz zawór lub co najmniej jedno urządzenie klimatyzacyjne.",
       "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground odrzucił klucz API.",
+      "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
+      "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
+      "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "Deszcz Weather Underground jest już skonfigurowany."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Zawór, czujniki i urządzenia klimatyzacyjne",
           "watering": "Ustawienia podawania wody",
           "zone_type": "Typ strefy",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Deszcz Weather Underground"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Deszcz Weather Underground (eksperymentalne)",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Klucz API",
+          "radius_km": "Promień wyszukiwania"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Wybierz 1–3 stacje",
+        "description": "Stacje w promieniu, najbliższe jako pierwsze, z dzisiejszym deszczem. Wybierz maksymalnie 3. Przy 3 stacjach ZoneFlow używa środkowego odczytu; przy 2 – niższego; 1 stacja działa, ale jest mniej niezawodna. W przypadku stacji oddalonych o ponad 1 km porównuj ich odczyty z deszczem u Siebie przez pewien czas, zanim im zaufasz.",
         "data": {
-          "stations": "Stations"
+          "stations": "Stacje"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Maksymalnie 3. Przed zaufaniem sprawdź, czy dzisiejszy deszcz na każdej stacji wygląda prawidłowo."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Deszcz Weather Underground",
+        "description": "Użyj deszczu ze stacji Weather Underground dla tej strefy (nie ma deszczomierza). Eksperymentalne: nie w 100% dokładne.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Używaj deszczu Weather Underground"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Tylko dla stref bez deszczomierza. Najpierw skonfiguruj wpis Weather Underground."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Wybierz zawór lub co najmniej jedno urządzenie klimatyzacyjne.",
       "valve_required_outdoor": "Strefa zewnętrzna wymaga zaworu. Najpierw dodaj go w sekcji Zawór, czujniki i urządzenia klimatyzacyjne.",
       "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground odrzucił klucz API.",
+      "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
+      "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
+      "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Czujnik offline po"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Ręczny deszcz"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Czas automatycznego wznowienia"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Oznacz jako podlane"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Dodaj ręczny deszcz"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Wznów automatykę"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Zamgławianie w nocy"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Wznowienie automatyczne"
       }
     },
     "sensor": {
@@ -911,13 +911,13 @@
         "name": "Dzisiejsze zamgławianie"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Trafność pominięć na podstawie prognozy"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Deszcz dzisiaj"
       },
       "wu_station": {
-        "name": "Station {station}"
+        "name": "Stacja {station}"
       }
     },
     "select": {
@@ -1148,16 +1148,16 @@
       "description": "Wysyła teraz podsumowanie tygodnia na każdy telefon, który ma strefę z ustawionym dniem podsumowania – jako podgląd; liczniki tygodnia biegną dalej aż do zaplanowanego podsumowania."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Dodaj deszcz",
+      "description": "Zapisuje deszcz odczytany ręcznie ze zwykłego deszczomierza. Liczy się tak jak deszcz z deszczomierza do kredytu deszczowego, głębokiego nawadniania i przesychania, ale nie do 30-minutowych kontroli „pada teraz”. W strefie z własnym deszczomierzem brana jest pod uwagę wyższa z dwóch wartości, nigdy ich suma.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Ilość",
+          "description": "Deszcz w jednostkach strefy (mm lub cale w strefie z jednostkami imperialnymi)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Kiedy",
+          "description": "Kiedy padał deszcz (domyślnie teraz). Maksymalnie do 14 dni wstecz."
         },
         "device_id": {
           "name": "Urządzenie strefy",
@@ -1202,16 +1202,16 @@
       "message": "Ta strefa nie ma zaworu, więc nie może podlewać. Dodaj zawór w sekcji Konfiguracja, jeśli tego chcesz."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Najpierw ustaw ilość dla Ręczny deszcz na wartość większą niż 0."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "Ręczny deszcz jest przeznaczony tylko dla stref zewnętrznych."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Deszczu nie można wprowadzić dla czasu v przyszłości."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "Deszcz można wprowadzić maksymalnie do 14 dni wstecz."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "Główny czujnik temperatury wewnętrznej w strefie {zone} ({entity}) wskazuje {main}, podczas gdy zapasowy wskazuje {backup}, i różnią się znacznie od dłuższego czasu. Jeden z nich jest prawdopodobnie uszkodzony lub źle umieszczony (w bezpośrednim słońcu, obok grzejnika). Sprawdź oba. Problem ustąpi samoistnie, gdy zaczną się zgadzać."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Deszcz Weather Underground: brak danych",
+      "description": "Żadna z wybranych stacji Weather Underground nie przesłała przydatnego odczytu deszczu od {hours} godzin, więc strefy z niej korzystające działają tak, jakby nie miały deszczomierza. Sprawdź stacje na wunderground.com lub wybierz inne w opcji Konfiguruj przy wpisie Weather Underground. Ten komunikat zniknie automatycznie, gdy dane powrócą."
     }
   }
 }

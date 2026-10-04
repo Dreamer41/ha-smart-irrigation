@@ -230,8 +230,8 @@
       "misting": "Mlžení ({temp}, {humidity})",
       "gate_blocked": "Nevětrá se: venkovní vzduch ({outside}) není chladnější než vnitřní ({temp})",
       "idle": "Vše v pořádku: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} přepnuto ručně: automatika opětně od {time}",
+      "held_until_resume": "{device} přepnuto ručně: automatika se obnoví po stisknutí Obnovit automatiku"
     },
     "heater_mode": {
       "off": "vypnuto",

@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Zone toevoegen",
+          "weather_underground": "Weather Underground-regen instellen"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground regen (experimenteel)",
+        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen worden alleen gebruikt voor regenkrediet. Ze zijn niet 100% nauwkeurig, en hoe verder de stations van je zones liggen, hoe minder nauwkeurig ze zijn.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API-sleutel",
+          "radius_km": "Zoekradius"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Uit je Weather Underground-account (API Keys). Alleen opgeslagen in deze vermelding.",
+          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Kies 1-3 stations",
+        "description": "Stations binnen de radius, dichtstbijzijnde eerst, met de regen van vandaag. Kies er maximaal 3. Bij 3 gebruikt ZoneFlow de middelste meting; bij 2 de lagere; 1 station werkt, maar is minder betrouwbaar. Vergelijk bij stations op meer dan 1 km afstand hun metingen een tijdje met de regen bij jou thuis voordat je ze vertrouwt.",
         "data": {
           "stations": "Stations"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Maximaal 3. Controleer of de regen van vandaag voor elk station klopt voordat je erop vertrouwt."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "Een andere ZoneFlow-zone gebruikt al een van deze apparaten.",
       "valve_or_device_required": "Kies een klep, of ten minste één klimaatapparaat.",
       "backup_same_as_inside": "Een reservesensor kan niet dezelfde zijn als de hoofd-binnentemperatuursensor.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground heeft de API-sleutel geweigerd.",
+      "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
+      "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
+      "wu_pick_1_to_3": "Kies 1, 2 of 3 stations."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "Weather Underground-regen is al ingesteld."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Klep, sensoren en klimaatapparaten",
           "watering": "Bewateringsinstellingen",
           "zone_type": "Zonetype",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Weather Underground-regen"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground regen (experimenteel)",
+        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen worden alleen gebruikt voor regenkrediet. Ze zijn niet 100% nauwkeurig, en hoe verder de stations van je zones liggen, hoe minder nauwkeurig ze zijn.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API-sleutel",
+          "radius_km": "Zoekradius"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Uit je Weather Underground-account (API Keys). Alleen opgeslagen in deze vermelding.",
+          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Kies 1-3 stations",
+        "description": "Stations binnen de radius, dichtstbijzijnde eerst, met de regen van vandaag. Kies er maximaal 3. Bij 3 gebruikt ZoneFlow de middelste meting; bij 2 de lagere; 1 station werkt, maar is minder betrouwbaar. Vergelijk bij stations op meer dan 1 km afstand hun metingen een tijdje met de regen bij jou thuis voordat je ze vertrouwt.",
         "data": {
           "stations": "Stations"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Maximaal 3. Controleer of de regen van vandaag voor elk station klopt voordat je erop vertrouwt."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Weather Underground-regen",
+        "description": "Gebruik de regen van de Weather Underground-stations voor deze zone (deze heeft geen regenmeter). Experimenteel: niet 100% nauwkeurig.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Gebruik Weather Underground-regen"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Alleen voor zones zonder regenmeter. Stel eerst de Weather Underground-vermelding in."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Kies een klep, of ten minste één klimaatapparaat.",
       "valve_required_outdoor": "Een buitenzone heeft een klep nodig. Voeg er eerst een toe onder Klep, sensoren en klimaatapparaten.",
       "backup_same_as_inside": "Een reservesensor kan niet dezelfde zijn als de hoofd-binnentemperatuursensor.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground heeft de API-sleutel geweigerd.",
+      "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
+      "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
+      "wu_pick_1_to_3": "Kies 1, 2 of 3 stations."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Sensor offline na"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Handmatige regen"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Automatisch hervatten na"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Markeer als bewaterd"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Handmatige regen toevoegen"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Automatisch hervatten"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Nevelen 's nachts"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Automatisch hervatten"
       }
     },
     "sensor": {
@@ -911,10 +911,10 @@
         "name": "Nevelen vandaag"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Nauwkeurigheid voorspellingsoverslag"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Regen vandaag"
       },
       "wu_station": {
         "name": "Station {station}"
@@ -1148,16 +1148,16 @@
       "description": "Stuurt het weekoverzicht nu naar elke telefoon met een zone waarvoor een dag voor het Weekoverzicht is ingesteld -- een voorproefje; de tellingen van de week lopen door tot het geplande overzicht."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Regen toevoegen",
+      "description": "RRegistreert regen die handmatig is afgelezen van een eenvoudige regenmeter. Telt als regenmeterregen voor het regenkrediet, diepe bewatering en de opdroogtijd, maar niet voor de 30-minuten controle \"het regent nu\". In een zone met een eigene regenmeter telt de hoogste van de twee, nooit de som.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Hoeveelheid",
+          "description": "Regen in de eenheden van de zone (mm, of inches bij een imperiale zone)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Wanneer",
+          "description": "Wanneer de regen viel (standaard nu). Maximaal 14 dagen terug."
         },
         "device_id": {
           "name": "Zone-apparaat",
@@ -1202,16 +1202,16 @@
       "message": "Deze zone heeft geen klep en kan dus niet bewateren. Voeg een klep toe onder Configureren als u dit wilt."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Stel eerst de hoeveelheid Handmatige regen in op meer dan 0."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "Handmatige regen is alleen bedoeld voor buitenzones."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Regen kan niet voor een zukomstige tijd worden ingevoerd."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "Regen kan maximaal 14 dagen terug worden ingevoerd."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "De hoofd-binnentemperatuursensor van zone {zone} ({entity}) geeft {main} aan terwijl de reservesensor {backup} aangeeft, en ze lopen al een tijdje ver uiteen. Een van beide is waarschijnlijk defect of verkeerd geplaatst (in direct zonlicht, naast de verwarming). Controleer beide. Dit herstelt automatisch zodra ze weer overeenkomen."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Weather Underground regen: geen gegevens",
+      "description": "Geen van de gekozen Weather Underground-stations heeft gedurende {hours} uur een bruikbare regenmeting verzonden, dus zones die hier gebruik van maken werken alsof ze geen regenmeter hebben. Controleer de stations op wunderground.com, eller kies andere onder Configureer bij de Weather Underground-vermelding. Dit wordt automatisch opgelost zodra er weer gegevens binnenkomen."
     }
   }
 }

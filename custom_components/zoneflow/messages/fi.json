@@ -230,8 +230,8 @@
       "misting": "Sumuttaa ({temp}, {humidity})",
       "gate_blocked": "Ei tuuleteta: ulkoilma ({outside}) ei ole viileämpää kuin sisäilma ({temp})",
       "idle": "Kaikki hyvin: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} kytketty käsin: automatiikka palaa {time}",
+      "held_until_resume": "{device} kytketty käsin: automatiikka palaa, kun painat Palauta automatiikka"
     },
     "heater_mode": {
       "off": "pois päältä",

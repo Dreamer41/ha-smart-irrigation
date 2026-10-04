@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Додати зону",
+          "weather_underground": "Налаштувати дощ Weather Underground"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Дощ Weather Underground (експериментально)",
+        "description": "Використовує показники дощу з приватних метеостанцій поблизу вашого саду для зовнішніх зон БЕЗ дощоміра. Маєте дощомір? Це вам не нужно.\n\n**Спочатку** перевірте карту на wunderground.com на наявність станцій у межах кількох км від вашого саду, які повідомляють про дощ. Якщо таких немає, зупиніться тут.\n\n**По-друге**, безкоштовний ключ API потребує власної метеостанції: зареєструйте її на wunderground.com та надсилайте щонайменше зовнішню температуру та вологість (наприклад, за допомогою інтеграції ha-weather-uploader). Ключ API з'явиться у вашому обліковому записі Weather Underground.\n\nПоказники використовуються лише для компенсації опадів. Вони не на 100 % точні, і чим далі станції від ваших зон, тим менша точність.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Ключ API",
+          "radius_km": "Радіус пошуку"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "З вашого облікового запису Weather Underground (API Keys). Зберігається лише в цьому записі.",
+          "radius_km": "0,5–2 км, чим ближче, тим краще: кількість опадів може сильно відрізнятися на відстані в пару км. Понад 1 км стежте за тим, як показники відповідають дощу у вас."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Оберіть 1–3 станції",
+        "description": "Станції в межах радіуса, спочатку найближчі, з даними про дощ за сьогодні. Оберіть до 3. При 3 станціях ZoneFlow використовує середнє значення; при 2 — менше; 1 станція працює, але менш надійна. Для станцій далі 1 км перший час порівнюйте їхні показники з дощем у вас, перш ніж довіряти їм.",
         "data": {
-          "stations": "Stations"
+          "stations": "Станції"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "До 3. Перш ніж довіряти даним, переконайтеся, що сьогоднішній дощ на кожній станції виглядає правдоподібно."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "Один із цих пристроїв уже використовується в іншій зоні ZoneFlow.",
       "valve_or_device_required": "Оберіть клапан або принаймні один пристрій клімат-контролю.",
       "backup_same_as_inside": "Резервний датчик не може бути основним внутрішнім датчиком температури.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground відхилив ключ API.",
+      "wu_cannot_connect": "Не вдалося з'єднатися з Weather Underground. Спробуйте пізніше.",
+      "wu_no_stations": "Немає станцій у межах радіуса. Без метеостанції поблизу ця функція не допоможе.",
+      "wu_pick_1_to_3": "Оберіть 1, 2 або 3 станції."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "Дощ Weather Underground вже налаштовано."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Клапан, датчики та пристрої клімату",
           "watering": "Налаштування поливу",
           "zone_type": "Тип зони",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Дощ Weather Underground"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Дощ Weather Underground (експериментально)",
+        "description": "Використовує показники дощу з приватних метеостанцій поблизу вашого саду для зовнішніх зон БЕЗ дощоміра. Маєте дощомір? Це вам не нужно.\n\n**Спочатку** перевірте карту на wunderground.com на наявність станцій у межах кількох км від вашого саду, які повідомляють про дощ. Якщо таких немає, зупиніться тут.\n\n**По-друге**, безкоштовний ключ API потребує власної метеостанції: зареєструйте її на wunderground.com та надсилайте щонайменше зовнішню температуру та вологість (наприклад, за допомогою інтеграції ha-weather-uploader). Ключ API з'явиться у вашому обліковому записі Weather Underground.\n\nПоказники використовуються лише для компенсації опадів. Вони не на 100 % точні, і чим далі станції від ваших зон, тим менша точність.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Ключ API",
+          "radius_km": "Радіус пошуку"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "З вашого облікового запису Weather Underground (API Keys). Зберігається лише в цьому записі.",
+          "radius_km": "0,5–2 км, чим ближче, тим краще: кількість опадів може сильно відрізнятися на відстані в пару км. Понад 1 км стежте за тим, як показники відповідають дощу у вас."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Оберіть 1–3 станції",
+        "description": "Станції в межах радіуса, спочатку найближчі, з даними про дощ за сьогодні. Оберіть до 3. При 3 станціях ZoneFlow використовує середнє значення; при 2 — менше; 1 станція працює, але менш надійна. Для станцій далі 1 км перший час порівнюйте їхні показники з дощем у вас, перш ніж довіряти їм.",
         "data": {
-          "stations": "Stations"
+          "stations": "Станції"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "До 3. Перш ніж довіряти даним, переконайтеся, що сьогоднішній дощ на кожній станції виглядає правдоподібно."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Дощ Weather Underground",
+        "description": "Використовувати дані про дощ зі станцій Weather Underground для цієї зони (у неї немає дощоміра). Експериментально: точність не 100 %.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Використовувати дощ Weather Underground"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Лише для зон без дощоміра. Спочатку налаштуйте запис Weather Underground."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Оберіть клапан або принаймні один пристрій клімат-контролю.",
       "valve_required_outdoor": "Зовнішня зона потребує клапана. Спочатку додайте його в меню «Клапан, датчики та пристрої клімату».",
       "backup_same_as_inside": "Резервний датчик не може бути основним внутрішнім датчиком температури.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground відхилив ключ API.",
+      "wu_cannot_connect": "Не вдалося з'єднатися з Weather Underground. Спробуйте пізніше.",
+      "wu_no_stations": "Немає станцій у межах радіуса. Без метеостанції поблизу ця функція не допоможе.",
+      "wu_pick_1_to_3": "Оберіть 1, 2 або 3 станції."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Датчик офлайн через"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Ручний ввід дощу"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Автоматичне відновлення через"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Позначити полив"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Додати ручний дощ"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Vidnovyty avtomatyku"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Туман уночі"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Автоматичне відновлення"
       }
     },
     "sensor": {
@@ -911,13 +911,13 @@
         "name": "Туманоутворення сьогодні"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Точність пропусків за прогнозом"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Дощ сьогодні"
       },
       "wu_station": {
-        "name": "Station {station}"
+        "name": "Станція {station}"
       }
     },
     "select": {
@@ -1148,16 +1148,16 @@
       "description": "Надсилає тижневий підсумок зараз на кожен телефон, для якого є зона із заданим днем тижневого підсумку -- це попередній перегляд; лічильники тижня тривають до планового підсумку."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Додати дощ",
+      "description": "Фіксує дощ, виміряний вручну з простого дощоміра. Враховується так само, як і дощ з дощоміра для компенсації опадів, глибокого поливу та просихання, але не для 30-хвилинних перевірок «зараз йде дощ». У зоні з власним дощоміром враховується більше з двох значень, а не їхня сума.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Кількість",
+          "description": "Дощ у одиницях вимірювання зони (мм або дюйми в імперській зоні)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Коли",
+          "description": "Коли йшов дощ (за замовчуванням зараз). Максимум за останні 14 днів."
         },
         "device_id": {
           "name": "Пристрій зони",
@@ -1202,16 +1202,16 @@
       "message": "Ця зона не має клапана, тому не може здійснювати полив. Додайте клапан у меню «Налаштувати», якщо це необхідно."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Спочатку встановіть значення для Ручний ввід дощу більше 0."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "Ручний ввід дощу призначений лише для зовнішніх зон."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Не можна вводити дані про дощ для майбутнього часу."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "Дощ можна ввести максимум за останні 14 днів."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "Основний датчик температури всередині зони {zone} ({entity}) показує {main}, а резервний — {backup}, і їхні показники тривалий час суттєво відрізняються. Один із них може бути несправним або невдало розміщеним (під прямим сонцем, поруч із обігрівачем). Перевірте обидва. Повідомлення зникне автоматично, коли показники збігатимуться."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Дощ Weather Underground: немає даних",
+      "description": "Жодна з вибраних станцій Weather Underground не надсилала придатних даних про дощ протягом {hours} год., тому зони, які її використовують, працюють так, ніби у них немає дощоміра. Перевірте станції на wunderground.com або виберіть інші в пункті Налаштувати для інтеграції Weather Underground. Це зникне автоматично, щойно дані знову з'являться."
     }
   }
 }

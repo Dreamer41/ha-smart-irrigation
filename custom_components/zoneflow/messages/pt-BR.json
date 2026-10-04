@@ -230,8 +230,8 @@
       "misting": "Nebulizando ({temp}, {humidity})",
       "gate_blocked": "Sem ventilação: ar externo ({outside}) não está mais frio que o interno ({temp})",
       "idle": "Tudo certo: {temp}, {humidity}",
-      "held_until": "{device} switched by hand: automatic again {time}",
-      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
+      "held_until": "{device} alterado manualmente: modo automático de novo às {time}",
+      "held_until_resume": "{device} alterado manualmente: modo automático de novo ao pressionar Retomar automático"
     },
     "heater_mode": {
       "off": "desligado",

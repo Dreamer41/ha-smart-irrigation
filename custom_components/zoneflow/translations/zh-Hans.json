@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "添加区域",
+          "weather_underground": "设置 Weather Underground 降雨"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground 降雨（实验性）",
+        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n这些读数仅用于计算降雨抵扣。数据并非 100% 准确，气象站距离您的区域越远，准确度就越低。",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API 密钥",
+          "radius_km": "搜索半径"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "来自您的 Weather Underground 账户（API Keys）。仅保存在此条目中。",
+          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。"
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "选择 1-3 个气象站",
+        "description": "半径范围内的气象站，按由近到远排列，并显示今日降雨量。最多可选择 3 个。选择 3 个时，ZoneFlow 将使用中间读数；选择 2 个时使用较低的读数；仅选 1 个可以工作但可靠性较低。对于距离超过 1 公里的气象站，请在信任其数据前先与您所在位置的实际降雨对比一段时间。",
         "data": {
-          "stations": "Stations"
+          "stations": "气象站"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "最多 3 个。在信任各个气象站的数据之前，请先确认其今日降雨量是否合理。"
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "另一个 ZoneFlow 分区已经使用了这些设备中的某一个。",
       "valve_or_device_required": "请选择一个阀门，或至少选择一个环境控制设备。",
       "backup_same_as_inside": "备用传感器不能与主室内温度传感器相同。",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground 拒绝了该 API 密钥。",
+      "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
+      "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
+      "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。"
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "Weather Underground 降雨功能已设置。"
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "阀门、传感器与环境设备",
           "watering": "浇水设置",
           "zone_type": "分区类型",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Weather Underground 降雨"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground 降雨（实验性）",
+        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n这些读数仅用于计算降雨抵扣。数据并非 100% 准确，气象站距离您的区域越远，准确度就越低。",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API 密钥",
+          "radius_km": "搜索半径"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "来自您的 Weather Underground 账户（API Keys）。仅保存在此条目中。",
+          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。"
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "选择 1-3 个气象站",
+        "description": "半径范围内的气象站，按由近到远排列，并显示今日降雨量。最多可选择 3 个。选择 3 个时，ZoneFlow 将使用中间读数；选择 2 个时使用较低的读数；仅选 1 个可以工作但可靠性较低。对于距离超过 1 公里的气象站，请在信任其数据前先与您所在位置的实际降雨对比一段时间。",
         "data": {
-          "stations": "Stations"
+          "stations": "气象站"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "最多 3 个。在信任各个气象站的数据之前，请先确认其今日降雨量是否合理。"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Weather Underground 降雨",
+        "description": "对此区域使用来自 Weather Underground 气象站的降雨数据（该区域未配备雨量计）。实验性功能：并非 100% 准确。",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "使用 Weather Underground 降雨数据"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "仅适用于未配备雨量计的区域。请先设置 Weather Underground 条目。"
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "请选择一个阀门，或至少选择一个环境控制设备。",
       "valve_required_outdoor": "室外分区必须配置阀门。请先在“阀门、传感器与环境设备”中添加一个阀门。",
       "backup_same_as_inside": "备用传感器不能与主室内温度传感器相同。",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground 拒绝了该 API 密钥。",
+      "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
+      "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
+      "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。"
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "传感器离线判定时间"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "手动降雨"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "自动恢复延迟"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "标记为已浇水"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "添加手动降雨"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "恢复自动"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "夜间喷雾"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "自动恢复"
       }
     },
     "sensor": {
@@ -911,13 +911,13 @@
         "name": "今日喷雾时长"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "预测跳过准确率"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "今日降雨"
       },
       "wu_station": {
-        "name": "Station {station}"
+        "name": "气象站 {station}"
       }
     },
     "select": {
@@ -1148,16 +1148,16 @@
       "description": "立即向所有设置了“每周总结”日期的区域所对应的手机发送每周总结——仅作预览；本周的统计会继续累计，直到计划发送的那一次。"
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "添加降雨",
+      "description": "记录从普通雨量计手动读取的降雨量。在计算降雨抵扣、深层浇灌和土壤干燥时长时，其作用与雨量计相同，但不用于 30 分钟的“正在下雨”检测。在自带雨量计的区域中，取两者中的较大值，而不是两者之和。",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "降雨量",
+          "description": "按该区域的单位计算的降雨量（毫米，或英制区域的英寸）。"
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "时间",
+          "description": "降雨发生的具体时间（默认为“现在”）。最多只能回溯 14 天。"
         },
         "device_id": {
           "name": "区域设备",
@@ -1202,16 +1202,16 @@
       "message": "该分区未配置阀门，因此无法进行浇水。如果需要浇水，请在“配置”中添加阀门。"
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "请先将“手动降雨”数值设置为大于 0。"
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "手动降雨仅适用于室外区域。"
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "无法为未来时间输入降雨量。"
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "最多只能输入过去 14 天内的降雨量。"
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "分区 {zone} 的主室内温度传感器（{entity}）读数为 {main}，而备用传感器读数为 {backup}，两者偏差较大且已持续一段时间。其中一个传感器可能存在故障或位置摆放不当（例如处于阳光直射下或紧挨着加热器）。请检查这两个传感器。一旦读数恢复一致，此警告将自动清除。"
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Weather Underground 降雨：无数据",
+      "description": "所选的 Weather Underground 气象站在过去 {hours} 小时内均未发送可用的降雨读数，因此使用该气象站的区域将按没有雨量计的情况运行。请在 wunderground.com 上检查这些气象站，或在 Weather Underground 条目的“配置”下选择其他气象站。一旦数据恢复，此提示将自动消失。"
     }
   }
 }

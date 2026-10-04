@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Zóna hozzáadása",
+          "weather_underground": "Weather Underground eső beállítása"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground eső (kísérleti)",
+        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nA méréseket csak az esőjóváíráshoz használjuk. Nem 100%-os pontosságúak, és minél távolabb vannak az állomások a zónáktól, annál kevésbé pontosak.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API-kulcs",
+          "radius_km": "Keresési sugár"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "A Weather Underground fiókjából (API Keys). Csak ebben a bejegyzésben tárolódik.",
+          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Válasszon 1–3 állomást",
+        "description": "Állomások a keresési sugáron belül, a legközelebbi legelöl, a mai esővel. Válasszon legfeljebb 3-at. 3 állomásnál a ZoneFlow a középső értéket használja; 2-nél az alacsonyabbat; 1 állomás működik, de kevésbé megbízható. Az 1 km-nél távolabbi állomások méréseit hasonlítsa össze a helyi esővel egy ideig, mielőtt megbízna bennük.",
         "data": {
-          "stations": "Stations"
+          "stations": "Állomások"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Legfeljebb 3. Ellenőrizze, hogy az egyes állomások mai esőadatai reálisnak tűnnek-e, mielőtt megbízna bennük."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "Egy másik ZoneFlow zóna már használja ezen eszközök egyikét.",
       "valve_or_device_required": "Válasszon egy szelepet vagy legalább egy klímaeszközt.",
       "backup_same_as_inside": "A tartalék érzékelő nem lehet ugyanaz, mint a fő belső hőmérséklet-érzékelő.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "A Weather Underground visszautasította az API-kulcsot.",
+      "wu_cannot_connect": "Nem sikerült csatlakozni a Weather Underground szolgáltatáshoz. Próbálja újra később.",
+      "wu_no_stations": "Nincsenek állomások a sugáron belül. Közeli állomás nélkül ez a funkció nem segít.",
+      "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "A Weather Underground eső már be van állítva."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Szelep, érzékelők és klímaeszközök",
           "watering": "Öntözési beállítások",
           "zone_type": "Zónatípus",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Weather Underground eső"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground eső (kísérleti)",
+        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nA méréseket csak az esőjóváíráshoz használjuk. Nem 100%-os pontosságúak, és minél távolabb vannak az állomások a zónáktól, annál kevésbé pontosak.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "API-kulcs",
+          "radius_km": "Keresési sugár"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "A Weather Underground fiókjából (API Keys). Csak ebben a bejegyzésben tárolódik.",
+          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Válasszon 1–3 állomást",
+        "description": "Állomások a keresési sugáron belül, a legközelebbi legelöl, a mai esővel. Válasszon legfeljebb 3-at. 3 állomásnál a ZoneFlow a középső értéket használja; 2-nél az alacsonyabbat; 1 állomás működik, de kevésbé megbízható. Az 1 km-nél távolabbi állomások méréseit hasonlítsa össze a helyi esővel egy ideig, mielőtt megbízna bennük.",
         "data": {
-          "stations": "Stations"
+          "stations": "Állomások"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Legfeljebb 3. Ellenőrizze, hogy az egyes állomások mai esőadatai reálisnak tűnnek-e, mielőtt megbízna bennük."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Weather Underground eső",
+        "description": "Használja a Weather Underground állomások esőadatait ehhez a zónához (nincs csapadékmérője). Kísérleti: nem 100%-os pontosságú.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Weather Underground eső használata"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Csak csapadékmérő nélküli zónákhoz. Először állítsa be a Weather Underground bejegyzést."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Válasszon egy szelepet vagy legalább egy klímaeszközt.",
       "valve_required_outdoor": "A kültéri zónához szelep szükséges. Először adjon hozzá egyet a Szelep, érzékelők és klímaeszközök menüpontban.",
       "backup_same_as_inside": "A tartalék érzékelő nem lehet ugyanaz, mint a fő belső hőmérséklet-érzékelő.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "A Weather Underground visszautasította az API-kulcsot.",
+      "wu_cannot_connect": "Nem sikerült csatlakozni a Weather Underground szolgáltatáshoz. Próbálja újra később.",
+      "wu_no_stations": "Nincsenek állomások a sugáron belül. Közeli állomás nélkül ez a funkció nem segít.",
+      "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Érzékelő offline ennyi után"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Kézi eső"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Automatikus folytatás késleltetése"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Megjelölés öntözöttként"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Kézi eső hozzáadása"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Automatika folytatása"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Párásítás éjszaka"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Automatikus folytatás"
       }
     },
     "sensor": {
@@ -911,13 +911,13 @@
         "name": "Párásítás ma"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Előrejelzési kihagyások találati aránya"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Eső ma"
       },
       "wu_station": {
-        "name": "Station {station}"
+        "name": "Állomás {station}"
       }
     },
     "select": {
@@ -1148,16 +1148,16 @@
       "description": "Most elküldi a heti összesítőt minden telefonra, amelyhez tartozik beállított heti összesítő nappal rendelkező zóna – ez csak előnézet; a heti számlálás az ütemezett összesítőig folytatódik."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Eső hozzáadása",
+      "description": "Rögzíti az egyszerű csapadékmérőből kézzel leolvasott esőt. Ugyanúgy számít, mint a csapadékmérő esője az esőjóváírásnál, a mélyöntözésnél és a kiszáradásnál, de nem a 30 perces „most esik” ellenőrzéseknél. Saját csapadékmérővel rendelkező zónánál a két érték közül a magasabb számít, sohasem az összegük.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Mennyiség",
+          "description": "Eső a zóna mértékegségében (mm, vagy hüvelyk az imperiális zónáknál)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Mikor",
+          "description": "Mikor esett az eső (alapértelmezett: most). Legfeljebb 14 napra visszamenőleg."
         },
         "device_id": {
           "name": "Zóna eszköze",
@@ -1202,16 +1202,16 @@
       "message": "Ez a zóna nem rendelkezik szeleppel, így nem tud öntözni. Adjon hozzá egy szelepet a Beállítások menüben, ha szeretné."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Először állítsa a Kézi eső mennyiségét 0 fölé."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "A kézi eső csak szabadtéri zónáknál használható."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Jövőbeli időpontra nem rögzíthető eső."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "Eső legfeljebb 14 napra visszamenőleg rögzíthető."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "A(z) {zone} zóna elsődleges belső hőmérséklet-érzékelője ({entity}) {main} értéket mutat, míg a tartalék {backup} értéket, és egy ideje jelentős az eltérés. Az egyik valószínűleg hibás vagy rossz helyre van szerelve (közvetlen napsütésben, fűtőtest mellett). Ellenőrizze mindkettőt. Ez a probléma magától megszűnik, amint egyeznek az értékek."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Weather Underground eső: nincs adat",
+      "description": "A kiválasztott Weather Underground állomások egyike sem küldött használható esőadatot {hours} órája, így az ezt használó zónák úgy működnek, mintha nem lenne csapadékmérőjük. Ellenőrizze az állomásokat a wunderground.com oldalon, vagy válasszon másokat a Weather Underground bejegyzés Beállítás gombjánál. Ez a hiba magától megszűnik, amint újra érkeznek adatok."
     }
   }
 }

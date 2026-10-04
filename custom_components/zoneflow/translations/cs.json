@@ -176,30 +176,30 @@
       "start": {
         "title": "ZoneFlow",
         "menu_options": {
-          "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "zone": "Přidat zónu",
+          "weather_underground": "Nastavit srážky Weather Underground"
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground déšť (experimentální)",
+        "description": "Využívá údaje o dešti ze soukromých meteorologických stanic v blízkosti vaší zahrady pro venkovní zóny BEZ srážkoměru. Máte srážkoměr? Toto nepotřebujete.\n\n**Nejprve** zkontrolujte mapu na wunderground.com a vyhledejte stanice v okruhu několika km od vaší zahrady, které hlášení o dešti poskytují. Pokud žádné nejsou, zde skončete.\n\n**Za druhé**, bezplatný klíč API vyžaduje vaši vlastní stanici: zaregistrujte ji na wunderground.com a odesílejte alespoň venkovní teplotu a vlhkost (například pomocí integrace ha-weather-uploader). Klíč API pak najdete ve svém účtu Weather Underground.\n\nNaměřené hodnoty se používají pouze pro srážkový kredit. Nejso 100% přesné a čím dále jsou stanice od vašich zón, tím je přesnost nižší.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Klíč API",
+          "radius_km": "Rádius vyhledávání"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Z vašeho účtu Weather Underground (API Keys). Uloženo pouze v této položce.",
+          "radius_km": "0,5–2 km, čím blíže, tím lépe: srážky se mohou na vzdálenost několika km výrazně lišit. Nad 1 km sledujte, jak naměřené hodnoty odpovídají dešti u vás."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Vyberte 1–3 stanice",
+        "description": "Stanice v okruhu, nejbližší jako první, s dnešními srážkami. Vyberte až 3. Se 3 stanicemi použije ZoneFlow prostřední hodnotu, se 2 nižší z nich; 1 stanice funguje, ale je méně spolehlivá. U stanic vzdálených více než 1 km porovnejte před důvěrou jejich hodnoty s deštěm u vás.",
         "data": {
-          "stations": "Stations"
+          "stations": "Stanice"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Až 3. Před důvěrou zkontrolujte, zda dnešní srážky na každé stanici vypadají správně."
         }
       }
     },
@@ -213,13 +213,13 @@
       "device_already_used": "Jedno z těchto zařízení již používá jiná zóna ZoneFlow.",
       "valve_or_device_required": "Vyberte ventil nebo alespoň jedno klimatické zařízení.",
       "backup_same_as_inside": "Záložní snímač nemůže být hlavním snímačem vnitřní teploty.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground odmítl klíč API.",
+      "wu_cannot_connect": "Nelze se spojit s Weather Underground. Zkuste to znovu později.",
+      "wu_no_stations": "Žádné stanice v okruhu. Bez stanice v blízkosti vám tato funkce nepomůže.",
+      "wu_pick_1_to_3": "Vyberte 1, 2 nebo 3 stanice."
     },
     "abort": {
-      "already_configured": "Weather Underground rain is already set up."
+      "already_configured": "Srážky Weather Underground jsou již nastaveny."
     }
   },
   "options": {
@@ -233,7 +233,7 @@
           "greenhouse_devices": "Ventil, snímače a klimatická zařízení",
           "watering": "Nastavení zavlažování",
           "zone_type": "Typ zóny",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Dešťové srážky Weather Underground"
         }
       },
       "settings": {
@@ -395,35 +395,35 @@
         }
       },
       "wu_key": {
-        "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "title": "Weather Underground déšť (experimentální)",
+        "description": "Využívá údaje o dešti ze soukromých meteorologických stanic v blízkosti vaší zahrady pro venkovní zóny BEZ srážkoměru. Máte srážkoměr? Toto nepotřebujete.\n\n**Nejprve** zkontrolujte mapu na wunderground.com a vyhledejte stanice v okruhu několika km od vaší zahrady, které hlášení o dešti poskytují. Pokud žádné nejsou, zde skončete.\n\n**Za druhé**, bezplatný klíč API vyžaduje vaši vlastní stanici: zaregistrujte ji na wunderground.com a odesílejte alespoň venkovní teplotu a vlhkost (například pomocí integrace ha-weather-uploader). Klíč API pak najdete ve svém účtu Weather Underground.\n\nNaměřené hodnoty se používají pouze pro srážkový kredit. Nejso 100% přesné a čím dále jsou stanice od vašich zón, tím je přesnost nižší.",
         "data": {
-          "api_key": "API key",
-          "radius_km": "Search radius"
+          "api_key": "Klíč API",
+          "radius_km": "Rádius vyhledávání"
         },
         "data_description": {
-          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "api_key": "Z vašeho účtu Weather Underground (API Keys). Uloženo pouze v této položce.",
+          "radius_km": "0,5–2 km, čím blíže, tím lépe: srážky se mohou na vzdálenost několika km výrazně lišit. Nad 1 km sledujte, jak naměřené hodnoty odpovídají dešti u vás."
         }
       },
       "wu_stations": {
-        "title": "Pick 1-3 stations",
-        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "title": "Vyberte 1–3 stanice",
+        "description": "Stanice v okruhu, nejbližší jako první, s dnešními srážkami. Vyberte až 3. Se 3 stanicemi použije ZoneFlow prostřední hodnotu, se 2 nižší z nich; 1 stanice funguje, ale je méně spolehlivá. U stanic vzdálených více než 1 km porovnejte před důvěrou jejich hodnoty s deštěm u vás.",
         "data": {
-          "stations": "Stations"
+          "stations": "Stanice"
         },
         "data_description": {
-          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+          "stations": "Až 3. Před důvěrou zkontrolujte, zda dnešní srážky na každé stanici vypadají správně."
         }
       },
       "weather_underground": {
-        "title": "Weather Underground rain",
-        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "title": "Dešťové srážky Weather Underground",
+        "description": "Použít srážky ze stanic Weather Underground pro tuto zónu (nemá srážkoměr). Experimentální: není 100% přesné.",
         "data": {
-          "use_weather_underground": "Use Weather Underground rain"
+          "use_weather_underground": "Použít srážky Weather Underground"
         },
         "data_description": {
-          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+          "use_weather_underground": "Pouze pro zóny bez srážkoměru. Nejprve nastavte položku Weather Underground."
         }
       }
     },
@@ -444,10 +444,10 @@
       "valve_or_device_required": "Vyberte ventil nebo alespoň jedno klimatické zařízení.",
       "valve_required_outdoor": "Venkovní zóna vyžaduje ventil. Nejdříve jej přidejte v sekci Ventil, snímače a klimatická zařízení.",
       "backup_same_as_inside": "Záložní snímač nemůže být hlavním snímačem vnitřní teploty.",
-      "wu_invalid_key": "Weather Underground refused the API key.",
-      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
-      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_invalid_key": "Weather Underground odmítl klíč API.",
+      "wu_cannot_connect": "Nelze se spojit s Weather Underground. Zkuste to znovu později.",
+      "wu_no_stations": "Žádné stanice v okruhu. Bez stanice v blízkosti vám tato funkce nepomůže.",
+      "wu_pick_1_to_3": "Vyberte 1, 2 nebo 3 stanice."
     }
   },
   "selector": {
@@ -725,10 +725,10 @@
         "name": "Senzor offline po"
       },
       "manual_rain_mm": {
-        "name": "Manual Rain"
+        "name": "Ručně zadaný déšť"
       },
       "auto_resume_hours": {
-        "name": "Auto Resume After"
+        "name": "Zpoždění automatického návratu"
       }
     },
     "datetime": {
@@ -783,10 +783,10 @@
         "name": "Označit jako zalité"
       },
       "add_manual_rain": {
-        "name": "Add Manual Rain"
+        "name": "Přidat ručně zadaný déšť"
       },
       "resume_automatic": {
-        "name": "Resume Automatic"
+        "name": "Obnovit automatiku"
       }
     },
     "binary_sensor": {
@@ -820,7 +820,7 @@
         "name": "Mlžit v noci"
       },
       "auto_resume": {
-        "name": "Auto Resume"
+        "name": "Automatický návrat"
       }
     },
     "sensor": {
@@ -911,13 +911,13 @@
         "name": "Mlžení dnes"
       },
       "forecast_skip_hit_rate": {
-        "name": "Forecast Skip Hit Rate"
+        "name": "Úspěšnost přeskočení podle předpovědi"
       },
       "wu_rain_today": {
-        "name": "Rain today"
+        "name": "Dnešní déšť"
       },
       "wu_station": {
-        "name": "Station {station}"
+        "name": "Stanice {station}"
       }
     },
     "select": {
@@ -1148,16 +1148,16 @@
       "description": "Odešle týdenní souhrn hned na každý telefon, který má zónu s nastaveným dnem týdenního souhrnu -- jako náhled; týdenní počty běží dál až do naplánovaného souhrnu."
     },
     "add_rain": {
-      "name": "Add Rain",
-      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "name": "Přidat déšť",
+      "description": "Zaznamená déšť odečtený ručně z běžného srážkoměru. Počítá se stejně jako srážkoměr pro srážkový kredit, hlubokou zálivku a vysychání, ale ne pro 30minutové kontroly „právě prší“. Na zóně s vlastním srážkoměrem se započítává vyšší z obou hodnot, nikoli jejich součet.",
       "fields": {
         "amount": {
-          "name": "Amount",
-          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+          "name": "Množství",
+          "description": "Déšť v jednotkách zóny (mm, nebo palce v americké zóně)."
         },
         "when": {
-          "name": "When",
-          "description": "When the rain fell (default now). At most 14 days back."
+          "name": "Kdy",
+          "description": "Kdy pršelo (výchozí: nyní). Maximálně 14 dní zpětně."
         },
         "device_id": {
           "name": "Zařízení zóny",
@@ -1202,16 +1202,16 @@
       "message": "Tato zóna nemá žádný ventil, takže nemůže zavlažovat. Pokud chcete zavlažovat, přidejte ventil v nabídce Nastavit."
     },
     "manual_rain_zero": {
-      "message": "Set the Manual Rain amount above 0 first."
+      "message": "Nejprve nastavte hodnotu Ručně zadaného deště na více než 0."
     },
     "manual_rain_not_outdoor": {
-      "message": "Manual rain is only for outdoor zones."
+      "message": "Ručně zadaný déšť je určen pouze pro venkovní zóny."
     },
     "manual_rain_future": {
-      "message": "Rain can't be entered for a time in the future."
+      "message": "Déšť nelze zadat pro budoucí čas."
     },
     "manual_rain_too_old": {
-      "message": "Rain can be entered at most 14 days back."
+      "message": "Déšť lze zadat maximálně 14 dní zpětně."
     }
   },
   "issues": {
@@ -1260,8 +1260,8 @@
       "description": "Hlavní snímač vnitřní teploty zóny {zone} ({entity}) ukazuje {main}, zatímco záložní ukazuje {backup}, a jejich hodnoty se výrazně liší po delší dobu. Jeden z nich je pravděpodobně vadný nebo špatně umístěný (na přímém slunci, vedle topení). Zkontrolujte oba snímače. Problém se automaticky vyřeší, jakmile se shodnou."
     },
     "weather_underground_no_data": {
-      "title": "Weather Underground rain: no data",
-      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+      "title": "Weather Underground déšť: žádná data",
+      "description": "Žádná z vybraných stanic Weather Underground neodeslala použitelný údaj o dešti po dobu {hours} hodin, takže zóny, které ji používají, fungují, jako by neměly srážkoměr. Zkontrolujte stanice na wunderground.com nebo vyberte jiné v položce Weather Underground v nabídce Nastavit. Tato chyba se sama vyřeší, jakmile budou data opět k dispozici."
     }
   }
 }
