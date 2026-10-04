@@ -25,8 +25,10 @@ with everything under *Watering settings*:
 
 What is different under a roof: **no rain credit and no forecast** (no rain
 gauge or weather service is asked for, so Weather Underground rain and
-manual rain don't apply), **no frost guard**, and the hot / cool / normal
-water target follows the **inside temperature** instead of an outside one.
+manual rain don't apply), and the hot / cool / normal water target and the
+**frost guard** follow the **inside temperature** instead of an outside one
+(in an unheated greenhouse, watering still waits while it is freezing
+inside).
 A probe is the best way to water a greenhouse: rain never tops it up, so
 the soil's own reading is the truth.
 

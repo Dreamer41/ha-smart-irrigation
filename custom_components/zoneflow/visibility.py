@@ -135,7 +135,9 @@ def _greenhouse_hidden(controller) -> set[tuple[str, str]]:
     if not controller.light_entity:
         hidden |= GH_LIGHT
     if not (fans or vents or misters or heater):
-        hidden |= GH_ANY_DEVICE
+        # Nothing to control (a crop, or a zone that only waters): no
+        # climate status or Greenhouse Control switch either.
+        hidden |= GH_ANY_DEVICE | GH_ALWAYS
     elif not controller.store.state.gh_auto_resume:
         hidden.add(("number", "auto_resume_hours"))  # holds wait for the button
     return hidden

@@ -205,3 +205,19 @@ async def test_an_offline_inside_sensor_is_not_reported_on_every_crop(hass, fake
     crop = _crop(hass, "Tomatoes", VALVE_A, house)
     await _load(hass, house)
     assert issues._sensors(_ctl(hass, crop))["temperature"] is None
+
+
+@pytest.mark.asyncio
+async def test_a_crop_shows_no_climate_status_or_control(hass, fake_valve_services):
+    from homeassistant.helpers import entity_registry as er
+
+    await _seed_all(hass)
+    house = _climate_only_entry(hass)
+    crop = _crop(hass, "Tomatoes", VALVE_A, house)
+    await _load(hass, house)
+    registry = er.async_get(hass)
+    entries = {(e.domain, e.translation_key): e for e in er.async_entries_for_config_entry(registry, crop.entry_id)}
+    assert entries[("sensor", "greenhouse_status")].hidden_by == er.RegistryEntryHider.INTEGRATION
+    assert entries[("switch", "greenhouse_control")].hidden_by == er.RegistryEntryHider.INTEGRATION
+    house_entries = {(e.domain, e.translation_key): e for e in er.async_entries_for_config_entry(registry, house.entry_id)}
+    assert house_entries[("switch", "greenhouse_control")].hidden_by is None
