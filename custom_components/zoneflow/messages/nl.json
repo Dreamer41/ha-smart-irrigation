@@ -224,13 +224,14 @@
       "control_off": "Kasregeling staat uit",
       "failsafe": "Noodbediening: geen binnentemperatuur (ventilatie en ventilatoren: {mode}; verwarming: {heater})",
       "mist_halted": "Nevelen gestopt: druk op Bewateringsslot opheffen",
-      "held": "{device} gerustgelaten gedurende {minutes} min (handmatig geschakeld)",
       "heating": "Verwarmen ({temp})",
       "ventilating_temperature": "Ventileren: te warm ({temp})",
       "ventilating_humidity": "Ventileren: te vochtig ({humidity})",
       "misting": "Nevelen ({temp}, {humidity})",
       "gate_blocked": "Niet ventileren: buitenlucht ({outside}) is niet koeler dan binnen ({temp})",
-      "idle": "Alles in orde: {temp}, {humidity}"
+      "idle": "Alles in orde: {temp}, {humidity}",
+      "held_until": "{device} handmatig geschakeld: weer automatisch om {time}",
+      "held_until_resume": "{device} handmatig geschakeld: weer automatisch wanneer je op Automatisch hervatten drukt"
     },
     "heater_mode": {
       "off": "uit",

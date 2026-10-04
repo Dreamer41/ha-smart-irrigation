@@ -172,6 +172,60 @@
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Lisää vyöhyke",
+          "weather_underground": "Ota käyttöön Weather Underground -sade",
+          "crop": "Lisää kasvi kasvihuoneeseen"
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground -sade (kokeellinen)",
+        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemia käytetään vain sadehyvitykseen. Ne eivät ole 100 % tarkkoja, ja sitä epätarkempia, mitä kauempana asemat ovat vyöhykkeistäsi.",
+        "data": {
+          "api_key": "API-avain",
+          "radius_km": "Hakusäde"
+        },
+        "data_description": {
+          "api_key": "Weather Underground -tilisi API-avaimet-kohdasta. Tallennetaan vain tähän merkintään.",
+          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi."
+        }
+      },
+      "wu_stations": {
+        "title": "Valitse 1–3 asemaa",
+        "description": "Säteen sisällä olevat asemat lähin ensin sekä tämän päivän sade. Valitse enintään 3. Kolmella ZoneFlow käyttää keskimmäistä lukemaa, kahdella pienempää; yksi asema toimii mutta on epävarmempi. Yli 1 km:n päässä oleville asemille vertaa lukemia luonasi sataneeseen sateeseen jonkin aikaa ennen kuin luotat niihin.",
+        "data": {
+          "stations": "Asemat"
+        },
+        "data_description": {
+          "stations": "Enintään 3. Tarkista, että kunkin aseman tämänpäiväinen sade vaikuttaa uskottavalta, ennen kuin luotat siihen."
+        }
+      },
+      "crop": {
+        "title": "Lisää kasvi kasvihuoneeseen",
+        "description": "Kasvi on oma kasteluvyöhykkeensä kasvihuoneen sisällä: oma venttiili, maankosteusanturi ja aikataulu. Se käyttää kasvihuoneen sisäantureita ja ilmastoa.",
+        "data": {
+          "greenhouse_entry_id": "Kasvihuone",
+          "zone_name": "Kasvin nimi",
+          "plant": "Mitä on istutettu"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet.",
+          "zone_name": "Tästä tulee kasvin laitteen nimi ja sen entiteettien nimien alku, esim. \"Tomaatit\".",
+          "plant": "Täyttää tälle kasville sopivat alkuarvot."
+        }
+      },
+      "crop_valve": {
+        "title": "Kasvin venttiili",
+        "description": "Venttiili, joka kastelee tämän kasvin.",
+        "data": {
+          "valve_entity": "Venttiili"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "Sama entiteetti on valittu kahteen eri tehtävään.",
       "device_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo jotakin näistä laitteista.",
       "valve_or_device_required": "Valitse venttiili tai vähintään yksi ilmastolaite.",
-      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi."
+      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi.",
+      "wu_invalid_key": "Weather Underground hylkäsi API-avaimen.",
+      "wu_cannot_connect": "Weather Undergroundiin ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
+      "wu_no_stations": "Säteen sisällä ei ole asemia. Ilman lähellä olevaa asemaa tästä ominaisuudesta ei ole hyötyä.",
+      "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa."
+    },
+    "abort": {
+      "already_configured": "Weather Underground -sade on jo otettu käyttöön."
     }
   },
   "options": {
@@ -196,7 +257,10 @@
           "flow_measure": "Virtaama: mittaa virtausmittarilla",
           "greenhouse_devices": "Venttiili, anturit ja ilmastolaitteet",
           "watering": "Kasteluasetukset",
-          "zone_type": "Vyöhyketyyppi"
+          "zone_type": "Vyöhyketyyppi",
+          "weather_underground": "Weather Underground -sade",
+          "crop_valve": "Kasvin venttiili",
+          "greenhouse_link": "Kasvihuone"
         }
       },
       "settings": {
@@ -356,6 +420,58 @@
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
         }
+      },
+      "wu_key": {
+        "title": "Weather Underground -sade (kokeellinen)",
+        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemia käytetään vain sadehyvitykseen. Ne eivät ole 100 % tarkkoja, ja sitä epätarkempia, mitä kauempana asemat ovat vyöhykkeistäsi.",
+        "data": {
+          "api_key": "API-avain",
+          "radius_km": "Hakusäde"
+        },
+        "data_description": {
+          "api_key": "Weather Underground -tilisi API-avaimet-kohdasta. Tallennetaan vain tähän merkintään.",
+          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi."
+        }
+      },
+      "wu_stations": {
+        "title": "Valitse 1–3 asemaa",
+        "description": "Säteen sisällä olevat asemat lähin ensin sekä tämän päivän sade. Valitse enintään 3. Kolmella ZoneFlow käyttää keskimmäistä lukemaa, kahdella pienempää; yksi asema toimii mutta on epävarmempi. Yli 1 km:n päässä oleville asemille vertaa lukemia luonasi sataneeseen sateeseen jonkin aikaa ennen kuin luotat niihin.",
+        "data": {
+          "stations": "Asemat"
+        },
+        "data_description": {
+          "stations": "Enintään 3. Tarkista, että kunkin aseman tämänpäiväinen sade vaikuttaa uskottavalta, ennen kuin luotat siihen."
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground -sade",
+        "description": "Käytä Weather Underground -asemien sadetta tälle vyöhykkeelle (sillä ei ole sademittaria). Kokeellinen: ei 100 % tarkka.",
+        "data": {
+          "use_weather_underground": "Käytä Weather Underground -sadetta"
+        },
+        "data_description": {
+          "use_weather_underground": "Vain vyöhykkeille, joilla ei ole sademittaria. Ota ensin käyttöön Weather Underground -merkintä."
+        }
+      },
+      "crop_valve": {
+        "title": "Kasvin venttiili",
+        "description": "Venttiili, joka kastelee tämän kasvin.",
+        "data": {
+          "valve_entity": "Venttiili"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Kasvihuone",
+        "description": "Tee tästä vyöhykkeestä kasvihuoneen kasvi: se käyttää silloin kasvihuoneen sisäantureita ja näkyy sen yhteydessä. Valitse \"-\", niin siitä tulee taas oma vyöhykkeensä (se säilyttää kopion kasvihuoneen antureista).",
+        "data": {
+          "greenhouse_entry_id": "Kuuluu kasvihuoneeseen"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet, tai \"-\", jos ei mikään."
+        }
       }
     },
     "abort": {
@@ -374,7 +490,12 @@
       "device_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo jotakin näistä laitteista.",
       "valve_or_device_required": "Valitse venttiili tai vähintään yksi ilmastolaite.",
       "valve_required_outdoor": "Ulkovyöhyke tarvitsee venttiilin. Lisää sellainen ensin kohdassa Venttiili, anturit ja ilmastolaitteet.",
-      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi."
+      "backup_same_as_inside": "Vara-anturi ei voi olla pääasiallinen sisälämpötila-anturi.",
+      "wu_invalid_key": "Weather Underground hylkäsi API-avaimen.",
+      "wu_cannot_connect": "Weather Undergroundiin ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
+      "wu_no_stations": "Säteen sisällä ei ole asemia. Ilman lähellä olevaa asemaa tästä ominaisuudesta ei ole hyötyä.",
+      "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
+      "greenhouse_has_crops": "Tässä kasvihuoneessa on kasveja. Siirrä ne toiseen kasvihuoneeseen tai poista ne ensin (kunkin kasvin Määritä -> Kasvihuone)."
     }
   },
   "selector": {
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Tuuletusluukun avautuma"
       },
-      "manual_hold_minutes": {
-        "name": "Manuaalisen ohituksen kesto"
-      },
       "sensor_offline_hours": {
         "name": "Anturin katkosraja"
+      },
+      "manual_rain_mm": {
+        "name": "Käsin kirjattava sade"
+      },
+      "auto_resume_hours": {
+        "name": "Automaattipaluun viive"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Merkitse kastelluksi"
+      },
+      "add_manual_rain": {
+        "name": "Lisää käsin kirjattu sade"
+      },
+      "resume_automatic": {
+        "name": "Palauta automatiikka"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Sumuta yöllä"
+      },
+      "auto_resume": {
+        "name": "Automaattipaluu"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Sumutus tänään"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Ennusteohitusten osumatarkkuus"
+      },
+      "wu_rain_today": {
+        "name": "Sade tänään"
+      },
+      "wu_station": {
+        "name": "Asema {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Lähetä viikkoyhteenveto nyt",
       "description": "Lähettää viikkoyhteenvedon nyt jokaiseen puhelimeen, jolla on vyöhyke, jolle on asetettu viikkoyhteenvedon päivä -- esikatselu; viikon laskurit jatkuvat ajastettuun yhteenvetoon asti."
+    },
+    "add_rain": {
+      "name": "Lisää sade",
+      "description": "Kirjaa yksinkertaisesta sademittarista käsin luetun sateen. Se lasketaan kuten mittarin sade sadehyvitykseen, syväkasteluun ja kuivumisaikaan, mutta ei 30 minuutin ”sataa nyt” -tarkistuksiin. Jos vyöhykkeellä on oma sademittari, huomioidaan suurempi arvo, ei summaa.",
+      "fields": {
+        "amount": {
+          "name": "Määrä",
+          "description": "Sademäärä vyöhykkeen yksiköissä (mm tai tuumaa, jos vyöhyke käyttää tuumia)."
+        },
+        "when": {
+          "name": "Ajankohta",
+          "description": "Milloin sade tuli (oletus nyt). Enintään 14 päivää taaksepäin."
+        },
+        "device_id": {
+          "name": "Vyöhykkeen laite",
+          "description": "Vyöhykkeen laite. Tarvitaan vain, jos vyöhykkeitä on 2 tai enemmän."
+        },
+        "entity_id": {
+          "name": "Vyöhykkeen entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "Tällä vyöhykkeellä ei ole venttiiliä, joten se ei voi kastella. Lisää venttiili kohdassa Asetukset, jos haluat kastelun."
+    },
+    "manual_rain_zero": {
+      "message": "Aseta ensin Käsin kirjattava sade -määrä nollaa suuremmaksi."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Käsin kirjattu sade on tarkoitettu vain ulkovyöhykkeille."
+    },
+    "manual_rain_future": {
+      "message": "Sadetta ei voi kirjata tulevaisuuteen."
+    },
+    "manual_rain_too_old": {
+      "message": "Sateen voi kirjata enintään 14 päivää taaksepäin."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: sisälämpötila-antureiden lukemat poikkeavat",
       "description": "Vyöhykkeen {zone} pääasiallinen sisälämpötila-anturi ({entity}) näyttää lukemaa {main}, kun taas vara-anturi näyttää lukemaa {backup}, ja ne ovat poikenneet toisistaan huomattavasti jo jonkin aikaa. Toinen niistä on todennäköisesti viallinen tai sijoitettu huonosti (suoraan auringonpaisteeseen, lämmittimen viereen). Tarkista molemmat. Tämä kuittaantuu itsestään, kun lukemat vastaavat toisiaan."
+    },
+    "weather_underground_no_data": {
+      "title": "Weather Underground -sade: ei tietoja",
+      "description": "Yksikään valituista Weather Underground -asemista ei ole lähettänyt käyttökelpoista sadelukemaa {hours} tuntiin, joten sitä käyttävät vyöhykkeet toimivat kuin niillä ei olisi sademittaria. Tarkista asemat osoitteessa wunderground.com tai valitse toiset Weather Underground -merkinnän kohdasta Määritä. Tämä poistuu itsestään, kun tiedot palaavat."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: sen kasvihuone poistettiin",
+      "description": "Kasvihuone {greenhouse} poistettiin, joten {zone} on nyt oma vyöhykkeensä. Se kastelee edelleen ja säilyttää kasvihuoneen sisäanturit. Voit siirtää sen toiseen kasvihuoneeseen vyöhykkeen kohdasta Määritä -> Kasvihuone."
     }
   }
 }

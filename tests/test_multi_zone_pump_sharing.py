@@ -314,8 +314,13 @@ async def test_shared_pump_second_zone_waits_out_first_zones_full_split_cycle(ha
     # The actual regression this guards: zone B's valve must open only
     # after zone A's LAST "off" (the true end of its whole cycle) -- not
     # merely after zone A's first pulse ends, which is when a soak-gap-
-    # release implementation would have let it sneak in.
-    assert zone_b_on_ts > zone_a_last_off_ts, (
+    # release implementation would have let it sneak in. Compared by event
+    # order: on Windows the loop clock can give both the same reading.
+    position = {(e, s, t): i for i, (e, s, t) in enumerate(events)}
+    zone_a_last_off = max(position[(VALVE, s, t)] for s, t in zone_a_events if s == "off")
+    zone_b_on = next(position[(VALVE_B, s, t)] for s, t in zone_b_events if s == "on")
+    assert zone_b_on_ts >= zone_a_last_off_ts
+    assert zone_b_on > zone_a_last_off, (
         "zone B opened its valve before zone A's full split cycle (all 3 pulses "
         "+ both soak gaps) had finished -- the shared pump lock must be held "
         "across the whole cycle, not released during a soak gap"

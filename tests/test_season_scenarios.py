@@ -196,14 +196,17 @@ async def test_et_curve_replaces_roughly_the_water_the_plant_used(hass, fake_val
 
     # The weekly target the model chose follows the weather: in the cool
     # fortnight ~ET0(22-27C) x 7 x 0.8, in the hot one ~ET0(26-34C) x 7 x 0.8.
-    def expected_weekly(t):
-        return calc.hargreaves_et0(t[0], t[1], 9.5, 280) * 7 * 0.8
+    # The day of the year matters (sun angle), and the season starts today:
+    # use each result's own date (the target averages the 3 days before it).
+    def expected_weekly(t, result=None):
+        doy = date.fromisoformat(result.date).timetuple().tm_yday - 2 if result else 280
+        return calc.hargreaves_et0(t[0], t[1], 9.5, doy) * 7 * 0.8
 
-    cool = [r.target_weekly_used for r in sim.results[4:14] if r.routine_mm > 0]
-    hot = [r.target_weekly_used for r in sim.results[18:] if r.routine_mm > 0]
+    cool = [r for r in sim.results[4:14] if r.routine_mm > 0]
+    hot = [r for r in sim.results[18:] if r.routine_mm > 0]
     assert cool and hot
-    assert all(t == pytest.approx(expected_weekly(COOL), rel=0.05) for t in cool)
-    assert all(t == pytest.approx(expected_weekly(HOT), rel=0.05) for t in hot)
+    assert all(r.target_weekly_used == pytest.approx(expected_weekly(COOL, r), rel=0.05) for r in cool)
+    assert all(r.target_weekly_used == pytest.approx(expected_weekly(HOT, r), rel=0.05) for r in hot)
     assert expected_weekly(HOT) > expected_weekly(COOL) * 1.3
 
 

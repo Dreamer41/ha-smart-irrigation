@@ -224,13 +224,14 @@
       "control_off": "Drivhusstyring er slukket",
       "failsafe": "Fejlsikring: ingen indendørs temperatur (udluftning og ventilatorer: {mode}; varmelegeme: {heater})",
       "mist_halted": "Forstøvning stoppet: tryk på Nulstil vandingslås",
-      "held": "{device} ladet være i {minutes} min (skiftet manuelt)",
       "heating": "Opvarmning ({temp})",
       "ventilating_temperature": "Udluftning: for varmt ({temp})",
       "ventilating_humidity": "Udluftning: for fugtigt ({humidity})",
       "misting": "Forstøvning ({temp}, {humidity})",
       "gate_blocked": "Lufter ikke ud: udeluft ({outside}) er ikke koldere end indendørs ({temp})",
-      "idle": "Alt OK: {temp}, {humidity}"
+      "idle": "Alt OK: {temp}, {humidity}",
+      "held_until": "{device} skiftet manuelt: automatik igen {time}",
+      "held_until_resume": "{device} skiftet manuelt: automatik igen når du trykker på Genoptag automatik"
     },
     "heater_mode": {
       "off": "slukket",

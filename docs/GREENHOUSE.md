@@ -10,6 +10,58 @@ them.
 Greenhouse and indoor zones have no rain gauge and no weather forecast (there
 is a roof). If real rain does reach your plants, set the zone up as outdoor.
 
+## Watering a greenhouse or indoor zone
+
+Pick a **valve** and the zone waters in the same way as an outdoor zone,
+with everything under *Watering settings*:
+
+- the **soil-moisture probe** (optional): dry soil waters early, wet soil
+  skips, with the same dry and wet thresholds as outdoors;
+- soil type, drainage, slope, irrigation method, the routine and deep soak
+  times (or sunrise/sunset offsets), the growth ramp, pump power sensor,
+  flow meter and the pump sharing between zones;
+- the weekly water targets, ET curve, mulch, deficit mode, pause and
+  snooze, and the service runs.
+
+What is different under a roof: **no rain credit and no forecast** (no rain
+gauge or weather service is asked for, so Weather Underground rain and
+manual rain don't apply), and the hot / cool / normal water target and the
+**frost guard** follow the **inside temperature** instead of an outside one
+(in an unheated greenhouse, watering still waits while it is freezing
+inside).
+A probe is the best way to water a greenhouse: rain never tops it up, so
+the soil's own reading is the truth.
+
+## Several crops in one greenhouse (1.6.1)
+
+A greenhouse can hold several **crops**, each with its own valve, soil probe,
+plant type, schedule and watering settings. The greenhouse is the zone with
+the climate (inside sensors and the fans, vents, misters and heater); its
+crops use its inside sensors.
+
+1. Set up the greenhouse as usual (it may have a valve of its own too).
+2. **Settings -> Devices & Services -> Add Integration -> ZoneFlow -> Add a
+   crop to a greenhouse**: pick the greenhouse, name the crop, pick what's
+   planted, its valve, then its watering settings. No climate questions:
+   those come from the greenhouse.
+3. Repeat for each crop.
+
+- A crop's **Pump ID** starts as the greenhouse's, so crops on one water
+  supply never open at the same time (clear it if they have separate supplies).
+- A crop follows the greenhouse's inside temperature sensor live; change the
+  sensor on the greenhouse and every crop follows.
+- In Settings -> Devices each crop is **connected via** its greenhouse. The
+  greenhouse's card lists its crops (status, next watering, Water now; tap
+  one for its full card), a crop's card says which greenhouse it is in, the
+  overview card lists crops under their greenhouse, and the auto-generated
+  dashboard gives each greenhouse one tab with its crops.
+- **Zones set up before 1.6.1** (a separate greenhouse zone per crop): open
+  the zone's **Configure -> Greenhouse** and pick its greenhouse. Pick "-"
+  to make a crop a zone on its own again.
+- A greenhouse with crops can't be changed to an outdoor zone. If a
+  greenhouse is deleted, its crops keep working on their own (with a copy of
+  its inside sensors), and Repairs says so.
+
 ## Set it up
 
 **Settings → Devices & Services → Add Integration → ZoneFlow Irrigation**,
@@ -85,7 +137,7 @@ of it, with the climate settings under their own groups.
 | Mist On Time / Mist Off Time | 10 s / 120 s | 3–300 s / 10–3600 s |
 | Max Misting Per Hour | 10 min | 1–60 |
 | Vent Open Position | 100 % | 10–100 |
-| Manual Hold Time | 60 min | 0–480 |
+| Auto Resume After | 1 h | 0.5–24 h (used while **Auto Resume** is on) |
 | Sensor Offline After | 4 h | 1–24 |
 
 The climate you pick at setup seeds the heater, vent, fan and misting
@@ -99,9 +151,23 @@ below the humidity stop).
 
 If you switch a role's device yourself -- in Home Assistant, with a wall
 button, in the device's own app -- or another automation does, ZoneFlow
-leaves that role alone for *Manual Hold Time* and says so in the
-status. A device coming back from "unavailable" is not treated as someone
-switching it. There is no "resume now" button; the hold ends by itself.
+leaves that role alone and says so in the status. A device coming back
+from "unavailable" is not treated as someone switching it.
+
+- **Auto Resume** on (the default): ZoneFlow takes the device back after
+  *Auto Resume After* (0.5–24 h, default 1 h), so a forgotten device goes
+  back to automatic.
+- **Auto Resume** off: the device stays as you left it until you press
+  **Resume Automatic**.
+- **Resume Automatic** ends every hold in the zone at once.
+
+Two safety limits apply whatever the setting: a mister you switch on is
+switched off after *Max Misting Per Hour*, and a heater you switch on is
+taken back once the inside temperature goes above the vent temperature, so
+a forgotten heater can't overheat the greenhouse.
+
+(1.6.1 replaced the old *Manual Hold Time* in minutes: your setting was
+carried over, rounded up to the next half hour; "0" became 0.5 h.)
 
 ## Protecting the plants
 

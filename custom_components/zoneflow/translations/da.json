@@ -172,6 +172,60 @@
           "routine_sun_mode": "Start rutinevandingen på det faste tidspunkt ovenfor, eller før/efter solopgang eller solnedgang, så den tilpasser sig årstiderne.",
           "routine_sun_offset_minutes": "Hvor mange minutter før eller efter solopgang eller solnedgang. Bruges ikke med det faste tidspunkt."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Tilføj en zone",
+          "weather_underground": "Konfigurer Weather Underground-regn",
+          "crop": "Tilføj en afgrøde til et drivhus"
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground regn (eksperimentel)",
+        "description": "Låner regnaflæsninger fra private vejrstationer nær din have til udendørszoner UDEN en regnmåler. Har du en regnmåler? Så har du ikke brug for dette.\n\n**Tjek først** kortet på wunderground.com for stationer inden for et par km fra din have, der rapporterer regn. Hvis der ingen er, så stop her.\n\n**Dernæst** kræver den gratis API-nøgle din egen station: registrer en på wunderground.com og upload mindst udendørstemperatur og luftfugtighed (for eksempel med ha-weather-uploader-integrationen). API-nøglen findes derefter på din Weather Underground-konto.\n\nAflæsningerne bruges kun til regnkredit. De er ikke 100 % præcise, og jo længere væk stationerne er fra dine zoner, desto mindre præcise er de.",
+        "data": {
+          "api_key": "API-nøgle",
+          "radius_km": "Søgeradius"
+        },
+        "data_description": {
+          "api_key": "Fra din Weather Underground-konto (API Keys). Gemmes kun i denne post.",
+          "radius_km": "0,5–2 km, tættere på er bedre: regn kan variere meget over et par km. Over 1 km skal du holde øje med, hvordan aflæsningerne passer med regnen hos dig."
+        }
+      },
+      "wu_stations": {
+        "title": "Vælg 1-3 stationer",
+        "description": "Stationer inden for radiussen, den nærmeste først, med dagens regn. Vælg op til 3. Med 3 bruger ZoneFlow den midterste aflæsning; med 2 den laveste; 1 station fungerer, men er mindre pålidelig. For stationer over 1 km væk bør du sammenligne deres aflæsninger med regnen hos dig et stykke tid, før du stoler på dem.",
+        "data": {
+          "stations": "Stationer"
+        },
+        "data_description": {
+          "stations": "Op til 3. Tjek, at hver stations regn i dag ser rigtig ud, før du stoler på den."
+        }
+      },
+      "crop": {
+        "title": "Tilføj en afgrøde til et drivhus",
+        "description": "En afgrøde er sin egen vandingszone inde i et drivhus: sin egen ventil, jordsensor og tidsplan. Den bruger drivhusets indvendige sensorer og klima.",
+        "data": {
+          "greenhouse_entry_id": "Drivhus",
+          "zone_name": "Afgrøde-navn",
+          "plant": "Hvad der er plantet"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Drivhuset eller indendørszonen med klimaenhederne.",
+          "zone_name": "Bliver afgrødens enhedsnavn og starten på dens entitetsnavne, f.eks. \"Tomater\".",
+          "plant": "Udfylder fornuftige startværdier for denne afgrøde."
+        }
+      },
+      "crop_valve": {
+        "title": "Afgrøde-ventil",
+        "description": "Ventilen der vander denne afgrøde.",
+        "data": {
+          "valve_entity": "Ventil"
+        },
+        "data_description": {
+          "valve_entity": "En kontakt, der åbner for denne afgrødes vand. Hver afgrøde skal have sin egen ventil."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "Den samme entitet er valgt til to forskellige opgaver.",
       "device_already_used": "En anden ZoneFlow-zone bruger allerede en af disse enheder.",
       "valve_or_device_required": "Vælg en ventil eller mindst én klimaenhed.",
-      "backup_same_as_inside": "En reservesensor kan ikke være den primære indendørs temperatursensor."
+      "backup_same_as_inside": "En reservesensor kan ikke være den primære indendørs temperatursensor.",
+      "wu_invalid_key": "Weather Underground afviste API-nøglen.",
+      "wu_cannot_connect": "Kunne ikke forbinde til Weather Underground. Prøv igen senere.",
+      "wu_no_stations": "Ingen stationer inden for radiussen. Uden en station i nærheden hjælper denne funktion ikke.",
+      "wu_pick_1_to_3": "Vælg 1, 2 eller 3 stationer."
+    },
+    "abort": {
+      "already_configured": "Weather Underground-regn er allerede konfigureret."
     }
   },
   "options": {
@@ -196,7 +257,10 @@
           "flow_measure": "Flow: mål det med flowmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheder",
           "watering": "Vandingsindstillinger",
-          "zone_type": "Zonetype"
+          "zone_type": "Zonetype",
+          "weather_underground": "Weather Underground-regn",
+          "crop_valve": "Afgrøde-ventil",
+          "greenhouse_link": "Drivhus"
         }
       },
       "settings": {
@@ -356,6 +420,58 @@
           "routine_sun_mode": "Start rutinevandingen på det faste tidspunkt ovenfor, eller før/efter solopgang eller solnedgang, så den tilpasser sig årstiderne.",
           "routine_sun_offset_minutes": "Hvor mange minutter før eller efter solopgang eller solnedgang. Bruges ikke med det faste tidspunkt."
         }
+      },
+      "wu_key": {
+        "title": "Weather Underground regn (eksperimentel)",
+        "description": "Låner regnaflæsninger fra private vejrstationer nær din have til udendørszoner UDEN en regnmåler. Har du en regnmåler? Så har du ikke brug for dette.\n\n**Tjek først** kortet på wunderground.com for stationer inden for et par km fra din have, der rapporterer regn. Hvis der ingen er, så stop her.\n\n**Dernæst** kræver den gratis API-nøgle din egen station: registrer en på wunderground.com og upload mindst udendørstemperatur og luftfugtighed (for eksempel med ha-weather-uploader-integrationen). API-nøglen findes derefter på din Weather Underground-konto.\n\nAflæsningerne bruges kun til regnkredit. De er ikke 100 % præcise, og jo længere væk stationerne er fra dine zoner, desto mindre præcise er de.",
+        "data": {
+          "api_key": "API-nøgle",
+          "radius_km": "Søgeradius"
+        },
+        "data_description": {
+          "api_key": "Fra din Weather Underground-konto (API Keys). Gemmes kun i denne post.",
+          "radius_km": "0,5–2 km, tættere på er bedre: regn kan variere meget over et par km. Over 1 km skal du holde øje med, hvordan aflæsningerne passer med regnen hos dig."
+        }
+      },
+      "wu_stations": {
+        "title": "Vælg 1-3 stationer",
+        "description": "Stationer inden for radiussen, den nærmeste først, med dagens regn. Vælg op til 3. Med 3 bruger ZoneFlow den midterste aflæsning; med 2 den laveste; 1 station fungerer, men er mindre pålidelig. For stationer over 1 km væk bør du sammenligne deres aflæsninger med regnen hos dig et stykke tid, før du stoler på dem.",
+        "data": {
+          "stations": "Stationer"
+        },
+        "data_description": {
+          "stations": "Op til 3. Tjek, at hver stations regn i dag ser rigtig ud, før du stoler på den."
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground-regn",
+        "description": "Brug regn fra Weather Underground-stationerne til denne zone (den har ingen regnmåler). Eksperimentel: ikke 100 % præcis.",
+        "data": {
+          "use_weather_underground": "Brug Weather Underground-regn"
+        },
+        "data_description": {
+          "use_weather_underground": "Kun til zoner uden en regnmåler. Konfigurer Weather Underground-posten først."
+        }
+      },
+      "crop_valve": {
+        "title": "Afgrøde-ventil",
+        "description": "Ventilen der vander denne afgrøde.",
+        "data": {
+          "valve_entity": "Ventil"
+        },
+        "data_description": {
+          "valve_entity": "En kontakt, der åbner for denne afgrødes vand. Hver afgrøde skal have sin egen ventil."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Drivhus",
+        "description": "Gør denne zone til en afgrøde i et drivhus: den bruger derefter det drivhuses indvendige sensorer og vises sammen med det. Vælg \"-\" for at gøre den til en selvstændig zone igen (den beholder en kopi af drivhusets sensorer).",
+        "data": {
+          "greenhouse_entry_id": "En del af drivhus"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Drivhuset eller indendørszonen med klimaenhederne, eller \"-\" for ingen."
+        }
       }
     },
     "abort": {
@@ -374,7 +490,12 @@
       "device_already_used": "En anden ZoneFlow-zone bruger allerede en af disse enheder.",
       "valve_or_device_required": "Vælg en ventil eller mindst én klimaenhed.",
       "valve_required_outdoor": "En udendørszone kræver en ventil. Tilføj en under Ventil, sensorer og klimaenheder først.",
-      "backup_same_as_inside": "En reservesensor kan ikke være den primære indendørs temperatursensor."
+      "backup_same_as_inside": "En reservesensor kan ikke være den primære indendørs temperatursensor.",
+      "wu_invalid_key": "Weather Underground afviste API-nøglen.",
+      "wu_cannot_connect": "Kunne ikke forbinde til Weather Underground. Prøv igen senere.",
+      "wu_no_stations": "Ingen stationer inden for radiussen. Uden en station i nærheden hjælper denne funktion ikke.",
+      "wu_pick_1_to_3": "Vælg 1, 2 eller 3 stationer.",
+      "greenhouse_has_crops": "Dette drivhus har afgrøder. Flyt dem til et andet drivhus, eller fjern dem først (hver afgrødes Konfigurer -> Drivhus)."
     }
   },
   "selector": {
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Åbningsposition for udluftning"
       },
-      "manual_hold_minutes": {
-        "name": "Manuel holdetid"
-      },
       "sensor_offline_hours": {
         "name": "Sensor offline efter"
+      },
+      "manual_rain_mm": {
+        "name": "Manuel regn"
+      },
+      "auto_resume_hours": {
+        "name": "Auto-genoptag efter"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Markér som vandet"
+      },
+      "add_manual_rain": {
+        "name": "Tilføj manuel regn"
+      },
+      "resume_automatic": {
+        "name": "Genoptag automatik"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Forstøv om natten"
+      },
+      "auto_resume": {
+        "name": "Auto-genoptag"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Forstøvning i dag"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Træfsikkerhed for prognose-overspring"
+      },
+      "wu_rain_today": {
+        "name": "Regn i dag"
+      },
+      "wu_station": {
+        "name": "Station {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Send ugeoversigt nu",
       "description": "Sender ugeoversigten nu til hver telefon, der har en zone med en ugedag valgt under Ugeoversigt -- en forhåndsvisning; ugens tal fortsætter frem til den planlagte."
+    },
+    "add_rain": {
+      "name": "Tilføj regn",
+      "description": "Registrerer regn aflæst manuelt fra en simpel regnmåler. Tæller som regnmålerregn i forhold til regnkredit, dybvanding og udtørring, men ikke for de 30 minutters ”det regner nu”-tjek. I en zone med egen regnmåler tæller den højeste af de to værdier, aldrig summen.",
+      "fields": {
+        "amount": {
+          "name": "Mængde",
+          "description": "Regn i zonens enheder (mm eller tommer på en imperial zone)."
+        },
+        "when": {
+          "name": "Hvornår",
+          "description": "Hvornår det regnede (standard er nu). Højst 14 dage bagud."
+        },
+        "device_id": {
+          "name": "Zoneenhed",
+          "description": "Zonens enhed. Kun nødvendig, hvis du har 2 eller flere zoner."
+        },
+        "entity_id": {
+          "name": "Zoneentitet",
+          "description": "En hvilken som helst entitet, der hører til zonens enhed (alternativ til Zoneenhed)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "Denne zone har ingen ventil, så den kan ikke vande. Tilføj en ventil under Konfigurer, hvis du ønsker det."
+    },
+    "manual_rain_zero": {
+      "message": "Indstil først mængden for Manuel regn til over 0."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Manuel regn er kun til udendørszoner."
+    },
+    "manual_rain_future": {
+      "message": "Regn kan ikke angives for et fremtidigt tidspunkt."
+    },
+    "manual_rain_too_old": {
+      "message": "Regn kan højst angives 14 dage bagud."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: indendørs temperatursensorer er uenige",
       "description": "Den primære indendørs temperatursensor for zone {zone} ({entity}) viser {main}, mens reservesensoren viser {backup}, og de har afviget meget fra hinanden i et stykke tid. En af dem er sandsynligvis defekt eller forkert placeret (i direkte sol, ved siden af varmelegemet). Kontrollér begge. Dette ryddes automatisk, når de stemmer overens."
+    },
+    "weather_underground_no_data": {
+      "title": "Weather Underground regn: ingen data",
+      "description": "Ingen af de valgte Weather Underground-stationer har sendt en brugbar regnaflæsning i {hours} timer, så zoner, der bruger den, fungerer, som om de ikke havde nogen regnmåler. Tjek stationerne på wunderground.com, eller vælg andre under Weather Underground-postens Konfigurer. Dette rydder sig selv, når data vender tilbage."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: dens drivhus blev fjernet",
+      "description": "Drivhuset {greenhouse} blev slettet, så {zone} er nu en selvstændig zone. Den fortsætter med at vande og beholder drivhusets indvendige sensorer. For at placere den i et andet drivhus skal du bruge zonens Konfigurer -> Drivhus."
     }
   }
 }

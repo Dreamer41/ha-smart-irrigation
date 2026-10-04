@@ -172,6 +172,60 @@
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Dodaj strefę",
+          "weather_underground": "Skonfiguruj deszcz Weather Underground",
+          "crop": "Dodaj uprawę do szklarni"
+        }
+      },
+      "weather_underground": {
+        "title": "Deszcz Weather Underground (eksperymentalne)",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
+        "data": {
+          "api_key": "Klucz API",
+          "radius_km": "Promień wyszukiwania"
+        },
+        "data_description": {
+          "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
+        }
+      },
+      "wu_stations": {
+        "title": "Wybierz 1–3 stacje",
+        "description": "Stacje w promieniu, najbliższe jako pierwsze, z dzisiejszym deszczem. Wybierz maksymalnie 3. Przy 3 stacjach ZoneFlow używa środkowego odczytu; przy 2 – niższego; 1 stacja działa, ale jest mniej niezawodna. W przypadku stacji oddalonych o ponad 1 km porównuj ich odczyty z deszczem u Siebie przez pewien czas, zanim im zaufasz.",
+        "data": {
+          "stations": "Stacje"
+        },
+        "data_description": {
+          "stations": "Maksymalnie 3. Przed zaufaniem sprawdź, czy dzisiejszy deszcz na każdej stacji wygląda prawidłowo."
+        }
+      },
+      "crop": {
+        "title": "Dodaj uprawę do szklarni",
+        "description": "Uprawa to osobna strefa nawadniania wewnątrz szklarni: własny zawór, czujnik glebowy i harmonogram. Korzysta z czujników wewnętrznych i klimatu szklarni.",
+        "data": {
+          "greenhouse_entry_id": "Szklarnia",
+          "zone_name": "Nazwa uprawy",
+          "plant": "Co jest posadzone"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi.",
+          "zone_name": "Stanie się nazwą urządzenia uprawy i początkiem nazw jej encji, np. „Pomidory”.",
+          "plant": "Wypełnia rozsądne wartości początkowe dla tej uprawy."
+        }
+      },
+      "crop_valve": {
+        "title": "Zawór uprawy",
+        "description": "Zawór, który podlewa tę uprawę.",
+        "data": {
+          "valve_entity": "Zawór"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "Ta sama encja została wybrana do dwóch różnych zadań.",
       "device_already_used": "Inna strefa ZoneFlow używa już jednego z tych urządzeń.",
       "valve_or_device_required": "Wybierz zawór lub co najmniej jedno urządzenie klimatyzacyjne.",
-      "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej."
+      "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej.",
+      "wu_invalid_key": "Weather Underground odrzucił klucz API.",
+      "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
+      "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
+      "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje."
+    },
+    "abort": {
+      "already_configured": "Deszcz Weather Underground jest już skonfigurowany."
     }
   },
   "options": {
@@ -196,7 +257,10 @@
           "flow_measure": "Wydajność: zmierz przepływomierzem",
           "greenhouse_devices": "Zawór, czujniki i urządzenia klimatyzacyjne",
           "watering": "Ustawienia podawania wody",
-          "zone_type": "Typ strefy"
+          "zone_type": "Typ strefy",
+          "weather_underground": "Deszcz Weather Underground",
+          "crop_valve": "Zawór uprawy",
+          "greenhouse_link": "Szklarnia"
         }
       },
       "settings": {
@@ -356,6 +420,58 @@
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie."
         }
+      },
+      "wu_key": {
+        "title": "Deszcz Weather Underground (eksperymentalne)",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
+        "data": {
+          "api_key": "Klucz API",
+          "radius_km": "Promień wyszukiwania"
+        },
+        "data_description": {
+          "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
+        }
+      },
+      "wu_stations": {
+        "title": "Wybierz 1–3 stacje",
+        "description": "Stacje w promieniu, najbliższe jako pierwsze, z dzisiejszym deszczem. Wybierz maksymalnie 3. Przy 3 stacjach ZoneFlow używa środkowego odczytu; przy 2 – niższego; 1 stacja działa, ale jest mniej niezawodna. W przypadku stacji oddalonych o ponad 1 km porównuj ich odczyty z deszczem u Siebie przez pewien czas, zanim im zaufasz.",
+        "data": {
+          "stations": "Stacje"
+        },
+        "data_description": {
+          "stations": "Maksymalnie 3. Przed zaufaniem sprawdź, czy dzisiejszy deszcz na każdej stacji wygląda prawidłowo."
+        }
+      },
+      "weather_underground": {
+        "title": "Deszcz Weather Underground",
+        "description": "Użyj deszczu ze stacji Weather Underground dla tej strefy (nie ma deszczomierza). Eksperymentalne: nie w 100% dokładne.",
+        "data": {
+          "use_weather_underground": "Używaj deszczu Weather Underground"
+        },
+        "data_description": {
+          "use_weather_underground": "Tylko dla stref bez deszczomierza. Najpierw skonfiguruj wpis Weather Underground."
+        }
+      },
+      "crop_valve": {
+        "title": "Zawór uprawy",
+        "description": "Zawór, który podlewa tę uprawę.",
+        "data": {
+          "valve_entity": "Zawór"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Szklarnia",
+        "description": "Zrób z tej strefy uprawę w szklarni: będzie wtedy korzystać z czujników wewnętrznych tej szklarni i wyświetlać się wraz z nią. Wybierz „-”, aby ponownie uczynić ją samodzielną strefą (zachowa kopię czujników szklarni).",
+        "data": {
+          "greenhouse_entry_id": "Część szklarni"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi, lub „-” dla braku."
+        }
       }
     },
     "abort": {
@@ -374,7 +490,12 @@
       "device_already_used": "Inna strefa ZoneFlow używa już jednego z tych urządzeń.",
       "valve_or_device_required": "Wybierz zawór lub co najmniej jedno urządzenie klimatyzacyjne.",
       "valve_required_outdoor": "Strefa zewnętrzna wymaga zaworu. Najpierw dodaj go w sekcji Zawór, czujniki i urządzenia klimatyzacyjne.",
-      "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej."
+      "backup_same_as_inside": "Czujnik zapasowy nie może być głównym czujnikiem temperatury wewnętrznej.",
+      "wu_invalid_key": "Weather Underground odrzucił klucz API.",
+      "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
+      "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
+      "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
+      "greenhouse_has_crops": "Ta szklarnia zawiera uprawy. Najpierw przenieś je do innej szklarni lub usuń (Konfiguruj -> Szklarnia dla każdej uprawy)."
     }
   },
   "selector": {
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Pozycja otwarcia wietrzników"
       },
-      "manual_hold_minutes": {
-        "name": "Czas wstrzymania ręcznego"
-      },
       "sensor_offline_hours": {
         "name": "Czujnik offline po"
+      },
+      "manual_rain_mm": {
+        "name": "Ręczny deszcz"
+      },
+      "auto_resume_hours": {
+        "name": "Czas automatycznego wznowienia"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Oznacz jako podlane"
+      },
+      "add_manual_rain": {
+        "name": "Dodaj ręczny deszcz"
+      },
+      "resume_automatic": {
+        "name": "Wznów automatykę"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Zamgławianie w nocy"
+      },
+      "auto_resume": {
+        "name": "Wznowienie automatyczne"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Dzisiejsze zamgławianie"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Trafność pominięć na podstawie prognozy"
+      },
+      "wu_rain_today": {
+        "name": "Deszcz dzisiaj"
+      },
+      "wu_station": {
+        "name": "Stacja {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Wyślij teraz podsumowanie tygodnia",
       "description": "Wysyła teraz podsumowanie tygodnia na każdy telefon, który ma strefę z ustawionym dniem podsumowania – jako podgląd; liczniki tygodnia biegną dalej aż do zaplanowanego podsumowania."
+    },
+    "add_rain": {
+      "name": "Dodaj deszcz",
+      "description": "Zapisuje deszcz odczytany ręcznie ze zwykłego deszczomierza. Liczy się tak jak deszcz z deszczomierza do kredytu deszczowego, głębokiego nawadniania i przesychania, ale nie do 30-minutowych kontroli „pada teraz”. W strefie z własnym deszczomierzem brana jest pod uwagę wyższa z dwóch wartości, nigdy ich suma.",
+      "fields": {
+        "amount": {
+          "name": "Ilość",
+          "description": "Deszcz w jednostkach strefy (mm lub cale w strefie z jednostkami imperialnymi)."
+        },
+        "when": {
+          "name": "Kiedy",
+          "description": "Kiedy padał deszcz (domyślnie teraz). Maksymalnie do 14 dni wstecz."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Urządzenie strefy. Potrzebne tylko przy 2 lub więcej strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "Ta strefa nie ma zaworu, więc nie może podlewać. Dodaj zawór w sekcji Konfiguracja, jeśli tego chcesz."
+    },
+    "manual_rain_zero": {
+      "message": "Najpierw ustaw ilość dla Ręczny deszcz na wartość większą niż 0."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Ręczny deszcz jest przeznaczony tylko dla stref zewnętrznych."
+    },
+    "manual_rain_future": {
+      "message": "Deszczu nie można wprowadzić dla czasu v przyszłości."
+    },
+    "manual_rain_too_old": {
+      "message": "Deszcz można wprowadzić maksymalnie do 14 dni wstecz."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: czujniki temperatury wewnętrznej wskazują różne wartości",
       "description": "Główny czujnik temperatury wewnętrznej w strefie {zone} ({entity}) wskazuje {main}, podczas gdy zapasowy wskazuje {backup}, i różnią się znacznie od dłuższego czasu. Jeden z nich jest prawdopodobnie uszkodzony lub źle umieszczony (w bezpośrednim słońcu, obok grzejnika). Sprawdź oba. Problem ustąpi samoistnie, gdy zaczną się zgadzać."
+    },
+    "weather_underground_no_data": {
+      "title": "Deszcz Weather Underground: brak danych",
+      "description": "Żadna z wybranych stacji Weather Underground nie przesłała przydatnego odczytu deszczu od {hours} godzin, więc strefy z niej korzystające działają tak, jakby nie miały deszczomierza. Sprawdź stacje na wunderground.com lub wybierz inne w opcji Konfiguruj przy wpisie Weather Underground. Ten komunikat zniknie automatycznie, gdy dane powrócą."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: jej szklarnia została usunięta",
+      "description": "Szklarnia {greenhouse} została usunięta, więc {zone} jest teraz samodzielną strefą. Kontynuuje podlanie i zachowuje czujniki wewnętrzne szklarni. Aby umieścić ją w innej szklarni, użyj Konfiguruj -> Szklarnia dla danej strefy."
     }
   }
 }

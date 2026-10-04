@@ -172,6 +172,60 @@
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Add a zone",
+          "weather_underground": "Set up Weather Underground rain",
+          "crop": "Add a crop to a greenhouse"
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground rain (experimental)",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "data": {
+          "api_key": "API key",
+          "radius_km": "Search radius"
+        },
+        "data_description": {
+          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
+          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+        }
+      },
+      "wu_stations": {
+        "title": "Pick 1-3 stations",
+        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "data": {
+          "stations": "Stations"
+        },
+        "data_description": {
+          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+        }
+      },
+      "crop": {
+        "title": "Add a crop to a greenhouse",
+        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "data": {
+          "greenhouse_entry_id": "Greenhouse",
+          "zone_name": "Crop name",
+          "plant": "What's planted"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
+          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
+          "plant": "Fills in sensible starting values for this crop."
+        }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "The same entity is chosen for two different jobs.",
       "device_already_used": "Another ZoneFlow zone already uses one of these devices.",
       "valve_or_device_required": "Choose a valve, or at least one climate device.",
-      "backup_same_as_inside": "A backup sensor can't be the main inside temperature sensor."
+      "backup_same_as_inside": "A backup sensor can't be the main inside temperature sensor.",
+      "wu_invalid_key": "Weather Underground refused the API key.",
+      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
+      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
+      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+    },
+    "abort": {
+      "already_configured": "Weather Underground rain is already set up."
     }
   },
   "options": {
@@ -195,7 +256,12 @@
       "device_already_used": "Another ZoneFlow zone already uses one of these devices.",
       "valve_or_device_required": "Choose a valve, or at least one climate device.",
       "valve_required_outdoor": "An outdoor zone needs a valve. Add one under Valve, sensors and climate devices first.",
-      "backup_same_as_inside": "A backup sensor can't be the main inside temperature sensor."
+      "backup_same_as_inside": "A backup sensor can't be the main inside temperature sensor.",
+      "wu_invalid_key": "Weather Underground refused the API key.",
+      "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
+      "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
+      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
+      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
     },
     "step": {
       "init": {
@@ -206,7 +272,10 @@
           "flow_measure": "Flow rate: measure it with the flow meter",
           "greenhouse_devices": "Valve, sensors and climate devices",
           "watering": "Watering settings",
-          "zone_type": "Zone type"
+          "zone_type": "Zone type",
+          "weather_underground": "Weather Underground rain",
+          "crop_valve": "Crop valve",
+          "greenhouse_link": "Greenhouse"
         }
       },
       "settings": {
@@ -365,6 +434,58 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
+        }
+      },
+      "wu_key": {
+        "title": "Weather Underground rain (experimental)",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "data": {
+          "api_key": "API key",
+          "radius_km": "Search radius"
+        },
+        "data_description": {
+          "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
+          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+        }
+      },
+      "wu_stations": {
+        "title": "Pick 1-3 stations",
+        "description": "Stations within the radius, nearest first, with today's rain. Pick up to 3. With 3, ZoneFlow uses the middle reading; with 2, the lower one; 1 station works but is less reliable. For stations over 1 km away, compare their readings with the rain at your place for a while before trusting them.",
+        "data": {
+          "stations": "Stations"
+        },
+        "data_description": {
+          "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground rain",
+        "description": "Use the rain from the Weather Underground stations for this zone (it has no rain gauge). Experimental: not 100 % accurate.",
+        "data": {
+          "use_weather_underground": "Use Weather Underground rain"
+        },
+        "data_description": {
+          "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+        }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Greenhouse",
+        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "data": {
+          "greenhouse_entry_id": "Part of greenhouse"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
         }
       }
     },
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Vent Open Position"
       },
-      "manual_hold_minutes": {
-        "name": "Manual Hold Time"
-      },
       "sensor_offline_hours": {
         "name": "Sensor Offline After"
+      },
+      "manual_rain_mm": {
+        "name": "Manual Rain"
+      },
+      "auto_resume_hours": {
+        "name": "Auto Resume After"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Mark watered"
+      },
+      "add_manual_rain": {
+        "name": "Add Manual Rain"
+      },
+      "resume_automatic": {
+        "name": "Resume Automatic"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Mist At Night"
+      },
+      "auto_resume": {
+        "name": "Auto Resume"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Misting Today"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Forecast Skip Hit Rate"
+      },
+      "wu_rain_today": {
+        "name": "Rain today"
+      },
+      "wu_station": {
+        "name": "Station {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Send Weekly Summary Now",
       "description": "Sends the weekly summary now to every phone that has a zone with a Weekly Summary day set -- a preview; the week's counts carry on until the scheduled one."
+    },
+    "add_rain": {
+      "name": "Add Rain",
+      "description": "Records rain read by hand from a simple rain gauge. It counts like gauge rain for the rain credit, deep soak and the dry-down, but not for the 30-minute \"raining now\" checks. On a zone with its own rain gauge the higher of the two counts, never the sum.",
+      "fields": {
+        "amount": {
+          "name": "Amount",
+          "description": "Rain in the zone's units (mm, or inches on an imperial zone)."
+        },
+        "when": {
+          "name": "When",
+          "description": "When the rain fell (default now). At most 14 days back."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone's device. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "This zone has no valve, so it can't water. Add a valve under Configure if you want it to."
+    },
+    "manual_rain_zero": {
+      "message": "Set the Manual Rain amount above 0 first."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Manual rain is only for outdoor zones."
+    },
+    "manual_rain_future": {
+      "message": "Rain can't be entered for a time in the future."
+    },
+    "manual_rain_too_old": {
+      "message": "Rain can be entered at most 14 days back."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: inside temperature sensors disagree",
       "description": "The main inside temperature sensor of zone {zone} ({entity}) reads {main} while the backup reads {backup}, and they have been far apart for a while. One of them is probably wrong or badly placed (in direct sun, next to the heater). Check both. This clears by itself once they agree."
+    },
+    "weather_underground_no_data": {
+      "title": "Weather Underground rain: no data",
+      "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: its greenhouse was removed",
+      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
     }
   }
 }

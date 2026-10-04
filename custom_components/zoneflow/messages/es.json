@@ -224,13 +224,14 @@
       "control_off": "El control de invernadero está apagado",
       "failsafe": "A prueba de fallos: sin temperatura interior (rejillas y ventiladores: {mode}; calefactor: {heater})",
       "mist_halted": "Nebulización detenida: presione Reiniciar bloqueo de riego",
-      "held": "{device} dejado en reposo por {minutes} min (cambiado manualmente)",
       "heating": "Calentando ({temp})",
       "ventilating_temperature": "Ventilando: demasiado calor ({temp})",
       "ventilating_humidity": "Ventilando: demasiado húmedo ({humidity})",
       "misting": "Nebulizando ({temp}, {humidity})",
       "gate_blocked": "Sin ventilar: aire exterior ({outside}) no es más frío que el interior ({temp})",
-      "idle": "Todo bien: {temp}, {humidity}"
+      "idle": "Todo bien: {temp}, {humidity}",
+      "held_until": "{device} cambiado a mano: automático de nuevo a las {time}",
+      "held_until_resume": "{device} cambiado a mano: automático de nuevo al pulsar Reanudar automático"
     },
     "heater_mode": {
       "off": "apagado",

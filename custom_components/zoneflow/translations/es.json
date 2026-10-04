@@ -172,6 +172,60 @@
           "routine_sun_mode": "Iniciar el riego de rutina a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
           "routine_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Añadir una zona",
+          "weather_underground": "Configurar lluvia de Weather Underground",
+          "crop": "Añadir un cultivo a un invernadero"
+        }
+      },
+      "weather_underground": {
+        "title": "Lluvia de Weather Underground (experimental)",
+        "description": "Toma lecturas de lluvia de estaciones meteorológicas privadas cercanas a tu jardín para zonas exteriores SIN pluviómetro. ¿Tienes pluviómetro? No necesitas esto.\n\n**Primero**, consulta el mapa en wunderground.com para buscar estaciones a pocos kilómetros de tu jardín que informen de lluvia. Si no hay ninguna, detente aquí.\n\n**Segundo**, la clave API gratuita requiere una estación propia: registra una en wunderground.com y envía al menos la temperatura y humedad exterior (por ejemplo, con la integración ha-weather-uploader). La clave API estará disponible en tu cuenta de Weather Underground.\n\nLas lecturas solo se usan para el crédito de lluvia. No son 100 % precisas, y lo serán menos cuanto más lejos estén las estaciones de tus zonas.",
+        "data": {
+          "api_key": "Clave API",
+          "radius_km": "Radio de búsqueda"
+        },
+        "data_description": {
+          "api_key": "De tu cuenta de Weather Underground (API Keys). Se almacena solo en esta entrada.",
+          "radius_km": "0,5-2 km, cuanto más cerca mejor: la lluvia puede variar mucho en un par de km. A más de 1 km, observa cómo coinciden las lecturas con la lluvia en tu ubicación."
+        }
+      },
+      "wu_stations": {
+        "title": "Elige 1-3 estaciones",
+        "description": "Estaciones dentro del radio, las más cercanas primero, con la lluvia de hoy. Elige hasta 3. Con 3, ZoneFlow usa la lectura intermedia; con 2, la más baja; 1 estación funciona pero es menos fiable. Para estaciones a más de 1 km, compara sus lecturas con la lluvia en tu ubicación durante un tiempo antes de confiar en ellas.",
+        "data": {
+          "stations": "Estaciones"
+        },
+        "data_description": {
+          "stations": "Hasta 3. Comprueba que la lluvia de hoy de cada estación parezca correcta antes de confiar en ella."
+        }
+      },
+      "crop": {
+        "title": "Añadir un cultivo a un invernadero",
+        "description": "Un cultivo es su propia zona de riego dentro de un invernadero: tiene su propia válvula, sonda de suelo y programación. Utiliza los sensores interiores y el clima del invernadero.",
+        "data": {
+          "greenhouse_entry_id": "Invernadero",
+          "zone_name": "Nombre del cultivo",
+          "plant": "Qué está plantado"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "El invernadero o zona interior con las dispositivos de clima.",
+          "zone_name": "Se convierte en el nombre del dispositivo del cultivo y el inicio de los nombres de sus entidades, p. ej., \"Tomates\".",
+          "plant": "Rellena valores iniciales razonables para este cultivo."
+        }
+      },
+      "crop_valve": {
+        "title": "Válvula del cultivo",
+        "description": "La válvula que riega este cultivo.",
+        "data": {
+          "valve_entity": "Válvula"
+        },
+        "data_description": {
+          "valve_entity": "Un interruptor que abre el agua de este cultivo. Cada cultivo necesita su propia válvula."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "Se ha elegido la misma entidad para dos tareas distintas.",
       "device_already_used": "Otra zona de ZoneFlow ya utiliza uno de estos dispositivos.",
       "valve_or_device_required": "Seleccione una válvula o al menos un dispositivo de clima.",
-      "backup_same_as_inside": "Un sensor de respaldo no puede ser el sensor de temperatura interior principal."
+      "backup_same_as_inside": "Un sensor de respaldo no puede ser el sensor de temperatura interior principal.",
+      "wu_invalid_key": "Weather Underground rechazó la clave API.",
+      "wu_cannot_connect": "No se pudo conectar con Weather Underground. Inténtalo de nuevo más tarde.",
+      "wu_no_stations": "No hay estaciones dentro del radio. Sin una estación cercana esta función no servirá de nada.",
+      "wu_pick_1_to_3": "Elige 1, 2 o 3 estaciones."
+    },
+    "abort": {
+      "already_configured": "La lluvia de Weather Underground ya está configurada."
     }
   },
   "options": {
@@ -196,7 +257,10 @@
           "flow_measure": "Caudal: medirlo con el caudalímetro",
           "greenhouse_devices": "Válvula, sensores y dispositivos de clima",
           "watering": "Ajustes de riego",
-          "zone_type": "Tipo de zona"
+          "zone_type": "Tipo de zona",
+          "weather_underground": "Lluvia de Weather Underground",
+          "crop_valve": "Válvula del cultivo",
+          "greenhouse_link": "Invernadero"
         }
       },
       "settings": {
@@ -356,6 +420,58 @@
           "routine_sun_mode": "Iniciar el riego de rutina a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
           "routine_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija."
         }
+      },
+      "wu_key": {
+        "title": "Lluvia de Weather Underground (experimental)",
+        "description": "Toma lecturas de lluvia de estaciones meteorológicas privadas cercanas a tu jardín para zonas exteriores SIN pluviómetro. ¿Tienes pluviómetro? No necesitas esto.\n\n**Primero**, consulta el mapa en wunderground.com para buscar estaciones a pocos kilómetros de tu jardín que informen de lluvia. Si no hay ninguna, detente aquí.\n\n**Segundo**, la clave API gratuita requiere una estación propia: registra una en wunderground.com y envía al menos la temperatura y humedad exterior (por ejemplo, con la integración ha-weather-uploader). La clave API estará disponible en tu cuenta de Weather Underground.\n\nLas lecturas solo se usan para el crédito de lluvia. No son 100 % precisas, y lo serán menos cuanto más lejos estén las estaciones de tus zonas.",
+        "data": {
+          "api_key": "Clave API",
+          "radius_km": "Radio de búsqueda"
+        },
+        "data_description": {
+          "api_key": "De tu cuenta de Weather Underground (API Keys). Se almacena solo en esta entrada.",
+          "radius_km": "0,5-2 km, cuanto más cerca mejor: la lluvia puede variar mucho en un par de km. A más de 1 km, observa cómo coinciden las lecturas con la lluvia en tu ubicación."
+        }
+      },
+      "wu_stations": {
+        "title": "Elige 1-3 estaciones",
+        "description": "Estaciones dentro del radio, las más cercanas primero, con la lluvia de hoy. Elige hasta 3. Con 3, ZoneFlow usa la lectura intermedia; con 2, la más baja; 1 estación funciona pero es menos fiable. Para estaciones a más de 1 km, compara sus lecturas con la lluvia en tu ubicación durante un tiempo antes de confiar en ellas.",
+        "data": {
+          "stations": "Estaciones"
+        },
+        "data_description": {
+          "stations": "Hasta 3. Comprueba que la lluvia de hoy de cada estación parezca correcta antes de confiar en ella."
+        }
+      },
+      "weather_underground": {
+        "title": "Lluvia de Weather Underground",
+        "description": "Usar la lluvia de las estaciones de Weather Underground para esta zona (no tiene pluviómetro). Experimental: no es 100 % precisa.",
+        "data": {
+          "use_weather_underground": "Usar lluvia de Weather Underground"
+        },
+        "data_description": {
+          "use_weather_underground": "Solo para zonas sin pluviómetro. Configura primero la entrada de Weather Underground."
+        }
+      },
+      "crop_valve": {
+        "title": "Válvula del cultivo",
+        "description": "La válvula que riega este cultivo.",
+        "data": {
+          "valve_entity": "Válvula"
+        },
+        "data_description": {
+          "valve_entity": "Un interruptor que abre el agua de este cultivo. Cada cultivo necesita su propia válvula."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Invernadero",
+        "description": "Haz que esta zona sea un cultivo de un invernadero: usará los sensores interiores de ese invernadero y se mostrará junto a él. Selecciona \"-\" para que vuelva a ser una zona independiente (conservará una copia de los sensores del invernadero).",
+        "data": {
+          "greenhouse_entry_id": "Parte del invernadero"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "El invernadero o zona interior con los dispositivos de clima, o \"-\" para ninguno."
+        }
       }
     },
     "abort": {
@@ -374,7 +490,12 @@
       "device_already_used": "Otra zona de ZoneFlow ya utiliza uno de estos dispositivos.",
       "valve_or_device_required": "Seleccione una válvula o al menos un dispositivo de clima.",
       "valve_required_outdoor": "Una zona exterior necesita una válvula. Añada una primero en Válvula, sensores y dispositivos de clima.",
-      "backup_same_as_inside": "Un sensor de respaldo no puede ser el sensor de temperatura interior principal."
+      "backup_same_as_inside": "Un sensor de respaldo no puede ser el sensor de temperatura interior principal.",
+      "wu_invalid_key": "Weather Underground rechazó la clave API.",
+      "wu_cannot_connect": "No se pudo conectar con Weather Underground. Inténtalo de nuevo más tarde.",
+      "wu_no_stations": "No hay estaciones dentro del radio. Sin una estación cercana esta función no servirá de nada.",
+      "wu_pick_1_to_3": "Elige 1, 2 o 3 estaciones.",
+      "greenhouse_has_crops": "Este invernadero tiene cultivos. Muévelos a otro invernadero o elimínalos primero (Configurar -> Invernadero de cada cultivo)."
     }
   },
   "selector": {
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Posición de apertura de rejilla"
       },
-      "manual_hold_minutes": {
-        "name": "Tiempo de retención manual"
-      },
       "sensor_offline_hours": {
         "name": "Sensor sin conexión tras"
+      },
+      "manual_rain_mm": {
+        "name": "Lluvia manual"
+      },
+      "auto_resume_hours": {
+        "name": "Reanudación automática tras"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Marcar como regado"
+      },
+      "add_manual_rain": {
+        "name": "Añadir lluvia manual"
+      },
+      "resume_automatic": {
+        "name": "Reanudar automático"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Nebulizar de noche"
+      },
+      "auto_resume": {
+        "name": "Reanudación automática"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Nebulización hoy"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Precisión de omisión por pronóstico"
+      },
+      "wu_rain_today": {
+        "name": "Lluvia hoy"
+      },
+      "wu_station": {
+        "name": "Estación {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Enviar resumen semanal ahora",
       "description": "Envía ahora el resumen semanal a cada teléfono que tenga una zona con día de Resumen semanal definido. Es una vista previa: los recuentos de la semana continúan hasta el envío programado."
+    },
+    "add_rain": {
+      "name": "Añadir lluvia",
+      "description": "Registra la lluvia leída manualmente de un pluviómetro manual. Cuenta como lluvia de pluviómetro para el crédito de lluvia, el riego profundo y el secado, pero no para las comprobaciones de 30 minutos de «está lloviendo». En una zona con su propio pluviómetro, cuenta el valor más alto de los dos, nunca la suma.",
+      "fields": {
+        "amount": {
+          "name": "Cantidad",
+          "description": "Lluvia en las unidades de la zona (mm, o pulgadas en una zona imperial)."
+        },
+        "when": {
+          "name": "Cuándo",
+          "description": "Cuándo cayó la lluvia (por defecto, ahora). Máximo 14 días atrás."
+        },
+        "device_id": {
+          "name": "Dispositivo de la zona",
+          "description": "El dispositivo de la zona. Solo hace falta con 2 o más zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidad de la zona",
+          "description": "Cualquier entidad del dispositivo de la zona (alternativa a Dispositivo de la zona)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "Esta zona no tiene válvula, por lo que no puede regar. Añada una válvula en Configurar si lo desea."
+    },
+    "manual_rain_zero": {
+      "message": "Ajusta primero el valor de Lluvia manual por encima de 0."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "La lluvia manual solo se aplica a zonas exteriores."
+    },
+    "manual_rain_future": {
+      "message": "No se puede registrar lluvia para una fecha o hora futura."
+    },
+    "manual_rain_too_old": {
+      "message": "La lluvia solo se puede registrar como máximo con 14 días de antigüedad."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: los sensores de temperatura interior no coinciden",
       "description": "El sensor de temperatura interior principal de la zona {zone} ({entity}) lee {main} mientras que el de respaldo lee {backup}, y han estado alejados durante un tiempo. Es probable que uno de ellos sea erróneo o esté mal ubicado (bajo luz solar directa, junto al calefactor). Revise ambos. Esto se borra automáticamente cuando coincidan."
+    },
+    "weather_underground_no_data": {
+      "title": "Lluvia de Weather Underground: sin datos",
+      "description": "Ninguna de las estaciones de Weather Underground seleccionadas ha enviado una lectura de lluvia útil durante {hours} horas, por lo que las zonas que la utilizan actúan como si no tuvieran pluviómetro. Comprueba las estaciones en wunderground.com o elige otras en Configurar de la entrada de Weather Underground. Esto se solucionará automáticamente cuando se vuelvan a recibir datos."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: se eliminó su invernadero",
+      "description": "El invernadero {greenhouse} se ha eliminado, por lo que {zone} ahora es una zona independiente. Continúa regando y mantiene los sensores interiores del invernadero. Para colocarlo en otro invernadero, usa Configurar -> Invernadero en la zona."
     }
   }
 }

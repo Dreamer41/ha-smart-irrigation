@@ -67,3 +67,32 @@ def test_round_trip_persistence():
     tracker.record(200.0, 2.5)
     restored = RainWindowTracker.from_persisted(tracker.as_persisted())
     assert restored.samples == tracker.samples
+
+
+def test_insert_into_an_empty_tracker_counts_in_full():
+    tracker = RainWindowTracker()
+    now = 1_000_000.0
+    tracker.insert(now - 600, 5.0)
+    assert tracker.window_sum_mm(30, now) == 5.0
+    assert tracker.window_sum_mm(24 * 60, now) == 5.0
+
+
+def test_insert_in_the_past_moves_later_samples_up():
+    tracker = RainWindowTracker()
+    now = 1_000_000.0
+    tracker.insert(now - 600, 5.0)
+    tracker.insert(now - 3 * 3600, 2.0)  # entered later, fell earlier
+    assert tracker.latest_cumulative() == 7.0
+    assert tracker.window_sum_mm(60, now) == 5.0  # only the recent one
+    assert tracker.window_sum_mm(24 * 60, now) == 7.0
+    assert [c for _t, c in tracker.samples] == sorted(c for _t, c in tracker.samples)
+
+
+def test_sum_between_one_day():
+    tracker = RainWindowTracker()
+    day = 86400.0
+    tracker.insert(10 * day + 100, 3.0)
+    tracker.insert(11 * day + 100, 4.0)
+    assert tracker.sum_between_mm(10 * day, 11 * day) == 3.0
+    assert tracker.sum_between_mm(11 * day, 12 * day) == 4.0
+    assert tracker.sum_between_mm(12 * day, 13 * day) == 0.0

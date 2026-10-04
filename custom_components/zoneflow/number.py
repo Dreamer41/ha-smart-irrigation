@@ -10,12 +10,16 @@ YAML helpers in Sept 2026, so this is built to not repeat it.
 """
 from __future__ import annotations
 
+import math
+
 from homeassistant.components.number import RestoreNumber
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.restore_state import async_get as async_get_restore_data
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import units
@@ -31,6 +35,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         # The moisture thresholds do nothing without a probe: don't create
         # them, and drop them if the probe was removed from this zone.
         remove_entities(hass, entry, "number", list(MOISTURE_ONLY_NUMBERS))
+    # 1.6.1: Manual Hold Time (minutes) became Auto Resume After (hours).
+    controller.migrated_hold_hours = _old_hold_hours(hass, entry)
+    remove_entities(hass, entry, "number", ["manual_hold_minutes"])
     if controller.is_outdoor:
         # The greenhouse sliders belong to greenhouse / indoor zones only.
         remove_entities(hass, entry, "number", list(GREENHOUSE_NUMBERS))
@@ -41,6 +48,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         and (key not in GREENHOUSE_NUMBERS or not controller.is_outdoor)
     ]
     async_add_entities(entities)
+
+
+def _old_hold_hours(hass: HomeAssistant, entry: ConfigEntry) -> float | None:
+    """The old Manual Hold Time as Auto Resume After: minutes rounded up to
+    the next half hour, at least 0.5 h (0 -- "no hold" -- is gone)."""
+    registry = er.async_get(hass)
+    entity_id = registry.async_get_entity_id("number", DOMAIN, f"{entry.entry_id}_manual_hold_minutes")
+    if entity_id is None:
+        return None
+    stored = async_get_restore_data(hass).last_states.get(entity_id)
+    if stored is None:
+        return None
+    try:
+        minutes = float((stored.extra_data.as_dict() if stored.extra_data else {}).get("native_value"))
+    except (TypeError, ValueError):
+        try:
+            minutes = float(stored.state.state)
+        except (TypeError, ValueError):
+            return None
+    return max(0.5, math.ceil(minutes / 30.0) / 2.0)
 
 
 class ZoneFlowNumber(RestoreNumber):
@@ -110,8 +137,11 @@ class ZoneFlowNumber(RestoreNumber):
                 **(self._entry.data.get(CONF_INITIAL_NUMBERS) or {}),
                 **(self._entry.options.get(CONF_INITIAL_NUMBERS) or {}),
             }.get(self._key)
+            migrated = getattr(self._controller, "migrated_hold_hours", None)
             if initial is not None:
                 self.metric_value = float(initial)
+            elif self._key == "auto_resume_hours" and migrated is not None:
+                self.metric_value = migrated
             elif self._key == "fallback_temp":
                 self.metric_value = None
             else:

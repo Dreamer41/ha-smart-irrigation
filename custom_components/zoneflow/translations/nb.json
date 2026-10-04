@@ -172,6 +172,60 @@
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Legg til en sone",
+          "weather_underground": "Sett opp Weather Underground-regn",
+          "crop": "Legg til en kultur i et drivhus"
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground regn (eksperimentell)",
+        "description": "Henter regnavlesninger fra private værstasjoner i nærheten av hagen din, for utendørssoner UTEN regnmåler. Har du en regnmåler? Da trenger du ikke dette.\n\n**Sjekk først** kartet på wunderground.com for stasjoner innenfor et par km fra hagen din som rapporterer regn. Hvis det ikke finnes noen, stopp her.\n\n**For det andre** krever den gratis API-nøkkelen en egen stasjon: registrer en på wunderground.com og last opp minst utetemperatur og luftfuktighet (for eksempel med ha-weather-uploader-integrasjonen). API-nøkkelen finner du deretter på Weather Underground-kontoen din.\n\nAvlesningene brukes kun til regnkreditt. De er ikke 100 % nøyaktige, og mindre nøyaktige jo lenger unna stasjonene er fra sonene dine.",
+        "data": {
+          "api_key": "API-nøkkel",
+          "radius_km": "Søkeradius"
+        },
+        "data_description": {
+          "api_key": "Fra Weather Underground-kontoen din (API Keys). Lagres kun i denne oppføringen.",
+          "radius_km": "0,5–2 km, nærmere er bedre: regn kan variere mye over et par km. Over 1 km bør du følge med på hvordan avlesningene stemmer med regnet hos deg."
+        }
+      },
+      "wu_stations": {
+        "title": "Velg 1–3 stasjoner",
+        "description": "Stasjoner innenfor radiusen, nærmeste først, med dagens regn. Velg opptil 3. Med 3 bruker ZoneFlow den midterste avlesningen; med 2 den laveste; 1 stasjon fungerer, men er mindre pålitelig. For stasjoner over 1 km unna bør du sammenligne avlesningene deres med regnet hos deg en stund før du stoler på dem.",
+        "data": {
+          "stations": "Stasjoner"
+        },
+        "data_description": {
+          "stations": "Opptil 3. Sjekk at hver stasjons regn i dag ser riktig ut før du stoler på den."
+        }
+      },
+      "crop": {
+        "title": "Legg til en kultur i et drivhus",
+        "description": "En kultur er en egen vanningssone inne i et drivhus: sin egen ventil, fuktsensor i jorden og timeplan. Den bruker drivhusets innvendige sensorer og klima.",
+        "data": {
+          "greenhouse_entry_id": "Drivhus",
+          "zone_name": "Navn på kultur",
+          "plant": "Hva som er plantet"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Drivhuset eller innendørssonen med klimaerhetene.",
+          "zone_name": "Blir navnet på kulturen sin enhet og starten på enhetsnavnene, f.eks. «Tomater».",
+          "plant": "Fyller inn fornuftige startverdier for denne kulturen."
+        }
+      },
+      "crop_valve": {
+        "title": "Kulturventil",
+        "description": "Ventilen som vanner denne kulturen.",
+        "data": {
+          "valve_entity": "Ventil"
+        },
+        "data_description": {
+          "valve_entity": "En bryter som åpner vannet for denne kulturen. Hver kultur trenger sin egen ventil."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "Samme enhet er valgt for to ulike oppgaver.",
       "device_already_used": "En annen ZoneFlow-sone bruker allerede en av disse enhetene.",
       "valve_or_device_required": "Velg en ventil eller minst én klimaenhet.",
-      "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur."
+      "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur.",
+      "wu_invalid_key": "Weather Underground avviste API-nøkkelen.",
+      "wu_cannot_connect": "Klarte ikke å koble til Weather Underground. Prøv igjen senere.",
+      "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
+      "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner."
+    },
+    "abort": {
+      "already_configured": "Weather Underground-regn er allerede satt opp."
     }
   },
   "options": {
@@ -196,7 +257,10 @@
           "flow_measure": "Vannmengde: mål den med vannmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheter",
           "watering": "Vanningsinnstillinger",
-          "zone_type": "Sonetype"
+          "zone_type": "Sonetype",
+          "weather_underground": "Weather Underground-regn",
+          "crop_valve": "Kulturventil",
+          "greenhouse_link": "Drivhus"
         }
       },
       "settings": {
@@ -356,6 +420,58 @@
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt."
         }
+      },
+      "wu_key": {
+        "title": "Weather Underground regn (eksperimentell)",
+        "description": "Henter regnavlesninger fra private værstasjoner i nærheten av hagen din, for utendørssoner UTEN regnmåler. Har du en regnmåler? Da trenger du ikke dette.\n\n**Sjekk først** kartet på wunderground.com for stasjoner innenfor et par km fra hagen din som rapporterer regn. Hvis det ikke finnes noen, stopp her.\n\n**For det andre** krever den gratis API-nøkkelen en egen stasjon: registrer en på wunderground.com og last opp minst utetemperatur og luftfuktighet (for eksempel med ha-weather-uploader-integrasjonen). API-nøkkelen finner du deretter på Weather Underground-kontoen din.\n\nAvlesningene brukes kun til regnkreditt. De er ikke 100 % nøyaktige, og mindre nøyaktige jo lenger unna stasjonene er fra sonene dine.",
+        "data": {
+          "api_key": "API-nøkkel",
+          "radius_km": "Søkeradius"
+        },
+        "data_description": {
+          "api_key": "Fra Weather Underground-kontoen din (API Keys). Lagres kun i denne oppføringen.",
+          "radius_km": "0,5–2 km, nærmere er bedre: regn kan variere mye over et par km. Over 1 km bør du følge med på hvordan avlesningene stemmer med regnet hos deg."
+        }
+      },
+      "wu_stations": {
+        "title": "Velg 1–3 stasjoner",
+        "description": "Stasjoner innenfor radiusen, nærmeste først, med dagens regn. Velg opptil 3. Med 3 bruker ZoneFlow den midterste avlesningen; med 2 den laveste; 1 stasjon fungerer, men er mindre pålitelig. For stasjoner over 1 km unna bør du sammenligne avlesningene deres med regnet hos deg en stund før du stoler på dem.",
+        "data": {
+          "stations": "Stasjoner"
+        },
+        "data_description": {
+          "stations": "Opptil 3. Sjekk at hver stasjons regn i dag ser riktig ut før du stoler på den."
+        }
+      },
+      "weather_underground": {
+        "title": "Weather Underground-regn",
+        "description": "Bruk regnet fra Weather Underground-stasjonene for denne sonen (den har ingen regnmåler). Eksperimentell: ikke 100 % nøyaktig.",
+        "data": {
+          "use_weather_underground": "Bruk Weather Underground-regn"
+        },
+        "data_description": {
+          "use_weather_underground": "Kun for soner uten regnmåler. Sett opp Weather Underground-oppføringen først."
+        }
+      },
+      "crop_valve": {
+        "title": "Kulturventil",
+        "description": "Ventilen som vanner denne kulturen.",
+        "data": {
+          "valve_entity": "Ventil"
+        },
+        "data_description": {
+          "valve_entity": "En bryter som åpner vannet for denne kulturen. Hver kultur trenger sin egen ventil."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Drivhus",
+        "description": "Gjør denne sonen til en kultur i et drivhus: den bruker da det drivhusets innvendige sensorer og vises sammen med det. Velg «-» for å gjøre den til en egen sone igjen (den beholder en kopi av drivhusets sensorer).",
+        "data": {
+          "greenhouse_entry_id": "Del av drivhus"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Drivhuset eller innendørssonen med klimaerhetene, eller «-» for ingen."
+        }
       }
     },
     "abort": {
@@ -374,7 +490,12 @@
       "device_already_used": "En annen ZoneFlow-sone bruker allerede en av disse enhetene.",
       "valve_or_device_required": "Velg en ventil eller minst én klimaenhet.",
       "valve_required_outdoor": "En utendørssone trenger en ventil. Legg til en under Ventil, sensorer og klimaenheter først.",
-      "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur."
+      "backup_same_as_inside": "En reservesensor kan ikke være hovedsensoren for innendørstemperatur.",
+      "wu_invalid_key": "Weather Underground avviste API-nøkkelen.",
+      "wu_cannot_connect": "Klarte ikke å koble til Weather Underground. Prøv igjen senere.",
+      "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
+      "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner.",
+      "greenhouse_has_crops": "Dette drivhuset har kulturer. Flytt dem til et annet drivhus eller fjern dem først (hver kulturs Konfigurer -> Drivhus)."
     }
   },
   "selector": {
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Åpningsgrad for lufting"
       },
-      "manual_hold_minutes": {
-        "name": "Tid for manuell overstyring"
-      },
       "sensor_offline_hours": {
         "name": "Sensor frakoblet etter"
+      },
+      "manual_rain_mm": {
+        "name": "Manuell regn"
+      },
+      "auto_resume_hours": {
+        "name": "Automatisk gjenoptakelse etter"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Merk som vannet"
+      },
+      "add_manual_rain": {
+        "name": "Legg til manuell regn"
+      },
+      "resume_automatic": {
+        "name": "Gjenoppta automatikk"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Tåkelegging om natten"
+      },
+      "auto_resume": {
+        "name": "Automatisk gjenoptakelse"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Tåkelegging i dag"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Treffprosent for prognoseoverhopp"
+      },
+      "wu_rain_today": {
+        "name": "Regn i dag"
+      },
+      "wu_station": {
+        "name": "Stasjon {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Send ukesammendrag nå",
       "description": "Sender ukesammendraget nå til alle telefoner som har en sone med valgt dag for Ukesammendrag -- en forhåndsvisning; ukens tall telles videre frem til det planlagte sammendraget."
+    },
+    "add_rain": {
+      "name": "Legg til regn",
+      "description": "Registrerer regn avlest manuelt fra en enkel regnmåler. Teller som regnmålerregn for regnkreditt, dypvanning og uttørking, men ikke for de 30-minutters «det regner nå»-kontrollene. I en sone med egen regnmåler gjelder den høyeste av de to verdiene, aldri summen.",
+      "fields": {
+        "amount": {
+          "name": "Mengde",
+          "description": "Regn i sonens enheter (mm, eller tommer i en imperial sone)."
+        },
+        "when": {
+          "name": "Når",
+          "description": "Når regnet falt (standard er nå). Mye 14 dager bakover."
+        },
+        "device_id": {
+          "name": "Soneenhet",
+          "description": "Sonens enhet. Trengs bare når du har 2 eller flere soner."
+        },
+        "entity_id": {
+          "name": "Soneentitet",
+          "description": "Hvilken som helst entitet som hører til sonens enhet (i stedet for Soneenhet)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "Denne sonen har ingen ventil og kan ikke vanne. Legg til en ventil under Konfigurer hvis du ønsker det."
+    },
+    "manual_rain_zero": {
+      "message": "Angi først mengden for Manuell regn til mer enn 0."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Manuell regn gjelder kun for utendørssoner."
+    },
+    "manual_rain_future": {
+      "message": "Regn kan ikke angis for et fremtidig tidspunkt."
+    },
+    "manual_rain_too_old": {
+      "message": "Regn kan angis for høyst 14 dager siden."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: innvendige temperatursensorer er uenige",
       "description": "Hovedsensoren for innvendig temperatur i sonen {zone} ({entity}) viser {main}, mens reservesensoren viser {backup}. Målingene har avveket mye fra hverandre over tid. En av dem er sannsynligvis feil eller uheldig plassert (i direkte sol eller ved varmeovnen). Sjekk begge. Dette tilbakestilles automatisk når de samsvarer."
+    },
+    "weather_underground_no_data": {
+      "title": "Weather Underground regn: ingen data",
+      "description": "Ingen av de valgte Weather Underground-stasjonene har sendt en brukbar regnavlesning på {hours} timer, så soner som bruker den fungerer som om de ikke har noen regnmåler. Sjekk stasjonene på wunderground.com, eller velg andre under Konfigurer for Weather Underground-oppføringen. Dette løser seg selv når dataene er tilbake."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: drivhuset ble fjernet",
+      "description": "Drivhuset {greenhouse} ble slettet, så {zone} er nå en egen sone. Den fortsetter å vanne og beholder drivhusets innvendige sensorer. For å plassere den i et annet drivhus, bruk sonens Konfigurer -> Drivhus."
     }
   }
 }

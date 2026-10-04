@@ -4,6 +4,26 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.6.1] — Rain without a gauge, Resume Automatic and a ready-made dashboard
+
+- **New**: **Weather Underground rain (experimental)** — an outdoor zone **without a rain gauge** can borrow rain from 1-3 private weather stations within 2 km (nearer is better). One shared entry for the whole Home Assistant (Add integration → ZoneFlow → Set up Weather Underground rain), the station readings combined (3 stations: the middle one, 2: the lower one, 1: as is), polled every 2 hours and every 10 minutes around a watering. Only for rain deduction, not 100 % reliable. Read [the guide](docs/WEATHER-UNDERGROUND.md) first: check the Weather Underground map for stations nearby, and note the free API key needs your own station uploading temperature and humidity. Not for zones with a rain gauge
+- **New**: **manual rain** — enter rain read from a simple gauge (Manual Rain number + Add Manual Rain button, or the `zoneflow.add_rain` service), up to 14 days back; hidden on zones with a gauge or Weather Underground
+- **New**: **Forecast Skip Hit Rate** sensor — each watering skipped for forecast rain is judged 48 hours later against the rain that really fell
+- **New**: **Resume Automatic** button for greenhouse and indoor zones ends a manual hold at once
+- **New**: **Auto Resume** switch and **Auto Resume After** (0.5-24 h) — a device you switched by hand goes back to automatic after that time, or waits for the button when the switch is off
+- **Changed**: Auto Resume After replaces **Manual Hold Time**; your old value is carried over, rounded up to the next half hour ("0" becomes 0.5 h)
+- **New**: a heater switched on by hand is taken back once the inside temperature goes above the vent temperature, whatever the hold setting
+- **New**: **several crops in one greenhouse** — Add integration → ZoneFlow → *Add a crop to a greenhouse*: each crop has its own valve, soil probe, plant and schedule and uses the greenhouse's climate and inside sensors (read live). Crops are connected via their greenhouse in the device list, listed on the greenhouse's card, under it in the overview card, and on its tab in the auto-generated dashboard. Zones set up the old way join a greenhouse under Configure → Greenhouse. Deleting a greenhouse leaves its crops working on their own
+- **Changed**: a greenhouse or indoor zone without climate devices no longer shows the Greenhouse Status sensor and Greenhouse Control switch
+- **New**: **auto-generated dashboard** — `strategy: {type: custom:zoneflow}` builds an overview tab and one tab per zone
+- **Changed**: adding a second zone now starts with a small menu (Add a zone / Set up Weather Underground rain)
+- **Fixed**: a test of two zones sharing a pump was timing-dependent on Windows
+- **Tests**: full suite passes
+
+See [docs/1.6.1-RELEASE-NOTES.md](docs/1.6.1-RELEASE-NOTES.md) for details and upgrade instructions.
+
+---
+
 ## [1.6.0] — Greenhouse & indoor climate control
 
 - **New**: zone types — **outdoor** (as before), **greenhouse** and **indoor**. Existing zones stay outdoor; nothing changes for them. Change the type any time under Configure → Zone type, nothing is deleted

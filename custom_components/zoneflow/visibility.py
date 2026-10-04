@@ -21,6 +21,7 @@ FORECAST = {
     ("number", "forecast_rain_threshold_mm"),
     ("number", "forecast_probability_threshold_pct"),
     ("number", "forecast_dry_override_days"),
+    ("sensor", "forecast_skip_hit_rate"),
 }
 RAIN_GAUGE = {
     ("number", "rain_mm_per_tip"),
@@ -32,6 +33,15 @@ RAIN_GAUGE = {
     ("sensor", "rain_past_7d"),
     ("sensor", "rain_past_14d"),
     ("sensor", "rain_today"),
+}
+# Manual rain (1.6.1): for outdoor zones without a rain gauge. Once rain
+# has been entered, the rain sensors that read it are shown as well (not
+# the gauge's calibration, nor the 30-minute ones manual rain never feeds).
+MANUAL_RAIN = {("number", "manual_rain_mm"), ("button", "add_manual_rain")}
+RAIN_GAUGE_ONLY = {
+    ("number", "rain_mm_per_tip"),
+    ("number", "preirrigation_rain_threshold_mm"),
+    ("sensor", "rain_past_30min"),
 }
 PUMP_POWER = {("number", "pump_min_watts")}
 SHARED_PUMP = {("number", "pump_preamble_seconds"), ("number", "pump_postamble_seconds")}
@@ -93,8 +103,11 @@ GH_MIST = {
 }
 GH_MIST_HUMIDITY = {("number", "mist_min_humidity"), ("number", "mist_stop_humidity")}
 GH_LIGHT = {("number", "mist_light_level")}
-GH_ANY_DEVICE = {("number", "climate_hysteresis"), ("number", "manual_hold_minutes"), ("number", "sensor_offline_hours")}
-GH_ALL = _GH_NUMBERS | GH_ALWAYS | GH_HEAT | GH_VENT | GH_OUTSIDE | GH_HUMIDITY | GH_MIST
+GH_ANY_DEVICE = {
+    ("number", "climate_hysteresis"), ("number", "auto_resume_hours"), ("number", "sensor_offline_hours"),
+    ("switch", "auto_resume"), ("button", "resume_automatic"),
+}
+GH_ALL = _GH_NUMBERS | GH_ALWAYS | GH_HEAT | GH_VENT | GH_OUTSIDE | GH_HUMIDITY | GH_MIST | GH_ANY_DEVICE
 
 # What a zone without a valve still shows: its phone-message setting and the
 # climate entities (the reset button too, when it has misters).
@@ -122,7 +135,11 @@ def _greenhouse_hidden(controller) -> set[tuple[str, str]]:
     if not controller.light_entity:
         hidden |= GH_LIGHT
     if not (fans or vents or misters or heater):
-        hidden |= GH_ANY_DEVICE
+        # Nothing to control (a crop, or a zone that only waters): no
+        # climate status or Greenhouse Control switch either.
+        hidden |= GH_ANY_DEVICE | GH_ALWAYS
+    elif not controller.store.state.gh_auto_resume:
+        hidden.add(("number", "auto_resume_hours"))  # holds wait for the button
     return hidden
 
 
@@ -131,8 +148,14 @@ def hidden_for(controller) -> set[tuple[str, str]]:
     hidden = set(ADVANCED)
     if not controller.weather_entity:
         hidden |= FORECAST
-    if not controller.rain_counter_entity:
-        hidden |= RAIN_GAUGE
+    if controller.uses_wu:
+        # Weather Underground rain feeds every rain sensor and threshold,
+        # the 30-minute ones too (fresh rain around a watering).
+        hidden.add(("number", "rain_mm_per_tip"))
+    elif not controller.rain_counter_entity:
+        hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
+    if not controller.manual_rain_available:
+        hidden |= MANUAL_RAIN
     if not controller.pump_power_entity:
         hidden |= PUMP_POWER
     if (
@@ -151,7 +174,9 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= FLOW_METER
     if not controller.deep_soak_enabled:
         hidden |= DEEP_SOAK
-    if not controller.is_outdoor:
+    if controller.is_outdoor:
+        hidden.add(("button", "resume_automatic"))
+    else:
         hidden |= _greenhouse_hidden(controller)
     profile = controller.growth_ramp_profile
     if profile == GROWTH_RAMP_OFF:

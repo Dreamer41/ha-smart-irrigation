@@ -224,13 +224,14 @@
       "control_off": "Controllo serra disattivato",
       "failsafe": "Protezione: nessuna temperatura interna (aperture e ventole: {mode}; riscaldatore: {heater})",
       "mist_halted": "Nebulizzazione interrotta: premi Ripristina blocco irrigazione",
-      "held": "{device} non gestito per {minutes} min (azionato manualmente)",
       "heating": "Riscaldamento in corso ({temp})",
       "ventilating_temperature": "Ventilazione: troppo caldo ({temp})",
       "ventilating_humidity": "Ventilazione: troppo umido ({humidity})",
       "misting": "Nebulizzazione in corso ({temp}, {humidity})",
       "gate_blocked": "Ventilazione assente: l’aria esterna ({outside}) non è più fresca di quella interna ({temp})",
-      "idle": "Tutto regolare: {temp}, {humidity}"
+      "idle": "Tutto regolare: {temp}, {humidity}",
+      "held_until": "{device} azionato manualmente: di nuovo in automatico alle {time}",
+      "held_until_resume": "{device} azionato manualmente: torna in automatico quando premi Ripristina automatico"
     },
     "heater_mode": {
       "off": "spento",

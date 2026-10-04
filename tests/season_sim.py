@@ -42,6 +42,10 @@ class VirtualDt:
         )
         self.module.utcnow = lambda: self.t
         self.module.now = lambda time_zone=None: self.t.astimezone(time_zone or dt_util.DEFAULT_TIME_ZONE)
+        # "Today's midnight" is the simulated day's, not the real one.
+        self.module.start_of_local_day = lambda dt_or_d=None: dt_util.start_of_local_day(
+            self.module.now() if dt_or_d is None else dt_or_d
+        )
 
     def install(self, monkeypatch) -> "VirtualDt":
         monkeypatch.setattr(controller_module, "dt_util", self.module)

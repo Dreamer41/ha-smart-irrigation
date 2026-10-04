@@ -19,9 +19,9 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.loader import async_get_integration
 import homeassistant.util.dt as dt_util
 
-from .const import CONF_NOTIFY_ENTITY, DOMAIN
+from .const import CONF_NOTIFY_ENTITY, CONF_WU_API_KEY, DOMAIN, WU_DATA_KEY
 
-TO_REDACT = {CONF_NOTIFY_ENTITY}
+TO_REDACT = {CONF_NOTIFY_ENTITY, CONF_WU_API_KEY}
 
 
 def _ts(value: float | None) -> str | None:
@@ -65,6 +65,18 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigE
         },
         "entities": _entities(hass, entry),
     }
+    source = hass.data.get(WU_DATA_KEY)
+    if source is not None and source.entry.entry_id == entry.entry_id:
+        base["weather_underground"] = {
+            "stations": {sid: state.as_dict() for sid, state in source.stations.items()},
+            "used_stations": source.used_station_ids,
+            "today": source.day.as_dict(),
+            "record_samples": len(source.record.samples),
+            "last_poll": _ts(source.last_poll_ts),
+            "last_good": _ts(source.last_good_ts),
+            "next_poll": _ts(source.next_poll_ts),
+        }
+        return base
     controller = hass.data.get(DOMAIN, {}).get(entry.entry_id)
     if controller is None:
         return base  # the zone isn't loaded right now

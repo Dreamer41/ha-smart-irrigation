@@ -172,6 +172,60 @@
           "routine_sun_mode": "Spustite bežné zavlažovanie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
           "routine_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase."
         }
+      },
+      "start": {
+        "title": "ZoneFlow",
+        "menu_options": {
+          "zone": "Pridať zónu",
+          "weather_underground": "Nastaviť zrážky Weather Underground",
+          "crop": "Pridať plodinu do skleníka"
+        }
+      },
+      "weather_underground": {
+        "title": "Dážď Weather Underground (experimentálne)",
+        "description": "Využíva údaje o daždi ze súkromných meteorologických staníc v blízkosti vašej záhrady pre vonkajšie zóny BEZ zrážkomera. Máte zrážkomer? Toto nepotrebujete.\n\n**Najprv** skontrolujte mapu na wunderground.com a vyhľadajte stanice v okruhu niekoľkých km od vašej záhrady, ktoré hlásia dážď. Ak žiadne nie sú, tu skončite.\n\n**Po druhé**, bezplatný kľúč API vyžaduje vlastnú stanicu: zaregistrujte ju na wunderground.com a odosielajte minimálne vonkajšiu teplotu a vlhkosť (napríklad pomocou integrácie ha-weather-uploader). Kľúč API potom nájdete vo svojom účte Weather Underground.\n\nNamerané hodnoty sa používajú iba pre zrážkový kredit. Nie sú na 100 % presné a čím ďalej sú stanice od vašich zón, tým je presnosť nižšia.",
+        "data": {
+          "api_key": "Kľúč API",
+          "radius_km": "Rádius vyhľadávania"
+        },
+        "data_description": {
+          "api_key": "Z vášho účtu Weather Underground (API Keys). Uložené iba v tejto položke.",
+          "radius_km": "0,5–2 km, čím bližšie, tým lepšie: zrážky sa môžu na vzdialenosť niekoľkých km výrazne líšiť. Nad 1 km sledujte, ako namerané hodnoty zodpovedajú dažďu u vás."
+        }
+      },
+      "wu_stations": {
+        "title": "Vyberte 1–3 stanice",
+        "description": "Stanice v okruhu, najbližšie ako prvý, s dnešnými zrážkami. Vyberte až 3. So 3 stanicami použije ZoneFlow prostrednú hodnotu, s 2 nižšiu z nich; 1 stanica funguje, ale je menej spoľahlivá. Pri staniciach vzdialených viac ako 1 km porovnajte pred dôverou ich hodnoty s dažďom u vás.",
+        "data": {
+          "stations": "Stanice"
+        },
+        "data_description": {
+          "stations": "Až 3. Pred dôverou skontrolujte, či dnešné zrážky na každej stanici vyzerajú správne."
+        }
+      },
+      "crop": {
+        "title": "Pridať plodinu do skleníka",
+        "description": "Plodina je vlastná zavlažovacia zóna vo vnútri skleníka: má vlastný ventil, pôdnu sondu a harmonogram. Využíva vnútorné snímače a klímu skleníka.",
+        "data": {
+          "greenhouse_entry_id": "Skleník",
+          "zone_name": "Názov plodiny",
+          "plant": "Čo je zasadené"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Skleník alebo vnútorná zóna s klimatickými zariadeniami.",
+          "zone_name": "Stane sa názvom zariadenia plodiny a začiatkom názvov jej entít, napr. „Parajdajky“.",
+          "plant": "Vyplní rozumné východiskové hodnoty pre túto plodinu."
+        }
+      },
+      "crop_valve": {
+        "title": "Ventil plodiny",
+        "description": "Ventil, ktorý zalieva túto plodinu.",
+        "data": {
+          "valve_entity": "Ventil"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, ktorý otvára vodu pre túto plodinu. Každá plodina potrebuje vlastný ventil."
+        }
       }
     },
     "error": {
@@ -183,7 +237,14 @@
       "device_in_two_roles": "Rovnaká entita je vybraná pre dve rôzne úlohy.",
       "device_already_used": "Iná zóna ZoneFlow už jedno z týchto zariadení používa.",
       "valve_or_device_required": "Vyberte ventil alebo aspoň jedno klimatické zariadenie.",
-      "backup_same_as_inside": "Záložný senzor nemôže byť hlavným senzorom vnútornej teploty."
+      "backup_same_as_inside": "Záložný senzor nemôže byť hlavným senzorom vnútornej teploty.",
+      "wu_invalid_key": "Weather Underground odmietol kľúč API.",
+      "wu_cannot_connect": "Napadlo spojiť sa s Weather Underground. Skúste to znova neskôr.",
+      "wu_no_stations": "Žiadne stanice v okruhu. Bez stanice v blízkosti vám táto funkcia nepomôže.",
+      "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice."
+    },
+    "abort": {
+      "already_configured": "Dážď Weather Underground je už nastavený."
     }
   },
   "options": {
@@ -196,7 +257,10 @@
           "flow_measure": "Prietok: zmerať prietokomerom",
           "greenhouse_devices": "Ventil, senzory a klimatické zariadenia",
           "watering": "Nastavenia zavlažovania",
-          "zone_type": "Typ zóny"
+          "zone_type": "Typ zóny",
+          "weather_underground": "Zrážky Weather Underground",
+          "crop_valve": "Ventil plodiny",
+          "greenhouse_link": "Skleník"
         }
       },
       "settings": {
@@ -356,6 +420,58 @@
           "routine_sun_mode": "Spustite bežné zavlažovanie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
           "routine_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase."
         }
+      },
+      "wu_key": {
+        "title": "Dážď Weather Underground (experimentálne)",
+        "description": "Využíva údaje o daždi ze súkromných meteorologických staníc v blízkosti vašej záhrady pre vonkajšie zóny BEZ zrážkomera. Máte zrážkomer? Toto nepotrebujete.\n\n**Najprv** skontrolujte mapu na wunderground.com a vyhľadajte stanice v okruhu niekoľkých km od vašej záhrady, ktoré hlásia dážď. Ak žiadne nie sú, tu skončite.\n\n**Po druhé**, bezplatný kľúč API vyžaduje vlastnú stanicu: zaregistrujte ju na wunderground.com a odosielajte minimálne vonkajšiu teplotu a vlhkosť (napríklad pomocou integrácie ha-weather-uploader). Kľúč API potom nájdete vo svojom účte Weather Underground.\n\nNamerané hodnoty sa používajú iba pre zrážkový kredit. Nie sú na 100 % presné a čím ďalej sú stanice od vašich zón, tým je presnosť nižšia.",
+        "data": {
+          "api_key": "Kľúč API",
+          "radius_km": "Rádius vyhľadávania"
+        },
+        "data_description": {
+          "api_key": "Z vášho účtu Weather Underground (API Keys). Uložené iba v tejto položke.",
+          "radius_km": "0,5–2 km, čím bližšie, tým lepšie: zrážky sa môžu na vzdialenosť niekoľkých km výrazne líšiť. Nad 1 km sledujte, ako namerané hodnoty zodpovedajú dažďu u vás."
+        }
+      },
+      "wu_stations": {
+        "title": "Vyberte 1–3 stanice",
+        "description": "Stanice v okruhu, najbližšie ako prvý, s dnešnými zrážkami. Vyberte až 3. So 3 stanicami použije ZoneFlow prostrednú hodnotu, s 2 nižšiu z nich; 1 stanica funguje, ale je menej spoľahlivá. Pri staniciach vzdialených viac ako 1 km porovnajte pred dôverou ich hodnoty s dažďom u vás.",
+        "data": {
+          "stations": "Stanice"
+        },
+        "data_description": {
+          "stations": "Až 3. Pred dôverou skontrolujte, či dnešné zrážky na každej stanici vyzerajú správne."
+        }
+      },
+      "weather_underground": {
+        "title": "Zrážky Weather Underground",
+        "description": "Použiť zrážky zo staníc Weather Underground pre túto zónu (nemá zrážkomer). Experimentálne: nie je na 100 % presné.",
+        "data": {
+          "use_weather_underground": "Použiť zrážky Weather Underground"
+        },
+        "data_description": {
+          "use_weather_underground": "Iba pre zóny bez zrážkomera. Najprv nastavte položku Weather Underground."
+        }
+      },
+      "crop_valve": {
+        "title": "Ventil plodiny",
+        "description": "Ventil, ktorý zalieva túto plodinu.",
+        "data": {
+          "valve_entity": "Ventil"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, ktorý otvára vodu pre túto plodinu. Každá plodina potrebuje vlastný ventil."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Skleník",
+        "description": "Urobte z tejto zóny plodinu skleníka: bude potom využívať vnútorné snímače daného skleníka a zobrazovať sa s ním. Vyberte „-“, ak z nej chcete opäť urobiť samostatnú zónu (ponechá si kópiu snímačov skleníka).",
+        "data": {
+          "greenhouse_entry_id": "Súčasť skleníka"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "Skleník alebo vnútorná zóna s klimatickými zariadeniami, alebo „-“ pre žiadny."
+        }
       }
     },
     "abort": {
@@ -374,7 +490,12 @@
       "device_already_used": "Iná zóna ZoneFlow už jedno z týchto zariadení používa.",
       "valve_or_device_required": "Vyberte ventil alebo aspoň jedno klimatické zariadenie.",
       "valve_required_outdoor": "Vonkajšia zóna vyžaduje ventil. Najprv ho pridajte v časti Ventil, senzory a klimatické zariadenia.",
-      "backup_same_as_inside": "Záložný senzor nemôže byť hlavným senzorom vnútornej teploty."
+      "backup_same_as_inside": "Záložný senzor nemôže byť hlavným senzorom vnútornej teploty.",
+      "wu_invalid_key": "Weather Underground odmietol kľúč API.",
+      "wu_cannot_connect": "Napadlo spojiť sa s Weather Underground. Skúste to znova neskôr.",
+      "wu_no_stations": "Žiadne stanice v okruhu. Bez stanice v blízkosti vám táto funkcia nepomôže.",
+      "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice.",
+      "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Najprv ich presuňte do iného skleníka alebo ich odstráňte (Nakonfigurovať -> Skleník pri každej plodine)."
     }
   },
   "selector": {
@@ -648,11 +769,14 @@
       "vent_open_pct": {
         "name": "Poloha otvorenia vetrania"
       },
-      "manual_hold_minutes": {
-        "name": "Trvanie ručného podržania"
-      },
       "sensor_offline_hours": {
         "name": "Senzor offline po"
+      },
+      "manual_rain_mm": {
+        "name": "Ručne zadaný dážď"
+      },
+      "auto_resume_hours": {
+        "name": "Zpoždenie automatického návratu"
       }
     },
     "datetime": {
@@ -705,6 +829,12 @@
       },
       "mark_watered": {
         "name": "Označiť ako zaliate"
+      },
+      "add_manual_rain": {
+        "name": "Pridať ručne zadaný dážď"
+      },
+      "resume_automatic": {
+        "name": "Obnoviť automatiku"
       }
     },
     "binary_sensor": {
@@ -736,6 +866,9 @@
       },
       "mist_at_night": {
         "name": "Zahmlievanie v noci"
+      },
+      "auto_resume": {
+        "name": "Automatický návrat"
       }
     },
     "sensor": {
@@ -824,6 +957,15 @@
       },
       "misting_today": {
         "name": "Dnešné zahmlievanie"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Úspešnosť vynechania podľa predpovede"
+      },
+      "wu_rain_today": {
+        "name": "Dnešný dážď"
+      },
+      "wu_station": {
+        "name": "Stanica {station}"
       }
     },
     "select": {
@@ -1052,6 +1194,28 @@
     "send_weekly_summary": {
       "name": "Odoslať týždenný súhrn teraz",
       "description": "Hneď odošle týždenný súhrn do každého telefónu, ktorý má zónu s nastaveným dňom Týždenného súhrnu – ako ukážku; týždenné počty pokračujú až do plánovaného súhrnu."
+    },
+    "add_rain": {
+      "name": "Pridať dážď",
+      "description": "Zaznamená dážď odčítaný ručne z obyčajného zrážkomera. Počíta sa rovnako ako dážď zo zrážkomera pre zrážkový kredit, hlboké zalievanie a vysychanie, ale nie pre 30-minútové kontroly „práve prší“. V zóne s vlastným zrážkomerom sa započítava vyššia z oboch hodnôt, nikdy nie ich súčet.",
+      "fields": {
+        "amount": {
+          "name": "Množstvo",
+          "description": "Dážď v jednotkách zóny (mm, alebo palce v imperialnej zóne)."
+        },
+        "when": {
+          "name": "Kedy",
+          "description": "Kedy pršalo (predvolené: teraz). Maximálne 14 dní spätne."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zariadenie zóny. Potrebné len pri 2 a viac nastavených zónach."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1084,6 +1248,21 @@
     },
     "zone_has_no_valve": {
       "message": "Táto zóna nemá ventil, takže nemôže zavlažovať. Ak chcete, pridajte ventil v časti Konfigurácia."
+    },
+    "manual_rain_zero": {
+      "message": "Najprv nastavte hodnotu pre Ručne zadaný dážď na viac ako 0."
+    },
+    "manual_rain_not_outdoor": {
+      "message": "Ručne zadaný dážď je určený len pre vonkajšie zóny."
+    },
+    "manual_rain_future": {
+      "message": "Dážď nie je možné zadať pre budúci čas."
+    },
+    "manual_rain_too_old": {
+      "message": "Dážď je možné zadať maximálne 14 dní spevane."
+    },
+    "nothing_on_hold": {
+      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
     }
   },
   "issues": {
@@ -1130,6 +1309,14 @@
     "greenhouse_sensor_mismatch": {
       "title": "{zone}: senzory vnútornej teploty sa nezhodujú",
       "description": "Hlavný senzor vnútornej teploty v zóne {zone} ({entity}) ukazuje {main}, zatiaľ čo záložný ukazuje {backup}, a už nejaký čas sú hodnoty veľmi odlišné. Jeden z nich je pravdepodobne chybný alebo zle umiestnený (na priamom slnku, vedľa ohrievača). Skontrolujte oba. Problém sa vyrieši sám, hneď ako sa zhodnú."
+    },
+    "weather_underground_no_data": {
+      "title": "Dážď Weather Underground: žiadne údaje",
+      "description": "Žiadna z vybraných staníc Weather Underground neodoslala použiteľný údaj o daždi počas {hours} hodín, takže zóny, ktoré ju používajú, fungujú, ako kedy nemali zrážkomer. Skontrolujte stanice na wunderground.com alebo vyberte iné v položke Weather Underground v ponuke Nastaviť. Toto sa automaticky vyrieši, hneď ako sa údaje vrátia."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: jej skleník bol odstránený",
+      "description": "Skleník {greenhouse} bol odstránený, takže {zone} je teraz samostatnou zónou. Naďalej zalieva a ponecháva si vnútorné snímače skleníka. Ak ju chcete umiestniť do iného skleníka, použijete Nakonfigurovať -> Skleník v ponuke zóny."
     }
   }
 }

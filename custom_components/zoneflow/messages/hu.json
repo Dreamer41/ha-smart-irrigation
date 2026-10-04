@@ -224,13 +224,14 @@
       "control_off": "Üvegház vezérlése kikapcsolva",
       "failsafe": "Hibavédelem: nincs belső hőmérséklet (szellőzők és ventilátorok: {mode}; fűtés: {heater})",
       "mist_halted": "Párásítás leállt: nyomja meg az Öntözési zárolás alaphelyzetbe állítása gombot",
-      "held": "{device} békén hagyva {minutes} percig (kézzel átkapcsolva)",
       "heating": "Fűtés ({temp})",
       "ventilating_temperature": "Szellőztetés: túl meleg ({temp})",
       "ventilating_humidity": "Szellőztetés: túl párás ({humidity})",
       "misting": "Párásítás ({temp}, {humidity})",
       "gate_blocked": "Nincs szellőztetés: a külső levegő ({outside}) nem hűvösebb a belsőnél ({temp})",
-      "idle": "Minden rendben: {temp}, {humidity}"
+      "idle": "Minden rendben: {temp}, {humidity}",
+      "held_until": "{device} kézzel kapcsolva: automatika újra ekkor: {time}",
+      "held_until_resume": "{device} kézzel kapcsolva: az automatika az Automatika folytatása gomb megnyomásakor tér vissza"
     },
     "heater_mode": {
       "off": "kikapcsolva",

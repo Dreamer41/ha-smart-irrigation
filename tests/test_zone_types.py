@@ -191,6 +191,8 @@ async def test_zone_without_valve_survives_restart_of_the_zone(hass, fake_valve_
 
 async def _start_non_outdoor(hass, zone_type="greenhouse"):
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    if result["type"] == "menu":  # a zone already exists: add a zone
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "zone"})
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_ZONE_NAME: "Tunnel", CONF_PLANT: "tomatoes", CONF_ZONE_TYPE: zone_type}
     )
@@ -403,3 +405,82 @@ async def test_outdoor_zone_changed_to_greenhouse_starts_from_its_climate_preset
     controller = hass.data[DOMAIN][entry.entry_id]
     assert controller.number("heat_temp") == 15.0  # tropical, not the temperate default of 10
     assert controller.number("vent_temp") == 28.0
+
+
+# ------------------------------------------- a greenhouse that waters with a probe
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("moisture", "runs"), [("10", True), ("80", False)])
+async def test_greenhouse_with_valve_and_soil_probe_waters_by_the_moisture(hass, fake_valve_services, moisture, runs):
+    """A greenhouse or indoor zone with a valve waters like an outdoor zone,
+    including by its soil-moisture probe: dry soil waters early, wet soil
+    skips."""
+    from unittest.mock import AsyncMock
+
+    probe = "sensor.gh_soil_moisture"
+    await _seed(hass)
+    hass.states.async_set(probe, moisture)
+    entry = make_entry(
+        hass, **{CONF_ZONE_TYPE: "greenhouse", CONF_INSIDE_TEMP_ENTITY: INSIDE_TEMP, "soil_moisture_entity": probe}
+    )
+    controller = await _setup(hass, entry)
+    assert controller.has_valve and controller.soil_moisture_entity == probe
+    registry = {(e.domain, e.translation_key): e for e in _reg(hass, entry)}
+    # The probe's own settings and sensors are shown, not hidden.
+    assert registry[("sensor", "soil_moisture")].hidden_by is None
+    assert registry[("number", "soil_moisture_dry_pct")].hidden_by is None
+    # Last watering just now (the interval is not due): only the probe can start one.
+    import homeassistant.util.dt as dt_util
+
+    controller.store.state.last_routine_ts = dt_util.utcnow().timestamp() if runs else 0.0
+    controller.store.state.last_significant_rain_ts = 0.0
+    spy = AsyncMock(return_value=True)
+    controller._run_pulses = spy
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert spy.called is runs
+
+
+@pytest.mark.asyncio
+async def test_one_greenhouse_with_a_climate_zone_and_several_watering_zones(hass, fake_valve_services):
+    """Different crops in one greenhouse today: one climate zone owns the
+    fans, vents, misters and heater; each crop is its own greenhouse zone
+    with its own valve and probe, all reading the same inside temperature
+    sensor (sensors may be shared; valves and climate devices may not)."""
+    from unittest.mock import AsyncMock
+
+    for entity in ("switch.valve_tomatoes", "switch.valve_peppers", "sensor.probe_tomatoes", "sensor.probe_peppers"):
+        hass.states.async_set(entity, "off" if entity.startswith("switch") else "50")
+    await _seed(hass)
+    climate = _climate_only_entry(hass)
+    crops = []
+    for name, valve, probe in (("Tomatoes", "switch.valve_tomatoes", "sensor.probe_tomatoes"),
+                               ("Peppers", "switch.valve_peppers", "sensor.probe_peppers")):
+        crops.append(make_entry(
+            hass,
+            **{CONF_ZONE_NAME: name, CONF_ZONE_TYPE: "greenhouse", CONF_INSIDE_TEMP_ENTITY: INSIDE_TEMP,
+               CONF_VALVE_ENTITY: valve, "soil_moisture_entity": probe,
+               CONF_CSV_PATH: f"/tmp/test_zoneflow_{name}.csv"},
+        ))
+    controller_climate = await _setup(hass, climate)  # sets up every entry of the integration
+    controllers = [hass.data[DOMAIN][entry.entry_id] for entry in crops]
+
+    assert controller_climate.has_climate_devices and not controller_climate.has_valve
+    assert all(c.has_valve and not c.has_climate_devices for c in controllers)
+    assert all(c.inside_temp_entity == INSIDE_TEMP for c in controllers)
+    # Each crop waters by its own probe: dry tomatoes, wet peppers.
+    hass.states.async_set("sensor.probe_tomatoes", "10")
+    hass.states.async_set("sensor.probe_peppers", "80")
+    import homeassistant.util.dt as dt_util
+
+    spies = []
+    for c in controllers:
+        c.store.state.last_routine_ts = dt_util.utcnow().timestamp()
+        c.store.state.last_significant_rain_ts = 0.0
+        spy = AsyncMock(return_value=True)
+        c._run_pulses = spy
+        spies.append(spy)
+    for c in controllers:
+        await c.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert spies[0].called is True and spies[1].called is False

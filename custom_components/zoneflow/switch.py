@@ -20,6 +20,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
+from . import visibility
 from .const import CONF_DEEP_SOAK_ENABLED, DOMAIN
 from .controller import ZoneFlowController
 from .entity_cleanup import remove_entities
@@ -34,9 +35,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowPauseSwitch(entry, controller),
     ]
     if controller.is_outdoor:
-        remove_entities(hass, entry, "switch", ["greenhouse_control", "mist_at_night"])
+        remove_entities(hass, entry, "switch", ["greenhouse_control", "mist_at_night", "auto_resume"])
     else:
-        entities += [ZoneFlowGreenhouseControlSwitch(entry, controller), ZoneFlowMistAtNightSwitch(entry, controller)]
+        entities += [
+            ZoneFlowGreenhouseControlSwitch(entry, controller),
+            ZoneFlowMistAtNightSwitch(entry, controller),
+            ZoneFlowAutoResumeSwitch(entry, controller),
+        ]
     async_add_entities(entities)
 
 
@@ -207,6 +212,38 @@ class ZoneFlowGreenhouseControlSwitch(SwitchEntity):
         await self._controller.store.async_save()
         self.async_write_ha_state()
         await self._controller.greenhouse.async_evaluate("control")
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._set(True)
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._set(False)
+
+
+class ZoneFlowAutoResumeSwitch(SwitchEntity):
+    """On: a device switched by hand goes back to automatic after Auto
+    Resume After. Off: only the Resume Automatic button ends the hold."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:timer-refresh-outline"
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_auto_resume"
+        self._attr_translation_key = "auto_resume"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.store.state.gh_auto_resume
+
+    async def _set(self, value: bool) -> None:
+        self._controller.store.state.gh_auto_resume = value
+        self.async_write_ha_state()
+        await self._controller.greenhouse.async_auto_resume_changed()
+        # The time slider only matters while this is on (visibility.py).
+        await visibility.async_apply(self.hass, self._controller.entry, self._controller)
 
     async def async_turn_on(self, **kwargs) -> None:
         await self._set(True)

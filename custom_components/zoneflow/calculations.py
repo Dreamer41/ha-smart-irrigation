@@ -17,6 +17,30 @@ import math
 from dataclasses import dataclass
 
 
+# Skip journal (1.6.1): was a watering skipped for forecast rain worth
+# skipping? Judged 48 hours after the skip.
+SKIP_JUDGE_HOURS = 48.0
+SKIP_JOURNAL_MAX_ENTRIES = 30
+SKIP_HIT_RATE_DAYS = 30
+
+
+def skip_paid_off(actual_mm: float, forecast_mm: float, threshold_mm: float) -> bool:
+    """A skip paid off when at least the forecast amount fell -- or the zone's
+    forecast threshold, if the forecast was higher than that (a skip is
+    justified by the threshold, not by every extra millimetre) -- within
+    the judging window. No rain at all never pays off."""
+    needed = min(max(forecast_mm, 0.0), threshold_mm)
+    return actual_mm > 0.0 and actual_mm >= needed
+
+
+def skip_hit_rate(entries: list[dict], now_ts: float) -> tuple[int, int]:
+    """(paid off, judged) over the entries judged in the last 30 days.
+    Entries with no rain data are not counted either way."""
+    cutoff = now_ts - SKIP_HIT_RATE_DAYS * 86400
+    judged = [e for e in entries if e.get("paid_off") is not None and e["ts"] >= cutoff]
+    return sum(1 for e in judged if e["paid_off"]), len(judged)
+
+
 # Cycle and soak: how a watering is split into pulses, from the soil and
 # the slope (soil_pulse_count below). Sources:
 # - Water per pulse: Texas A&M AgriLife, "Preventing Runoff with Cycle and

@@ -224,13 +224,14 @@
       "control_off": "Drivhusstyring er av",
       "failsafe": "Nødstyring: ingen innvendig temperatur (lufting og vifter: {mode}; varmeovn: {heater})",
       "mist_halted": "Tåkelegging stoppet: trykk Tilbakestill vanningslås",
-      "held": "{device} lates i fred i {minutes} min (manuelt overstyrt)",
       "heating": "Varmer ({temp})",
       "ventilating_temperature": "Lufter: for varmt ({temp})",
       "ventilating_humidity": "Lufter: for fuktig ({humidity})",
       "misting": "Tåkelegger ({temp}, {humidity})",
       "gate_blocked": "Lufter ikke: uteluft ({outside}) er ikke kaldere enn inne ({temp})",
-      "idle": "Alt i orden: {temp}, {humidity}"
+      "idle": "Alt i orden: {temp}, {humidity}",
+      "held_until": "{device} slått på/av manuelt: automatikk igjen {time}",
+      "held_until_resume": "{device} slått på/av manuelt: automatikk igjen når du trykker på Gjenoppta automatikk"
     },
     "heater_mode": {
       "off": "av",

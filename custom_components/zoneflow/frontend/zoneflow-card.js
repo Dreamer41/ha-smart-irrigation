@@ -10,9 +10,10 @@
  * (hidden entities) stays out. Rows are Home Assistant's own entity rows,
  * so units, sliders, toggles and more-info work as everywhere else.
  *
- * Also here: zoneflow-overview-card, every zone in one table (further down).
+ * Also here: zoneflow-overview-card, every zone in one table (further down),
+ * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.6.0";
+const CARD_VERSION = "1.6.1";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -114,7 +115,9 @@ const I18N = {
       "mist_off_seconds": "The rest between misting pulses.",
       "max_mist_minutes_per_hour": "A hard limit on misting in any 60 minutes. A mister switched on by hand also goes off after this long.",
       "vent_open_pct": "How far a vent opens (for vents that can be set to a position).",
-      "manual_hold_minutes": "After you switch a device by hand, ZoneFlow leaves it alone for this long. 0 means it takes charge again at once.",
+      "auto_resume": "On: a device you switch by hand goes back to automatic after Auto Resume After. Off: it stays as you left it until you press Resume automatic.",
+      "auto_resume_hours": "How long a device you switched by hand is left alone before ZoneFlow takes it back (while Auto Resume is on).",
+      "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
       "sensor_offline_hours": "A sensor that sends nothing for this many hours counts as offline, and the climate control goes to its failsafe. Raise it if a steady sensor causes false warnings.",
       "ventilation_failsafe": "What vents and fans do when no inside temperature sensor is working. Misters always go off.",
       "heater_failsafe": "What the heater does when no inside temperature sensor is working. It never runs non-stop without a sensor.",
@@ -123,7 +126,11 @@ const I18N = {
     "close": "Close",
     "device_page": "Open the device page",
     "fertilized": "Fertilized",
-    "mark_watered": "Mark watered"
+    "mark_watered": "Mark watered",
+    "add_rain": "Add rain",
+    "resume_automatic": "Resume automatic",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse"
   },
   "de": {
     "now": "Jetzt",
@@ -200,6 +207,10 @@ const I18N = {
     "device_page": "Geräteseite öffnen",
     "fertilized": "Gedüngt",
     "mark_watered": "Als bewässert markieren",
+    "add_rain": "Regen hinzufügen",
+    "resume_automatic": "Automatik fortsetzen",
+    "crops": "Kulturen",
+    "in_greenhouse": "Im Gewächshaus",
     "tips": {
       "crop_coefficient": "Gibt den Wasserbedarf der Pflanze im Vergleich zur Referenz-Evapotranspiration (ET0) an. Höhere Werte bedeuten mehr Wasser, niedrigere weniger.",
       "flow_rate_mm_per_min": "Gibt an, wie viel Wasser das Bewässerungssystem pro Minute abgibt (in mm/min). Dieser Wert bestimmt die Laufzeit pro Durchgang. Messung per Durchflussmesser oder Behälter und Stoppuhr.",
@@ -227,7 +238,9 @@ const I18N = {
       "mist_off_seconds": "Die Pause zwischen den Vernebelungsimpulsen.",
       "max_mist_minutes_per_hour": "Eine feste Obergrenze für die Vernebelung innerhalb von 60 Minuten. Ein manuell eingeschalteter Vernebler schaltet sich nach dieser Zeit ebenfalls aus.",
       "vent_open_pct": "Wie weit eine Lüftung öffnet (für Lüftungen, die auf eine bestimmte Position eingestellt werden können).",
-      "manual_hold_minutes": "Nachdem Sie ein Gerät manuell geschaltet haben, lässt ZoneFlow es für diese Dauer unverändert. 0 bedeutet, dass sofort wieder die automatische Steuerung übernimmt.",
+      "auto_resume": "Ein: Ein manuell geschaltetes Gerät kehrt nach Automatische Fortsetzung nach wieder zur Automatik zurück. Aus: Es bleibt so eingestellt, bis Sie Automatik fortsetzen drücken.",
+      "auto_resume_hours": "Wie lange ein manuell geschaltetes Gerät unverändert bleibt, bevor ZoneFlow wieder die Steuerung übernimmt (wenn Automatische Fortsetzung aktiv ist).",
+      "manual_rain_mm": "Regenmenge von einem einfachen Regenmesser. Drücken Sie Regen hinzufügen zum Speichern; der Wert wird danach auf 0 zurückgesetzt.",
       "sensor_offline_hours": "Ein Sensor, der so viele Stunden nichts sendet, gilt als offline, und die Klimasteuerung geht in den Notbetrieb. Erhöhen Sie den Wert, wenn ein gleichmäßig messender Sensor Fehlalarme auslöst.",
       "ventilation_failsafe": "Was Lüftungen und Lüfter tun, wenn kein Innen-Temperatursensor funktioniert. Vernebler schalten sich immer aus.",
       "heater_failsafe": "Was die Heizung tut, wenn kein Innen-Temperatursensor funktioniert. Ohne Sensor läuft sie niemals ununterbrochen.",
@@ -309,6 +322,10 @@ const I18N = {
     "device_page": "Abrir la página del dispositivo",
     "fertilized": "Abonado",
     "mark_watered": "Marcar como regado",
+    "add_rain": "Añadir lluvia",
+    "resume_automatic": "Reanudar automático",
+    "crops": "Cultivos",
+    "in_greenhouse": "En invernadero",
     "tips": {
       "crop_coefficient": "Indica las necesidades de agua de la planta en comparación con la evapotranspiración de referencia (ET0). Un valor más alto requiere más agua; uno más bajo, menos.",
       "flow_rate_mm_per_min": "Caudal que aporta el sistema de riego en mm por minuto. Determina la duración de cada sesión. Puede medirlo con un caudalímetro o usando un recipiente y un cronómetro.",
@@ -336,7 +353,9 @@ const I18N = {
       "mist_off_seconds": "Pausa de reposo entre pulsos de nebulización.",
       "max_mist_minutes_per_hour": "Límite máximo de nebulización en un periodo de 60 minutos. Un nebulizador encendido manualmente se apaga también tras este periodo.",
       "vent_open_pct": "Cuánto abre una rejilla (para rejillas con posición regulable).",
-      "manual_hold_minutes": "Tras cambiar un dispositivo a mano, ZoneFlow lo dejará sin tocar durante este tiempo. 0 significa que retoma el control de inmediato.",
+      "auto_resume": "Activado: un dispositivo cambiado a mano vuelve a automático tras Reanudación automática tras. Desactivado: permanece como lo dejaste hasta que pulses Reanudar automático.",
+      "auto_resume_hours": "Tiempo que un dispositivo cambiado a mano se deja sin modificar antes de que ZoneFlow retome el control (mientras la Reanudación automática esté activada).",
+      "manual_rain_mm": "Lluvia leída en un pluviómetro manual. Pulsa Añadir lluvia para registrarla; la cantidad volverá a 0.",
       "sensor_offline_hours": "Un sensor que no envía nada durante estas horas se considera sin conexión y el control del clima pasa a su modo de seguridad. Auméntalo si un sensor estable provoca avisos falsos.",
       "ventilation_failsafe": "Qué hacen las rejillas y ventiladores cuando no funciona ningún sensor de temperatura interior. Los nebulizadores siempre se apagan.",
       "heater_failsafe": "Qué hace el calefactor cuando no funciona ningún sensor de temperatura interior. Nunca funciona de forma continua sin un sensor.",
@@ -418,6 +437,10 @@ const I18N = {
     "device_page": "Avaa laitesivu",
     "fertilized": "Lannoita",
     "mark_watered": "Merkitse kastelluksi",
+    "add_rain": "Lisää sade",
+    "resume_automatic": "Palauta automatiikka",
+    "crops": "Kasvit",
+    "in_greenhouse": "Kasvihuoneessa",
     "tips": {
       "crop_coefficient": "Kasvin vedenkulutus verrattuna vertailuevapotranspiraatioon (ET0). Suurempi arvo tarkoittaa suurempaa veden tarvetta, pienempi vähempää.",
       "flow_rate_mm_per_min": "Sadetuksen tai kastelun määrä millimetreinä minuutissa. Määrittää kastelukerran keston. Voit mitata arvon virtausmittarilla tai astialla ja sekuntikellolla.",
@@ -445,7 +468,9 @@ const I18N = {
       "mist_off_seconds": "Tauko sumutuspulssien välillä.",
       "max_mist_minutes_per_hour": "Tiukka enimmäisraja sumutukselle minkä tahansa 60 minuutin jakson aikana. Käsin päälle kytketty sumutin sammuu myös tämän ajan kuluttua.",
       "vent_open_pct": "Kuinka paljon tuuletusluukku avautuu (luukuille, jotka voidaan asettaa tiettyyn asentoon).",
-      "manual_hold_minutes": "Kun kytket laitteen käsin, ZoneFlow jättää sen rauhaan näin pitkäksi aikaa. 0 tarkoittaa, että se ottaa ohjat välittömästi takaisin.",
+      "auto_resume": "Päällä: käsin kytketty laite palaa automatiikalle Automaattipaluun viiveen jälkeen. Pois: laite pysyy siinä tilassa, jonka jätit, kunnes painat Palauta automatiikka.",
+      "auto_resume_hours": "Kuinka kauan käsin kytkettyä laitetta ei ohjata, ennen kuin ZoneFlow ottaa sen takaisin (kun Automaattipaluu on päällä).",
+      "manual_rain_mm": "Yksinkertaisesta sademittarista lukemasi sademäärä. Tallenna se painamalla Lisää sade; määrä nollautuu.",
       "sensor_offline_hours": "Anturi, joka ei lähetä mitään näin moneen tuntiin, katsotaan poissaolevaksi, ja ilmastonohjaus siirtyy vikatilaan. Nosta arvoa, jos tasaisesti mittaava anturi aiheuttaa vääriä varoituksia.",
       "ventilation_failsafe": "Mitä tuuletusluukut ja tuulettimet tekevät, kun mikään sisälämpötila-anturi ei toimi. Sumuttimet sammuvat aina.",
       "heater_failsafe": "Mitä lämmitin tekee, kun mikään sisälämpötila-anturi ei toimi. Se ei koskaan pyöri taukoamatta ilman anturia.",
@@ -527,6 +552,10 @@ const I18N = {
     "device_page": "Ouvrir la page de l'appareil",
     "fertilized": "Engrais apporté",
     "mark_watered": "Marquer comme arrosé",
+    "add_rain": "Ajouter de la pluie",
+    "resume_automatic": "Reprendre en automatique",
+    "crops": "Cultures",
+    "in_greenhouse": "Dans la serre",
     "tips": {
       "crop_coefficient": "Besoins en eau de la plante par rapport à l'évapotranspiration de référence (ET0). Une valeur plus élevée augmente l'arrosage, une valeur plus basse le réduit.",
       "flow_rate_mm_per_min": "Pluviométrie du système d'arrosage en mm par minute. Détermine la durée de chaque cycle. À mesurer avec un débitmètre ou un récipient et un chronomètre.",
@@ -554,7 +583,9 @@ const I18N = {
       "mist_off_seconds": "Durée du temps de repos entre deux impulsions de brumisation.",
       "max_mist_minutes_per_hour": "Limite stricte de brumisation sur une période glissante de 60 minutes. Un brumisateur allumé manuellement s'éteint aussi passé ce délai.",
       "vent_open_pct": "Pourcentage d'ouverture de l'ouvrant (pour les ouvrants dont la position est réglable).",
-      "manual_hold_minutes": "Après une action manuelle sur un appareil, ZoneFlow le laisse inchangé pendant cette durée. 0 réactive le contrôle automatique immédiatement.",
+      "auto_resume": "Activé : un appareil basculé manuellement repasse en automatique après Reprise automatique après. Désactivé : il reste en l'état jusqu'à ce que vous appuyiez sur Reprendre en automatique.",
+      "auto_resume_hours": "Durée pendant laquelle un appareil basculé manuellement est laissé tel quel avant que ZoneFlow ne en reprenne le contrôle (lorsque la Reprise automatique est activée).",
+      "manual_rain_mm": "Pluie relevée sur un pluviomètre manuel. Appuyez sur Ajouter de la pluie pour l'enregistrer ; la valeur repassera à 0.",
       "sensor_offline_hours": "Un capteur qui n'envoie rien pendant ce nombre d'heures est considéré hors ligne, et le contrôle climatique passe en mode de sécurité. Augmentez cette valeur si un capteur stable provoque de fausses alertes.",
       "ventilation_failsafe": "Comportement des ouvrants et ventilateurs en cas de panne du capteur de température intérieure. Les brumisateurs s'éteignent toujours.",
       "heater_failsafe": "Comportement du chauffage en cas de panne du capteur de température intérieure. Il ne fonctionne jamais en continu sans capteur.",
@@ -636,6 +667,10 @@ const I18N = {
     "device_page": "Apri la pagina del dispositivo",
     "fertilized": "Concimato",
     "mark_watered": "Segna come annaffiato",
+    "add_rain": "Aggiungi pioggia",
+    "resume_automatic": "Ripristina automatico",
+    "crops": "Colture",
+    "in_greenhouse": "In serra",
     "tips": {
       "crop_coefficient": "Fabbisogno idrico della pianta rispetto all'evapotraspirazione di riferimento (ET0). Valori più alti indicano maggiore fabbisogno d'acqua, valori più bassi minore.",
       "flow_rate_mm_per_min": "Tasso di erogazione dell'impianto di irrigazione espresso in mm al minuto. Determina la durata di ciascuna sessione. Può essere misurato con un flussometro oppure con un contenitore e un cronometro.",
@@ -663,7 +698,9 @@ const I18N = {
       "mist_off_seconds": "Pausa tra gli impulsi di nebulizzazione.",
       "max_mist_minutes_per_hour": "Limite massimo di nebulizzazione in un intervallo di 60 minuti. Anche un nebulizzatore attivato manualmente si spegne dopo questo tempo.",
       "vent_open_pct": "Grado di apertura di una finestra di ventilazione (per aperture posizionabili).",
-      "manual_hold_minutes": "Dopo aver azionato manualmente un dispositivo, ZoneFlow non interviene per questo intervallo di tempo. 0 indica che riprende subito il controllo.",
+      "auto_resume": "Attivo: un dispositivo azionato manualmente torna in automatico dopo Ripristino automatico dopo. Disattivo: rimane nello stato impostato finché non premi Ripristina automatico.",
+      "auto_resume_hours": "Per quanto tempo un dispositivo azionato manualmente viene lasciato invariato prima che ZoneFlow ne riprenda il controllo (mentre il Ripristino automatico è attivo).",
+      "manual_rain_mm": "Pioggia rilevata da un semplice pluviometro. Premi Aggiungi pioggia per registrarla; la quantità tornerà a 0.",
       "sensor_offline_hours": "Un sensore che non invia nulla per queste ore è considerato offline e il controllo del clima passa alla modalità di sicurezza. Aumentalo se un sensore stabile causa falsi avvisi.",
       "ventilation_failsafe": "Comportamento di aperture e ventole quando nessun sensore di temperatura interna funziona. I nebulizzatori si spengono sempre.",
       "heater_failsafe": "Comportamento del riscaldatore quando nessun sensore di temperatura interna funziona. Non rimane mai in funzione continua senza sensore.",
@@ -745,6 +782,10 @@ const I18N = {
     "device_page": "Apparaatpagina openen",
     "fertilized": "Bemest",
     "mark_watered": "Markeer als bewaterd",
+    "add_rain": "Regen toevoegen",
+    "resume_automatic": "Automatisch hervatten",
+    "crops": "Gewassen",
+    "in_greenhouse": "In kas",
     "tips": {
       "crop_coefficient": "Bepaalt de waterbehoefte van het gewas ten opzichte van de referentie-evapotranspiratie (ET0). Hoger = meer water, lager = minder water.",
       "flow_rate_mm_per_min": "De neerslagsnelheid van je irrigatiesysteem in mm per minuut. Dit bepaalt de duur van elke sproeibeurt. Te meten met een stroommeter of met een opvangbakje en een stopwatch.",
@@ -772,7 +813,9 @@ const I18N = {
       "mist_off_seconds": "De rusttijd tussen nevelpulsen.",
       "max_mist_minutes_per_hour": "Een harde limiet voor nevelen in een periode van 60 minuten. Een handmatig ingeschakelde nevelaar gaat na deze tijd ook uit.",
       "vent_open_pct": "Hoe ver een ventilatie opent (voor ventilaties die op een stand ingesteld kunnen worden).",
-      "manual_hold_minutes": "Nadat u een apparaat handmatig schakelt, laat ZoneFlow het zo lang met rust. 0 betekent dat het het beheer direct weer overneemt.",
+      "auto_resume": "Aan: een handmatig geschakeld apparaat keert terug naar automatisch na Automatisch hervatten na. Uit: het blijft zoals je het achterliet totdat je op Automatisch hervatten drukt.",
+      "auto_resume_hours": "Hoe lang een handmatig geschakeld apparaat met rust wordt gelaten voordat ZoneFlow de bediening overneemt (terwijl Automatisch hervatten aan staat).",
+      "manual_rain_mm": "Regen afgelezen van een eenvoudige regenmeter. Druk op Regen toevoegen om op te slaan; de hoeveelheid gaat terug naar 0.",
       "sensor_offline_hours": "Een sensor die zo veel uur niets stuurt, geldt als offline en de klimaatregeling gaat naar de noodstand. Verhoog dit als een stabiele sensor valse waarschuwingen geeft.",
       "ventilation_failsafe": "Wat ventilatie en ventilatoren doen als er geen binnentemperatuursensor werkt. Nevelaars gaan altijd uit.",
       "heater_failsafe": "Wat de verwarming doet als er geen binnentemperatuursensor werkt. Deze draait nooit ononderbroken zonder sensor.",
@@ -854,6 +897,10 @@ const I18N = {
     "device_page": "Otwórz stronę urządzenia",
     "fertilized": "Nawożono",
     "mark_watered": "Oznacz jako podlane",
+    "add_rain": "Dodaj deszcz",
+    "resume_automatic": "Wznów automatykę",
+    "crops": "Uprawy",
+    "in_greenhouse": "W szklarni",
     "tips": {
       "crop_coefficient": "Określa zapotrzebowanie rośliny na wodę w stosunku do ewapotranspiracji wskaźnikowej (ET0). Wyższa wartość = więcej wody, niższa = mniej.",
       "flow_rate_mm_per_min": "Wydajność systemu nawadniania wyrażona w mm na minutę. Wyznacza czas trwania pojedynczego cyklu. Można ją zmierzyć przepływomierzem lub pojemnikiem i stoperem.",
@@ -881,7 +928,9 @@ const I18N = {
       "mist_off_seconds": "Przerwa między impulsami zamgławiania.",
       "max_mist_minutes_per_hour": "Sztywny limit zamgławiania w ciągu dowolnych 60 minut. Zamgławiacz włączony ręcznie również wyłącza się po tym czasie.",
       "vent_open_pct": "Stopień otwarcia wietrznika (dla wietrzników z możliwością ustawienia pozycji).",
-      "manual_hold_minutes": "Po ręcznym przełączeniu urządzenia ZoneFlow pozostawia je bez zmian przez ten czas. 0 oznacza, że natychmiast ponownie przejmuje kontrolę.",
+      "auto_resume": "Włączone: urządzenie przełączone ręcznie wraca do automatyki po Czasie automatycznego wznowienia. Wyłączone: pozostaje w obecnym stanie, dopóki nie naciśniesz Wznów automatykę.",
+      "auto_resume_hours": "Jak długo urządzenie przełączone ręcznie pozostaje bez zmian, zanim ZoneFlow przejmie nad nim kontrolę (gdy Wznowienie automatyczne jest włączone).",
+      "manual_rain_mm": "Ilość deszczu odczytana ze zwykłego deszczomierza. Naciśnij Dodaj deszcz, aby ją zapisać; wartość powróci do 0.",
       "sensor_offline_hours": "Czujnik, który nie wysyła nic przez tyle godzin, jest uznawany za offline, a sterowanie klimatem przechodzi w tryb awaryjny. Zwiększ tę wartość, jeśli stabilny czujnik powoduje fałszywe ostrzeżenia.",
       "ventilation_failsafe": "Co robią wietrzniki i wentylatory, gdy żaden czujnik temperatury wewnętrznej nie działa. Zamgławiacze zawsze się wyłączają.",
       "heater_failsafe": "Co robi grzejnik, gdy żaden czujnik temperatury wewnętrznej nie działa. Nigdy nie działa bez przerwy bez czujnika.",
@@ -963,6 +1012,10 @@ const I18N = {
     "device_page": "Abrir a página do dispositivo",
     "fertilized": "Adubado",
     "mark_watered": "Marcar como regado",
+    "add_rain": "Adicionar chuva",
+    "resume_automatic": "Retomar automático",
+    "crops": "Culturas",
+    "in_greenhouse": "Na estufa",
     "tips": {
       "crop_coefficient": "Indica a necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
       "flow_rate_mm_per_min": "Taxa de precipitação da rega em mm por minuto. Define a duração de cada ciclo. Pode medir com um caudalímetro ou com um recipiente e um cronómetro.",
@@ -990,7 +1043,9 @@ const I18N = {
       "mist_off_seconds": "Intervalo de descanso entre impulsos de nebulização.",
       "max_mist_minutes_per_hour": "Limite máximo de nebulização em qualquer janela de 60 minutos. Um nebulizador ligado manualmente também se desliga após este tempo.",
       "vent_open_pct": "O quanto uma abertura se abre (para aberturas com regulação de posição).",
-      "manual_hold_minutes": "Após alterar um dispositivo manualmente, o ZoneFlow deixa-o inalterado durante este tempo. 0 significa que retoma o controlo imediatamente.",
+      "auto_resume": "Ligado: um dispositivo alterado manualmente volta ao modo automático após Retoma automática após. Desligado: permanece como o deixou até premir Retomar automático.",
+      "auto_resume_hours": "Quanto tempo um dispositivo alterado manualmente é mantido inalterado antes de o ZoneFlow retomar o controlo (enquanto a Retoma automática estiver ligada).",
+      "manual_rain_mm": "Chuva lida num pluviómetro simples. Prima Adicionar chuva para registar; o valor volta a 0.",
       "sensor_offline_hours": "Um sensor que não envia nada durante estas horas é considerado offline e o controlo do clima passa ao modo de segurança. Aumente o valor se um sensor estável causar avisos falsos.",
       "ventilation_failsafe": "O que as aberturas e ventiladores fazem quando nenhum sensor de temperatura interior está a funcionar. Os nebulizadores desligam-se sempre.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interior está a funcionar. Nunca funciona ininterruptamente sem um sensor.",
@@ -1072,6 +1127,10 @@ const I18N = {
     "device_page": "Öppna enhetssidan",
     "fertilized": "Gödslat",
     "mark_watered": "Markera som vattnad",
+    "add_rain": "Lägg till regn",
+    "resume_automatic": "Återgå till automatik",
+    "crops": "Grödor",
+    "in_greenhouse": "I växthus",
     "tips": {
       "crop_coefficient": "Växtens vattenbehov i jämförelse med referensevapotranspiration (ET0). Högre värde innebär mer vatten, lägre värde mindre.",
       "flow_rate_mm_per_min": "Bevattningssystemets flöde i mm per minut. Detta bestämmer bevattningstiden för varje pass. Mät med flödesmätare eller behållare och tidtagarur.",
@@ -1099,7 +1158,9 @@ const I18N = {
       "mist_off_seconds": "Pausen mellan dimmimpulser.",
       "max_mist_minutes_per_hour": "En fast gräns för dimmning under valfria 60 minuter. En dimmare som slås på manuellt stängs också av efter denna tid.",
       "vent_open_pct": "Hur mycket en vädring öppnas (för vädring som kan ställas in i ett visst läge).",
-      "manual_hold_minutes": "När du ändrar en enhet manuellt lämnar ZoneFlow den i fred så här länge. 0 innebär att den tar över styrningen igen direkt.",
+      "auto_resume": "På: en enhet du ändrat manuellt återgår till automatik efter Auto-återgång efter. Av: den står kvar i sitt läge tills du trycker på Återgå till automatik.",
+      "auto_resume_hours": "Hur länge en enhet du ändrat manuellt lämnas ifred innan ZoneFlow tar över styrningen igen (när Auto-återgång är på).",
+      "manual_rain_mm": "Regnmängd du läst av från en enkel regnmätare. Tryck på Lägg till regn för att spara; mängden återgår till 0.",
       "sensor_offline_hours": "En sensor som inte skickar något på så här många timmar räknas som offline, och klimatstyrningen går till sitt nödläge. Höj värdet om en stabil sensor ger falska varningar.",
       "ventilation_failsafe": "Vad vädring och fläktar gör när ingen innetemperaturgivare fungerar. Dimmare stängs alltid av.",
       "heater_failsafe": "Vad värmaren gör när ingen innetemperaturgivare fungerar. Den körs aldrig oavbrutet utan en givare.",
@@ -1181,6 +1242,10 @@ const I18N = {
     "device_page": "Otevřít stránku zařízení",
     "fertilized": "Pohnojeno",
     "mark_watered": "Označit jako zalité",
+    "add_rain": "Přidat déšť",
+    "resume_automatic": "Obnovit automatiku",
+    "crops": "Plodiny",
+    "in_greenhouse": "V skleníku",
     "tips": {
       "crop_coefficient": "Vyjadřuje nároky rostliny na vodu v porovnání s referenční evapotranspirací (ET0). Vyšší hodnota znamená více vody, nižší méně.",
       "flow_rate_mm_per_min": "Intenzita závlahy v mm za minutu. Určuje délku jednoho zavlažovacího cyklu. Změřte průtokoměrem nebo pomocí nádoby a stopek.",
@@ -1208,7 +1273,9 @@ const I18N = {
       "mist_off_seconds": "Pauza mezi pulzy mlžení.",
       "max_mist_minutes_per_hour": "Pevný limit mlžení během libovolných 60 minut. Mlžovač zapnutý ručně se po této době také vypne.",
       "vent_open_pct": "Míra otevření větracího otvoru (pro otvory, u kterých lze nastavit polohu).",
-      "manual_hold_minutes": "Po ručním přepnutí zařízení je ZoneFlow ponechá bez zásahu po tuto dobu. Hodnota 0 znamená okamžité převzetí řízení.",
+      "auto_resume": "Zapnuto: ručně přepnuté zařízení se vrátí do automatického režimu po uplynutí Zpoždění automatického návratu. Vypnuto: zůstane ve stavu, v jakém jste jej nechali, dokud nestisknete Obnovit automatiku.",
+      "auto_resume_hours": "Jak dlouho zůstane ručně přepnuté zařízení bez zásahu, než si je ZoneFlow vezme zpět (při zapnutém Automatickém návratu).",
+      "manual_rain_mm": "Množství srážek zjištěné z běžného srážkoměru. Stisknutím tlačítka Přidat déšť jej uložíte; hodnota se pak vynuluje.",
       "sensor_offline_hours": "Senzor, který tolik hodin nic nepošle, se považuje za offline a řízení klimatu přejde do nouzového režimu. Zvyšte hodnotu, pokud stabilní senzor způsobuje falešná varování.",
       "ventilation_failsafe": "Co dělají větrací otvory a ventilátory, když nefunguje žádný snímač vnitřní teploty. Mlžovače se vždy vypnou.",
       "heater_failsafe": "Co dělá topení, když nefunguje žádný snímač vnitřní teploty. Bez snímače nikdy neběží nepřetržitě.",
@@ -1290,6 +1357,10 @@ const I18N = {
     "device_page": "Åbn enhedssiden",
     "fertilized": "Gødsket",
     "mark_watered": "Markér som vandet",
+    "add_rain": "Tilføj regn",
+    "resume_automatic": "Genoptag automatik",
+    "crops": "Aftrøder",
+    "in_greenhouse": "I drivhus",
     "tips": {
       "crop_coefficient": "Viser plantens vandbehov sammenlignet med reference-evapotranspiration (ET0). Højere værdi betyder mere vand, lavere betyder mindre.",
       "flow_rate_mm_per_min": "Vandtilførsel fra vandingssystemet i mm pr. minut. Det bestemmer varigheden af hver vanding. Måles med en flowmåler eller en beholder og et stopur.",
@@ -1317,7 +1388,9 @@ const I18N = {
       "mist_off_seconds": "Pausen mellem forstøvningspulser.",
       "max_mist_minutes_per_hour": "En fast grænse for forstøvning inden for en periode på 60 minutter. En forstøver skiftet manuelt slukker også efter så lang tid.",
       "vent_open_pct": "Hvor meget en udluftning åbner (for udluftninger der kan indstilles til en position).",
-      "manual_hold_minutes": "Efter du har skiftet en enhed manuelt, lader ZoneFlow den være i dette tidsrum. 0 betyder, at den tager over igen med det samme.",
+      "auto_resume": "Til: en enhed skiftet manuelt vender tilbage til automatik efter Auto-genoptag efter. Fra: den forbliver som du forlod den, indtil du trykker på Genoptag automatik.",
+      "auto_resume_hours": "Hvor længe en manuelt betjent enhed lades være i fred, før ZoneFlow tager styringen tilbage (når Auto-genoptag er slået til).",
+      "manual_rain_mm": "Regnmængde du har aflæst fra en simpel regnmåler. Tryk på Tilføj regn for at gemme den; mængden nulstilles herefter.",
       "sensor_offline_hours": "En sensor, der ikke sender noget i så mange timer, regnes som offline, og klimastyringen går i nøddrift. Hæv værdien, hvis en stabil sensor giver falske advarsler.",
       "ventilation_failsafe": "Hvad udluftning og ventilatorer gør, når ingen indendørs temperatursensor virker. Forstøvere slukker altid.",
       "heater_failsafe": "Hvad varmelegemet gør, når ingen indendørs temperatursensor virker. Det kører aldrig uafbrudt uden en sensor.",
@@ -1399,6 +1472,10 @@ const I18N = {
     "device_page": "Eszközoldal megnyitása",
     "fertilized": "Tápanyag pótolva",
     "mark_watered": "Megjelölés öntözöttként",
+    "add_rain": "Eső hozzáadása",
+    "resume_automatic": "Automatika folytatása",
+    "crops": "Növények",
+    "in_greenhouse": "Üvegházban",
     "tips": {
       "crop_coefficient": "A növény vízigénye a referencia-párolgáshoz (ET0) képest. A magasabb érték több, az alacsonyabb kevesebb vizet jelent.",
       "flow_rate_mm_per_min": "A öntözőrendszer csapadékintenzitása mm/percben. Ez határozza meg az egyes öntözések időtartamát. Áramlásmérővel, vagy edénnyel és stopperórával mérhető.",
@@ -1426,7 +1503,9 @@ const I18N = {
       "mist_off_seconds": "A párásítási impulzusok közötti szünet ideje.",
       "max_mist_minutes_per_hour": "Szigorú korlát a párásításra bármely 60 perces időszakban. A kézzel bekapcsolt párásító is kikapcsol ennyi idő után.",
       "vent_open_pct": "Mennyire nyíljon ki a szellőző (pozicionálható szellőzők esetén).",
-      "manual_hold_minutes": "Miután kézzel átkapcsol egy eszközt, a ZoneFlow ennyi ideig békén hagyja. A 0 azt jelenti, hogy azonnal visszaveszi a vezérlést.",
+      "auto_resume": "Be: a kézzel kapcsolodó eszköz az Automatikus folytatás késleltetése után visszatér automatikus módba. Ki: abban az állapotban marad, amíg meg nem nyomja az Automatika folytatása gombot.",
+      "auto_resume_hours": "Mennyi ideig marad változatlanul a kézzel kapcsolodó eszköz, mielőtt a ZoneFlow visszaveszi az irányítást (amikor az Automatikus folytatás be van kapcsolva).",
+      "manual_rain_mm": "Egyszerű csapadékmérőből leolvasott esőmennyiség. Nyomja meg az Eső hozzáadása gombot a rögzítéshez; az érték ezután 0-ra vált.",
       "sensor_offline_hours": "Az az érzékelő, amely ennyi órán át nem küld semmit, offline-nak számít, és a klímavezérlés vészüzemmódba lép. Növelje az értéket, ha egy egyenletesen mérő érzékelő téves figyelmeztetéseket okoz.",
       "ventilation_failsafe": "Mit tegyenek a szellőzők és ventilátorok, ha nem működik belső hőmérséklet-érzékelő. A párásítók mindig kikapcsolnak.",
       "heater_failsafe": "Mit tegyen a fűtés, ha nem működik belső hőmérséklet-érzékelő. Érzékelő nélkül soha nem működik folyamatosan.",
@@ -1508,6 +1587,10 @@ const I18N = {
     "device_page": "Åpne enhetssiden",
     "fertilized": "Gjødslet",
     "mark_watered": "Merk som vannet",
+    "add_rain": "Legg til regn",
+    "resume_automatic": "Gjenoppta automatikk",
+    "crops": "Kulturer",
+    "in_greenhouse": "I drivhus",
     "tips": {
       "crop_coefficient": "Plantens vannbehov sammenlignet med referanse-evapotranspirasjon (ET0). Høyere verdi gir mer vann, lavere gir mindre.",
       "flow_rate_mm_per_min": "Vanningssystemets vanntilførsel i mm per minutt. Dette bestemmer varigheten på hver vanning. Kan måles med mengdemåler eller med en beholder og stoppeklokke.",
@@ -1535,7 +1618,9 @@ const I18N = {
       "mist_off_seconds": "Hvilepause mellom tåkeleggingspulser.",
       "max_mist_minutes_per_hour": "En øvre grense for tåkelegging i løpet av en 60-minutters periode. En tåkelegger slått på manuelt slås også av etter så lang tid.",
       "vent_open_pct": "Hvor mye luftingen åpner seg (for ventiler som kan stilles inn i posisjon).",
-      "manual_hold_minutes": "Etter at du slår på en enhet manuelt, lar ZoneFlow den være i fred så lenge. 0 betyr at den tar over styringen igjen med en gang.",
+      "auto_resume": "På: en enhet som er slått på/av manuelt går tilbake til automatikk etter Automatisk gjenoptakelse etter. Av: den blir stående som du forlot den til du trykker på Gjenoppta automatikk.",
+      "auto_resume_hours": "Hvor lenge en manuelt betjent enhet står urørt før ZoneFlow tar over styringen igjen (når Automatisk gjenoptakelse er på).",
+      "manual_rain_mm": "Regnmengde du avleser fra en enkel regnmåler. Trykk på Legg til regn for å registrere den; mengden tilbakestilles til 0.",
       "sensor_offline_hours": "En sensor som ikke sender noe på så mange timer, regnes som frakoblet, og klimastyringen går i nøddrift. Øk verdien hvis en stabil sensor gir falske varsler.",
       "ventilation_failsafe": "Hva lufting og vifter gjør når ingen innvendig temperatursensor fungerer. Tåkeleggere slås alltid av.",
       "heater_failsafe": "Hva varmeovnen gjør når ingen innvendig temperatursensor fungerer. Den kjører aldri uavbrutt uten sensor.",
@@ -1617,6 +1702,10 @@ const I18N = {
     "device_page": "Abrir a página do dispositivo",
     "fertilized": "Adubado",
     "mark_watered": "Marcar como regado",
+    "add_rain": "Adicionar chuva",
+    "resume_automatic": "Retomar automático",
+    "crops": "Culturas",
+    "in_greenhouse": "Na estufa",
     "tips": {
       "crop_coefficient": "Necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
       "flow_rate_mm_per_min": "Taxa de precipitação da irrigação em mm por minuto. Determina a duração de cada ciclo. Pode ser medida com um medidor de vazão ou usando um recipiente e um cronômetro.",
@@ -1644,7 +1733,9 @@ const I18N = {
       "mist_off_seconds": "Tempo de descanso entre pulsos de nebulização.",
       "max_mist_minutes_per_hour": "Limite máximo de nebulização a cada 60 minutos. Um nebulizador ligado manualmente também desliga após esse tempo.",
       "vent_open_pct": "Quanto uma abertura de ventilação abre (para aberturas ajustáveis por posição).",
-      "manual_hold_minutes": "Após você acionar um dispositivo manualmente, o ZoneFlow o mantém inalterado por este tempo. 0 significa que ele retoma o controle imediatamente.",
+      "auto_resume": "Ligado: um dispositivo alterado manualmente volta ao modo automático após Retomada automática após. Desligado: permanece como você deixou até pressionar Retomar automático.",
+      "auto_resume_hours": "Quanto tempo um dispositivo alterado manualmente fica sem intervenção antes que o ZoneFlow retome o controle (enquanto a Retomada automática estiver ligada).",
+      "manual_rain_mm": "Chuva lida em um pluviômetro simples. Pressione Adicionar chuva para registrar; a quantidade volta para 0.",
       "sensor_offline_hours": "Um sensor que não envia nada por estas horas é considerado offline, e o controle do clima entra no modo de segurança. Aumente o valor se um sensor estável causar alertas falsos.",
       "ventilation_failsafe": "O que aberturas e ventiladores fazem quando nenhum sensor de temperatura interna funciona. Nebulizadores sempre desligam.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interna funciona. Ele nunca roda continuamente sem um sensor.",
@@ -1726,6 +1817,10 @@ const I18N = {
     "device_page": "Открыть страницу устройства",
     "fertilized": "Подкормлено",
     "mark_watered": "Отметить полив",
+    "add_rain": "Добавить дождь",
+    "resume_automatic": "Возобновить авторежим",
+    "crops": "Культуры",
+    "in_greenhouse": "В теплице",
     "tips": {
       "crop_coefficient": "Потребность растения в воде по сравнению с эталонной эвапотранспирацией (ET0). Чем выше значение, тем больше воды требуется.",
       "flow_rate_mm_per_min": "Интенсивность полива в мм/мин. Определяет продолжительность одного сеанса. Можно измерить расходомером или с помощью емкости и секундомера.",
@@ -1753,7 +1848,9 @@ const I18N = {
       "mist_off_seconds": "Длительность паузы между импульсами тумана.",
       "max_mist_minutes_per_hour": "Лимит суммарного времени работы тумана за любой 60-минутный интервал. Ручное включение тумана также выключается по истечении этого времени.",
       "vent_open_pct": "Степень открытия форточки (для форточек с поддержкой точного позиционирования).",
-      "manual_hold_minutes": "После ручного переключения устройства ZoneFlow не вмешивается в его работу указанное время. Значение 0 сразу возвращает автоматическое управление.",
+      "auto_resume": "Вкл: вручную переключенное устройство вернется в авторежим через Автовозврат через. Выкл: устройство остается в текущем состоянии, пока вы не нажмете Возобновить авторежим.",
+      "auto_resume_hours": "Сколько времени переключенное вручную устройство остается без изменений, прежде чем ZoneFlow снова возьмет его под контроль (при включенном Автовозврате).",
+      "manual_rain_mm": "Количество осадков, измеренное обычным дождемером. Нажмите Добавить дождь, чтобы сохранить значение; показатель сбросится на 0.",
       "sensor_offline_hours": "Датчик, который ничего не передаёт столько часов, считается офлайн, и управление климатом переходит в аварийный режим. Увеличьте значение, если стабильный датчик вызывает ложные предупреждения.",
       "ventilation_failsafe": "Поведение форточек и вентиляторов при отказе датчика температуры внутри. Туманообразование всегда отключается.",
       "heater_failsafe": "Поведение обогревателя при отказе датчика температуры внутри. Без датчика непрерывная работа запрещена.",
@@ -1835,6 +1932,10 @@ const I18N = {
     "device_page": "Otvoriť stránku zariadenia",
     "fertilized": "Pohnojené",
     "mark_watered": "Označiť ako zaliate",
+    "add_rain": "Pridať dážď",
+    "resume_automatic": "Obnoviť automatiku",
+    "crops": "Plodiny",
+    "in_greenhouse": "V skleníku",
     "tips": {
       "crop_coefficient": "Vyjadruje potrebu vody pre rastlinu v porovnaní s referenčnou evapotranspiráciou (ET0). Vyššia hodnota znamená viac vody, nižšia menej.",
       "flow_rate_mm_per_min": "Intenzita zavlažovania v mm za minútu. Určuje dĺžku jedného cyklu. Zmerajte ju prietokomerom alebo pomocou nádoby a stopiek.",
@@ -1862,7 +1963,9 @@ const I18N = {
       "mist_off_seconds": "Pauza medzi impulzmi zahmlievania.",
       "max_mist_minutes_per_hour": "Pevný limit pre zahmlievanie počas akýchkoľvek 60 minút. Zahmlievač zapnutý ručne sa po tomto čase tiež vypne.",
       "vent_open_pct": "Ako veľmi sa vetranie otvorí (pre vetranie, ktoré je možné nastaviť do polohy).",
-      "manual_hold_minutes": "Po ručnom prepnutí zariadenia ho ZoneFlow nechá bez zásahu na túto dobu. 0 znamená, že sa hneď znova ujme riadenia.",
+      "auto_resume": "Zapnuté: ručne prepnuté zariadenie sa vráti do automatického režimu po uplynutí Zpoždenia automatického návratu. Vypnuté: zostane v stave, v akom ste ho nechali, kým nestlačíte Obnoviť automatiku.",
+      "auto_resume_hours": "Ako dlho zostane ručne prepnuté zariadenie bez zásahu, kým nad ním ZoneFlow opäť prevezme kontrolu (keď je zapnutý Automatický návrat).",
+      "manual_rain_mm": "Množstvo zrážok odčítané z obyčajného zrážkomera. Stlačte Pridať dážď na uloženie; hodnota sa potom vynuluje.",
       "sensor_offline_hours": "Senzor, ktorý toľko hodín nič nepošle, sa považuje za offline a riadenie klímy prejde do núdzového režimu. Zvýšte hodnotu, ak stabilný senzor spôsobuje falošné varovania.",
       "ventilation_failsafe": "Čo robia vetranie a ventilátory, keď nefunguje žiaden senzor vnútornej teploty. Zahmlievače sa vždy vypnú.",
       "heater_failsafe": "Čo robí ohrievač, keď nefunguje žiaden senzor vnútornej teploty. Bez senzora nikdy nebeží nepretržite.",
@@ -1944,6 +2047,10 @@ const I18N = {
     "device_page": "Відкрити сторінку пристрою",
     "fertilized": "Підживлено",
     "mark_watered": "Позначити полив",
+    "add_rain": "Додати дощ",
+    "resume_automatic": "Vidnovyty avtomatyku",
+    "crops": "Культури",
+    "in_greenhouse": "У теплиці",
     "tips": {
       "crop_coefficient": "Потреба рослини у воді порівняно з еталонною евапотранспірацією (ET0). Вище значення означає більше води, нижче — менше.",
       "flow_rate_mm_per_min": "Інтенсивність поливу в мм за хвилину. Визначає тривалість кожного сеансу. Можна виміряти витратоміром або за допомогою ємності та секундоміра.",
@@ -1971,7 +2078,9 @@ const I18N = {
       "mist_off_seconds": "Тривалість паузи між імпульсами туманоутворення.",
       "max_mist_minutes_per_hour": "Строге обмеження загального часу туманоутворення за будь-які 60 хвилин. Туманоутворювач, увімкнений вручну, також вимкнеться після цього часу.",
       "vent_open_pct": "Ступінь відкриття кватирок (для кватирок із підтримкою позиціонування).",
-      "manual_hold_minutes": "Після ручного перемикання пристрою ZoneFlow не змінюватиме його стан протягом цього часу. Значення 0 означає миттєве повернення під керування автоматики.",
+      "auto_resume": "Увімкнено: пристрій, переключений вручну, повертається до авторежиму через Автоматичне відновлення через. Вимкнено: залишається у вибраному стані, поки ви не натиснете Відновити авторежим.",
+      "auto_resume_hours": "Скільки часу пристрій, переключений вручну, залишається без змін, перш ніж ZoneFlow знову візьме його під контроль (коли Автоматичне відновлення увімкнено).",
+      "manual_rain_mm": "Кількість осадків з простого дощоміра. Натисніть Додати дощ, щоб зберегти; значення скинеться на 0.",
       "sensor_offline_hours": "Датчик, який нічого не передає стільки годин, вважається офлайн, і керування кліматом переходить в аварійний режим. Збільште значення, якщо стабільний датчик спричиняє хибні попередження.",
       "ventilation_failsafe": "Дія кватирок і вентиляторів при несправності всіх внутрішніх датчиків температури. Туманоутворювачі завжди вимикаються.",
       "heater_failsafe": "Дія обігрівача при несправності всіх внутрішніх датчиків температури. Він ніколи не працює безперервно без датчика.",
@@ -2053,6 +2162,10 @@ const I18N = {
     "device_page": "打开设备页面",
     "fertilized": "已施肥",
     "mark_watered": "标记为已浇水",
+    "add_rain": "添加降雨",
+    "resume_automatic": "恢复自动",
+    "crops": "作物",
+    "in_greenhouse": "温室内",
     "tips": {
       "crop_coefficient": "衡量植物相比于基准蒸散发量 (ET0) 的需水程度。数值越高需水量越大，越低则越小。",
       "flow_rate_mm_per_min": "灌溉系统的喷灌强度（毫米/分钟）。该参数决定每次灌溉的持续时长。可使用流量计或利用测量容器与秒表测定。",
@@ -2080,7 +2193,9 @@ const I18N = {
       "mist_off_seconds": "喷雾脉冲之间的休息间隔。",
       "max_mist_minutes_per_hour": "任何 60 分钟内喷雾总时长的硬性限制。手动开启的喷雾器也会在此时长后自动关闭。",
       "vent_open_pct": "通风口打开的位置程度（适用于支持设置位置的通风口）。",
-      "manual_hold_minutes": "手动切换设备后，ZoneFlow 将在此时长内保持该状态不干预。设为 0 表示立即重新接管。",
+      "auto_resume": "开启：手动切换的设备将在“自动恢复延迟”后恢复自动模式。关闭：保持原状，直到您点击“恢复自动”。",
+      "auto_resume_hours": "手动切换的设备在 ZoneFlow 接管控制之前保持原状的时间（当“自动恢复”开启时）。",
+      "manual_rain_mm": "从普通雨量计读取的降雨量。点击“添加降雨”进行记录，数值将清零。",
       "sensor_offline_hours": "传感器在这么多小时内没有任何上报即视为离线，气候控制将进入故障安全模式。如果数值稳定的传感器引起误报，请调高此值。",
       "ventilation_failsafe": "当没有可用的室内温度传感器时通风口和风扇的动作。喷雾器将始终关闭。",
       "heater_failsafe": "当没有可用的室内温度传感器时加热器的动作。在没有传感器的情况下，它绝不会不间断连续运行。",
@@ -2121,7 +2236,7 @@ const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fer
 const SETTINGS_GROUPS = [
   ["climate", [
     "number.heat_temp", "number.vent_temp", "number.fan_temp", "number.climate_hysteresis",
-    "number.outside_margin", "number.max_humidity", "number.vent_open_pct", "number.manual_hold_minutes",
+    "number.outside_margin", "number.max_humidity", "number.vent_open_pct", "switch.auto_resume", "number.auto_resume_hours",
     "number.sensor_offline_hours", "select.ventilation_failsafe", "select.heater_failsafe",
   ]],
   ["misting", [
@@ -2169,6 +2284,7 @@ const HANDLED = new Set([
   "sensor.status", "button.run_routine", "button.run_deep_soak", "button.snooze_today",
   "button.reset_lock", "switch.service_mode", "button.service_run_1_min", "button.service_run_5_min",
   "button.service_run_10_min", "button.fertilized_today", "button.mark_watered",
+  "number.manual_rain_mm", "button.add_manual_rain", "button.resume_automatic",
 ]);
 
 function t(hass, key) {
@@ -2255,7 +2371,8 @@ class ZoneFlowCard extends HTMLElement {
         return !when || when(this._hass.states[e.entity_id]);
       })
     );
-    const valve = this._hass.states[visible["sensor.status"]?.entity_id]?.attributes?.valve;
+    const statusAttrs = this._hass.states[visible["sensor.status"]?.entity_id]?.attributes || {};
+    const valve = statusAttrs.valve;
     const device = this._hass.devices?.[this._config.device_id];
     // What the card is built from: rebuilt only when one of these changes.
     const signature = JSON.stringify([
@@ -2266,10 +2383,12 @@ class ZoneFlowCard extends HTMLElement {
       !!(valve && this._hass.states[valve]),
       this._hass.locale?.language,
       device?.name_by_user || device?.name,
+      statusAttrs.greenhouse || null,
+      statusAttrs.crops || null,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
-      this._build(visible, valve);
+      this._build(visible, valve, statusAttrs);
     }
     this._update(visible);
   }
@@ -2284,12 +2403,13 @@ class ZoneFlowCard extends HTMLElement {
     return this._helpersPromise;
   }
 
-  _build(visible, valve) {
+  _build(visible, valve, statusAttrs = {}) {
     const hass = this._hass;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
     const root = this.shadowRoot;
     this._buildId = (this._buildId || 0) + 1;
     this._open = this._open || {};
+    this._cropList = undefined;
     root.innerHTML = "";
     const style = document.createElement("style");
     style.textContent = `
@@ -2300,6 +2420,10 @@ class ZoneFlowCard extends HTMLElement {
       .status { padding: 4px 16px 12px; font-size: 1.05em; color: var(--primary-text-color); }
       .status.warn { color: var(--warning-color, #db4437); }
       .status .code { display: block; font-size: 0.75em; color: var(--secondary-text-color); margin-top: 2px; }
+      .in-greenhouse { display: flex; align-items: center; gap: 6px; padding: 0 16px 8px; margin-top: -6px;
+        color: var(--secondary-text-color); font-size: 0.9em; }
+      .in-greenhouse ha-icon { --mdc-icon-size: 16px; }
+      .crops zoneflow-overview-card { display: block; margin: 0 -12px; }
       .section { padding: 0 16px 8px; }
       .section-title { font-weight: 500; color: var(--secondary-text-color); font-size: 0.85em;
         text-transform: uppercase; letter-spacing: 0.04em; margin: 12px 0 4px; }
@@ -2363,6 +2487,15 @@ class ZoneFlowCard extends HTMLElement {
     this._statusEl = document.createElement("div");
     this._statusEl.className = "status";
     card.appendChild(this._statusEl);
+    // A crop: which greenhouse it is in.
+    if (statusAttrs.greenhouse?.name) {
+      const where = document.createElement("div");
+      where.className = "in-greenhouse";
+      const whereIcon = document.createElement("ha-icon");
+      whereIcon.setAttribute("icon", "mdi:greenhouse");
+      where.append(whereIcon, document.createTextNode(`${t(hass, "in_greenhouse")}: ${statusAttrs.greenhouse.name}`));
+      card.appendChild(where);
+    }
 
     const used = new Set();
     const id = (key) => {
@@ -2397,6 +2530,11 @@ class ZoneFlowCard extends HTMLElement {
         ["button.mark_watered", t(hass, "mark_watered"), "mdi:watering-can-outline"],
       ]),
       ...rows(CONTROLS),
+      ...buttons([["button.resume_automatic", t(hass, "resume_automatic"), "mdi:play-circle-outline"]]),
+      // Manual rain (outdoor zones without a rain gauge): the amount, then
+      // the button that records it.
+      ...rows(["number.manual_rain_mm"]),
+      ...buttons([["button.add_manual_rain", t(hass, "add_rain"), "mdi:weather-pouring"]]),
     ];
     const minutes = t(hass, "min");
     const service = [
@@ -2448,6 +2586,24 @@ class ZoneFlowCard extends HTMLElement {
       if (!popup.parts.length) delete this._popups[key];
     }
     section("now", now);
+    // A greenhouse: its crops, as in the overview card (status, next and
+    // last watering, Water now; tap one for its full card).
+    const crops = (statusAttrs.crops || []).map((c) => c.device_id).filter(Boolean);
+    if (crops.length && this._config.show_crops !== false) {
+      const el = document.createElement("div");
+      el.className = "section crops";
+      const heading = document.createElement("div");
+      heading.className = "section-title";
+      heading.textContent = t(hass, "crops");
+      const list = document.createElement("zoneflow-overview-card");
+      list.setConfig({ device_ids: crops, embedded: true, show_add: false });
+      list.hass = hass;
+      el.append(heading, list);
+      card.appendChild(el);
+      this._cropList = list;
+    } else {
+      this._cropList = undefined;
+    }
     section("controls", controls);
     section("service", service);
     if (Object.keys(this._popups).length) {
@@ -2587,6 +2743,7 @@ class ZoneFlowCard extends HTMLElement {
   }
 
   _update(visible) {
+    if (this._cropList) this._cropList.hass = this._hass;
     const hass = this._hass;
     for (const row of this._rows || []) row.hass = hass;
     if (!this._statusEl) return;
@@ -2813,6 +2970,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
         button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
+        parent: status?.attributes?.greenhouse?.device_id || null,
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -2822,14 +2980,26 @@ class ZoneFlowOverviewCard extends HTMLElement {
     } else {
       zones.sort(byName);
     }
-    return zones;
+    const only = this._config.device_ids;
+    const shown = Array.isArray(only) ? zones.filter((z) => only.includes(z.device_id)) : zones;
+    // A greenhouse's crops right under it.
+    const ids = new Set(shown.map((z) => z.device_id));
+    const ordered = [];
+    for (const zone of shown) {
+      if (zone.parent && ids.has(zone.parent)) continue;
+      ordered.push(zone);
+      ordered.push(...shown.filter((z) => z.parent === zone.device_id).map((z) => ({ ...z, crop: true })));
+    }
+    return ordered;
   }
 
   _render() {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false]),
+      this._config.device_ids || null,
+      this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
       this._hass.locale?.language,
       this._config.title,
@@ -2882,6 +3052,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .action ha-icon-button[disabled] { color: var(--disabled-text-color); }
       .details { padding: 0 8px 8px; }
       .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
+      .zone.crop { margin-left: 36px; }
+      ${this._config.embedded ? `
+      ha-card { box-shadow: none; border: none; background: none; }
+      .title { display: none; }` : ""}
       /* Phones: two lines per zone -- the name, then status and next. */
       @container (max-width: 480px) {
         .head { display: none; }
@@ -2938,7 +3112,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
 
     for (const zone of zones) {
       const wrap = document.createElement("div");
-      wrap.className = "zone";
+      wrap.className = zone.crop ? "zone crop" : "zone";
       const row = document.createElement("div");
       row.className = "grid row";
       row.tabIndex = 0;
@@ -3020,7 +3194,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
       return;
     }
     const inner = document.createElement("zoneflow-card");
-    inner.setConfig({ device_id: zone.device_id, show_journal: false, show_settings: true, embedded: true });
+    // Crops are listed here already: not again inside their greenhouse.
+    inner.setConfig({ device_id: zone.device_id, show_journal: false, show_settings: true, embedded: true, show_crops: false });
     inner.hass = this._hass;
     details.append(inner);
   }
@@ -3152,6 +3327,97 @@ class ZoneFlowOverviewCardEditor extends HTMLElement {
   }
 }
 
+// A ready-made dashboard: an overview tab and one tab per zone, built from
+// the zones that exist each time the dashboard opens -- so a new zone
+// appears by itself. Settings -> Dashboards -> Add dashboard -> new from
+// scratch, then in its raw editor:
+//
+//   strategy:
+//     type: custom:zoneflow
+//
+// (Home Assistant's own "take control" turns it into a normal dashboard to
+// edit by hand.) The tabs reuse the two cards above.
+function slug(text) {
+  return String(text || "zone")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "zone";
+}
+
+function zoneIcon(hass, zone) {
+  const registry = Object.values(hass.entities || {});
+  // Greenhouse and indoor zones have a climate status of their own.
+  // (A crop has the entity too, hidden: it has no climate of its own.)
+  const climate = registry.some(
+    (e) => e.platform === "zoneflow" && e.device_id === zone.device_id && e.translation_key === "greenhouse_status" && !e.hidden
+  );
+  if (climate) return "mdi:greenhouse";
+  const plant = hass.states?.[zone.status]?.attributes?.plant;
+  return PLANT_ICONS[plant] || DEFAULT_ZONE_ICON;
+}
+
+function buildDashboard(hass) {
+  const zones = allZones(hass).sort((a, b) => a.name.localeCompare(b.name, hass.locale?.language || undefined));
+  const views = [];
+  if (!zones.length) {
+    return {
+      title: "ZoneFlow",
+      views: [{
+        title: "ZoneFlow",
+        path: "zoneflow",
+        icon: DEFAULT_ZONE_ICON,
+        cards: [{ type: "markdown", content: "No ZoneFlow zones yet. Add one under Settings → Devices & services." }],
+      }],
+    };
+  }
+  // Use the whole width: one card fills the page ("panel"); a greenhouse
+  // with crops lays its cards out side by side.
+  views.push({
+    title: t(hass, "overview.title"),
+    path: "overview",
+    icon: "mdi:view-dashboard-outline",
+    type: "panel",
+    cards: [{ type: "custom:zoneflow-overview-card" }],
+  });
+  const used = new Set(["overview"]);
+  const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
+  const ids = new Set(zones.map((z) => z.device_id));
+  for (const zone of zones) {
+    if (ids.has(parentOf(zone))) continue; // a crop: on its greenhouse's tab
+    let path = slug(zone.name);
+    for (let n = 2; used.has(path); n += 1) path = `${slug(zone.name)}-${n}`;
+    used.add(path);
+    const crops = zones.filter((z) => parentOf(z) === zone.device_id);
+    views.push({
+      title: zone.name,
+      path,
+      icon: crops.length ? "mdi:greenhouse" : zoneIcon(hass, zone),
+      ...(crops.length ? {} : { type: "panel" }),
+      cards: [
+        // The crops have their own cards on this tab: not listed again.
+        { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },
+        ...crops.map((c) => ({ type: "custom:zoneflow-card", device_id: c.device_id })),
+      ],
+    });
+  }
+  return { title: "ZoneFlow", views };
+}
+
+class ZoneFlowDashboardStrategy extends HTMLElement {
+  static async generate(config, hass) {
+    return buildDashboard(hass);
+  }
+
+  static async generateDashboard(info) {
+    return buildDashboard(info.hass);
+  }
+}
+// The loader (frontend.py) registers the element early, because Home
+// Assistant waits only 5 s for it; it hands over to this one.
+window.__zoneflowDashboardStrategy = ZoneFlowDashboardStrategy;
+
 // Defined as soon as this file loads -- and again if Home Assistant's
 // frontend replaces the page's custom-element registry afterwards (it can
 // install a scoped-registry polyfill after early-loaded modules like this
@@ -3161,6 +3427,8 @@ const ELEMENTS = [
   ["zoneflow-card-editor", ZoneFlowCardEditor],
   ["zoneflow-overview-card", ZoneFlowOverviewCard],
   ["zoneflow-overview-card-editor", ZoneFlowOverviewCardEditor],
+  // The dashboard strategy: `strategy: {type: custom:zoneflow}`.
+  ["ll-strategy-dashboard-zoneflow", ZoneFlowDashboardStrategy],
 ];
 function defineElements() {
   for (const [tag, cls] of ELEMENTS) {

@@ -21,6 +21,7 @@ DEPTH_KEYS = {
     "rain_mm_per_tip",
     "preirrigation_rain_threshold_mm",
     "forecast_rain_threshold_mm",
+    "manual_rain_mm",
 }
 # Emitter application rate: mm/min <-> in/h (the usual drip rating in the US).
 FLOW_KEYS = {"flow_rate_mm_per_min"}

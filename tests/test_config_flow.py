@@ -366,6 +366,10 @@ async def test_a_second_zone_cannot_share_the_first_zones_valve(hass):
     make_entry(hass, csv_path="/tmp/test_zoneflow_first.csv")  # existing zone, same VALVE
 
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    # With a zone already there: add a zone, or Weather Underground rain.
+    assert result["type"] == FlowResultType.MENU
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "zone"})
+    assert result["step_id"] == "user"
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_ZONE_NAME: "Second Zone"})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], _minimal_entities_input())
     assert result["type"] == FlowResultType.FORM

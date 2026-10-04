@@ -43,7 +43,7 @@ import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, units
+from . import calculations as calc, issues, messages, units, visibility
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
@@ -110,7 +110,11 @@ from .const import (
     DEFAULT_SOIL_TYPE,
     DEMAND_MODEL_ET,
     MULCH_STATUS_NOT_MULCHED,
+    CONF_USE_WU,
+    CONF_PARENT_ZONE,
+    CROP_INHERITED_KEYS,
     DOMAIN,
+    WU_DATA_KEY,
     EVENT_LOG,
     GROWTH_RAMP_CURVES,
     GROWTH_RAMP_CUSTOM,
@@ -141,6 +145,7 @@ from .const import (
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
 )
+from .rain_tracker import MANUAL_RAIN_MAX_AGE_MINUTES, RAIN_WINDOWS_MINUTES, SHORT_RAIN_WINDOWS
 from .state_store import IrrigationStateStore
 
 SIGNIFICANT_RAIN_ALERT_QUIET_SECONDS = 24 * 3600
@@ -341,8 +346,38 @@ class ZoneFlowController:
     @property
     def zone_type(self) -> str:
         """outdoor / greenhouse / indoor. A zone made before 1.6 has none
-        stored and is an outdoor zone, exactly as it always was."""
-        return self.entry.options.get(CONF_ZONE_TYPE, self.entry.data.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE))
+        stored and is an outdoor zone, exactly as it always was. A crop is
+        whatever its greenhouse is."""
+        parent = self.parent_entry
+        source = {**parent.data, **parent.options} if parent is not None else {
+            **self.entry.data, **self.entry.options
+        }
+        return source.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+
+    # ------------------------------------------------------------------
+    # Greenhouse crops (1.6.1): a zone that belongs to a greenhouse
+    # ------------------------------------------------------------------
+    @property
+    def parent_entry_id(self) -> str | None:
+        return self.entry.options.get(CONF_PARENT_ZONE, self.entry.data.get(CONF_PARENT_ZONE)) or None
+
+    @property
+    def parent_entry(self):
+        """The greenhouse this zone is a crop of (its config entry), or None."""
+        entry_id = self.parent_entry_id
+        return self.hass.config_entries.async_get_entry(entry_id) if entry_id else None
+
+    @property
+    def is_crop(self) -> bool:
+        return self.parent_entry is not None
+
+    @property
+    def crops(self) -> list[Any]:
+        """The loaded zones that are crops of this one."""
+        return [
+            c for c in self.hass.data.get(DOMAIN, {}).values()
+            if getattr(c, "parent_entry_id", None) == self.entry.entry_id
+        ]
 
     @property
     def is_outdoor(self) -> bool:
@@ -364,6 +399,9 @@ class ZoneFlowController:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_has_no_valve")
 
     def _climate_option(self, key: str) -> Any:
+        parent = self.parent_entry
+        if parent is not None and key in CROP_INHERITED_KEYS:
+            return parent.options.get(key, parent.data.get(key))  # a crop uses its greenhouse's
         return self.entry.options.get(key, self.entry.data.get(key))
 
     @property
@@ -433,6 +471,41 @@ class ZoneFlowController:
         if not self.is_outdoor:
             return None  # a roof: no rain gauge
         return self.entry.options.get(CONF_RAIN_COUNTER_ENTITY, self.entry.data.get(CONF_RAIN_COUNTER_ENTITY))
+
+    @property
+    def uses_wu(self) -> bool:
+        """Weather Underground rain (1.6.1): only for an outdoor zone without
+        a rain gauge that opted in. A gauge always wins."""
+        if not self.is_outdoor or self.rain_counter_entity:
+            return False
+        return bool(self.entry.options.get(CONF_USE_WU, self.entry.data.get(CONF_USE_WU, False)))
+
+    def _wu(self):
+        """The shared Weather Underground poller, if this zone uses it and it
+        is loaded."""
+        return self.hass.data.get(WU_DATA_KEY) if self.uses_wu else None
+
+    def wu_watering_slots(self, now_ts: float) -> list[float]:
+        """The next scheduled starts, for the poller's watering mode."""
+        if not self.has_valve:
+            return []
+        slots = [self.next_slot("routine", now_ts)]
+        if self.deep_soak_enabled:
+            slots.append(self.next_slot("deep_soak", now_ts))
+        return slots
+
+    @callback
+    def on_wu_rain(self) -> None:
+        """New Weather Underground rain: heavy-rain dry-down and status."""
+        self._check_significant_rain()
+        self._notify_status()
+
+    async def _refresh_wu_rain(self) -> None:
+        """Before a watering looks at the rain: fresh WU data if the last
+        poll is older than 15 minutes."""
+        source = self._wu()
+        if source is not None:
+            await source.async_refresh_if_stale()
 
     @property
     def outdoor_temp_entity(self) -> str | None:
@@ -887,7 +960,7 @@ class ZoneFlowController:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
             self.hass.async_create_task(self.store.async_save())
-            self._check_significant_rain(tracker)
+            self._check_significant_rain()
         elif not tracker.samples:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
@@ -899,13 +972,16 @@ class ZoneFlowController:
             return
         self._sync_rain_from_counter_state(new_state)
 
-    def _check_significant_rain(self, tracker) -> None:
-        """Port of avocado_significant_rain_logger (edge-triggered)."""
+    def _check_significant_rain(self) -> None:
+        """Port of avocado_significant_rain_logger (edge-triggered). Reads
+        the combined rain (gauge and manual), so heavy rain entered by hand
+        restarts the dry-down too."""
         now_ts = dt_util.utcnow().timestamp()
+        windows = self.rain_windows()
         checks = {
-            "24h": (tracker.window_sum_mm(24 * 60, now_ts), SIGNIFICANT_RAIN_24H_MM),
-            "4d": (tracker.window_sum_mm(4 * 24 * 60, now_ts), SIGNIFICANT_RAIN_4D_MM),
-            "7d": (tracker.window_sum_mm(7 * 24 * 60, now_ts), SIGNIFICANT_RAIN_7D_MM),
+            "24h": (windows["24h"], SIGNIFICANT_RAIN_24H_MM),
+            "4d": (windows["4d"], SIGNIFICANT_RAIN_4D_MM),
+            "7d": (windows["7d"], SIGNIFICANT_RAIN_7D_MM),
         }
         state = self.store.state
         fired = False
@@ -960,6 +1036,7 @@ class ZoneFlowController:
         state.today_min_temp_c = seed_temp
         state.rain_midnight_baseline_mm = state.rain_tracker().latest_cumulative()
         state.today_runtime_minutes = 0.0
+        self.judge_skip_journal()
 
     @callback
     def _on_midnight(self, now) -> None:
@@ -1036,8 +1113,18 @@ class ZoneFlowController:
         self.hass.async_create_task(self.store.async_save())
 
     def today_rain_mm(self) -> float:
+        """Today's rain: the gauge's, or the manual entries' when they say
+        more (the higher of the two, never the sum -- see add_manual_rain)."""
         state = self.store.state
-        return max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
+        gauge = max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
+        source = self._wu()
+        if not state.manual_rain_samples and source is None:
+            return gauge
+        midnight = dt_util.start_of_local_day().timestamp()
+        now_ts = dt_util.utcnow().timestamp()
+        manual = state.manual_rain_tracker().sum_between_mm(midnight, now_ts)
+        wu = source.sum_between(midnight, now_ts) if source is not None else 0.0
+        return max(gauge, manual, wu)
 
     def avg_peak_temp(self) -> float | None:
         """Average of the real daily peaks recorded in the last 3 days, or
@@ -1494,8 +1581,26 @@ class ZoneFlowController:
         return sorted(points, key=lambda p: p[0])
 
     def rain_windows(self) -> dict[str, float]:
+        """Rain per rolling window: the gauge's, or the manual entries' when
+        they say more. The short "raining now" windows are the gauge's
+        alone -- manual rain is entered after the fact."""
         now_ts = dt_util.utcnow().timestamp()
-        return self.store.state.rain_tracker().all_windows_mm(now_ts)
+        state = self.store.state
+        windows = state.rain_tracker().all_windows_mm(now_ts)
+        if state.manual_rain_samples:
+            manual = state.manual_rain_tracker().all_windows_mm(now_ts)
+            for name, value in manual.items():
+                if name not in SHORT_RAIN_WINDOWS:
+                    windows[name] = max(windows[name], value)
+        source = self._wu()
+        if source is not None:
+            # Weather Underground: only rain that arrived fresh counts as
+            # "raining now" (see wu_logic.FRESH_GAP_SECONDS).
+            for name, minutes in RAIN_WINDOWS_MINUTES.items():
+                start = now_ts - minutes * 60
+                value = source.fresh_sum_since(start) if name in SHORT_RAIN_WINDOWS else source.sum_between(start, now_ts)
+                windows[name] = max(windows[name], value)
+        return windows
 
     def rain_since(self, since_ts: float) -> float:
         """Actual measured rain (mm) between `since_ts` and now -- used by
@@ -1503,7 +1608,13 @@ class ZoneFlowController:
         opposed to the fixed rolling windows in rain_windows()."""
         now_ts = dt_util.utcnow().timestamp()
         window_minutes = max(now_ts - since_ts, 0.0) / 60.0
-        return self.store.state.rain_tracker().window_sum_mm(window_minutes, now_ts)
+        state = self.store.state
+        gauge = state.rain_tracker().window_sum_mm(window_minutes, now_ts)
+        source = self._wu()
+        wu = source.sum_between(since_ts, now_ts) if source is not None else 0.0
+        if not state.manual_rain_samples:
+            return max(gauge, wu)
+        return max(gauge, wu, state.manual_rain_tracker().window_sum_mm(window_minutes, now_ts))
 
     # ------------------------------------------------------------------
     # Lock / abort helpers
@@ -2662,6 +2773,7 @@ class ZoneFlowController:
             return True
 
         setattr(state, count_attr, getattr(state, count_attr) + 1)
+        self._journal_skip(cycle, precip_mm, now_ts)
         await self._decide(cycle, "skipped_forecast", rain_mm=round(precip_mm, 2))
         await self._log_event(
             event_type="Forecast Skip",
@@ -2679,6 +2791,50 @@ class ZoneFlowController:
             ),
         )
         return False
+
+    # ------------------------------------------------------------------
+    # Skip journal: did skipping a watering for forecast rain pay off?
+    # ------------------------------------------------------------------
+    def _journal_skip(self, cycle: str, forecast_mm: float, now_ts: float) -> None:
+        state = self.store.state
+        state.forecast_skip_journal.append(
+            {"ts": now_ts, "cycle": cycle, "forecast_mm": round(forecast_mm, 2), "actual_mm": None, "paid_off": None}
+        )
+        del state.forecast_skip_journal[: -calc.SKIP_JOURNAL_MAX_ENTRIES]
+
+    def rain_between(self, start_ts: float, end_ts: float) -> float:
+        """Rain (mm) between two times, from whatever rain sources the zone has."""
+        state = self.store.state
+        gauge = state.rain_tracker().sum_between_mm(start_ts, end_ts)
+        source = self._wu()
+        wu = source.sum_between(start_ts, end_ts) if source is not None else 0.0
+        if not state.manual_rain_samples:
+            return max(gauge, wu)
+        return max(gauge, wu, state.manual_rain_tracker().sum_between_mm(start_ts, end_ts))
+
+    def judge_skip_journal(self) -> bool:
+        """Fill in the entries that are 48 h old. True when something changed."""
+        state = self.store.state
+        now_ts = dt_util.utcnow().timestamp()
+        has_rain_data = bool(self.rain_counter_entity) or state.manual_rain_used or self.uses_wu
+        threshold = self.number("forecast_rain_threshold_mm")
+        changed = False
+        for entry in state.forecast_skip_journal:
+            if entry.get("judged"):
+                continue
+            end_ts = entry["ts"] + calc.SKIP_JUDGE_HOURS * 3600
+            if end_ts > now_ts:
+                continue
+            entry["judged"] = True
+            if has_rain_data:
+                actual = self.rain_between(entry["ts"], end_ts)
+                entry["actual_mm"] = round(actual, 2)
+                entry["paid_off"] = calc.skip_paid_off(actual, entry["forecast_mm"], threshold)
+            changed = True
+        return changed
+
+    def skip_hit_rate(self) -> tuple[int, int]:
+        return calc.skip_hit_rate(self.store.state.forecast_skip_journal, dt_util.utcnow().timestamp())
 
     @_tracked_run
     async def run_deep_soak(self) -> None:
@@ -2712,6 +2868,7 @@ class ZoneFlowController:
             DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
         ):
             return
+        await self._refresh_wu_rain()
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("deep_soak_drydown_days")
         ):
@@ -2943,6 +3100,7 @@ class ZoneFlowController:
             return
         await self._end_wet_hold_if_not_wet(moisture_pct)
         await self._note_frozen_wet_probe()
+        await self._refresh_wu_rain()
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("routine_drydown_days")
         ):
@@ -2963,7 +3121,6 @@ class ZoneFlowController:
         # water overall right now", which is the routine cycle's job, while
         # deep soak's job (root-zone penetration depth) doesn't scale the
         # same way with plant age.
-        ramp = self.growth_ramp_fraction()
         deficit_share, deficit_reason = self.deficit()
         # The routine dose scales with the growth ramp, deficit mode, and
         # mulch adjustment alike -- see routine_target_scale().
@@ -3539,6 +3696,76 @@ class ZoneFlowController:
             notify_phone=False,
             phone_title="",
             phone_msg="",
+        )
+
+    @property
+    def manual_rain_available(self) -> bool:
+        """Manual rain is for outdoor zones without a rain gauge or
+        Weather Underground."""
+        return self.is_outdoor and not self.rain_counter_entity and not self.uses_wu
+
+    async def add_manual_rain_from_number(self) -> None:
+        """The "Add Manual Rain" button: adds the Manual Rain number's
+        amount now, then sets the number back to 0."""
+        amount = self.number("manual_rain_mm")
+        if amount <= 0:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_zero")
+        await self.add_manual_rain(amount)
+        entity = self.numbers.get("manual_rain_mm")
+        if entity is not None:
+            await entity.async_set_metric_value(0.0)
+
+    async def add_manual_rain(self, amount_mm: float, when_ts: float | None = None) -> None:
+        """Rain read by hand from a simple gauge: `amount_mm` that fell at
+        `when_ts` (default now, at most 14 days back). It counts like gauge
+        rain for the rain credit, the rolling windows, deep soak and the
+        dry-down -- but not for the 30-minute "raining now" checks, as it
+        is entered after the fact. If the zone also has a rain gauge, the
+        higher of the two counts, never the sum, so nothing is counted
+        twice."""
+        if not self.is_outdoor:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_not_outdoor")
+        if amount_mm <= 0:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_zero")
+        now_ts = dt_util.utcnow().timestamp()
+        when = now_ts if when_ts is None else when_ts
+        if when > now_ts + 60:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_future")
+        if when < now_ts - MANUAL_RAIN_MAX_AGE_MINUTES * 60:
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_too_old")
+        when = min(when, now_ts)
+        state = self.store.state
+        tracker = state.manual_rain_tracker()
+        tracker.insert(when, amount_mm)
+        state.save_manual_rain_tracker(tracker)
+        # Rain on an earlier day: that day's total in the rain-credit history.
+        day = dt_util.as_local(dt_util.utc_from_timestamp(when)).date()
+        days_back = (dt_util.now().date() - day).days
+        if 1 <= days_back <= len(state.rain_day_history_mm):
+            start = dt_util.start_of_local_day(day).timestamp()
+            end = dt_util.start_of_local_day(day + timedelta(days=1)).timestamp()
+            index = days_back - 1
+            state.rain_day_history_mm[index] = max(
+                state.rain_day_history_mm[index], tracker.sum_between_mm(start, end)
+            )
+        first = not state.manual_rain_used
+        state.manual_rain_used = True
+        self._check_significant_rain()
+        await self.store.async_save()
+        if first:
+            # The rain sensors are worth showing now (visibility.py).
+            await visibility.async_apply(self.hass, self.entry, self)
+        self._notify_status()
+        await self._log_event(
+            event_type="Manual Rain Added",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+            extra_log=f"{amount_mm:.1f} mm on {day.isoformat()}",
         )
 
     # ------------------------------------------------------------------

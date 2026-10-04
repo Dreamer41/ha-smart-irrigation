@@ -24,15 +24,18 @@ breaking the zone.
 - **Plant, soil and slope aware**: plant presets at setup, and **cycle and
   soak** — each watering is split into as many pulses as the soil takes in
   without runoff, with extra pulses on a slope.
-- **Rain and weather**: rain credit from a rain gauge, a dry-down pause
-  after heavy rain, a forecast skip, a frost guard, and a rain stop during
-  a running cycle.
+- **Rain and weather**: rain credit from a rain gauge (or, without one,
+  rain you enter by hand, or — experimental — from nearby Weather
+  Underground stations), a dry-down pause after heavy rain, a forecast skip
+  with a hit rate that shows how often it was right, a frost guard, and a
+  rain stop during a running cycle.
 - **Says why**: a plain-language Status per zone ("Skipped: the soil is
   wet (72%)"), phone notifications and a weekly summary.
 - **Greenhouse and indoor climate control** (1.6): fans, vents, misters and
   a heater from an inside temperature (and humidity) sensor, with an
   outside-air check, supervised misting, sensor failsafes and backup
-  sensors. The valve is optional — see
+  sensors. The valve is optional, and one greenhouse can hold several
+  crops, each with its own valve and soil probe — see
   [docs/GREENHOUSE.md](docs/GREENHOUSE.md).
 - **Safety first**: runtime caps, stuck-valve watchdog, pump and flow
   checks, power-loss handling — a cycle always ends with the valve closed.
@@ -99,7 +102,7 @@ manual, goes through the same pipeline:
 | Entity | Adds | Without it |
 |---|---|---|
 | `switch.*` valve | — | **required** |
-| Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains |
+| Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains — or enter rain by hand (**Manual Rain** + **Add Manual Rain**, or the `zoneflow.add_rain` service), or borrow it from nearby stations ([Weather Underground rain](docs/WEATHER-UNDERGROUND.md), experimental) |
 | Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard, frost guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
 | Soil-moisture probe (`sensor.*`, %) | dry soil waters early, wet soil skips | the modeled schedule alone |
 | Pump power sensor | per-pulse "is the pump really running" audit | no low-power warning |
@@ -138,12 +141,22 @@ zone. Besides watering, ZoneFlow can then run the climate of the space:
   short supervised pulses with an hourly cap.
 - **An outside-air check** so ventilation never pulls in hotter air (needs
   an outside temperature sensor; optional).
-- **No valve needed**: a climate-only zone has no watering at all.
+- **Watering too**: give the zone a valve and it waters like an outdoor
+  zone, including a soil-moisture probe (dry soil waters early, wet soil
+  skips); the water target follows the inside temperature, with no rain
+  credit or forecast. **No valve needed** for a climate-only zone, which has
+  no watering at all.
+- **Several crops in one greenhouse** (1.6.1): add each crop with *Add a crop
+  to a greenhouse* — its own valve, probe and schedule, the greenhouse's
+  climate and sensors, shown together on the cards and the dashboard.
 - **Failsafes**: if the inside sensor fails, misters stop, vents and fans
   follow your **Sensor Failsafe** choice and the heater follows the **Heater
   Failsafe** (off, part of the time, or part of the time while cold
   outside). Add a **backup inside sensor** and control carries on with it.
-- A device you switch by hand is left alone for a while (**Manual Hold**).
+- A device you switch by hand is left alone (**Manual Hold**) and goes back
+  to automatic by itself after **Auto Resume After**, or when you press
+  **Resume Automatic**; a heater you switched on is taken back when it gets
+  too hot.
 
 Greenhouse and indoor zones have no rain gauge or weather forecast (there is
 a roof); if rain does reach your plants, set the zone up as outdoor. Existing
@@ -254,6 +267,19 @@ and both zones get less water than their calibrated runtime assumes.
   behind it.
 
 ## Dashboard
+
+**A whole dashboard, built for you (1.6.1).** Settings → Dashboards → **Add
+dashboard** → *New dashboard from scratch*, open it, ⋮ → **Raw configuration
+editor**, and replace everything with:
+
+```yaml
+strategy:
+  type: custom:zoneflow
+```
+
+You get an **overview** tab and **one tab per zone** with the full ZoneFlow
+card. It is built from your zones each time the dashboard opens, so a new
+zone appears by itself. To edit it by hand later, ⋮ → **Take control**.
 
 **The ZoneFlow card comes with the integration** — nothing to install or
 add as a resource. Edit a dashboard → **Add card** → **ZoneFlow zone** →

@@ -7,13 +7,13 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -28,6 +28,11 @@ def _label(raw: str) -> str:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    if entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_WU:
+        from .wu_sensor import async_setup_wu_sensors
+
+        async_setup_wu_sensors(hass, entry, async_add_entities)
+        return
     controller = hass.data[DOMAIN][entry.entry_id]
     entities: list[SensorEntity] = [
         ZoneFlowRainWindowSensor(entry, controller, window) for window in RAIN_WINDOW_SENSORS
@@ -41,6 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
         ZoneFlowTodayRainSensor(entry, controller),
+        ZoneFlowForecastSkipHitRateSensor(entry, controller),
         ZoneFlowSoilProfileSensor(entry, controller),
         ZoneFlowGrowthRampSensor(entry, controller),
         ZoneFlowLastCycleWaterSensor(entry, controller),
@@ -429,6 +435,53 @@ class ZoneFlowTodayRainSensor(_Base):
         return round(self._controller.today_rain_mm(), 2)
 
 
+class ZoneFlowForecastSkipHitRateSensor(_Base):
+    """Of the waterings skipped for forecast rain in the last 30 days, the
+    share where rain really came (within 48 h of the skip). Tells how much
+    to trust the weather service used for skipping. Empty until a skip has
+    been judged, and for a zone with no rain data (no gauge, no manual rain)."""
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_native_unit_of_measurement = "%"
+    _attr_icon = "mdi:weather-cloudy-clock"
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_forecast_skip_hit_rate"
+        self._attr_translation_key = "forecast_skip_hit_rate"
+
+    def _judged(self) -> tuple[int, int]:
+        # Entries become 48 h old between midnights: judge them here too.
+        if self._controller.judge_skip_journal():
+            self._controller.hass.async_create_task(self._controller.store.async_save())
+        return self._controller.skip_hit_rate()
+
+    @property
+    def native_value(self) -> float | None:
+        paid, judged = self._judged()
+        return round(100.0 * paid / judged) if judged else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        paid, judged = self._judged()
+        journal = self._controller.store.state.forecast_skip_journal
+        return {
+            "paid_off": paid,
+            "judged": judged,
+            "entries": [
+                {
+                    "skipped": dt_util.as_local(dt_util.utc_from_timestamp(e["ts"])).isoformat(timespec="minutes"),
+                    "cycle": e["cycle"],
+                    "forecast_mm": e["forecast_mm"],
+                    "actual_mm": e["actual_mm"],
+                    "paid_off": e["paid_off"],
+                }
+                for e in reversed(journal)
+            ],
+        }
+
+
 class ZoneFlowSoilProfileSensor(_Base):
     """Read-only summary of the descriptive soil/site fields set at setup
     (see const.py's CONF_SOIL_TYPE block) -- purely informational, so this
@@ -663,6 +716,21 @@ class ZoneFlowStatusSensor(_Base):
         attributes["valve"] = self._controller.valve_entity
         # For the overview card's default icon (the plant preset at setup).
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
+        # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
+        registry = dr.async_get(self.hass)
+
+        def device_of(entry_id: str) -> str | None:
+            device = registry.async_get_device(identifiers={(DOMAIN, entry_id)})
+            return device.id if device is not None else None
+
+        parent = self._controller.parent_entry
+        if parent is not None:
+            attributes["greenhouse"] = {"name": parent.title, "device_id": device_of(parent.entry_id)}
+        crops = sorted(self._controller.crops, key=lambda c: c.entry.title.lower())
+        if crops:
+            attributes["crops"] = [
+                {"name": c.entry.title, "device_id": device_of(c.entry.entry_id)} for c in crops
+            ]
         return attributes
 
 

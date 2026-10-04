@@ -127,3 +127,41 @@ send_weekly_summary:
     Sends the weekly summary now to every phone that has a zone with a
     Weekly Summary day set -- a preview; the week's counts carry on until
     the scheduled one.
+
+add_rain:
+  name: Add Rain
+  description: >-
+    Records rain read by hand from a simple rain gauge. It counts like gauge
+    rain for the rain credit, deep soak and the dry-down, but not for the
+    30-minute "raining now" checks. On a zone with its own rain gauge the
+    higher of the two counts, never the sum.
+  fields:
+    amount:
+      name: Amount
+      description: Rain in the zone's units (mm, or inches on an imperial zone).
+      required: true
+      selector:
+        number:
+          min: 0.01
+          max: 500
+          step: 0.01
+          mode: box
+    when:
+      name: When
+      description: When the rain fell (default now). At most 14 days back.
+      selector:
+        datetime:
+    device_id:
+      name: Zone Device
+      description: The zone's device. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+          multiple: true
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+          multiple: true

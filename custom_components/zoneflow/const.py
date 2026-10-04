@@ -46,6 +46,17 @@ CONF_PUMP_POWER_ENTITY = "pump_power_entity"  # optional -- backs the pump-audit
 # groups unrelated zones together (see the lock-key fallback order in
 # ZoneFlowController._pump_lock_key).
 CONF_PUMP_ID = "pump_id"
+# Weather Underground rain (1.6.1, experimental): one shared config entry
+# (entry_type below) holds the API key and the chosen stations (wu.py);
+# an outdoor zone without a rain gauge opts in with CONF_USE_WU.
+CONF_ENTRY_TYPE = "entry_type"
+ENTRY_TYPE_WU = "weather_underground"
+CONF_WU_API_KEY = "api_key"
+CONF_WU_RADIUS_KM = "radius_km"
+CONF_WU_STATIONS = "stations"
+CONF_USE_WU = "use_weather_underground"
+WU_DATA_KEY = "zoneflow_weather_underground"
+REPAIR_WU_NO_DATA_SECONDS = 6 * 3600
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
 CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
 CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter
@@ -361,6 +372,9 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "deep_soak_rain_threshold": ("Deep Soak Rain Ceiling (14d)", 0.0, 100.0, 5.0, "mm"),
     "rain_mm_per_tip": ("Rain Gauge mm per Tip (Calibration)", 0.05, 1.0, 0.001, "mm"),
     "preirrigation_rain_threshold_mm": ("Pre-Irrigation Cancel Threshold (30min)", 0.5, 20.0, 0.5, "mm"),
+    # Manual rain (1.6.1): the amount the "Add Manual Rain" button adds,
+    # back to 0 after each press (controller.add_manual_rain_from_number).
+    "manual_rain_mm": ("Manual Rain", 0.0, 200.0, 0.5, "mm"),
     # Only matter when another zone shares this zone's pump-power entity --
     # see ZoneFlowController._get_pump_lock. Default 0 on both means no
     # behavior change for a single-zone/independent-pump setup.
@@ -466,7 +480,9 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "mist_off_seconds": ("Mist Off Time", 10.0, 3600.0, 10.0, "s"),
     "max_mist_minutes_per_hour": ("Max Misting Per Hour", 1.0, 60.0, 1.0, "min"),
     "vent_open_pct": ("Vent Open Position", 10.0, 100.0, 5.0, "%"),
-    "manual_hold_minutes": ("Manual Hold Time", 0.0, 480.0, 5.0, "min"),
+    # 1.6.1: replaces Manual Hold Time (minutes). Used while Auto Resume is
+    # on; with it off a hold lasts until Resume Automatic is pressed.
+    "auto_resume_hours": ("Auto Resume After", 0.5, 24.0, 0.5, "h"),
     "sensor_offline_hours": ("Sensor Offline After", 1.0, 24.0, 1.0, "h"),
 }
 
@@ -494,6 +510,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "deep_soak_rain_threshold": 40.0,
     "rain_mm_per_tip": 0.3,
     "preirrigation_rain_threshold_mm": 3.0,
+    "manual_rain_mm": 0.0,
     "pump_preamble_seconds": 0.0,
     "pump_postamble_seconds": 0.0,
     "forecast_rain_threshold_mm": 3.0,
@@ -539,7 +556,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "mist_off_seconds": 120.0,
     "max_mist_minutes_per_hour": 10.0,
     "vent_open_pct": 100.0,
-    "manual_hold_minutes": 60.0,
+    "auto_resume_hours": 1.0,
     "sensor_offline_hours": 4.0,
 }
 
@@ -714,6 +731,12 @@ CONF_FAN_ENTITIES = "fan_entities"
 CONF_VENT_ENTITIES = "vent_entities"
 CONF_MISTER_ENTITIES = "mister_entities"
 CONF_HEATER_ENTITIES = "heater_entities"
+# 1.6.1: a crop is a greenhouse / indoor zone that belongs to a greenhouse
+# (the zone with the climate): it stores that zone's entry id here and uses
+# its inside sensors (controller.parent_entry).
+CONF_PARENT_ZONE = "greenhouse_entry_id"
+# What a crop takes from its greenhouse, read live.
+CROP_INHERITED_KEYS = (CONF_INSIDE_TEMP_ENTITY, CONF_BACKUP_TEMP_ENTITIES)
 DEVICE_ROLE_KEYS = (CONF_FAN_ENTITIES, CONF_VENT_ENTITIES, CONF_MISTER_ENTITIES, CONF_HEATER_ENTITIES)
 # What each role accepts (entity domains).
 DEVICE_ROLE_DOMAINS: dict[str, list[str]] = {
@@ -728,7 +751,7 @@ DEVICE_ROLE_DOMAINS: dict[str, list[str]] = {
 GREENHOUSE_NUMBERS = (
     "heat_temp", "vent_temp", "fan_temp", "climate_hysteresis", "outside_margin", "max_humidity",
     "mist_temp", "mist_min_humidity", "mist_stop_humidity", "mist_min_temp", "mist_light_level",
-    "mist_on_seconds", "mist_off_seconds", "max_mist_minutes_per_hour", "vent_open_pct", "manual_hold_minutes",
+    "mist_on_seconds", "mist_off_seconds", "max_mist_minutes_per_hour", "vent_open_pct", "auto_resume_hours",
     "sensor_offline_hours",
 )
 # Seeded from the climate preset at setup (greenhouse_logic.PRESET_SETPOINTS).
