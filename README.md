@@ -24,15 +24,18 @@ breaking the zone.
 - **Plant, soil and slope aware**: plant presets at setup, and **cycle and
   soak** — each watering is split into as many pulses as the soil takes in
   without runoff, with extra pulses on a slope.
-- **Rain and weather**: rain credit from a rain gauge, a dry-down pause
-  after heavy rain, a forecast skip, a frost guard, and a rain stop during
-  a running cycle.
+- **Rain and weather**: rain credit from a rain gauge (or, without one,
+  rain you enter by hand, or — experimental — from nearby Weather
+  Underground stations), a dry-down pause after heavy rain, a forecast skip
+  with a hit rate that shows how often it was right, a frost guard, and a
+  rain stop during a running cycle.
 - **Says why**: a plain-language Status per zone ("Skipped: the soil is
   wet (72%)"), phone notifications and a weekly summary.
 - **Greenhouse and indoor climate control** (1.6): fans, vents, misters and
   a heater from an inside temperature (and humidity) sensor, with an
   outside-air check, supervised misting, sensor failsafes and backup
-  sensors. The valve is optional — see
+  sensors. The valve is optional, and one greenhouse can hold several
+  crops, each with its own valve and soil probe — see
   [docs/GREENHOUSE.md](docs/GREENHOUSE.md).
 - **Safety first**: runtime caps, stuck-valve watchdog, pump and flow
   checks, power-loss handling — a cycle always ends with the valve closed.
@@ -150,7 +153,10 @@ zone. Besides watering, ZoneFlow can then run the climate of the space:
   follow your **Sensor Failsafe** choice and the heater follows the **Heater
   Failsafe** (off, part of the time, or part of the time while cold
   outside). Add a **backup inside sensor** and control carries on with it.
-- A device you switch by hand is left alone for a while (**Manual Hold**).
+- A device you switch by hand is left alone (**Manual Hold**) and goes back
+  to automatic by itself after **Auto Resume After**, or when you press
+  **Resume Automatic**; a heater you switched on is taken back when it gets
+  too hot.
 
 Greenhouse and indoor zones have no rain gauge or weather forecast (there is
 a roof); if rain does reach your plants, set the zone up as outdoor. Existing

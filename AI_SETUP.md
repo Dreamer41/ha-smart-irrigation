@@ -546,6 +546,10 @@ once they've agreed to let you drive.
      gauge, only for rain deduction, not 100 % reliable. Full guide:
      docs/WEATHER-UNDERGROUND.md.
 
+   (The **Forecast Skip Hit Rate** sensor of a zone with a weather service
+   shows how often a skip for forecast rain was followed by real rain, 48
+   hours later, using whichever rain data the zone has.)
+
    Either way, say plainly that this is a "worth adding for reliability"
    recommendation, not a blocker — a zone runs fine with no rain gauge at
    all, on the temperature-driven schedule alone, and setup can absolutely
@@ -1884,14 +1888,23 @@ heater is the one that matters:
   is left alone); and a device that has just come back from *unavailable*
   is not treated as someone switching it by hand.
 
-**Manual hold.** If a person switches a role's device by hand (or from
-another automation or app), ZoneFlow leaves that role alone for **Manual
-Hold Time** (default 60 minutes; 0 turns it off) and says so in the status
--- it does not fight them. The exception is safety: the heater is still
-cut in a sensor failsafe set to *Off*, and a hand-switched mister is left
-on at most Max Misting Per Hour. There is no "resume now" button; the hold
-ends by itself. A wall button, the device's own app or another automation
-counts as a person too. **Greenhouse Control** (switch) pauses the whole
+**Manual hold, Auto Resume and Resume Automatic (1.6.1).** If a person
+switches a role's device by hand (or from another automation or app),
+ZoneFlow leaves that role alone and says so in the status ("Fans switched by
+hand: automatic again Sun 15:30") -- it does not fight them. How long is
+the person's choice: the **Auto Resume** switch (default on) with **Auto
+Resume After** (0.5-24 h, default 1 h) hands the device back to automatic by
+itself, so a forgotten device returns; with Auto Resume off the device stays
+as the person left it until they press **Resume Automatic**, a button that
+ends every hold in the zone at once (with nothing on hold it says so). This
+replaces the older *Manual Hold Time* in minutes; an upgrade carries the old
+value over. The exceptions are safety, and are not configurable: the heater
+is still cut in a sensor failsafe set to *Off*, a hand-switched mister is
+left on at most Max Misting Per Hour, and **a heater switched on by hand is
+taken back once the inside temperature passes the vent temperature**, so a
+forgotten heater can't overheat the house. A wall button, the device's own
+app or another automation counts as a person too. **Greenhouse Control**
+(switch) pauses the whole
 climate engine for maintenance -- devices are left as they are, except a
 heater ZoneFlow switched on, which is switched off.
 
@@ -1913,6 +1926,43 @@ zone needs a valve). An existing 1.5 zone is simply an outdoor zone.
 rain, forecast, flow or pump settings and none of their sensors or buttons;
 the watering entities are hidden, and no irrigation Repairs issue is raised
 for it.
+
+**Watering in a greenhouse or indoor zone.** Give the zone a valve and it
+waters like an outdoor zone: the *Watering settings* step asks for the soil
+type, drainage, slope, irrigation method, the schedule, the growth ramp, the
+pump power sensor and the flow meter, and for a **soil-moisture probe**
+(recommended -- rain never tops up a greenhouse, so the probe's reading is
+the truth: dry soil waters early, wet soil skips). What differs under a
+roof: no rain gauge, forecast, Weather Underground rain or manual rain, and
+the hot / cool / normal water target and the frost guard follow the
+**inside temperature**.
+
+**Several crops in one greenhouse (1.6.1).** Each crop is its own zone with
+its own valve, probe, plant and schedule; the climate (inside sensors and
+the fans, vents, misters, heater) belongs to **one** zone, the greenhouse. To
+add a crop: *Add integration -> ZoneFlow -> Add a crop to a greenhouse* (the
+choice appears once a greenhouse with climate devices exists): pick the
+greenhouse, name the crop and what is planted, give the crop's valve (each
+crop needs its own), then the watering settings. There are no climate
+questions -- the crop takes the greenhouse's zone type and inside
+temperature sensors, read live (change the sensor on the greenhouse and every
+crop follows). Pre-fill nothing for the person except that the crop's *Pump
+ID* starts as the greenhouse's, so crops on one water supply never open
+together; ask whether crops on separate supplies should clear it.
+
+- A zone set up the old way (a separate greenhouse zone per crop) joins a
+  greenhouse under its **Configure -> Greenhouse**; "-" makes it a zone on
+  its own again (it keeps a copy of the sensors).
+- A crop has no climate devices, no Greenhouse Status and no Greenhouse
+  Control of its own (hidden); its Configure menu has only its valve and the
+  watering settings.
+- A greenhouse with crops can't be changed to an outdoor zone; deleting a
+  greenhouse leaves its crops working on their own, with Repairs saying so.
+- The greenhouse's card lists its crops (status, next watering, Water now;
+  tap one for its full card), a crop's card says which greenhouse it is in,
+  the overview card lists crops under their greenhouse, Settings -> Devices
+  shows each crop "connected via" its greenhouse, and the auto-generated
+  dashboard (§9) gives each greenhouse one tab with its crops.
 
 **Verify (before you call it done).**
 
@@ -2148,6 +2198,18 @@ views:
             name: Paused Until
           - entity: <switch.zone_deep_soak_enabled>
             name: Deep Soak Enabled
+          # Outdoor zone with no rain gauge and no Weather Underground (1.6.1):
+          - entity: <number.zone_manual_rain_if_no_rain_gauge>
+            name: Manual Rain
+          - entity: <button.zone_add_manual_rain_if_no_rain_gauge>
+            name: Add Manual Rain
+          # Greenhouse / indoor zone with climate devices (1.6.1):
+          - entity: <switch.zone_auto_resume_greenhouse_only>
+            name: Auto Resume
+          - entity: <number.zone_auto_resume_after_greenhouse_only>
+            name: Auto Resume After
+          - entity: <button.zone_resume_automatic_greenhouse_only>
+            name: Resume Automatic
           - type: buttons
             entities:
               - entity: <button.zone_run_deep_soak_now>
@@ -2177,6 +2239,15 @@ views:
               - entity: <button.zone_service_run_10_min>
                 name: 10 min
                 icon: mdi:timer-outline
+
+      # Outdoor zones with a weather service: how often a skip for forecast
+      # rain was followed by real rain (1.6.1)
+      - type: entities
+        title: Forecast Skips
+        show_header_toggle: false
+        entities:
+          - entity: <sensor.zone_forecast_skip_hit_rate_if_weather_entity>
+            name: Skips that paid off
 
       - type: entities
         title: Health Journal
@@ -2515,8 +2586,12 @@ A dashboard using the built-in ZoneFlow card needs nothing: it picks up new
 entities by itself -- including, since 1.6, the climate rows (status,
 inside VPD, ventilation allowed, misting today), the Greenhouse Control
 switch and the climate settings groups of a greenhouse or indoor zone, and a
-greenhouse icon for a zone with no valve. (After an update, a hard refresh of
-the browser loads the new card.) What follows is for hand-built dashboards.
+greenhouse icon for a zone with no valve. Since 1.6.1 it also shows a
+greenhouse's crops (a Crops list) and, on a crop, which greenhouse it is in.
+(After an update, a hard refresh of the browser loads the new card.) What
+follows is for hand-built dashboards. In 1.6.1 *Manual Hold Time* became
+*Auto Resume After* (`number.<zone>_auto_resume_after`): replace the old row
+on a hand-built dashboard.
 
 If the person already has a ZoneFlow dashboard and has just updated
 ZoneFlow, check the release notes for that version (GitHub → Releases): each
