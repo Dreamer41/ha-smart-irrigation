@@ -2963,7 +2963,6 @@ class ZoneFlowController:
         # water overall right now", which is the routine cycle's job, while
         # deep soak's job (root-zone penetration depth) doesn't scale the
         # same way with plant age.
-        ramp = self.growth_ramp_fraction()
         deficit_share, deficit_reason = self.deficit()
         # The routine dose scales with the growth ramp, deficit mode, and
         # mulch adjustment alike -- see routine_target_scale().
