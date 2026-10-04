@@ -964,6 +964,7 @@ class ZoneFlowController:
         state.today_min_temp_c = seed_temp
         state.rain_midnight_baseline_mm = state.rain_tracker().latest_cumulative()
         state.today_runtime_minutes = 0.0
+        self.judge_skip_journal()
 
     @callback
     def _on_midnight(self, now) -> None:
@@ -2687,6 +2688,7 @@ class ZoneFlowController:
             return True
 
         setattr(state, count_attr, getattr(state, count_attr) + 1)
+        self._journal_skip(cycle, precip_mm, now_ts)
         await self._decide(cycle, "skipped_forecast", rain_mm=round(precip_mm, 2))
         await self._log_event(
             event_type="Forecast Skip",
@@ -2704,6 +2706,48 @@ class ZoneFlowController:
             ),
         )
         return False
+
+    # ------------------------------------------------------------------
+    # Skip journal: did skipping a watering for forecast rain pay off?
+    # ------------------------------------------------------------------
+    def _journal_skip(self, cycle: str, forecast_mm: float, now_ts: float) -> None:
+        state = self.store.state
+        state.forecast_skip_journal.append(
+            {"ts": now_ts, "cycle": cycle, "forecast_mm": round(forecast_mm, 2), "actual_mm": None, "paid_off": None}
+        )
+        del state.forecast_skip_journal[: -calc.SKIP_JOURNAL_MAX_ENTRIES]
+
+    def rain_between(self, start_ts: float, end_ts: float) -> float:
+        """Rain (mm) between two times, from whatever rain sources the zone has."""
+        state = self.store.state
+        gauge = state.rain_tracker().sum_between_mm(start_ts, end_ts)
+        if not state.manual_rain_samples:
+            return gauge
+        return max(gauge, state.manual_rain_tracker().sum_between_mm(start_ts, end_ts))
+
+    def judge_skip_journal(self) -> bool:
+        """Fill in the entries that are 48 h old. True when something changed."""
+        state = self.store.state
+        now_ts = dt_util.utcnow().timestamp()
+        has_rain_data = bool(self.rain_counter_entity) or state.manual_rain_used
+        threshold = self.number("forecast_rain_threshold_mm")
+        changed = False
+        for entry in state.forecast_skip_journal:
+            if entry.get("judged"):
+                continue
+            end_ts = entry["ts"] + calc.SKIP_JUDGE_HOURS * 3600
+            if end_ts > now_ts:
+                continue
+            entry["judged"] = True
+            if has_rain_data:
+                actual = self.rain_between(entry["ts"], end_ts)
+                entry["actual_mm"] = round(actual, 2)
+                entry["paid_off"] = calc.skip_paid_off(actual, entry["forecast_mm"], threshold)
+            changed = True
+        return changed
+
+    def skip_hit_rate(self) -> tuple[int, int]:
+        return calc.skip_hit_rate(self.store.state.forecast_skip_journal, dt_util.utcnow().timestamp())
 
     @_tracked_run
     async def run_deep_soak(self) -> None:

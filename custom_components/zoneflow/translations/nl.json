@@ -830,6 +830,9 @@
       },
       "misting_today": {
         "name": "Nevelen vandaag"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Forecast Skip Hit Rate"
       }
     },
     "select": {

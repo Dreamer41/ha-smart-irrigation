@@ -234,6 +234,12 @@ class IrrigationState:
     gh_changed_ts: dict[str, float] = field(default_factory=dict)
     gh_hold_until: dict[str, float] = field(default_factory=dict)
 
+    # --- 1.6.1 skip journal (controller._journal_skip) ---
+    # One entry per watering skipped for forecast rain: {ts, cycle,
+    # forecast_mm, actual_mm, paid_off}. actual_mm/paid_off stay None until
+    # judged 48 h later (paid_off stays None when the zone has no rain data).
+    forecast_skip_journal: list[dict] = field(default_factory=list)
+
     # --- 1.6.1 manual rain (controller.add_manual_rain) ---
     # Rain read by hand from a simple gauge, kept apart from the rain
     # gauge's samples (whose total is rebuilt from the tip counter).

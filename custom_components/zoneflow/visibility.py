@@ -21,6 +21,7 @@ FORECAST = {
     ("number", "forecast_rain_threshold_mm"),
     ("number", "forecast_probability_threshold_pct"),
     ("number", "forecast_dry_override_days"),
+    ("sensor", "forecast_skip_hit_rate"),
 }
 RAIN_GAUGE = {
     ("number", "rain_mm_per_tip"),

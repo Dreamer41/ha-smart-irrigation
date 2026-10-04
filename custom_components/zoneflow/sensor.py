@@ -41,6 +41,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
         ZoneFlowTodayRainSensor(entry, controller),
+        ZoneFlowForecastSkipHitRateSensor(entry, controller),
         ZoneFlowSoilProfileSensor(entry, controller),
         ZoneFlowGrowthRampSensor(entry, controller),
         ZoneFlowLastCycleWaterSensor(entry, controller),
@@ -427,6 +428,53 @@ class ZoneFlowTodayRainSensor(_Base):
 
     def metric_native_value(self) -> float:
         return round(self._controller.today_rain_mm(), 2)
+
+
+class ZoneFlowForecastSkipHitRateSensor(_Base):
+    """Of the waterings skipped for forecast rain in the last 30 days, the
+    share where rain really came (within 48 h of the skip). Tells how much
+    to trust the weather service used for skipping. Empty until a skip has
+    been judged, and for a zone with no rain data (no gauge, no manual rain)."""
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_native_unit_of_measurement = "%"
+    _attr_icon = "mdi:weather-cloudy-clock"
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_forecast_skip_hit_rate"
+        self._attr_translation_key = "forecast_skip_hit_rate"
+
+    def _judged(self) -> tuple[int, int]:
+        # Entries become 48 h old between midnights: judge them here too.
+        if self._controller.judge_skip_journal():
+            self._controller.hass.async_create_task(self._controller.store.async_save())
+        return self._controller.skip_hit_rate()
+
+    @property
+    def native_value(self) -> float | None:
+        paid, judged = self._judged()
+        return round(100.0 * paid / judged) if judged else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        paid, judged = self._judged()
+        journal = self._controller.store.state.forecast_skip_journal
+        return {
+            "paid_off": paid,
+            "judged": judged,
+            "entries": [
+                {
+                    "skipped": dt_util.as_local(dt_util.utc_from_timestamp(e["ts"])).isoformat(timespec="minutes"),
+                    "cycle": e["cycle"],
+                    "forecast_mm": e["forecast_mm"],
+                    "actual_mm": e["actual_mm"],
+                    "paid_off": e["paid_off"],
+                }
+                for e in reversed(journal)
+            ],
+        }
 
 
 class ZoneFlowSoilProfileSensor(_Base):

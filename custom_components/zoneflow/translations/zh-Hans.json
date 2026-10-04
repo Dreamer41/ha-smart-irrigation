@@ -830,6 +830,9 @@
       },
       "misting_today": {
         "name": "今日喷雾时长"
+      },
+      "forecast_skip_hit_rate": {
+        "name": "Forecast Skip Hit Rate"
       }
     },
     "select": {
