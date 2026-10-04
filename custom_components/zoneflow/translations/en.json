@@ -177,7 +177,8 @@
         "title": "ZoneFlow",
         "menu_options": {
           "zone": "Add a zone",
-          "weather_underground": "Set up Weather Underground rain"
+          "weather_underground": "Set up Weather Underground rain",
+          "crop": "Add a crop to a greenhouse"
         }
       },
       "weather_underground": {
@@ -200,6 +201,30 @@
         },
         "data_description": {
           "stations": "Up to 3. Check that each station's rain today looks right before you trust it."
+        }
+      },
+      "crop": {
+        "title": "Add a crop to a greenhouse",
+        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "data": {
+          "greenhouse_entry_id": "Greenhouse",
+          "zone_name": "Crop name",
+          "plant": "What's planted"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
+          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
+          "plant": "Fills in sensible starting values for this crop."
+        }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
         }
       }
     },
@@ -235,7 +260,8 @@
       "wu_invalid_key": "Weather Underground refused the API key.",
       "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
       "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
+      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
     },
     "step": {
       "init": {
@@ -247,7 +273,9 @@
           "greenhouse_devices": "Valve, sensors and climate devices",
           "watering": "Watering settings",
           "zone_type": "Zone type",
-          "weather_underground": "Weather Underground rain"
+          "weather_underground": "Weather Underground rain",
+          "crop_valve": "Crop valve",
+          "greenhouse_link": "Greenhouse"
         }
       },
       "settings": {
@@ -438,6 +466,26 @@
         },
         "data_description": {
           "use_weather_underground": "Only for zones without a rain gauge. Set up the Weather Underground entry first."
+        }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Greenhouse",
+        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "data": {
+          "greenhouse_entry_id": "Part of greenhouse"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
         }
       }
     },
@@ -1262,6 +1310,10 @@
     "weather_underground_no_data": {
       "title": "Weather Underground rain: no data",
       "description": "None of the chosen Weather Underground stations has sent a usable rain reading for {hours} hours, so zones using it act as if they had no rain gauge. Check the stations on wunderground.com, or pick others under the Weather Underground entry's Configure. This clears by itself once data returns."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: its greenhouse was removed",
+      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
     }
   }
 }

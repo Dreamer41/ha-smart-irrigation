@@ -7,7 +7,7 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
@@ -716,6 +716,21 @@ class ZoneFlowStatusSensor(_Base):
         attributes["valve"] = self._controller.valve_entity
         # For the overview card's default icon (the plant preset at setup).
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
+        # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
+        registry = dr.async_get(self.hass)
+
+        def device_of(entry_id: str) -> str | None:
+            device = registry.async_get_device(identifiers={(DOMAIN, entry_id)})
+            return device.id if device is not None else None
+
+        parent = self._controller.parent_entry
+        if parent is not None:
+            attributes["greenhouse"] = {"name": parent.title, "device_id": device_of(parent.entry_id)}
+        crops = sorted(self._controller.crops, key=lambda c: c.entry.title.lower())
+        if crops:
+            attributes["crops"] = [
+                {"name": c.entry.title, "device_id": device_of(c.entry.entry_id)} for c in crops
+            ]
         return attributes
 
 

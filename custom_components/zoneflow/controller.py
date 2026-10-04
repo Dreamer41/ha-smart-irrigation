@@ -111,6 +111,8 @@ from .const import (
     DEMAND_MODEL_ET,
     MULCH_STATUS_NOT_MULCHED,
     CONF_USE_WU,
+    CONF_PARENT_ZONE,
+    CROP_INHERITED_KEYS,
     DOMAIN,
     WU_DATA_KEY,
     EVENT_LOG,
@@ -344,8 +346,38 @@ class ZoneFlowController:
     @property
     def zone_type(self) -> str:
         """outdoor / greenhouse / indoor. A zone made before 1.6 has none
-        stored and is an outdoor zone, exactly as it always was."""
-        return self.entry.options.get(CONF_ZONE_TYPE, self.entry.data.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE))
+        stored and is an outdoor zone, exactly as it always was. A crop is
+        whatever its greenhouse is."""
+        parent = self.parent_entry
+        source = {**parent.data, **parent.options} if parent is not None else {
+            **self.entry.data, **self.entry.options
+        }
+        return source.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+
+    # ------------------------------------------------------------------
+    # Greenhouse crops (1.6.1): a zone that belongs to a greenhouse
+    # ------------------------------------------------------------------
+    @property
+    def parent_entry_id(self) -> str | None:
+        return self.entry.options.get(CONF_PARENT_ZONE, self.entry.data.get(CONF_PARENT_ZONE)) or None
+
+    @property
+    def parent_entry(self):
+        """The greenhouse this zone is a crop of (its config entry), or None."""
+        entry_id = self.parent_entry_id
+        return self.hass.config_entries.async_get_entry(entry_id) if entry_id else None
+
+    @property
+    def is_crop(self) -> bool:
+        return self.parent_entry is not None
+
+    @property
+    def crops(self) -> list[Any]:
+        """The loaded zones that are crops of this one."""
+        return [
+            c for c in self.hass.data.get(DOMAIN, {}).values()
+            if getattr(c, "parent_entry_id", None) == self.entry.entry_id
+        ]
 
     @property
     def is_outdoor(self) -> bool:
@@ -367,6 +399,9 @@ class ZoneFlowController:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_has_no_valve")
 
     def _climate_option(self, key: str) -> Any:
+        parent = self.parent_entry
+        if parent is not None and key in CROP_INHERITED_KEYS:
+            return parent.options.get(key, parent.data.get(key))  # a crop uses its greenhouse's
         return self.entry.options.get(key, self.entry.data.get(key))
 
     @property

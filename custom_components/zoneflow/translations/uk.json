@@ -177,7 +177,8 @@
         "title": "ZoneFlow",
         "menu_options": {
           "zone": "Додати зону",
-          "weather_underground": "Налаштувати дощ Weather Underground"
+          "weather_underground": "Налаштувати дощ Weather Underground",
+          "crop": "Add a crop to a greenhouse"
         }
       },
       "weather_underground": {
@@ -200,6 +201,30 @@
         },
         "data_description": {
           "stations": "До 3. Перш ніж довіряти даним, переконайтеся, що сьогоднішній дощ на кожній станції виглядає правдоподібно."
+        }
+      },
+      "crop": {
+        "title": "Add a crop to a greenhouse",
+        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "data": {
+          "greenhouse_entry_id": "Greenhouse",
+          "zone_name": "Crop name",
+          "plant": "What's planted"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
+          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
+          "plant": "Fills in sensible starting values for this crop."
+        }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
         }
       }
     },
@@ -233,7 +258,9 @@
           "greenhouse_devices": "Клапан, датчики та пристрої клімату",
           "watering": "Налаштування поливу",
           "zone_type": "Тип зони",
-          "weather_underground": "Дощ Weather Underground"
+          "weather_underground": "Дощ Weather Underground",
+          "crop_valve": "Crop valve",
+          "greenhouse_link": "Greenhouse"
         }
       },
       "settings": {
@@ -425,6 +452,26 @@
         "data_description": {
           "use_weather_underground": "Лише для зон без дощоміра. Спочатку налаштуйте запис Weather Underground."
         }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Greenhouse",
+        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "data": {
+          "greenhouse_entry_id": "Part of greenhouse"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+        }
       }
     },
     "abort": {
@@ -447,7 +494,8 @@
       "wu_invalid_key": "Weather Underground відхилив ключ API.",
       "wu_cannot_connect": "Не вдалося з'єднатися з Weather Underground. Спробуйте пізніше.",
       "wu_no_stations": "Немає станцій у межах радіуса. Без метеостанції поблизу ця функція не допоможе.",
-      "wu_pick_1_to_3": "Оберіть 1, 2 або 3 станції."
+      "wu_pick_1_to_3": "Оберіть 1, 2 або 3 станції.",
+      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
     }
   },
   "selector": {
@@ -1262,6 +1310,10 @@
     "weather_underground_no_data": {
       "title": "Дощ Weather Underground: немає даних",
       "description": "Жодна з вибраних станцій Weather Underground не надсилала придатних даних про дощ протягом {hours} год., тому зони, які її використовують, працюють так, ніби у них немає дощоміра. Перевірте станції на wunderground.com або виберіть інші в пункті Налаштувати для інтеграції Weather Underground. Це зникне автоматично, щойно дані знову з'являться."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: its greenhouse was removed",
+      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
     }
   }
 }

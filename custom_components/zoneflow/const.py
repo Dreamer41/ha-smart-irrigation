@@ -731,6 +731,12 @@ CONF_FAN_ENTITIES = "fan_entities"
 CONF_VENT_ENTITIES = "vent_entities"
 CONF_MISTER_ENTITIES = "mister_entities"
 CONF_HEATER_ENTITIES = "heater_entities"
+# 1.6.1: a crop is a greenhouse / indoor zone that belongs to a greenhouse
+# (the zone with the climate): it stores that zone's entry id here and uses
+# its inside sensors (controller.parent_entry).
+CONF_PARENT_ZONE = "greenhouse_entry_id"
+# What a crop takes from its greenhouse, read live.
+CROP_INHERITED_KEYS = (CONF_INSIDE_TEMP_ENTITY, CONF_BACKUP_TEMP_ENTITIES)
 DEVICE_ROLE_KEYS = (CONF_FAN_ENTITIES, CONF_VENT_ENTITIES, CONF_MISTER_ENTITIES, CONF_HEATER_ENTITIES)
 # What each role accepts (entity domains).
 DEVICE_ROLE_DOMAINS: dict[str, list[str]] = {

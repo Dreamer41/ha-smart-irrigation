@@ -2,18 +2,19 @@
 from __future__ import annotations
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, Platform
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import issue_registry as ir
 
 import homeassistant.util.dt as dt_util
 
 from . import frontend, issues, summary, units, visibility
-from .const import CONF_ENTRY_TYPE, DOMAIN, ENTRY_TYPE_WU, PLATFORMS, WU_DATA_KEY
+from .const import CONF_ENTRY_TYPE, CONF_PARENT_ZONE, CROP_INHERITED_KEYS, DOMAIN, ENTRY_TYPE_WU, PLATFORMS, WU_DATA_KEY
 from .controller import ZoneFlowController
 
 SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
@@ -160,6 +161,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # Hide what this zone doesn't use (see visibility.py).
     await visibility.async_apply(hass, entry, controller)
+    _link_crop_devices(hass)
+    # A greenhouse's card lists its crops: tell it about this one.
+    if (parent := hass.data[DOMAIN].get(controller.parent_entry_id or "")) is not None:
+        parent._notify_status()
     summary.async_setup(hass)
     await frontend.async_register(hass)
 
@@ -226,6 +231,32 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     await hass.config_entries.async_reload(entry.entry_id)
+    # A greenhouse's crops read its sensors: they follow its changes.
+    for crop in _crop_entries(hass, entry.entry_id):
+        if crop.state is ConfigEntryState.LOADED:
+            await hass.config_entries.async_reload(crop.entry_id)
+
+
+def _crop_entries(hass: HomeAssistant, parent_id: str) -> list[ConfigEntry]:
+    return [
+        e for e in hass.config_entries.async_entries(DOMAIN)
+        if {**e.data, **e.options}.get(CONF_PARENT_ZONE) == parent_id
+    ]
+
+
+@callback
+def _link_crop_devices(hass: HomeAssistant) -> None:
+    """Settings -> Devices shows each crop "connected via" its greenhouse."""
+    registry = dr.async_get(hass)
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        parent_id = {**entry.data, **entry.options}.get(CONF_PARENT_ZONE)
+        device = registry.async_get_device(identifiers={(DOMAIN, entry.entry_id)})
+        if device is None:
+            continue
+        parent = registry.async_get_device(identifiers={(DOMAIN, parent_id)}) if parent_id else None
+        wanted = parent.id if parent is not None else None
+        if device.via_device_id != wanted:
+            registry.async_update_device(device.id, via_device_id=wanted)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -257,17 +288,40 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unloaded
 
 
+def _release_crops(hass: HomeAssistant, greenhouse: ConfigEntry) -> None:
+    """A greenhouse was deleted: its crops keep working on their own, with a
+    copy of its inside sensors, and a note in Repairs (until the next
+    restart)."""
+    source = {**greenhouse.data, **greenhouse.options}
+    for crop in _crop_entries(hass, greenhouse.entry_id):
+        options = {key: value for key, value in crop.options.items() if key != CONF_PARENT_ZONE}
+        for key in CROP_INHERITED_KEYS:
+            if source.get(key):
+                options[key] = source[key]
+        data = {key: value for key, value in crop.data.items() if key != CONF_PARENT_ZONE}
+        hass.config_entries.async_update_entry(crop, data=data, options=options)
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            f"{crop.entry_id}_greenhouse_removed",
+            is_fixable=False,
+            is_persistent=False,
+            severity=ir.IssueSeverity.WARNING,
+            translation_key="greenhouse_removed",
+            translation_placeholders={"zone": crop.title, "greenhouse": greenhouse.title},
+        )
+
+
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """A zone was deleted: clear its Repairs issues. The last one also takes
     the dashboard card's loader away (frontend.py)."""
     if is_wu_entry(entry):
-        from homeassistant.helpers import issue_registry as ir
-
         from .wu import ISSUE_NO_DATA
 
         ir.async_delete_issue(hass, DOMAIN, ISSUE_NO_DATA)
         return
     issues.async_remove(hass, entry.entry_id)
+    _release_crops(hass, entry)
     others = [
         e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id and not is_wu_entry(e)
     ]

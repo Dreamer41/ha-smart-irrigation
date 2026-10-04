@@ -25,6 +25,8 @@ from homeassistant.util import slugify
 from . import calculations as calc, greenhouse_logic, units, wu_logic
 
 from .const import (
+    CONF_PARENT_ZONE,
+    CROP_INHERITED_KEYS,
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,
@@ -368,6 +370,41 @@ def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     }
 
 
+# --- Greenhouse crops (1.6.1) -----------------------------------------------
+# A crop is a greenhouse / indoor zone that belongs to a greenhouse (the zone
+# with the climate devices) and uses its inside sensors (controller.is_crop).
+
+
+def _merged_entry(entry) -> dict[str, Any]:
+    return {**entry.data, **entry.options}
+
+
+def _greenhouses(hass, exclude_entry_id: str | None = None) -> list:
+    """Zones a crop can belong to: greenhouse / indoor zones with climate
+    devices that aren't crops themselves."""
+    found = []
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        data = _merged_entry(entry)
+        if entry.entry_id == exclude_entry_id or _is_wu_entry(entry) or data.get(CONF_PARENT_ZONE):
+            continue
+        if data.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE) == ZONE_TYPE_OUTDOOR:
+            continue
+        if any(data.get(role) for role in DEVICE_ROLE_KEYS):
+            found.append(entry)
+    return sorted(found, key=lambda e: e.title.lower())
+
+
+def _has_crops(hass, entry_id: str) -> bool:
+    return any(_merged_entry(e).get(CONF_PARENT_ZONE) == entry_id for e in hass.config_entries.async_entries(DOMAIN))
+
+
+def _greenhouse_selector(entries: list, *, with_none: bool) -> selector.SelectSelector:
+    options = [selector.SelectOptionDict(value=e.entry_id, label=e.title) for e in entries]
+    if with_none:
+        options.insert(0, selector.SelectOptionDict(value="", label="-"))
+    return selector.SelectSelector(selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.LIST))
+
+
 # --- Weather Underground rain (1.6.1, experimental) -----------------------
 # One shared entry (wu.py) for outdoor zones without a rain gauge. Offered
 # once a zone exists; the first screen says to check the WU map for nearby
@@ -462,6 +499,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._climate: str = DEFAULT_CLIMATE
         self._zone_type: str = DEFAULT_ZONE_TYPE
         self._menu_done = False
+        self._crop_pump_id: str | None = None
         self._wu: dict[str, Any] = {}
         self._wu_candidates: list[dict[str, Any]] = []
 
@@ -471,8 +509,74 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         entries = self.hass.config_entries.async_entries(DOMAIN)
         return any(not _is_wu_entry(e) for e in entries) and not any(_is_wu_entry(e) for e in entries)
 
+    def _menu_options(self) -> list[str]:
+        options = ["zone"]
+        if _greenhouses(self.hass):
+            options.append("crop")
+        if self._offer_wu():
+            options.append("weather_underground")
+        return options
+
+    async def async_step_crop(self, user_input: dict[str, Any] | None = None):
+        """A crop in a greenhouse: which greenhouse, the crop's name and
+        plant. Then its valve and watering settings; the climate (zone type,
+        inside sensors, climate preset) comes from the greenhouse."""
+        greenhouses = _greenhouses(self.hass)
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            parent = self.hass.config_entries.async_get_entry(user_input[CONF_PARENT_ZONE])
+            name = user_input[CONF_ZONE_NAME].strip()
+            if not name:
+                errors["base"] = "zone_name_required"
+            elif parent is not None:
+                source = _merged_entry(parent)
+                self._zone_name = name
+                self._plant = user_input.get(CONF_PLANT, PLANT_CUSTOM)
+                self._zone_type = source.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+                self._climate = source.get(CONF_CLIMATE, DEFAULT_CLIMATE)
+                self._crop_pump_id = source.get(CONF_PUMP_ID) or ""
+                self._data = {
+                    CONF_PARENT_ZONE: parent.entry_id,
+                    CONF_ZONE_TYPE: self._zone_type,
+                    # Phone messages and units as the greenhouse has them.
+                    CONF_NOTIFY_ENTITY: source.get(CONF_NOTIFY_ENTITY),
+                    CONF_UNIT_SYSTEM: source.get(CONF_UNIT_SYSTEM, units.UNIT_SYSTEM_AUTO),
+                }
+                return await self.async_step_crop_valve()
+        return self.async_show_form(
+            step_id="crop",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_PARENT_ZONE, default=greenhouses[0].entry_id if greenhouses else ""
+                    ): _greenhouse_selector(greenhouses, with_none=False),
+                    vol.Required(CONF_ZONE_NAME, default=self._zone_name or ""): str,
+                    vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
+                    ),
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_crop_valve(self, user_input: dict[str, Any] | None = None):
+        """A crop always has a valve: it is what makes it a crop."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = _duplicate_errors(self.hass, user_input)
+            if not errors:
+                self._data = {**self._data, CONF_VALVE_ENTITY: user_input[CONF_VALVE_ENTITY]}
+                return await self.async_step_watering()
+        return self.async_show_form(
+            step_id="crop_valve",
+            data_schema=vol.Schema(
+                {vol.Required(CONF_VALVE_ENTITY): selector.EntitySelector(selector.EntitySelectorConfig(domain="switch"))}
+            ),
+            errors=errors,
+        )
+
     async def async_step_start(self, user_input: dict[str, Any] | None = None):
-        return self.async_show_menu(step_id="start", menu_options=["zone", "weather_underground"])
+        return self.async_show_menu(step_id="start", menu_options=self._menu_options())
 
     async def async_step_zone(self, user_input: dict[str, Any] | None = None):
         self._menu_done = True
@@ -518,7 +622,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
-        if user_input is None and not self._menu_done and self._offer_wu():
+        if user_input is None and not self._menu_done and len(self._menu_options()) > 1:
             return await self.async_step_start()
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -656,8 +760,13 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_ZONE_NAME: self._zone_name,
                 CONF_CSV_PATH: f"/config/zoneflow_{slugify(self._zone_name)}.csv",
             }
+            if self._data.get(CONF_PARENT_ZONE):
+                return await self.async_step_temperatures()  # the greenhouse's climate
             return await self.async_step_climate()
         defaults: dict[str, Any] = {}
+        if self._crop_pump_id:
+            # Crops on one water supply don't open at the same time.
+            defaults[CONF_PUMP_ID] = self._crop_pump_id
         if (preset := PLANT_PRESETS.get(self._plant)) is not None:
             defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
             defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
@@ -812,10 +921,16 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
     def _has_valve(self) -> bool:
         return bool(self._merged().get(CONF_VALVE_ENTITY))
 
+    def _is_crop(self) -> bool:
+        parent_id = self._merged().get(CONF_PARENT_ZONE)
+        return bool(parent_id and self.hass.config_entries.async_get_entry(parent_id))
+
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
         outdoor = self._zone_type() == ZONE_TYPE_OUTDOOR
         has_valve = self._has_valve()
-        options = ["settings"] if outdoor else ["greenhouse_devices"]
+        crop = self._is_crop()
+        # A crop's sensors and climate are its greenhouse's: only its valve here.
+        options = ["settings"] if outdoor else (["crop_valve"] if crop else ["greenhouse_devices"])
         if not outdoor and has_valve:
             options.append("watering")
         if has_valve:
@@ -827,8 +942,59 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             _is_wu_entry(e) for e in self.hass.config_entries.async_entries(DOMAIN)
         ):
             options.append("weather_underground")
-        options.append("zone_type")
+        if not outdoor and (crop or not any(self._merged().get(role) for role in DEVICE_ROLE_KEYS)):
+            if _greenhouses(self.hass, exclude_entry_id=self._config_entry.entry_id):
+                options.append("greenhouse_link")
+        if not crop:
+            options.append("zone_type")  # a crop is whatever its greenhouse is
         return self.async_show_menu(step_id="init", menu_options=options)
+
+    async def async_step_greenhouse_link(self, user_input: dict[str, Any] | None = None):
+        """Which greenhouse this zone is a crop of, or none (on its own).
+        Leaving a greenhouse keeps a copy of its inside sensors."""
+        greenhouses = _greenhouses(self.hass, exclude_entry_id=self._config_entry.entry_id)
+        current = self._merged().get(CONF_PARENT_ZONE) or ""
+        if user_input is not None:
+            chosen = user_input.get(CONF_PARENT_ZONE) or ""
+            options = {**self._config_entry.options}
+            if chosen:
+                parent = self.hass.config_entries.async_get_entry(chosen)
+                options[CONF_PARENT_ZONE] = chosen
+                options[CONF_ZONE_TYPE] = _merged_entry(parent).get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+            else:
+                old = self.hass.config_entries.async_get_entry(current) if current else None
+                options[CONF_PARENT_ZONE] = None
+                if old is not None:
+                    source = _merged_entry(old)
+                    for key in CROP_INHERITED_KEYS:
+                        if source.get(key):
+                            options[key] = source[key]
+            return self.async_create_entry(title="", data=options)
+        return self.async_show_form(
+            step_id="greenhouse_link",
+            data_schema=vol.Schema(
+                {vol.Optional(CONF_PARENT_ZONE, default=current): _greenhouse_selector(greenhouses, with_none=True)}
+            ),
+        )
+
+    async def async_step_crop_valve(self, user_input: dict[str, Any] | None = None):
+        """A crop's valve (its sensors and climate are its greenhouse's)."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = _duplicate_errors(self.hass, user_input, exclude_entry_id=self._config_entry.entry_id)
+            if not errors:
+                return self.async_create_entry(title="", data={**self._config_entry.options, **user_input})
+        return self.async_show_form(
+            step_id="crop_valve",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_VALVE_ENTITY, default=self._merged().get(CONF_VALVE_ENTITY)): selector.EntitySelector(
+                        selector.EntitySelectorConfig(domain="switch")
+                    )
+                }
+            ),
+            errors=errors,
+        )
 
     async def async_step_weather_underground(self, user_input: dict[str, Any] | None = None):
         """Use the shared Weather Underground rain (zones without a gauge)."""
@@ -852,6 +1018,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             new_type = user_input[CONF_ZONE_TYPE]
             if new_type == ZONE_TYPE_OUTDOOR and not self._has_valve():
                 errors["base"] = "valve_required_outdoor"
+            elif new_type == ZONE_TYPE_OUTDOOR and _has_crops(self.hass, self._config_entry.entry_id):
+                errors["base"] = "greenhouse_has_crops"
             else:
                 options = {**self._config_entry.options, CONF_ZONE_TYPE: new_type}
                 if new_type != ZONE_TYPE_OUTDOOR:

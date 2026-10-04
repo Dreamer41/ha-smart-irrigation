@@ -91,7 +91,8 @@ def _set(hass: HomeAssistant, controller: ZoneFlowController, key: str, raised: 
 
 def _sensors(controller: ZoneFlowController) -> dict[str, str | None]:
     return {
-        "temperature": controller.outdoor_temp_entity,
+        # A crop's temperature is its greenhouse's sensor: reported there once.
+        "temperature": None if controller.is_crop else controller.outdoor_temp_entity,
         "rain_gauge": controller.rain_counter_entity,
         "soil_moisture": controller.soil_moisture_entity,
         "pump_power": controller.pump_power_entity,

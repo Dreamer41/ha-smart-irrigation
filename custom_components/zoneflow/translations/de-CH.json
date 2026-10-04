@@ -177,7 +177,8 @@
         "title": "ZoneFlow",
         "menu_options": {
           "zone": "Zone hinzufügen",
-          "weather_underground": "Weather Underground-Regen einrichten"
+          "weather_underground": "Weather Underground-Regen einrichten",
+          "crop": "Add a crop to a greenhouse"
         }
       },
       "weather_underground": {
@@ -200,6 +201,30 @@
         },
         "data_description": {
           "stations": "Bis zu 3. Überprüfen Sie, ob der heutige Regen jeder Station richtig aussieht, bevor Sie ihr vertrauen."
+        }
+      },
+      "crop": {
+        "title": "Add a crop to a greenhouse",
+        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "data": {
+          "greenhouse_entry_id": "Greenhouse",
+          "zone_name": "Crop name",
+          "plant": "What's planted"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
+          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
+          "plant": "Fills in sensible starting values for this crop."
+        }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
         }
       }
     },
@@ -233,7 +258,9 @@
           "greenhouse_devices": "Ventil, Sensoren und Klimageräte",
           "watering": "Bewässerungseinstellungen",
           "zone_type": "Zonentyp",
-          "weather_underground": "Weather Underground-Regen"
+          "weather_underground": "Weather Underground-Regen",
+          "crop_valve": "Crop valve",
+          "greenhouse_link": "Greenhouse"
         }
       },
       "settings": {
@@ -425,6 +452,26 @@
         "data_description": {
           "use_weather_underground": "Nur für Zonen ohne Regenmesser. Richten Sie zuerst den Weather Underground-Eintrag ein."
         }
+      },
+      "crop_valve": {
+        "title": "Crop valve",
+        "description": "The valve that waters this crop.",
+        "data": {
+          "valve_entity": "Valve"
+        },
+        "data_description": {
+          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+        }
+      },
+      "greenhouse_link": {
+        "title": "Greenhouse",
+        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "data": {
+          "greenhouse_entry_id": "Part of greenhouse"
+        },
+        "data_description": {
+          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+        }
       }
     },
     "abort": {
@@ -447,7 +494,8 @@
       "wu_invalid_key": "Weather Underground hat den API-Schlüssel abgelehnt.",
       "wu_cannot_connect": "Weather Underground konnte nicht erreicht werden. Versuchen Sie es später erneut.",
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
-      "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen."
+      "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
+      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
     }
   },
   "selector": {
@@ -1262,6 +1310,10 @@
     "weather_underground_no_data": {
       "title": "Weather Underground Regen: Keine Daten",
       "description": "Keine der ausgewählten Weather Underground-Stationen hat seit {hours} Stunden eine verwertbare Regenmessung gesendet, sodass Zonen, die diese nutzen, so reagieren, als hätten sie keinen Regenmesser. Überprüfen Sie die Stationen auf wunderground.com oder wählen Sie andere unter Konfigurieren des Weather Underground-Eintrags. Dies behebt sich von selbst, sobald wieder Daten eingehen."
+    },
+    "greenhouse_removed": {
+      "title": "{zone}: its greenhouse was removed",
+      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
     }
   }
 }
