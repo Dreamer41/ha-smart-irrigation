@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Pridať zónu",
           "weather_underground": "Nastaviť zrážky Weather Underground",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Pridať plodinu do skleníka"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Pridať plodinu do skleníka",
+        "description": "Plodina je vlastná zavlažovacia zóna vo vnútri skleníka: má vlastný ventil, pôdnu sondu a harmonogram. Využíva vnútorné snímače a klímu skleníka.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Skleník",
+          "zone_name": "Názov plodiny",
+          "plant": "Čo je zasadené"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Skleník alebo vnútorná zóna s klimatickými zariadeniami.",
+          "zone_name": "Stane sa názvom zariadenia plodiny a začiatkom názvov jej entít, napr. „Parajdajky“.",
+          "plant": "Vyplní rozumné východiskové hodnoty pre túto plodinu."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Ventil plodiny",
+        "description": "Ventil, ktorý zalieva túto plodinu.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Ventil"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Spínač, ktorý otvára vodu pre túto plodinu. Každá plodina potrebuje vlastný ventil."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Nastavenia zavlažovania",
           "zone_type": "Typ zóny",
           "weather_underground": "Zrážky Weather Underground",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Ventil plodiny",
+          "greenhouse_link": "Skleník"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Ventil plodiny",
+        "description": "Ventil, ktorý zalieva túto plodinu.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Ventil"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Spínač, ktorý otvára vodu pre túto plodinu. Každá plodina potrebuje vlastný ventil."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Skleník",
+        "description": "Urobte z tejto zóny plodinu skleníka: bude potom využívať vnútorné snímače daného skleníka a zobrazovať sa s ním. Vyberte „-“, ak z nej chcete opäť urobiť samostatnú zónu (ponechá si kópiu snímačov skleníka).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Súčasť skleníka"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Skleník alebo vnútorná zóna s klimatickými zariadeniami, alebo „-“ pre žiadny."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Napadlo spojiť sa s Weather Underground. Skúste to znova neskôr.",
       "wu_no_stations": "Žiadne stanice v okruhu. Bez stanice v blízkosti vám táto funkcia nepomôže.",
       "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Najprv ich presuňte do iného skleníka alebo ich odstráňte (Nakonfigurovať -> Skleník pri každej plodine)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Žiadna z vybraných staníc Weather Underground neodoslala použiteľný údaj o daždi počas {hours} hodín, takže zóny, ktoré ju používajú, fungujú, ako kedy nemali zrážkomer. Skontrolujte stanice na wunderground.com alebo vyberte iné v položke Weather Underground v ponuke Nastaviť. Toto sa automaticky vyrieši, hneď ako sa údaje vrátia."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: jej skleník bol odstránený",
+      "description": "Skleník {greenhouse} bol odstránený, takže {zone} je teraz samostatnou zónou. Naďalej zalieva a ponecháva si vnútorné snímače skleníka. Ak ju chcete umiestniť do iného skleníka, použijete Nakonfigurovať -> Skleník v ponuke zóny."
     }
   }
 }

@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Zone hinzufügen",
           "weather_underground": "Weather Underground-Regen einrichten",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Kultur zu einem Gewächshaus hinzufügen"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Kultur zu einem Gewächshaus hinzufügen",
+        "description": "Eine Kultur ist eine eigene Bewässerungszone innerhalb eines Gewächshauses: ein eigenes Ventil, ein eigener Bodensensor und ein eigener Zeitplan. Sie nutzt die Innensensoren und das Klima des Gewächshauses.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Gewächshaus",
+          "zone_name": "Kulturname",
+          "plant": "Was gepflanzt ist"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Das Gewächshaus oder die Innenzone mit den Klimageräten.",
+          "zone_name": "Wird zum Gerätenamen der Kultur und zum Anfang ihrer Entitätsnamen, z. B. „Tomaten“.",
+          "plant": "Füllt sinnvolle Startwerte für diese Kultur ein."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Kulturventil",
+        "description": "Das Ventil, das diese Kultur bewässert.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Ventil"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Ein Schalter, der das Wasser für diese Kultur öffnet. Jede Kultur benötigt ein eigenes Ventil."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Bewässerungseinstellungen",
           "zone_type": "Zonentyp",
           "weather_underground": "Weather Underground-Regen",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Kulturventil",
+          "greenhouse_link": "Gewächshaus"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Kulturventil",
+        "description": "Das Ventil, das diese Kultur bewässert.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Ventil"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Ein Schalter, der das Wasser für diese Kultur öffnet. Jede Kultur benötigt ein eigenes Ventil."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Gewächshaus",
+        "description": "Machen Sie diese Zone zu einer Kultur eines Gewächshauses: Sie nutzt dann die Innensensoren dieses Gewächshauses und wird mit ihm angezeigt. Wählen Sie „-“, um sie wieder zu einer eigenständigen Zone zu machen (sie behält eine Kopie der Gewächshaussensoren).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Teil des Gewächshauses"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Das Gewächshaus oder die Innenzone mit den Klimageräten, oder „-“ für keine."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Weather Underground konnte nicht erreicht werden. Versuchen Sie es später erneut.",
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
       "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Dieses Gewächshaus enthält Kulturen. Verschieben Sie diese zuerst in ein anderes Gewächshaus oder entfernen Sie sie (Konfigurieren -> Gewächshaus der jeweiligen Kultur)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Keine der ausgewählten Weather Underground-Stationen hat seit {hours} Stunden eine verwertbare Regenmessung gesendet, sodass Zonen, die diese nutzen, so reagieren, als hätten sie keinen Regenmesser. Überprüfen Sie die Stationen auf wunderground.com oder wählen Sie andere unter Konfigurieren des Weather Underground-Eintrags. Dies behebt sich von selbst, sobald wieder Daten eingehen."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: Das Gewächshaus wurde entfernt",
+      "description": "Das Gewächshaus {greenhouse} wurde gelöscht, daher ist {zone} jetzt eine eigenständige Zone. Sie gießt weiterhin und behält die Innensensoren des Gewächshauses. Um sie in ein anderes Gewächshaus zu setzen, nutzen Sie Konfigurieren -> Gewächshaus der Zone."
     }
   }
 }

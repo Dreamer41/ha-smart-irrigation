@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Zone toevoegen",
           "weather_underground": "Weather Underground-regen instellen",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Voeg een gewas toe aan een kas"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Voeg een gewas toe aan een kas",
+        "description": "Een gewas is een eigen beregeningszone in een kas: een eigen klep, bodemsensor en schema. Het maakt gebruik van de interne sensoren en het klimaat van de kas.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Kas",
+          "zone_name": "Naam gewas",
+          "plant": "Wat er is geplant"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten.",
+          "zone_name": "Wordt de apparaatnaam van het gewas en het begin van de entiteitsnamen, bijv. \"Tomaten\".",
+          "plant": "Vult verstandige beginwaarden in voor dit gewas."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Gewasklep",
+        "description": "De klep die dit gewas besproeit.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Klep"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Een schakelaar die het water voor dit gewas opent. Elk gewas heeft een eigen klep nodig."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Bewateringsinstellingen",
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regen",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Gewasklep",
+          "greenhouse_link": "Kas"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Gewasklep",
+        "description": "De klep die dit gewas besproeit.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Klep"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Een schakelaar die het water voor dit gewas opent. Elk gewas heeft een eigen klep nodig."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Kas",
+        "description": "Maak van deze zone een gewas van een kas: het maakt dan gebruik van de interne sensoren van die kas en wordt ermee weergegeven. Kies \"-\" om er weer een zelfstandige zone van te maken (het behoudt een kopie van de kassensoren).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Onderdeel van kas"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten, of \"-\" voor geen."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Geen van de gekozen Weather Underground-stations heeft gedurende {hours} uur een bruikbare regenmeting verzonden, dus zones die hier gebruik van maken werken alsof ze geen regenmeter hebben. Controleer de stations op wunderground.com, eller kies andere onder Configureer bij de Weather Underground-vermelding. Dit wordt automatisch opgelost zodra er weer gegevens binnenkomen."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: de kas is verwijderd",
+      "description": "Kas {greenhouse} is verwijderd, dus {zone} is nu een zelfstandige zone. Deze blijft sproeien en behoudt de interne sensoren van de kas. Gebruik Configureer -> Kas van de zone om deze in een andere kas te plaatsen."
     }
   }
 }

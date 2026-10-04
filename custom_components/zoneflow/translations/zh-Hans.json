@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "添加区域",
           "weather_underground": "设置 Weather Underground 降雨",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "向温室添加作物"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "向温室添加作物",
+        "description": "作物是温室内独立的浇水区域：拥有独立的阀门、土壤传感器和计划。它使用温室内部的传感器和气候数据。",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "温室",
+          "zone_name": "作物名称",
+          "plant": "种植的植物"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "带有气候调节设备的温室或室内区域。",
+          "zone_name": "将作为作物的设备名称以及其实体名称的前缀，例如 “番茄”。",
+          "plant": "为此作物自动填充合理的初始值。"
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "作物阀门",
+        "description": "用于为此作物浇水的阀门。",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "阀门"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "用于开启此作物水源的开关。每种作物都需要独立的阀门。"
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "浇水设置",
           "zone_type": "分区类型",
           "weather_underground": "Weather Underground 降雨",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "作物阀门",
+          "greenhouse_link": "温室"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "作物阀门",
+        "description": "用于为此作物浇水的阀门。",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "阀门"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "用于开启此作物水源的开关。每种作物都需要独立的阀门。"
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "温室",
+        "description": "将此区域设为温室内的作物：它将使用该温室的内部传感器并与其一同显示。选择 “-” 可将其重新设为独立区域（它会保留温室传感器的副本）。",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "所属温室"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "带有气候调节设备的温室或室内区域，或选择 “-” 表示无。"
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
       "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
       "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "此温室中有作物。请先将它们移动到另一个温室或进行移除（每种作物的 配置 -> 温室）。"
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "所选的 Weather Underground 气象站在过去 {hours} 小时内均未发送可用的降雨读数，因此使用该气象站的区域将按没有雨量计的情况运行。请在 wunderground.com 上检查这些气象站，或在 Weather Underground 条目的“配置”下选择其他气象站。一旦数据恢复，此提示将自动消失。"
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}：其温室已被移除",
+      "description": "温室 {greenhouse} 已被删除，因此 {zone} 现在是一个独立区域。它将继续进行浇水并保留温室的内部传感器。如需将其放入另一个温室，请使用该区域的 配置 -> 温室。"
     }
   }
 }

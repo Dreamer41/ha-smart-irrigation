@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Adicionar uma zona",
           "weather_underground": "Configurar chuva do Weather Underground",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Adicionar uma cultura a uma estufa"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Adicionar uma cultura a uma estufa",
+        "description": "Uma cultura é a sua própria zona de rega dentro de uma estufa: a sua própria válvula, sonda de solo e programação. Utiliza os sensores internos e o clima da estufa.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Estufa",
+          "zone_name": "Nome da cultura",
+          "plant": "O que está plantado"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "A estufa ou zona interior com os dispositivos de clima.",
+          "zone_name": "Torna-se o nome do dispositivo da cultura e o início dos nomes das suas entidades, ex.: \"Tomates\".",
+          "plant": "Preenche valores iniciais adequados para esta cultura."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Válvula da cultura",
+        "description": "A válvula que rega esta cultura.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Válvula"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Um interruptor que abre a água desta cultura. Cada cultura precisa da sua própria válvula."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Definições de rega",
           "zone_type": "Tipo de zona",
           "weather_underground": "Chuva do Weather Underground",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Válvula da cultura",
+          "greenhouse_link": "Estufa"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Válvula da cultura",
+        "description": "A válvula que rega esta cultura.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Válvula"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Um interruptor que abre a água desta cultura. Cada cultura precisa da sua própria válvula."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Estufa",
+        "description": "Torne esta zona uma cultura de uma estufa: ela passa a usar os sensores internos dessa estufa e é mostrada com ela. Escolha \"-\" para torná-la novamente uma zona independente (mantém uma cópia dos sensores da estufa).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Parte da estufa"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "A estufa ou zona interior com os dispositivos de clima, ou \"-\" para nenhuma."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Não foi possível ligar ao Weather Underground. Tente novamente mais tarde.",
       "wu_no_stations": "Nenhuma estação dentro do raio. Sem uma estação próxima, esta funcionalidade não ajudará.",
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Esta estufa tem culturas. Mova-as para outra estufa ou remova-as primeiro (Configurar -> Estufa de cada cultura)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Nenhuma das estações Weather Underground selecionadas enviou uma leitura de chuva útil há {hours} horas, pelo que as zonas que a utilizam agem como se não tivessem pluviómetro. Verifique as estações em wunderground.com ou escolha outras em Configurar na entrada do Weather Underground. Esto resolve-se automaticamente assim que os dados regressarem."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: a sua estufa foi removida",
+      "description": "A estufa {greenhouse} foi eliminada, pelo que {zone} é agora uma zona independente. Continua a regar e mantém os sensores internos da estufa. Para a colocar noutra estufa, utilize Configurar -> Estufa da zona."
     }
   }
 }

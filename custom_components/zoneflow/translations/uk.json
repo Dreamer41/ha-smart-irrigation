@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Додати зону",
           "weather_underground": "Налаштувати дощ Weather Underground",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Додати культуру в теплицю"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Додати культуру в теплицю",
+        "description": "Культура — це окрема зона поливу всередині теплиці: із власним клапаном, датчиком ґрунту та розкладом. Вона використовує внутрішні датчики та мікроклімат теплиці.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Теплиця",
+          "zone_name": "Назва культури",
+          "plant": "Що посаджено"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Теплиця або приміщення з кліматичними пристроями.",
+          "zone_name": "Стане назвою пристрою культури та початком назв її сутностей, наприклад «Помідори».",
+          "plant": "Заповнює доцільні початкові значення для цієї культури."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Клапан культури",
+        "description": "Клапан, який поливає цю культуру.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Клапан"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Перемикач, який відкриває воду для цієї культури. Кожній культурі потрібен власний клапан."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Налаштування поливу",
           "zone_type": "Тип зони",
           "weather_underground": "Дощ Weather Underground",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Клапан культури",
+          "greenhouse_link": "Теплиця"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Клапан культури",
+        "description": "Клапан, який поливає цю культуру.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Клапан"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Перемикач, який відкриває воду для цієї культури. Кожній культурі потрібен власний клапан."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Теплиця",
+        "description": "Зробіть цю зону культурою теплиці: тоді вона використовуватиме внутрішні датчики цієї теплиці та відображатиметься разом із нею. Виберіть «-», щоб знову зробити її окремою зоною (вона збереже копію датчиків теплиці).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Частина теплиці"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Теплиця або приміщення з кліматичними пристроями, або «-», якщо немає."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Не вдалося з'єднатися з Weather Underground. Спробуйте пізніше.",
       "wu_no_stations": "Немає станцій у межах радіуса. Без метеостанції поблизу ця функція не допоможе.",
       "wu_pick_1_to_3": "Оберіть 1, 2 або 3 станції.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "У цій теплиці є культури. Спочатку перемістіть їх до іншої теплиці або вилучіть (Налаштувати -> Теплиця для кожної культури)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Жодна з вибраних станцій Weather Underground не надсилала придатних даних про дощ протягом {hours} год., тому зони, які її використовують, працюють так, ніби у них немає дощоміра. Перевірте станції на wunderground.com або виберіть інші в пункті Налаштувати для інтеграції Weather Underground. Це зникне автоматично, щойно дані знову з'являться."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: її теплицю було вилучено",
+      "description": "Теплицю {greenhouse} було видалено, тому {zone} тепер є окремою зоною. Вона продовжує поливати та зберігає внутрішні датчики теплиці. Щоб перемістити її до іншої теплиці, скористайтеся розділом Налаштувати -> Теплиця в меню зони."
     }
   }
 }

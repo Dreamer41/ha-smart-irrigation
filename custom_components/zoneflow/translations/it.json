@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Aggiungi una zona",
           "weather_underground": "Configura pioggia Weather Underground",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Aggiungi una coltura a una serra"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Aggiungi una coltura a una serra",
+        "description": "Una coltura è una zona di irrigazione autonoma all'interno di una serra: ha una propria valvola, sonda del suolo e programmazione. Utilizza i sensori interni e il clima della serra.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Serra",
+          "zone_name": "Nome coltura",
+          "plant": "Cosa è piantato"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "La serra o la zona interna con i dispositivi per il clima.",
+          "zone_name": "Diventa il nome del dispositivo della coltura e l'inizio dei nomi delle sue entità, ad es. \"Pomodori\".",
+          "plant": "Inserisce valori iniziali adeguati per questa coltura."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Valvola della coltura",
+        "description": "La valvola che irriga questa coltura.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Valvola"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Un interruttore che apre l'acqua per questa coltura. Ogni coltura ha bisogno della propria valvola."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Impostazioni di irrigazione",
           "zone_type": "Tipo di zona",
           "weather_underground": "Pioggia Weather Underground",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Valvola della coltura",
+          "greenhouse_link": "Serra"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Valvola della coltura",
+        "description": "La valvola che irriga questa coltura.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Valvola"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Un interruttore che apre l'acqua per questa coltura. Ogni coltura ha bisogno della propria valvola."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Serra",
+        "description": "Rendi questa zona una coltura di una serra: utilizzerà i sensori interni di quella serra e verrà mostrata insieme ad essa. Scegli \"-\" per farla tornare una zona autonoma (conserverà una copia dei sensori della serra).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Fa parte della serra"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "La serra o la zona interna con i dispositivi per il clima, o \"-\" per nessuna."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Impossibile raggiungere Weather Underground. Riprova più tardi.",
       "wu_no_stations": "Nessuna stazione all'interno del raggio. Senza una stazione vicina questa funzione non sarà utile.",
       "wu_pick_1_to_3": "Scegli 1, 2 o 3 stazioni.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Questa serra contiene colture. Spostale in un'altra serra o rimuovile prima (Configura -> Serra di ciascuna coltura)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Nessuna delle stazioni Weather Underground selezionate ha inviato una lettura della pioggia valida da {hours} ore, quindi le zone che la utilizzano agiscono come se non avessero un pluviometro. Controlla le stazioni su wunderground.com o scegline altre sotto Configura nella voce Weather Underground. Il problema si risolverà automaticamente non appena i dati torneranno disponibili."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: la sua serra è stata rimossa",
+      "description": "La serra {greenhouse} è stata eliminata, quindi {zone} è ora una zona autonoma. Continua ad irrigare e mantiene i sensori interni della serra. Per inserirla in un'altra serra, usa Configura -> Serra della zona."
     }
   }
 }

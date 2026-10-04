@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Lisää vyöhyke",
           "weather_underground": "Ota käyttöön Weather Underground -sade",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Lisää kasvi kasvihuoneeseen"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Lisää kasvi kasvihuoneeseen",
+        "description": "Kasvi on oma kasteluvyöhykkeensä kasvihuoneen sisällä: oma venttiili, maankosteusanturi ja aikataulu. Se käyttää kasvihuoneen sisäantureita ja ilmastoa.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Kasvihuone",
+          "zone_name": "Kasvin nimi",
+          "plant": "Mitä on istutettu"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet.",
+          "zone_name": "Tästä tulee kasvin laitteen nimi ja sen entiteettien nimien alku, esim. \"Tomaatit\".",
+          "plant": "Täyttää tälle kasville sopivat alkuarvot."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Kasvin venttiili",
+        "description": "Venttiili, joka kastelee tämän kasvin.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Venttiili"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Kasteluasetukset",
           "zone_type": "Vyöhyketyyppi",
           "weather_underground": "Weather Underground -sade",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Kasvin venttiili",
+          "greenhouse_link": "Kasvihuone"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Kasvin venttiili",
+        "description": "Venttiili, joka kastelee tämän kasvin.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Venttiili"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Kasvihuone",
+        "description": "Tee tästä vyöhykkeestä kasvihuoneen kasvi: se käyttää silloin kasvihuoneen sisäantureita ja näkyy sen yhteydessä. Valitse \"-\", niin siitä tulee taas oma vyöhykkeensä (se säilyttää kopion kasvihuoneen antureista).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Kuuluu kasvihuoneeseen"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet, tai \"-\", jos ei mikään."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Weather Undergroundiin ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
       "wu_no_stations": "Säteen sisällä ei ole asemia. Ilman lähellä olevaa asemaa tästä ominaisuudesta ei ole hyötyä.",
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Tässä kasvihuoneessa on kasveja. Siirrä ne toiseen kasvihuoneeseen tai poista ne ensin (kunkin kasvin Määritä -> Kasvihuone)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Yksikään valituista Weather Underground -asemista ei ole lähettänyt käyttökelpoista sadelukemaa {hours} tuntiin, joten sitä käyttävät vyöhykkeet toimivat kuin niillä ei olisi sademittaria. Tarkista asemat osoitteessa wunderground.com tai valitse toiset Weather Underground -merkinnän kohdasta Määritä. Tämä poistuu itsestään, kun tiedot palaavat."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: sen kasvihuone poistettiin",
+      "description": "Kasvihuone {greenhouse} poistettiin, joten {zone} on nyt oma vyöhykkeensä. Se kastelee edelleen ja säilyttää kasvihuoneen sisäanturit. Voit siirtää sen toiseen kasvihuoneeseen vyöhykkeen kohdasta Määritä -> Kasvihuone."
     }
   }
 }

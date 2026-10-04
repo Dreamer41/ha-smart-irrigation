@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Dodaj strefę",
           "weather_underground": "Skonfiguruj deszcz Weather Underground",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Dodaj uprawę do szklarni"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Dodaj uprawę do szklarni",
+        "description": "Uprawa to osobna strefa nawadniania wewnątrz szklarni: własny zawór, czujnik glebowy i harmonogram. Korzysta z czujników wewnętrznych i klimatu szklarni.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Szklarnia",
+          "zone_name": "Nazwa uprawy",
+          "plant": "Co jest posadzone"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi.",
+          "zone_name": "Stanie się nazwą urządzenia uprawy i początkiem nazw jej encji, np. „Pomidory”.",
+          "plant": "Wypełnia rozsądne wartości początkowe dla tej uprawy."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Zawór uprawy",
+        "description": "Zawór, który podlewa tę uprawę.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Zawór"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Ustawienia podawania wody",
           "zone_type": "Typ strefy",
           "weather_underground": "Deszcz Weather Underground",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Zawór uprawy",
+          "greenhouse_link": "Szklarnia"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Zawór uprawy",
+        "description": "Zawór, który podlewa tę uprawę.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Zawór"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Szklarnia",
+        "description": "Zrób z tej strefy uprawę w szklarni: będzie wtedy korzystać z czujników wewnętrznych tej szklarni i wyświetlać się wraz z nią. Wybierz „-”, aby ponownie uczynić ją samodzielną strefą (zachowa kopię czujników szklarni).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Część szklarni"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi, lub „-” dla braku."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
       "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
       "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Ta szklarnia zawiera uprawy. Najpierw przenieś je do innej szklarni lub usuń (Konfiguruj -> Szklarnia dla każdej uprawy)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Żadna z wybranych stacji Weather Underground nie przesłała przydatnego odczytu deszczu od {hours} godzin, więc strefy z niej korzystające działają tak, jakby nie miały deszczomierza. Sprawdź stacje na wunderground.com lub wybierz inne w opcji Konfiguruj przy wpisie Weather Underground. Ten komunikat zniknie automatycznie, gdy dane powrócą."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: jej szklarnia została usunięta",
+      "description": "Szklarnia {greenhouse} została usunięta, więc {zone} jest teraz samodzielną strefą. Kontynuuje podlanie i zachowuje czujniki wewnętrzne szklarni. Aby umieścić ją w innej szklarni, użyj Konfiguruj -> Szklarnia dla danej strefy."
     }
   }
 }

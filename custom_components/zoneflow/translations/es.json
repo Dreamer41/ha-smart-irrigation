@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Añadir una zona",
           "weather_underground": "Configurar lluvia de Weather Underground",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Añadir un cultivo a un invernadero"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Añadir un cultivo a un invernadero",
+        "description": "Un cultivo es su propia zona de riego dentro de un invernadero: tiene su propia válvula, sonda de suelo y programación. Utiliza los sensores interiores y el clima del invernadero.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Invernadero",
+          "zone_name": "Nombre del cultivo",
+          "plant": "Qué está plantado"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "El invernadero o zona interior con las dispositivos de clima.",
+          "zone_name": "Se convierte en el nombre del dispositivo del cultivo y el inicio de los nombres de sus entidades, p. ej., \"Tomates\".",
+          "plant": "Rellena valores iniciales razonables para este cultivo."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Válvula del cultivo",
+        "description": "La válvula que riega este cultivo.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Válvula"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Un interruptor que abre el agua de este cultivo. Cada cultivo necesita su propia válvula."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Ajustes de riego",
           "zone_type": "Tipo de zona",
           "weather_underground": "Lluvia de Weather Underground",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Válvula del cultivo",
+          "greenhouse_link": "Invernadero"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Válvula del cultivo",
+        "description": "La válvula que riega este cultivo.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Válvula"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Un interruptor que abre el agua de este cultivo. Cada cultivo necesita su propia válvula."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Invernadero",
+        "description": "Haz que esta zona sea un cultivo de un invernadero: usará los sensores interiores de ese invernadero y se mostrará junto a él. Selecciona \"-\" para que vuelva a ser una zona independiente (conservará una copia de los sensores del invernadero).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Parte del invernadero"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "El invernadero o zona interior con los dispositivos de clima, o \"-\" para ninguno."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "No se pudo conectar con Weather Underground. Inténtalo de nuevo más tarde.",
       "wu_no_stations": "No hay estaciones dentro del radio. Sin una estación cercana esta función no servirá de nada.",
       "wu_pick_1_to_3": "Elige 1, 2 o 3 estaciones.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Este invernadero tiene cultivos. Muévelos a otro invernadero o elimínalos primero (Configurar -> Invernadero de cada cultivo)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Ninguna de las estaciones de Weather Underground seleccionadas ha enviado una lectura de lluvia útil durante {hours} horas, por lo que las zonas que la utilizan actúan como si no tuvieran pluviómetro. Comprueba las estaciones en wunderground.com o elige otras en Configurar de la entrada de Weather Underground. Esto se solucionará automáticamente cuando se vuelvan a recibir datos."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: se eliminó su invernadero",
+      "description": "El invernadero {greenhouse} se ha eliminado, por lo que {zone} ahora es una zona independiente. Continúa regando y mantiene los sensores interiores del invernadero. Para colocarlo en otro invernadero, usa Configurar -> Invernadero en la zona."
     }
   }
 }

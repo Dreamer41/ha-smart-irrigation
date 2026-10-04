@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Tilføj en zone",
           "weather_underground": "Konfigurer Weather Underground-regn",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Tilføj en afgrøde til et drivhus"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Tilføj en afgrøde til et drivhus",
+        "description": "En afgrøde er sin egen vandingszone inde i et drivhus: sin egen ventil, jordsensor og tidsplan. Den bruger drivhusets indvendige sensorer og klima.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Drivhus",
+          "zone_name": "Afgrøde-navn",
+          "plant": "Hvad der er plantet"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Drivhuset eller indendørszonen med klimaenhederne.",
+          "zone_name": "Bliver afgrødens enhedsnavn og starten på dens entitetsnavne, f.eks. \"Tomater\".",
+          "plant": "Udfylder fornuftige startværdier for denne afgrøde."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Afgrøde-ventil",
+        "description": "Ventilen der vander denne afgrøde.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Ventil"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "En kontakt, der åbner for denne afgrødes vand. Hver afgrøde skal have sin egen ventil."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Vandingsindstillinger",
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regn",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Afgrøde-ventil",
+          "greenhouse_link": "Drivhus"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Afgrøde-ventil",
+        "description": "Ventilen der vander denne afgrøde.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Ventil"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "En kontakt, der åbner for denne afgrødes vand. Hver afgrøde skal have sin egen ventil."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Drivhus",
+        "description": "Gør denne zone til en afgrøde i et drivhus: den bruger derefter det drivhuses indvendige sensorer og vises sammen med det. Vælg \"-\" for at gøre den til en selvstændig zone igen (den beholder en kopi af drivhusets sensorer).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "En del af drivhus"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Drivhuset eller indendørszonen med klimaenhederne, eller \"-\" for ingen."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Kunne ikke forbinde til Weather Underground. Prøv igen senere.",
       "wu_no_stations": "Ingen stationer inden for radiussen. Uden en station i nærheden hjælper denne funktion ikke.",
       "wu_pick_1_to_3": "Vælg 1, 2 eller 3 stationer.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Dette drivhus har afgrøder. Flyt dem til et andet drivhus, eller fjern dem først (hver afgrødes Konfigurer -> Drivhus)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "Ingen af de valgte Weather Underground-stationer har sendt en brugbar regnaflæsning i {hours} timer, så zoner, der bruger den, fungerer, som om de ikke havde nogen regnmåler. Tjek stationerne på wunderground.com, eller vælg andre under Weather Underground-postens Konfigurer. Dette rydder sig selv, når data vender tilbage."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: dens drivhus blev fjernet",
+      "description": "Drivhuset {greenhouse} blev slettet, så {zone} er nu en selvstændig zone. Den fortsætter med at vande og beholder drivhusets indvendige sensorer. For at placere den i et andet drivhus skal du bruge zonens Konfigurer -> Drivhus."
     }
   }
 }

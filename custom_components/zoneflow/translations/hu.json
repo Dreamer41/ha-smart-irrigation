@@ -178,7 +178,7 @@
         "menu_options": {
           "zone": "Zóna hozzáadása",
           "weather_underground": "Weather Underground eső beállítása",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Növény hozzáadása az üvegházhoz"
         }
       },
       "weather_underground": {
@@ -204,27 +204,27 @@
         }
       },
       "crop": {
-        "title": "Add a crop to a greenhouse",
-        "description": "A crop is its own watering zone inside a greenhouse: its own valve, soil probe and schedule. It uses the greenhouse's inside sensors and climate.",
+        "title": "Növény hozzáadása az üvegházhoz",
+        "description": "A növény egy önálló öntözési zóna az üvegházon belül: saját szeleppel, talajszondával és ütemezéssel rendelkezik. Az üvegház belső érzékelőit és klímáját használja.",
         "data": {
-          "greenhouse_entry_id": "Greenhouse",
-          "zone_name": "Crop name",
-          "plant": "What's planted"
+          "greenhouse_entry_id": "Üvegház",
+          "zone_name": "Növény neve",
+          "plant": "Mi van ültetve"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
-          "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "greenhouse_entry_id": "Az üvegház vagy beltéri zóna a klímaberendezésekkel.",
+          "zone_name": "Ez lesz a növény eszközneve és az entitásnevek kezdete, pl. \"Paradicsom\".",
+          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez."
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Növény szelepe",
+        "description": "A szelep, amely ezt a növényt öntözi.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Szelep"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Egy kapcsoló, amely megnyitja a vizet ehhez a növényhez. Minden növénynek saját szelepre van szüksége."
         }
       }
     },
@@ -259,8 +259,8 @@
           "watering": "Öntözési beállítások",
           "zone_type": "Zónatípus",
           "weather_underground": "Weather Underground eső",
-          "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "crop_valve": "Növény szelepe",
+          "greenhouse_link": "Üvegház"
         }
       },
       "settings": {
@@ -454,23 +454,23 @@
         }
       },
       "crop_valve": {
-        "title": "Crop valve",
-        "description": "The valve that waters this crop.",
+        "title": "Növény szelepe",
+        "description": "A szelep, amely ezt a növényt öntözi.",
         "data": {
-          "valve_entity": "Valve"
+          "valve_entity": "Szelep"
         },
         "data_description": {
-          "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
+          "valve_entity": "Egy kapcsoló, amely megnyitja a vizet ehhez a növényhez. Minden növénynek saját szelepre van szüksége."
         }
       },
       "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
+        "title": "Üvegház",
+        "description": "Tegye ezt a zónát egy üvegház növényévé: ekkor az üvegház belső érzékelőit használja, és azzal együtt jelenik meg. Válassza a \"-\" lehetőséget, ha ismét önálló zónává szeretné tenni (megőrzi az üvegház érzékelőinek másolatát).",
         "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
+          "greenhouse_entry_id": "Az üvegház része"
         },
         "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+          "greenhouse_entry_id": "Az üvegház vagy beltéri zóna a klímaberendezésekkel, vagy \"-\" ha nincs."
         }
       }
     },
@@ -495,7 +495,7 @@
       "wu_cannot_connect": "Nem sikerült csatlakozni a Weather Underground szolgáltatáshoz. Próbálja újra később.",
       "wu_no_stations": "Nincsenek állomások a sugáron belül. Közeli állomás nélkül ez a funkció nem segít.",
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "Ez az üvegház növényeket tartalmaz. Először helyezze át őket egy másik üvegházba, vagy távolítsa el őket (minden növény Beállítás -> Üvegház menüpontjában)."
     }
   },
   "selector": {
@@ -1312,8 +1312,8 @@
       "description": "A kiválasztott Weather Underground állomások egyike sem küldött használható esőadatot {hours} órája, így az ezt használó zónák úgy működnek, mintha nem lenne csapadékmérőjük. Ellenőrizze az állomásokat a wunderground.com oldalon, vagy válasszon másokat a Weather Underground bejegyzés Beállítás gombjánál. Ez a hiba magától megszűnik, amint újra érkeznek adatok."
     },
     "greenhouse_removed": {
-      "title": "{zone}: its greenhouse was removed",
-      "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+      "title": "{zone}: az üvegháza el lett távolítva",
+      "description": "A(z) {greenhouse} üvegház törölve lett, így a(z) {zone} mostantól önálló zóna. A locsolást folytatja, és megőrzi az üvegház belső érzékelőit. Ha másik üvegházba szeretné helyezni, használja a zóna Beállítás -> Üvegház menüpontját."
     }
   }
 }
