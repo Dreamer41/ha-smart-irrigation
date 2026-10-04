@@ -85,7 +85,7 @@ of it, with the climate settings under their own groups.
 | Mist On Time / Mist Off Time | 10 s / 120 s | 3–300 s / 10–3600 s |
 | Max Misting Per Hour | 10 min | 1–60 |
 | Vent Open Position | 100 % | 10–100 |
-| Manual Hold Time | 60 min | 0–480 |
+| Auto Resume After | 1 h | 0.5–24 h (used while **Auto Resume** is on) |
 | Sensor Offline After | 4 h | 1–24 |
 
 The climate you pick at setup seeds the heater, vent, fan and misting
@@ -99,9 +99,23 @@ below the humidity stop).
 
 If you switch a role's device yourself -- in Home Assistant, with a wall
 button, in the device's own app -- or another automation does, ZoneFlow
-leaves that role alone for *Manual Hold Time* and says so in the
-status. A device coming back from "unavailable" is not treated as someone
-switching it. There is no "resume now" button; the hold ends by itself.
+leaves that role alone and says so in the status. A device coming back
+from "unavailable" is not treated as someone switching it.
+
+- **Auto Resume** on (the default): ZoneFlow takes the device back after
+  *Auto Resume After* (0.5–24 h, default 1 h), so a forgotten device goes
+  back to automatic.
+- **Auto Resume** off: the device stays as you left it until you press
+  **Resume Automatic**.
+- **Resume Automatic** ends every hold in the zone at once.
+
+Two safety limits apply whatever the setting: a mister you switch on is
+switched off after *Max Misting Per Hour*, and a heater you switch on is
+taken back once the inside temperature goes above the vent temperature, so
+a forgotten heater can't overheat the greenhouse.
+
+(1.6.1 replaced the old *Manual Hold Time* in minutes: your setting was
+carried over, rounded up to the next half hour; "0" became 0.5 h.)
 
 ## Protecting the plants
 

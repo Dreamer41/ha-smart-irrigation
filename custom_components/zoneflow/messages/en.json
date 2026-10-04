@@ -224,13 +224,14 @@
       "control_off": "Greenhouse control is off",
       "failsafe": "Failsafe: no inside temperature (vents and fans: {mode}; heater: {heater})",
       "mist_halted": "Misting stopped: press Reset Irrigation Lock",
-      "held": "{device} left alone for {minutes} min (switched by hand)",
       "heating": "Heating ({temp})",
       "ventilating_temperature": "Ventilating: too warm ({temp})",
       "ventilating_humidity": "Ventilating: too humid ({humidity})",
       "misting": "Misting ({temp}, {humidity})",
       "gate_blocked": "Not ventilating: outside air ({outside}) is not cooler than inside ({temp})",
-      "idle": "All good: {temp}, {humidity}"
+      "idle": "All good: {temp}, {humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "off",

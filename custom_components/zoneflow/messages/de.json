@@ -224,13 +224,14 @@
       "control_off": "Gewächshaussteuerung ist aus",
       "failsafe": "Ausfallsicherung: Keine Innentemperatur (Lüftungen und Lüfter: {mode}; Heizung: {heater})",
       "mist_halted": "Vernebelung gestoppt: 'Bewässerungssperre zurücksetzen' drücken",
-      "held": "{device} für {minutes} Min. unverändert belassen (manuell geschaltet)",
       "heating": "Heizen ({temp})",
       "ventilating_temperature": "Lüften: zu warm ({temp})",
       "ventilating_humidity": "Lüften: zu feucht ({humidity})",
       "misting": "Vernebeln ({temp}, {humidity})",
       "gate_blocked": "Keine Lüftung: Außenluft ({outside}) ist nicht kühler als Innenluft ({temp})",
-      "idle": "Alles bestens: {temp}, {humidity}"
+      "idle": "Alles bestens: {temp}, {humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "aus",

@@ -224,13 +224,14 @@
       "control_off": "Le contrôle de la serre est désactivé",
       "failsafe": "Sécurité : pas de température intérieure (ouvrants et ventilateurs : {mode} ; chauffage : {heater})",
       "mist_halted": "Brumisation stoppée : appuyez sur Réinitialiser le verrouillage d'arrosage",
-      "held": "{device} laissé en gestion manuelle pendant {minutes} min",
       "heating": "Chauffage en cours ({temp})",
       "ventilating_temperature": "Ventilation : trop chaud ({temp})",
       "ventilating_humidity": "Ventilation : trop humide ({humidity})",
       "misting": "Brumisation en cours ({temp}, {humidity})",
       "gate_blocked": "Pas de ventilation : l'air extérieur ({outside}) n'est pas plus frais que l'intérieur ({temp})",
-      "idle": "Tout est normal : {temp}, {humidity}"
+      "idle": "Tout est normal : {temp}, {humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "éteint",

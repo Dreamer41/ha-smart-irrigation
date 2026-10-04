@@ -233,6 +233,9 @@ class IrrigationState:
     # until when a person's own switching is respected (manual hold).
     gh_changed_ts: dict[str, float] = field(default_factory=dict)
     gh_hold_until: dict[str, float] = field(default_factory=dict)
+    # 1.6.1 Auto Resume: on = a hold ends after Auto Resume After; off = it
+    # lasts until the Resume Automatic button is pressed.
+    gh_auto_resume: bool = True
 
     # --- 1.6.1 skip journal (controller._journal_skip) ---
     # One entry per watering skipped for forecast rain: {ts, cycle,

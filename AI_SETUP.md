@@ -1818,7 +1818,7 @@ setup seeds the first four:
 | Max Misting Per Hour | 10 min | a hard cap; reaching it stops misting until the hour has room |
 | Mist At Night (switch) | off | misting is daytime only unless this is on |
 | Vent Open Position | 100 % | how far a cover opens |
-| Manual Hold Time | 60 min | how long a role is left alone after a person switches it by hand |
+| Auto Resume After | 1 h | how long a role is left alone after a person switches it by hand (Auto Resume switch on; off = until Resume Automatic is pressed). A heater switched on by hand is always taken back above the vent temperature |
 | Sensor Offline After | 4 h | a sensor silent this long counts as offline (raise it if a steady sensor gives false failsafes) |
 
 Presets by climate: tropical heater 15, vents 28, fans 31, mist 32; hot

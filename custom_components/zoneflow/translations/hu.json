@@ -721,14 +721,14 @@
       "vent_open_pct": {
         "name": "Szellőző nyitási pozíciója"
       },
-      "manual_hold_minutes": {
-        "name": "Kézi tartási idő"
-      },
       "sensor_offline_hours": {
         "name": "Érzékelő offline ennyi után"
       },
       "manual_rain_mm": {
         "name": "Manual Rain"
+      },
+      "auto_resume_hours": {
+        "name": "Auto Resume After"
       }
     },
     "datetime": {
@@ -784,6 +784,9 @@
       },
       "add_manual_rain": {
         "name": "Add Manual Rain"
+      },
+      "resume_automatic": {
+        "name": "Resume Automatic"
       }
     },
     "binary_sensor": {
@@ -815,6 +818,9 @@
       },
       "mist_at_night": {
         "name": "Párásítás éjszaka"
+      },
+      "auto_resume": {
+        "name": "Auto Resume"
       }
     },
     "sensor": {

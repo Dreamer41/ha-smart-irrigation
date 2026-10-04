@@ -103,8 +103,11 @@ GH_MIST = {
 }
 GH_MIST_HUMIDITY = {("number", "mist_min_humidity"), ("number", "mist_stop_humidity")}
 GH_LIGHT = {("number", "mist_light_level")}
-GH_ANY_DEVICE = {("number", "climate_hysteresis"), ("number", "manual_hold_minutes"), ("number", "sensor_offline_hours")}
-GH_ALL = _GH_NUMBERS | GH_ALWAYS | GH_HEAT | GH_VENT | GH_OUTSIDE | GH_HUMIDITY | GH_MIST
+GH_ANY_DEVICE = {
+    ("number", "climate_hysteresis"), ("number", "auto_resume_hours"), ("number", "sensor_offline_hours"),
+    ("switch", "auto_resume"), ("button", "resume_automatic"),
+}
+GH_ALL = _GH_NUMBERS | GH_ALWAYS | GH_HEAT | GH_VENT | GH_OUTSIDE | GH_HUMIDITY | GH_MIST | GH_ANY_DEVICE
 
 # What a zone without a valve still shows: its phone-message setting and the
 # climate entities (the reset button too, when it has misters).
@@ -133,6 +136,8 @@ def _greenhouse_hidden(controller) -> set[tuple[str, str]]:
         hidden |= GH_LIGHT
     if not (fans or vents or misters or heater):
         hidden |= GH_ANY_DEVICE
+    elif not controller.store.state.gh_auto_resume:
+        hidden.add(("number", "auto_resume_hours"))  # holds wait for the button
     return hidden
 
 
@@ -167,7 +172,9 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= FLOW_METER
     if not controller.deep_soak_enabled:
         hidden |= DEEP_SOAK
-    if not controller.is_outdoor:
+    if controller.is_outdoor:
+        hidden.add(("button", "resume_automatic"))
+    else:
         hidden |= _greenhouse_hidden(controller)
     profile = controller.growth_ramp_profile
     if profile == GROWTH_RAMP_OFF:

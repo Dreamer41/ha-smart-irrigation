@@ -224,13 +224,14 @@
       "control_off": "温室控制已关闭",
       "failsafe": "保护模式：无室内温度数据（通风口和风扇：{mode}；加热器：{heater}）",
       "mist_halted": "喷雾已停止：请点击“重置灌溉锁定”",
-      "held": "{device} 已保持手动状态 {minutes} 分钟（由手动切换）",
       "heating": "正在加热（{temp}）",
       "ventilating_temperature": "正在通风：温度过高（{temp}）",
       "ventilating_humidity": "正在通风：湿度过高（{humidity}）",
       "misting": "正在喷雾（{temp}，{humidity}）",
       "gate_blocked": "未进行通风：室外空气（{outside}）不比室内（{temp}）凉爽",
-      "idle": "一切正常：{temp}，{humidity}"
+      "idle": "一切正常：{temp}，{humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "关闭",

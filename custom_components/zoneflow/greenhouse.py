@@ -64,6 +64,9 @@ ROLE_ENTITIES = {
     "misters": "mister_entities",
     "heater": "heater_entities",
 }
+# Auto Resume off: a hold that only Resume Automatic ends (10 years; a
+# number, so the saved state stays plain JSON).
+NO_AUTO_RESUME_SECONDS = 10 * 365 * 86400.0
 ROLE_LABEL = {"fans": "Fans", "vents": "Vents", "misters": "Misting", "heater": "Heater"}
 ISSUE_SENSOR = "greenhouse_sensor"
 ISSUE_OUTSIDE = "greenhouse_outside_sensor"
@@ -225,10 +228,7 @@ class GreenhouseManager:
         # The person's state now, not ZoneFlow's: forget the command (so it
         # is not confirmed, nor switched off at unload as if ZoneFlow's).
         self._commanded.pop(entity, None)
-        minutes = self.c.number("manual_hold_minutes")
-        if minutes <= 0:
-            return
-        hold = minutes * 60
+        hold = self.hold_seconds()
         if role == "misters" and on:
             # A mister switched on by hand is water running unsupervised:
             # it is left on at most Max Misting Per Hour, then switched off.
@@ -239,6 +239,46 @@ class GreenhouseManager:
         self.hass.async_create_task(self._log(f"Manual Hold: {ROLE_LABEL[role]}", "HOLD"))
         self.hass.async_create_task(self.c.store.async_save())
         self.hass.async_create_task(self.async_evaluate("manual"))
+
+    def hold_seconds(self) -> float:
+        """How long a device switched by hand is left alone: Auto Resume
+        After, or (Auto Resume off) until Resume Automatic is pressed."""
+        if self.c.store.state.gh_auto_resume:
+            return self.c.number("auto_resume_hours") * 3600
+        return NO_AUTO_RESUME_SECONDS
+
+    async def async_resume_automatic(self) -> None:
+        """The Resume Automatic button: every manual hold ends now."""
+        state = self.c.store.state
+        if not state.gh_hold_until:
+            return
+        state.gh_hold_until.clear()
+        await self.c.store.async_save()
+        await self._log("Automatic Resumed", "INFO")
+        await self.async_evaluate("resume")
+
+    async def async_auto_resume_changed(self) -> None:
+        """Auto Resume switched on: holds that were waiting for the button
+        now end after Auto Resume After (from now) instead."""
+        state = self.c.store.state
+        if state.gh_auto_resume:
+            limit = time.time() + self.hold_seconds()
+            state.gh_hold_until = {role: min(until, limit) for role, until in state.gh_hold_until.items()}
+        await self.c.store.async_save()
+        await self.async_evaluate("setting")
+
+    def _release_hot_heater(self, readings, now: float) -> bool:
+        """A heater switched on by hand is taken back once the inside
+        temperature passes the vent temperature, whatever the hold: a
+        forgotten heater must never overheat the greenhouse."""
+        if self._held("heater", now) <= 0 or readings.inside_temp is None:
+            return False
+        if readings.inside_temp <= self.c.number("vent_temp"):
+            return False
+        if not any(actuators.state_is_on(e, self.hass.states.get(e)) for e in self.c.heater_entities):
+            return False
+        self.c.store.state.gh_hold_until.pop("heater", None)
+        return True
 
     def _held(self, role: str, now: float) -> float:
         """Seconds of manual hold left for the role (0 = none)."""
@@ -407,6 +447,9 @@ class GreenhouseManager:
             readings = replace(readings, failsafe_seconds=now - self._inside_bad_since)
             self._readings = readings
         await self._backup_checks(now)
+        if self._release_hot_heater(readings, now):
+            await self._log("Manual Hold Ended: too hot", "WARNING")
+            await c.store.async_save()
 
         decision = gl.decide(
             self.settings(), self._hardware(), readings, self._latches, enabled=state.greenhouse_enabled
@@ -909,9 +952,15 @@ class GreenhouseManager:
         elif state.mist_halted:
             code = "mist_halted"
         elif held is not None:
-            code = "held"
             params["device"] = ROLE_LABEL[held]
-            params["minutes"] = f"{self._held(held, now) / 60:.0f}"
+            until = state.gh_hold_until.get(held, now)
+            if until - now >= NO_AUTO_RESUME_SECONDS / 2:
+                code = "held_until_resume"
+            else:
+                code = "held_until"
+                params["time"] = messages.when(
+                    self.hass, dt_util.as_local(dt_util.utc_from_timestamp(until)), "weekday_time"
+                )
         elif decision.heater:
             code = "heating"
         elif decision.vents or decision.fans:

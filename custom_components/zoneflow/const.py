@@ -480,7 +480,9 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "mist_off_seconds": ("Mist Off Time", 10.0, 3600.0, 10.0, "s"),
     "max_mist_minutes_per_hour": ("Max Misting Per Hour", 1.0, 60.0, 1.0, "min"),
     "vent_open_pct": ("Vent Open Position", 10.0, 100.0, 5.0, "%"),
-    "manual_hold_minutes": ("Manual Hold Time", 0.0, 480.0, 5.0, "min"),
+    # 1.6.1: replaces Manual Hold Time (minutes). Used while Auto Resume is
+    # on; with it off a hold lasts until Resume Automatic is pressed.
+    "auto_resume_hours": ("Auto Resume After", 0.5, 24.0, 0.5, "h"),
     "sensor_offline_hours": ("Sensor Offline After", 1.0, 24.0, 1.0, "h"),
 }
 
@@ -554,7 +556,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "mist_off_seconds": 120.0,
     "max_mist_minutes_per_hour": 10.0,
     "vent_open_pct": 100.0,
-    "manual_hold_minutes": 60.0,
+    "auto_resume_hours": 1.0,
     "sensor_offline_hours": 4.0,
 }
 
@@ -743,7 +745,7 @@ DEVICE_ROLE_DOMAINS: dict[str, list[str]] = {
 GREENHOUSE_NUMBERS = (
     "heat_temp", "vent_temp", "fan_temp", "climate_hysteresis", "outside_margin", "max_humidity",
     "mist_temp", "mist_min_humidity", "mist_stop_humidity", "mist_min_temp", "mist_light_level",
-    "mist_on_seconds", "mist_off_seconds", "max_mist_minutes_per_hour", "vent_open_pct", "manual_hold_minutes",
+    "mist_on_seconds", "mist_off_seconds", "max_mist_minutes_per_hour", "vent_open_pct", "auto_resume_hours",
     "sensor_offline_hours",
 )
 # Seeded from the climate preset at setup (greenhouse_logic.PRESET_SETPOINTS).

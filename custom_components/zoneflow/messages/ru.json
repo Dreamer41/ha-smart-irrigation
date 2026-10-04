@@ -224,13 +224,14 @@
       "control_off": "Управление теплицей выключено",
       "failsafe": "Аварийный режим: нет температуры внутри (форточки и вентиляторы: {mode}; обогрев: {heater})",
       "mist_halted": "Туман остановлен: нажмите «Сброс блокировки полива»",
-      "held": "{device} оставлено без изменений на {minutes} мин (ручное переключение)",
       "heating": "Обогрев ({temp})",
       "ventilating_temperature": "Проветривание: слишком жарко ({temp})",
       "ventilating_humidity": "Проветривание: слишком влажно ({humidity})",
       "misting": "Туманообразование ({temp}, {humidity})",
       "gate_blocked": "Без проветривания: воздух снаружи ({outside}) не прохладнее внутреннего ({temp})",
-      "idle": "Всё в порядке: {temp}, {humidity}"
+      "idle": "Всё в порядке: {temp}, {humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "выкл",

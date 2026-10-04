@@ -224,13 +224,14 @@
       "control_off": "Växthusstyrningen är avstängd",
       "failsafe": "Säkerhetsläge: ingen innetemperatur (vädring och fläktar: {mode}; värmare: {heater})",
       "mist_halted": "Dimmning stoppad: tryck på Återställ bevattningslås",
-      "held": "{device} lämnad i fred i {minutes} min (ändrad manuellt)",
       "heating": "Värmer ({temp})",
       "ventilating_temperature": "Vädrar: för varmt ({temp})",
       "ventilating_humidity": "Vädrar: för fuktigt ({humidity})",
       "misting": "Dimmar ({temp}, {humidity})",
       "gate_blocked": "Vädrar inte: uteluften ({outside}) är inte kallare än inne ({temp})",
-      "idle": "Allt väl: {temp}, {humidity}"
+      "idle": "Allt väl: {temp}, {humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "av",

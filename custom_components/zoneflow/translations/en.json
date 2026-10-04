@@ -721,14 +721,14 @@
       "vent_open_pct": {
         "name": "Vent Open Position"
       },
-      "manual_hold_minutes": {
-        "name": "Manual Hold Time"
-      },
       "sensor_offline_hours": {
         "name": "Sensor Offline After"
       },
       "manual_rain_mm": {
         "name": "Manual Rain"
+      },
+      "auto_resume_hours": {
+        "name": "Auto Resume After"
       }
     },
     "datetime": {
@@ -784,6 +784,9 @@
       },
       "add_manual_rain": {
         "name": "Add Manual Rain"
+      },
+      "resume_automatic": {
+        "name": "Resume Automatic"
       }
     },
     "binary_sensor": {
@@ -815,6 +818,9 @@
       },
       "mist_at_night": {
         "name": "Mist At Night"
+      },
+      "auto_resume": {
+        "name": "Auto Resume"
       }
     },
     "sensor": {

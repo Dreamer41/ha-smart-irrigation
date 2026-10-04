@@ -721,14 +721,14 @@
       "vent_open_pct": {
         "name": "通风口开度"
       },
-      "manual_hold_minutes": {
-        "name": "手动干预保持时间"
-      },
       "sensor_offline_hours": {
         "name": "传感器离线判定时间"
       },
       "manual_rain_mm": {
         "name": "Manual Rain"
+      },
+      "auto_resume_hours": {
+        "name": "Auto Resume After"
       }
     },
     "datetime": {
@@ -784,6 +784,9 @@
       },
       "add_manual_rain": {
         "name": "Add Manual Rain"
+      },
+      "resume_automatic": {
+        "name": "Resume Automatic"
       }
     },
     "binary_sensor": {
@@ -815,6 +818,9 @@
       },
       "mist_at_night": {
         "name": "夜间喷雾"
+      },
+      "auto_resume": {
+        "name": "Auto Resume"
       }
     },
     "sensor": {

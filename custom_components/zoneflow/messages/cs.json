@@ -224,13 +224,14 @@
       "control_off": "Řízení skleníku je vypnuté",
       "failsafe": "Nouzový režim: chybí vnitřní teplota (otvory a ventilátory: {mode}; topení: {heater})",
       "mist_halted": "Mlžení zastaveno: stiskněte Obnovit zámek zavlažování",
-      "held": "Zařízení {device} ponecháno v ručním režimu na {minutes} min (změněno ručně)",
       "heating": "Topení ({temp})",
       "ventilating_temperature": "Větrání: příliš horko ({temp})",
       "ventilating_humidity": "Větrání: příliš vlhko ({humidity})",
       "misting": "Mlžení ({temp}, {humidity})",
       "gate_blocked": "Nevětrá se: venkovní vzduch ({outside}) není chladnější než vnitřní ({temp})",
-      "idle": "Vše v pořádku: {temp}, {humidity}"
+      "idle": "Vše v pořádku: {temp}, {humidity}",
+      "held_until": "{device} switched by hand: automatic again {time}",
+      "held_until_resume": "{device} switched by hand: automatic again when you press Resume Automatic"
     },
     "heater_mode": {
       "off": "vypnuto",
