@@ -128,7 +128,9 @@ const I18N = {
     "fertilized": "Fertilized",
     "mark_watered": "Mark watered",
     "add_rain": "Add rain",
-    "resume_automatic": "Resume automatic"
+    "resume_automatic": "Resume automatic",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse"
   },
   "de": {
     "now": "Jetzt",
@@ -207,6 +209,8 @@ const I18N = {
     "mark_watered": "Als bewässert markieren",
     "add_rain": "Regen hinzufügen",
     "resume_automatic": "Automatik fortsetzen",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Gibt den Wasserbedarf der Pflanze im Vergleich zur Referenz-Evapotranspiration (ET0) an. Höhere Werte bedeuten mehr Wasser, niedrigere weniger.",
       "flow_rate_mm_per_min": "Gibt an, wie viel Wasser das Bewässerungssystem pro Minute abgibt (in mm/min). Dieser Wert bestimmt die Laufzeit pro Durchgang. Messung per Durchflussmesser oder Behälter und Stoppuhr.",
@@ -320,6 +324,8 @@ const I18N = {
     "mark_watered": "Marcar como regado",
     "add_rain": "Añadir lluvia",
     "resume_automatic": "Reanudar automático",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Indica las necesidades de agua de la planta en comparación con la evapotranspiración de referencia (ET0). Un valor más alto requiere más agua; uno más bajo, menos.",
       "flow_rate_mm_per_min": "Caudal que aporta el sistema de riego en mm por minuto. Determina la duración de cada sesión. Puede medirlo con un caudalímetro o usando un recipiente y un cronómetro.",
@@ -433,6 +439,8 @@ const I18N = {
     "mark_watered": "Merkitse kastelluksi",
     "add_rain": "Lisää sade",
     "resume_automatic": "Palauta automatiikka",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Kasvin vedenkulutus verrattuna vertailuevapotranspiraatioon (ET0). Suurempi arvo tarkoittaa suurempaa veden tarvetta, pienempi vähempää.",
       "flow_rate_mm_per_min": "Sadetuksen tai kastelun määrä millimetreinä minuutissa. Määrittää kastelukerran keston. Voit mitata arvon virtausmittarilla tai astialla ja sekuntikellolla.",
@@ -546,6 +554,8 @@ const I18N = {
     "mark_watered": "Marquer comme arrosé",
     "add_rain": "Ajouter de la pluie",
     "resume_automatic": "Reprendre en automatique",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Besoins en eau de la plante par rapport à l'évapotranspiration de référence (ET0). Une valeur plus élevée augmente l'arrosage, une valeur plus basse le réduit.",
       "flow_rate_mm_per_min": "Pluviométrie du système d'arrosage en mm par minute. Détermine la durée de chaque cycle. À mesurer avec un débitmètre ou un récipient et un chronomètre.",
@@ -659,6 +669,8 @@ const I18N = {
     "mark_watered": "Segna come annaffiato",
     "add_rain": "Aggiungi pioggia",
     "resume_automatic": "Ripristina automatico",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Fabbisogno idrico della pianta rispetto all'evapotraspirazione di riferimento (ET0). Valori più alti indicano maggiore fabbisogno d'acqua, valori più bassi minore.",
       "flow_rate_mm_per_min": "Tasso di erogazione dell'impianto di irrigazione espresso in mm al minuto. Determina la durata di ciascuna sessione. Può essere misurato con un flussometro oppure con un contenitore e un cronometro.",
@@ -772,6 +784,8 @@ const I18N = {
     "mark_watered": "Markeer als bewaterd",
     "add_rain": "Regen toevoegen",
     "resume_automatic": "Automatisch hervatten",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Bepaalt de waterbehoefte van het gewas ten opzichte van de referentie-evapotranspiratie (ET0). Hoger = meer water, lager = minder water.",
       "flow_rate_mm_per_min": "De neerslagsnelheid van je irrigatiesysteem in mm per minuut. Dit bepaalt de duur van elke sproeibeurt. Te meten met een stroommeter of met een opvangbakje en een stopwatch.",
@@ -885,6 +899,8 @@ const I18N = {
     "mark_watered": "Oznacz jako podlane",
     "add_rain": "Dodaj deszcz",
     "resume_automatic": "Wznów automatykę",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Określa zapotrzebowanie rośliny na wodę w stosunku do ewapotranspiracji wskaźnikowej (ET0). Wyższa wartość = więcej wody, niższa = mniej.",
       "flow_rate_mm_per_min": "Wydajność systemu nawadniania wyrażona w mm na minutę. Wyznacza czas trwania pojedynczego cyklu. Można ją zmierzyć przepływomierzem lub pojemnikiem i stoperem.",
@@ -998,6 +1014,8 @@ const I18N = {
     "mark_watered": "Marcar como regado",
     "add_rain": "Adicionar chuva",
     "resume_automatic": "Retomar automático",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Indica a necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
       "flow_rate_mm_per_min": "Taxa de precipitação da rega em mm por minuto. Define a duração de cada ciclo. Pode medir com um caudalímetro ou com um recipiente e um cronómetro.",
@@ -1111,6 +1129,8 @@ const I18N = {
     "mark_watered": "Markera som vattnad",
     "add_rain": "Lägg till regn",
     "resume_automatic": "Återgå till automatik",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Växtens vattenbehov i jämförelse med referensevapotranspiration (ET0). Högre värde innebär mer vatten, lägre värde mindre.",
       "flow_rate_mm_per_min": "Bevattningssystemets flöde i mm per minut. Detta bestämmer bevattningstiden för varje pass. Mät med flödesmätare eller behållare och tidtagarur.",
@@ -1224,6 +1244,8 @@ const I18N = {
     "mark_watered": "Označit jako zalité",
     "add_rain": "Přidat déšť",
     "resume_automatic": "Obnovit automatiku",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Vyjadřuje nároky rostliny na vodu v porovnání s referenční evapotranspirací (ET0). Vyšší hodnota znamená více vody, nižší méně.",
       "flow_rate_mm_per_min": "Intenzita závlahy v mm za minutu. Určuje délku jednoho zavlažovacího cyklu. Změřte průtokoměrem nebo pomocí nádoby a stopek.",
@@ -1337,6 +1359,8 @@ const I18N = {
     "mark_watered": "Markér som vandet",
     "add_rain": "Tilføj regn",
     "resume_automatic": "Genoptag automatik",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Viser plantens vandbehov sammenlignet med reference-evapotranspiration (ET0). Højere værdi betyder mere vand, lavere betyder mindre.",
       "flow_rate_mm_per_min": "Vandtilførsel fra vandingssystemet i mm pr. minut. Det bestemmer varigheden af hver vanding. Måles med en flowmåler eller en beholder og et stopur.",
@@ -1450,6 +1474,8 @@ const I18N = {
     "mark_watered": "Megjelölés öntözöttként",
     "add_rain": "Eső hozzáadása",
     "resume_automatic": "Automatika folytatása",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "A növény vízigénye a referencia-párolgáshoz (ET0) képest. A magasabb érték több, az alacsonyabb kevesebb vizet jelent.",
       "flow_rate_mm_per_min": "A öntözőrendszer csapadékintenzitása mm/percben. Ez határozza meg az egyes öntözések időtartamát. Áramlásmérővel, vagy edénnyel és stopperórával mérhető.",
@@ -1563,6 +1589,8 @@ const I18N = {
     "mark_watered": "Merk som vannet",
     "add_rain": "Legg til regn",
     "resume_automatic": "Gjenoppta automatikk",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Plantens vannbehov sammenlignet med referanse-evapotranspirasjon (ET0). Høyere verdi gir mer vann, lavere gir mindre.",
       "flow_rate_mm_per_min": "Vanningssystemets vanntilførsel i mm per minutt. Dette bestemmer varigheten på hver vanning. Kan måles med mengdemåler eller med en beholder og stoppeklokke.",
@@ -1676,6 +1704,8 @@ const I18N = {
     "mark_watered": "Marcar como regado",
     "add_rain": "Adicionar chuva",
     "resume_automatic": "Retomar automático",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Necessidade de água da planta em comparação com a evapotranspiração de referência (ET0). Valores mais altos significam mais água; valores mais baixos, menos.",
       "flow_rate_mm_per_min": "Taxa de precipitação da irrigação em mm por minuto. Determina a duração de cada ciclo. Pode ser medida com um medidor de vazão ou usando um recipiente e um cronômetro.",
@@ -1789,6 +1819,8 @@ const I18N = {
     "mark_watered": "Отметить полив",
     "add_rain": "Добавить дождь",
     "resume_automatic": "Возобновить авторежим",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Потребность растения в воде по сравнению с эталонной эвапотранспирацией (ET0). Чем выше значение, тем больше воды требуется.",
       "flow_rate_mm_per_min": "Интенсивность полива в мм/мин. Определяет продолжительность одного сеанса. Можно измерить расходомером или с помощью емкости и секундомера.",
@@ -1902,6 +1934,8 @@ const I18N = {
     "mark_watered": "Označiť ako zaliate",
     "add_rain": "Pridať dážď",
     "resume_automatic": "Obnoviť automatiku",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Vyjadruje potrebu vody pre rastlinu v porovnaní s referenčnou evapotranspiráciou (ET0). Vyššia hodnota znamená viac vody, nižšia menej.",
       "flow_rate_mm_per_min": "Intenzita zavlažovania v mm za minútu. Určuje dĺžku jedného cyklu. Zmerajte ju prietokomerom alebo pomocou nádoby a stopiek.",
@@ -2015,6 +2049,8 @@ const I18N = {
     "mark_watered": "Позначити полив",
     "add_rain": "Додати дощ",
     "resume_automatic": "Vidnovyty avtomatyku",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "Потреба рослини у воді порівняно з еталонною евапотранспірацією (ET0). Вище значення означає більше води, нижче — менше.",
       "flow_rate_mm_per_min": "Інтенсивність поливу в мм за хвилину. Визначає тривалість кожного сеансу. Можна виміряти витратоміром або за допомогою ємності та секундоміра.",
@@ -2128,6 +2164,8 @@ const I18N = {
     "mark_watered": "标记为已浇水",
     "add_rain": "添加降雨",
     "resume_automatic": "恢复自动",
+    "crops": "Crops",
+    "in_greenhouse": "In greenhouse",
     "tips": {
       "crop_coefficient": "衡量植物相比于基准蒸散发量 (ET0) 的需水程度。数值越高需水量越大，越低则越小。",
       "flow_rate_mm_per_min": "灌溉系统的喷灌强度（毫米/分钟）。该参数决定每次灌溉的持续时长。可使用流量计或利用测量容器与秒表测定。",
@@ -2333,7 +2371,8 @@ class ZoneFlowCard extends HTMLElement {
         return !when || when(this._hass.states[e.entity_id]);
       })
     );
-    const valve = this._hass.states[visible["sensor.status"]?.entity_id]?.attributes?.valve;
+    const statusAttrs = this._hass.states[visible["sensor.status"]?.entity_id]?.attributes || {};
+    const valve = statusAttrs.valve;
     const device = this._hass.devices?.[this._config.device_id];
     // What the card is built from: rebuilt only when one of these changes.
     const signature = JSON.stringify([
@@ -2344,10 +2383,12 @@ class ZoneFlowCard extends HTMLElement {
       !!(valve && this._hass.states[valve]),
       this._hass.locale?.language,
       device?.name_by_user || device?.name,
+      statusAttrs.greenhouse || null,
+      statusAttrs.crops || null,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
-      this._build(visible, valve);
+      this._build(visible, valve, statusAttrs);
     }
     this._update(visible);
   }
@@ -2362,12 +2403,13 @@ class ZoneFlowCard extends HTMLElement {
     return this._helpersPromise;
   }
 
-  _build(visible, valve) {
+  _build(visible, valve, statusAttrs = {}) {
     const hass = this._hass;
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
     const root = this.shadowRoot;
     this._buildId = (this._buildId || 0) + 1;
     this._open = this._open || {};
+    this._cropList = undefined;
     root.innerHTML = "";
     const style = document.createElement("style");
     style.textContent = `
@@ -2378,6 +2420,10 @@ class ZoneFlowCard extends HTMLElement {
       .status { padding: 4px 16px 12px; font-size: 1.05em; color: var(--primary-text-color); }
       .status.warn { color: var(--warning-color, #db4437); }
       .status .code { display: block; font-size: 0.75em; color: var(--secondary-text-color); margin-top: 2px; }
+      .in-greenhouse { display: flex; align-items: center; gap: 6px; padding: 0 16px 8px; margin-top: -6px;
+        color: var(--secondary-text-color); font-size: 0.9em; }
+      .in-greenhouse ha-icon { --mdc-icon-size: 16px; }
+      .crops zoneflow-overview-card { display: block; margin: 0 -12px; }
       .section { padding: 0 16px 8px; }
       .section-title { font-weight: 500; color: var(--secondary-text-color); font-size: 0.85em;
         text-transform: uppercase; letter-spacing: 0.04em; margin: 12px 0 4px; }
@@ -2441,6 +2487,15 @@ class ZoneFlowCard extends HTMLElement {
     this._statusEl = document.createElement("div");
     this._statusEl.className = "status";
     card.appendChild(this._statusEl);
+    // A crop: which greenhouse it is in.
+    if (statusAttrs.greenhouse?.name) {
+      const where = document.createElement("div");
+      where.className = "in-greenhouse";
+      const whereIcon = document.createElement("ha-icon");
+      whereIcon.setAttribute("icon", "mdi:greenhouse");
+      where.append(whereIcon, document.createTextNode(`${t(hass, "in_greenhouse")}: ${statusAttrs.greenhouse.name}`));
+      card.appendChild(where);
+    }
 
     const used = new Set();
     const id = (key) => {
@@ -2531,6 +2586,24 @@ class ZoneFlowCard extends HTMLElement {
       if (!popup.parts.length) delete this._popups[key];
     }
     section("now", now);
+    // A greenhouse: its crops, as in the overview card (status, next and
+    // last watering, Water now; tap one for its full card).
+    const crops = (statusAttrs.crops || []).map((c) => c.device_id).filter(Boolean);
+    if (crops.length && this._config.show_crops !== false) {
+      const el = document.createElement("div");
+      el.className = "section crops";
+      const heading = document.createElement("div");
+      heading.className = "section-title";
+      heading.textContent = t(hass, "crops");
+      const list = document.createElement("zoneflow-overview-card");
+      list.setConfig({ device_ids: crops, embedded: true, show_add: false });
+      list.hass = hass;
+      el.append(heading, list);
+      card.appendChild(el);
+      this._cropList = list;
+    } else {
+      this._cropList = undefined;
+    }
     section("controls", controls);
     section("service", service);
     if (Object.keys(this._popups).length) {
@@ -2670,6 +2743,7 @@ class ZoneFlowCard extends HTMLElement {
   }
 
   _update(visible) {
+    if (this._cropList) this._cropList.hass = this._hass;
     const hass = this._hass;
     for (const row of this._rows || []) row.hass = hass;
     if (!this._statusEl) return;
@@ -2896,6 +2970,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
         button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
+        parent: status?.attributes?.greenhouse?.device_id || null,
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -2905,14 +2980,26 @@ class ZoneFlowOverviewCard extends HTMLElement {
     } else {
       zones.sort(byName);
     }
-    return zones;
+    const only = this._config.device_ids;
+    const shown = Array.isArray(only) ? zones.filter((z) => only.includes(z.device_id)) : zones;
+    // A greenhouse's crops right under it.
+    const ids = new Set(shown.map((z) => z.device_id));
+    const ordered = [];
+    for (const zone of shown) {
+      if (zone.parent && ids.has(zone.parent)) continue;
+      ordered.push(zone);
+      ordered.push(...shown.filter((z) => z.parent === zone.device_id).map((z) => ({ ...z, crop: true })));
+    }
+    return ordered;
   }
 
   _render() {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false]),
+      this._config.device_ids || null,
+      this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
       this._hass.locale?.language,
       this._config.title,
@@ -2965,6 +3052,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .action ha-icon-button[disabled] { color: var(--disabled-text-color); }
       .details { padding: 0 8px 8px; }
       .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
+      .zone.crop { margin-left: 36px; }
+      ${this._config.embedded ? `
+      ha-card { box-shadow: none; border: none; background: none; }
+      .title { display: none; }` : ""}
       /* Phones: two lines per zone -- the name, then status and next. */
       @container (max-width: 480px) {
         .head { display: none; }
@@ -3021,7 +3112,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
 
     for (const zone of zones) {
       const wrap = document.createElement("div");
-      wrap.className = "zone";
+      wrap.className = zone.crop ? "zone crop" : "zone";
       const row = document.createElement("div");
       row.className = "grid row";
       row.tabIndex = 0;
@@ -3103,7 +3194,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
       return;
     }
     const inner = document.createElement("zoneflow-card");
-    inner.setConfig({ device_id: zone.device_id, show_journal: false, show_settings: true, embedded: true });
+    // Crops are listed here already: not again inside their greenhouse.
+    inner.setConfig({ device_id: zone.device_id, show_journal: false, show_settings: true, embedded: true, show_crops: false });
     inner.hass = this._hass;
     details.append(inner);
   }
@@ -3286,15 +3378,23 @@ function buildDashboard(hass) {
     cards: [{ type: "custom:zoneflow-overview-card" }],
   });
   const used = new Set(["overview"]);
+  const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
+  const ids = new Set(zones.map((z) => z.device_id));
   for (const zone of zones) {
+    if (ids.has(parentOf(zone))) continue; // a crop: on its greenhouse's tab
     let path = slug(zone.name);
     for (let n = 2; used.has(path); n += 1) path = `${slug(zone.name)}-${n}`;
     used.add(path);
+    const crops = zones.filter((z) => parentOf(z) === zone.device_id);
     views.push({
       title: zone.name,
       path,
-      icon: zoneIcon(hass, zone),
-      cards: [{ type: "custom:zoneflow-card", device_id: zone.device_id }],
+      icon: crops.length ? "mdi:greenhouse" : zoneIcon(hass, zone),
+      cards: [
+        // The crops have their own cards on this tab: not listed again.
+        { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },
+        ...crops.map((c) => ({ type: "custom:zoneflow-card", device_id: c.device_id })),
+      ],
     });
   }
   return { title: "ZoneFlow", views };

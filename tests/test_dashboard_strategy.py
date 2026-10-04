@@ -139,3 +139,23 @@ def test_the_loader_registers_the_strategy_at_once_and_waits_for_the_card(tmp_pa
 def test_the_card_file_hands_its_strategy_to_the_loader_stub():
     card = CARD.read_text(encoding="utf-8")
     assert "window.__zoneflowDashboardStrategy = ZoneFlowDashboardStrategy" in card
+
+
+def test_a_greenhouse_tab_holds_its_crops(tmp_path):
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "gh", "Tunnel", "custom", climate=True)
+    _zone(entities, states, "c1", "Tomatoes", "tomatoes")
+    _zone(entities, states, "c2", "Peppers", "chilis")
+    _zone(entities, states, "o1", "Lawn", "lawn")
+    for crop in ("sensor.tomatoes_status", "sensor.peppers_status"):
+        states[crop]["attributes"]["greenhouse"] = {"name": "Tunnel", "device_id": "gh"}
+    devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Tomatoes"}, "c2": {"name": "Peppers"}, "o1": {"name": "Lawn"}})
+    out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
+    views = {v["path"]: v for v in out["views"]}
+    assert set(views) == {"overview", "lawn", "tunnel"}  # crops have no tab of their own
+    assert views["tunnel"]["icon"] == "mdi:greenhouse"
+    assert views["tunnel"]["cards"] == [
+        {"type": "custom:zoneflow-card", "device_id": "gh", "show_crops": False},
+        {"type": "custom:zoneflow-card", "device_id": "c2"},  # Peppers, then Tomatoes: by name
+        {"type": "custom:zoneflow-card", "device_id": "c1"},
+    ]
