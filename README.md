@@ -143,6 +143,9 @@ zone. Besides watering, ZoneFlow can then run the climate of the space:
   skips); the water target follows the inside temperature, with no rain
   credit or forecast. **No valve needed** for a climate-only zone, which has
   no watering at all.
+- **Several crops in one greenhouse** (1.6.1): add each crop with *Add a crop
+  to a greenhouse* — its own valve, probe and schedule, the greenhouse's
+  climate and sensors, shown together on the cards and the dashboard.
 - **Failsafes**: if the inside sensor fails, misters stop, vents and fans
   follow your **Sensor Failsafe** choice and the heater follows the **Heater
   Failsafe** (off, part of the time, or part of the time while cold

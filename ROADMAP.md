@@ -29,8 +29,10 @@ Ideas queued for upcoming releases.
 - **Resume Automatic**: a button that ends a manual hold at once, an **Auto
   Resume** switch and **Auto Resume After** (0.5-24 h) replacing Manual Hold
   Time; a heater switched on by hand is taken back when it gets too hot.
+- **Several crops in one greenhouse**: each crop its own valve, probe and
+  schedule, sharing the greenhouse's climate and sensors.
 - **Auto-generated dashboard**: `strategy: {type: custom:zoneflow}` gives an
-  overview tab and one tab per zone.
+  overview tab and one tab per zone (per greenhouse, with its crops).
 
 ### 1.6.0 — greenhouse and indoor climate control
 

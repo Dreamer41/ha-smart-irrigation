@@ -32,24 +32,35 @@ inside).
 A probe is the best way to water a greenhouse: rain never tops it up, so
 the soil's own reading is the truth.
 
-## Several crops in one greenhouse
+## Several crops in one greenhouse (1.6.1)
 
-Each crop is its own zone, with its own valve, soil probe and watering
-settings. The climate (fans, vents, misters, heater) belongs to **one**
-zone, and a fan, vent, mister or heater can't be in two zones. So:
+A greenhouse can hold several **crops**, each with its own valve, soil probe,
+plant type, schedule and watering settings. The greenhouse is the zone with
+the climate (inside sensors and the fans, vents, misters and heater); its
+crops use its inside sensors.
 
-1. Add one **greenhouse** zone for the climate (call it, say, "Greenhouse
-   climate"): the inside temperature sensor and the climate devices, and no
-   valve.
-2. Add one **greenhouse** zone per crop ("Tomatoes", "Peppers"...): pick
-   that crop's valve and probe, and the **same inside temperature sensor**.
-   Leave the climate devices empty. Each crop has its own plant type, soil,
-   schedule and thresholds.
+1. Set up the greenhouse as usual (it may have a valve of its own too).
+2. **Settings -> Devices & Services -> Add Integration -> ZoneFlow -> Add a
+   crop to a greenhouse**: pick the greenhouse, name the crop, pick what's
+   planted, its valve, then its watering settings. No climate questions:
+   those come from the greenhouse.
+3. Repeat for each crop.
 
-Sensors can be shared between zones; valves and climate devices can't. Zones
-that share a pump should share the same *Pump ID* so they don't open
-together. The overview card and the auto-generated dashboard show every zone
-as its own row and tab.
+- A crop's **Pump ID** starts as the greenhouse's, so crops on one water
+  supply never open at the same time (clear it if they have separate supplies).
+- A crop follows the greenhouse's inside temperature sensor live; change the
+  sensor on the greenhouse and every crop follows.
+- In Settings -> Devices each crop is **connected via** its greenhouse. The
+  greenhouse's card lists its crops (status, next watering, Water now; tap
+  one for its full card), a crop's card says which greenhouse it is in, the
+  overview card lists crops under their greenhouse, and the auto-generated
+  dashboard gives each greenhouse one tab with its crops.
+- **Zones set up before 1.6.1** (a separate greenhouse zone per crop): open
+  the zone's **Configure -> Greenhouse** and pick its greenhouse. Pick "-"
+  to make a crop a zone on its own again.
+- A greenhouse with crops can't be changed to an outdoor zone. If a
+  greenhouse is deleted, its crops keep working on their own (with a copy of
+  its inside sensors), and Repairs says so.
 
 ## Set it up
 

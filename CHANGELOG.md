@@ -13,6 +13,8 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 - **New**: **Auto Resume** switch and **Auto Resume After** (0.5-24 h) — a device you switched by hand goes back to automatic after that time, or waits for the button when the switch is off
 - **Changed**: Auto Resume After replaces **Manual Hold Time**; your old value is carried over, rounded up to the next half hour ("0" becomes 0.5 h)
 - **New**: a heater switched on by hand is taken back once the inside temperature goes above the vent temperature, whatever the hold setting
+- **New**: **several crops in one greenhouse** — Add integration → ZoneFlow → *Add a crop to a greenhouse*: each crop has its own valve, soil probe, plant and schedule and uses the greenhouse's climate and inside sensors (read live). Crops are connected via their greenhouse in the device list, listed on the greenhouse's card, under it in the overview card, and on its tab in the auto-generated dashboard. Zones set up the old way join a greenhouse under Configure → Greenhouse. Deleting a greenhouse leaves its crops working on their own
+- **Changed**: a greenhouse or indoor zone without climate devices no longer shows the Greenhouse Status sensor and Greenhouse Control switch
 - **New**: **auto-generated dashboard** — `strategy: {type: custom:zoneflow}` builds an overview tab and one tab per zone
 - **Changed**: adding a second zone now starts with a small menu (Add a zone / Set up Weather Underground rain)
 - **Fixed**: a test of two zones sharing a pump was timing-dependent on Windows
