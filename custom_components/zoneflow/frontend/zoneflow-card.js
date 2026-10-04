@@ -3349,8 +3349,9 @@ function slug(text) {
 function zoneIcon(hass, zone) {
   const registry = Object.values(hass.entities || {});
   // Greenhouse and indoor zones have a climate status of their own.
+  // (A crop has the entity too, hidden: it has no climate of its own.)
   const climate = registry.some(
-    (e) => e.platform === "zoneflow" && e.device_id === zone.device_id && e.translation_key === "greenhouse_status"
+    (e) => e.platform === "zoneflow" && e.device_id === zone.device_id && e.translation_key === "greenhouse_status" && !e.hidden
   );
   if (climate) return "mdi:greenhouse";
   const plant = hass.states?.[zone.status]?.attributes?.plant;
@@ -3371,10 +3372,13 @@ function buildDashboard(hass) {
       }],
     };
   }
+  // Use the whole width: one card fills the page ("panel"); a greenhouse
+  // with crops lays its cards out side by side.
   views.push({
     title: t(hass, "overview.title"),
     path: "overview",
     icon: "mdi:view-dashboard-outline",
+    type: "panel",
     cards: [{ type: "custom:zoneflow-overview-card" }],
   });
   const used = new Set(["overview"]);
@@ -3390,6 +3394,7 @@ function buildDashboard(hass) {
       title: zone.name,
       path,
       icon: crops.length ? "mdi:greenhouse" : zoneIcon(hass, zone),
+      ...(crops.length ? {} : { type: "panel" }),
       cards: [
         // The crops have their own cards on this tab: not listed again.
         { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },

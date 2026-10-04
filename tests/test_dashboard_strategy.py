@@ -31,7 +31,7 @@ strategy.generate({ type: "custom:zoneflow" }, hass).then((out) => console.log(J
 """
 
 
-def _zone(entities, states, device, name, plant, climate=False):
+def _zone(entities, states, device, name, plant, climate=False, hidden_climate=False):
     status = f"sensor.{name.lower().replace(' ', '_')}_status"
     entities[status] = {
         "entity_id": status, "device_id": device, "platform": "zoneflow", "translation_key": "status",
@@ -39,7 +39,8 @@ def _zone(entities, states, device, name, plant, climate=False):
     states[status] = {"entity_id": status, "state": "idle", "attributes": {"plant": plant}}
     if climate:
         gh = f"sensor.{name.lower().replace(' ', '_')}_climate"
-        entities[gh] = {"entity_id": gh, "device_id": device, "platform": "zoneflow", "translation_key": "greenhouse_status"}
+        entities[gh] = {"entity_id": gh, "device_id": device, "platform": "zoneflow", "translation_key": "greenhouse_status",
+                        "hidden": hidden_climate}
 
 
 def _run(tmp_path, hass):
@@ -65,6 +66,7 @@ def test_overview_first_then_one_tab_per_zone_sorted_by_name(tmp_path):
     views = out["views"]
     assert [v["path"] for v in views] == ["overview", "cherry-trees", "tomatoes", "tunnel"]
     assert views[0]["cards"] == [{"type": "custom:zoneflow-overview-card"}]
+    assert views[0]["type"] == "panel" and views[1]["type"] == "panel"  # the whole width
     assert views[0]["title"] == "Garden"
     assert views[1]["cards"] == [{"type": "custom:zoneflow-card", "device_id": "d2"}]
     assert views[1]["icon"] == "mdi:tree"
@@ -144,16 +146,19 @@ def test_the_card_file_hands_its_strategy_to_the_loader_stub():
 def test_a_greenhouse_tab_holds_its_crops(tmp_path):
     entities, states, devices = {}, {}, {}
     _zone(entities, states, "gh", "Tunnel", "custom", climate=True)
-    _zone(entities, states, "c1", "Tomatoes", "tomatoes")
+    _zone(entities, states, "c1", "Tomatoes", "tomatoes", climate=True, hidden_climate=True)  # crops: hidden climate
     _zone(entities, states, "c2", "Peppers", "chilis")
     _zone(entities, states, "o1", "Lawn", "lawn")
+    _zone(entities, states, "s1", "Shed", "herbs", climate=True, hidden_climate=True)  # waters only, on its own
     for crop in ("sensor.tomatoes_status", "sensor.peppers_status"):
         states[crop]["attributes"]["greenhouse"] = {"name": "Tunnel", "device_id": "gh"}
-    devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Tomatoes"}, "c2": {"name": "Peppers"}, "o1": {"name": "Lawn"}})
+    devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Tomatoes"}, "c2": {"name": "Peppers"}, "o1": {"name": "Lawn"}, "s1": {"name": "Shed"}})
     out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
     views = {v["path"]: v for v in out["views"]}
-    assert set(views) == {"overview", "lawn", "tunnel"}  # crops have no tab of their own
+    assert set(views) == {"overview", "lawn", "shed", "tunnel"}  # crops have no tab of their own
+    assert views["shed"]["icon"] == "mdi:sprout"  # a hidden climate status is no greenhouse
     assert views["tunnel"]["icon"] == "mdi:greenhouse"
+    assert "type" not in views["tunnel"]  # several cards: side by side
     assert views["tunnel"]["cards"] == [
         {"type": "custom:zoneflow-card", "device_id": "gh", "show_crops": False},
         {"type": "custom:zoneflow-card", "device_id": "c2"},  # Peppers, then Tomatoes: by name
