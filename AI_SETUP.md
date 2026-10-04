@@ -537,7 +537,7 @@ once they've agreed to let you drive.
      or the `zoneflow.add_rain` service (amount, optional "when", up to 14
      days back).
    - **Weather Underground rain (experimental)**: borrows rain from 1-3
-     private stations within a few km. Before suggesting it, tell them the
+     private stations within 2 km (nearer is better; over 1 km, compare with the real rain for a while). Before suggesting it, tell them the
      two checks in this order, so they don't waste time: **FIRST** look on
      the wunderground.com map for stations near the garden that report rain
      -- if there are none, stop; **SECOND**, the free API key requires their

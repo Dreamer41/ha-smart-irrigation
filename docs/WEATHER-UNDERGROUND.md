@@ -11,16 +11,21 @@ does not replace the weather service used for skipping a watering before
 rain.
 
 Why bother: forecast services often use a station 20 km or more away. A
-private station within a few km is usually much closer to what fell in your
+private station within a km or two is usually much closer to what fell in your
 garden. But it is **not 100 % reliable**, and less so the further the
 stations are from your zones. That is why it is marked experimental.
+
+How useful it is depends on where you live: the USA and parts of Europe
+have many private stations, so there is a good chance of one nearby; in
+many other countries stations are few and far apart.
 
 ## Before you start: two checks, in this order
 
 1. **First, check the map.** Open the map on
    [wunderground.com](https://www.wunderground.com/wundermap) and look for
-   stations within a few km of your garden that report rain (look at
-   "Precip"). If there are none, stop here: this feature won't help you.
+   stations near your garden that report rain (look at "Precip"). Nearer
+   is better: aim for within 1 km, at most 2 km. If there are none, stop
+   here: this feature won't help you.
    Use a rain gauge, the manual rain entry, or nothing.
 2. **Second, you need your own station to get the free API key.** Weather
    Underground only gives API keys to people who upload data. Register a
@@ -43,11 +48,13 @@ diagnostics downloads.
 1. Settings → Devices & services → Add integration → **ZoneFlow** →
    **Set up Weather Underground rain**. (It is offered once you have at
    least one zone, and only one per Home Assistant.)
-2. Paste the API key and choose the search radius (1–5 km, default 3).
+2. Paste the API key and choose the search radius (0.5–2 km, default 1).
    ZoneFlow looks for stations around your Home Assistant home location and
    works out each distance itself.
 3. Pick **1, 2 or 3 stations**. Each shows its distance and today's rain, so
-   you can check the numbers look sensible.
+   you can check the numbers look sensible. Stations over 1 km away are
+   marked: for those, keep an eye on how their readings match the rain at
+   your place for a while before trusting them.
 4. For each outdoor zone without a rain gauge: the zone's **Configure** →
    **Weather Underground rain** → switch it on.
 

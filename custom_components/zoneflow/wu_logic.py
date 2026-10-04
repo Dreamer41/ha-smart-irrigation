@@ -48,9 +48,12 @@ WATERING_LEAD_SECONDS = 60 * 60
 DAY_END_POLL_TIME = (23, 55)
 
 MAX_STATIONS = 3
-RADIUS_DEFAULT_KM = 3.0
-RADIUS_MIN_KM = 1.0
-RADIUS_MAX_KM = 5.0
+# Nearer is better: rain can differ a lot over a couple of km. Beyond 1 km
+# the person should compare with what really falls in the garden.
+RADIUS_DEFAULT_KM = 1.0
+RADIUS_MIN_KM = 0.5
+RADIUS_MAX_KM = 2.0
+CHECK_DISTANCE_KM = 1.0
 
 
 def distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:

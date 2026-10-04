@@ -429,6 +429,7 @@ def _wu_station_schema(candidates: list[dict[str, Any]], chosen: list[str]) -> v
             label=(
                 f"{s['id']} ({s['name']}) - {s['distance_km']:.1f} km - "
                 + ("no recent report" if s.get("rain_today") is None else f"{s['rain_today']:.1f} mm today")
+                + (" - over 1 km: compare with your own rain" if s["distance_km"] > wu_logic.CHECK_DISTANCE_KM else "")
             ),
         )
         for s in candidates

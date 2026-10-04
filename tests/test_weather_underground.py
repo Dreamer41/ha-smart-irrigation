@@ -69,7 +69,7 @@ def _wu_entry(hass, stations=STATIONS):
         domain=DOMAIN,
         title="Weather Underground rain",
         unique_id=ENTRY_TYPE_WU,
-        data={CONF_ENTRY_TYPE: ENTRY_TYPE_WU, CONF_WU_API_KEY: "secret-key", CONF_WU_RADIUS_KM: 3.0, CONF_WU_STATIONS: stations},
+        data={CONF_ENTRY_TYPE: ENTRY_TYPE_WU, CONF_WU_API_KEY: "secret-key", CONF_WU_RADIUS_KM: 2.0, CONF_WU_STATIONS: stations},
     )
     entry.add_to_hass(hass)
     return entry
@@ -115,7 +115,7 @@ async def test_setup_flow_offers_wu_once_a_zone_exists_and_creates_the_entry(has
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "weather_underground"})
     assert result["step_id"] == "weather_underground"
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_WU_API_KEY: " secret-key ", CONF_WU_RADIUS_KM: 3.0}
+        result["flow_id"], {CONF_WU_API_KEY: " secret-key ", CONF_WU_RADIUS_KM: 2.0}
     )
     assert result["step_id"] == "wu_stations"
     # The station 11 km away is not offered.
@@ -143,7 +143,7 @@ async def test_setup_flow_errors(hass, aioclient_mock):
     aioclient_mock.get(wu.NEAR_URL, status=401)
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "weather_underground"})
-    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_WU_API_KEY: "bad", CONF_WU_RADIUS_KM: 3.0})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_WU_API_KEY: "bad", CONF_WU_RADIUS_KM: 2.0})
     assert result["errors"] == {"base": "wu_invalid_key"}
 
     aioclient_mock.clear_requests()
@@ -151,7 +151,7 @@ async def test_setup_flow_errors(hass, aioclient_mock):
         wu.NEAR_URL,
         json={"location": {"stationId": ["IFAR1"], "stationName": ["Far"], "latitude": [9.6], "longitude": [100.0]}},
     )
-    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_WU_API_KEY: "k", CONF_WU_RADIUS_KM: 3.0})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_WU_API_KEY: "k", CONF_WU_RADIUS_KM: 2.0})
     assert result["errors"] == {"base": "wu_no_stations"}
 
 
