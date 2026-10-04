@@ -30,6 +30,25 @@ water target follows the **inside temperature** instead of an outside one.
 A probe is the best way to water a greenhouse: rain never tops it up, so
 the soil's own reading is the truth.
 
+## Several crops in one greenhouse
+
+Each crop is its own zone, with its own valve, soil probe and watering
+settings. The climate (fans, vents, misters, heater) belongs to **one**
+zone, and a fan, vent, mister or heater can't be in two zones. So:
+
+1. Add one **greenhouse** zone for the climate (call it, say, "Greenhouse
+   climate"): the inside temperature sensor and the climate devices, and no
+   valve.
+2. Add one **greenhouse** zone per crop ("Tomatoes", "Peppers"...): pick
+   that crop's valve and probe, and the **same inside temperature sensor**.
+   Leave the climate devices empty. Each crop has its own plant type, soil,
+   schedule and thresholds.
+
+Sensors can be shared between zones; valves and climate devices can't. Zones
+that share a pump should share the same *Pump ID* so they don't open
+together. The overview card and the auto-generated dashboard show every zone
+as its own row and tab.
+
 ## Set it up
 
 **Settings → Devices & Services → Add Integration → ZoneFlow Irrigation**,
