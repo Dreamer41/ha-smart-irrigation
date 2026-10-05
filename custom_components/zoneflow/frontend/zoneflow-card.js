@@ -2395,7 +2395,14 @@ class ZoneFlowCard extends HTMLElement {
       Object.entries(entities).filter(([key, e]) => {
         if (e.hidden) return false;
         const when = ONLY_WHEN[key];
-        return !when || when(this._hass.states[e.entity_id]);
+        if (when && !when(this._hass.states[e.entity_id])) return false;
+        // With a flow meter that counted, its litres are on the card already.
+        if (key === "sensor.last_water_volume") {
+          const measured = entities["sensor.last_cycle_water_liters"];
+          const litres = Number(this._hass.states[measured?.entity_id]?.state);
+          if (measured && !measured.hidden && litres > 0) return false;
+        }
+        return true;
       })
     );
     const statusAttrs = this._hass.states[visible["sensor.status"]?.entity_id]?.attributes || {};
@@ -2979,7 +2986,9 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const keyed = zoneEntities(hass, zone.device_id);
       const measured = keyed["sensor.last_cycle_water_liters"];
       const estimate = keyed["sensor.last_water_delivered"];
-      const last = measured && !measured.hidden ? measured.entity_id : estimate?.entity_id;
+      // The meter's litres once it has counted something; else the estimate.
+      const metered = Boolean(measured && !measured.hidden && Number(hass.states[measured.entity_id]?.state) > 0);
+      const last = metered ? measured.entity_id : estimate?.entity_id;
       const lastVolume = keyed["sensor.last_water_volume"];
       const button = keyed["button.run_routine"]?.entity_id;
       const plant = status?.attributes?.plant;
@@ -2996,7 +3005,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
         text: climate ? climateState?.state : status?.state,
         next: climate ? undefined : status?.attributes?.next_watering,
         last: climate ? undefined : last,
-        lastIsEstimate: !(measured && !measured.hidden),
+        lastIsEstimate: !metered,
         lastVolume: climate || !lastVolume || lastVolume.hidden ? undefined : lastVolume.entity_id,
         button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
