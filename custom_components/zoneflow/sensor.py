@@ -45,6 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowNextFertilizingSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
+        ZoneFlowLastWaterVolumeSensor(entry, controller),
         ZoneFlowWaterUsedSensor(entry, controller, "30d"),
         ZoneFlowWaterUsedSensor(entry, controller, "year"),
         ZoneFlowTodayRainSensor(entry, controller),
@@ -421,6 +422,25 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
             # The old value, for planning: half this week's target.
             "typical_watering": units.depth_text(typical, imperial),
         }
+
+
+class ZoneFlowLastWaterVolumeSensor(_Base):
+    """The last watering in litres (gallons): the flow meter's reading, else
+    the valve's minutes x Zone Flow. Unknown while neither is known; the
+    amount in mm is Last Water Delivered."""
+
+    _unit_kind = "volume"
+    _attr_native_unit_of_measurement = "L"
+    _attr_icon = "mdi:water"
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_last_water_volume"
+        self._attr_translation_key = "last_water_volume"
+
+    def metric_native_value(self) -> float | None:
+        return self._controller.store.state.last_cycle_liters
 
 
 class ZoneFlowWaterUsedSensor(_Base):
