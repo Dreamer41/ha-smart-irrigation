@@ -14,6 +14,10 @@ Ideas queued for upcoming releases.
 
 ## Shipped
 
+### 1.6.3 — 15-minute service run
+
+- A Service Run 15 min button for longer flow-calibration tests.
+
 ### 1.6.2 — stuck-probe protection and hardening
 
 - A soil probe stuck on "dry" can no longer flood a zone: a run it brings
