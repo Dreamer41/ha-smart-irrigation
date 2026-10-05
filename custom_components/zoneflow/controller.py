@@ -3128,6 +3128,10 @@ class ZoneFlowController:
         et_weekly = self.et_weekly_target_mm()
         routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
         days_elapsed = int(elapsed_seconds / 86400)
+        # Brought forward by a dry probe (the schedule says not yet): only the
+        # elapsed days' share of the dose, so a probe stuck on "dry" can't
+        # flood the zone with a full dose every morning.
+        interval_fraction = 1.0 if interval_due else calc.early_run_fraction(elapsed_seconds, interval_days)
         plan = calc.plan_routine_irrigation(
             avg_peak_temp=avg_peak_temp,
             hot_threshold=hot_threshold,
@@ -3146,6 +3150,7 @@ class ZoneFlowController:
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
+            interval_fraction=interval_fraction,
         )
 
         # Only a zone that HAS watered before can be overdue -- a brand-new

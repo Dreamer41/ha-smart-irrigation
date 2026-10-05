@@ -80,7 +80,9 @@ manual, goes through the same pipeline:
    - scaled by the **growth ramp** (young plants need less) and optional
      **deficit mode** (controlled stress after fruit set, with guardrails);
    - an optional **soil-moisture probe** decides at the extremes: dry soil
-     brings watering forward, wet soil skips it.
+     brings watering forward (with the share of the dose the days since the
+     last watering call for, so a stuck probe can't flood the zone), wet
+     soil skips it.
 3. **Water already received** — rolling rain windows from a tipping-bucket
    gauge, rain credit deducted by efficiency band, a dry-down hold after
    significant rain, an optional **weather forecast gate**, and a

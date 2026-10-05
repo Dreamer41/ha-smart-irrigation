@@ -297,7 +297,7 @@ async def test_forecast_rain_holds_off_then_dry_spell_override_waters_the_normal
 
 
 @pytest.mark.asyncio
-async def test_dry_soil_waters_early_with_a_full_dose_and_wet_soil_blocks_an_overdue_one(
+async def test_dry_soil_waters_early_with_the_elapsed_days_share_and_wet_soil_blocks_an_overdue_one(
     hass, fake_valve_services, monkeypatch, tmp_path
 ):
     controller, clock, _ = await _zone(hass, monkeypatch, tmp_path, soil_moisture_entity=SOIL)
@@ -306,9 +306,11 @@ async def test_dry_soil_waters_early_with_a_full_dose_and_wet_soil_blocks_an_ove
     _history(controller, last_routine_days_ago=1, peaks=(30.5, 30.5, 30.5))
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
-    # Documents current behavior: the forced early run applies the full
-    # interval dose (weekly/7 x 4), not a 1-day share.
-    assert _delivered_mm(clock, controller) == pytest.approx(20.0, abs=_tolerance_mm(controller, 3))
+    # The early run gives the elapsed days' share of the interval dose: 1 day
+    # of a 4-day interval (weekly/7 x 4 x 1/4 = one day's worth). Before 1.6.2
+    # it was the full interval dose, so a probe stuck on "dry" watered a full
+    # dose every morning.
+    assert _delivered_mm(clock, controller) == pytest.approx(5.0, abs=_tolerance_mm(controller, 3))
 
     clock.reset()
     hass.states.async_set(SOIL, "75")  # above 60% wet threshold
