@@ -255,6 +255,7 @@
           "settings": "Zoninställningar (entiteter, jord, schema…)",
           "flow_rate": "Flöde: räkna ut från dropparna",
           "flow_volume": "Flöde: mät det utifrån litrarna en servicekörning ger",
+          "zone_flow": "Zonens flöde: liter per minut från antal droppare",
           "flow_measure": "Flöde: mät med flödesmätaren",
           "greenhouse_devices": "Ventil, givare och klimatenheter",
           "watering": "Bevattningsinställningar",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Dropparnas flöde",
-        "description": "Hur mycket vatten zonens munstycken avger på ytan de blöter. 1 liter på 1 m² är 1 mm. Detta förutsätter att varje munstycke på zonens ventil ger samma flöde. För droppspridare vid enskilda växter används ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Dropparflöde (kalibrering). Med blandade munstycken mäter du istället (\"Flöde: mät det utifrån litrarna en servicekörning ger\").",
+        "description": "Hur mycket vatten zonens munstycken avger på ytan de blöter. 1 liter på 1 m² är 1 mm. Detta förutsätter att varje munstycke på zonens ventil ger samma flöde. För droppspridare vid enskilda växter används ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Dropparflöde (kalibrering). Med blandade munstycken mäter du istället (\"Flöde: mät det utifrån litrarna en servicekörning ger\"). Det ställer också in Zonens flöde, som är litrarna per minut som används för uppskattningen av vattenförbrukningen.",
         "data": {
           "emitters": "Antal droppare (eller spridare) i zonen",
           "emitter_flow": "Flöde per droppare",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Mät flödet efter volym",
-        "description": "Tryck på en av zonens Servicekörning-knappar (en längre körning, t.ex. 15 min, är mer exakt) och fånga upp eller läs av vattnet: en hink eller tunna vid munstyckena, eller skillnaden på en vattenmätare. Ange sedan minuterna ventilen var öppen, litrarna och ytan munstyckena blöter.\n\nResultatet är zonens GENOMSNITT: liter delat med yta och minuter, och det ersätter zonens Dropparflöde (kalibrering). ZoneFlow har ett flöde per zon och kan inte skilja på olika munstycken. För ett exakt resultat bör varje munstycke på en zons ventil vara av samma typ och flöde; placera olika munstycken på separata ventiler (separata zoner). I en blandad zon får växterna vid de svagare munstyckena mindre än det visade genomsnittet.",
+        "description": "Tryck på en av zonens Servicekörning-knappar (en längre körning, t.ex. 15 min, är mer exakt) och fånga upp eller läs av vattnet: en hink eller tunna vid munstyckena, eller skillnaden på en vattenmätare. Ange sedan minuterna ventilen var öppen, litrarna och ytan munstyckena blöter.\n\nResultatet är zonens GENOMSNITT: liter delat med yta och minuter, och det ersätter zonens Dropparflöde (kalibrering). ZoneFlow har ett flöde per zon och kan inte skilja på olika munstycken. För ett exakt resultat bör varje munstycke på en zons ventil vara av samma typ och flöde; placera olika munstycken på separata ventiler (separata zoner). I en blandad zon får växterna vid de svagare munstyckena mindre än det visade genomsnittet. Det ställer också in Zonens flöde, som är litrarna per minut som används för uppskattningen av vattenförbrukningen.",
         "data": {
           "minutes": "Minuter ventilen var öppen",
           "volume": "Vatten som kom ut",
@@ -487,6 +488,20 @@
           "volume": "Allt vatten som zonens munstycken gav under körningen (liter, eller gallons i US-enheter).",
           "area": "Ytan som faktiskt blir blöt. För droppspridare vid enskilda växter lägger du ihop de blöta fläckarna runt dem, inte hela rabatten."
         }
+      },
+      "zone_flow": {
+        "title": "Zonens flöde",
+        "description": "Zonens totala flöde, utifrån dess droppar. ZoneFlow multiplicerar det med ventilens öppna minuter för att uppskatta använda liter (visas som Använt vatten och under Senaste vattenmängd (uppskattad)). Det ändrar inte hur mycket eller när zonen vattnar; det styrs av Dropparflöde (kalibrering). Droppare anges vanligtvis per timme, spridare per minut. För den mest exakta siffran, mät det i stället: menyvalet om litrarna en servicekörning ger ställer också in detta.",
+        "data": {
+          "heads": "Antal droppare (droppare, spridare) på zonens ventil",
+          "head_flow": "Flöde för en droppare",
+          "head_flow_unit": "Per"
+        },
+        "data_description": {
+          "heads": "Räkna varje droppare som den här ventilen försörjer.",
+          "head_flow": "Vad en droppare ger, från dess förpackning eller munstyckstabell.",
+          "head_flow_unit": "Enheten flödet för en droppare anges i."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Mäter: ventilen går i cirka {minutes} minuter. Resultatet kommer som ett mobilmeddelande (eller i Home Assistants aviseringar om zonen saknar mobil) och ställs in automatiskt.",
       "zone_not_loaded": "Zonen körs inte just nu, så det här går inte att göra.",
       "zone_busy": "Zonen (eller dess pump) är upptagen, eller så är dagens säkerhetsgräns för körtid förbrukad. Försök igen senare.",
-      "flow_rate_disabled": "Zonens entitet Dropparflöde (kalibrering) är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen."
+      "flow_rate_disabled": "Zonens entitet Dropparflöde (kalibrering) är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen.",
+      "zone_flow_set": "Zonens flöde inställt till {flow}. Det används endast för uppskattningen av vattenförbrukningen.",
+      "zone_flow_out_of_range": "Det blir ett zonflöde utanför vad inställningen tillåter (0 till 2000 L/min). Kontrollera siffrorna."
     },
     "error": {
       "valve_already_used": "En annan ZoneFlow-zon använder redan denna ventil.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Auto-återgång efter"
+      },
+      "zone_flow_l_min": {
+        "name": "Zonens flöde"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Använt vatten, senaste 30 dagarna"
+      },
+      "water_used_year": {
+        "name": "Använt vatten i år"
+      },
+      "last_water_volume": {
+        "name": "Senaste vattenvolym"
       }
     },
     "select": {

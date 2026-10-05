@@ -255,6 +255,7 @@
           "settings": "Definições da zona (entidades, solo, horário…)",
           "flow_rate": "Fluxo: calcular a partir dos emissores",
           "flow_volume": "Fluxo: meça pelos litros fornecidos num ciclo de manutenção",
+          "zone_flow": "Fluxo da zona: litros por minuto a partir do número de emissores",
           "flow_measure": "Fluxo: medir com o medidor de fluxo",
           "greenhouse_devices": "Válvula, sensores e dispositivos de clima",
           "watering": "Definições de rega",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Fluxo dos emissores",
-        "description": "Quanta água os emissores da zona aplicam na área que molham. 1 litro em 1 m² equivale a 1 mm. Isto pressupõe que todos os emissores na válvula da zona forneçam o mesmo fluxo. Para gotejadores em plantas individuais, utilize a área ao redor delas que realmente fica molhada. O resultado substitui a Calibração do fluxo dos emissores da zona. Com emissores mistos, meça em vez disso («Fluxo: meça pelos litros fornecidos num ciclo de manutenção»).",
+        "description": "Quanta água os emissores da zona aplicam na área que molham. 1 litro em 1 m² equivale a 1 mm. Isto pressupõe que todos os emissores na válvula da zona forneçam o mesmo fluxo. Para gotejadores em plantas individuais, utilize a área ao redor delas que realmente fica molhada. O resultado substitui a Calibração do fluxo dos emissores da zona. Com emissores mistos, meça em vez disso («Fluxo: meça pelos litros fornecidos num ciclo de manutenção»). Também define o Fluxo da zona, os litros por minuto utilizados para a estimativa de uso de água.",
         "data": {
           "emitters": "Número de emissores (gotejadores, aspersores) na zona",
           "emitter_flow": "Fluxo de um emissor",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Medir o fluxo por volume",
-        "description": "Prima um dos botões Ciclo de manutenção da zona (um ciclo mais longo, como 15 min, é mais preciso) e recolha ou leia a água: um balde ou tambor nos emissores, ou a diferença num contador de água. Em seguida, introduza os minutos em que a válvula esteve aberta, os litros e a área que os emissores molham.\n\nO resultado é a MÉDIA da zona: litros divididos pela área e pelos minutos, e substitui a Calibração do fluxo dos emissores da zona. O ZoneFlow tem uma única taxa por zona, pelo que não consegue diferenciar os emissores. Para um resultado preciso, todos os emissores na válvula de uma zona devem ser do mesmo tipo e fluxo; coloque emissores diferentes em válvulas separadas (zonas separadas). Numa zona mista, as plantas nos emissores mais fracos recebem menos do que a média mostrada.",
+        "description": "Prima um dos botões Ciclo de manutenção da zona (um ciclo mais longo, como 15 min, é mais preciso) e recolha ou leia a água: um balde ou tambor nos emissores, ou a diferença num contador de água. Em seguida, introduza os minutos em que a válvula esteve aberta, os litros e a área que os emissores molham.\n\nO resultado é a MÉDIA da zona: litros divididos pela área e pelos minutos, e substitui a Calibração do fluxo dos emissores da zona. O ZoneFlow tem uma única taxa por zona, pelo que não consegue diferenciar os emissores. Para um resultado preciso, todos os emissores na válvula de uma zona devem ser do mesmo tipo e fluxo; coloque emissores diferentes em válvulas separadas (zonas separadas). Numa zona mista, as plantas nos emissores mais fracos recebem menos do que a média mostrada. Também define o Fluxo da zona, os litros por minuto utilizados para a estimativa de uso de água.",
         "data": {
           "minutes": "Minutos em que a válvula esteve aberta",
           "volume": "Água fornecida",
@@ -487,6 +488,20 @@
           "volume": "Toda a água fornecida pelos emissores da zona durante o ciclo (litros, ou galões em unidades US).",
           "area": "A área que realmente fica molhada. Para gotejadores em plantas individuais, some as manchas molhadas ao redor delas, não o canteiro inteiro."
         }
+      },
+      "zone_flow": {
+        "title": "Fluxo da zona",
+        "description": "O fluxo total da zona, a partir dos seus emissores. O ZoneFlow multiplica esse valor pelos minutos de abertura da válvula para estimar os litros utilizados (mostrados como Água utilizada e sob Última água aplicada (estimativa)). Isto não altera o quanto ou quando a zona irriga; isso é determinado pela Calibração do fluxo dos emissores. Os gotejadores são geralmente especificados por hora, e os aspersores por minuto. Para um valor mais preciso, meça-o: a opção do menu sobre os litros fornecidos num ciclo de manutenção também define este valor.",
+        "data": {
+          "heads": "Número de emissores (gotejadores, aspersores) na válvula da zona",
+          "head_flow": "Fluxo de um emissor",
+          "head_flow_unit": "Por"
+        },
+        "data_description": {
+          "heads": "Conte cada emissor alimentado por esta válvula.",
+          "head_flow": "O que um emissor fornece, conforme a embalagem ou tabela de bicos.",
+          "head_flow_unit": "A unidade em que o fluxo de um emissor é indicado."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Medição em curso: a válvula abre durante cerca de {minutes} minutos. O resultado chega por mensagem no telefone (ou nas notificações do Home Assistant, se a zona não tiver telefone definido) e é aplicado automaticamente.",
       "zone_not_loaded": "Esta zona não está ativa neste momento, por isso não é possível fazer isto.",
       "zone_busy": "A zona (ou a sua bomba) está ocupada, ou o limite de segurança diário já foi atingido. Tente mais tarde.",
-      "flow_rate_disabled": "A entidade Calibração do fluxo dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente."
+      "flow_rate_disabled": "A entidade Calibração do fluxo dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente.",
+      "zone_flow_set": "Fluxo da zona definido para {flow}. Utilizado apenas para a estimativa de uso de água.",
+      "zone_flow_out_of_range": "Isso resulta num fluxo de zona fora do permitido pela configuração (0 a 2000 L/min). Verifique os números."
     },
     "error": {
       "valve_already_used": "Outra zona ZoneFlow já usa esta válvula.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Retoma automática após"
+      },
+      "zone_flow_l_min": {
+        "name": "Fluxo da zona"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Estação {station}"
+      },
+      "water_used_30d": {
+        "name": "Água utilizada, últimos 30 dias"
+      },
+      "water_used_year": {
+        "name": "Água utilizada este ano"
+      },
+      "last_water_volume": {
+        "name": "Volume da última irrigação"
       }
     },
     "select": {

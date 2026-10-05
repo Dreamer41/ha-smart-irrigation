@@ -255,6 +255,7 @@
           "settings": "Zoneindstillinger (entiteter, jord, tidsplan…)",
           "flow_rate": "Flow: beregn det ud fra drypperne",
           "flow_volume": "Flow: mål den ud fra de liter, en servicekørsel giver",
+          "zone_flow": "Zonens flow: liter pr. minut fra antallet af dryppere",
           "flow_measure": "Flow: mål det med flowmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheder",
           "watering": "Vandingsindstillinger",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Dryppernes flow",
-        "description": "Hvor meget vand zonens dryppere/spredere giver på det område, de væder. 1 liter på 1 m² er 1 mm. Dette forudsætter, at alle dryppere/spredere på zonens ventil giver den samme gennemstrømning. For dryppere ved enkelte planter bruges det område omkring dem, der reelt bliver vådt. Resultatet erstatter zonens indstilling Dryppernes flow (kalibrering). Ved blandede dryppere/spredere måles der i stedet („Flow: mål den ud fra de liter, en servicekørsel giver“).",
+        "description": "Hvor meget vand zonens dryppere/spredere giver på det område, de væder. 1 liter på 1 m² er 1 mm. Dette forudsætter, at alle dryppere/spredere på zonens ventil giver den samme gennemstrømning. For dryppere ved enkelte planter bruges det område omkring dem, der reelt bliver vådt. Resultatet erstatter zonens indstilling Dryppernes flow (kalibrering). Ved blandede dryppere/spredere måles der i stedet („Flow: mål den ud fra de liter, en servicekørsel giver“). Det indstiller også Zonens flow, som er de liter pr. minut, der bruges til at skønne vandforbruget.",
         "data": {
           "emitters": "Antal dryppere og dyser i zonen",
           "emitter_flow": "Flow for én drypper",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Mål gennemstrømningen ud fra volumen",
-        "description": "Tryk på en af zonens Servicekørsel-knapper (en længere kørsel, f.eks. 15 min, er mere præcis) og opsaml eller aflæs vandet: en spand eller tønde ved drypperne/sprederne, eller forskellen på en vandmåler. Indtast derefter de minutter, ventilen var åben, antal liter og det område, drypperne/sprederne væder.\n\nResultatet er zonens GENNEMSNIT: liter divideret med areal og minutter, og det erstatter zonens indstilling Dryppernes flow (kalibrering). ZoneFlow har én gennemstrømning pr. zone, så den kan ikke skelne mellem dryppere/spredere. For at få et præcist resultat bør alle dryppere/spredere på en zones ventil være af samme type og gennemstrømning; placer forskellige dryppere/spredere på adskilte ventiler (adskilte zoner). I en blandet zone får planterne ved de svagere dryppere/spredere mindre end det viste gennemsnit.",
+        "description": "Tryk på en af zonens Servicekørsel-knapper (en længere kørsel, f.eks. 15 min, er mere præcis) og opsaml eller aflæs vandet: en spand eller tønde ved drypperne/sprederne, eller forskellen på en vandmåler. Indtast derefter de minutter, ventilen var åben, antal liter og det område, drypperne/sprederne væder.\n\nResultatet er zonens GENNEMSNIT: liter divideret med areal og minutter, og det erstatter zonens indstilling Dryppernes flow (kalibrering). ZoneFlow har én gennemstrømning pr. zone, så den kan ikke skelne mellem dryppere/spredere. For at få et præcist resultat bør alle dryppere/spredere på en zones ventil være af samme type og gennemstrømning; placer forskellige dryppere/spredere på adskilte ventiler (adskilte zoner). I en blandet zone får planterne ved de svagere dryppere/spredere mindre end det viste gennemsnit. Det indstiller også Zonens flow, som er de liter pr. minut, der bruges til at skønne vandforbruget.",
         "data": {
           "minutes": "Minutter ventilen var åben",
           "volume": "Vand der kom ud",
@@ -487,6 +488,20 @@
           "volume": "Alt det vand, zonens dryppere/spredere afgav under kørslen (liter, eller gallons i US-enheder).",
           "area": "Arealet, der reelt bliver vådt. For dryppere ved enkelte planter lægges de våde pletter omkring dem sammen, ikke hele bedet."
         }
+      },
+      "zone_flow": {
+        "title": "Zonens flow",
+        "description": "Zonens samlede flow, fra dens dryppere. ZoneFlow ganger det med ventilens åbningstid i minutter for at skønne de brugte liter (vist som Brugt vand og under Seneste vandmængde (skønnet)). Det ændrer ikke, hvor meget eller hvornår zonen vander; det styres af Dryppernes flow (kalibrering). Dryppere opgives normalt pr. time, sprinklere pr. minut. For at få det mest præcise tal kan du måle det i stedet: menupunktet om de liter, en servicekørsel giver, indstiller også dette.",
+        "data": {
+          "heads": "Antal dryppere (dryppere, sprinklere) på zonens ventil",
+          "head_flow": "Flow for én drypper",
+          "head_flow_unit": "Pr."
+        },
+        "data_description": {
+          "heads": "Tæl hver drypper, som denne ventil forsyner.",
+          "head_flow": "Hvad én drypper giver, fra emballagen eller dysetabellen.",
+          "head_flow_unit": "Enheden, som flowet for én drypper er opgivet i."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Måler: ventilen kører i ca. {minutes} minutter. Resultatet kommer som besked på telefonen (eller i Home Assistants notifikationer, hvis zonen ikke har et telefonmål) og indstilles automatisk.",
       "zone_not_loaded": "Zonen kører ikke lige nu, så det kan ikke lade sig gøre.",
       "zone_busy": "Zonen (eller dens pumpe) er optaget, eller dagens sikkerhedsgrænse for køretid er brugt op. Prøv igen senere.",
-      "flow_rate_disabled": "Zonens entitet Dryppernes flow (kalibrering) er deaktiveret. Aktivér den (zonens enhedsside → dens entiteter), og prøv igen."
+      "flow_rate_disabled": "Zonens entitet Dryppernes flow (kalibrering) er deaktiveret. Aktivér den (zonens enhedsside → dens entiteter), og prøv igen.",
+      "zone_flow_set": "Zonens flow er indstillet til {flow}. Det bruges kun til at skønne vandforbruget.",
+      "zone_flow_out_of_range": "Det giver et zoneflow uden for det tilladte område (0 til 2000 L/min). Kontroller tallene."
     },
     "error": {
       "valve_already_used": "En anden ZoneFlow-zone bruger allerede denne ventil.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Auto-genoptag efter"
+      },
+      "zone_flow_l_min": {
+        "name": "Zonens flow"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Brugt vand, seneste 30 dage"
+      },
+      "water_used_year": {
+        "name": "Brugt vand i år"
+      },
+      "last_water_volume": {
+        "name": "Seneste vandvolumen"
       }
     },
     "select": {

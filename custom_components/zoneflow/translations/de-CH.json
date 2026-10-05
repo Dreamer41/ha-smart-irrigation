@@ -255,6 +255,7 @@
           "settings": "Zoneneinstellungen (Entitäten, Boden, Zeitplan …)",
           "flow_rate": "Durchflussrate: aus den Tropfern berechnen",
           "flow_volume": "Durchflussrate: Gemessen an den Litern eines Wartungslaufs",
+          "zone_flow": "Zonendurchfluss: Liter pro Minute aus der Anzahl der Tropfer",
           "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen",
           "greenhouse_devices": "Ventil, Sensoren und Klimageräte",
           "watering": "Bewässerungseinstellungen",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Durchflussrate der Tropfer",
-        "description": "Wie viel Wasser die Tropfer/Sprüher der Zone auf die gewässerte Fläche abgeben. 1 Liter auf 1 m² entspricht 1 mm. Dies setzt voraus, dass jeder Tropfer/Sprüher am Ventil der Zone denselben Durchfluss liefert. Verwenden Sie bei Tropfern an Einzelpflanzen die Fläche um sie herum, die tatsächlich nass wird. Das Ergebnis ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone. Bei gemischten Tropfern/Sprühern messen Sie stattdessen („Durchflussrate: Gemessen an den Litern eines Wartungslaufs“).",
+        "description": "Wie viel Wasser die Tropfer/Sprüher der Zone auf die gewässerte Fläche abgeben. 1 Liter auf 1 m² entspricht 1 mm. Dies setzt voraus, dass jeder Tropfer/Sprüher am Ventil der Zone denselben Durchfluss liefert. Verwenden Sie bei Tropfern an Einzelpflanzen die Fläche um sie herum, die tatsächlich nass wird. Das Ergebnis ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone. Bei gemischten Tropfern/Sprühern messen Sie stattdessen („Durchflussrate: Gemessen an den Litern eines Wartungslaufs“). Es stellt auch den Zonendurchfluss ein, also die Liter pro Minute, die für die Wasserverbrauchsschätzung verwendet werden.",
         "data": {
           "emitters": "Anzahl Tropfer bzw. Sprüher in der Zone",
           "emitter_flow": "Durchfluss eines Tropfers",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Durchflussrate nach Volumen messen",
-        "description": "Drücken Sie eine der Wartungslauf-Tasten der Zone (ein längerer Lauf, z. B. 15 Min., ist genauer) und fangen Sie das Wasser auf oder lesen Sie es ab: ein Eimer oder Fass an den Tropfern/Sprühern oder die Differenz an einem Wasserzähler. Geben Sie dann die Minuten ein, die das Ventil geöffnet war, die Liter und die gewässerte Fläche.\n\nDas Ergebnis ist der DURCHSCHNITT der Zone: Liter geteilt durch Fläche und Minuten. Es ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone. ZoneFlow verwendet eine Rate pro Zone und kann Tropfer/Sprüher nicht unterscheiden. Für ein genaues Ergebnis sollte jeder Tropfer/Sprüher an einem Zonenventil vom gleichen Typ und Durchfluss sein; setzen Sie unterschiedliche Tropfer/Sprüher auf separate Ventile (separate Zonen). In einer gemischten Zone erhalten die Pflanzen an den schwächeren Tropfern/Sprühern weniger als den angezeigten Durchschnitt.",
+        "description": "Drücken Sie eine der Wartungslauf-Tasten der Zone (ein längerer Lauf, z. B. 15 Min., ist genauer) und fangen Sie das Wasser auf oder lesen Sie es ab: ein Eimer oder Fass an den Tropfern/Sprühern oder die Differenz an einem Wasserzähler. Geben Sie dann die Minuten ein, die das Ventil geöffnet war, die Liter und die gewässerte Fläche.\n\nDas Ergebnis ist der DURCHSCHNITT der Zone: Liter geteilt durch Fläche und Minuten. Es ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone. ZoneFlow verwendet eine Rate pro Zone und kann Tropfer/Sprüher nicht unterscheiden. Für ein genaues Ergebnis sollte jeder Tropfer/Sprüher an einem Zonenventil vom gleichen Typ und Durchfluss sein; setzen Sie unterschiedliche Tropfer/Sprüher auf separate Ventile (separate Zonen). In einer gemischten Zone erhalten die Pflanzen an den schwächeren Tropfern/Sprühern weniger als den angezeigten Durchschnitt. Es stellt auch den Zonendurchfluss ein, also die Liter pro Minute, die für die Wasserverbrauchsschätzung verwendet werden.",
         "data": {
           "minutes": "Minuten, die das Ventil geöffnet war",
           "volume": "Ausgetretenes Wasser",
@@ -487,6 +488,20 @@
           "volume": "Das gesamte Wasser, das die Tropfer/Sprüher der Zone während des Laufs abgegeben haben (Liter oder Gallonen in US-Einheiten).",
           "area": "Die Fläche, die tatsächlich nass wird. Addieren Sie bei Tropfern an Einzelpflanzen die nassen Stellen um sie herum, nicht das gesamte Beet."
         }
+      },
+      "zone_flow": {
+        "title": "Zonendurchfluss",
+        "description": "Der Gesamtdurchfluss der Zone, basierend auf ihren Tropfern. ZoneFlow multipliziert ihn mit den Öffnungsminuten des Ventils, um die verbrauchten Liter zu schätzen (angezeigt als Verbrauchtes Wasser und unter Letzte Wassermenge (geschätzt)). Dies ändert nicht, wie viel oder wann die Zone bewässert; dafür ist die Tropfer-Durchflussrate (Kalibrierung) zuständig. Tropfer werden meist pro Stunde angegeben, Sprinkler pro Minute. Für den genauesten Wert messen Sie ihn stattdessen: Der Menüeintrag über die Liter, die ein Wartungslauf liefert, stellt dies ebenfalls ein.",
+        "data": {
+          "heads": "Anzahl der Tropfer (Tropfer, Sprinkler) am Ventil der Zone",
+          "head_flow": "Durchfluss eines Tropfers",
+          "head_flow_unit": "Pro"
+        },
+        "data_description": {
+          "heads": "Zählen Sie jeden Tropfer mit, den dieses Ventil versorgt.",
+          "head_flow": "Was ein Tropfer liefert, laut Verpackung oder Düsentabelle.",
+          "head_flow_unit": "Die Einheit, in der der Durchfluss eines Tropfers angegeben ist."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Messung läuft: Das Ventil ist etwa {minutes} Minuten offen. Das Ergebnis kommt als Handy-Nachricht (oder in den Home Assistant-Benachrichtigungen, falls die Zone kein Handy-Ziel hat) und wird automatisch übernommen.",
       "zone_not_loaded": "Diese Zone läuft gerade nicht, daher geht das jetzt nicht.",
       "zone_busy": "Die Zone (oder ihre Pumpe) ist beschäftigt, oder das heutige Laufzeit-Sicherheitslimit ist ausgeschöpft. Versuche es später erneut.",
-      "flow_rate_disabled": "Die Entität „Tropfer-Durchflussrate (Kalibrierung)“ der Zone ist deaktiviert. Aktiviere sie (Geräteseite der Zone → Entitäten) und versuche es erneut."
+      "flow_rate_disabled": "Die Entität „Tropfer-Durchflussrate (Kalibrierung)“ der Zone ist deaktiviert. Aktiviere sie (Geräteseite der Zone → Entitäten) und versuche es erneut.",
+      "zone_flow_set": "Zonendurchfluss auf {flow} eingestellt. Er wird nur für die Wasserverbrauchsschätzung verwendet.",
+      "zone_flow_out_of_range": "Dies ergibt einen Zonendurchfluss außerhalb des zulässigen Bereichs (0 bis 2000 L/min). Überprüfen Sie die Zahlen."
     },
     "error": {
       "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Automatische Fortsetzung nach"
+      },
+      "zone_flow_l_min": {
+        "name": "Zonendurchfluss"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Verbrauchtes Wasser, letzte 30 Tage"
+      },
+      "water_used_year": {
+        "name": "Verbrauchtes Wasser in diesem Jahr"
+      },
+      "last_water_volume": {
+        "name": "Letztes Wasservolumen"
       }
     },
     "select": {

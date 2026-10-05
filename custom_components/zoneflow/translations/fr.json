@@ -255,6 +255,7 @@
           "settings": "Paramètres de la zone (entités, sol, programme…)",
           "flow_rate": "Débit : le calculer à partir des goutteurs",
           "flow_volume": "Débit : mesurez-le d'après les litres fournis par un cycle Maintenance",
+          "zone_flow": "Débit de zone : litres par minute selon le nombre de goutteurs",
           "flow_measure": "Débit : le mesurer avec le débitmètre",
           "greenhouse_devices": "Vanne, capteurs et appareils climatiques",
           "watering": "Paramètres d'arrosage",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Débit des goutteurs",
-        "description": "Quantité d'eau que les goutteurs/arroseurs de la zone apportent sur la surface qu'ils mouillent. 1 litre sur 1 m² équivaut à 1 mm. Ceci suppose que chaque goutteur/arroseur sur la vanne de la zone fournit le même débit. Pour les goutteurs sur des plantes isolées, utilisez la surface autour d'elles qui est réellement mouillée. Le résultat remplace le Étalonnage du débit des goutteurs de la zone. Avec des goutteurs/arroseurs mixtes, mesurez plutôt (« Débit : mesurez-le d'après les litres fournis par un cycle Maintenance »).",
+        "description": "Quantité d'eau que les goutteurs/arroseurs de la zone apportent sur la surface qu'ils mouillent. 1 litre sur 1 m² équivaut à 1 mm. Ceci suppose que chaque goutteur/arroseur sur la vanne de la zone fournit le même débit. Pour les goutteurs sur des plantes isolées, utilisez la surface autour d'elles qui est réellement mouillée. Le résultat remplace le Étalonnage du débit des goutteurs de la zone. Avec des goutteurs/arroseurs mixtes, mesurez plutôt (« Débit : mesurez-le d'après les litres fournis par un cycle Maintenance »). Cela définit également le Débit de zone, soit les litres par minute utilisés pour l'estimation de la consommation d'eau.",
         "data": {
           "emitters": "Nombre de goutteurs (ou diffuseurs) dans la zone",
           "emitter_flow": "Débit d'un goutteur",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Mesurer le débit par le volume",
-        "description": "Appuyez sur l'un des boutons Maintenance de la zone (une durée plus longue, comme 15 min, est plus précise) et recueillez ou lisez l'eau : un seau ou un tonneau sous les goutteurs/arroseurs, ou la différence sur un compteur d'eau. Saisissez ensuite les minutes pendant lesquelles la vanne a été ouverte, les litres et la surface mouillée par les goutteurs/arroseurs.\n\nLe résultat est la MOYENNE de la zone : les litres divisés par la surface et les minutes, et il remplace le Étalonnage du débit des goutteurs de la zone. ZoneFlow applique un seul débit par zone et ne peut donc pas distinguer les goutteurs/arroseurs entre eux. Pour un résultat précis, chaque goutteur/arroseur sur la vanne d'une zone doit être du même type et avoir le même débit ; placez les goutteurs/arroseurs différents sur des vannes séparées (zones séparées). Dans une zone mixte, les plantes situées sur les goutteurs/arroseurs les plus faibles reçoivent moins que la moyenne affichée.",
+        "description": "Appuyez sur l'un des boutons Maintenance de la zone (une durée plus longue, comme 15 min, est plus précise) et recueillez ou lisez l'eau : un seau ou un tonneau sous les goutteurs/arroseurs, ou la différence sur un compteur d'eau. Saisissez ensuite les minutes pendant lesquelles la vanne a été ouverte, les litres et la surface mouillée par les goutteurs/arroseurs.\n\nLe résultat est la MOYENNE de la zone : les litres divisés par la surface et les minutes, et il remplace le Étalonnage du débit des goutteurs de la zone. ZoneFlow applique un seul débit par zone et ne peut donc pas distinguer les goutteurs/arroseurs entre eux. Pour un résultat précis, chaque goutteur/arroseur sur la vanne d'une zone doit être du même type et avoir le même débit ; placez les goutteurs/arroseurs différents sur des vannes séparées (zones séparées). Dans une zone mixte, les plantes situées sur les goutteurs/arroseurs les plus faibles reçoivent moins que la moyenne affichée. Cela définit également le Débit de zone, soit les litres par minute utilisés pour l'estimation de la consommation d'eau.",
         "data": {
           "minutes": "Minutes pendant lesquelles la vanne a été ouverte",
           "volume": "Eau écoulée",
@@ -487,6 +488,20 @@
           "volume": "Toute l'eau fournie par les goutteurs/arroseurs de la zone pendant le cycle (en litres, ou en gallons pour les unités US).",
           "area": "La surface réellement mouillée. Pour les goutteurs sur des plantes isolées, additionnez les zones humides autour d'elles, pas l'ensemble de la plate-bande."
         }
+      },
+      "zone_flow": {
+        "title": "Débit de zone",
+        "description": "Le débit total de la zone, à partir de ses goutteurs. ZoneFlow le multiplie par les minutes d'ouverture de la vanne pour estimer les litres utilisés (affiché sous Eau utilisée et sous Dernier apport d'eau (estimé)). Cela ne change pas la quantité d'eau ni le moment où la zone arrose ; cela dépend de l'Étalonnage du débit des goutteurs. Les goutteurs sont généralement évalués par heure, les arroseurs par minute. Pour obtenir la valeur la plus précise, mesurez-la : l'entrée du menu sur les litres fournis par un cycle Maintenance définit également ceci.",
+        "data": {
+          "heads": "Nombre de goutteurs (goutteurs, arroseurs) sur la vanne de la zone",
+          "head_flow": "Débit d'un goutteur",
+          "head_flow_unit": "Par"
+        },
+        "data_description": {
+          "heads": "Comptez chaque goutteur alimenté par cette vanne.",
+          "head_flow": "Ce que fournit un goutteur, d'après son emballage ou la charte des buses.",
+          "head_flow_unit": "L'unité dans laquelle le débit d'un goutteur est donné."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Mesure en cours : la vanne s'ouvre pendant environ {minutes} minutes. Le résultat arrive par message sur le téléphone (ou dans les notifications de Home Assistant si la zone n'a pas de cible téléphone) et s'applique automatiquement.",
       "zone_not_loaded": "Cette zone ne fonctionne pas pour le moment, impossible de le faire.",
       "zone_busy": "La zone (ou sa pompe) est occupée, ou le plafond de sécurité du jour est atteint. Réessayez plus tard.",
-      "flow_rate_disabled": "L'entité Étalonnage du débit des goutteurs de la zone est désactivée. Activez-la (page de l'appareil de la zone → ses entités) et réessayez."
+      "flow_rate_disabled": "L'entité Étalonnage du débit des goutteurs de la zone est désactivée. Activez-la (page de l'appareil de la zone → ses entités) et réessayez.",
+      "zone_flow_set": "Débit de zone défini sur {flow}. Il est utilisé uniquement pour l'estimation de la consommation d'eau.",
+      "zone_flow_out_of_range": "Cela donne un débit de zone en dehors de la plage autorisée (0 à 2000 L/min). Vérifiez les chiffres."
     },
     "error": {
       "valve_already_used": "Une autre zone ZoneFlow utilise déjà cette vanne.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Reprise automatique après"
+      },
+      "zone_flow_l_min": {
+        "name": "Débit de zone"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Eau utilisée, 30 derniers jours"
+      },
+      "water_used_year": {
+        "name": "Eau utilisée cette année"
+      },
+      "last_water_volume": {
+        "name": "Volume du dernier arrosage"
       }
     },
     "select": {

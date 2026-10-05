@@ -255,6 +255,7 @@
           "settings": "Impostazioni della zona (entità, terreno, orari…)",
           "flow_rate": "Portata: calcolala dagli erogatori",
           "flow_volume": "Portata: misurala in base ai litri erogati da una Manutenzione",
+          "zone_flow": "Flusso di zona: litri al minuto dal numero di erogatori",
           "flow_measure": "Portata: misurala con il flussometro",
           "greenhouse_devices": "Valvola, sensori e dispositivi climatici",
           "watering": "Impostazioni di irrigazione",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Portata degli erogatori",
-        "description": "Quanta acqua i distributori della zona applicano sulla superficie che bagnano. 1 litro su 1 m² equivale a 1 mm. Si presuppone che ogni distributore sulla valvola della zona eroghi la stessa portata. Per i gocciolatori su singole piante, utilizza l'area circostante che viene effettivamente bagnata. Il risultato sostituisce la Taratura portata erogatori della zona. In caso di distributori misti, esegui invece una misurazione («Portata: misurala in base ai litri erogati da una Manutenzione»).",
+        "description": "Quanta acqua i distributori della zona applicano sulla superficie che bagnano. 1 litro su 1 m² equivale a 1 mm. Si presuppone che ogni distributore sulla valvola della zona eroghi la stessa portata. Per i gocciolatori su singole piante, utilizza l'area circostante che viene effettivamente bagnata. Il risultato sostituisce la Taratura portata erogatori della zona. In caso di distributori misti, esegui invece una misurazione («Portata: misurala in base ai litri erogati da una Manutenzione»). Imposta anche il Flusso di zona, ovvero i litri al minuto utilizzati per la stima dell'uso dell'acqua.",
         "data": {
           "emitters": "Numero di erogatori (gocciolatori, spruzzatori) nella zona",
           "emitter_flow": "Portata di un erogatore",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Misura la portata in base al volume",
-        "description": "Premi uno dei pulsanti Manutenzione della zona (un ciclo più lungo, come 15 min, è più preciso) e raccogli o leggi l'acqua: un secchio o barile sotto i distributori, oppure la differenza sul contatore dell'acqua. Inserisci quindi i minuti in cui la valvola è rimasta aperta, i litri e l'area bagnata dai distributori.\n\nIl risultato è la MEDIA della zona: litri divisi per area e minuti, e sostituisce la Taratura portata erogatori della zona. ZoneFlow utilizza un'unica portata per zona, quindi non può distinguere tra i diversi distributori. Per un risultato preciso, tutti i distributori sulla valvola di una zona dovrebbero essere dello stesso tipo e portata; posiziona distributori diversi su valvole separate (zone separate). In una zona mista, le piante servite dai distributori più deboli riceveranno meno della media mostrata.",
+        "description": "Premi uno dei pulsanti Manutenzione della zona (un ciclo più lungo, come 15 min, è più preciso) e raccogli o leggi l'acqua: un secchio o barile sotto i distributori, oppure la differenza sul contatore dell'acqua. Inserisci quindi i minuti in cui la valvola è rimasta aperta, i litri e l'area bagnata dai distributori.\n\nIl risultato è la MEDIA della zona: litri divisi per area e minuti, e sostituisce la Taratura portata erogatori della zona. ZoneFlow utilizza un'unica portata per zona, quindi non può distinguere tra i diversi distributori. Per un risultato preciso, tutti i distributori sulla valvola di una zona dovrebbero essere dello stesso tipo e portata; posiziona distributori diversi su valvole separate (zone separate). In una zona mista, le piante servite dai distributori più deboli riceveranno meno della media mostrata. Imposta anche il Flusso di zona, ovvero i litri al minuto utilizzati per la stima dell'uso dell'acqua.",
         "data": {
           "minutes": "Minuti in cui la valvola è rimasta aperta",
           "volume": "Acqua erogata",
@@ -487,6 +488,20 @@
           "volume": "Tutta l'acqua erogata dai distributori della zona durante il ciclo (in litri, o galloni nelle unità US).",
           "area": "L'area che viene effettivamente bagnata. Per i gocciolatori su singole piante, somma le chiazze bagnate attorno ad esse, non l'intera aiuola."
         }
+      },
+      "zone_flow": {
+        "title": "Flusso di zona",
+        "description": "Il flusso totale della zona, dai suoi erogatori. ZoneFlow lo moltiplica per i minuti di apertura della valvola per stimare i litri utilizzati (mostrati come Acqua utilizzata e sotto Ultima acqua erogata (stima)). Non modifica la quantità d'acqua né il momento in cui la zona irriga; quello è determinato dalla Taratura portata erogatori. I gocciolatori sono solitamente valutati all'ora, gli irrigatori al minuto. Per un valore più preciso, misuralo: la voce di menu sui litri erogati da una Manutenzione imposta anche questo.",
+        "data": {
+          "heads": "Numero di erogatori (gocciolatori, irrigatori) sulla valvola della zona",
+          "head_flow": "Flusso di un erogatore",
+          "head_flow_unit": "Per"
+        },
+        "data_description": {
+          "heads": "Conta ogni erogatore alimentato da questa valvola.",
+          "head_flow": "Quanto eroga un erogatore, dalla confezione o dalla tabella degli ugelli.",
+          "head_flow_unit": "L'unità in cui viene espresso il flusso di un erogatore."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Misurazione in corso: la valvola resta aperta per circa {minutes} minuti. Il risultato arriva come messaggio sul telefono (o nelle notifiche di Home Assistant se la zona non ha un telefono impostato) e viene impostato automaticamente.",
       "zone_not_loaded": "Questa zona non è attiva in questo momento, quindi non è possibile farlo.",
       "zone_busy": "La zona (o la sua pompa) è occupata, oppure il limite di sicurezza giornaliero è esaurito. Riprova più tardi.",
-      "flow_rate_disabled": "L'entità Taratura portata erogatori della zona è disabilitata. Abilitala (pagina del dispositivo della zona → le sue entità) e riprova."
+      "flow_rate_disabled": "L'entità Taratura portata erogatori della zona è disabilitata. Abilitala (pagina del dispositivo della zona → le sue entità) e riprova.",
+      "zone_flow_set": "Flusso di zona impostato a {flow}. Viene utilizzato solo per la stima dell'uso dell'acqua.",
+      "zone_flow_out_of_range": "Questo comporta un flusso di zona al di fuori di quanto consentito dall'impostazione (da 0 a 2000 L/min). Controlla i numeri."
     },
     "error": {
       "valve_already_used": "Un'altra zona ZoneFlow usa già questa valvola.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Ripristino automatico dopo"
+      },
+      "zone_flow_l_min": {
+        "name": "Flusso di zona"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Stazione {station}"
+      },
+      "water_used_30d": {
+        "name": "Acqua utilizzata, ultimi 30 giorni"
+      },
+      "water_used_year": {
+        "name": "Acqua utilizzata quest'anno"
+      },
+      "last_water_volume": {
+        "name": "Volume dell'ultima irrigazione"
       }
     },
     "select": {

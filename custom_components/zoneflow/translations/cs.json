@@ -255,6 +255,7 @@
           "settings": "Nastavení zóny (entity, půda, plán…)",
           "flow_rate": "Průtok: vypočítat z emitorů",
           "flow_volume": "Průtok: změřte jej podle litrů vydaných při servisním běhu",
+          "zone_flow": "Průtok zóny: litry za minutu podle počtu emitorů",
           "flow_measure": "Průtok: změřit průtokoměrem",
           "greenhouse_devices": "Ventil, snímače a klimatická zařízení",
           "watering": "Nastavení zavlažování",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Průtok emitorů",
-        "description": "Kolik vody dodají emitory zóny na plochu, kterou zavlažují. 1 litr na 1 m² je 1 mm. Předpokládá se, že každý emitor na ventilu zóny má stejný průtok. U kapkovačů u jednotlivých rostlin použijte plochu kolem nich, která se skutečně zavlaží. Výsledek nahradí Kalibraci průtoku emitorů zóny. U smíšených emitorů provádějte raději měření („Průtok: změřte jej podle litrů vydaných při servisním běhu“).",
+        "description": "Kolik vody dodají emitory zóny na plochu, kterou zavlažují. 1 litr na 1 m² je 1 mm. Předpokládá se, že každý emitor na ventilu zóny má stejný průtok. U kapkovačů u jednotlivých rostlin použijte plochu kolem nich, která se skutečně zavlaží. Výsledek nahradí Kalibraci průtoku emitorů zóny. U smíšených emitorů provádějte raději měření („Průtok: změřte jej podle litrů vydaných při servisním běhu“). Nastavuje také Průtok zóny, což jsou litry za minutu použité pro odhad spotřeby vody.",
         "data": {
           "emitters": "Počet emitorů (kapkovačů, rozstřikovačů) v zóně",
           "emitter_flow": "Průtok jednoho emitoru",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Změřte průtok podle objemu",
-        "description": "Stiskněte jedno z tlačítek Servisní běh pro zónu (delší běh, například 15 min, je přesnější) a zachyťte nebo odečtěte vodu: kbelík nebo sud pod emitory, případně rozdíl na vodoměru. Poté zadejte minuty, po které byl ventil otevřený, litry a plochu, kterou emitory zavlažují.\n\nVýsledkem je PRŮMĚR zóny: litry dělené plochou a minutami, a tento výsledek nahradí Kalibraci průtoku emitorů zóny. ZoneFlow používá pro každou zónu pouze jeden průtok, takže nemůže rozlišovat jednotlivé emitory. Pro přesný výsledek by měl být každý emitor na ventilu zóny stejného typu a průtoku; různé emitory umístěte na samostatné ventily (samostatné zóny). Ve smíšené zóně dostanou rostliny u slabších emitorů méně než zobrazený průměr.",
+        "description": "Stiskněte jedno z tlačítek Servisní běh pro zónu (delší běh, například 15 min, je přesnější) a zachyťte nebo odečtěte vodu: kbelík nebo sud pod emitory, případně rozdíl na vodoměru. Poté zadejte minuty, po které byl ventil otevřený, litry a plochu, kterou emitory zavlažují.\n\nVýsledkem je PRŮMĚR zóny: litry dělené plochou a minutami, a tento výsledek nahradí Kalibraci průtoku emitorů zóny. ZoneFlow používá pro každou zónu pouze jeden průtok, takže nemůže rozlišovat jednotlivé emitory. Pro přesný výsledek by měl být každý emitor na ventilu zóny stejného typu a průtoku; různé emitory umístěte na samostatné ventily (samostatné zóny). Ve smíšené zóně dostanou rostliny u slabších emitorů méně než zobrazený průměr. Nastavuje také Průtok zóny, což jsou litry za minutu použité pro odhad spotřeby vody.",
         "data": {
           "minutes": "Minuty, po které byl ventil otevřený",
           "volume": "Voda, která vytekla",
@@ -487,6 +488,20 @@
           "volume": "Veškerá voda, kterou emitory zóny během běhu vydaly (v litrech, nebo galonech v amerických jednotkách).",
           "area": "Plocha, která se skutečně zavlaží. U kapkovačů u jednotlivých rostlin sečtěte vlhká místa kolem nich, nikoli celý záhon."
         }
+      },
+      "zone_flow": {
+        "title": "Průtok zóny",
+        "description": "Celkový průtok zóny na základě jejích emitorů. ZoneFlow jej vynásobí minutami otevření ventilu a odhadne spotřebované litry (zobrazeno jako Spotřebovaná voda a pod položkou Voda při poslední zálivce (odhad)). Nemění to, kolik nebo kdy zóna zavlažuje; to určuje Kalibrace průtoku emitorů. Kapkovače se obvykle uvádějí za hodinu, rozstřikovače za minutu. Přesnější hodnotu získáte měřením: položka nabídky o litrech vydaných při servisním běhu nastavuje také tuto hodnotu.",
+        "data": {
+          "heads": "Počet emitorů (kapkovače, rozstřikovače) na ventilu zóny",
+          "head_flow": "Průtok jednoho emitoru",
+          "head_flow_unit": "Za"
+        },
+        "data_description": {
+          "heads": "Spočítejte každý emitor, který tento ventil napájí.",
+          "head_flow": "Kolik jeden emitor dává, z obalu nebo tabulky trusek.",
+          "head_flow_unit": "Jednotka, ve které je uveden průtok jednoho emitoru."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Probíhá měření: ventil poběží asi {minutes} min. Výsledek přijde zprávou na telefon (nebo do oznámení Home Assistant, pokud zóna nemá cíl na telefonu) a nastaví se automaticky.",
       "zone_not_loaded": "Tato zóna teď neběží, takže to nelze provést.",
       "zone_busy": "Zóna (nebo její čerpadlo) je zaneprázdněná, nebo je dnešní bezpečnostní limit doby vyčerpán. Zkuste to později.",
-      "flow_rate_disabled": "Entita Kalibrace průtoku emitorů této zóny je zakázaná. Povolte ji (stránka zařízení zóny → její entity) a zkuste to znovu."
+      "flow_rate_disabled": "Entita Kalibrace průtoku emitorů této zóny je zakázaná. Povolte ji (stránka zařízení zóny → její entity) a zkuste to znovu.",
+      "zone_flow_set": "Průtok zóny nastaven na {flow}. Používá se pouze pro odhad spotřeby vody.",
+      "zone_flow_out_of_range": "Výsledek je mimo rozsah povolený nastavením (0 až 2000 L/min). Zkontrolujte čísla."
     },
     "error": {
       "valve_already_used": "Jiná zóna ZoneFlow už tento ventil používá.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Zpoždění automatického návratu"
+      },
+      "zone_flow_l_min": {
+        "name": "Průtok zóny"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Stanice {station}"
+      },
+      "water_used_30d": {
+        "name": "Spotřebovaná voda za posledních 30 dní"
+      },
+      "water_used_year": {
+        "name": "Spotřebovaná voda tento rok"
+      },
+      "last_water_volume": {
+        "name": "Objem poslední zálivky"
       }
     },
     "select": {

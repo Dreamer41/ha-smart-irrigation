@@ -255,6 +255,7 @@
           "settings": "Ustawienia strefy (encje, gleba, harmonogram…)",
           "flow_rate": "Wydajność: oblicz na podstawie emiterów",
           "flow_volume": "Wydajność: zmierz go na podstawie litrów podanych podczas uruchomienia serwisowego",
+          "zone_flow": "Przepływ w strefie: litry na minutę na podstawie liczby emiterów",
           "flow_measure": "Wydajność: zmierz przepływomierzem",
           "greenhouse_devices": "Zawór, czujniki i urządzenia klimatyzacyjne",
           "watering": "Ustawienia podawania wody",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Wydajność emiterów",
-        "description": "Ile wody emitery w strefie podają na obszar, który zwilżają. 1 litr na 1 m² to 1 mm. Zakłada to, że każdy emiter na zaworze strefy zapewnia taki sam przepływ. W przypadku kroplowników przy pojedynczych roślinach użyj obszaru wokół nich, który rzeczywiście ulega zwilżeniu. Wynik zastępuje Kalibrację wydajności emiterów strefy. Przy mieszanych emiterach zmierz przepływ bezpośrednio („Wydajność: zmierz go na podstawie litrów podanych podczas uruchomienia serwisowego”).",
+        "description": "Ile wody emitery w strefie podają na obszar, który zwilżają. 1 litr na 1 m² to 1 mm. Zakłada to, że każdy emiter na zaworze strefy zapewnia taki sam przepływ. W przypadku kroplowników przy pojedynczych roślinach użyj obszaru wokół nich, który rzeczywiście ulega zwilżeniu. Wynik zastępuje Kalibrację wydajności emiterów strefy. Przy mieszanych emiterach zmierz przepływ bezpośrednio („Wydajność: zmierz go na podstawie litrów podanych podczas uruchomienia serwisowego”). Ustawia również Przepływ w strefie, czyli litry na minutę używane do szacowania zużycia wody.",
         "data": {
           "emitters": "Liczba emiterów (kroplowników, zraszaczy) w strefie",
           "emitter_flow": "Wydajność jednego emitera",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Zmierz przepływ na podstawie objętości",
-        "description": "Naciśnij jeden z przycisków Uruchom serwisowo dla strefy (dłuższy bieg, np. 15 min, jest dokładniejszy) i złap lub odczytaj wodę: wiadro lub beczkę pod emiterami albo różnicę na wodomierzu. Następnie wprowadź czas w minutach, przez który zawór był otwarty, liczbę litrów oraz obszar zwilżany przez emitery.\n\nWynikiem jest ŚREDNIA dla strefy: litry podzielone przez obszar i minuty, i zastępuje on Kalibrację wydajności emiterów strefy. ZoneFlow używa jednej wartości przepływu dla strefy, więc nie rozróżnia poszczególnych emiterów. Aby uzyskać dokładny wynik, każdy emiter na zaworze strefy powinien być tego samego typu i mieć taki sam przepływ; umieść różne emitery na osobnych zaworach (osobne strefy). W strefie mieszanej rośliny przy słabszych emiterach otrzymają mniej niż wyświetlana średnia.",
+        "description": "Naciśnij jeden z przycisków Uruchom serwisowo dla strefy (dłuższy bieg, np. 15 min, jest dokładniejszy) i złap lub odczytaj wodę: wiadro lub beczkę pod emiterami albo różnicę na wodomierzu. Następnie wprowadź czas w minutach, przez który zawór był otwarty, liczbę litrów oraz obszar zwilżany przez emitery.\n\nWynikiem jest ŚREDNIA dla strefy: litry podzielone przez obszar i minuty, i zastępuje on Kalibrację wydajności emiterów strefy. ZoneFlow używa jednej wartości przepływu dla strefy, więc nie rozróżnia poszczególnych emiterów. Aby uzyskać dokładny wynik, każdy emiter na zaworze strefy powinien być tego samego typu i mieć taki sam przepływ; umieść różne emitery na osobnych zaworach (osobne strefy). W strefie mieszanej rośliny przy słabszych emiterach otrzymają mniej niż wyświetlana średnia. Ustawia również Przepływ w strefie, czyli litry na minutę używane do szacowania zużycia wody.",
         "data": {
           "minutes": "Minuty, przez które zawór był otwarty",
           "volume": "Woda, która wypłynęła",
@@ -487,6 +488,20 @@
           "volume": "Cała woda podana przez emitery strefy podczas uruchomienia (w litrach lub galonach w jednostkach US).",
           "area": "Obszar, który rzeczywiście ulega zwilżeniu. W przypadku kroplowników przy pojedynczych roślinach zsumuj wilgotne plamy wokół nich, a nie całą grządkę."
         }
+      },
+      "zone_flow": {
+        "title": "Przepływ w strefie",
+        "description": "Całkowity przepływ w strefie, na podstawie jej emiterów. ZoneFlow mnoży go przez minuty otwarcia zaworu, aby oszacować zużyte litry (wyświetlane jako Zużyta woda i pod Ostatnia dawka wody (szacowana)). Nie zmienia to ilości ani czasu podawania wody w strefie; za to odpowiada Kalibracja wydajności emiterów. Kroplowniki są zwykle podawane w przeliczeniu na godzinę, a zraszacze na minutę. Aby uzyskać najdokładniejszy wynik, zmierz go bezpośrednio: opcja menu dotycząca litrów podanych podczas uruchomienia serwisowego również ustawia tę wartość.",
+        "data": {
+          "heads": "Liczba emiterów (kroplowniki, zraszacze) na zaworze strefy",
+          "head_flow": "Przepływ jednego emitera",
+          "head_flow_unit": "Na"
+        },
+        "data_description": {
+          "heads": "Policz każdy emiter zasilany przez ten zawór.",
+          "head_flow": "Ile daje jeden emiter, z jego opakowania lub tabeli dysz.",
+          "head_flow_unit": "Jednostka, w której podany jest przepływ jednego emitera."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Pomiar: zawór będzie otwarty ok. {minutes} min. Wynik przyjdzie jako wiadomość na telefon (albo w powiadomieniach Home Assistant, jeśli strefa nie ma celu powiadomień) i zostanie ustawiony automatycznie.",
       "zone_not_loaded": "Ta strefa w tej chwili nie działa, więc nie można tego zrobić.",
       "zone_busy": "Strefa (lub jej pompa) jest zajęta albo dzisiejszy limit czasu pracy został wyczerpany. Spróbuj później.",
-      "flow_rate_disabled": "Encja „Kalibracja wydajności emiterów” tej strefy jest wyłączona. Włącz ją (strona urządzenia strefy → encje) i spróbuj ponownie."
+      "flow_rate_disabled": "Encja „Kalibracja wydajności emiterów” tej strefy jest wyłączona. Włącz ją (strona urządzenia strefy → encje) i spróbuj ponownie.",
+      "zone_flow_set": "Przepływ w strefie ustawiony na {flow}. Jest używany wyłącznie do szacowania zużycia wody.",
+      "zone_flow_out_of_range": "Daje to przepływ w strefie spoza zakresu dozwolonego w ustawieniach (od 0 do 2000 L/min). Sprawdź liczby."
     },
     "error": {
       "valve_already_used": "Inna strefa ZoneFlow już korzysta z tego zaworu.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Czas automatycznego wznowienia"
+      },
+      "zone_flow_l_min": {
+        "name": "Przepływ w strefie"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Stacja {station}"
+      },
+      "water_used_30d": {
+        "name": "Zużyta woda, ostatnie 30 dni"
+      },
+      "water_used_year": {
+        "name": "Zużyta woda w tym roku"
+      },
+      "last_water_volume": {
+        "name": "Objętość ostatniego podania wody"
       }
     },
     "select": {

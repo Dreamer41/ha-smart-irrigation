@@ -255,6 +255,7 @@
           "settings": "Zone-instellingen (entiteiten, grond, schema…)",
           "flow_rate": "Debiet: berekenen uit de druppelaars",
           "flow_volume": "Debiet: meet het aan de hand van de liters die een proefdraaien geeft",
+          "zone_flow": "Zonedebiet: liters per minuut op basis van het aantal druppelaars",
           "flow_measure": "Debiet: meten met de watermeter",
           "greenhouse_devices": "Klep, sensoren en klimaatapparaten",
           "watering": "Bewateringsinstellingen",
@@ -318,7 +319,7 @@
       },
       "flow_rate": {
         "title": "Debiet druppelaars",
-        "description": "Hoeveel water de druppelaars/sproeiers van de zone afgeven op het oppervlak dat ze natmaken. 1 liter op 1 m² is 1 mm. Dit gaat er van uit dat elke druppelaar/sproeier op de klep van de zone hetzelfde debiet geeft. Gebruik voor druppelaars bij losse planten het oppervlak eromheen dat daadwerkelijk nat wordt. Het resultaat vervangt de Kalibratie debiet druppelaars. Meet bij gemengde druppelaars/sproeiers in plaats daarvan («Debiet: meet het aan de hand van de liters die een proefdraaien geeft»).",
+        "description": "Hoeveel water de druppelaars/sproeiers van de zone afgeven op het oppervlak dat ze natmaken. 1 liter op 1 m² is 1 mm. Dit gaat er van uit dat elke druppelaar/sproeier op de klep van de zone hetzelfde debiet geeft. Gebruik voor druppelaars bij losse planten het oppervlak eromheen dat daadwerkelijk nat wordt. Het resultaat vervangt de Kalibratie debiet druppelaars. Meet bij gemengde druppelaars/sproeiers in plaats daarvan («Debiet: meet het aan de hand van de liters die een proefdraaien geeft»). Het stelt ook het Zonedebiet in, de liters per minuut die worden gebruikt voor de schatting van het waterverbruik.",
         "data": {
           "emitters": "Aantal druppelaars (of sproeiers) in de zone",
           "emitter_flow": "Debiet van één druppelaar",
@@ -476,7 +477,7 @@
       },
       "flow_volume": {
         "title": "Meet het debiet op basis van volume",
-        "description": "Druk op een van de Proefdraaien-knoppen van de zone (een langere run, zoals 15 min, is nauwkeuriger) en vang het water op of lees het af: een emmer of ton bij de druppelaars/sproeiers, of het verschil op een watermeter. Voer vervolgens de minuten in dat de klep open stond, de liters en het oppervlak dat de druppelaars/sproeiers natmaken.\n\nHet resultaat is het GEMIDDELDE van de zone: liters gedeeld door oppervlak en minuten, en het vervangt de Kalibratie debiet druppelaars. ZoneFlow gebruikt één debiet per zone en kan geen onderscheid maken tussen druppelaars/sproeiers. Voor een nauwkeurig resultaat moet elke druppelaar/sproeier op de klep van een zone van hetzelfde type en debiet zijn; plaats verschillende druppelaars/sproeiers op aparte kleppen (aparte zones). In een gemengde zone krijgen de planten bij de zwakkere druppelaars/sproeiers minder dan het getoonde gemiddelde.",
+        "description": "Druk op een van de Proefdraaien-knoppen van de zone (een langere run, zoals 15 min, is nauwkeuriger) en vang het water op of lees het af: een emmer of ton bij de druppelaars/sproeiers, of het verschil op een watermeter. Voer vervolgens de minuten in dat de klep open stond, de liters en het oppervlak dat de druppelaars/sproeiers natmaken.\n\nHet resultaat is het GEMIDDELDE van de zone: liters gedeeld door oppervlak en minuten, en het vervangt de Kalibratie debiet druppelaars. ZoneFlow gebruikt één debiet per zone en kan geen onderscheid maken tussen druppelaars/sproeiers. Voor een nauwkeurig resultaat moet elke druppelaar/sproeier op de klep van een zone van hetzelfde type en debiet zijn; plaats verschillende druppelaars/sproeiers op aparte kleppen (aparte zones). In een gemengde zone krijgen de planten bij de zwakkere druppelaars/sproeiers minder dan het getoonde gemiddelde. Het stelt ook het Zonedebiet in, de liters per minuut die worden gebruikt voor de schatting van het waterverbruik.",
         "data": {
           "minutes": "Minuten dat de klep open stond",
           "volume": "Water dat eruit is gekomen",
@@ -487,6 +488,20 @@
           "volume": "Al het water dat de druppelaars/sproeiers van de zone tijdens de run hebben afgegeven (liters, of gallons in US-eenheden).",
           "area": "Het oppervlak dat daadwerkelijk nat wordt. Tel bij druppelaars bij losse planten de natte plekken eromheen bij elkaar op, niet het hele bed."
         }
+      },
+      "zone_flow": {
+        "title": "Zonedebiet",
+        "description": "Het totale debiet van de zone, op basis van de druppelaars. ZoneFlow vermenigvuldigt dit met de minuten dat de klep open staat om de gebruikte liters te schatten (getoond als Gebruikt water en onder Laatst gegeven water (schatting)). Het verandert niets aan hoeveel of wanneer de zone sproeit; dat wordt bepaald door de Kalibratie debiet druppelaars. Druppelaars worden meestal per uur vermeld, sproeiers per minuut. Voor het meest nauwkeurige getal meet u het in plaats daarvan: de optie in het menu over de liters die het proefdraaien geeft, stelt dit ook in.",
+        "data": {
+          "heads": "Aantal druppelaars (druppelaars, sproeiers) op de klep van de zone",
+          "head_flow": "Debiet van één druppelaar",
+          "head_flow_unit": "Per"
+        },
+        "data_description": {
+          "heads": "Tel elke druppelaar mee die door deze klep wordt gevoed.",
+          "head_flow": "Wat één druppelaar geeft, volgens de verpakking of sproeiertabel.",
+          "head_flow_unit": "De eenheid waarin het debiet van één druppelaar wordt vermeld."
+        }
       }
     },
     "abort": {
@@ -495,7 +510,9 @@
       "measuring": "Bezig met meten: de klep staat ongeveer {minutes} minuten open. De uitkomst komt als telefoonmelding (of bij de meldingen van Home Assistant als de zone geen telefoon heeft) en wordt automatisch ingesteld.",
       "zone_not_loaded": "Deze zone draait nu niet, dus dit kan niet.",
       "zone_busy": "De zone (of de pomp) is bezig, of de dagelijkse veiligheidslimiet is op. Probeer het later opnieuw.",
-      "flow_rate_disabled": "De entiteit Kalibratie debiet druppelaars van de zone is uitgeschakeld. Schakel hem in (apparaatpagina van de zone → entiteiten) en probeer het opnieuw."
+      "flow_rate_disabled": "De entiteit Kalibratie debiet druppelaars van de zone is uitgeschakeld. Schakel hem in (apparaatpagina van de zone → entiteiten) en probeer het opnieuw.",
+      "zone_flow_set": "Zonedebiet ingesteld op {flow}. Het wordt alleen gebruikt voor de schatting van het waterverbruik.",
+      "zone_flow_out_of_range": "Dat komt uit op een zonedebiet dat buiten de toegestane instelling valt (0 tot 2000 L/min). Controleer de getallen."
     },
     "error": {
       "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Automatisch hervatten na"
+      },
+      "zone_flow_l_min": {
+        "name": "Zonedebiet"
       }
     },
     "datetime": {
@@ -984,6 +1004,15 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Gebruikt water, afgelopen 30 dagen"
+      },
+      "water_used_year": {
+        "name": "Gebruikt water dit jaar"
+      },
+      "last_water_volume": {
+        "name": "Laatste watervolume"
       }
     },
     "select": {
