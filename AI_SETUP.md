@@ -1957,7 +1957,9 @@ together; ask whether crops on separate supplies should clear it.
   Control of its own (hidden); its Configure menu has only its valve and the
   watering settings.
 - A greenhouse with crops can't be changed to an outdoor zone; deleting a
-  greenhouse leaves its crops working on their own, with Repairs saying so.
+  greenhouse leaves its crops working on their own, with Repairs saying so,
+  and switches off its fans, misters and heater and closes its vents (a
+  reload or restart leaves the devices alone).
 - The greenhouse's card lists its crops (status, next watering, Water now;
   tap one for its full card), a crop's card says which greenhouse it is in,
   the overview card lists crops under their greenhouse, Settings -> Devices

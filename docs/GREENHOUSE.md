@@ -60,7 +60,9 @@ crops use its inside sensors.
   to make a crop a zone on its own again.
 - A greenhouse with crops can't be changed to an outdoor zone. If a
   greenhouse is deleted, its crops keep working on their own (with a copy of
-  its inside sensors), and Repairs says so.
+  its inside sensors), and Repairs says so. Deleting a greenhouse also
+  switches off its fans, misters and heater and closes its vents, since
+  nothing controls them any more (a reload or restart leaves them alone).
 
 ## Set it up
 

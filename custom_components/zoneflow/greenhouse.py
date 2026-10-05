@@ -37,6 +37,7 @@ import homeassistant.util.dt as dt_util
 from . import actuators, greenhouse_logic as gl, issues, messages, units
 from .const import (
     CONF_CLIMATE,
+    DEVICE_ROLE_KEYS,
     DOMAIN,
     GREENHOUSE_CONFIRM_SECONDS,
     GREENHOUSE_EVAL_SECONDS,
@@ -76,6 +77,20 @@ ISSUE_DEVICE = "greenhouse_device"
 ISSUE_MIST_HALTED = "greenhouse_mist_halted"
 ISSUE_ON_BACKUP = "greenhouse_on_backup_sensor"
 ISSUE_MISMATCH = "greenhouse_sensor_mismatch"
+
+
+async def async_release_devices(hass: HomeAssistant, entry) -> None:
+    """A greenhouse zone was deleted: nothing controls its devices any more,
+    so they are switched off (vents closed) rather than left running. Only on
+    deletion -- a reload or a restart leaves the devices alone. A device that
+    won't answer is skipped (and logged)."""
+    data = {**entry.data, **entry.options}
+    for role_key in DEVICE_ROLE_KEYS:
+        for entity_id in data.get(role_key) or []:
+            try:
+                await actuators.async_set(hass, entity_id, False)
+            except Exception as err:  # noqa: BLE001 -- one stubborn device must not stop the rest
+                _LOGGER.warning("ZoneFlow: could not switch off %s after its zone was deleted: %s", entity_id, err)
 
 
 class GreenhouseManager:

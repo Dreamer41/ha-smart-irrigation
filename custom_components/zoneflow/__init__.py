@@ -14,7 +14,8 @@ from homeassistant.helpers import issue_registry as ir
 import homeassistant.util.dt as dt_util
 
 from . import frontend, issues, summary, units, visibility
-from .const import CONF_ENTRY_TYPE, CONF_PARENT_ZONE, CROP_INHERITED_KEYS, DOMAIN, ENTRY_TYPE_WU, PLATFORMS, WU_DATA_KEY
+from . import greenhouse as greenhouse_module
+from .const import CONF_ENTRY_TYPE, CONF_PARENT_ZONE, CONF_ZONE_TYPE, CROP_INHERITED_KEYS, DOMAIN, ENTRY_TYPE_WU, PLATFORMS, WU_DATA_KEY
 from .controller import ZoneFlowController
 
 SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
@@ -322,6 +323,8 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
         return
     issues.async_remove(hass, entry.entry_id)
     _release_crops(hass, entry)
+    if entry.data.get(CONF_ZONE_TYPE, "outdoor") != "outdoor":
+        await greenhouse_module.async_release_devices(hass, entry)
     others = [
         e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id and not is_wu_entry(e)
     ]

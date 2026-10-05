@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [Unreleased]
+
+- **Changed**: deleting a greenhouse zone now switches off its fans, misters and heater and closes its vents (nothing controls them any more); a reload or restart still leaves them alone
+- **Translations**: the "nothing is on hold" message of Resume Automatic in every language
+
+---
+
 ## [1.6.1] — Rain without a gauge, Resume Automatic and a ready-made dashboard
 
 - **New**: **Weather Underground rain (experimental)** — an outdoor zone **without a rain gauge** can borrow rain from 1-3 private weather stations within 2 km (nearer is better). One shared entry for the whole Home Assistant (Add integration → ZoneFlow → Set up Weather Underground rain), the station readings combined (3 stations: the middle one, 2: the lower one, 1: as is), polled every 2 hours and every 10 minutes around a watering. Only for rain deduction, not 100 % reliable. Read [the guide](docs/WEATHER-UNDERGROUND.md) first: check the Weather Underground map for stations nearby, and note the free API key needs your own station uploading temperature and humidity. Not for zones with a rain gauge
