@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Ajustes de la zona (entidades, suelo, programación…)",
           "flow_rate": "Caudal: calcularlo a partir de los emisores",
+          "flow_volume": "Caudal: mídalo según los litros que da un Mantenimiento",
           "flow_measure": "Caudal: medirlo con el caudalímetro",
           "greenhouse_devices": "Válvula, sensores y dispositivos de clima",
           "watering": "Ajustes de riego",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Caudal de los emisores",
-        "description": "Cuánta agua aportan los emisores de la zona sobre la superficie que mojan. 1 litro sobre 1 m² equivale a 1 mm. Para goteros en plantas sueltas, usa la superficie a su alrededor que realmente se moja. El resultado sustituye la Calibración del caudal de emisores de la zona.",
+        "description": "Cuánta agua vierten los emisores de la zona sobre la superficie que mojan. 1 litro en 1 m² equivale a 1 mm. Esto asume que todos los emisores de la válvula de la zona tienen el mismo caudal. Para goteadores en plantas individuales, use la superficie a su alrededor que realmente se moja. El resultado reemplaza la Calibración del caudal de emisores de la zona. Con emisores mixtos, mida en su lugar («Caudal: mídalo según los litros que da un Mantenimiento»).",
         "data": {
           "emitters": "Número de emisores (goteros, difusores) en la zona",
           "emitter_flow": "Caudal de un emisor",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "El invernadero o zona interior con los dispositivos de clima, o \"-\" para ninguno."
+        }
+      },
+      "flow_volume": {
+        "title": "Medir el caudal por volumen",
+        "description": "Presione uno de los botones de Mantenimiento de la zona (un tiempo más largo, como 15 min, es más preciso) y recoja o lea el agua: un cubo o barril en los emisores, o la diferencia en un contador de agua. A continuación, introduzca los minutos que la válvula estuvo abierta, los litros y la superficie que mojan los emisores.\n\nEl resultado es el PROMEDIO de la zona: litros divididos por la superficie y los minutos, y reemplaza la Calibración del caudal de emisores de la zona. ZoneFlow utiliza un solo caudal por zona, por lo que no puede distinguir entre emisores. Para obtener un resultado preciso, todos los emisores de la válvula de una zona deben ser del mismo tipo y caudal; coloque emisores diferentes en válvulas separadas (zonas separadas). En una zona mixta, las plantas con emisores más débiles reciben menos que el promedio mostrado.",
+        "data": {
+          "minutes": "Minutos que la válvula estuvo abierta",
+          "volume": "Agua vertida",
+          "area": "Superficie que riegan los emisores"
+        },
+        "data_description": {
+          "minutes": "La duración del Mantenimiento, según se presionó (1, 5, 10 o 15 min).",
+          "volume": "Toda el agua que aportaron los emisores de la zona durante la ejecución (litros, o galones en unidades de EE. UU.).",
+          "area": "La superficie que realmente se moja. En el caso de goteadores en plantas individuales, sume las zonas húmedas a su alrededor, no todo el parterre."
         }
       }
     },

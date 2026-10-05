@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Zone-instellingen (entiteiten, grond, schema…)",
           "flow_rate": "Debiet: berekenen uit de druppelaars",
+          "flow_volume": "Debiet: meet het aan de hand van de liters die een proefdraaien geeft",
           "flow_measure": "Debiet: meten met de watermeter",
           "greenhouse_devices": "Klep, sensoren en klimaatapparaten",
           "watering": "Bewateringsinstellingen",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Debiet druppelaars",
-        "description": "Hoeveel water de druppelaars van de zone geven op de oppervlakte die ze nat maken. 1 liter op 1 m² is 1 mm. Bij druppelaars bij losse planten: neem de oppervlakte rond de plant die echt nat wordt. De uitkomst vervangt de instelling Kalibratie debiet druppelaars van de zone.",
+        "description": "Hoeveel water de druppelaars/sproeiers van de zone afgeven op het oppervlak dat ze natmaken. 1 liter op 1 m² is 1 mm. Dit gaat er van uit dat elke druppelaar/sproeier op de klep van de zone hetzelfde debiet geeft. Gebruik voor druppelaars bij losse planten het oppervlak eromheen dat daadwerkelijk nat wordt. Het resultaat vervangt de Kalibratie debiet druppelaars. Meet bij gemengde druppelaars/sproeiers in plaats daarvan («Debiet: meet het aan de hand van de liters die een proefdraaien geeft»).",
         "data": {
           "emitters": "Aantal druppelaars (of sproeiers) in de zone",
           "emitter_flow": "Debiet van één druppelaar",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten, of \"-\" voor geen."
+        }
+      },
+      "flow_volume": {
+        "title": "Meet het debiet op basis van volume",
+        "description": "Druk op een van de Proefdraaien-knoppen van de zone (een langere run, zoals 15 min, is nauwkeuriger) en vang het water op of lees het af: een emmer of ton bij de druppelaars/sproeiers, of het verschil op een watermeter. Voer vervolgens de minuten in dat de klep open stond, de liters en het oppervlak dat de druppelaars/sproeiers natmaken.\n\nHet resultaat is het GEMIDDELDE van de zone: liters gedeeld door oppervlak en minuten, en het vervangt de Kalibratie debiet druppelaars. ZoneFlow gebruikt één debiet per zone en kan geen onderscheid maken tussen druppelaars/sproeiers. Voor een nauwkeurig resultaat moet elke druppelaar/sproeier op de klep van een zone van hetzelfde type en debiet zijn; plaats verschillende druppelaars/sproeiers op aparte kleppen (aparte zones). In een gemengde zone krijgen de planten bij de zwakkere druppelaars/sproeiers minder dan het getoonde gemiddelde.",
+        "data": {
+          "minutes": "Minuten dat de klep open stond",
+          "volume": "Water dat eruit is gekomen",
+          "area": "Oppervlak dat de druppelaars/sproeiers sproeien"
+        },
+        "data_description": {
+          "minutes": "De duur van de proefdraaien, zoals ingedrukt (1, 5, 10 of 15 min).",
+          "volume": "Al het water dat de druppelaars/sproeiers van de zone tijdens de run hebben afgegeven (liters, of gallons in US-eenheden).",
+          "area": "Het oppervlak dat daadwerkelijk nat wordt. Tel bij druppelaars bij losse planten de natte plekken eromheen bij elkaar op, niet het hele bed."
         }
       }
     },

@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Zoninställningar (entiteter, jord, schema…)",
           "flow_rate": "Flöde: räkna ut från dropparna",
+          "flow_volume": "Flöde: mät det utifrån litrarna en servicekörning ger",
           "flow_measure": "Flöde: mät med flödesmätaren",
           "greenhouse_devices": "Ventil, givare och klimatenheter",
           "watering": "Bevattningsinställningar",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Dropparnas flöde",
-        "description": "Hur mycket vatten zonens droppare ger på ytan de väter. 1 liter på 1 m² är 1 mm. För droppare vid enskilda plantor, använd ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Dropparflöde (kalibrering).",
+        "description": "Hur mycket vatten zonens munstycken avger på ytan de blöter. 1 liter på 1 m² är 1 mm. Detta förutsätter att varje munstycke på zonens ventil ger samma flöde. För droppspridare vid enskilda växter används ytan runt dem som faktiskt blir blöt. Resultatet ersätter zonens Dropparflöde (kalibrering). Med blandade munstycken mäter du istället (\"Flöde: mät det utifrån litrarna en servicekörning ger\").",
         "data": {
           "emitters": "Antal droppare (eller spridare) i zonen",
           "emitter_flow": "Flöde per droppare",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Växthuset eller inomhuszonen med klimatenheterna, eller \"-\" för ingen."
+        }
+      },
+      "flow_volume": {
+        "title": "Mät flödet efter volym",
+        "description": "Tryck på en av zonens Servicekörning-knappar (en längre körning, t.ex. 15 min, är mer exakt) och fånga upp eller läs av vattnet: en hink eller tunna vid munstyckena, eller skillnaden på en vattenmätare. Ange sedan minuterna ventilen var öppen, litrarna och ytan munstyckena blöter.\n\nResultatet är zonens GENOMSNITT: liter delat med yta och minuter, och det ersätter zonens Dropparflöde (kalibrering). ZoneFlow har ett flöde per zon och kan inte skilja på olika munstycken. För ett exakt resultat bör varje munstycke på en zons ventil vara av samma typ och flöde; placera olika munstycken på separata ventiler (separata zoner). I en blandad zon får växterna vid de svagare munstyckena mindre än det visade genomsnittet.",
+        "data": {
+          "minutes": "Minuter ventilen var öppen",
+          "volume": "Vatten som kom ut",
+          "area": "Yta munstyckena vattnar"
+        },
+        "data_description": {
+          "minutes": "Servicekörningens längd, som vald (1, 5, 10 eller 15 min).",
+          "volume": "Allt vatten som zonens munstycken gav under körningen (liter, eller gallons i US-enheter).",
+          "area": "Ytan som faktiskt blir blöt. För droppspridare vid enskilda växter lägger du ihop de blöta fläckarna runt dem, inte hela rabatten."
         }
       }
     },

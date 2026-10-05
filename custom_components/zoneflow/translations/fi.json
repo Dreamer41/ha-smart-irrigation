@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Vyöhykkeen asetukset (entiteetit, maa, aikataulu…)",
           "flow_rate": "Virtaama: laske suuttimista",
+          "flow_volume": "Virtaama: mittaa huoltoajon antamilla litroilla",
           "flow_measure": "Virtaama: mittaa virtausmittarilla",
           "greenhouse_devices": "Venttiili, anturit ja ilmastolaitteet",
           "watering": "Kasteluasetukset",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Suuttimien virtaama",
-        "description": "Kuinka paljon vettä vyöhykkeen suuttimet antavat kastelemalleen alalle. 1 litra 1 m²:lle on 1 mm. Jos tippusuuttimet ovat yksittäisten kasvien juurella, käytä sitä alaa, joka oikeasti kastuu. Tulos korvaa vyöhykkeen asetuksen Suuttimien virtaama (kalibrointi).",
+        "description": "Kuinka paljon vettä vyöhykkeen suuttimet antavat kastelemalleen alalle. 1 litra 1 m²:lle on 1 mm. Laskenta olettaa, että kaikki vyöhykkeen venttiilin suuttimet antavat saman virtauksen. Yksittäisten kasvien tippukastelussa käytä kasvien ympärillä todella kastuvaa alaa. Tulos korvaa vyöhykkeen Suuttimien virtaama (kalibrointi) -asetuksen. Sekasuuttimien vyöhykkeellä mittaa virtaus (\"Virtaama: mittaa huoltoajon antamilla litroilla\").",
         "data": {
           "emitters": "Suuttimien (tippusuuttimet, sumuttimet) määrä vyöhykkeellä",
           "emitter_flow": "Yhden suuttimen virtaama",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet, tai \"-\", jos ei mikään."
+        }
+      },
+      "flow_volume": {
+        "title": "Mittaa virtausnopeus litroilla",
+        "description": "Paina yhtä vyöhykkeen Huoltoajo-painikkeista (pidempi ajo, esim. 15 min, on tarkempi) ja ota vesi talteen tai lue se: ämpäri tai tynnyri suuttimien alla tai vesimittarin erotus. Syötä sitten minuutit, jotka venttiili oli auki, litrat ja ala, jonka suuttimet kastelevat.\n\nTulos on vyöhykkeen KESKIARVO: litrat jaettuna alalla ja minuuteilla, ja se korvaa vyöhykkeen Suuttimien virtaama (kalibrointi) -asetuksen. ZoneFlow käyttää yhtä virtausnopeutta vyöhykettä kohti, joten se ei erota suuttimia toisistaan. Tarkan tuloksen saamiseksi kaikkien vyöhykkeen venttiilin suuttimien pitää olla samaa tyyppiä ja samaa virtausta; laita erilaiset suuttimet eri venttiileille (eri vyöhykkeiksi). Sekavyöhykkeellä heikommilla suuttimilla olevat kasvit saavat vähemmän kuin näytetty keskiarvo.",
+        "data": {
+          "minutes": "Minuutit, jotka venttiili oli auki",
+          "volume": "Ulos tullut vesi",
+          "area": "Kasteltava ala"
+        },
+        "data_description": {
+          "minutes": "Huoltoajon pituus painettuna (1, 5, 10 tai 15 min).",
+          "volume": "Kaikki vesi, jonka vyöhykkeen suuttimet antoivat ajon aikana (litroina, tai gallonoina US-yksiköissä).",
+          "area": "Ala, joka todella kastuu. Yksittäisten kasvien tippukastelussa laske yhteen kasvien ympärillä kastuvat alat, älä koko penkkiä."
         }
       }
     },

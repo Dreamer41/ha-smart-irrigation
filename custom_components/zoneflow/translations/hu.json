@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Zóna beállításai (entitások, talaj, ütemezés…)",
           "flow_rate": "Vízhozam: kiszámítás a csepegtetők alapján",
+          "flow_volume": "Vízhozam: mérés a szervizfuttatás által adott literek alapján",
           "flow_measure": "Vízhozam: mérés az átfolyásmérővel",
           "greenhouse_devices": "Szelep, érzékelők és klímaeszközök",
           "watering": "Öntözési beállítások",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Csepegtetők vízhozama",
-        "description": "Mennyi vizet juttatnak a zóna csepegtetői (szórófejei) az általuk nedvesített területre. 1 liter 1 m²-en 1 mm. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük valóban nedvesedő területet vedd. Az eredmény felülírja a zóna Csepegtetők vízhozama (kalibrálás) értékét.",
+        "description": "Mennyi vizet juttatnak a zóna öntözőfejei az általuk benedvesített területre. 1 liter 1 m²-re 1 mm-nek felel meg. Ez azt feltételezi, hogy a zóna szelepén lévő minden öntözőfej azonos átfolyást biztosít. Egyes növényeknél lévő csepegtetőknél a körülöttük lévő valóban benedvesedő területet használja. Az eredmény felváltja a zóna Csepegtetők vízhozama (kalibrálás) beállítását. Vegyes öntözőfejek esetén inkább mérje meg („Vízhozam: mérés a szervizfuttatás által adott literek alapján”).",
         "data": {
           "emitters": "Csepegtetők, szórófejek száma a zónában",
           "emitter_flow": "Egy csepegtető vízhozama",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Az üvegház vagy beltéri zóna a klímaberendezésekkel, vagy \"-\" ha nincs."
+        }
+      },
+      "flow_volume": {
+        "title": "Vízhozam mérése térfogat alapján",
+        "description": "Nyomja meg a zóna egyik Szervizfuttatás gombját (egy hosszabb futás, például 15 perc, pontosabb), és fogja fel vagy olvassa le a vizet: egy vödör vagy hordó az öntözőfejeknél, vagy a különbség egy vízmérőn. Ezután adja meg a perceket, amíg a szelep nyitva volt, a litereket és az öntözőfejek által benedvesített területet.\n\nAz eredmény a zóna ÁTLAGA: a literek osztva a területtel és a percekkel, és ez felváltja a zóna Csepegtetők vízhozama (kalibrálás) beállítását. A ZoneFlow zónánként egyetlen értéket használ, így nem tudja megkülönböztetni az öntözőfejeket. A pontos eredmény érdekében a zóna szelepén lévő minden öntözőfejnek azonos típusúnak és átfolyásúnak kell lennie; az eltérő öntözőfejeket tegye külön szelepekre (külön zónákra). Vegyes zónában a gyengébb öntözőfejeknél lévő növények kevesebbet kapnak a megjelenített átlagnál.",
+        "data": {
+          "minutes": "Percek, amíg a szelep nyitva volt",
+          "volume": "Kifolyt víz",
+          "area": "Az öntözőfejek által öntözött terület"
+        },
+        "data_description": {
+          "minutes": "A szervizfuttatás hossza a megnyomott gomb szerint (1, 5, 10 vagy 15 perc).",
+          "volume": "A zóna öntözőfejei által a futás során leadott összes víz (literben, vagy USA egységekben gallonban).",
+          "area": "A valóban benedvesedő terület. Egyes növényeknél lévő csepegtetőknél a körülöttük lévő nedves foltokat adja össze, ne a teljes ágyást."
         }
       }
     },

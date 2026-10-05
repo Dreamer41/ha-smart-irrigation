@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Definições da zona (entidades, solo, horário…)",
           "flow_rate": "Fluxo: calcular a partir dos emissores",
+          "flow_volume": "Fluxo: meça pelos litros fornecidos num ciclo de manutenção",
           "flow_measure": "Fluxo: medir com o medidor de fluxo",
           "greenhouse_devices": "Válvula, sensores e dispositivos de clima",
           "watering": "Definições de rega",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Fluxo dos emissores",
-        "description": "Quanta água os emissores da zona aplicam na área que molham. 1 litro em 1 m² é 1 mm. Para gotejadores junto a plantas isoladas, use a área em torno delas que fica realmente molhada. O resultado substitui a Calibração do fluxo dos emissores da zona.",
+        "description": "Quanta água os emissores da zona aplicam na área que molham. 1 litro em 1 m² equivale a 1 mm. Isto pressupõe que todos os emissores na válvula da zona forneçam o mesmo fluxo. Para gotejadores em plantas individuais, utilize a área ao redor delas que realmente fica molhada. O resultado substitui a Calibração do fluxo dos emissores da zona. Com emissores mistos, meça em vez disso («Fluxo: meça pelos litros fornecidos num ciclo de manutenção»).",
         "data": {
           "emitters": "Número de emissores (gotejadores, aspersores) na zona",
           "emitter_flow": "Fluxo de um emissor",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "A estufa ou zona interior com os dispositivos de clima, ou \"-\" para nenhuma."
+        }
+      },
+      "flow_volume": {
+        "title": "Medir o fluxo por volume",
+        "description": "Prima um dos botões Ciclo de manutenção da zona (um ciclo mais longo, como 15 min, é mais preciso) e recolha ou leia a água: um balde ou tambor nos emissores, ou a diferença num contador de água. Em seguida, introduza os minutos em que a válvula esteve aberta, os litros e a área que os emissores molham.\n\nO resultado é a MÉDIA da zona: litros divididos pela área e pelos minutos, e substitui a Calibração do fluxo dos emissores da zona. O ZoneFlow tem uma única taxa por zona, pelo que não consegue diferenciar os emissores. Para um resultado preciso, todos os emissores na válvula de uma zona devem ser do mesmo tipo e fluxo; coloque emissores diferentes em válvulas separadas (zonas separadas). Numa zona mista, as plantas nos emissores mais fracos recebem menos do que a média mostrada.",
+        "data": {
+          "minutes": "Minutos em que a válvula esteve aberta",
+          "volume": "Água fornecida",
+          "area": "Área irrigada pelos emissores"
+        },
+        "data_description": {
+          "minutes": "A duração do ciclo de manutenção conforme premido (1, 5, 10 ou 15 min).",
+          "volume": "Toda a água fornecida pelos emissores da zona durante o ciclo (litros, ou galões em unidades US).",
+          "area": "A área que realmente fica molhada. Para gotejadores em plantas individuais, some as manchas molhadas ao redor delas, não o canteiro inteiro."
         }
       }
     },

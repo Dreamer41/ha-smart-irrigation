@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Zoneindstillinger (entiteter, jord, tidsplan…)",
           "flow_rate": "Flow: beregn det ud fra drypperne",
+          "flow_volume": "Flow: mål den ud fra de liter, en servicekørsel giver",
           "flow_measure": "Flow: mål det med flowmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheder",
           "watering": "Vandingsindstillinger",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Dryppernes flow",
-        "description": "Hvor meget vand zonens dryppere giver på det område, de gør vådt. 1 liter på 1 m² er 1 mm. Ved dryppere ved enkelte planter skal du bruge det område omkring dem, der faktisk bliver vådt. Resultatet erstatter zonens Dryppernes flow (kalibrering).",
+        "description": "Hvor meget vand zonens dryppere/spredere giver på det område, de væder. 1 liter på 1 m² er 1 mm. Dette forudsætter, at alle dryppere/spredere på zonens ventil giver den samme gennemstrømning. For dryppere ved enkelte planter bruges det område omkring dem, der reelt bliver vådt. Resultatet erstatter zonens indstilling Dryppernes flow (kalibrering). Ved blandede dryppere/spredere måles der i stedet („Flow: mål den ud fra de liter, en servicekørsel giver“).",
         "data": {
           "emitters": "Antal dryppere og dyser i zonen",
           "emitter_flow": "Flow for én drypper",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Drivhuset eller indendørszonen med klimaenhederne, eller \"-\" for ingen."
+        }
+      },
+      "flow_volume": {
+        "title": "Mål gennemstrømningen ud fra volumen",
+        "description": "Tryk på en af zonens Servicekørsel-knapper (en længere kørsel, f.eks. 15 min, er mere præcis) og opsaml eller aflæs vandet: en spand eller tønde ved drypperne/sprederne, eller forskellen på en vandmåler. Indtast derefter de minutter, ventilen var åben, antal liter og det område, drypperne/sprederne væder.\n\nResultatet er zonens GENNEMSNIT: liter divideret med areal og minutter, og det erstatter zonens indstilling Dryppernes flow (kalibrering). ZoneFlow har én gennemstrømning pr. zone, så den kan ikke skelne mellem dryppere/spredere. For at få et præcist resultat bør alle dryppere/spredere på en zones ventil være af samme type og gennemstrømning; placer forskellige dryppere/spredere på adskilte ventiler (adskilte zoner). I en blandet zone får planterne ved de svagere dryppere/spredere mindre end det viste gennemsnit.",
+        "data": {
+          "minutes": "Minutter ventilen var åben",
+          "volume": "Vand der kom ud",
+          "area": "Areal drypperne/sprederne vander"
+        },
+        "data_description": {
+          "minutes": "Servicekørslens varighed, som valgt (1, 5, 10 eller 15 min).",
+          "volume": "Alt det vand, zonens dryppere/spredere afgav under kørslen (liter, eller gallons i US-enheder).",
+          "area": "Arealet, der reelt bliver vådt. For dryppere ved enkelte planter lægges de våde pletter omkring dem sammen, ikke hele bedet."
         }
       }
     },

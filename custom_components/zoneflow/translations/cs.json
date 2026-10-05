@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Nastavení zóny (entity, půda, plán…)",
           "flow_rate": "Průtok: vypočítat z emitorů",
+          "flow_volume": "Průtok: změřte jej podle litrů vydaných při servisním běhu",
           "flow_measure": "Průtok: změřit průtokoměrem",
           "greenhouse_devices": "Ventil, snímače a klimatická zařízení",
           "watering": "Nastavení zavlažování",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Průtok emitorů",
-        "description": "Kolik vody emitory zóny dodají na plochu, kterou zavlažují. 1 litr na 1 m² je 1 mm. U kapkovačů u jednotlivých rostlin použijte plochu kolem nich, která opravdu zvlhne. Výsledek nahradí Kalibraci průtoku emitorů zóny.",
+        "description": "Kolik vody dodají emitory zóny na plochu, kterou zavlažují. 1 litr na 1 m² je 1 mm. Předpokládá se, že každý emitor na ventilu zóny má stejný průtok. U kapkovačů u jednotlivých rostlin použijte plochu kolem nich, která se skutečně zavlaží. Výsledek nahradí Kalibraci průtoku emitorů zóny. U smíšených emitorů provádějte raději měření („Průtok: změřte jej podle litrů vydaných při servisním běhu“).",
         "data": {
           "emitters": "Počet emitorů (kapkovačů, rozstřikovačů) v zóně",
           "emitter_flow": "Průtok jednoho emitoru",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Skleník nebo vnitřní zóna s klimatickými zařízeními, nebo \"-\" pro žádný."
+        }
+      },
+      "flow_volume": {
+        "title": "Změřte průtok podle objemu",
+        "description": "Stiskněte jedno z tlačítek Servisní běh pro zónu (delší běh, například 15 min, je přesnější) a zachyťte nebo odečtěte vodu: kbelík nebo sud pod emitory, případně rozdíl na vodoměru. Poté zadejte minuty, po které byl ventil otevřený, litry a plochu, kterou emitory zavlažují.\n\nVýsledkem je PRŮMĚR zóny: litry dělené plochou a minutami, a tento výsledek nahradí Kalibraci průtoku emitorů zóny. ZoneFlow používá pro každou zónu pouze jeden průtok, takže nemůže rozlišovat jednotlivé emitory. Pro přesný výsledek by měl být každý emitor na ventilu zóny stejného typu a průtoku; různé emitory umístěte na samostatné ventily (samostatné zóny). Ve smíšené zóně dostanou rostliny u slabších emitorů méně než zobrazený průměr.",
+        "data": {
+          "minutes": "Minuty, po které byl ventil otevřený",
+          "volume": "Voda, která vytekla",
+          "area": "Plocha zavlažovaná emitory"
+        },
+        "data_description": {
+          "minutes": "Délka Servisního běhu podle stisknutého tlačítka (1, 5, 10 nebo 15 min).",
+          "volume": "Veškerá voda, kterou emitory zóny během běhu vydaly (v litrech, nebo galonech v amerických jednotkách).",
+          "area": "Plocha, která se skutečně zavlaží. U kapkovačů u jednotlivých rostlin sečtěte vlhká místa kolem nich, nikoli celý záhon."
         }
       }
     },
