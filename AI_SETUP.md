@@ -1486,7 +1486,9 @@ Requires a `sensor.*` entity reporting moisture as a percentage.
    not deep soak — a shallow probe measures topsoil moisture, which is
    exactly what the routine cycle targets, but doesn't reflect the
    root-zone depth the deep-soak cycle is aiming for. Below the dry
-   threshold, ZoneFlow waters even if the modeled interval isn't due yet;
+   threshold, ZoneFlow waters even if the modeled interval isn't due yet
+   (giving only the share of the dose the days since the last watering call
+   for, at least a quarter, so a probe stuck on "dry" can't flood the zone);
    above the wet threshold, it skips even if the interval says overdue; in
    between, it defers entirely to the plain modeled schedule, same as
    before this was configured. A dropout degrades the same way (§7.6).
