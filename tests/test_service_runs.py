@@ -46,7 +46,7 @@ async def _wait_until(predicate, seconds=3.0):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("minutes", [1, 5, 10])
+@pytest.mark.parametrize("minutes", [1, 5, 10, 15])
 async def test_service_run_button_runs_the_valve_and_is_not_counted_as_watering(
     hass, fake_valve_services, monkeypatch, tmp_path, minutes
 ):

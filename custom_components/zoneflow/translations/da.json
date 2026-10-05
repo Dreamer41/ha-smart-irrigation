@@ -824,6 +824,9 @@
       "service_run_10_min": {
         "name": "Servicekørsel 10 min"
       },
+      "service_run_15_min": {
+        "name": "Servicekørsel 15 min"
+      },
       "fertilized_today": {
         "name": "Gødsket i dag"
       },

@@ -824,6 +824,9 @@
       "service_run_10_min": {
         "name": "Servisní běh 10 min"
       },
+      "service_run_15_min": {
+        "name": "Servisní běh 15 min"
+      },
       "fertilized_today": {
         "name": "Dnes pohnojeno"
       },

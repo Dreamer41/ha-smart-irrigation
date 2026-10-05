@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.6.3] — 15-minute service run
+
+- **New**: a **Service Run 15 min** button next to the 1, 5 and 10 minute ones, for a longer flow-calibration test. Like the others it is never counted as watering and respects the daily safety cap
+
+**Update your dashboard**: the zone card shows the new button by itself. A hand-made dashboard can add `button.<zone>_service_run_15_min`
+
 ## [1.6.2] — Stuck-probe protection, hardening and tidier greenhouse deletion
 
 - **Fixed**: a soil-moisture probe stuck on "dry" (or reading dry because it is out of the soil) that keeps reporting made the zone water a **full** interval dose **every morning** — about four times the weekly target in a four-week simulation. A run a dry probe brings forward now gives only the share of the dose the days since the last watering call for (at least a quarter), so even a stuck probe stays near the weekly target

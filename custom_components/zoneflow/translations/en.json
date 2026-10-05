@@ -824,6 +824,9 @@
       "service_run_10_min": {
         "name": "Service Run 10 min"
       },
+      "service_run_15_min": {
+        "name": "Service Run 15 min"
+      },
       "fertilized_today": {
         "name": "Fertilized Today"
       },
