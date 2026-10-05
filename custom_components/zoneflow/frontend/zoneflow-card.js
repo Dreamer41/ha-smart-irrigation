@@ -2396,6 +2396,9 @@ class ZoneFlowCard extends HTMLElement {
         if (e.hidden) return false;
         const when = ONLY_WHEN[key];
         if (when && !when(this._hass.states[e.entity_id])) return false;
+        // A meter that has counted nothing says nothing; the litres estimate
+        // (Last Water Volume) stands in for it.
+        if (key === "sensor.last_cycle_water_liters" && !(Number(this._hass.states[e.entity_id]?.state) > 0)) return false;
         // With a flow meter that counted, its litres are on the card already.
         if (key === "sensor.last_water_volume") {
           const measured = entities["sensor.last_cycle_water_liters"];
