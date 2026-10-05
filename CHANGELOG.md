@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
-## [Unreleased]
+## [1.6.2] — Stuck-probe protection, hardening and tidier greenhouse deletion
 
 - **Fixed**: a soil-moisture probe stuck on "dry" (or reading dry because it is out of the soil) that keeps reporting made the zone water a **full** interval dose **every morning** — about four times the weekly target in a four-week simulation. A run a dry probe brings forward now gives only the share of the dose the days since the last watering call for (at least a quarter), so even a stuck probe stays near the weekly target
 
