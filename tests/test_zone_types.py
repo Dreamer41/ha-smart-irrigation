@@ -303,7 +303,7 @@ async def test_configure_menu_per_zone_type(hass, fake_valve_services):
     await _seed(hass)
     outdoor = make_entry(hass)
     await _setup(hass, outdoor)
-    assert (await _menu(hass, outdoor))["menu_options"] == ["settings", "flow_rate", "flow_volume", "zone_type"]
+    assert (await _menu(hass, outdoor))["menu_options"] == ["settings", "flow_rate", "flow_volume", "zone_flow", "zone_type"]
 
     greenhouse = _climate_only_entry(hass)
     await _setup(hass, greenhouse)
@@ -316,7 +316,7 @@ async def test_configure_menu_per_zone_type(hass, fake_valve_services):
     hass.states.async_set("switch.other_valve", "off")
     await _setup(hass, with_valve)
     assert (await _menu(hass, with_valve))["menu_options"] == [
-        "greenhouse_devices", "watering", "flow_rate", "flow_volume", "zone_type"
+        "greenhouse_devices", "watering", "flow_rate", "flow_volume", "zone_flow", "zone_type"
     ]
 
 

@@ -936,6 +936,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         if has_valve:
             options.append("flow_rate")
             options.append("flow_volume")
+            options.append("zone_flow")
         controller = self._controller()
         if has_valve and controller is not None and controller.flow_meter_entity:
             options.append("flow_measure")
@@ -1103,6 +1104,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             per_emitter_l_h = float(user_input["emitter_flow"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
             area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
             mm_per_min = round(float(user_input["emitters"])) * per_emitter_l_h / area_m2 / 60
+            await self._set_zone_flow(controller, round(float(user_input["emitters"])) * per_emitter_l_h / 60)
             return await self._apply_flow_rate(controller, mm_per_min)
         return self.async_show_form(
             step_id="flow_rate",
@@ -1140,6 +1142,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             liters = float(user_input["volume"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
             area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
             mm_per_min = liters / area_m2 / float(user_input["minutes"])
+            await self._set_zone_flow(controller, liters / float(user_input["minutes"]))
             return await self._apply_flow_rate(controller, mm_per_min)
         return self.async_show_form(
             step_id="flow_volume",
@@ -1161,6 +1164,56 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
                             min=0.1, max=100000, step=0.1, mode=selector.NumberSelectorMode.BOX,
                             unit_of_measurement="ft²" if imperial else "m²",
                         )
+                    ),
+                }
+            ),
+        )
+
+    async def _set_zone_flow(self, controller, l_per_min: float) -> None:
+        """Zone Flow (litres per minute) only converts valve time to litres
+        for the water-use estimate. Left alone when it is not a sensible
+        number or its entity is disabled."""
+        _name, lo, hi, _step, _unit = NUMBER_DEFS["zone_flow_l_min"]
+        number = controller.numbers.get("zone_flow_l_min")
+        if number is not None and lo < l_per_min <= hi:
+            await number.async_set_metric_value(round(l_per_min, 2))
+
+    async def async_step_zone_flow(self, user_input: dict[str, Any] | None = None):
+        """Zone Flow from the heads: how many, and what one gives (drippers
+        are usually rated per hour, sprinklers per minute). Sets only the
+        zone's total flow, for the water-use estimate; the Emitter Flow
+        Rate Calibration is not touched."""
+        controller = self._controller()
+        if controller is None:
+            return self.async_abort(reason="zone_not_loaded")
+        imperial = controller.imperial
+        per_hour, per_minute = ("gal/h", "gal/min") if imperial else ("L/h", "L/min")
+        if user_input is not None:
+            one = float(user_input["head_flow"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
+            if user_input["head_flow_unit"] == per_hour:
+                one /= 60
+            l_per_min = round(float(user_input["heads"])) * one
+            _name, lo, hi, _step, _unit = NUMBER_DEFS["zone_flow_l_min"]
+            number = controller.numbers.get("zone_flow_l_min")
+            if number is None:
+                return self.async_abort(reason="flow_rate_disabled")
+            if not lo < l_per_min <= hi:
+                return self.async_abort(reason="zone_flow_out_of_range")
+            await number.async_set_metric_value(round(l_per_min, 2))
+            shown = f"{units.to_display('zone_flow_l_min', l_per_min, imperial):.2f} {per_minute}"
+            return self.async_abort(reason="zone_flow_set", description_placeholders={"flow": shown})
+        return self.async_show_form(
+            step_id="zone_flow",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("heads", default=10): selector.NumberSelector(
+                        selector.NumberSelectorConfig(min=1, max=5000, step=1, mode=selector.NumberSelectorMode.BOX)
+                    ),
+                    vol.Required("head_flow", default=2.0): selector.NumberSelector(
+                        selector.NumberSelectorConfig(min=0.01, max=10000, step=0.01, mode=selector.NumberSelectorMode.BOX)
+                    ),
+                    vol.Required("head_flow_unit", default=per_hour): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=[per_hour, per_minute], mode=selector.SelectSelectorMode.DROPDOWN)
                     ),
                 }
             ),

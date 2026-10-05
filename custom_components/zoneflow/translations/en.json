@@ -270,6 +270,7 @@
           "settings": "Zone settings (entities, soil, schedule…)",
           "flow_rate": "Flow rate: work it out from the emitters",
           "flow_volume": "Flow rate: measure it by the litres a service run gives",
+          "zone_flow": "Zone flow: litres per minute from the number of heads",
           "flow_measure": "Flow rate: measure it with the flow meter",
           "greenhouse_devices": "Valve, sensors and climate devices",
           "watering": "Watering settings",
@@ -502,6 +503,20 @@
           "volume": "All the water the zone's emitters gave during the run (litres, or gallons in US units).",
           "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
+      },
+      "zone_flow": {
+        "title": "Zone flow",
+        "description": "The zone's total flow, from its heads. ZoneFlow multiplies it by the valve's open minutes to estimate the litres used (shown as Water Used and under the last watering). It does not change how much or when the zone waters; that is the Emitter Flow Rate Calibration. Drippers are usually rated per hour, sprinklers per minute. For the most accurate figure, measure it instead: the menu entry about the litres a service run gave also sets this.",
+        "data": {
+          "heads": "Number of heads (drippers, sprinklers) on the zone's valve",
+          "head_flow": "Flow of one head",
+          "head_flow_unit": "Per"
+        },
+        "data_description": {
+          "heads": "Count every head this valve feeds.",
+          "head_flow": "What one head gives, from its package or nozzle chart.",
+          "head_flow_unit": "The unit the flow of one head is given in."
+        }
       }
     },
     "abort": {
@@ -510,7 +525,9 @@
       "measuring": "Measuring: the valve runs for about {minutes} minutes. The result comes as a phone message (or in Home Assistant's notifications if the zone has no phone target) and is set automatically.",
       "zone_not_loaded": "This zone isn't running right now, so this can't be done.",
       "zone_busy": "The zone (or its pump) is busy, or today's runtime safety cap is used up. Try again later.",
-      "flow_rate_disabled": "The zone's Emitter Flow Rate Calibration entity is disabled. Enable it (the zone's device page → its entities) and try again."
+      "flow_rate_disabled": "The zone's Emitter Flow Rate Calibration entity is disabled. Enable it (the zone's device page → its entities) and try again.",
+      "zone_flow_set": "Zone flow set to {flow}. It is used for the water-use estimate only.",
+      "zone_flow_out_of_range": "That works out to a zone flow outside what the setting allows (0 to 2000 L/min). Check the numbers."
     }
   },
   "selector": {
@@ -792,6 +809,9 @@
       },
       "auto_resume_hours": {
         "name": "Auto Resume After"
+      },
+      "zone_flow_l_min": {
+        "name": "Zone Flow"
       }
     },
     "datetime": {
@@ -984,6 +1004,12 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Water Used, Past 30 Days"
+      },
+      "water_used_year": {
+        "name": "Water Used This Year"
       }
     },
     "select": {

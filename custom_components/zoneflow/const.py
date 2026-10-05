@@ -350,6 +350,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "rain_eff_mid": ("Rain Efficiency - Moderate (5-10mm)", 0.0, 1.0, 0.05, None),
     "rain_eff_high": ("Rain Efficiency - Heavy (10-20mm+)", 0.0, 1.0, 0.05, None),
     "flow_rate_mm_per_min": ("Emitter Flow Rate Calibration", 0.05, 2.0, 0.01, "mm/min"),
+    # 1.6.5: what the zone's valve delivers in total, for the water-use
+    # estimate only (litres = valve minutes x this). 0 = not set: the zone
+    # then counts mm only. Never used for a watering decision.
+    "zone_flow_l_min": ("Zone Flow", 0.0, 2000.0, 0.01, "L/min"),
     "deep_soak_target_mm": ("Deep Soak Target Depth", 15.0, 40.0, 1.0, "mm"),
     "pump_min_watts": ("Pump Low-Power Warning Threshold", 20.0, 500.0, 10.0, "W"),
     # Upper bound covers the worst case a slow drip emitter can legitimately
@@ -511,6 +515,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "rain_mm_per_tip": 0.3,
     "preirrigation_rain_threshold_mm": 3.0,
     "manual_rain_mm": 0.0,
+    "zone_flow_l_min": 0.0,
     "pump_preamble_seconds": 0.0,
     "pump_postamble_seconds": 0.0,
     "forecast_rain_threshold_mm": 3.0,

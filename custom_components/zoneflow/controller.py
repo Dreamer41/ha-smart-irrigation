@@ -212,6 +212,7 @@ _PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
+WATER_LEDGER_DAYS = 400
 
 # Cycle kinds (as logged) -> the keys used by the message catalog and the
 # Status sensor's decisions.
@@ -4006,6 +4007,51 @@ class ZoneFlowController:
         state.last_cycle_applied_mm = round(mm, 2)
         state.last_cycle_kind = cycle
         state.last_cycle_runtime_min = minutes
+        liters = self._run_liters  # the flow meter's, when it read both ends
+        if liters is None and self.number("zone_flow_l_min") > 0:
+            liters = minutes * self.number("zone_flow_l_min")
+        state.last_cycle_liters = round(liters, 1) if liters is not None else None
+        self._add_to_water_ledger(mm, liters)
+
+    def _add_to_water_ledger(self, mm: float, liters: float | None) -> None:
+        ledger = self.store.state.water_ledger
+        if not isinstance(ledger, dict):
+            ledger = self.store.state.water_ledger = {}
+        today = dt_util.now().date()
+        day = ledger.setdefault(today.isoformat(), {"mm": 0.0, "l": 0.0})
+        day["mm"] = day.get("mm", 0.0) + mm
+        if liters is not None:
+            day["l"] = day.get("l", 0.0) + liters
+        cutoff = (today - timedelta(days=WATER_LEDGER_DAYS)).isoformat()
+        for key in [k for k in ledger if k < cutoff]:
+            del ledger[key]
+
+    def water_used(self) -> dict[str, float]:
+        """Water applied over the last 30 days (today included) and this
+        calendar year: mm and litres. Litres cover the runs whose volume was
+        known (a flow meter, or a Zone Flow setting at the time)."""
+        ledger = self.store.state.water_ledger
+        today = dt_util.now().date()
+        month_start = (today - timedelta(days=29)).isoformat()
+        year_start = today.replace(month=1, day=1).isoformat()
+        out = {"mm_30d": 0.0, "liters_30d": 0.0, "mm_year": 0.0, "liters_year": 0.0}
+        for key, day in (ledger.items() if isinstance(ledger, dict) else []):
+            if key >= year_start:
+                out["mm_year"] += day.get("mm", 0.0)
+                out["liters_year"] += day.get("l", 0.0)
+            if key >= month_start:
+                out["mm_30d"] += day.get("mm", 0.0)
+                out["liters_30d"] += day.get("l", 0.0)
+        return out
+
+    @property
+    def has_water_volume(self) -> bool:
+        """True once litres are known: a flow meter, a Zone Flow, or litres
+        already recorded."""
+        if self.flow_meter_entity or self.number("zone_flow_l_min") > 0:
+            return True
+        ledger = self.store.state.water_ledger
+        return any(day.get("l", 0.0) > 0 for day in ledger.values()) if isinstance(ledger, dict) else False
 
     def _record_decision(self, cycle: str, code: str, **params: Any) -> None:
         """What a due cycle decided (`cycle` is "routine" or "deep_soak").

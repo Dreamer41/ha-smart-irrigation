@@ -102,6 +102,12 @@ class IrrigationState:
     # None until the first cycle completes under a version that records it.
     last_cycle_applied_mm: float | None = None
     last_cycle_kind: str | None = None  # "routine" or "deep_soak"
+    # The same watering in litres (the flow meter's, else minutes x Zone Flow);
+    # None when neither is known.
+    last_cycle_liters: float | None = None
+    # Water used per local day (1.6.5): {"2026-10-05": {"mm": 12.0, "l": 480.0}}.
+    # "l" only counts runs whose litres were known; about 400 days are kept.
+    water_ledger: dict = field(default_factory=dict)
     last_cycle_runtime_min: float | None = None
 
     # Live dashboard overrides (select.py) -- both are pure convenience

@@ -45,6 +45,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowNextFertilizingSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
         ZoneFlowLastWaterDeliveredSensor(entry, controller),
+        ZoneFlowWaterUsedSensor(entry, controller, "30d"),
+        ZoneFlowWaterUsedSensor(entry, controller, "year"),
         ZoneFlowTodayRainSensor(entry, controller),
         ZoneFlowForecastSkipHitRateSensor(entry, controller),
         ZoneFlowSoilProfileSensor(entry, controller),
@@ -414,8 +416,46 @@ class ZoneFlowLastWaterDeliveredSensor(_Base):
         return {
             "cycle": state.last_cycle_kind,
             "runtime_minutes": state.last_cycle_runtime_min,
+            "volume": units.sensor_value("volume", state.last_cycle_liters, imperial),
+            "volume_unit": units.sensor_unit("volume", imperial),
             # The old value, for planning: half this week's target.
             "typical_watering": units.depth_text(typical, imperial),
+        }
+
+
+class ZoneFlowWaterUsedSensor(_Base):
+    """Water applied by this zone: the last 30 days (rolling) and this
+    calendar year, in litres (gallons), with the same in mm as an
+    attribute. An estimate -- minutes x Zone Flow, or the flow meter's
+    litres. Unknown until litres are known (a Zone Flow or a flow meter)."""
+
+    _unit_kind = "volume"
+    _attr_native_unit_of_measurement = "L"
+    _attr_icon = "mdi:water-sync"
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, entry: ConfigEntry, controller, window: str) -> None:
+        super().__init__(entry, controller)
+        self._window = window
+        self._attr_unique_id = f"{entry.entry_id}_water_used_{window}"
+        self._attr_translation_key = f"water_used_{window}"
+        if window == "year":
+            # A new calendar year starts again at 0: a reset, not a fault.
+            self._attr_device_class = "water"
+            self._attr_state_class = "total_increasing"
+
+    def metric_native_value(self) -> float | None:
+        if not self._controller.has_water_volume:
+            return None
+        return round(self._controller.water_used()[f"liters_{self._window}"], 1)
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        used = self._controller.water_used()
+        imperial = self._controller.imperial
+        return {
+            "depth": round(units.sensor_value("depth", used[f"mm_{self._window}"], imperial), 2),
+            "depth_unit": units.sensor_unit("depth", imperial),
         }
 
 
