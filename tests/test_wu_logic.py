@@ -138,3 +138,10 @@ def test_polling_interval():
     assert wl.next_poll_ts(NOW, [], True, day_end) == NOW + 600
     # The 23:55 poll comes first when it is sooner.
     assert wl.next_poll_ts(NOW, [], False, NOW + 1200) == NOW + 1200
+
+
+def test_nan_infinity_and_negative_totals_are_not_rain():
+    for bad in (float("nan"), float("inf"), -float("inf"), -0.5):
+        state = StationState()
+        assert wl.check_station(state, Observation(bad, NOW - 60, TODAY), NOW, TODAY) is None, bad
+        assert state.status == "spike"

@@ -292,3 +292,40 @@ async def test_unloading_the_wu_entry_leaves_the_zone_without_wu_rain(hass, fake
     assert await hass.config_entries.async_unload(wu_entry.entry_id)
     assert WU_DATA_KEY not in hass.data
     assert zone.today_rain_mm() == 0.0
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {}, {"observations": []}, {"observations": [{}]}, {"observations": [{"metric": {}}]},
+        {"observations": [{"epoch": 1, "obsTimeLocal": "2026-10-04 10:00:00", "metric": {"precipTotal": None}}]},
+        {"observations": [{"epoch": 1, "obsTimeLocal": "2026-10-04 10:00:00", "metric": {"precipTotal": "abc"}}]},
+        {"observations": [{"epoch": 1, "obsTimeLocal": "2026-10-04 10:00:00", "metric": {"precipTotal": [1]}}]},
+        {"observations": [{"epoch": 1, "obsTimeLocal": "2026-10-04 10:00:00", "metric": {"precipTotal": float("nan")}}]},
+        {"observations": [{"epoch": float("inf"), "obsTimeLocal": "x", "metric": {"precipTotal": 1.0}}]},
+        {"observations": "nothing"}, {"observations": ["x"]}, ["a", "list"], "plain text", 42,
+    ],
+)
+@pytest.mark.asyncio
+async def test_a_station_answer_that_makes_no_sense_is_no_data_not_an_error(hass, aioclient_mock, payload):
+    aioclient_mock.get(wu.CURRENT_URL, json=payload)
+    assert await wu.async_current(hass, "key", "ISAMUI1") is None
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {}, {"location": None}, {"location": "x"}, {"location": {"stationId": "IONE"}},
+        {"location": {"stationId": ["IONE"], "latitude": ["north"], "longitude": [100.0]}},
+        {"location": {"stationId": ["IONE"], "latitude": [float("nan")], "longitude": [100.0]}},
+        {"location": {"stationId": [None, "ITWO"], "latitude": [9.5, 9.5], "longitude": [100.0, 100.0]}},
+        ["a", "list"], "plain text",
+    ],
+)
+@pytest.mark.asyncio
+async def test_a_station_list_that_makes_no_sense_gives_no_stations_not_an_error(hass, aioclient_mock, payload):
+    await hass.config.async_update(latitude=9.5, longitude=100.0)
+    aioclient_mock.get(wu.NEAR_URL, json=payload)
+    stations = await wu.async_nearby_stations(hass, "key")
+    assert isinstance(stations, list)
+    assert all(set(s) >= {"id", "name", "latitude", "longitude", "distance_km"} for s in stations)

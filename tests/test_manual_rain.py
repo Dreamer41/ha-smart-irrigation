@@ -148,3 +148,14 @@ async def test_manual_rain_survives_a_restart(hass, fake_valve_services):
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
     assert controller.today_rain_mm() == pytest.approx(4.0)
+
+
+@pytest.mark.asyncio
+async def test_a_non_finite_amount_is_refused(hass, fake_valve_services):
+    from homeassistant.exceptions import ServiceValidationError
+
+    _entry, controller = await _setup(hass, **{CONF_RAIN_COUNTER_ENTITY: None})
+    for bad in (float("nan"), float("inf")):
+        with pytest.raises(ServiceValidationError):
+            await controller.add_manual_rain(bad)
+    assert controller.store.state.manual_rain_samples == []
