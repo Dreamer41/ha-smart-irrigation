@@ -935,6 +935,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             options.append("watering")
         if has_valve:
             options.append("flow_rate")
+            options.append("flow_volume")
         controller = self._controller()
         if has_valve and controller is not None and controller.flow_meter_entity:
             options.append("flow_measure")
@@ -1114,6 +1115,45 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
                         selector.NumberSelectorConfig(
                             min=0.05, max=200, step=0.05, mode=selector.NumberSelectorMode.BOX,
                             unit_of_measurement="gal/h" if imperial else "L/h",
+                        )
+                    ),
+                    vol.Required("area", default=10.0 if imperial else 1.0): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1, max=100000, step=0.1, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="ft²" if imperial else "m²",
+                        )
+                    ),
+                }
+            ),
+        )
+
+    async def async_step_flow_volume(self, user_input: dict[str, Any] | None = None):
+        """Without a flow meter: the person runs a Service Run, catches or
+        reads the litres, and enters them here. The result is the zone's
+        AVERAGE depth per minute (litres / area / minutes); different
+        emitters on one valve cannot be told apart."""
+        controller = self._controller()
+        if controller is None:
+            return self.async_abort(reason="zone_not_loaded")
+        imperial = controller.imperial
+        if user_input is not None:
+            liters = float(user_input["volume"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
+            area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
+            mm_per_min = liters / area_m2 / float(user_input["minutes"])
+            return await self._apply_flow_rate(controller, mm_per_min)
+        return self.async_show_form(
+            step_id="flow_volume",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("minutes", default=15): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=1, max=240, step=1, mode=selector.NumberSelectorMode.BOX, unit_of_measurement="min"
+                        )
+                    ),
+                    vol.Required("volume", default=10.0): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.01, max=1000000, step=0.01, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="gal" if imperial else "L",
                         )
                     ),
                     vol.Required("area", default=10.0 if imperial else 1.0): selector.NumberSelector(
