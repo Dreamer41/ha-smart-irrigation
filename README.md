@@ -477,6 +477,18 @@ has a watering history, and press **Service Run 1 min** to confirm the
 valve, pump and log. Add further zones the same way; sensors can be
 added or removed later under **Configure**.
 
+**Water use in litres.** Set **Zone Flow** (the litres per minute the whole
+zone's valve gives) and ZoneFlow estimates the litres each watering uses:
+the zone card shows the last watering as mm and litres, plus **Water Used,
+Past 30 Days** and **Water Used This Year** (from 1 January). Work Zone Flow
+out under **Configure → Zone flow** (number of heads x flow per head;
+drippers are rated per hour, sprinklers per minute), or measure it with the
+service run and **Configure → Flow rate: measure it by the litres a service
+run gave**. A flow meter's measured litres are used when the zone has one.
+It is an estimate and only for display: it never changes when or how much
+the zone waters. Zones without a Zone Flow or flow meter show mm only, and
+watering from before it was set stays in mm.
+
 ## Recommended cutover
 
 If you're replacing an existing YAML-based irrigation automation:
