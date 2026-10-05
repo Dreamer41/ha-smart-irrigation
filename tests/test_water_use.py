@@ -128,3 +128,15 @@ async def test_the_flow_rate_steps_also_set_zone_flow(hass, fake_valve_services,
         result["flow_id"], {"minutes": 15, "volume": 36.0, "area": 10.0}
     )
     assert controller.number("zone_flow_l_min") == pytest.approx(2.4)
+
+
+@pytest.mark.asyncio
+async def test_a_flow_meter_that_counts_nothing_falls_back_to_zone_flow(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _clock, _ = await _cycle_zone(hass, monkeypatch, tmp_path)
+    await controller.numbers["zone_flow_l_min"].async_set_metric_value(2.0)
+    controller._run_liters = 0.0  # the meter read both ends and saw no water
+    controller._count_for_summary(10.0, "routine")
+    assert controller.store.state.last_cycle_liters == pytest.approx(20.0)
+    controller._run_liters = 15.0  # a meter that counted is believed
+    controller._count_for_summary(10.0, "routine")
+    assert controller.store.state.last_cycle_liters == pytest.approx(15.0)

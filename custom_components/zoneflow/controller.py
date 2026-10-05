@@ -4007,7 +4007,10 @@ class ZoneFlowController:
         state.last_cycle_applied_mm = round(mm, 2)
         state.last_cycle_kind = cycle
         state.last_cycle_runtime_min = minutes
-        liters = self._run_liters  # the flow meter's, when it read both ends
+        # The flow meter's litres, when it read both ends and counted
+        # something (a meter that counts nothing while the valve was open is
+        # not working: the Zone Flow estimate stands in).
+        liters = self._run_liters or None
         if liters is None and self.number("zone_flow_l_min") > 0:
             liters = minutes * self.number("zone_flow_l_min")
         state.last_cycle_liters = round(liters, 1) if liters is not None else None
