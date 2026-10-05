@@ -8,6 +8,8 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 - **Fixed**: a soil-moisture probe stuck on "dry" (or reading dry because it is out of the soil) that keeps reporting made the zone water a **full** interval dose **every morning** — about four times the weekly target in a four-week simulation. A run a dry probe brings forward now gives only the share of the dose the days since the last watering call for (at least a quarter), so even a stuck probe stays near the weekly target
 
+- **Fixed**: Weather Underground answering with something that isn't a report (a list, a string, NaN, infinity, a missing key) no longer raises an error in the answer parser or the station-picking form; NaN and negative totals are never counted as rain
+- **Fixed**: a hand-entered rain amount that isn't a finite number is refused; a zone that names itself as its greenhouse is just a zone
 - **Changed**: deleting a greenhouse zone now switches off its fans, misters and heater and closes its vents (nothing controls them any more); a reload or restart still leaves them alone
 - **Translations**: the "nothing is on hold" message of Resume Automatic in every language
 
