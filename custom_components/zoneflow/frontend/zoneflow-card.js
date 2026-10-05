@@ -38,6 +38,8 @@ const I18N = {
     "show_diagnostics": "Show the diagnostics",
     "groups": {
       "amounts": "How much water",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Rain, forecast and frost",
       "deep_soak": "Deep soak",
       "soil": "Soil",
@@ -154,6 +156,8 @@ const I18N = {
     "show_diagnostics": "Diagnose anzeigen",
     "groups": {
       "amounts": "Wassermenge",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Regen, Vorhersage und Frost",
       "deep_soak": "Tiefenbewässerung",
       "soil": "Boden",
@@ -270,6 +274,8 @@ const I18N = {
     "show_diagnostics": "Mostrar el diagnóstico",
     "groups": {
       "amounts": "Cuánta agua",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Lluvia, previsión y heladas",
       "deep_soak": "Riego profundo",
       "soil": "Suelo",
@@ -386,6 +392,8 @@ const I18N = {
     "show_diagnostics": "Näytä diagnostiikka",
     "groups": {
       "amounts": "Vesimäärä",
+      "water_use": "Veden käytön arvio",
+      "water_use_note": "Käytetään vain litrojen laskemiseen veden käytön luvuissa. Ei muuta sitä, milloin tai kuinka kauan vyöhyke kastelee. Jätä 0, jos et tiedä.",
       "rain": "Sade, ennuste ja halla",
       "deep_soak": "Syväkastelu",
       "soil": "Maa",
@@ -502,6 +510,8 @@ const I18N = {
     "show_diagnostics": "Afficher le diagnostic",
     "groups": {
       "amounts": "Quantité d'eau",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Pluie, prévisions et gel",
       "deep_soak": "Arrosage profond",
       "soil": "Sol",
@@ -618,6 +628,8 @@ const I18N = {
     "show_diagnostics": "Mostra la diagnostica",
     "groups": {
       "amounts": "Quanta acqua",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Pioggia, previsioni e gelo",
       "deep_soak": "Irrigazione profonda",
       "soil": "Terreno",
@@ -734,6 +746,8 @@ const I18N = {
     "show_diagnostics": "Diagnose tonen",
     "groups": {
       "amounts": "Hoeveel water",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Regen, verwachting en vorst",
       "deep_soak": "Diepe watergift",
       "soil": "Bodem",
@@ -850,6 +864,8 @@ const I18N = {
     "show_diagnostics": "Pokaż diagnostykę",
     "groups": {
       "amounts": "Ile wody",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Deszcz, prognoza i przymrozki",
       "deep_soak": "Głębokie podlewanie",
       "soil": "Gleba",
@@ -966,6 +982,8 @@ const I18N = {
     "show_diagnostics": "Mostrar o diagnóstico",
     "groups": {
       "amounts": "Quantidade de água",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Chuva, previsão e geada",
       "deep_soak": "Rega profunda",
       "soil": "Solo",
@@ -1082,6 +1100,8 @@ const I18N = {
     "show_diagnostics": "Visa diagnostiken",
     "groups": {
       "amounts": "Hur mycket vatten",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Regn, prognos och frost",
       "deep_soak": "Djupvattning",
       "soil": "Jord",
@@ -1198,6 +1218,8 @@ const I18N = {
     "show_diagnostics": "Zobrazit diagnostiku",
     "groups": {
       "amounts": "Kolik vody",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Déšť, předpověď a mráz",
       "deep_soak": "Hloubková zálivka",
       "soil": "Půda",
@@ -1314,6 +1336,8 @@ const I18N = {
     "show_diagnostics": "Vis diagnosticeringen",
     "groups": {
       "amounts": "Vandmængde",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Regn, vejrudsigt og frost",
       "deep_soak": "Dybdevanding",
       "soil": "Jord",
@@ -1430,6 +1454,8 @@ const I18N = {
     "show_diagnostics": "Diagnosztika megjelenítése",
     "groups": {
       "amounts": "Vízmennyiség",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Eső, előrejelzés és fagy",
       "deep_soak": "Mélyöntözés",
       "soil": "Talaj",
@@ -1546,6 +1572,8 @@ const I18N = {
     "show_diagnostics": "Vis diagnostikken",
     "groups": {
       "amounts": "Vannmengde",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Regn, værmelding og frost",
       "deep_soak": "Dypvanning",
       "soil": "Jord",
@@ -1662,6 +1690,8 @@ const I18N = {
     "show_diagnostics": "Mostrar o diagnóstico",
     "groups": {
       "amounts": "Quantidade de água",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Chuva, previsão e geada",
       "deep_soak": "Irrigação profunda",
       "soil": "Solo",
@@ -1778,6 +1808,8 @@ const I18N = {
     "show_diagnostics": "Показывать диагностику",
     "groups": {
       "amounts": "Сколько воды",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Дождь, прогноз и заморозки",
       "deep_soak": "Глубокий полив",
       "soil": "Почва",
@@ -1894,6 +1926,8 @@ const I18N = {
     "show_diagnostics": "Zobraziť diagnostiku",
     "groups": {
       "amounts": "Koľko vody",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Dážď, predpoveď a mráz",
       "deep_soak": "Hĺbková zálievka",
       "soil": "Pôda",
@@ -2010,6 +2044,8 @@ const I18N = {
     "show_diagnostics": "Показувати діагностику",
     "groups": {
       "amounts": "Скільки води",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Дощ, прогноз і заморозки",
       "deep_soak": "Глибокий полив",
       "soil": "Ґрунт",
@@ -2126,6 +2162,8 @@ const I18N = {
     "show_diagnostics": "显示诊断",
     "groups": {
       "amounts": "浇水量",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "降雨、预报和霜冻",
       "deep_soak": "深层浇灌",
       "soil": "土壤",
@@ -2272,11 +2310,12 @@ const SETTINGS_GROUPS = [
     "number.mist_on_seconds", "number.mist_off_seconds", "number.max_mist_minutes_per_hour",
   ]],
   ["amounts", [
-    "number.flow_rate_mm_per_min", "number.zone_flow_l_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
+    "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
     "number.target_weekly_cool_mm", "select.demand_model", "number.crop_coefficient",
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
     "number.routine_pulse_count", "number.routine_pulse_rest_minutes",
   ]],
+  ["water_use", ["number.zone_flow_l_min"]],
   ["rain", [
     "number.routine_drydown_days", "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
@@ -2485,6 +2524,7 @@ class ZoneFlowCard extends HTMLElement {
       dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
       dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
       dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
+      .group-note { color: var(--secondary-text-color); font-size: 0.85em; margin: -4px 0 8px; line-height: 1.35; }
       .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
         letter-spacing: 0.04em; margin: 16px 0 2px; }
       .rows > * { display: block; margin: 4px 0; }
@@ -2695,6 +2735,14 @@ class ZoneFlowCard extends HTMLElement {
         heading.className = "group-title";
         heading.textContent = t(hass, `groups.${groupKey}`);
         body.appendChild(heading);
+        // Some groups say in plain words what their settings are for.
+        const noteText = t(hass, `groups.${groupKey}_note`);
+        if (noteText && !noteText.startsWith("groups.")) {
+          const note = document.createElement("div");
+          note.className = "group-note";
+          note.textContent = noteText;
+          body.appendChild(note);
+        }
       }
       const list = document.createElement("div");
       list.className = "rows";
