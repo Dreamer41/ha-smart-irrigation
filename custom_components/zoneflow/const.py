@@ -603,7 +603,7 @@ SOIL_MOISTURE_STALE_SECONDS = 24 * 3600
 SOIL_WET_HOLD_ALERT_INTERVALS = 2
 
 # The quick service/check run buttons on every zone, in minutes.
-SERVICE_RUN_BUTTON_MINUTES = (1, 5, 10)
+SERVICE_RUN_BUTTON_MINUTES = (1, 5, 10, 15)
 
 # Phone notifications: every notification is either informational (a run
 # finished, rain skipped a cycle) or a warning (something needs a look).

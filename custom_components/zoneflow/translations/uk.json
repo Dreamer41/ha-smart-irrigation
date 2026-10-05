@@ -824,6 +824,9 @@
       "service_run_10_min": {
         "name": "Сервісний запуск 10 хв"
       },
+      "service_run_15_min": {
+        "name": "Сервісний запуск 15 хв"
+      },
       "fertilized_today": {
         "name": "Підживлено сьогодні"
       },

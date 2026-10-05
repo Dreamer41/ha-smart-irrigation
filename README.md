@@ -233,7 +233,7 @@ and both zones get less water than their calibrated runtime assumes.
   Rain dates, so a migrated plant isn't treated as overdue. Past dates only
   (a typo'd future date would silently keep the zone dry).
 - **Service runs for checks and maintenance**: every zone has **Service
-  Run 1 / 5 / 10 min** buttons and a **Service Mode** switch (valve on until
+  Run 1 / 5 / 10 / 15 min** buttons and a **Service Mode** switch (valve on until
   you switch it off, with an automatic switch-off after 30 minutes by
   default and a phone alert). For checking drippers, flushing lines or
   finding leaks — they go through the same safety path as a real cycle

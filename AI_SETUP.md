@@ -2243,6 +2243,9 @@ views:
               - entity: <button.zone_service_run_10_min>
                 name: 10 min
                 icon: mdi:timer-outline
+              - entity: <button.zone_service_run_15_min>
+                name: 15 min
+                icon: mdi:timer-outline
 
       # Outdoor zones with a weather service: how often a skip for forecast
       # rain was followed by real rain (1.6.1)

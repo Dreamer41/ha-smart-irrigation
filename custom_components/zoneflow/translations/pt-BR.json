@@ -824,6 +824,9 @@
       "service_run_10_min": {
         "name": "Ciclo de manutenção 10 min"
       },
+      "service_run_15_min": {
+        "name": "Ciclo de manutenção 15 min"
+      },
       "fertilized_today": {
         "name": "Adubado hoje"
       },

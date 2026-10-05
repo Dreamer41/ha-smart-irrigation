@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.6.2";
+const CARD_VERSION = "1.6.3";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -2283,7 +2283,7 @@ const SETTINGS_GROUPS = [
 const HANDLED = new Set([
   "sensor.status", "button.run_routine", "button.run_deep_soak", "button.snooze_today",
   "button.reset_lock", "switch.service_mode", "button.service_run_1_min", "button.service_run_5_min",
-  "button.service_run_10_min", "button.fertilized_today", "button.mark_watered",
+  "button.service_run_10_min", "button.service_run_15_min", "button.fertilized_today", "button.mark_watered",
   "number.manual_rain_mm", "button.add_manual_rain", "button.resume_automatic",
 ]);
 
@@ -2543,6 +2543,7 @@ class ZoneFlowCard extends HTMLElement {
         ["button.service_run_1_min", `1 ${minutes}`, "mdi:timer-outline"],
         ["button.service_run_5_min", `5 ${minutes}`, "mdi:timer-outline"],
         ["button.service_run_10_min", `10 ${minutes}`, "mdi:timer-outline"],
+        ["button.service_run_15_min", `15 ${minutes}`, "mdi:timer-outline"],
         ["button.reset_lock", t(hass, "reset_lock"), "mdi:lock-open-variant"],
       ]),
     ];
