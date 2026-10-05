@@ -1262,7 +1262,7 @@
       "message": "Deszcz można wprowadzić maksymalnie do 14 dni wstecz."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Nic nie jest wstrzymane: wszystkie urządzenia są już pod kontrolą ZoneFlow."
     }
   },
   "issues": {

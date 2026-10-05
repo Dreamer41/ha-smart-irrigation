@@ -108,8 +108,8 @@ def check_station(state: StationState, obs: Observation | None, now_ts: float, t
     if now_ts - obs.obs_ts > SILENT_SECONDS or obs.obs_day != today:
         state.status = "silent"  # nothing recent, or still yesterday's total
         return None
-    if obs.total_mm < 0:
-        state.status = "spike"
+    if not math.isfinite(obs.total_mm) or obs.total_mm < 0:
+        state.status = "spike"  # NaN, infinity, a negative total: not rain
         return None
     previous = (state.total or 0.0) if state.day == today else 0.0
     if obs.total_mm - previous > SPIKE_MM:

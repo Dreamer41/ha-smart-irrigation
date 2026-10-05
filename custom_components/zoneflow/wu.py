@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 from collections.abc import Callable
 from datetime import datetime, time as dt_time, timedelta
 from typing import Any
@@ -70,24 +71,27 @@ async def async_nearby_stations(hass: HomeAssistant, api_key: str) -> list[dict[
     data = await _get_json(
         hass, NEAR_URL, {"geocode": f"{lat},{lon}", "product": "pws", "format": "json", "apiKey": api_key}
     )
-    location = (data or {}).get("location") or {}
+    location = data.get("location") if isinstance(data, dict) else None
+    if not isinstance(location, dict):
+        return []
+
+    def _list(key):
+        value = location.get(key)
+        return value if isinstance(value, list) else []
+
     stations = []
     for sid, name, s_lat, s_lon in zip(
-        location.get("stationId") or [],
-        location.get("stationName") or [],
-        location.get("latitude") or [],
-        location.get("longitude") or [],
+        _list("stationId"), _list("stationName") or [None] * 10, _list("latitude"), _list("longitude")
     ):
-        if sid is None or s_lat is None or s_lon is None:
+        try:
+            s_lat, s_lon = float(s_lat), float(s_lon)
+            if sid is None or not (math.isfinite(s_lat) and math.isfinite(s_lon)):
+                continue
+            distance = round(wl.distance_km(lat, lon, s_lat, s_lon), 2)
+        except (TypeError, ValueError):
             continue
         stations.append(
-            {
-                "id": sid,
-                "name": name or sid,
-                "latitude": s_lat,
-                "longitude": s_lon,
-                "distance_km": round(wl.distance_km(lat, lon, s_lat, s_lon), 2),
-            }
+            {"id": str(sid), "name": str(name or sid), "latitude": s_lat, "longitude": s_lon, "distance_km": distance}
         )
     return sorted(stations, key=lambda s: s["distance_km"])
 
@@ -99,20 +103,25 @@ async def async_current(hass: HomeAssistant, api_key: str, station_id: str) -> w
         CURRENT_URL,
         {"stationId": station_id, "format": "json", "units": "m", "numericPrecision": "decimal", "apiKey": api_key},
     )
+    # Whatever comes back (a list, a string, a missing key, NaN...) that isn't
+    # a usable report is "nothing recent", never an error.
     try:
-        obs = (data or {}).get("observations") or []
-        if not obs:
+        if not isinstance(data, dict):
+            return None
+        obs = data.get("observations")
+        if not isinstance(obs, list) or not obs or not isinstance(obs[0], dict):
             return None
         report = obs[0]
-        total = report.get("metric", {}).get("precipTotal")
-        if total is None:
+        metric = report.get("metric")
+        total = metric.get("precipTotal") if isinstance(metric, dict) else None
+        if total is None or isinstance(total, (bool, list, dict)):
             return None
-        return wl.Observation(
-            total_mm=float(total),
-            obs_ts=float(report["epoch"]),
-            obs_day=str(report["obsTimeLocal"])[:10],
-        )
-    except (KeyError, TypeError, ValueError):
+        total_mm = float(total)
+        obs_ts = float(report["epoch"])
+        if not (math.isfinite(total_mm) and math.isfinite(obs_ts)):
+            return None
+        return wl.Observation(total_mm=total_mm, obs_ts=obs_ts, obs_day=str(report["obsTimeLocal"])[:10])
+    except (KeyError, TypeError, ValueError, AttributeError):
         return None
 
 

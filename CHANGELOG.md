@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.6.2] — Stuck-probe protection, hardening and tidier greenhouse deletion
+
+- **Fixed**: a soil-moisture probe stuck on "dry" (or reading dry because it is out of the soil) that keeps reporting made the zone water a **full** interval dose **every morning** — about four times the weekly target in a four-week simulation. A run a dry probe brings forward now gives only the share of the dose the days since the last watering call for (at least a quarter), so even a stuck probe stays near the weekly target
+
+- **Fixed**: Weather Underground answering with something that isn't a report (a list, a string, NaN, infinity, a missing key) no longer raises an error in the answer parser or the station-picking form; NaN and negative totals are never counted as rain
+- **Fixed**: a hand-entered rain amount that isn't a finite number is refused; a zone that names itself as its greenhouse is just a zone
+- **Changed**: deleting a greenhouse zone now switches off its fans, misters and heater and closes its vents (nothing controls them any more); a reload or restart still leaves them alone
+- **Translations**: the "nothing is on hold" message of Resume Automatic in every language
+
+---
+
 ## [1.6.1] — Rain without a gauge, Resume Automatic and a ready-made dashboard
 
 - **New**: **Weather Underground rain (experimental)** — an outdoor zone **without a rain gauge** can borrow rain from 1-3 private weather stations within 2 km (nearer is better). One shared entry for the whole Home Assistant (Add integration → ZoneFlow → Set up Weather Underground rain), the station readings combined (3 stations: the middle one, 2: the lower one, 1: as is), polled every 2 hours and every 10 minutes around a watering. Only for rain deduction, not 100 % reliable. Read [the guide](docs/WEATHER-UNDERGROUND.md) first: check the Weather Underground map for stations nearby, and note the free API key needs your own station uploading temperature and humidity. Not for zones with a rain gauge

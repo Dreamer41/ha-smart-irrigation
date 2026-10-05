@@ -221,3 +221,15 @@ async def test_a_crop_shows_no_climate_status_or_control(hass, fake_valve_servic
     assert entries[("switch", "greenhouse_control")].hidden_by == er.RegistryEntryHider.INTEGRATION
     house_entries = {(e.domain, e.translation_key): e for e in er.async_entries_for_config_entry(registry, house.entry_id)}
     assert house_entries[("switch", "greenhouse_control")].hidden_by is None
+
+
+@pytest.mark.asyncio
+async def test_a_zone_that_names_itself_as_its_greenhouse_is_just_a_zone(hass, fake_valve_services):
+    await _seed_all(hass)
+    house = _climate_only_entry(hass)
+    crop = _crop(hass, "Tomatoes", VALVE_A, house)
+    hass.config_entries.async_update_entry(crop, options={CONF_PARENT_ZONE: crop.entry_id})
+    await _load(hass, house)
+    c = _ctl(hass, crop)
+    assert not c.is_crop and c.has_valve
+    assert c.crops == []  # not a crop of itself

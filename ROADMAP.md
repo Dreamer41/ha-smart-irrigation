@@ -14,6 +14,14 @@ Ideas queued for upcoming releases.
 
 ## Shipped
 
+### 1.6.2 — stuck-probe protection and hardening
+
+- A soil probe stuck on "dry" can no longer flood a zone: a run it brings
+  forward gives the elapsed days' share of the dose.
+- Weather Underground answers that make no sense are no data, not errors.
+- Deleting a greenhouse switches its fans, misters and heater off and closes
+  its vents.
+
 ### 1.6.1 — rain without a gauge, Resume Automatic and a ready-made dashboard
 
 - **Weather Underground rain (experimental)**: an outdoor zone without a rain

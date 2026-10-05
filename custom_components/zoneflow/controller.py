@@ -23,6 +23,7 @@ import contextlib
 import csv
 import functools
 import logging
+import math
 from datetime import datetime, time as dt_time, timedelta
 from typing import Any
 
@@ -365,7 +366,9 @@ class ZoneFlowController:
     def parent_entry(self):
         """The greenhouse this zone is a crop of (its config entry), or None."""
         entry_id = self.parent_entry_id
-        return self.hass.config_entries.async_get_entry(entry_id) if entry_id else None
+        if not entry_id or entry_id == self.entry.entry_id:  # a zone can't be a crop of itself
+            return None
+        return self.hass.config_entries.async_get_entry(entry_id)
 
     @property
     def is_crop(self) -> bool:
@@ -376,7 +379,7 @@ class ZoneFlowController:
         """The loaded zones that are crops of this one."""
         return [
             c for c in self.hass.data.get(DOMAIN, {}).values()
-            if getattr(c, "parent_entry_id", None) == self.entry.entry_id
+            if c is not self and getattr(c, "parent_entry_id", None) == self.entry.entry_id
         ]
 
     @property
@@ -3128,6 +3131,10 @@ class ZoneFlowController:
         et_weekly = self.et_weekly_target_mm()
         routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
         days_elapsed = int(elapsed_seconds / 86400)
+        # Brought forward by a dry probe (the schedule says not yet): only the
+        # elapsed days' share of the dose, so a probe stuck on "dry" can't
+        # flood the zone with a full dose every morning.
+        interval_fraction = 1.0 if interval_due else calc.early_run_fraction(elapsed_seconds, interval_days)
         plan = calc.plan_routine_irrigation(
             avg_peak_temp=avg_peak_temp,
             hot_threshold=hot_threshold,
@@ -3146,6 +3153,7 @@ class ZoneFlowController:
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
+            interval_fraction=interval_fraction,
         )
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
@@ -3725,7 +3733,7 @@ class ZoneFlowController:
         twice."""
         if not self.is_outdoor:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_not_outdoor")
-        if amount_mm <= 0:
+        if not math.isfinite(amount_mm) or amount_mm <= 0:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="manual_rain_zero")
         now_ts = dt_util.utcnow().timestamp()
         when = now_ts if when_ts is None else when_ts

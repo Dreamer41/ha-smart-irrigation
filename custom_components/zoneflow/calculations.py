@@ -450,6 +450,7 @@ def plan_routine_irrigation(
     min_pulse_minutes: int = 1,
     weekly_target_override_mm: float | None = None,
     site: tuple[str, str, str] | None = None,
+    interval_fraction: float = 1.0,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -468,7 +469,10 @@ def plan_routine_irrigation(
         target_weekly_mm = routine_target_weekly_mm(
             avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
         )
-    interval_target_mm = (target_weekly_mm / 7.0) * interval_days
+    # A run the soil probe brought forward gives only what the days since the
+    # last watering call for (interval_fraction < 1), so a probe that stays
+    # "dry" can't turn every morning into a full interval's dose.
+    interval_target_mm = (target_weekly_mm / 7.0) * interval_days * interval_fraction
     eff_rain = rain_deduction_mm(
         today_rain_mm,
         rain_day_history_mm,
@@ -493,6 +497,20 @@ def plan_routine_irrigation(
         pulse_runtime_minutes=pulse_runtime,
         pulse_count=count,
     )
+
+
+# The least a run brought forward by a dry soil probe gives, as a share of a
+# full interval's dose: one day's worth of a 4-day interval.
+EARLY_RUN_MIN_FRACTION = 0.25
+
+
+def early_run_fraction(elapsed_seconds: float, interval_days: int) -> float:
+    """The share of a full interval's dose a probe-forced early run gives:
+    the days since the last watering over the interval, never below
+    EARLY_RUN_MIN_FRACTION and never above 1."""
+    if interval_days <= 0:
+        return 1.0
+    return min(max(elapsed_seconds / 86400.0 / interval_days, EARLY_RUN_MIN_FRACTION), 1.0)
 
 
 def routine_due(elapsed_seconds: float, interval_days: int, buffer_seconds: int) -> bool:

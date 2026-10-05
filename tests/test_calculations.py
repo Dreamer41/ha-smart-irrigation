@@ -411,3 +411,24 @@ def test_a_jump_back_after_a_week_is_real_rain():
     for tips, t in ((1500, 0), (0, 60), (1500, 60 + 8 * 86400)):
         total, last, drop_from, drop_ts, since = calc.track_tip_total(total, last, drop_from, drop_ts, since, tips, t)
     assert total == 3000
+
+
+def test_a_run_brought_forward_by_the_probe_gives_the_elapsed_days_share():
+    assert calc.early_run_fraction(1 * 86400, 4) == 0.25
+    assert calc.early_run_fraction(2 * 86400, 4) == 0.5
+    assert calc.early_run_fraction(0, 4) == calc.EARLY_RUN_MIN_FRACTION  # right after a watering: the floor
+    assert calc.early_run_fraction(3.9 * 86400, 4) == pytest.approx(0.975)
+    assert calc.early_run_fraction(10 * 86400, 4) == 1.0
+    assert calc.early_run_fraction(86400, 0) == 1.0
+
+
+def test_the_plan_scales_the_interval_dose_by_the_fraction():
+    kw = dict(
+        avg_peak_temp=30.5, hot_threshold=30.0, cool_threshold=20.0, normal_weekly_mm=35.0, hot_weekly_mm=35.0,
+        cool_weekly_mm=20.0, flow_rate=0.24, days_elapsed=1, today_rain_mm=0.0, rain_day_history_mm=[0.0] * 10,
+        rain_eff_low=0.5, rain_eff_mid=0.7, rain_eff_high=0.9,
+    )
+    full = calc.plan_routine_irrigation(**kw)
+    quarter = calc.plan_routine_irrigation(**kw, interval_fraction=0.25)
+    assert quarter.interval_target_mm == pytest.approx(full.interval_target_mm / 4)
+    assert quarter.calc_runtime_minutes < full.calc_runtime_minutes

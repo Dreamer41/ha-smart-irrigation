@@ -1262,7 +1262,7 @@
       "message": "La pluie peut être saisie au maximum 14 jours en arrière."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Rien n'est en pause : tous les appareils sont déjà sous le contrôle de ZoneFlow."
     }
   },
   "issues": {

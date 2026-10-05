@@ -1262,7 +1262,7 @@
       "message": "Regn kan angis for høyst 14 dager siden."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Ingenting er satt på pause: Alle enheter er allerede under ZoneFlows styring."
     }
   },
   "issues": {

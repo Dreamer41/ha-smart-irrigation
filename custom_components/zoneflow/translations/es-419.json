@@ -1262,7 +1262,7 @@
       "message": "La lluvia solo se puede registrar como máximo con 14 días de antigüedad."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "No hay nada en pausa: todos los dispositivos ya están bajo el control de ZoneFlow."
     }
   },
   "issues": {

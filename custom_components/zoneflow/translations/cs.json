@@ -1262,7 +1262,7 @@
       "message": "Déšť lze zadat maximálně 14 dní zpětně."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Nic není pozastaveno: všechna zařízení jsou již pod řízením ZoneFlow."
     }
   },
   "issues": {

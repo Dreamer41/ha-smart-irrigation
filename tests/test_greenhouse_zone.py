@@ -712,3 +712,27 @@ async def test_failsafe_status_says_what_vents_really_do_when_it_is_cold(hass, d
     hass.states.async_set(OUTSIDE, "30")  # warm: the setting applies
     await c.greenhouse.async_evaluate("test")
     assert "vents open, fans on" in c.greenhouse.status()["text"]
+
+
+@pytest.mark.asyncio
+async def test_deleting_a_greenhouse_switches_its_devices_off_but_a_reload_does_not(hass, devices):
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "30")
+    hass.states.async_set(OUTSIDE, "20")
+    await _go(c)
+    assert hass.states.get(VENT).state == "open" and hass.states.get(FAN).state == "on"
+    hass.states.async_set(HEATER, "on")  # a heater a person switched on
+    await hass.async_block_till_done()
+
+    # A reload leaves the devices as they are.
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.states.get(FAN).state == "on" and hass.states.get(VENT).state == "open"
+
+    # Deleting the zone: nothing controls them any more, so they are switched off.
+    assert await hass.config_entries.async_remove(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.states.get(FAN).state == "off"
+    assert hass.states.get(VENT).state == "closed"
+    assert hass.states.get(HEATER).state == "off"

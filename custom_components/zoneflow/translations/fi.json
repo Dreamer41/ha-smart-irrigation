@@ -1262,7 +1262,7 @@
       "message": "Sateen voi kirjata enintään 14 päivää taaksepäin."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Mikään ei ole pidossa: kaikki laitteet ovat jo ZoneFlown ohjauksessa."
     }
   },
   "issues": {

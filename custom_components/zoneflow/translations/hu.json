@@ -1262,7 +1262,7 @@
       "message": "Eső legfeljebb 14 napra visszamenőleg rögzíthető."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Semmi sincs szüneteltetve: minden eszköz már a ZoneFlow vezérlése alatt áll."
     }
   },
   "issues": {

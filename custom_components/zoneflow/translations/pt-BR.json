@@ -1262,7 +1262,7 @@
       "message": "A chuva pode ser registrada no máximo até 14 dias atrás."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Nenhum dispositivo está suspenso: todos já estão sob o controle do ZoneFlow."
     }
   },
   "issues": {
