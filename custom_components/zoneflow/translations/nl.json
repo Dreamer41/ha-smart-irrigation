@@ -1262,7 +1262,7 @@
       "message": "Regen kan maximaal 14 dagen terug worden ingevoerd."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Er staat niets op pauze: alle apparaten staan al onder bediening van ZoneFlow."
     }
   },
   "issues": {

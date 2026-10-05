@@ -1262,7 +1262,7 @@
       "message": "La pioggia può essere inserita al massimo fino a 14 giorni fa."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Niente è in pausa: tutti i dispositivi sono già sotto il controllo di ZoneFlow."
     }
   },
   "issues": {

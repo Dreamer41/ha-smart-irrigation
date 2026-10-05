@@ -1262,7 +1262,7 @@
       "message": "Regn kan anges som mest 14 dagar bakåt."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Inget är satt på paus: Alla enheter står redan under ZoneFlows styrning."
     }
   },
   "issues": {

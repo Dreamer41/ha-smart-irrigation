@@ -1262,7 +1262,7 @@
       "message": "Дощ можна ввести максимум за останні 14 днів."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Нічого не призупинено: усі пристрої вже перебувають під керуванням ZoneFlow."
     }
   },
   "issues": {

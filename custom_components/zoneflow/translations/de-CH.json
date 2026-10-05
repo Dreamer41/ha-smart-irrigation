@@ -1262,7 +1262,7 @@
       "message": "Regen kann maximal 14 Tage rückwirkend eingegeben werden."
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "Nichts ist angehalten: Alle Geräte stehen bereits unter der Steuerung von ZoneFlow."
     }
   },
   "issues": {

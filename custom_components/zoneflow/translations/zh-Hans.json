@@ -1262,7 +1262,7 @@
       "message": "最多只能输入过去 14 天内的降雨量。"
     },
     "nothing_on_hold": {
-      "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+      "message": "没有暂停事项：所有设备均已处于 ZoneFlow 的控制之下。"
     }
   },
   "issues": {
