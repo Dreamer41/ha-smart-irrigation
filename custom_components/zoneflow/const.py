@@ -65,7 +65,10 @@ CONF_RAIN_SOURCE = "rain_source_type"
 RAIN_SOURCE_TIPS = "tips"
 RAIN_SOURCE_TOTAL = "total_mm"
 RAIN_SOURCE_RATE = "rate_mm_h"
-RAIN_SOURCE_OPTIONS = [RAIN_SOURCE_TIPS, RAIN_SOURCE_TOTAL, RAIN_SOURCE_RATE]
+# The amount that fell since the previous reading (e.g. the Tempest "Precipitation"
+# sensor: the previous minute): every reading is new rain, added up.
+RAIN_SOURCE_AMOUNT = "amount_mm"
+RAIN_SOURCE_OPTIONS = [RAIN_SOURCE_TIPS, RAIN_SOURCE_TOTAL, RAIN_SOURCE_RATE, RAIN_SOURCE_AMOUNT]
 # Rain units a station may report, as mm (or mm/h for a rate).
 RAIN_UNIT_TO_MM = {
     "mm": 1.0, "mm/h": 1.0, "mm/hr": 1.0, "l/m²": 1.0, "l/m2": 1.0,

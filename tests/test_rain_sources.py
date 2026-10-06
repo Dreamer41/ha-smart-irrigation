@@ -121,3 +121,23 @@ async def test_the_tip_size_setting_is_hidden_for_a_total(hass, tmp_path):
 
     _entry, controller = await _zone(hass, tmp_path, RAIN_SOURCE_TOTAL, 1.0)
     assert ("number", "rain_mm_per_tip") in visibility.hidden_for(controller)
+
+
+@pytest.mark.asyncio
+async def test_rain_per_reading_is_added_up_including_repeated_readings(hass, tmp_path):
+    from homeassistant.core import State
+
+    _entry, controller = await _zone(hass, tmp_path, "amount_mm", 0.0)
+    await _set(hass, 0.2)  # a change
+    # The same 0.2 again is a reading too (a state report, not a change).
+    controller._sync_rain_from_counter_state(State(RAIN_COUNTER, "0.2", {"unit_of_measurement": "mm"}))
+    controller._sync_rain_from_counter_state(State(RAIN_COUNTER, "0.0", {"unit_of_measurement": "mm"}))
+    await _set(hass, 0.1)
+    assert controller.rain_windows()["24h"] == pytest.approx(0.5)
+
+
+@pytest.mark.asyncio
+async def test_rain_per_reading_in_inches(hass, tmp_path):
+    _entry, controller = await _zone(hass, tmp_path, "amount_mm", 0.0, "in")
+    await _set(hass, 0.01, "in")
+    assert controller.rain_windows()["24h"] == pytest.approx(0.254)

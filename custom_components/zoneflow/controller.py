@@ -42,6 +42,7 @@ from homeassistant.helpers.event import (
 from homeassistant.helpers.sun import get_astral_event_next
 import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
+from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, issues, messages, units, visibility
@@ -147,6 +148,7 @@ from .const import (
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
     RAIN_RATE_MAX_GAP_SECONDS,
+    RAIN_SOURCE_AMOUNT,
     RAIN_SOURCE_OPTIONS,
     RAIN_SOURCE_RATE,
     RAIN_SOURCE_TIPS,
@@ -219,6 +221,8 @@ _PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
+# Home Assistant 2024.4+: a sensor that reports the same value again.
+EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
 WATER_LEDGER_DAYS = 400
 
 # Cycle kinds (as logged) -> the keys used by the message catalog and the
@@ -837,6 +841,17 @@ class ZoneFlowController:
                     self.hass, [self.rain_counter_entity], self._on_rain_counter_change
                 )
             )
+            if self.rain_source_type in (RAIN_SOURCE_RATE, RAIN_SOURCE_AMOUNT) and EVENT_STATE_REPORTED is not None:
+                # A steady reading (0.2 mm again, 6 mm/h again) is no state
+                # change, only a "state reported": it is a reading all the same.
+                rain_entity = self.rain_counter_entity
+                self._unsubs.append(
+                    self.hass.bus.async_listen(
+                        EVENT_STATE_REPORTED,
+                        self._on_rain_counter_change,
+                        event_filter=callback(lambda data: data.get("entity_id") == rain_entity),
+                    )
+                )
         if self.outdoor_temp_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -989,7 +1004,14 @@ class ZoneFlowController:
         if source != RAIN_SOURCE_TIPS:
             tips *= self._rain_unit_factor(new_state)  # inches -> mm
         now_ts = dt_util.utcnow().timestamp()
-        if source == RAIN_SOURCE_RATE:
+        if source == RAIN_SOURCE_AMOUNT:
+            # Rain since the previous reading: every reading is new rain.
+            total = state.rain_counter_total_tips or 0.0
+            if not seed_only:
+                total += max(tips, 0.0)
+            state.rain_counter_total_tips = total
+            state.rain_counter_last_tips = max(tips, 0.0)
+        elif source == RAIN_SOURCE_RATE:
             # A rain rate (mm/h): add up rate x time since the last reading.
             rate = max(tips, 0.0)
             total = state.rain_counter_total_tips or 0.0
