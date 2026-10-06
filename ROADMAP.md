@@ -14,6 +14,14 @@ Ideas queued for upcoming releases.
 
 ## Shipped
 
+### 1.6.5 — water use in litres, rain from weather stations
+
+- Zone Flow (litres per minute), Last Water Volume, Water Used Past 30 Days and
+  This Year; Configure → Zone flow.
+- Rain gauge sensor type: tip counter, rain total (lifetime, daily, weekly),
+  rain rate or rain per reading, for Ecowitt, Ambient Weather, Tempest and
+  similar stations.
+
 ### 1.6.4 — rain gauge fix, measure flow by volume
 
 - Rain from a gauge no longer jumps when the mm-per-tip calibration differs

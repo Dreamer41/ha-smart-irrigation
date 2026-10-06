@@ -3,6 +3,17 @@
 Checklist for every release (GitHub release titled "ZoneFlow X.Y.Z", tag
 `vX.Y.Z`).
 
+**Before anything is pushed to GitHub (every time):**
+
+- **Code review** of the whole change against `main` (`/code-review high
+  main..<branch>`); every finding fixed or marked skipped with a reason.
+- **Upgrade test**: a test that loads the saved state of the previous
+  version (see `tests/test_upgrade_from_1_6_4.py`) and checks nothing resets
+  or jumps. Add one for each release that adds stored state.
+- Full test suite green, and tried on the sandbox Home Assistant.
+- Release in batches, not one update per finished feature. The publish link
+  is given last, after the merge, the green checks and the tag.
+
 1. `custom_components/zoneflow/manifest.json` version bumped.
 2. Full test suite passes (`pytest tests/ -q`) and the GitHub checks
    (Tests, HASSfest, HACS) are green.

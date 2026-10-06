@@ -4,10 +4,12 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
-## [Unreleased]
+## [1.6.5] — Water use in litres and rain from weather stations
 
 - **New**: **rain from weather stations**. A new setting, **Rain gauge sensor type** (Configure → Zone settings), tells ZoneFlow what the rain sensor reports: a **tip counter** (as before), a **rain total** in mm or inches (lifetime, daily or weekly, as from Ecowitt, Ambient Weather or Davis), a **rain rate** in mm/h, which is added up over time, or **rain per reading** (the amount since the previous update, as the Tempest *Precipitation* sensor reports it). Only the increase of a total counts, so a reset at midnight is not rain, and the tip size setting is hidden for totals and rates. Changing the sensor or the type starts the rain history again. New guide: [docs/RAIN-GAUGES.md](docs/RAIN-GAUGES.md)
 - **New**: **water use in litres (gallons)**. A new **Zone Flow** setting (litres per minute the zone's valve gives) turns valve minutes into litres. Set it under **Configure → Zone flow** (heads x flow per head), or it is set when you work out or measure the flow rate. The zone card shows the **last watering as mm and litres** (new **Last Water Volume** sensor), and new **Water Used, Past 30 Days** and **Water Used This Year** sensors (calendar year, from 1 January) keep a daily record of about 400 days. A flow meter's measured litres are used when there is one. Estimates only, never used for watering decisions; zones without Zone Flow or a flow meter show mm only, and earlier watering stays in mm
+- **Fixed**: **Rain Today** showed a sensor's whole history as rain today when rain tracking started on a sensor that already held a count (a new zone, a switched sensor, or a sensor that came online after startup)
+- **Fixed**: a rain total that starts again every day or week could be taken for a sensor glitch on a heavy-rain day and under-count the rain
 
 ## [1.6.4] — Rain gauge fix, measure flow by volume
 
