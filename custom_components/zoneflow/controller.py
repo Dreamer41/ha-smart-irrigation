@@ -958,6 +958,7 @@ class ZoneFlowController:
             tips,
             dt_util.utcnow().timestamp(),
         )
+        self._align_rain_calibration()
         cumulative_mm = state.rain_counter_total_tips * self.number("rain_mm_per_tip")
         tracker = state.rain_tracker()
         if not seed_only:
@@ -968,6 +969,28 @@ class ZoneFlowController:
         elif not tracker.samples:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
+
+    def _align_rain_calibration(self) -> None:
+        """The rain samples hold cumulative mm (tips x mm per tip). If the
+        calibration changed since they were recorded -- the slider was moved,
+        or a restart read the default before the saved value was restored --
+        the next sample would jump by (all tips so far) x (the difference) and
+        show up as rain that never fell. Rescale what is stored to the
+        calibration now in use, so only real tips make rain."""
+        state = self.store.state
+        mm_per_tip = self.number("rain_mm_per_tip")
+        old = state.rain_samples_mm_per_tip
+        if old is None or old <= 0 or mm_per_tip <= 0:
+            state.rain_samples_mm_per_tip = mm_per_tip if mm_per_tip > 0 else old
+            return
+        if abs(mm_per_tip - old) < 1e-9:
+            return
+        ratio = mm_per_tip / old
+        tracker = state.rain_tracker()
+        tracker.samples = [(ts, mm * ratio) for ts, mm in tracker.samples]
+        state.save_rain_tracker(tracker)
+        state.rain_midnight_baseline_mm *= ratio
+        state.rain_samples_mm_per_tip = mm_per_tip
 
     @callback
     def _on_rain_counter_change(self, event: Event) -> None:
