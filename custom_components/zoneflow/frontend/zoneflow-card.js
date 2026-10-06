@@ -135,7 +135,12 @@ const I18N = {
     "add_rain": "Add rain",
     "resume_automatic": "Resume automatic",
     "crops": "Crops",
-    "in_greenhouse": "In greenhouse"
+    "in_greenhouse": "In greenhouse",
+    "garden": {
+      "none": "No area",
+      "new": "New area…",
+      "name": "Area name"
+    }
   },
   "de": {
     "now": "Jetzt",
@@ -255,6 +260,11 @@ const I18N = {
       "ventilation_failsafe": "Was Lüftungen und Lüfter tun, wenn kein Innen-Temperatursensor funktioniert. Vernebler schalten sich immer aus.",
       "heater_failsafe": "Was die Heizung tut, wenn kein Innen-Temperatursensor funktioniert. Ohne Sensor läuft sie niemals ununterbrochen.",
       "misting_trigger": "Was die Vernebelung startet: jeder beliebige Auslöser oder nur Temperatur, Feuchtigkeit oder Licht."
+    },
+    "garden": {
+      "none": "Kein Bereich",
+      "new": "Neuer Bereich …",
+      "name": "Name des Bereichs"
     }
   },
   "es": {
@@ -375,6 +385,11 @@ const I18N = {
       "ventilation_failsafe": "Qué hacen las rejillas y ventiladores cuando no funciona ningún sensor de temperatura interior. Los nebulizadores siempre se apagan.",
       "heater_failsafe": "Qué hace el calefactor cuando no funciona ningún sensor de temperatura interior. Nunca funciona de forma continua sin un sensor.",
       "misting_trigger": "Qué inicia la nebulización: cualquiera de los activadores, o solo la temperatura, humedad o luz."
+    },
+    "garden": {
+      "none": "Sin área",
+      "new": "Nueva área…",
+      "name": "Nombre del área"
     }
   },
   "fi": {
@@ -495,6 +510,11 @@ const I18N = {
       "ventilation_failsafe": "Mitä tuuletusluukut ja tuulettimet tekevät, kun mikään sisälämpötila-anturi ei toimi. Sumuttimet sammuvat aina.",
       "heater_failsafe": "Mitä lämmitin tekee, kun mikään sisälämpötila-anturi ei toimi. Se ei koskaan pyöri taukoamatta ilman anturia.",
       "misting_trigger": "Mikä käynnistää sumutuksen: mikä tahansa käynnistimistä tai vain lämpötila, kosteus tai valoisuus."
+    },
+    "garden": {
+      "none": "Ei aluetta",
+      "new": "Uusi alue…",
+      "name": "Alueen nimi"
     }
   },
   "fr": {
@@ -615,6 +635,11 @@ const I18N = {
       "ventilation_failsafe": "Comportement des ouvrants et ventilateurs en cas de panne du capteur de température intérieure. Les brumisateurs s'éteignent toujours.",
       "heater_failsafe": "Comportement du chauffage en cas de panne du capteur de température intérieure. Il ne fonctionne jamais en continu sans capteur.",
       "misting_trigger": "Conditions de démarrage de la brumisation : n'importe quel déclencheur, ou exclusivement température, humidité ou luminosité."
+    },
+    "garden": {
+      "none": "Aucune partie",
+      "new": "Nouvelle partie…",
+      "name": "Nom de la partie"
     }
   },
   "it": {
@@ -735,6 +760,11 @@ const I18N = {
       "ventilation_failsafe": "Comportamento di aperture e ventole quando nessun sensore di temperatura interna funziona. I nebulizzatori si spengono sempre.",
       "heater_failsafe": "Comportamento del riscaldatore quando nessun sensore di temperatura interna funziona. Non rimane mai in funzione continua senza sensore.",
       "misting_trigger": "Cosa avvia la nebulizzazione: qualsiasi condizione, oppure solo temperatura, umidità o luminosità."
+    },
+    "garden": {
+      "none": "Nessuna area",
+      "new": "Nuova area…",
+      "name": "Nome dell'area"
     }
   },
   "nl": {
@@ -855,6 +885,11 @@ const I18N = {
       "ventilation_failsafe": "Wat ventilatie en ventilatoren doen als er geen binnentemperatuursensor werkt. Nevelaars gaan altijd uit.",
       "heater_failsafe": "Wat de verwarming doet als er geen binnentemperatuursensor werkt. Deze draait nooit ononderbroken zonder sensor.",
       "misting_trigger": "Wat het nevelen start: elke willekeurige trigger, of alleen temperatuur, luchtvochtigheid of licht."
+    },
+    "garden": {
+      "none": "Geen gedeelte",
+      "new": "Nieuw gedeelte…",
+      "name": "Naam van het gedeelte"
     }
   },
   "pl": {
@@ -975,6 +1010,11 @@ const I18N = {
       "ventilation_failsafe": "Co robią wietrzniki i wentylatory, gdy żaden czujnik temperatury wewnętrznej nie działa. Zamgławiacze zawsze się wyłączają.",
       "heater_failsafe": "Co robi grzejnik, gdy żaden czujnik temperatury wewnętrznej nie działa. Nigdy nie działa bez przerwy bez czujnika.",
       "misting_trigger": "Co uruchamia zamgławianie: dowolny z wyzwalaczy lub tylko temperatura, wilgotność bądź światło."
+    },
+    "garden": {
+      "none": "Brak obszaru",
+      "new": "Nowy obszar…",
+      "name": "Nazwa obszaru"
     }
   },
   "pt": {
@@ -1095,6 +1135,11 @@ const I18N = {
       "ventilation_failsafe": "O que as aberturas e ventiladores fazem quando nenhum sensor de temperatura interior está a funcionar. Os nebulizadores desligam-se sempre.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interior está a funcionar. Nunca funciona ininterruptamente sem um sensor.",
       "misting_trigger": "O que inicia a nebulização: qualquer um dos gatilhos ou apenas temperatura, humidade ou luz."
+    },
+    "garden": {
+      "none": "Sem área",
+      "new": "Nova área…",
+      "name": "Nome da área"
     }
   },
   "sv": {
@@ -1215,6 +1260,11 @@ const I18N = {
       "ventilation_failsafe": "Vad vädring och fläktar gör när ingen innetemperaturgivare fungerar. Dimmare stängs alltid av.",
       "heater_failsafe": "Vad värmaren gör när ingen innetemperaturgivare fungerar. Den körs aldrig oavbrutet utan en givare.",
       "misting_trigger": "Vad som startar dimmning: någon av utlösarna, eller enbart temperatur, fuktighet eller ljus."
+    },
+    "garden": {
+      "none": "Inget område",
+      "new": "Nytt område…",
+      "name": "Områdets namn"
     }
   },
   "cs": {
@@ -1335,6 +1385,11 @@ const I18N = {
       "ventilation_failsafe": "Co dělají větrací otvory a ventilátory, když nefunguje žádný snímač vnitřní teploty. Mlžovače se vždy vypnou.",
       "heater_failsafe": "Co dělá topení, když nefunguje žádný snímač vnitřní teploty. Bez snímače nikdy neběží nepřetržitě.",
       "misting_trigger": "Co spouští mlžení: jakýkoli ze spouštěčů, nebo pouze teplota, vlhkost či světlo."
+    },
+    "garden": {
+      "none": "Bez oblasti",
+      "new": "Nová oblast…",
+      "name": "Název oblasti"
     }
   },
   "da": {
@@ -1455,6 +1510,11 @@ const I18N = {
       "ventilation_failsafe": "Hvad udluftning og ventilatorer gør, når ingen indendørs temperatursensor virker. Forstøvere slukker altid.",
       "heater_failsafe": "Hvad varmelegemet gør, når ingen indendørs temperatursensor virker. Det kører aldrig uafbrudt uden en sensor.",
       "misting_trigger": "Hvad der starter forstøvningen: enhver af udløserne, eller kun temperatur, fugtighed eller lys."
+    },
+    "garden": {
+      "none": "Intet område",
+      "new": "Nyt område…",
+      "name": "Områdets navn"
     }
   },
   "hu": {
@@ -1575,6 +1635,11 @@ const I18N = {
       "ventilation_failsafe": "Mit tegyenek a szellőzők és ventilátorok, ha nem működik belső hőmérséklet-érzékelő. A párásítók mindig kikapcsolnak.",
       "heater_failsafe": "Mit tegyen a fűtés, ha nem működik belső hőmérséklet-érzékelő. Érzékelő nélkül soha nem működik folyamatosan.",
       "misting_trigger": "Mi indítja el a párásítást: az indítók bármelyike, vagy csak a hőmérséklet, a páratartalom vagy a fény."
+    },
+    "garden": {
+      "none": "Nincs terület",
+      "new": "Új terület…",
+      "name": "A terület neve"
     }
   },
   "nb": {
@@ -1695,6 +1760,11 @@ const I18N = {
       "ventilation_failsafe": "Hva lufting og vifter gjør når ingen innvendig temperatursensor fungerer. Tåkeleggere slås alltid av.",
       "heater_failsafe": "Hva varmeovnen gjør når ingen innvendig temperatursensor fungerer. Den kjører aldri uavbrutt uten sensor.",
       "misting_trigger": "Hva som starter tåkelegging: enhver utløser, eller bare temperatur, fuktighet eller lys."
+    },
+    "garden": {
+      "none": "Ingen område",
+      "new": "Nytt område…",
+      "name": "Områdets navn"
     }
   },
   "pt-BR": {
@@ -1815,6 +1885,11 @@ const I18N = {
       "ventilation_failsafe": "O que aberturas e ventiladores fazem quando nenhum sensor de temperatura interna funciona. Nebulizadores sempre desligam.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interna funciona. Ele nunca roda continuamente sem um sensor.",
       "misting_trigger": "O que inicia a nebulização: qualquer um dos gatilhos ou apenas temperatura, umidade ou luminosidade."
+    },
+    "garden": {
+      "none": "Sem área",
+      "new": "Nova área…",
+      "name": "Nome da área"
     }
   },
   "ru": {
@@ -1935,6 +2010,11 @@ const I18N = {
       "ventilation_failsafe": "Поведение форточек и вентиляторов при отказе датчика температуры внутри. Туманообразование всегда отключается.",
       "heater_failsafe": "Поведение обогревателя при отказе датчика температуры внутри. Без датчика непрерывная работа запрещена.",
       "misting_trigger": "Условие запуска тумана: любое из условий либо только температура, влажность или освещенность."
+    },
+    "garden": {
+      "none": "Без участка",
+      "new": "Новый участок…",
+      "name": "Название участка"
     }
   },
   "sk": {
@@ -2055,6 +2135,11 @@ const I18N = {
       "ventilation_failsafe": "Čo robia vetranie a ventilátory, keď nefunguje žiaden senzor vnútornej teploty. Zahmlievače sa vždy vypnú.",
       "heater_failsafe": "Čo robí ohrievač, keď nefunguje žiaden senzor vnútornej teploty. Bez senzora nikdy nebeží nepretržite.",
       "misting_trigger": "Čo spúšťa zahmlievanie: akýkoľvek zo spúšťačov, alebo iba teplota, vlhkosť či svetlo."
+    },
+    "garden": {
+      "none": "Bez oblasti",
+      "new": "Nová oblasť…",
+      "name": "Názov oblasti"
     }
   },
   "uk": {
@@ -2175,6 +2260,11 @@ const I18N = {
       "ventilation_failsafe": "Дія кватирок і вентиляторів при несправності всіх внутрішніх датчиків температури. Туманоутворювачі завжди вимикаються.",
       "heater_failsafe": "Дія обігрівача при несправності всіх внутрішніх датчиків температури. Він ніколи не працює безперервно без датчика.",
       "misting_trigger": "Що саме запускає туманоутворення: будь-який із тригерів або лише температура, вологість чи освітленість."
+    },
+    "garden": {
+      "none": "Без ділянки",
+      "new": "Нова ділянка…",
+      "name": "Назва ділянки"
     }
   },
   "zh-Hans": {
@@ -2295,6 +2385,11 @@ const I18N = {
       "ventilation_failsafe": "当没有可用的室内温度传感器时通风口和风扇的动作。喷雾器将始终关闭。",
       "heater_failsafe": "当没有可用的室内温度传感器时加热器的动作。在没有传感器的情况下，它绝不会不间断连续运行。",
       "misting_trigger": "触发喷雾的条件：满足任意触发条件，或仅限温度、湿度或光照。"
+    },
+    "garden": {
+      "none": "无地块",
+      "new": "新地块…",
+      "name": "地块名称"
     }
   }
 };
@@ -2563,6 +2658,10 @@ class ZoneFlowCard extends HTMLElement {
       dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
       dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
       dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
+      .area-row { display: flex; align-items: center; gap: 8px; padding: 6px 16px; min-height: 40px; }
+      .area-label { flex: 1; min-width: 0; }
+      .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
+        border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
       .group-note { color: var(--secondary-text-color); font-size: 0.85em; margin: -4px 0 8px; line-height: 1.35; }
       .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
         letter-spacing: 0.04em; margin: 16px 0 2px; }
@@ -2837,6 +2936,69 @@ class ZoneFlowCard extends HTMLElement {
     return conf;
   }
 
+  _areaRow(conf) {
+    // The Garden Area field as a dropdown of the areas in use (Home Assistant's
+    // own text row would need the name typed), with "New area..." for a new one.
+    const wrap = document.createElement("div");
+    wrap.className = "area-row";
+    const label = document.createElement("span");
+    label.className = "area-label";
+    const select = document.createElement("select");
+    select.className = "area-select";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "area-input";
+    input.maxLength = 40;
+    input.hidden = true;
+    wrap.append(label, select, input);
+    const NEW = "__new__";
+    let shown = null;
+    const save = (value) => this._hass.callService("text", "set_value", { entity_id: conf.entity, value });
+    select.addEventListener("change", () => {
+      if (select.value === NEW) {
+        input.hidden = false;
+        input.placeholder = t(this._hass, "garden.name");
+        input.focus();
+        return;
+      }
+      input.hidden = true;
+      save(select.value);
+    });
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Enter") return;
+      const value = input.value.trim();
+      if (!value) return;
+      input.hidden = true;
+      input.value = "";
+      save(value);
+    });
+    Object.defineProperty(wrap, "hass", {
+      set: (hass) => {
+        const raw = hass.states?.[conf.entity]?.state;
+        const current = raw && !["unknown", "unavailable"].includes(raw) ? raw : "";
+        const names = gardenAreas(hass);
+        if (current && !names.some((n) => n.toLowerCase() === current.toLowerCase())) names.push(current);
+        const signature = JSON.stringify([names, current, hass.locale?.language, conf.name]);
+        if (signature === shown) return;
+        shown = signature;
+        label.textContent = conf.name || t(hass, "groups.garden");
+        select.textContent = "";
+        const option = (value, text) => {
+          const el = document.createElement("option");
+          el.value = value;
+          el.textContent = text;
+          select.appendChild(el);
+        };
+        option("", t(hass, "garden.none"));
+        for (const name of names) option(name, name);
+        option(NEW, t(hass, "garden.new"));
+        select.value = names.find((n) => n.toLowerCase() === current.toLowerCase()) || "";
+        input.hidden = true;
+      },
+    });
+    return wrap;
+  }
+
   _addRows(list, confs) {
     const build = this._buildId;
     this._helpers().then(
@@ -2845,7 +3007,8 @@ class ZoneFlowCard extends HTMLElement {
         for (const raw of confs) {
           const conf = this._shortName(raw);
           const add = (before) => {
-            const row = helpers.createRowElement(conf);
+            const isArea = this._hass.entities?.[conf.entity]?.translation_key === "garden_area";
+            const row = isArea ? this._areaRow(conf) : helpers.createRowElement(conf);
             row.hass = this._hass;
             if (conf._tip) row.title = conf._tip;
             // A row that has to be recreated replaces just itself.
@@ -2999,6 +3162,16 @@ function allZones(hass) {
     });
   }
   return zones;
+}
+
+function gardenAreas(hass) {
+  // The garden areas in use by any zone, each name once (letter case aside), by name.
+  const names = new Map();
+  for (const zone of allZones(hass)) {
+    const area = hass.states?.[zone.status]?.attributes?.garden_area;
+    if (area && !names.has(area.toLowerCase())) names.set(area.toLowerCase(), area);
+  }
+  return [...names.values()].sort((a, b) => a.localeCompare(b, hass.locale?.language || undefined));
 }
 
 function formatNext(hass, iso) {
