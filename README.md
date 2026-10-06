@@ -104,7 +104,7 @@ manual, goes through the same pipeline:
 | Entity | Adds | Without it |
 |---|---|---|
 | `switch.*` valve | — | **required** |
-| Rain gauge tip counter (`counter.*`/`sensor.*`) | rain credit, dry-down hold, rain stop | waters as if it never rains — or enter rain by hand (**Manual Rain** + **Add Manual Rain**, or the `zoneflow.add_rain` service), or borrow it from nearby stations ([Weather Underground rain](docs/WEATHER-UNDERGROUND.md), experimental) |
+| Rain gauge sensor (`counter.*`/`sensor.*`): a tip counter, or a rain total or rate from a weather station such as Ecowitt, Ambient Weather or Tempest ([guide](docs/RAIN-GAUGES.md)) | rain credit, dry-down hold, rain stop | waters as if it never rains — or enter rain by hand (**Manual Rain** + **Add Manual Rain**, or the `zoneflow.add_rain` service), or borrow it from nearby stations ([Weather Underground rain](docs/WEATHER-UNDERGROUND.md), experimental) |
 | Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard, frost guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
 | Soil-moisture probe (`sensor.*`, %) | dry soil waters early, wet soil skips | the modeled schedule alone |
 | Pump power sensor | per-pulse "is the pump really running" audit | no low-power warning |
@@ -476,6 +476,18 @@ Settings → Repairs reminds you. Seed the Last Routine / Deep Soak dates if the
 has a watering history, and press **Service Run 1 min** to confirm the
 valve, pump and log. Add further zones the same way; sensors can be
 added or removed later under **Configure**.
+
+**Water use in litres.** Set **Zone Flow** (the litres per minute the whole
+zone's valve gives) and ZoneFlow estimates the litres each watering uses:
+the zone card shows the last watering as mm and litres, plus **Water Used,
+Past 30 Days** and **Water Used This Year** (from 1 January). Work Zone Flow
+out under **Configure → Zone flow** (number of heads x flow per head;
+drippers are rated per hour, sprinklers per minute), or measure it with the
+service run and **Configure → Flow rate: measure it by the litres a service
+run gave**. A flow meter's measured litres are used when the zone has one.
+It is an estimate and only for display: it never changes when or how much
+the zone waters. Zones without a Zone Flow or flow meter show mm only, and
+watering from before it was set stays in mm.
 
 ## Recommended cutover
 

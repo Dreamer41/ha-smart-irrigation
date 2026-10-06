@@ -2247,6 +2247,21 @@ views:
                 name: 15 min
                 icon: mdi:timer-outline
 
+      # Water use (1.6.5): litres need a Zone Flow (Configure -> Zone flow) or a
+      # flow meter; without them these three show nothing
+      - type: entities
+        title: Water Use
+        show_header_toggle: false
+        entities:
+          - entity: <number.zone_zone_flow>
+            name: Zone Flow
+          - entity: <sensor.zone_last_water_volume>
+            name: Last Water Volume
+          - entity: <sensor.zone_water_used_past_30_days>
+            name: Water Used, Past 30 Days
+          - entity: <sensor.zone_water_used_this_year>
+            name: Water Used This Year
+
       # Outdoor zones with a weather service: how often a skip for forecast
       # rain was followed by real rain (1.6.1)
       - type: entities

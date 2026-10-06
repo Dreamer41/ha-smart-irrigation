@@ -22,7 +22,8 @@
           "valve_entity": "Spínač ventilu",
           "pump_power_entity": "Snímač príkonu čerpadla (voliteľné)",
           "pump_id": "ID zdieľaného čerpadla (voliteľné)",
-          "rain_counter_entity": "Počítadlo preklopení zrážkomera (voliteľné)",
+          "rain_counter_entity": "Senzor zrážkomera (voliteľné)",
+          "rain_source_type": "Typ senzora zrážkomera",
           "outdoor_temp_entity": "Snímač vonkajšej teploty (voliteľné)",
           "flow_meter_entity": "Prietokomer (voliteľné)",
           "soil_moisture_entity": "Snímač vlhkosti pôdy (voliteľné)",
@@ -47,7 +48,8 @@
           "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
           "pump_power_entity": "Snímač príkonu (W) čerpadla, napr. z inteligentnej zásuvky. Počas každej zálievky ZoneFlow kontroluje, či čerpadlo naozaj odoberá prúd, a ak nie, upozorní vás. Ak ho nemáte, nechajte prázdne.",
           "pump_id": "Len pre zóny, ktoré bežia z jedného čerpadla: zadajte im tu všetkým rovnaký názov (ľubovoľný, napr. „Čerpadlo A“) a budú sa striedať namiesto toho, aby bežali naraz. Ak má zóna vlastné čerpadlo alebo prívod vody, nechajte prázdne.",
-          "rain_counter_entity": "Počítadlo zrážkomera, ktoré sa s každým preklopením misky zvýši o jedna. ZoneFlow potom odpočíta dážď od zálievky, nechá mokrú pôdu najprv vyschnúť a zastaví zálievku, keď začne pršať. Koľko zrážok zodpovedá jednému preklopeniu, nastavíte na stránke zariadenia zóny (Zrážkomer: mm na preklopenie). Bez zrážkomera ZoneFlow polieva, akoby nikdy nepršalo.",
+          "rain_counter_entity": "Senzor vášho zrážkomera: počítadlo preklopení, úhrn zrážok v milimetroch alebo intenzita dažďa (vyberte nižšie). ZoneFlow potom odpočíta dážď od zálievky, najprv nechá mokrú pôdu preschnúť a zastaví zálievku, keď začne pršať. Bez zrážkomera ZoneFlow polieva, akoby nikdy neprší.",
+          "rain_source_type": "Čo senzor hlási. Počítadlo preklopení: číslo, ktoré rastie o jedna pri každom preklopení nádobky (veľkosť jedného preklopenia nastavíte na stránke zariadenia zóny, Zrážkomer: mm na preklopenie). Úhrn zrážok v mm: priebežný súčet, ktorý len rastie, alebo sa každý deň či týždeň vynuluje, napríklad z Ecowitt, Ambient Weather alebo Tempest (funguje aj úhrn v palcoch). Intenzita dažďa: aktuálny dážď v mm za hodinu, ktorú ZoneFlow sčíta v čase (menej presné). Senzor, ktorý ukazuje len poslednú hodinu alebo posledných 24 hodín, nefunguje: použite úhrn. Zmena senzora alebo typu začne históriu zrážok odznova. Dážď na jedno čítanie: množstvo, ktoré spadlo od predchádzajúcej aktualizácie, napríklad senzor Zrážky u Tempest, ktoré ZoneFlow sčíta.",
           "outdoor_temp_entity": "Snímač vonkajšej teploty. S ním ZoneFlow sám polieva viac v horúčavách a menej v chladnom počasí a ochrana pred mrazom pri mraze zálievku odloží. Bez neho rozhoduje nastavenie Náhradná / ručná teplota.",
           "flow_meter_entity": "Vodomer, ktorý načítava celkový objem (litre, galóny alebo m³). ZoneFlow potom zaznamená, koľko vody každá zálievka naozaj spotrebovala, upozorní vás, ak čerpadlo bežalo, ale voda netiekla, a vie za vás zmerať prietok (Konfigurovať → Prietok).",
           "soil_moisture_entity": "Snímač vlhkosti pôdy (%) v koreňovej zóne tejto zóny. Suchá pôda bežnú zálievku urýchli, mokrá ju vynechá a medzi tým rozhoduje bežný plán. Hranice sucha a vlhka sú na stránke zariadenia zóny.",
@@ -255,6 +257,7 @@
           "settings": "Nastavenia zóny (entity, pôda, plán…)",
           "flow_rate": "Prietok: vypočítať z emitorov",
           "flow_volume": "Prietok: zmeryte ho podľa litrov vydaných pri servisnom chode",
+          "zone_flow": "Prietok zóny: litre za minútu podľa počtu emitorov",
           "flow_measure": "Prietok: zmerať prietokomerom",
           "greenhouse_devices": "Ventil, senzory a klimatické zariadenia",
           "watering": "Nastavenia zavlažovania",
@@ -269,7 +272,8 @@
           "valve_entity": "Spínač ventilu",
           "pump_power_entity": "Snímač príkonu čerpadla (voliteľné)",
           "pump_id": "ID zdieľaného čerpadla (voliteľné)",
-          "rain_counter_entity": "Počítadlo preklopení zrážkomera (voliteľné)",
+          "rain_counter_entity": "Senzor zrážkomera (voliteľné)",
+          "rain_source_type": "Typ senzora zrážkomera",
           "outdoor_temp_entity": "Snímač vonkajšej teploty (voliteľné)",
           "flow_meter_entity": "Prietokomer (voliteľné)",
           "soil_moisture_entity": "Snímač vlhkosti pôdy (voliteľné)",
@@ -294,7 +298,8 @@
           "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
           "pump_power_entity": "Snímač príkonu (W) čerpadla, napr. z inteligentnej zásuvky. Počas každej zálievky ZoneFlow kontroluje, či čerpadlo naozaj odoberá prúd, a ak nie, upozorní vás. Ak ho nemáte, nechajte prázdne.",
           "pump_id": "Len pre zóny, ktoré bežia z jedného čerpadla: zadajte im tu všetkým rovnaký názov (ľubovoľný, napr. „Čerpadlo A“) a budú sa striedať namiesto toho, aby bežali naraz. Ak má zóna vlastné čerpadlo alebo prívod vody, nechajte prázdne.",
-          "rain_counter_entity": "Počítadlo zrážkomera, ktoré sa s každým preklopením misky zvýši o jedna. ZoneFlow potom odpočíta dážď od zálievky, nechá mokrú pôdu najprv vyschnúť a zastaví zálievku, keď začne pršať. Koľko zrážok zodpovedá jednému preklopeniu, nastavíte na stránke zariadenia zóny (Zrážkomer: mm na preklopenie). Bez zrážkomera ZoneFlow polieva, akoby nikdy nepršalo.",
+          "rain_counter_entity": "Senzor vášho zrážkomera: počítadlo preklopení, úhrn zrážok v milimetroch alebo intenzita dažďa (vyberte nižšie). ZoneFlow potom odpočíta dážď od zálievky, najprv nechá mokrú pôdu preschnúť a zastaví zálievku, keď začne pršať. Bez zrážkomera ZoneFlow polieva, akoby nikdy neprší.",
+          "rain_source_type": "Čo senzor hlási. Počítadlo preklopení: číslo, ktoré rastie o jedna pri každom preklopení nádobky (veľkosť jedného preklopenia nastavíte na stránke zariadenia zóny, Zrážkomer: mm na preklopenie). Úhrn zrážok v mm: priebežný súčet, ktorý len rastie, alebo sa každý deň či týždeň vynuluje, napríklad z Ecowitt, Ambient Weather alebo Tempest (funguje aj úhrn v palcoch). Intenzita dažďa: aktuálny dážď v mm za hodinu, ktorú ZoneFlow sčíta v čase (menej presné). Senzor, ktorý ukazuje len poslednú hodinu alebo posledných 24 hodín, nefunguje: použite úhrn. Zmena senzora alebo typu začne históriu zrážok odznova. Dážď na jedno čítanie: množstvo, ktoré spadlo od predchádzajúcej aktualizácie, napríklad senzor Zrážky u Tempest, ktoré ZoneFlow sčíta.",
           "outdoor_temp_entity": "Snímač vonkajšej teploty. S ním ZoneFlow sám polieva viac v horúčavách a menej v chladnom počasí a ochrana pred mrazom pri mraze zálievku odloží. Bez neho rozhoduje nastavenie Náhradná / ručná teplota.",
           "flow_meter_entity": "Vodomer, ktorý načítava celkový objem (litre, galóny alebo m³). ZoneFlow potom zaznamená, koľko vody každá zálievka naozaj spotrebovala, upozorní vás, ak čerpadlo bežalo, ale voda netiekla, a vie za vás zmerať prietok (Konfigurovať → Prietok).",
           "soil_moisture_entity": "Snímač vlhkosti pôdy (%) v koreňovej zóne tejto zóny. Suchá pôda bežnú zálievku urýchli, mokrá ju vynechá a medzi tým rozhoduje bežný plán. Hranice sucha a vlhka sú na stránke zariadenia zóny.",
@@ -318,7 +323,7 @@
       },
       "flow_rate": {
         "title": "Prietok emitorov",
-        "description": "Koľko vody dodajú emitory zóny na plochu, ktorú zavlažujú. 1 liter na 1 m² je 1 mm. Predpokladá sa, že každý emitor na ventile zóny má rovnaký prietok. Pri kvapkovačoch u jednotlivých rastlín použite plochu okolo nich, ktorá sa skutočne zavlaží. Výsledok nahradí Kalibráciu prietoku emitorov zóny. Pri zmiešaných emitoroch vykonajte radšej meranie („Prietok: zmeryte ho podľa litrov vydaných pri servisnom chode“).",
+        "description": "Koľko vody dodajú emitory zóny na plochu, ktorú zavlažujú. 1 liter na 1 m² je 1 mm. Predpokladá sa, že každý emitor na ventile zóny má rovnaký prietok. Pri kvapkovačoch u jednotlivých rastlín použite plochu okolo nich, ktorá sa skutočne zavlaží. Výsledok nahradí Kalibráciu prietoku emitorov zóny. Pri zmiešaných emitoroch vykonajte radšej meranie („Prietok: zmeryte ho podľa litrov vydaných pri servisnom chode“). Nastavuje aj Prietok zóny, čo sú litre za minútu použité na odhad spotreby vody.",
         "data": {
           "emitters": "Počet emitorov (kvapkačov, rozstrekovačov) v zóne",
           "emitter_flow": "Prietok jedného emitora",
@@ -476,7 +481,7 @@
       },
       "flow_volume": {
         "title": "Zmerajte prietok podľa objemu",
-        "description": "Stlačte jedno z tlačidiel Servisný chod pre zónu (dlhší beh, napríklad 15 min, je presnejší) a zachyťte alebo odčítajte vodu: vedro alebo sud pod emitormi, prípadne rozdiel na vodomere. Potom zadajte minúty, počas ktorých bol ventil otvorený, litre a plochu, ktorú emitory zavlažujú.\n\nVýsledkom je PRIEMER zóny: litre delené plochou a minútami, a tento výsledok nahradí Kalibráciu prietoku emitorov zóny. ZoneFlow používa pre každú zónu iba jeden prietok, takže nemôže rozlišovať jednotlivé emitory. Pre presný výsledok by mal byť každý emitor na ventile zóny rovnakého typu a prietoku; rôzne emitory umiestnite na samostatné ventily (samostatné zóny). V zmiešanej zóne dostanú rastliny pri slabších emitoroch menej ako zobrazený priemer.",
+        "description": "Stlačte jedno z tlačidiel Servisný chod pre zónu (dlhší beh, napríklad 15 min, je presnejší) a zachyťte alebo odčítajte vodu: vedro alebo sud pod emitormi, prípadne rozdiel na vodomere. Potom zadajte minúty, počas ktorých bol ventil otvorený, litre a plochu, ktorú emitory zavlažujú.\n\nVýsledkom je PRIEMER zóny: litre delené plochou a minútami, a tento výsledok nahradí Kalibráciu prietoku emitorov zóny. ZoneFlow používa pre každú zónu iba jeden prietok, takže nemôže rozlišovať jednotlivé emitory. Pre presný výsledok by mal byť každý emitor na ventile zóny rovnakého typu a prietoku; rôzne emitory umiestnite na samostatné ventily (samostatné zóny). V zmiešanej zóne dostanú rastliny pri slabších emitoroch menej ako zobrazený priemer. Nastavuje aj Prietok zóny, čo sú litre za minútu použité na odhad spotreby vody.",
         "data": {
           "minutes": "Minúty, počas ktorých bol ventil otvorený",
           "volume": "Voda, ktorá vytiekla",
@@ -487,6 +492,20 @@
           "volume": "Všetka voda, ktorú emitory zóny počas behu vydali (v litroch, alebo galónoch v amerických jednotkách).",
           "area": "Plocha, ktorá sa skutočne zavlaží. Pri kvapkovačoch u jednotlivých rastlín spočítajte vlhké miesta okolo nich, nie celý záhon."
         }
+      },
+      "zone_flow": {
+        "title": "Prietok zóny",
+        "description": "Celkový prietok zóny na základe jej emitorov. ZoneFlow ho vynásobí minútami otvorenia ventilu a odhadne spotrebované litre (zobrazené ako Spotrebovaná voda a pod Posledná dodaná voda (odhad)). Nemení to, koľko alebo kedy zóna zavlažuje; to určuje Kalibrácia prietoku emitorov. Kvapkače sa zvyčajne udávajú za hodinu, rozstrekovače za minútu. Pre najpresnejšiu hodnotu ho radšej odmerajte: položka menu o litroch vydaných pri servisnom chode nastavuje aj túto hodnotu.",
+        "data": {
+          "heads": "Počet emitorov (kvapkače, rozstrekovače) na ventile zóny",
+          "head_flow": "Prietok jedného emitora",
+          "head_flow_unit": "Za"
+        },
+        "data_description": {
+          "heads": "Spočítajte každý emitor, ktorý tento ventil napája.",
+          "head_flow": "Koľko jeden emitor dáva, z obalu alebo tabuľky trysiek.",
+          "head_flow_unit": "Jednotka, v ktorej je uvedený prietok jedného emitora."
+        }
       }
     },
     "abort": {
@@ -495,7 +514,9 @@
       "measuring": "Meria sa: ventil bude otvorený asi {minutes} min. Výsledok príde ako správa do telefónu (alebo do oznámení Home Assistant, ak zóna nemá cieľ v telefóne) a nastaví sa automaticky.",
       "zone_not_loaded": "Táto zóna teraz nebeží, takže to nie je možné vykonať.",
       "zone_busy": "Zóna (alebo jej čerpadlo) je zaneprázdnená, alebo je dnešný bezpečnostný limit doby chodu vyčerpaný. Skúste to neskôr.",
-      "flow_rate_disabled": "Entita Kalibrácia prietoku emitorov je v tejto zóne zakázaná. Povoľte ju (stránka zariadenia zóny → jej entity) a skúste to znova."
+      "flow_rate_disabled": "Entita Kalibrácia prietoku emitorov je v tejto zóne zakázaná. Povoľte ju (stránka zariadenia zóny → jej entity) a skúste to znova.",
+      "zone_flow_set": "Prietok zóny nastavený na {flow}. Používa sa iba na odhad spotreby vody.",
+      "zone_flow_out_of_range": "To vychádza na prietok zóny mimo rozsahu, ktorý nastavenie povoľuje (0 až 2000 L/min). Skontrolujte čísla."
     },
     "error": {
       "valve_already_used": "Iná zóna ZoneFlow už používa tento ventil.",
@@ -602,6 +623,14 @@
         "outdoor": "Vonku",
         "greenhouse": "Skleník",
         "indoor": "Vnútri"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Počítadlo preklopení",
+        "total_mm": "Úhrn zrážok (mm alebo in; celkový, denný alebo týždenný)",
+        "rate_mm_h": "Intenzita dažďa (mm/h)",
+        "amount_mm": "Dážď na jedno čítanie (mm alebo in; napr. Tempest)"
       }
     }
   },
@@ -792,6 +821,9 @@
       },
       "auto_resume_hours": {
         "name": "Zpoždenie automatického návratu"
+      },
+      "zone_flow_l_min": {
+        "name": "Prietok zóny"
       }
     },
     "datetime": {
@@ -984,6 +1016,15 @@
       },
       "wu_station": {
         "name": "Stanica {station}"
+      },
+      "water_used_30d": {
+        "name": "Spotrebovaná voda, posledných 30 dní"
+      },
+      "water_used_year": {
+        "name": "Spotrebovaná voda tento rok"
+      },
+      "last_water_volume": {
+        "name": "Objem poslednej zálievky"
       }
     },
     "select": {

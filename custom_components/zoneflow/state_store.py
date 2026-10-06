@@ -55,6 +55,12 @@ class IrrigationState:
     # recorded with; they are rescaled when the calibration changes
     # (controller._align_rain_calibration).
     rain_samples_mm_per_tip: float | None = None
+    # Which sensor and type the rain history belongs to ("type|entity"): it
+    # starts again when either changes (controller._reset_rain_if_source_changed).
+    rain_source_signature: str | None = None
+    # Rain-rate sensors: the last rate (mm/h) and when, to add up rate x time.
+    rain_rate_last_mm_h: float | None = None
+    rain_rate_last_ts: float | None = None
 
     # Mutex / safety
     lock_on: bool = False
@@ -106,6 +112,12 @@ class IrrigationState:
     # None until the first cycle completes under a version that records it.
     last_cycle_applied_mm: float | None = None
     last_cycle_kind: str | None = None  # "routine" or "deep_soak"
+    # The same watering in litres (the flow meter's, else minutes x Zone Flow);
+    # None when neither is known.
+    last_cycle_liters: float | None = None
+    # Water used per local day (1.6.5): {"2026-10-05": {"mm": 12.0, "l": 480.0}}.
+    # "l" only counts runs whose litres were known; about 400 days are kept.
+    water_ledger: dict = field(default_factory=dict)
     last_cycle_runtime_min: float | None = None
 
     # Live dashboard overrides (select.py) -- both are pure convenience

@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.6.4";
+const CARD_VERSION = "1.6.5";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -38,6 +38,8 @@ const I18N = {
     "show_diagnostics": "Show the diagnostics",
     "groups": {
       "amounts": "How much water",
+      "water_use": "Water use estimate",
+      "water_use_note": "Only used to work out litres for the water-use numbers. It does not change when or how long the zone waters. Leave at 0 if you do not know it.",
       "rain": "Rain, forecast and frost",
       "deep_soak": "Deep soak",
       "soil": "Soil",
@@ -118,6 +120,7 @@ const I18N = {
       "auto_resume": "On: a device you switch by hand goes back to automatic after Auto Resume After. Off: it stays as you left it until you press Resume automatic.",
       "auto_resume_hours": "How long a device you switched by hand is left alone before ZoneFlow takes it back (while Auto Resume is on).",
       "manual_rain_mm": "Rain you read from a simple rain gauge. Press Add rain to record it; the amount goes back to 0.",
+      "zone_flow_l_min": "What the whole zone gives per minute (heads x flow per head). Used only to estimate litres; it does not change when or how much the zone waters. Leave 0 if you do not know it.",
       "sensor_offline_hours": "A sensor that sends nothing for this many hours counts as offline, and the climate control goes to its failsafe. Raise it if a steady sensor causes false warnings.",
       "ventilation_failsafe": "What vents and fans do when no inside temperature sensor is working. Misters always go off.",
       "heater_failsafe": "What the heater does when no inside temperature sensor is working. It never runs non-stop without a sensor.",
@@ -153,6 +156,8 @@ const I18N = {
     "show_diagnostics": "Diagnose anzeigen",
     "groups": {
       "amounts": "Wassermenge",
+      "water_use": "Wasserverbrauchsschätzung",
+      "water_use_note": "Wird nur verwendet, um Liter für die Wasserverbrauchswerte zu berechnen. Es ändert nicht, wann oder wie lange die Zone bewässert. Auf 0 belassen, wenn unbekannt.",
       "rain": "Regen, Vorhersage und Frost",
       "deep_soak": "Tiefenbewässerung",
       "soil": "Boden",
@@ -241,6 +246,7 @@ const I18N = {
       "auto_resume": "Ein: Ein manuell geschaltetes Gerät kehrt nach Automatische Fortsetzung nach wieder zur Automatik zurück. Aus: Es bleibt so eingestellt, bis Sie Automatik fortsetzen drücken.",
       "auto_resume_hours": "Wie lange ein manuell geschaltetes Gerät unverändert bleibt, bevor ZoneFlow wieder die Steuerung übernimmt (wenn Automatische Fortsetzung aktiv ist).",
       "manual_rain_mm": "Regenmenge von einem einfachen Regenmesser. Drücken Sie Regen hinzufügen zum Speichern; der Wert wird danach auf 0 zurückgesetzt.",
+      "zone_flow_l_min": "Was die gesamte Zone pro Minute liefert (Tropfer x Durchfluss pro Tropfer). Wird nur zur Schätzung der Liter verwendet; es ändert nicht, wann oder wie viel die Zone bewässert. Belassen Sie es auf 0, wenn Sie es nicht wissen.",
       "sensor_offline_hours": "Ein Sensor, der so viele Stunden nichts sendet, gilt als offline, und die Klimasteuerung geht in den Notbetrieb. Erhöhen Sie den Wert, wenn ein gleichmäßig messender Sensor Fehlalarme auslöst.",
       "ventilation_failsafe": "Was Lüftungen und Lüfter tun, wenn kein Innen-Temperatursensor funktioniert. Vernebler schalten sich immer aus.",
       "heater_failsafe": "Was die Heizung tut, wenn kein Innen-Temperatursensor funktioniert. Ohne Sensor läuft sie niemals ununterbrochen.",
@@ -268,6 +274,8 @@ const I18N = {
     "show_diagnostics": "Mostrar el diagnóstico",
     "groups": {
       "amounts": "Cuánta agua",
+      "water_use": "Estimación del consumo de agua",
+      "water_use_note": "Solo se usa para calcular los litros de las cifras de consumo de agua. No cambia cuándo ni cuánto tiempo riega la zona. Déjalo en 0 si no lo sabes.",
       "rain": "Lluvia, previsión y heladas",
       "deep_soak": "Riego profundo",
       "soil": "Suelo",
@@ -356,6 +364,7 @@ const I18N = {
       "auto_resume": "Activado: un dispositivo cambiado a mano vuelve a automático tras Reanudación automática tras. Desactivado: permanece como lo dejaste hasta que pulses Reanudar automático.",
       "auto_resume_hours": "Tiempo que un dispositivo cambiado a mano se deja sin modificar antes de que ZoneFlow retome el control (mientras la Reanudación automática esté activada).",
       "manual_rain_mm": "Lluvia leída en un pluviómetro manual. Pulsa Añadir lluvia para registrarla; la cantidad volverá a 0.",
+      "zone_flow_l_min": "Lo que da toda la zona por minuto (emisores x caudal por emisor). Se usa solo para estimar litros; no cambia cuándo ni cuánto riega la zona. Déjelo en 0 si no lo sabe.",
       "sensor_offline_hours": "Un sensor que no envía nada durante estas horas se considera sin conexión y el control del clima pasa a su modo de seguridad. Auméntalo si un sensor estable provoca avisos falsos.",
       "ventilation_failsafe": "Qué hacen las rejillas y ventiladores cuando no funciona ningún sensor de temperatura interior. Los nebulizadores siempre se apagan.",
       "heater_failsafe": "Qué hace el calefactor cuando no funciona ningún sensor de temperatura interior. Nunca funciona de forma continua sin un sensor.",
@@ -383,6 +392,8 @@ const I18N = {
     "show_diagnostics": "Näytä diagnostiikka",
     "groups": {
       "amounts": "Vesimäärä",
+      "water_use": "Veden käytön arvio",
+      "water_use_note": "Käytetään vain litrojen laskemiseen veden käytön luvuissa. Ei muuta sitä, milloin tai kuinka kauan vyöhyke kastelee. Jätä 0, jos et tiedä.",
       "rain": "Sade, ennuste ja halla",
       "deep_soak": "Syväkastelu",
       "soil": "Maa",
@@ -471,6 +482,7 @@ const I18N = {
       "auto_resume": "Päällä: käsin kytketty laite palaa automatiikalle Automaattipaluun viiveen jälkeen. Pois: laite pysyy siinä tilassa, jonka jätit, kunnes painat Palauta automatiikka.",
       "auto_resume_hours": "Kuinka kauan käsin kytkettyä laitetta ei ohjata, ennen kuin ZoneFlow ottaa sen takaisin (kun Automaattipaluu on päällä).",
       "manual_rain_mm": "Yksinkertaisesta sademittarista lukemasi sademäärä. Tallenna se painamalla Lisää sade; määrä nollautuu.",
+      "zone_flow_l_min": "Mitä koko vyöhyke antaa minuutissa (suuttimet x yhden suuttimen virtaama). Käytetään vain litrojen arviointiin; ei muuta sitä, milloin tai kuinka paljon vyöhyke kastelee. Jätä 0, jos et tiedä.",
       "sensor_offline_hours": "Anturi, joka ei lähetä mitään näin moneen tuntiin, katsotaan poissaolevaksi, ja ilmastonohjaus siirtyy vikatilaan. Nosta arvoa, jos tasaisesti mittaava anturi aiheuttaa vääriä varoituksia.",
       "ventilation_failsafe": "Mitä tuuletusluukut ja tuulettimet tekevät, kun mikään sisälämpötila-anturi ei toimi. Sumuttimet sammuvat aina.",
       "heater_failsafe": "Mitä lämmitin tekee, kun mikään sisälämpötila-anturi ei toimi. Se ei koskaan pyöri taukoamatta ilman anturia.",
@@ -498,6 +510,8 @@ const I18N = {
     "show_diagnostics": "Afficher le diagnostic",
     "groups": {
       "amounts": "Quantité d'eau",
+      "water_use": "Estimation de la consommation d'eau",
+      "water_use_note": "Sert uniquement à calculer les litres des chiffres de consommation d'eau. Cela ne change ni le moment ni la durée de l'arrosage de la zone. Laissez 0 si vous ne le connaissez pas.",
       "rain": "Pluie, prévisions et gel",
       "deep_soak": "Arrosage profond",
       "soil": "Sol",
@@ -586,6 +600,7 @@ const I18N = {
       "auto_resume": "Activé : un appareil basculé manuellement repasse en automatique après Reprise automatique après. Désactivé : il reste en l'état jusqu'à ce que vous appuyiez sur Reprendre en automatique.",
       "auto_resume_hours": "Durée pendant laquelle un appareil basculé manuellement est laissé tel quel avant que ZoneFlow ne en reprenne le contrôle (lorsque la Reprise automatique est activée).",
       "manual_rain_mm": "Pluie relevée sur un pluviomètre manuel. Appuyez sur Ajouter de la pluie pour l'enregistrer ; la valeur repassera à 0.",
+      "zone_flow_l_min": "Ce que toute la zone fournit par minute (goutteurs x débit par goutteur). Utilisé uniquement pour estimer les litres ; cela ne change pas le moment ni la quantité d'eau arrosée. Laissez à 0 si vous ne le savez pas.",
       "sensor_offline_hours": "Un capteur qui n'envoie rien pendant ce nombre d'heures est considéré hors ligne, et le contrôle climatique passe en mode de sécurité. Augmentez cette valeur si un capteur stable provoque de fausses alertes.",
       "ventilation_failsafe": "Comportement des ouvrants et ventilateurs en cas de panne du capteur de température intérieure. Les brumisateurs s'éteignent toujours.",
       "heater_failsafe": "Comportement du chauffage en cas de panne du capteur de température intérieure. Il ne fonctionne jamais en continu sans capteur.",
@@ -613,6 +628,8 @@ const I18N = {
     "show_diagnostics": "Mostra la diagnostica",
     "groups": {
       "amounts": "Quanta acqua",
+      "water_use": "Stima dell'uso dell'acqua",
+      "water_use_note": "Serve solo a calcolare i litri per i dati sull'uso dell'acqua. Non cambia quando né per quanto tempo la zona irriga. Lascia 0 se non lo conosci.",
       "rain": "Pioggia, previsioni e gelo",
       "deep_soak": "Irrigazione profonda",
       "soil": "Terreno",
@@ -701,6 +718,7 @@ const I18N = {
       "auto_resume": "Attivo: un dispositivo azionato manualmente torna in automatico dopo Ripristino automatico dopo. Disattivo: rimane nello stato impostato finché non premi Ripristina automatico.",
       "auto_resume_hours": "Per quanto tempo un dispositivo azionato manualmente viene lasciato invariato prima che ZoneFlow ne riprenda il controllo (mentre il Ripristino automatico è attivo).",
       "manual_rain_mm": "Pioggia rilevata da un semplice pluviometro. Premi Aggiungi pioggia per registrarla; la quantità tornerà a 0.",
+      "zone_flow_l_min": "Quanto eroga l'intera zona al minuto (erogatori x flusso per erogatore). Utilizzato solo per stimare i litri; non modifica quando o quanto la zona irriga. Lascia 0 se non lo conosci.",
       "sensor_offline_hours": "Un sensore che non invia nulla per queste ore è considerato offline e il controllo del clima passa alla modalità di sicurezza. Aumentalo se un sensore stabile causa falsi avvisi.",
       "ventilation_failsafe": "Comportamento di aperture e ventole quando nessun sensore di temperatura interna funziona. I nebulizzatori si spengono sempre.",
       "heater_failsafe": "Comportamento del riscaldatore quando nessun sensore di temperatura interna funziona. Non rimane mai in funzione continua senza sensore.",
@@ -728,6 +746,8 @@ const I18N = {
     "show_diagnostics": "Diagnose tonen",
     "groups": {
       "amounts": "Hoeveel water",
+      "water_use": "Schatting waterverbruik",
+      "water_use_note": "Wordt alleen gebruikt om liters uit te rekenen voor de waterverbruikcijfers. Het verandert niet wanneer of hoe lang de zone sproeit. Laat op 0 staan als u het niet weet.",
       "rain": "Regen, verwachting en vorst",
       "deep_soak": "Diepe watergift",
       "soil": "Bodem",
@@ -816,6 +836,7 @@ const I18N = {
       "auto_resume": "Aan: een handmatig geschakeld apparaat keert terug naar automatisch na Automatisch hervatten na. Uit: het blijft zoals je het achterliet totdat je op Automatisch hervatten drukt.",
       "auto_resume_hours": "Hoe lang een handmatig geschakeld apparaat met rust wordt gelaten voordat ZoneFlow de bediening overneemt (terwijl Automatisch hervatten aan staat).",
       "manual_rain_mm": "Regen afgelezen van een eenvoudige regenmeter. Druk op Regen toevoegen om op te slaan; de hoeveelheid gaat terug naar 0.",
+      "zone_flow_l_min": "Wat de gehele zone per minuut geeft (druppelaars x debiet per druppelaar). Alleen gebruikt om liters te schatten; het verandert niet wanneer of hoeveel de zone sproeit. Laat op 0 staan als u het niet weet.",
       "sensor_offline_hours": "Een sensor die zo veel uur niets stuurt, geldt als offline en de klimaatregeling gaat naar de noodstand. Verhoog dit als een stabiele sensor valse waarschuwingen geeft.",
       "ventilation_failsafe": "Wat ventilatie en ventilatoren doen als er geen binnentemperatuursensor werkt. Nevelaars gaan altijd uit.",
       "heater_failsafe": "Wat de verwarming doet als er geen binnentemperatuursensor werkt. Deze draait nooit ononderbroken zonder sensor.",
@@ -843,6 +864,8 @@ const I18N = {
     "show_diagnostics": "Pokaż diagnostykę",
     "groups": {
       "amounts": "Ile wody",
+      "water_use": "Szacowanie zużycia wody",
+      "water_use_note": "Służy wyłącznie do obliczania litrów dla danych o zużyciu wody. Nie zmienia tego, kiedy ani jak długo strefa podlewa. Pozostaw 0, jeśli nie znasz tej wartości.",
       "rain": "Deszcz, prognoza i przymrozki",
       "deep_soak": "Głębokie podlewanie",
       "soil": "Gleba",
@@ -931,6 +954,7 @@ const I18N = {
       "auto_resume": "Włączone: urządzenie przełączone ręcznie wraca do automatyki po Czasie automatycznego wznowienia. Wyłączone: pozostaje w obecnym stanie, dopóki nie naciśniesz Wznów automatykę.",
       "auto_resume_hours": "Jak długo urządzenie przełączone ręcznie pozostaje bez zmian, zanim ZoneFlow przejmie nad nim kontrolę (gdy Wznowienie automatyczne jest włączone).",
       "manual_rain_mm": "Ilość deszczu odczytana ze zwykłego deszczomierza. Naciśnij Dodaj deszcz, aby ją zapisać; wartość powróci do 0.",
+      "zone_flow_l_min": "Ile daje cała strefa na minutę (emitery x przepływ na emiter). Używane tylko do szacowania litrów; nie zmienia tego, kiedy ani ile wody podaje strefa. Pozostaw 0, jeśli nie znasz tej wartości.",
       "sensor_offline_hours": "Czujnik, który nie wysyła nic przez tyle godzin, jest uznawany za offline, a sterowanie klimatem przechodzi w tryb awaryjny. Zwiększ tę wartość, jeśli stabilny czujnik powoduje fałszywe ostrzeżenia.",
       "ventilation_failsafe": "Co robią wietrzniki i wentylatory, gdy żaden czujnik temperatury wewnętrznej nie działa. Zamgławiacze zawsze się wyłączają.",
       "heater_failsafe": "Co robi grzejnik, gdy żaden czujnik temperatury wewnętrznej nie działa. Nigdy nie działa bez przerwy bez czujnika.",
@@ -958,6 +982,8 @@ const I18N = {
     "show_diagnostics": "Mostrar o diagnóstico",
     "groups": {
       "amounts": "Quantidade de água",
+      "water_use": "Estimativa do uso de água",
+      "water_use_note": "Utilizado apenas para calcular os litros dos números de uso de água. Não altera quando nem durante quanto tempo a zona irriga. Deixe 0 se não souber.",
       "rain": "Chuva, previsão e geada",
       "deep_soak": "Rega profunda",
       "soil": "Solo",
@@ -1046,6 +1072,7 @@ const I18N = {
       "auto_resume": "Ligado: um dispositivo alterado manualmente volta ao modo automático após Retoma automática após. Desligado: permanece como o deixou até premir Retomar automático.",
       "auto_resume_hours": "Quanto tempo um dispositivo alterado manualmente é mantido inalterado antes de o ZoneFlow retomar o controlo (enquanto a Retoma automática estiver ligada).",
       "manual_rain_mm": "Chuva lida num pluviómetro simples. Prima Adicionar chuva para registar; o valor volta a 0.",
+      "zone_flow_l_min": "Quanto a zona inteira fornece por minuto (emissores x fluxo por emissor). Utilizado apenas para estimar os litros; não altera quando ou o quanto a zona irriga. Deixe 0 se não souber.",
       "sensor_offline_hours": "Um sensor que não envia nada durante estas horas é considerado offline e o controlo do clima passa ao modo de segurança. Aumente o valor se um sensor estável causar avisos falsos.",
       "ventilation_failsafe": "O que as aberturas e ventiladores fazem quando nenhum sensor de temperatura interior está a funcionar. Os nebulizadores desligam-se sempre.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interior está a funcionar. Nunca funciona ininterruptamente sem um sensor.",
@@ -1073,6 +1100,8 @@ const I18N = {
     "show_diagnostics": "Visa diagnostiken",
     "groups": {
       "amounts": "Hur mycket vatten",
+      "water_use": "Uppskattning av vattenförbrukning",
+      "water_use_note": "Används bara för att räkna ut liter till vattenförbrukningssiffrorna. Det ändrar inte när eller hur länge zonen vattnar. Lämna på 0 om du inte vet.",
       "rain": "Regn, prognos och frost",
       "deep_soak": "Djupvattning",
       "soil": "Jord",
@@ -1161,6 +1190,7 @@ const I18N = {
       "auto_resume": "På: en enhet du ändrat manuellt återgår till automatik efter Auto-återgång efter. Av: den står kvar i sitt läge tills du trycker på Återgå till automatik.",
       "auto_resume_hours": "Hur länge en enhet du ändrat manuellt lämnas ifred innan ZoneFlow tar över styrningen igen (när Auto-återgång är på).",
       "manual_rain_mm": "Regnmängd du läst av från en enkel regnmätare. Tryck på Lägg till regn för att spara; mängden återgår till 0.",
+      "zone_flow_l_min": "Vad hela zonen ger per minut (droppare x flöde per droppare). Används endast för att uppskatta liter; det ändrar inte när eller hur mycket zonen vattnar. Lämna som 0 om du inte vet.",
       "sensor_offline_hours": "En sensor som inte skickar något på så här många timmar räknas som offline, och klimatstyrningen går till sitt nödläge. Höj värdet om en stabil sensor ger falska varningar.",
       "ventilation_failsafe": "Vad vädring och fläktar gör när ingen innetemperaturgivare fungerar. Dimmare stängs alltid av.",
       "heater_failsafe": "Vad värmaren gör när ingen innetemperaturgivare fungerar. Den körs aldrig oavbrutet utan en givare.",
@@ -1188,6 +1218,8 @@ const I18N = {
     "show_diagnostics": "Zobrazit diagnostiku",
     "groups": {
       "amounts": "Kolik vody",
+      "water_use": "Odhad spotřeby vody",
+      "water_use_note": "Slouží jen k výpočtu litrů pro údaje o spotřebě vody. Nemění, kdy ani jak dlouho zóna zavlažuje. Pokud hodnotu neznáte, nechte 0.",
       "rain": "Déšť, předpověď a mráz",
       "deep_soak": "Hloubková zálivka",
       "soil": "Půda",
@@ -1276,6 +1308,7 @@ const I18N = {
       "auto_resume": "Zapnuto: ručně přepnuté zařízení se vrátí do automatického režimu po uplynutí Zpoždění automatického návratu. Vypnuto: zůstane ve stavu, v jakém jste jej nechali, dokud nestisknete Obnovit automatiku.",
       "auto_resume_hours": "Jak dlouho zůstane ručně přepnuté zařízení bez zásahu, než si je ZoneFlow vezme zpět (při zapnutém Automatickém návratu).",
       "manual_rain_mm": "Množství srážek zjištěné z běžného srážkoměru. Stisknutím tlačítka Přidat déšť jej uložíte; hodnota se pak vynuluje.",
+      "zone_flow_l_min": "Kolik celá zóna dává za minutu (počet emitorů x průtok na emitor). Používá se pouze k odhadu litrů; nemění to, kdy nebo kolik zóna zavlažuje. Pokud hodnotu neznáte, ponechte 0.",
       "sensor_offline_hours": "Senzor, který tolik hodin nic nepošle, se považuje za offline a řízení klimatu přejde do nouzového režimu. Zvyšte hodnotu, pokud stabilní senzor způsobuje falešná varování.",
       "ventilation_failsafe": "Co dělají větrací otvory a ventilátory, když nefunguje žádný snímač vnitřní teploty. Mlžovače se vždy vypnou.",
       "heater_failsafe": "Co dělá topení, když nefunguje žádný snímač vnitřní teploty. Bez snímače nikdy neběží nepřetržitě.",
@@ -1303,6 +1336,8 @@ const I18N = {
     "show_diagnostics": "Vis diagnosticeringen",
     "groups": {
       "amounts": "Vandmængde",
+      "water_use": "Skøn over vandforbrug",
+      "water_use_note": "Bruges kun til at regne liter ud til vandforbrugstallene. Det ændrer ikke, hvornår eller hvor længe zonen vander. Lad den stå på 0, hvis du ikke kender den.",
       "rain": "Regn, vejrudsigt og frost",
       "deep_soak": "Dybdevanding",
       "soil": "Jord",
@@ -1391,6 +1426,7 @@ const I18N = {
       "auto_resume": "Til: en enhed skiftet manuelt vender tilbage til automatik efter Auto-genoptag efter. Fra: den forbliver som du forlod den, indtil du trykker på Genoptag automatik.",
       "auto_resume_hours": "Hvor længe en manuelt betjent enhed lades være i fred, før ZoneFlow tager styringen tilbage (når Auto-genoptag er slået til).",
       "manual_rain_mm": "Regnmængde du har aflæst fra en simpel regnmåler. Tryk på Tilføj regn for at gemme den; mængden nulstilles herefter.",
+      "zone_flow_l_min": "Hvad hele zonen giver pr. minut (dryppere x flow pr. drypper). Bruges kun til at skønne liter; det ændrer ikke, hvornår eller hvor meget zonen vander. Lad stå på 0, hvis du ikke kender det.",
       "sensor_offline_hours": "En sensor, der ikke sender noget i så mange timer, regnes som offline, og klimastyringen går i nøddrift. Hæv værdien, hvis en stabil sensor giver falske advarsler.",
       "ventilation_failsafe": "Hvad udluftning og ventilatorer gør, når ingen indendørs temperatursensor virker. Forstøvere slukker altid.",
       "heater_failsafe": "Hvad varmelegemet gør, når ingen indendørs temperatursensor virker. Det kører aldrig uafbrudt uden en sensor.",
@@ -1418,6 +1454,8 @@ const I18N = {
     "show_diagnostics": "Diagnosztika megjelenítése",
     "groups": {
       "amounts": "Vízmennyiség",
+      "water_use": "Vízhasználat becslése",
+      "water_use_note": "Csak a vízhasználati adatok literszámának kiszámítására szolgál. Nem változtatja meg, hogy a zóna mikor és mennyi ideig öntöz. Hagyja 0-n, ha nem ismeri.",
       "rain": "Eső, előrejelzés és fagy",
       "deep_soak": "Mélyöntözés",
       "soil": "Talaj",
@@ -1506,6 +1544,7 @@ const I18N = {
       "auto_resume": "Be: a kézzel kapcsolodó eszköz az Automatikus folytatás késleltetése után visszatér automatikus módba. Ki: abban az állapotban marad, amíg meg nem nyomja az Automatika folytatása gombot.",
       "auto_resume_hours": "Mennyi ideig marad változatlanul a kézzel kapcsolodó eszköz, mielőtt a ZoneFlow visszaveszi az irányítást (amikor az Automatikus folytatás be van kapcsolva).",
       "manual_rain_mm": "Egyszerű csapadékmérőből leolvasott esőmennyiség. Nyomja meg az Eső hozzáadása gombot a rögzítéshez; az érték ezután 0-ra vált.",
+      "zone_flow_l_min": "Amit a teljes zóna ad percenként (csepegtetők x csepegtetőnkénti vízhozam). Csak a literek becslésére szolgál; nem változtatja meg, hogy a zóna mikor vagy mennyit öntöz. Hagyja 0 értéken, ha nem tudja.",
       "sensor_offline_hours": "Az az érzékelő, amely ennyi órán át nem küld semmit, offline-nak számít, és a klímavezérlés vészüzemmódba lép. Növelje az értéket, ha egy egyenletesen mérő érzékelő téves figyelmeztetéseket okoz.",
       "ventilation_failsafe": "Mit tegyenek a szellőzők és ventilátorok, ha nem működik belső hőmérséklet-érzékelő. A párásítók mindig kikapcsolnak.",
       "heater_failsafe": "Mit tegyen a fűtés, ha nem működik belső hőmérséklet-érzékelő. Érzékelő nélkül soha nem működik folyamatosan.",
@@ -1533,6 +1572,8 @@ const I18N = {
     "show_diagnostics": "Vis diagnostikken",
     "groups": {
       "amounts": "Vannmengde",
+      "water_use": "Anslag for vannforbruk",
+      "water_use_note": "Brukes bare til å regne ut liter for vannforbrukstallene. Det endrer ikke når eller hvor lenge sonen vanner. La stå på 0 hvis du ikke vet det.",
       "rain": "Regn, værmelding og frost",
       "deep_soak": "Dypvanning",
       "soil": "Jord",
@@ -1621,6 +1662,7 @@ const I18N = {
       "auto_resume": "På: en enhet som er slått på/av manuelt går tilbake til automatikk etter Automatisk gjenoptakelse etter. Av: den blir stående som du forlot den til du trykker på Gjenoppta automatikk.",
       "auto_resume_hours": "Hvor lenge en manuelt betjent enhet står urørt før ZoneFlow tar over styringen igjen (når Automatisk gjenoptakelse er på).",
       "manual_rain_mm": "Regnmengde du avleser fra en enkel regnmåler. Trykk på Legg til regn for å registrere den; mengden tilbakestilles til 0.",
+      "zone_flow_l_min": "Hva hele sonen gir per minutt (utløp x gjennomstrømning per utløp). Brukes kun til å anslå liter; det endrer ikke når eller hvor mye sonen vanner. La stå som 0 hvis du ikke vet det.",
       "sensor_offline_hours": "En sensor som ikke sender noe på så mange timer, regnes som frakoblet, og klimastyringen går i nøddrift. Øk verdien hvis en stabil sensor gir falske varsler.",
       "ventilation_failsafe": "Hva lufting og vifter gjør når ingen innvendig temperatursensor fungerer. Tåkeleggere slås alltid av.",
       "heater_failsafe": "Hva varmeovnen gjør når ingen innvendig temperatursensor fungerer. Den kjører aldri uavbrutt uten sensor.",
@@ -1648,6 +1690,8 @@ const I18N = {
     "show_diagnostics": "Mostrar o diagnóstico",
     "groups": {
       "amounts": "Quantidade de água",
+      "water_use": "Estimativa do uso de água",
+      "water_use_note": "Usado apenas para calcular os litros dos números de uso de água. Não altera quando nem por quanto tempo a zona irriga. Deixe 0 se você não souber.",
       "rain": "Chuva, previsão e geada",
       "deep_soak": "Irrigação profunda",
       "soil": "Solo",
@@ -1736,6 +1780,7 @@ const I18N = {
       "auto_resume": "Ligado: um dispositivo alterado manualmente volta ao modo automático após Retomada automática após. Desligado: permanece como você deixou até pressionar Retomar automático.",
       "auto_resume_hours": "Quanto tempo um dispositivo alterado manualmente fica sem intervenção antes que o ZoneFlow retome o controle (enquanto a Retomada automática estiver ligada).",
       "manual_rain_mm": "Chuva lida em um pluviômetro simples. Pressione Adicionar chuva para registrar; a quantidade volta para 0.",
+      "zone_flow_l_min": "Quanto a zona inteira fornece por minuto (emissores x vazão por emissor). Usado apenas para estimar os litros; não altera quando ou o quanto a zona irriga. Deixe 0 se não souber.",
       "sensor_offline_hours": "Um sensor que não envia nada por estas horas é considerado offline, e o controle do clima entra no modo de segurança. Aumente o valor se um sensor estável causar alertas falsos.",
       "ventilation_failsafe": "O que aberturas e ventiladores fazem quando nenhum sensor de temperatura interna funciona. Nebulizadores sempre desligam.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interna funciona. Ele nunca roda continuamente sem um sensor.",
@@ -1763,6 +1808,8 @@ const I18N = {
     "show_diagnostics": "Показывать диагностику",
     "groups": {
       "amounts": "Сколько воды",
+      "water_use": "Оценка расхода воды",
+      "water_use_note": "Используется только для расчёта литров в данных о расходе воды. Не влияет на то, когда и как долго зона поливает. Оставьте 0, если не знаете.",
       "rain": "Дождь, прогноз и заморозки",
       "deep_soak": "Глубокий полив",
       "soil": "Почва",
@@ -1851,6 +1898,7 @@ const I18N = {
       "auto_resume": "Вкл: вручную переключенное устройство вернется в авторежим через Автовозврат через. Выкл: устройство остается в текущем состоянии, пока вы не нажмете Возобновить авторежим.",
       "auto_resume_hours": "Сколько времени переключенное вручную устройство остается без изменений, прежде чем ZoneFlow снова возьмет его под контроль (при включенном Автовозврате).",
       "manual_rain_mm": "Количество осадков, измеренное обычным дождемером. Нажмите Добавить дождь, чтобы сохранить значение; показатель сбросится на 0.",
+      "zone_flow_l_min": "Сколько дает вся зона в минуту (капельницы x расход на капельницу). Используется только для оценки литров; не меняет время и объем полива зоны. Оставьте 0, если не знаете.",
       "sensor_offline_hours": "Датчик, который ничего не передаёт столько часов, считается офлайн, и управление климатом переходит в аварийный режим. Увеличьте значение, если стабильный датчик вызывает ложные предупреждения.",
       "ventilation_failsafe": "Поведение форточек и вентиляторов при отказе датчика температуры внутри. Туманообразование всегда отключается.",
       "heater_failsafe": "Поведение обогревателя при отказе датчика температуры внутри. Без датчика непрерывная работа запрещена.",
@@ -1878,6 +1926,8 @@ const I18N = {
     "show_diagnostics": "Zobraziť diagnostiku",
     "groups": {
       "amounts": "Koľko vody",
+      "water_use": "Odhad spotreby vody",
+      "water_use_note": "Slúži len na výpočet litrov pre údaje o spotrebe vody. Nemení, kedy ani ako dlho zóna zavlažuje. Ak hodnotu nepoznáte, ponechajte 0.",
       "rain": "Dážď, predpoveď a mráz",
       "deep_soak": "Hĺbková zálievka",
       "soil": "Pôda",
@@ -1966,6 +2016,7 @@ const I18N = {
       "auto_resume": "Zapnuté: ručne prepnuté zariadenie sa vráti do automatického režimu po uplynutí Zpoždenia automatického návratu. Vypnuté: zostane v stave, v akom ste ho nechali, kým nestlačíte Obnoviť automatiku.",
       "auto_resume_hours": "Ako dlho zostane ručne prepnuté zariadenie bez zásahu, kým nad ním ZoneFlow opäť prevezme kontrolu (keď je zapnutý Automatický návrat).",
       "manual_rain_mm": "Množstvo zrážok odčítané z obyčajného zrážkomera. Stlačte Pridať dážď na uloženie; hodnota sa potom vynuluje.",
+      "zone_flow_l_min": "Čo celá zóna dáva za minútu (emitory x prietok na emitor). Používa sa len na odhad litrov; nemení to, kedy alebo koľko zóna zavlažuje. Ak ho nepoznáte, ponechajte 0.",
       "sensor_offline_hours": "Senzor, ktorý toľko hodín nič nepošle, sa považuje za offline a riadenie klímy prejde do núdzového režimu. Zvýšte hodnotu, ak stabilný senzor spôsobuje falošné varovania.",
       "ventilation_failsafe": "Čo robia vetranie a ventilátory, keď nefunguje žiaden senzor vnútornej teploty. Zahmlievače sa vždy vypnú.",
       "heater_failsafe": "Čo robí ohrievač, keď nefunguje žiaden senzor vnútornej teploty. Bez senzora nikdy nebeží nepretržite.",
@@ -1993,6 +2044,8 @@ const I18N = {
     "show_diagnostics": "Показувати діагностику",
     "groups": {
       "amounts": "Скільки води",
+      "water_use": "Оцінка використання води",
+      "water_use_note": "Використовується лише для розрахунку літрів у даних про використання води. Не впливає на те, коли і як довго зона поливає. Залиште 0, якщо не знаєте.",
       "rain": "Дощ, прогноз і заморозки",
       "deep_soak": "Глибокий полив",
       "soil": "Ґрунт",
@@ -2081,6 +2134,7 @@ const I18N = {
       "auto_resume": "Увімкнено: пристрій, переключений вручну, повертається до авторежиму через Автоматичне відновлення через. Вимкнено: залишається у вибраному стані, поки ви не натиснете Відновити авторежим.",
       "auto_resume_hours": "Скільки часу пристрій, переключений вручну, залишається без змін, перш ніж ZoneFlow знову візьме його під контроль (коли Автоматичне відновлення увімкнено).",
       "manual_rain_mm": "Кількість осадків з простого дощоміра. Натисніть Додати дощ, щоб зберегти; значення скинеться на 0.",
+      "zone_flow_l_min": "Скільки дає вся зона за хвилину (крапельниці x витрата на крапельницю). Використовується лише для оцінки літрів; не змінює час або об'єм поливу зони. Залиште 0, якщо не знаєте.",
       "sensor_offline_hours": "Датчик, який нічого не передає стільки годин, вважається офлайн, і керування кліматом переходить в аварійний режим. Збільште значення, якщо стабільний датчик спричиняє хибні попередження.",
       "ventilation_failsafe": "Дія кватирок і вентиляторів при несправності всіх внутрішніх датчиків температури. Туманоутворювачі завжди вимикаються.",
       "heater_failsafe": "Дія обігрівача при несправності всіх внутрішніх датчиків температури. Він ніколи не працює безперервно без датчика.",
@@ -2108,6 +2162,8 @@ const I18N = {
     "show_diagnostics": "显示诊断",
     "groups": {
       "amounts": "浇水量",
+      "water_use": "用水量估算",
+      "water_use_note": "仅用于计算用水量数据中的升数。不会改变区域何时浇水或浇水多久。不知道时请保持为 0。",
       "rain": "降雨、预报和霜冻",
       "deep_soak": "深层浇灌",
       "soil": "土壤",
@@ -2196,6 +2252,7 @@ const I18N = {
       "auto_resume": "开启：手动切换的设备将在“自动恢复延迟”后恢复自动模式。关闭：保持原状，直到您点击“恢复自动”。",
       "auto_resume_hours": "手动切换的设备在 ZoneFlow 接管控制之前保持原状的时间（当“自动恢复”开启时）。",
       "manual_rain_mm": "从普通雨量计读取的降雨量。点击“添加降雨”进行记录，数值将清零。",
+      "zone_flow_l_min": "整个区域每分钟的出水量（灌水器数量 x 每个灌水器的流量）。仅用于估算升数；不会改变区域的浇水时间或浇水量。如果不知道请保持为 0。",
       "sensor_offline_hours": "传感器在这么多小时内没有任何上报即视为离线，气候控制将进入故障安全模式。如果数值稳定的传感器引起误报，请调高此值。",
       "ventilation_failsafe": "当没有可用的室内温度传感器时通风口和风扇的动作。喷雾器将始终关闭。",
       "heater_failsafe": "当没有可用的室内温度传感器时加热器的动作。在没有传感器的情况下，它绝不会不间断连续运行。",
@@ -2219,14 +2276,22 @@ const NOW = [
   "sensor.days_until_next_run",
   "sensor.next_fertilizing",
   "sensor.last_cycle_water_liters",
+  "sensor.last_water_delivered",
+  "sensor.last_water_volume",
   "sensor.rain_today",
   "sensor.routine_weekly_target",
   "sensor.avg_peak_temp_3d",
+  "sensor.water_used_30d",
+  "sensor.water_used_year",
   "sensor.growth_ramp_pct",
   "sensor.deficit_status",
 ];
 // Shown only while they say something (deficit mode on).
 const ONLY_WHEN = {
+  // Litres need a Zone Flow or a flow meter.
+  "sensor.last_water_volume": (state) => state && !["unknown", "unavailable"].includes(state.state),
+  "sensor.water_used_30d": (state) => state && !["unknown", "unavailable"].includes(state.state),
+  "sensor.water_used_year": (state) => state && !["unknown", "unavailable"].includes(state.state),
   "sensor.deficit_status": (state) => state && state.state !== "off",
   // Once a first feed is recorded.
   "sensor.next_fertilizing": (state) => state && !["unknown", "unavailable"].includes(state.state),
@@ -2250,6 +2315,7 @@ const SETTINGS_GROUPS = [
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
     "number.routine_pulse_count", "number.routine_pulse_rest_minutes",
   ]],
+  ["water_use", ["number.zone_flow_l_min"]],
   ["rain", [
     "number.routine_drydown_days", "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
@@ -2368,7 +2434,17 @@ class ZoneFlowCard extends HTMLElement {
       Object.entries(entities).filter(([key, e]) => {
         if (e.hidden) return false;
         const when = ONLY_WHEN[key];
-        return !when || when(this._hass.states[e.entity_id]);
+        if (when && !when(this._hass.states[e.entity_id])) return false;
+        // A meter that has counted nothing says nothing; the litres estimate
+        // (Last Water Volume) stands in for it.
+        if (key === "sensor.last_cycle_water_liters" && !(Number(this._hass.states[e.entity_id]?.state) > 0)) return false;
+        // With a flow meter that counted, its litres are on the card already.
+        if (key === "sensor.last_water_volume") {
+          const measured = entities["sensor.last_cycle_water_liters"];
+          const litres = Number(this._hass.states[measured?.entity_id]?.state);
+          if (measured && !measured.hidden && litres > 0) return false;
+        }
+        return true;
       })
     );
     const statusAttrs = this._hass.states[visible["sensor.status"]?.entity_id]?.attributes || {};
@@ -2448,6 +2524,7 @@ class ZoneFlowCard extends HTMLElement {
       dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
       dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
       dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
+      .group-note { color: var(--secondary-text-color); font-size: 0.85em; margin: -4px 0 8px; line-height: 1.35; }
       .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
         letter-spacing: 0.04em; margin: 16px 0 2px; }
       .rows > * { display: block; margin: 4px 0; }
@@ -2658,6 +2735,14 @@ class ZoneFlowCard extends HTMLElement {
         heading.className = "group-title";
         heading.textContent = t(hass, `groups.${groupKey}`);
         body.appendChild(heading);
+        // Some groups say in plain words what their settings are for.
+        const noteText = t(hass, `groups.${groupKey}_note`);
+        if (noteText && !noteText.startsWith("groups.")) {
+          const note = document.createElement("div");
+          note.className = "group-note";
+          note.textContent = noteText;
+          body.appendChild(note);
+        }
       }
       const list = document.createElement("div");
       list.className = "rows";
@@ -2952,7 +3037,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const keyed = zoneEntities(hass, zone.device_id);
       const measured = keyed["sensor.last_cycle_water_liters"];
       const estimate = keyed["sensor.last_water_delivered"];
-      const last = measured && !measured.hidden ? measured.entity_id : estimate?.entity_id;
+      // The meter's litres once it has counted something; else the estimate.
+      const metered = Boolean(measured && !measured.hidden && Number(hass.states[measured.entity_id]?.state) > 0);
+      const last = metered ? measured.entity_id : estimate?.entity_id;
+      const lastVolume = keyed["sensor.last_water_volume"];
       const button = keyed["button.run_routine"]?.entity_id;
       const plant = status?.attributes?.plant;
       // A zone with no valve to water has no irrigation status: it shows
@@ -2968,6 +3056,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
         text: climate ? climateState?.state : status?.state,
         next: climate ? undefined : status?.attributes?.next_watering,
         last: climate ? undefined : last,
+        lastIsEstimate: !metered,
+        lastVolume: climate || !lastVolume || lastVolume.hidden ? undefined : lastVolume.entity_id,
         button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
@@ -3216,6 +3306,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
       row.status.classList.toggle("warn", warn);
       row.next.textContent = zone.code === "paused" ? "—" : formatNext(hass, zone.next);
       row.last.textContent = zone.last ? formatState(hass, hass.states[zone.last]) : "—";
+      const volume = zone.lastVolume ? hass.states[zone.lastVolume] : null;
+      if (zone.last && volume && !["unknown", "unavailable"].includes(volume.state) && zone.lastIsEstimate) {
+        row.last.textContent += ` · ${formatState(hass, volume)}`;
+      }
       row.water.disabled = !zone.button || zone.code === "paused";
       row.feed.hidden = !zone.feed;
       row.feed.classList.toggle("due", zone.feedDue);

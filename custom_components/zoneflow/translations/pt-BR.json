@@ -22,7 +22,8 @@
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
           "pump_id": "ID da bomba compartilhada (opcional)",
-          "rain_counter_entity": "Contador de basculadas do pluviômetro (opcional)",
+          "rain_counter_entity": "Sensor do pluviômetro (opcional)",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
           "outdoor_temp_entity": "Sensor de temperatura externa (opcional)",
           "flow_meter_entity": "Medidor de vazão (opcional)",
           "soil_moisture_entity": "Sensor de umidade do solo (opcional)",
@@ -47,7 +48,8 @@
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: ele liga e desliga o interruptor e sempre garante que ele fique desligado no final.",
           "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Durante cada irrigação, o ZoneFlow confere se a bomba está mesmo consumindo energia e avisa você se não estiver. Deixe em branco se não tiver um.",
           "pump_id": "Só para zonas que usam a mesma bomba: dê a todas o mesmo nome aqui (qualquer nome, ex.: \"Bomba A\") e elas se revezam em vez de funcionar ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprio.",
-          "rain_counter_entity": "Um contador do pluviômetro que sobe uma unidade a cada basculada (cada vez que a báscula vira). Com ele, o ZoneFlow desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe a irrigação quando começa a chover. Quanta chuva vale uma basculada você define na página do dispositivo da zona (Pluviômetro: mm por basculada). Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_counter_entity": "O sensor do seu pluviômetro: um contador de basculadas, um total de chuva em milímetros ou uma intensidade de chuva (escolha abaixo). O ZoneFlow então desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe uma irrigação quando começa a chover. Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_source_type": "O que o sensor informa. Contador de basculadas: um número que aumenta de um a cada basculada da caçamba (o tamanho de uma basculada se ajusta na página do dispositivo da zona, Pluviômetro: mm por basculada). Total de chuva em mm: um total acumulado que só aumenta, ou que recomeça todo dia ou semana, por exemplo do Ecowitt, Ambient Weather ou Tempest (um total em polegadas também funciona). Intensidade de chuva: a chuva atual em mm por hora, que o ZoneFlow soma ao longo do tempo (menos exato). Um sensor que mostra só a última hora ou as últimas 24 horas não funciona: use um total. Trocar o sensor ou o tipo recomeça o histórico de chuva. Chuva por leitura: a quantidade que caiu desde a atualização anterior, por exemplo o sensor Precipitação do Tempest, que o ZoneFlow soma.",
           "outdoor_temp_entity": "Um sensor de temperatura externa. Com ele, o ZoneFlow irriga sozinho mais no calor e menos no tempo fresco, e a proteção contra geada segura a irrigação quando está congelando. Sem ele, quem decide é a configuração Temperatura de reserva / manual.",
           "flow_meter_entity": "Um hidrômetro que registra o volume total (litros, galões ou m³). Com ele, o ZoneFlow registra quanta água cada irrigação realmente usou, avisa você se a bomba funcionou mas a água não passou, e pode medir a vazão para você (Configurar → Vazão).",
           "soil_moisture_entity": "Um sensor de umidade do solo (%) na região das raízes desta zona. Solo seco antecipa a irrigação de rotina, solo úmido faz ela ser pulada e, entre os dois, quem decide é o horário normal. Os limites de seco e úmido ficam na página do dispositivo da zona.",
@@ -255,6 +257,7 @@
           "settings": "Configurações da zona (entidades, solo, horário…)",
           "flow_rate": "Vazão: calcular a partir dos emissores",
           "flow_volume": "Vazão: meça pelos litros fornecidos em um ciclo de manutenção",
+          "zone_flow": "Vazão da zona: litros por minuto a partir do número de emissores",
           "flow_measure": "Vazão: medir com o medidor de vazão",
           "greenhouse_devices": "Válvula, sensores e dispositivos de clima",
           "watering": "Configurações de irrigação",
@@ -269,7 +272,8 @@
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
           "pump_id": "ID da bomba compartilhada (opcional)",
-          "rain_counter_entity": "Contador de basculadas do pluviômetro (opcional)",
+          "rain_counter_entity": "Sensor do pluviômetro (opcional)",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
           "outdoor_temp_entity": "Sensor de temperatura externa (opcional)",
           "flow_meter_entity": "Medidor de vazão (opcional)",
           "soil_moisture_entity": "Sensor de umidade do solo (opcional)",
@@ -294,7 +298,8 @@
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: ele liga e desliga o interruptor e sempre garante que ele fique desligado no final.",
           "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Durante cada irrigação, o ZoneFlow confere se a bomba está mesmo consumindo energia e avisa você se não estiver. Deixe em branco se não tiver um.",
           "pump_id": "Só para zonas que usam a mesma bomba: dê a todas o mesmo nome aqui (qualquer nome, ex.: \"Bomba A\") e elas se revezam em vez de funcionar ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprio.",
-          "rain_counter_entity": "Um contador do pluviômetro que sobe uma unidade a cada basculada (cada vez que a báscula vira). Com ele, o ZoneFlow desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe a irrigação quando começa a chover. Quanta chuva vale uma basculada você define na página do dispositivo da zona (Pluviômetro: mm por basculada). Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_counter_entity": "O sensor do seu pluviômetro: um contador de basculadas, um total de chuva em milímetros ou uma intensidade de chuva (escolha abaixo). O ZoneFlow então desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe uma irrigação quando começa a chover. Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_source_type": "O que o sensor informa. Contador de basculadas: um número que aumenta de um a cada basculada da caçamba (o tamanho de uma basculada se ajusta na página do dispositivo da zona, Pluviômetro: mm por basculada). Total de chuva em mm: um total acumulado que só aumenta, ou que recomeça todo dia ou semana, por exemplo do Ecowitt, Ambient Weather ou Tempest (um total em polegadas também funciona). Intensidade de chuva: a chuva atual em mm por hora, que o ZoneFlow soma ao longo do tempo (menos exato). Um sensor que mostra só a última hora ou as últimas 24 horas não funciona: use um total. Trocar o sensor ou o tipo recomeça o histórico de chuva. Chuva por leitura: a quantidade que caiu desde a atualização anterior, por exemplo o sensor Precipitação do Tempest, que o ZoneFlow soma.",
           "outdoor_temp_entity": "Um sensor de temperatura externa. Com ele, o ZoneFlow irriga sozinho mais no calor e menos no tempo fresco, e a proteção contra geada segura a irrigação quando está congelando. Sem ele, quem decide é a configuração Temperatura de reserva / manual.",
           "flow_meter_entity": "Um hidrômetro que registra o volume total (litros, galões ou m³). Com ele, o ZoneFlow registra quanta água cada irrigação realmente usou, avisa você se a bomba funcionou mas a água não passou, e pode medir a vazão para você (Configurar → Vazão).",
           "soil_moisture_entity": "Um sensor de umidade do solo (%) na região das raízes desta zona. Solo seco antecipa a irrigação de rotina, solo úmido faz ela ser pulada e, entre os dois, quem decide é o horário normal. Os limites de seco e úmido ficam na página do dispositivo da zona.",
@@ -318,7 +323,7 @@
       },
       "flow_rate": {
         "title": "Vazão dos emissores",
-        "description": "Quanto de água os emissores da zona aplicam na área que molham. 1 litro em 1 m² equivale a 1 mm. Isso pressupõe que todos os emissores na válvula da zona forneçam a mesma vazão. Para gotejadores em plantas individuais, use a área ao redor delas que realmente fica molhada. O resultado substitui a Calibração da vazão dos emissores da zona. Com emissores mistos, meça em vez disso («Vazão: meça pelos litros fornecidos em um ciclo de manutenção»).",
+        "description": "Quanto de água os emissores da zona aplicam na área que molham. 1 litro em 1 m² equivale a 1 mm. Isso pressupõe que todos os emissores na válvula da zona forneçam a mesma vazão. Para gotejadores em plantas individuais, use a área ao redor delas que realmente fica molhada. O resultado substitui a Calibração da vazão dos emissores da zona. Com emissores mistos, meça em vez disso («Vazão: meça pelos litros fornecidos em um ciclo de manutenção»). Também define a Vazão da zona, os litros por minuto usados para a estimativa de uso de água.",
         "data": {
           "emitters": "Número de emissores (gotejadores, aspersores) na zona",
           "emitter_flow": "Vazão de um emissor",
@@ -476,7 +481,7 @@
       },
       "flow_volume": {
         "title": "Medir a vazão por volume",
-        "description": "Pressione um dos botões Ciclo de manutenção da zona (um ciclo mais longo, como 15 min, é mais preciso) e recolha ou leia a água: um balde ou tambor nos emissores, ou a diferença em um hidrômetro. Em seguida, informe os minutos em que a válvula ficou aberta, os litros e a área que os emissores molham.\n\nO resultado é a MÉDIA da zona: litros divididos pela área e pelos minutos, e substitui a Calibração da vazão dos emissores da zona. O ZoneFlow possui uma única taxa por zona, portanto não consegue diferenciar os emissores. Para um resultado preciso, todos os emissores na válvula de uma zona devem ser do mesmo tipo e vazão; coloque emissores diferentes em válvulas separadas (zonas separadas). Em uma zona mista, as plantas nos emissores mais fracos recebem menos do que a média mostrada.",
+        "description": "Pressione um dos botões Ciclo de manutenção da zona (um ciclo mais longo, como 15 min, é mais preciso) e recolha ou leia a água: um balde ou tambor nos emissores, ou a diferença em um hidrômetro. Em seguida, informe os minutos em que a válvula ficou aberta, os litros e a área que os emissores molham.\n\nO resultado é a MÉDIA da zona: litros divididos pela área e pelos minutos, e substitui a Calibração da vazão dos emissores da zona. O ZoneFlow possui uma única taxa por zona, portanto não consegue diferenciar os emissores. Para um resultado preciso, todos os emissores na válvula de uma zona devem ser do mesmo tipo e vazão; coloque emissores diferentes em válvulas separadas (zonas separadas). Em uma zona mista, as plantas nos emissores mais fracos recebem menos do que a média mostrada. Também define a Vazão da zona, os litros por minuto usados para a estimativa de uso de água.",
         "data": {
           "minutes": "Minutos em que a válvula ficou aberta",
           "volume": "Água fornecida",
@@ -487,6 +492,20 @@
           "volume": "Toda a água fornecida pelos emissores da zona durante o ciclo (litros, ou galões em unidades US).",
           "area": "A área que realmente fica molhada. Para gotejadores em plantas individuais, some as manchas molhadas ao redor delas, não o canteiro inteiro."
         }
+      },
+      "zone_flow": {
+        "title": "Vazão da zona",
+        "description": "A vazão total da zona, a partir de seus emissores. O ZoneFlow multiplica esse valor pelos minutos de abertura da válvula para estimar os litros utilizados (mostrados como Água utilizada e sob Última água aplicada (estimativa)). Isso não altera o quanto ou quando a zona irriga; isso é determinado pela Calibração da vazão dos emissores. Os gotejadores geralmente são especificados por hora, e os aspersores por minuto. Para um valor mais preciso, meça-o: a opção do menu sobre os litros fornecidos em um ciclo de manutenção também define este valor.",
+        "data": {
+          "heads": "Número de emissores (gotejadores, aspersores) na válvula da zona",
+          "head_flow": "Vazão de um emissor",
+          "head_flow_unit": "Por"
+        },
+        "data_description": {
+          "heads": "Conte cada emissor alimentado por esta válvula.",
+          "head_flow": "O que um emissor fornece, conforme a embalagem ou tabela de bocais.",
+          "head_flow_unit": "A unidade em que a vazão de um emissor é informada."
+        }
       }
     },
     "abort": {
@@ -495,7 +514,9 @@
       "measuring": "Medindo: a válvula fica aberta por cerca de {minutes} minutos. O resultado chega por mensagem no celular (ou nas notificações do Home Assistant, se a zona não tiver celular definido) e é aplicado automaticamente.",
       "zone_not_loaded": "Esta zona não está em funcionamento agora, então não é possível fazer isso.",
       "zone_busy": "A zona (ou a bomba dela) está ocupada, ou o limite de segurança diário de funcionamento já foi atingido. Tente novamente mais tarde.",
-      "flow_rate_disabled": "A entidade Calibração da vazão dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente."
+      "flow_rate_disabled": "A entidade Calibração da vazão dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente.",
+      "zone_flow_set": "Vazão da zona definida para {flow}. Usada apenas para a estimativa de uso de água.",
+      "zone_flow_out_of_range": "Isso resulta em uma vazão de zona fora do permitido pela configuração (0 a 2000 L/min). Verifique os números."
     },
     "error": {
       "valve_already_used": "Outra zona do ZoneFlow já usa esta válvula.",
@@ -602,6 +623,14 @@
         "outdoor": "Ao ar livre",
         "greenhouse": "Estufa",
         "indoor": "Interna"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Contador de basculadas",
+        "total_mm": "Total de chuva (mm ou in; acumulado, diário ou semanal)",
+        "rate_mm_h": "Intensidade de chuva (mm/h)",
+        "amount_mm": "Chuva por leitura (mm ou in; ex.: Tempest)"
       }
     }
   },
@@ -792,6 +821,9 @@
       },
       "auto_resume_hours": {
         "name": "Retomada automática após"
+      },
+      "zone_flow_l_min": {
+        "name": "Vazão da zona"
       }
     },
     "datetime": {
@@ -984,6 +1016,15 @@
       },
       "wu_station": {
         "name": "Estação {station}"
+      },
+      "water_used_30d": {
+        "name": "Água utilizada, últimos 30 dias"
+      },
+      "water_used_year": {
+        "name": "Água utilizada este ano"
+      },
+      "last_water_volume": {
+        "name": "Volume da última irrigação"
       }
     },
     "select": {

@@ -22,7 +22,8 @@
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
           "pump_id": "ID de bomba compartida (opcional)",
-          "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
+          "rain_counter_entity": "Sensor del pluviómetro (opcional)",
+          "rain_source_type": "Tipo de sensor del pluviómetro",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Caudalímetro (opcional)",
           "soil_moisture_entity": "Sensor de humedad del suelo (opcional)",
@@ -47,7 +48,8 @@
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
           "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej., el de un enchufe inteligente. En cada riego, ZoneFlow comprueba que la bomba consume corriente de verdad y te avisa si no es así. Déjalo vacío si no tienes uno.",
           "pump_id": "Solo para zonas que funcionan con la misma bomba: ponles a todas el mismo nombre aquí (el que quieras, p. ej., \"Bomba A\") y regarán por turnos en lugar de a la vez. Déjalo vacío si esta zona tiene su propia bomba o toma de agua.",
-          "rain_counter_entity": "Un contador del pluviómetro que sube de uno en uno con cada vuelco de su cazoleta. Así ZoneFlow descuenta la lluvia de lo que riega, deja que el suelo mojado se seque primero y detiene un riego cuando empieza a llover. Cuánta lluvia equivale a un vuelco se ajusta en la página del dispositivo de la zona, con \"Pluviómetro: mm por vuelco (calibración)\". Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_counter_entity": "El sensor de tu pluviómetro: un contador de vuelcos, un total de lluvia en milímetros o una intensidad de lluvia (elige abajo). ZoneFlow descuenta entonces la lluvia de lo que riega, deja secar primero el suelo mojado y detiene un riego cuando empieza a llover. Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_source_type": "Lo que informa el sensor. Contador de vuelcos: un número que sube uno con cada vuelco del cubilete (el tamaño de un vuelco se ajusta en la página del dispositivo de la zona, Pluviómetro: mm por vuelco). Total de lluvia en mm: un total acumulado que solo sube, o que empieza de nuevo cada día o semana, por ejemplo de Ecowitt, Ambient Weather o Tempest (un total en pulgadas también sirve). Intensidad de lluvia: la lluvia actual en mm por hora, que ZoneFlow suma con el tiempo (menos exacto). Un sensor que solo muestra la última hora o las últimas 24 horas no sirve: usa un total. Cambiar el sensor o el tipo reinicia el historial de lluvia. Lluvia por lectura: la cantidad caída desde la actualización anterior, por ejemplo el sensor Precipitación de Tempest, que ZoneFlow suma.",
           "outdoor_temp_entity": "Un sensor de temperatura exterior. Con él, ZoneFlow riega por sí solo más cuando hace calor y menos cuando hace fresco, y la protección antiheladas detiene el riego cuando hiela. Sin él, decide el ajuste Temperatura de respaldo / manual.",
           "flow_meter_entity": "Un contador de agua que va sumando el volumen total (litros, galones o m³). Así ZoneFlow registra cuánta agua usó realmente cada riego, te avisa si la bomba funcionó pero no pasó agua, y puede medir el caudal por ti (Configurar → Caudal: medirlo con el caudalímetro).",
           "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
@@ -255,6 +257,7 @@
           "settings": "Ajustes de la zona (entidades, suelo, programación…)",
           "flow_rate": "Caudal: calcularlo a partir de los emisores",
           "flow_volume": "Caudal: mídalo según los litros que da un Mantenimiento",
+          "zone_flow": "Caudal de la zona: litros por minuto según el número de emisores",
           "flow_measure": "Caudal: medirlo con el caudalímetro",
           "greenhouse_devices": "Válvula, sensores y dispositivos de clima",
           "watering": "Ajustes de riego",
@@ -269,7 +272,8 @@
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
           "pump_id": "ID de bomba compartida (opcional)",
-          "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
+          "rain_counter_entity": "Sensor del pluviómetro (opcional)",
+          "rain_source_type": "Tipo de sensor del pluviómetro",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Caudalímetro (opcional)",
           "soil_moisture_entity": "Sensor de humedad del suelo (opcional)",
@@ -294,7 +298,8 @@
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
           "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej., el de un enchufe inteligente. En cada riego, ZoneFlow comprueba que la bomba consume corriente de verdad y te avisa si no es así. Déjalo vacío si no tienes uno.",
           "pump_id": "Solo para zonas que funcionan con la misma bomba: ponles a todas el mismo nombre aquí (el que quieras, p. ej., \"Bomba A\") y regarán por turnos en lugar de a la vez. Déjalo vacío si esta zona tiene su propia bomba o toma de agua.",
-          "rain_counter_entity": "Un contador del pluviómetro que sube de uno en uno con cada vuelco de su cazoleta. Así ZoneFlow descuenta la lluvia de lo que riega, deja que el suelo mojado se seque primero y detiene un riego cuando empieza a llover. Cuánta lluvia equivale a un vuelco se ajusta en la página del dispositivo de la zona, con \"Pluviómetro: mm por vuelco (calibración)\". Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_counter_entity": "El sensor de tu pluviómetro: un contador de vuelcos, un total de lluvia en milímetros o una intensidad de lluvia (elige abajo). ZoneFlow descuenta entonces la lluvia de lo que riega, deja secar primero el suelo mojado y detiene un riego cuando empieza a llover. Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_source_type": "Lo que informa el sensor. Contador de vuelcos: un número que sube uno con cada vuelco del cubilete (el tamaño de un vuelco se ajusta en la página del dispositivo de la zona, Pluviómetro: mm por vuelco). Total de lluvia en mm: un total acumulado que solo sube, o que empieza de nuevo cada día o semana, por ejemplo de Ecowitt, Ambient Weather o Tempest (un total en pulgadas también sirve). Intensidad de lluvia: la lluvia actual en mm por hora, que ZoneFlow suma con el tiempo (menos exacto). Un sensor que solo muestra la última hora o las últimas 24 horas no sirve: usa un total. Cambiar el sensor o el tipo reinicia el historial de lluvia. Lluvia por lectura: la cantidad caída desde la actualización anterior, por ejemplo el sensor Precipitación de Tempest, que ZoneFlow suma.",
           "outdoor_temp_entity": "Un sensor de temperatura exterior. Con él, ZoneFlow riega por sí solo más cuando hace calor y menos cuando hace fresco, y la protección antiheladas detiene el riego cuando hiela. Sin él, decide el ajuste Temperatura de respaldo / manual.",
           "flow_meter_entity": "Un contador de agua que va sumando el volumen total (litros, galones o m³). Así ZoneFlow registra cuánta agua usó realmente cada riego, te avisa si la bomba funcionó pero no pasó agua, y puede medir el caudal por ti (Configurar → Caudal: medirlo con el caudalímetro).",
           "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
@@ -318,7 +323,7 @@
       },
       "flow_rate": {
         "title": "Caudal de los emisores",
-        "description": "Cuánta agua vierten los emisores de la zona sobre la superficie que mojan. 1 litro en 1 m² equivale a 1 mm. Esto asume que todos los emisores de la válvula de la zona tienen el mismo caudal. Para goteadores en plantas individuales, use la superficie a su alrededor que realmente se moja. El resultado reemplaza la Calibración del caudal de emisores de la zona. Con emisores mixtos, mida en su lugar («Caudal: mídalo según los litros que da un Mantenimiento»).",
+        "description": "Cuánta agua vierten los emisores de la zona sobre la superficie que mojan. 1 litro en 1 m² equivale a 1 mm. Esto asume que todos los emisores de la válvula de la zona tienen el mismo caudal. Para goteadores en plantas individuales, use la superficie a su alrededor que realmente se moja. El resultado reemplaza la Calibración del caudal de emisores de la zona. Con emisores mixtos, mida en su lugar («Caudal: mídalo según los litros que da un Mantenimiento»). También establece el Caudal de la zona, los litros por minuto utilizados para la estimación del uso de agua.",
         "data": {
           "emitters": "Número de emisores (goteros, difusores) en la zona",
           "emitter_flow": "Caudal de un emisor",
@@ -476,7 +481,7 @@
       },
       "flow_volume": {
         "title": "Medir el caudal por volumen",
-        "description": "Presione uno de los botones de Mantenimiento de la zona (un tiempo más largo, como 15 min, es más preciso) y recoja o lea el agua: un cubo o barril en los emisores, o la diferencia en un contador de agua. A continuación, introduzca los minutos que la válvula estuvo abierta, los litros y la superficie que mojan los emisores.\n\nEl resultado es el PROMEDIO de la zona: litros divididos por la superficie y los minutos, y reemplaza la Calibración del caudal de emisores de la zona. ZoneFlow utiliza un solo caudal por zona, por lo que no puede distinguir entre emisores. Para obtener un resultado preciso, todos los emisores de la válvula de una zona deben ser del mismo tipo y caudal; coloque emisores diferentes en válvulas separadas (zonas separadas). En una zona mixta, las plantas con emisores más débiles reciben menos que el promedio mostrado.",
+        "description": "Presione uno de los botones de Mantenimiento de la zona (un tiempo más largo, como 15 min, es más preciso) y recoja o lea el agua: un cubo o barril en los emisores, o la diferencia en un contador de agua. A continuación, introduzca los minutos que la válvula estuvo abierta, los litros y la superficie que mojan los emisores.\n\nEl resultado es el PROMEDIO de la zona: litros divididos por la superficie y los minutos, y reemplaza la Calibración del caudal de emisores de la zona. ZoneFlow utiliza un solo caudal por zona, por lo que no puede distinguir entre emisores. Para obtener un resultado preciso, todos los emisores de la válvula de una zona deben ser del mismo tipo y caudal; coloque emisores diferentes en válvulas separadas (zonas separadas). En una zona mixta, las plantas con emisores más débiles reciben menos que el promedio mostrado. También establece el Caudal de la zona, los litros por minuto utilizados para la estimación del uso de agua.",
         "data": {
           "minutes": "Minutos que la válvula estuvo abierta",
           "volume": "Agua vertida",
@@ -487,6 +492,20 @@
           "volume": "Toda el agua que aportaron los emisores de la zona durante la ejecución (litros, o galones en unidades de EE. UU.).",
           "area": "La superficie que realmente se moja. En el caso de goteadores en plantas individuales, sume las zonas húmedas a su alrededor, no todo el parterre."
         }
+      },
+      "zone_flow": {
+        "title": "Caudal de la zona",
+        "description": "El caudal total de la zona, a partir de sus emisores. ZoneFlow lo multiplica por los minutos de apertura de la válvula para estimar los litros utilizados (mostrado como Agua usada y bajo Último aporte de agua (estimado)). No cambia cuánto ni cuándo riega la zona; de eso se encarga la Calibración del caudal de emisores. Los goteadores suelen clasificarse por hora y los aspersores por minuto. Para obtener la cifra más precisa, mídalo en su lugar: la entrada del menú sobre los litros que da un Mantenimiento también establece esto.",
+        "data": {
+          "heads": "Número de emisores (goteadores, aspersores) en la válvula de la zona",
+          "head_flow": "Caudal de un emisor",
+          "head_flow_unit": "Por"
+        },
+        "data_description": {
+          "heads": "Cuente cada emisor que alimenta esta válvula.",
+          "head_flow": "Lo que da un emisor, según su paquete o tabla de boquillas.",
+          "head_flow_unit": "La unidad en la que se indica el caudal de un emisor."
+        }
       }
     },
     "abort": {
@@ -495,7 +514,9 @@
       "measuring": "Midiendo: la válvula se abre durante unos {minutes} minutos. El resultado llega como mensaje al teléfono (o en las notificaciones de Home Assistant si la zona no tiene destino de teléfono) y se aplica automáticamente.",
       "zone_not_loaded": "Esta zona no está en marcha ahora mismo, así que no se puede hacer esto.",
       "zone_busy": "La zona (o su bomba) está ocupada, o ya se agotó el límite de seguridad de tiempo de hoy. Inténtalo más tarde.",
-      "flow_rate_disabled": "La entidad Calibración del caudal de emisores de la zona está deshabilitada. Habilítala (página del dispositivo de la zona → sus entidades) e inténtalo de nuevo."
+      "flow_rate_disabled": "La entidad Calibración del caudal de emisores de la zona está deshabilitada. Habilítala (página del dispositivo de la zona → sus entidades) e inténtalo de nuevo.",
+      "zone_flow_set": "Caudal de la zona establecido en {flow}. Se utiliza solo para la estimación del uso de agua.",
+      "zone_flow_out_of_range": "Eso da como resultado un caudal de zona fuera de lo que permite el ajuste (0 a 2000 L/min). Compruebe los números."
     },
     "error": {
       "valve_already_used": "Otra zona de ZoneFlow ya usa esta válvula.",
@@ -602,6 +623,14 @@
         "outdoor": "Exterior",
         "greenhouse": "Invernadero",
         "indoor": "Interior"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Contador de vuelcos",
+        "total_mm": "Total de lluvia (mm o in; acumulado, diario o semanal)",
+        "rate_mm_h": "Intensidad de lluvia (mm/h)",
+        "amount_mm": "Lluvia por lectura (mm o in; p. ej. Tempest)"
       }
     }
   },
@@ -792,6 +821,9 @@
       },
       "auto_resume_hours": {
         "name": "Reanudación automática tras"
+      },
+      "zone_flow_l_min": {
+        "name": "Caudal de la zona"
       }
     },
     "datetime": {
@@ -984,6 +1016,15 @@
       },
       "wu_station": {
         "name": "Estación {station}"
+      },
+      "water_used_30d": {
+        "name": "Agua usada, últimos 30 días"
+      },
+      "water_used_year": {
+        "name": "Agua usada este año"
+      },
+      "last_water_volume": {
+        "name": "Volumen del último riego"
       }
     },
     "select": {

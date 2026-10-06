@@ -42,6 +42,7 @@ from homeassistant.helpers.event import (
 from homeassistant.helpers.sun import get_astral_event_next
 import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
+from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, issues, messages, units, visibility
@@ -81,6 +82,7 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_RAIN_COUNTER_ENTITY,
+    CONF_RAIN_SOURCE,
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
@@ -145,6 +147,13 @@ from .const import (
     DEFAULT_SUN_OFFSET_MINUTES,
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
+    RAIN_RATE_MAX_GAP_SECONDS,
+    RAIN_SOURCE_AMOUNT,
+    RAIN_SOURCE_OPTIONS,
+    RAIN_SOURCE_RATE,
+    RAIN_SOURCE_TIPS,
+    RAIN_SOURCE_TOTAL,
+    RAIN_UNIT_TO_MM,
 )
 from .rain_tracker import MANUAL_RAIN_MAX_AGE_MINUTES, RAIN_WINDOWS_MINUTES, SHORT_RAIN_WINDOWS
 from .state_store import IrrigationStateStore
@@ -212,6 +221,9 @@ _PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
+# Home Assistant 2024.4+: a sensor that reports the same value again.
+EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
+WATER_LEDGER_DAYS = 400
 
 # Cycle kinds (as logged) -> the keys used by the message catalog and the
 # Status sensor's decisions.
@@ -476,6 +488,40 @@ class ZoneFlowController:
         return self.entry.options.get(CONF_RAIN_COUNTER_ENTITY, self.entry.data.get(CONF_RAIN_COUNTER_ENTITY))
 
     @property
+    def rain_source_type(self) -> str:
+        """What the rain gauge sensor reports: tips (a counter, the default),
+        total_mm (a running total in mm) or rate_mm_h."""
+        value = self.entry.options.get(CONF_RAIN_SOURCE, self.entry.data.get(CONF_RAIN_SOURCE))
+        return value if value in RAIN_SOURCE_OPTIONS else RAIN_SOURCE_TIPS
+
+    def _rain_unit_factor(self, new_state: State) -> float:
+        """A total or rate in inches (or cm) as mm."""
+        unit = str(new_state.attributes.get("unit_of_measurement") or "").strip().lower()
+        return RAIN_UNIT_TO_MM.get(unit, 1.0)
+
+    def _rain_mm_factor(self) -> float:
+        """mm per unit of the stored rain total: the tip size for a tip
+        counter, 1 for a total or rate that is already in mm."""
+        if self.rain_source_type == RAIN_SOURCE_TIPS:
+            return self.number("rain_mm_per_tip")
+        return 1.0
+
+    def _reset_rain_if_source_changed(self) -> None:
+        """The stored rain history is in the units of one sensor and type;
+        when either changes it would read as a jump, so it starts again."""
+        state = self.store.state
+        signature = f"{self.rain_source_type}|{self.rain_counter_entity or ''}"
+        if state.rain_source_signature is not None and state.rain_source_signature != signature:
+            state.rain_counter_total_tips = state.rain_counter_last_tips = None
+            state.rain_counter_drop_from = state.rain_counter_drop_ts = None
+            state.rain_counter_since_drop_tips = 0.0
+            state.rain_samples = []
+            state.rain_midnight_baseline_mm = 0.0
+            state.rain_samples_mm_per_tip = None
+            state.rain_rate_last_mm_h = state.rain_rate_last_ts = None
+        state.rain_source_signature = signature
+
+    @property
     def uses_wu(self) -> bool:
         """Weather Underground rain (1.6.1): only for an outdoor zone without
         a rain gauge that opted in. A gauge always wins."""
@@ -738,6 +784,7 @@ class ZoneFlowController:
         # entirely when no rain gauge is configured -- the tracker simply
         # stays empty, and rain_windows()/today_rain_mm() already return
         # 0.0 for an empty tracker (the correct "assume no rain" fallback).
+        self._reset_rain_if_source_changed()
         if self.rain_counter_entity:
             counter_state = self.hass.states.get(self.rain_counter_entity)
             if counter_state is not None:
@@ -794,6 +841,17 @@ class ZoneFlowController:
                     self.hass, [self.rain_counter_entity], self._on_rain_counter_change
                 )
             )
+            if self.rain_source_type in (RAIN_SOURCE_RATE, RAIN_SOURCE_AMOUNT) and EVENT_STATE_REPORTED is not None:
+                # A steady reading (0.2 mm again, 6 mm/h again) is no state
+                # change, only a "state reported": it is a reading all the same.
+                rain_entity = self.rain_counter_entity
+                self._unsubs.append(
+                    self.hass.bus.async_listen(
+                        EVENT_STATE_REPORTED,
+                        self._on_rain_counter_change,
+                        event_filter=callback(lambda data: data.get("entity_id") == rain_entity),
+                    )
+                )
         if self.outdoor_temp_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -940,8 +998,38 @@ class ZoneFlowController:
             tips = float(new_state.state)
         except (TypeError, ValueError):
             return
-        # The rain windows assume an ever-growing total; see
-        # calc.track_tip_total for how resets and glitches are told apart.
+        if not math.isfinite(tips):
+            return
+        source = self.rain_source_type
+        if source != RAIN_SOURCE_TIPS:
+            tips *= self._rain_unit_factor(new_state)  # inches -> mm
+        now_ts = dt_util.utcnow().timestamp()
+        if source == RAIN_SOURCE_AMOUNT:
+            # Rain since the previous reading: every reading is new rain.
+            total = state.rain_counter_total_tips or 0.0
+            if not seed_only:
+                total += max(tips, 0.0)
+            state.rain_counter_total_tips = total
+            state.rain_counter_last_tips = max(tips, 0.0)
+        elif source == RAIN_SOURCE_RATE:
+            # A rain rate (mm/h): add up rate x time since the last reading.
+            rate = max(tips, 0.0)
+            total = state.rain_counter_total_tips or 0.0
+            if not seed_only and state.rain_rate_last_ts is not None and state.rain_rate_last_mm_h:
+                gap = min(max(now_ts - state.rain_rate_last_ts, 0.0), RAIN_RATE_MAX_GAP_SECONDS)
+                total += state.rain_rate_last_mm_h * gap / 3600
+            state.rain_counter_total_tips = total
+            state.rain_counter_last_tips = rate
+            state.rain_rate_last_mm_h = rate
+            state.rain_rate_last_ts = now_ts
+        else:
+            # The rain windows assume an ever-growing total; see
+            # calc.track_tip_total for how resets and glitches are told apart.
+            self._track_rain_total(tips, now_ts)
+        self._record_rain_sample(seed_only)
+
+    def _track_rain_total(self, tips: float, now_ts: float) -> None:
+        state = self.store.state
         (
             state.rain_counter_total_tips,
             state.rain_counter_last_tips,
@@ -955,19 +1043,29 @@ class ZoneFlowController:
             state.rain_counter_drop_ts,
             state.rain_counter_since_drop_tips,
             tips,
-            dt_util.utcnow().timestamp(),
+            now_ts,
+            0.5 if self.rain_source_type == RAIN_SOURCE_TOTAL else 0.0,
         )
+
+    def _record_rain_sample(self, seed_only: bool) -> None:
+        state = self.store.state
         self._align_rain_calibration()
-        cumulative_mm = state.rain_counter_total_tips * self.number("rain_mm_per_tip")
+        cumulative_mm = (state.rain_counter_total_tips or 0.0) * self._rain_mm_factor()
         tracker = state.rain_tracker()
+        first_sample = not tracker.samples
         if not seed_only:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
+            if first_sample:
+                state.rain_midnight_baseline_mm = cumulative_mm
             self.hass.async_create_task(self.store.async_save())
             self._check_significant_rain()
-        elif not tracker.samples:
+        elif first_sample:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
+            # Rain tracking starts here (a new zone, or a changed sensor): what
+            # the sensor already held is no rain of today.
+            state.rain_midnight_baseline_mm = cumulative_mm
 
     def _align_rain_calibration(self) -> None:
         """The rain samples hold cumulative mm (tips x mm per tip). If the
@@ -977,7 +1075,7 @@ class ZoneFlowController:
         show up as rain that never fell. Rescale what is stored to the
         calibration now in use, so only real tips make rain."""
         state = self.store.state
-        mm_per_tip = self.number("rain_mm_per_tip")
+        mm_per_tip = self._rain_mm_factor()
         old = state.rain_samples_mm_per_tip
         if old is None or old <= 0 or mm_per_tip <= 0:
             state.rain_samples_mm_per_tip = mm_per_tip if mm_per_tip > 0 else old
@@ -996,6 +1094,13 @@ class ZoneFlowController:
         new_state: State | None = event.data.get("new_state")
         if new_state is None:
             return
+        old_state: State | None = event.data.get("old_state")
+        if (
+            self.rain_source_type == RAIN_SOURCE_AMOUNT
+            and old_state is not None
+            and old_state.state == new_state.state
+        ):
+            return  # only an attribute changed: not a new reading (a repeat comes as a state report)
         self._sync_rain_from_counter_state(new_state)
 
     def _check_significant_rain(self) -> None:
@@ -4029,6 +4134,54 @@ class ZoneFlowController:
         state.last_cycle_applied_mm = round(mm, 2)
         state.last_cycle_kind = cycle
         state.last_cycle_runtime_min = minutes
+        # The flow meter's litres, when it read both ends and counted
+        # something (a meter that counts nothing while the valve was open is
+        # not working: the Zone Flow estimate stands in).
+        liters = self._run_liters or None
+        if liters is None and self.number("zone_flow_l_min") > 0:
+            liters = minutes * self.number("zone_flow_l_min")
+        state.last_cycle_liters = round(liters, 1) if liters is not None else None
+        self._add_to_water_ledger(mm, liters)
+
+    def _add_to_water_ledger(self, mm: float, liters: float | None) -> None:
+        ledger = self.store.state.water_ledger
+        if not isinstance(ledger, dict):
+            ledger = self.store.state.water_ledger = {}
+        today = dt_util.now().date()
+        day = ledger.setdefault(today.isoformat(), {"mm": 0.0, "l": 0.0})
+        day["mm"] = day.get("mm", 0.0) + mm
+        if liters is not None:
+            day["l"] = day.get("l", 0.0) + liters
+        cutoff = (today - timedelta(days=WATER_LEDGER_DAYS)).isoformat()
+        for key in [k for k in ledger if k < cutoff]:
+            del ledger[key]
+
+    def water_used(self) -> dict[str, float]:
+        """Water applied over the last 30 days (today included) and this
+        calendar year: mm and litres. Litres cover the runs whose volume was
+        known (a flow meter, or a Zone Flow setting at the time)."""
+        ledger = self.store.state.water_ledger
+        today = dt_util.now().date()
+        month_start = (today - timedelta(days=29)).isoformat()
+        year_start = today.replace(month=1, day=1).isoformat()
+        out = {"mm_30d": 0.0, "liters_30d": 0.0, "mm_year": 0.0, "liters_year": 0.0}
+        for key, day in (ledger.items() if isinstance(ledger, dict) else []):
+            if key >= year_start:
+                out["mm_year"] += day.get("mm", 0.0)
+                out["liters_year"] += day.get("l", 0.0)
+            if key >= month_start:
+                out["mm_30d"] += day.get("mm", 0.0)
+                out["liters_30d"] += day.get("l", 0.0)
+        return out
+
+    @property
+    def has_water_volume(self) -> bool:
+        """True once litres are known: a flow meter, a Zone Flow, or litres
+        already recorded."""
+        if self.flow_meter_entity or self.number("zone_flow_l_min") > 0:
+            return True
+        ledger = self.store.state.water_ledger
+        return any(day.get("l", 0.0) > 0 for day in ledger.values()) if isinstance(ledger, dict) else False
 
     def _record_decision(self, cycle: str, code: str, **params: Any) -> None:
         """What a due cycle decided (`cycle` is "routine" or "deep_soak").

@@ -22,7 +22,8 @@
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
           "pump_id": "Shared pump ID (optional)",
-          "rain_counter_entity": "Rain gauge tip counter (optional)",
+          "rain_counter_entity": "Rain gauge sensor (optional)",
+          "rain_source_type": "Rain gauge sensor type",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
           "soil_moisture_entity": "Soil moisture sensor (optional)",
@@ -47,7 +48,8 @@
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
           "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
-          "rain_counter_entity": "A rain gauge counter that goes up by one with every tip of its bucket. ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. How much rain one tip is, you set on the zone's device page (Rain Gauge mm per Tip). Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_counter_entity": "Your rain gauge sensor: a tip counter, a rain total in millimetres or a rain rate (choose which just below). ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_source_type": "What that sensor reports. Tip counter: a count that goes up by one with every tip of the bucket (set the size of a tip on the zone's device page, Rain Gauge mm per Tip). Rain total in mm: a running total that only goes up, or one that starts again every day or week, for example from Ecowitt, Ambient Weather or Tempest (a total in inches works too). Rain rate: the current rain in mm per hour, which ZoneFlow adds up over time (less exact). A sensor that shows only the last hour or the last 24 hours does not work: use a total. Changing the sensor or the type starts the rain history again. Rain per reading: the amount that fell since the previous update, for example the Tempest Precipitation sensor, which ZoneFlow adds up.",
           "outdoor_temp_entity": "An outdoor temperature sensor. With it, ZoneFlow waters more in hot weather and less in cool weather by itself, and the frost guard holds watering off when it's freezing. Without it, the Fallback / Manual Temperature setting decides.",
           "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
           "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
@@ -270,6 +272,7 @@
           "settings": "Zone settings (entities, soil, schedule…)",
           "flow_rate": "Flow rate: work it out from the emitters",
           "flow_volume": "Flow rate: measure it by the litres a service run gives",
+          "zone_flow": "Zone flow: litres per minute from the number of heads",
           "flow_measure": "Flow rate: measure it with the flow meter",
           "greenhouse_devices": "Valve, sensors and climate devices",
           "watering": "Watering settings",
@@ -284,7 +287,8 @@
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
           "pump_id": "Shared pump ID (optional)",
-          "rain_counter_entity": "Rain gauge tip counter (optional)",
+          "rain_counter_entity": "Rain gauge sensor (optional)",
+          "rain_source_type": "Rain gauge sensor type",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
           "soil_moisture_entity": "Soil moisture sensor (optional)",
@@ -309,7 +313,8 @@
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
           "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
-          "rain_counter_entity": "A rain gauge counter that goes up by one with every tip of its bucket. ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. How much rain one tip is, you set on the zone's device page (Rain Gauge mm per Tip). Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_counter_entity": "Your rain gauge sensor: a tip counter, a rain total in millimetres or a rain rate (choose which just below). ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_source_type": "What that sensor reports. Tip counter: a count that goes up by one with every tip of the bucket (set the size of a tip on the zone's device page, Rain Gauge mm per Tip). Rain total in mm: a running total that only goes up, or one that starts again every day or week, for example from Ecowitt, Ambient Weather or Tempest (a total in inches works too). Rain rate: the current rain in mm per hour, which ZoneFlow adds up over time (less exact). A sensor that shows only the last hour or the last 24 hours does not work: use a total. Changing the sensor or the type starts the rain history again. Rain per reading: the amount that fell since the previous update, for example the Tempest Precipitation sensor, which ZoneFlow adds up.",
           "outdoor_temp_entity": "An outdoor temperature sensor. With it, ZoneFlow waters more in hot weather and less in cool weather by itself, and the frost guard holds watering off when it's freezing. Without it, the Fallback / Manual Temperature setting decides.",
           "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
           "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
@@ -333,7 +338,7 @@
       },
       "flow_rate": {
         "title": "Emitter flow rate",
-        "description": "How much water the zone's emitters put on the area they wet. 1 litre on 1 m² is 1 mm. This assumes every emitter on the zone's valve gives the same flow. For drippers at single plants, use the area around them that actually gets wet. The result replaces the zone's Emitter Flow Rate Calibration. With mixed emitters, measure instead (\"Flow rate: measure it by the litres a service run gives\").",
+        "description": "How much water the zone's emitters put on the area they wet. 1 litre on 1 m² is 1 mm. This assumes every emitter on the zone's valve gives the same flow. For drippers at single plants, use the area around them that actually gets wet. The result replaces the zone's Emitter Flow Rate Calibration. With mixed emitters, measure instead (\"Flow rate: measure it by the litres a service run gives\"). It also sets Zone Flow, the litres per minute used for the water-use estimate.",
         "data": {
           "emitters": "Number of emitters (drippers, sprayers) in the zone",
           "emitter_flow": "Flow of one emitter",
@@ -491,7 +496,7 @@
       },
       "flow_volume": {
         "title": "Measure the flow rate by volume",
-        "description": "Press one of the zone's Service Run buttons (a longer run, such as 15 min, is more accurate) and catch or read the water: a bucket or barrel at the emitters, or the difference on a water meter. Then enter the minutes the valve was open, the litres, and the area the emitters wet. \n\nThe result is the zone's AVERAGE: litres divided by area and minutes, and it replaces the zone's Emitter Flow Rate Calibration. ZoneFlow has one rate per zone, so it cannot tell emitters apart. For a precise result, every emitter on a zone's valve should be the same type and flow; put different emitters on separate valves (separate zones). On a mixed zone the plants on the weaker emitters get less than the average shown.",
+        "description": "Press one of the zone's Service Run buttons (a longer run, such as 15 min, is more accurate) and catch or read the water: a bucket or barrel at the emitters, or the difference on a water meter. Then enter the minutes the valve was open, the litres, and the area the emitters wet. \n\nThe result is the zone's AVERAGE: litres divided by area and minutes, and it replaces the zone's Emitter Flow Rate Calibration. ZoneFlow has one rate per zone, so it cannot tell emitters apart. For a precise result, every emitter on a zone's valve should be the same type and flow; put different emitters on separate valves (separate zones). On a mixed zone the plants on the weaker emitters get less than the average shown. It also sets Zone Flow, the litres per minute used for the water-use estimate.",
         "data": {
           "minutes": "Minutes the valve was open",
           "volume": "Water that came out",
@@ -502,6 +507,20 @@
           "volume": "All the water the zone's emitters gave during the run (litres, or gallons in US units).",
           "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
+      },
+      "zone_flow": {
+        "title": "Zone flow",
+        "description": "The zone's total flow, from its heads. ZoneFlow multiplies it by the valve's open minutes to estimate the litres used (shown as Water Used and under the last watering). It does not change how much or when the zone waters; that is the Emitter Flow Rate Calibration. Drippers are usually rated per hour, sprinklers per minute. For the most accurate figure, measure it instead: the menu entry about the litres a service run gave also sets this.",
+        "data": {
+          "heads": "Number of heads (drippers, sprinklers) on the zone's valve",
+          "head_flow": "Flow of one head",
+          "head_flow_unit": "Per"
+        },
+        "data_description": {
+          "heads": "Count every head this valve feeds.",
+          "head_flow": "What one head gives, from its package or nozzle chart.",
+          "head_flow_unit": "The unit the flow of one head is given in."
+        }
       }
     },
     "abort": {
@@ -510,7 +529,9 @@
       "measuring": "Measuring: the valve runs for about {minutes} minutes. The result comes as a phone message (or in Home Assistant's notifications if the zone has no phone target) and is set automatically.",
       "zone_not_loaded": "This zone isn't running right now, so this can't be done.",
       "zone_busy": "The zone (or its pump) is busy, or today's runtime safety cap is used up. Try again later.",
-      "flow_rate_disabled": "The zone's Emitter Flow Rate Calibration entity is disabled. Enable it (the zone's device page → its entities) and try again."
+      "flow_rate_disabled": "The zone's Emitter Flow Rate Calibration entity is disabled. Enable it (the zone's device page → its entities) and try again.",
+      "zone_flow_set": "Zone flow set to {flow}. It is used for the water-use estimate only.",
+      "zone_flow_out_of_range": "That works out to a zone flow outside what the setting allows (0 to 2000 L/min). Check the numbers."
     }
   },
   "selector": {
@@ -602,6 +623,14 @@
         "outdoor": "Outdoor",
         "greenhouse": "Greenhouse",
         "indoor": "Indoor"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Tip counter",
+        "total_mm": "Rain total (mm or in; lifetime, daily or weekly)",
+        "rate_mm_h": "Rain rate (mm/h)",
+        "amount_mm": "Rain per reading (mm or in; e.g. Tempest)"
       }
     }
   },
@@ -792,6 +821,9 @@
       },
       "auto_resume_hours": {
         "name": "Auto Resume After"
+      },
+      "zone_flow_l_min": {
+        "name": "Zone Flow"
       }
     },
     "datetime": {
@@ -984,6 +1016,15 @@
       },
       "wu_station": {
         "name": "Station {station}"
+      },
+      "water_used_30d": {
+        "name": "Water Used, Past 30 Days"
+      },
+      "water_used_year": {
+        "name": "Water Used This Year"
+      },
+      "last_water_volume": {
+        "name": "Last Water Volume"
       }
     },
     "select": {

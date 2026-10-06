@@ -22,7 +22,8 @@
           "valve_entity": "Szelepkapcsoló",
           "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
           "pump_id": "Közös szivattyú azonosítója (opcionális)",
-          "rain_counter_entity": "Esőmérő billenésszámlálója (opcionális)",
+          "rain_counter_entity": "Esőmérő szenzora (opcionális)",
+          "rain_source_type": "Az esőmérő szenzorának típusa",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő (opcionális)",
           "flow_meter_entity": "Átfolyásmérő (opcionális)",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
@@ -47,7 +48,8 @@
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
           "pump_power_entity": "A szivattyú teljesítményérzékelője (W), pl. egy okoskonnektorból. A ZoneFlow minden öntözéskor ellenőrzi, hogy a szivattyú tényleg vesz-e fel áramot, és szól, ha nem. Hagyd üresen, ha nincs ilyened.",
           "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adj itt mindegyiknek ugyanazt a nevet (bármilyet, pl. \"A szivattyú\"), és akkor egymás után futnak, nem egyszerre. Hagyd üresen, ha ennek a zónának saját szivattyúja vagy vízellátása van.",
-          "rain_counter_entity": "Esőmérő-számláló, amely a billenőedény minden billenésével eggyel nő. A ZoneFlow ekkor levonja az esőt az öntözésből, hagyja előbb kiszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Hogy egy billenés mennyi eső, azt a zóna eszközoldalán állítod be (Esőmérő mm/billenés). Esőmérő nélkül a ZoneFlow úgy öntöz, mintha sosem esne.",
+          "rain_counter_entity": "Az esőmérő szenzora: billenésszámláló, esőmennyiség-összeg milliméterben vagy eső intenzitás (válasszon lent). A ZoneFlow ekkor levonja az esőt az öntözésből, előbb hagyja megszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Esőmérő nélkül a ZoneFlow úgy öntöz, mintha soha nem esne.",
+          "rain_source_type": "Amit a szenzor jelent. Billenésszámláló: egy szám, amely a vödör minden billenésére eggyel nő (egy billenés méretét a zóna eszközoldalán állíthatja be, Esőmérő mm/billenés). Esőösszeg mm-ben: egy futó összeg, amely csak nő, vagy minden nap vagy héten újrakezdődik, például Ecowitt, Ambient Weather vagy Tempest esetén (a hüvelykben megadott összeg is működik). Eső intenzitás: az aktuális eső mm/óra értékben, amit a ZoneFlow az idő során összead (kevésbé pontos). Az a szenzor, amely csak az utolsó órát vagy az utolsó 24 órát mutatja, nem működik: használjon összeget. A szenzor vagy a típus módosítása újrakezdi az esőelőzményeket. Eső leolvasásonként: az előző frissítés óta lehullott mennyiség, például a Tempest Csapadék szenzora, amelyet a ZoneFlow összead.",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő. Vele a ZoneFlow magától többet öntöz melegben és kevesebbet hűvösben, a fagyvédelem pedig fagyban visszatartja az öntözést. Nélküle a Tartalék / kézi hőmérséklet beállítás dönt.",
           "flow_meter_entity": "Vízóra, amely a teljes mennyiséget számolja (liter, gallon vagy m³). A ZoneFlow ekkor naplózza, mennyi vizet használt valójában minden öntözés, szól, ha a szivattyú ment, de nem folyt víz, és meg is tudja mérni a vízhozamot (Konfigurálás → Vízhozam).",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
@@ -255,6 +257,7 @@
           "settings": "Zóna beállításai (entitások, talaj, ütemezés…)",
           "flow_rate": "Vízhozam: kiszámítás a csepegtetők alapján",
           "flow_volume": "Vízhozam: mérés a szervizfuttatás által adott literek alapján",
+          "zone_flow": "Zóna vízhozama: percenkénti literek a csepegtetők száma alapján",
           "flow_measure": "Vízhozam: mérés az átfolyásmérővel",
           "greenhouse_devices": "Szelep, érzékelők és klímaeszközök",
           "watering": "Öntözési beállítások",
@@ -269,7 +272,8 @@
           "valve_entity": "Szelepkapcsoló",
           "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
           "pump_id": "Közös szivattyú azonosítója (opcionális)",
-          "rain_counter_entity": "Esőmérő billenésszámlálója (opcionális)",
+          "rain_counter_entity": "Esőmérő szenzora (opcionális)",
+          "rain_source_type": "Az esőmérő szenzorának típusa",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő (opcionális)",
           "flow_meter_entity": "Átfolyásmérő (opcionális)",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
@@ -294,7 +298,8 @@
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
           "pump_power_entity": "A szivattyú teljesítményérzékelője (W), pl. egy okoskonnektorból. A ZoneFlow minden öntözéskor ellenőrzi, hogy a szivattyú tényleg vesz-e fel áramot, és szól, ha nem. Hagyd üresen, ha nincs ilyened.",
           "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adj itt mindegyiknek ugyanazt a nevet (bármilyet, pl. \"A szivattyú\"), és akkor egymás után futnak, nem egyszerre. Hagyd üresen, ha ennek a zónának saját szivattyúja vagy vízellátása van.",
-          "rain_counter_entity": "Esőmérő-számláló, amely a billenőedény minden billenésével eggyel nő. A ZoneFlow ekkor levonja az esőt az öntözésből, hagyja előbb kiszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Hogy egy billenés mennyi eső, azt a zóna eszközoldalán állítod be (Esőmérő mm/billenés). Esőmérő nélkül a ZoneFlow úgy öntöz, mintha sosem esne.",
+          "rain_counter_entity": "Az esőmérő szenzora: billenésszámláló, esőmennyiség-összeg milliméterben vagy eső intenzitás (válasszon lent). A ZoneFlow ekkor levonja az esőt az öntözésből, előbb hagyja megszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Esőmérő nélkül a ZoneFlow úgy öntöz, mintha soha nem esne.",
+          "rain_source_type": "Amit a szenzor jelent. Billenésszámláló: egy szám, amely a vödör minden billenésére eggyel nő (egy billenés méretét a zóna eszközoldalán állíthatja be, Esőmérő mm/billenés). Esőösszeg mm-ben: egy futó összeg, amely csak nő, vagy minden nap vagy héten újrakezdődik, például Ecowitt, Ambient Weather vagy Tempest esetén (a hüvelykben megadott összeg is működik). Eső intenzitás: az aktuális eső mm/óra értékben, amit a ZoneFlow az idő során összead (kevésbé pontos). Az a szenzor, amely csak az utolsó órát vagy az utolsó 24 órát mutatja, nem működik: használjon összeget. A szenzor vagy a típus módosítása újrakezdi az esőelőzményeket. Eső leolvasásonként: az előző frissítés óta lehullott mennyiség, például a Tempest Csapadék szenzora, amelyet a ZoneFlow összead.",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő. Vele a ZoneFlow magától többet öntöz melegben és kevesebbet hűvösben, a fagyvédelem pedig fagyban visszatartja az öntözést. Nélküle a Tartalék / kézi hőmérséklet beállítás dönt.",
           "flow_meter_entity": "Vízóra, amely a teljes mennyiséget számolja (liter, gallon vagy m³). A ZoneFlow ekkor naplózza, mennyi vizet használt valójában minden öntözés, szól, ha a szivattyú ment, de nem folyt víz, és meg is tudja mérni a vízhozamot (Konfigurálás → Vízhozam).",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
@@ -318,7 +323,7 @@
       },
       "flow_rate": {
         "title": "Csepegtetők vízhozama",
-        "description": "Mennyi vizet juttatnak a zóna öntözőfejei az általuk benedvesített területre. 1 liter 1 m²-re 1 mm-nek felel meg. Ez azt feltételezi, hogy a zóna szelepén lévő minden öntözőfej azonos átfolyást biztosít. Egyes növényeknél lévő csepegtetőknél a körülöttük lévő valóban benedvesedő területet használja. Az eredmény felváltja a zóna Csepegtetők vízhozama (kalibrálás) beállítását. Vegyes öntözőfejek esetén inkább mérje meg („Vízhozam: mérés a szervizfuttatás által adott literek alapján”).",
+        "description": "Mennyi vizet juttatnak a zóna öntözőfejei az általuk benedvesített területre. 1 liter 1 m²-re 1 mm-nek felel meg. Ez azt feltételezi, hogy a zóna szelepén lévő minden öntözőfej azonos átfolyást biztosít. Egyes növényeknél lévő csepegtetőknél a körülöttük lévő valóban benedvesedő területet használja. Az eredmény felváltja a zóna Csepegtetők vízhozama (kalibrálás) beállítását. Vegyes öntözőfejek esetén inkább mérje meg („Vízhozam: mérés a szervizfuttatás által adott literek alapján”). Beállítja a Zóna vízhozama értéket is, vagyis a vízhasználat becsléséhez használt percenkénti litereket.",
         "data": {
           "emitters": "Csepegtetők, szórófejek száma a zónában",
           "emitter_flow": "Egy csepegtető vízhozama",
@@ -476,7 +481,7 @@
       },
       "flow_volume": {
         "title": "Vízhozam mérése térfogat alapján",
-        "description": "Nyomja meg a zóna egyik Szervizfuttatás gombját (egy hosszabb futás, például 15 perc, pontosabb), és fogja fel vagy olvassa le a vizet: egy vödör vagy hordó az öntözőfejeknél, vagy a különbség egy vízmérőn. Ezután adja meg a perceket, amíg a szelep nyitva volt, a litereket és az öntözőfejek által benedvesített területet.\n\nAz eredmény a zóna ÁTLAGA: a literek osztva a területtel és a percekkel, és ez felváltja a zóna Csepegtetők vízhozama (kalibrálás) beállítását. A ZoneFlow zónánként egyetlen értéket használ, így nem tudja megkülönböztetni az öntözőfejeket. A pontos eredmény érdekében a zóna szelepén lévő minden öntözőfejnek azonos típusúnak és átfolyásúnak kell lennie; az eltérő öntözőfejeket tegye külön szelepekre (külön zónákra). Vegyes zónában a gyengébb öntözőfejeknél lévő növények kevesebbet kapnak a megjelenített átlagnál.",
+        "description": "Nyomja meg a zóna egyik Szervizfuttatás gombját (egy hosszabb futás, például 15 perc, pontosabb), és fogja fel vagy olvassa le a vizet: egy vödör vagy hordó az öntözőfejeknél, vagy a különbség egy vízmérőn. Ezután adja meg a perceket, amíg a szelep nyitva volt, a litereket és az öntözőfejek által benedvesített területet.\n\nAz eredmény a zóna ÁTLAGA: a literek osztva a területtel és a percekkel, és ez felváltja a zóna Csepegtetők vízhozama (kalibrálás) beállítását. A ZoneFlow zónánként egyetlen értéket használ, így nem tudja megkülönböztetni az öntözőfejeket. A pontos eredmény érdekében a zóna szelepén lévő minden öntözőfejnek azonos típusúnak és átfolyásúnak kell lennie; az eltérő öntözőfejeket tegye külön szelepekre (külön zónákra). Vegyes zónában a gyengébb öntözőfejeknél lévő növények kevesebbet kapnak a megjelenített átlagnál. Beállítja a Zóna vízhozama értéket is, vagyis a vízhasználat becsléséhez használt percenkénti litereket.",
         "data": {
           "minutes": "Percek, amíg a szelep nyitva volt",
           "volume": "Kifolyt víz",
@@ -487,6 +492,20 @@
           "volume": "A zóna öntözőfejei által a futás során leadott összes víz (literben, vagy USA egységekben gallonban).",
           "area": "A valóban benedvesedő terület. Egyes növényeknél lévő csepegtetőknél a körülöttük lévő nedves foltokat adja össze, ne a teljes ágyást."
         }
+      },
+      "zone_flow": {
+        "title": "Zóna vízhozama",
+        "description": "A zóna teljes vízhozama a csepegtetői alapján. A ZoneFlow megszorozza azt a szelep nyitvatartási perceivel, hogy megbecsülje a felhasznált litereket (a Felhasznált víz menüpontban és az Utolsó kijuttatott víz (becslés) alatt látható). Nem változtatja meg, hogy a zóna mennyit vagy mikor öntöz; azt a Csepegtetők vízhozama (kalibrálás) határozza meg. A csepegtetőket általában óránkénti, a szórófejeket percenkénti teljesítménnyel adják meg. A legpontosabb értékért mérje meg inkább: a szervizfuttatás által adott literekről szóló menüpont ezt is beállítja.",
+        "data": {
+          "heads": "Csepegtetők száma (csepegtetők, szórófejek) a zóna szelepén",
+          "head_flow": "Egy csepegtető vízhozama",
+          "head_flow_unit": "Egység"
+        },
+        "data_description": {
+          "heads": "Számoljon meg minden csepegtetőt, amit ez a szelep táplál.",
+          "head_flow": "Amit egy csepegtető ad, a csomagolása vagy fúvókatáblázata alapján.",
+          "head_flow_unit": "Mértékegység, amiben az egy csepegtető vízhozama meg van adva."
+        }
       }
     },
     "abort": {
@@ -495,7 +514,9 @@
       "measuring": "Mérés folyamatban: a szelep kb. {minutes} percig lesz nyitva. Az eredmény telefonos üzenetben érkezik (vagy a Home Assistant értesítései között, ha a zónának nincs telefonos célja), és automatikusan beállítódik.",
       "zone_not_loaded": "Ez a zóna most nem fut, ezért ez nem végezhető el.",
       "zone_busy": "A zóna (vagy a szivattyúja) foglalt, vagy elfogyott a mai biztonsági időkorlát. Próbáld újra később.",
-      "flow_rate_disabled": "A zóna Csepegtetők vízhozama (kalibrálás) entitása le van tiltva. Engedélyezd (a zóna eszközoldala → entitások), és próbáld újra."
+      "flow_rate_disabled": "A zóna Csepegtetők vízhozama (kalibrálás) entitása le van tiltva. Engedélyezd (a zóna eszközoldala → entitások), és próbáld újra.",
+      "zone_flow_set": "Zóna vízhozama beállítva: {flow}. Csak a vízhasználat becslésére szolgál.",
+      "zone_flow_out_of_range": "Ez a beállítás által megengedett tartományon kívüli zóna vízhozamot eredményez (0-2000 L/min). Ellenőrizze a számokat."
     },
     "error": {
       "valve_already_used": "Egy másik ZoneFlow zóna már használja ezt a szelepet.",
@@ -602,6 +623,14 @@
         "outdoor": "Kültéri",
         "greenhouse": "Üvegház",
         "indoor": "Beltéri"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Billenésszámláló",
+        "total_mm": "Esőösszeg (mm vagy in; teljes, napi vagy heti)",
+        "rate_mm_h": "Eső intenzitás (mm/h)",
+        "amount_mm": "Eső leolvasásonként (mm vagy in; pl. Tempest)"
       }
     }
   },
@@ -792,6 +821,9 @@
       },
       "auto_resume_hours": {
         "name": "Automatikus folytatás késleltetése"
+      },
+      "zone_flow_l_min": {
+        "name": "Zóna vízhozama"
       }
     },
     "datetime": {
@@ -984,6 +1016,15 @@
       },
       "wu_station": {
         "name": "Állomás {station}"
+      },
+      "water_used_30d": {
+        "name": "Felhasznált víz az elmúlt 30 napban"
+      },
+      "water_used_year": {
+        "name": "Felhasznált víz idén"
+      },
+      "last_water_volume": {
+        "name": "Utolsó öntözési térfogat"
       }
     },
     "select": {
