@@ -22,7 +22,8 @@
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
           "pump_id": "Shared pump ID (optional)",
-          "rain_counter_entity": "Rain gauge tip counter (optional)",
+          "rain_counter_entity": "Rain gauge sensor (optional)",
+          "rain_source_type": "Rain gauge sensor type",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
           "soil_moisture_entity": "Soil moisture sensor (optional)",
@@ -47,7 +48,8 @@
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
           "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
-          "rain_counter_entity": "A rain gauge counter that goes up by one with every tip of its bucket. ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. How much rain one tip is, you set on the zone's device page (Rain Gauge mm per Tip). Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_counter_entity": "Your rain gauge sensor: a tip counter, a rain total in millimetres or a rain rate (choose which just below). ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_source_type": "What that sensor reports. Tip counter: a count that goes up by one with every tip of the bucket (set the size of a tip on the zone's device page, Rain Gauge mm per Tip). Rain total in mm: a running total that only goes up, or one that starts again every day or week, for example from Ecowitt, Ambient Weather or Tempest (a total in inches works too). Rain rate: the current rain in mm per hour, which ZoneFlow adds up over time (less exact). A sensor that shows only the last hour or the last 24 hours does not work: use a total. Changing the sensor or the type starts the rain history again.",
           "outdoor_temp_entity": "An outdoor temperature sensor. With it, ZoneFlow waters more in hot weather and less in cool weather by itself, and the frost guard holds watering off when it's freezing. Without it, the Fallback / Manual Temperature setting decides.",
           "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
           "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
@@ -285,7 +287,8 @@
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
           "pump_id": "Shared pump ID (optional)",
-          "rain_counter_entity": "Rain gauge tip counter (optional)",
+          "rain_counter_entity": "Rain gauge sensor (optional)",
+          "rain_source_type": "Rain gauge sensor type",
           "outdoor_temp_entity": "Outdoor temperature sensor (optional)",
           "flow_meter_entity": "Flow meter (optional)",
           "soil_moisture_entity": "Soil moisture sensor (optional)",
@@ -310,7 +313,8 @@
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
           "pump_id": "Only for zones that run from the same pump: give them all the same name here (any name, e.g. \"Pump A\") and they take turns instead of running at the same time. Leave empty if this zone has its own pump or water supply.",
-          "rain_counter_entity": "A rain gauge counter that goes up by one with every tip of its bucket. ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. How much rain one tip is, you set on the zone's device page (Rain Gauge mm per Tip). Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_counter_entity": "Your rain gauge sensor: a tip counter, a rain total in millimetres or a rain rate (choose which just below). ZoneFlow then subtracts rain from what it waters, lets wet soil dry out first, and stops a watering when it starts raining. Without a gauge, ZoneFlow waters as if it never rains.",
+          "rain_source_type": "What that sensor reports. Tip counter: a count that goes up by one with every tip of the bucket (set the size of a tip on the zone's device page, Rain Gauge mm per Tip). Rain total in mm: a running total that only goes up, or one that starts again every day or week, for example from Ecowitt, Ambient Weather or Tempest (a total in inches works too). Rain rate: the current rain in mm per hour, which ZoneFlow adds up over time (less exact). A sensor that shows only the last hour or the last 24 hours does not work: use a total. Changing the sensor or the type starts the rain history again.",
           "outdoor_temp_entity": "An outdoor temperature sensor. With it, ZoneFlow waters more in hot weather and less in cool weather by itself, and the frost guard holds watering off when it's freezing. Without it, the Fallback / Manual Temperature setting decides.",
           "flow_meter_entity": "A water meter that counts up the total volume (litres, gallons or m³). ZoneFlow then logs how much water each watering really used, warns you if the pump ran but no water moved, and can measure the flow rate for you (Configure → Flow rate).",
           "soil_moisture_entity": "A soil moisture sensor (%) in this zone's root zone. Dry soil brings the routine watering forward, wet soil skips it, and in between the normal schedule decides. The dry and wet levels are on the zone's device page.",
@@ -619,6 +623,13 @@
         "outdoor": "Outdoor",
         "greenhouse": "Greenhouse",
         "indoor": "Indoor"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Tip counter",
+        "total_mm": "Rain total (mm or in; lifetime, daily or weekly)",
+        "rate_mm_h": "Rain rate (mm/h)"
       }
     }
   },

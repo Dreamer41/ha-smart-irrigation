@@ -22,7 +22,8 @@
           "valve_entity": "Przełącznik zaworu",
           "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
           "pump_id": "Identyfikator wspólnej pompy (opcjonalnie)",
-          "rain_counter_entity": "Licznik przechyleń deszczomierza (opcjonalnie)",
+          "rain_counter_entity": "Czujnik deszczomierza (opcjonalnie)",
+          "rain_source_type": "Typ czujnika deszczomierza",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
           "flow_meter_entity": "Przepływomierz (opcjonalnie)",
           "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
@@ -47,7 +48,8 @@
           "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
           "pump_power_entity": "Czujnik mocy (W) pompy, np. z inteligentnego gniazdka. Przy każdym podlewaniu ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega Cię, jeśli nie. Zostaw puste, jeśli go nie masz.",
           "pump_id": "Tylko dla stref zasilanych z tej samej pompy: wpisz im tu tę samą nazwę (dowolną, np. „Pompa A”), a będą podlewać po kolei zamiast jednocześnie. Zostaw puste, jeśli ta strefa ma własną pompę lub własne źródło wody.",
-          "rain_counter_entity": "Licznik deszczomierza, który rośnie o jeden przy każdym przechyle korytka. ZoneFlow odejmuje wtedy deszcz od tego, co podlewa, pozwala mokrej glebie najpierw przeschnąć i przerywa podlewanie, gdy zaczyna padać. Ile deszczu daje jeden przechył, ustawiasz na stronie urządzenia strefy („Deszczomierz: mm na przechył”). Bez deszczomierza ZoneFlow podlewa tak, jakby nigdy nie padało.",
+          "rain_counter_entity": "Czujnik Twojego deszczomierza: licznik przechyleń, suma opadów w milimetrach lub natężenie deszczu (wybierz poniżej). ZoneFlow odejmuje wtedy deszcz od tego, co podlewa, pozwala najpierw przeschnąć mokrej glebie i przerywa podlewanie, gdy zacznie padać. Bez deszczomierza ZoneFlow podlewa tak, jakby nigdy nie padało.",
+          "rain_source_type": "Co raportuje czujnik. Licznik przechyleń: liczba rosnąca o jeden przy każdym przechyleniu łyżeczki (wielkość jednego przechylenia ustawisz na stronie urządzenia strefy, Deszczomierz: mm na przechył). Suma opadów w mm: bieżąca suma, która tylko rośnie albo zaczyna się od nowa co dzień lub tydzień, na przykład z Ecowitt, Ambient Weather lub Tempest (suma w calach też działa). Natężenie deszczu: bieżący deszcz w mm na godzinę, który ZoneFlow sumuje w czasie (mniej dokładne). Czujnik pokazujący tylko ostatnią godzinę lub ostatnie 24 godziny nie działa: użyj sumy. Zmiana czujnika lub typu rozpoczyna historię opadów od nowa.",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej. Dzięki niemu ZoneFlow sam podlewa więcej, gdy jest gorąco, i mniej, gdy jest chłodno, a ochrona przed przymrozkiem wstrzymuje podlewanie, gdy jest mróz. Bez niego decyduje ustawienie „Temperatura zastępcza / ręczna”.",
           "flow_meter_entity": "Przepływomierz, który zlicza całkowitą objętość (litry, galony lub m³). ZoneFlow zapisuje wtedy, ile wody naprawdę zużyło każde podlewanie, ostrzega Cię, gdy pompa pracowała, a woda nie płynęła, i może sam zmierzyć wydajność (Konfiguruj → Wydajność).",
           "soil_moisture_entity": "Czujnik wilgotności gleby (%) przy korzeniach roślin w tej strefie. Sucha gleba przyspiesza regularne podlewanie, mokra je pomija, a pomiędzy decyduje zwykły harmonogram. Progi „sucha” i „mokra” ustawisz na stronie urządzenia strefy.",
@@ -270,7 +272,8 @@
           "valve_entity": "Przełącznik zaworu",
           "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
           "pump_id": "Identyfikator wspólnej pompy (opcjonalnie)",
-          "rain_counter_entity": "Licznik przechyleń deszczomierza (opcjonalnie)",
+          "rain_counter_entity": "Czujnik deszczomierza (opcjonalnie)",
+          "rain_source_type": "Typ czujnika deszczomierza",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej (opcjonalnie)",
           "flow_meter_entity": "Przepływomierz (opcjonalnie)",
           "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
@@ -295,7 +298,8 @@
           "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
           "pump_power_entity": "Czujnik mocy (W) pompy, np. z inteligentnego gniazdka. Przy każdym podlewaniu ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega Cię, jeśli nie. Zostaw puste, jeśli go nie masz.",
           "pump_id": "Tylko dla stref zasilanych z tej samej pompy: wpisz im tu tę samą nazwę (dowolną, np. „Pompa A”), a będą podlewać po kolei zamiast jednocześnie. Zostaw puste, jeśli ta strefa ma własną pompę lub własne źródło wody.",
-          "rain_counter_entity": "Licznik deszczomierza, który rośnie o jeden przy każdym przechyle korytka. ZoneFlow odejmuje wtedy deszcz od tego, co podlewa, pozwala mokrej glebie najpierw przeschnąć i przerywa podlewanie, gdy zaczyna padać. Ile deszczu daje jeden przechył, ustawiasz na stronie urządzenia strefy („Deszczomierz: mm na przechył”). Bez deszczomierza ZoneFlow podlewa tak, jakby nigdy nie padało.",
+          "rain_counter_entity": "Czujnik Twojego deszczomierza: licznik przechyleń, suma opadów w milimetrach lub natężenie deszczu (wybierz poniżej). ZoneFlow odejmuje wtedy deszcz od tego, co podlewa, pozwala najpierw przeschnąć mokrej glebie i przerywa podlewanie, gdy zacznie padać. Bez deszczomierza ZoneFlow podlewa tak, jakby nigdy nie padało.",
+          "rain_source_type": "Co raportuje czujnik. Licznik przechyleń: liczba rosnąca o jeden przy każdym przechyleniu łyżeczki (wielkość jednego przechylenia ustawisz na stronie urządzenia strefy, Deszczomierz: mm na przechył). Suma opadów w mm: bieżąca suma, która tylko rośnie albo zaczyna się od nowa co dzień lub tydzień, na przykład z Ecowitt, Ambient Weather lub Tempest (suma w calach też działa). Natężenie deszczu: bieżący deszcz w mm na godzinę, który ZoneFlow sumuje w czasie (mniej dokładne). Czujnik pokazujący tylko ostatnią godzinę lub ostatnie 24 godziny nie działa: użyj sumy. Zmiana czujnika lub typu rozpoczyna historię opadów od nowa.",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej. Dzięki niemu ZoneFlow sam podlewa więcej, gdy jest gorąco, i mniej, gdy jest chłodno, a ochrona przed przymrozkiem wstrzymuje podlewanie, gdy jest mróz. Bez niego decyduje ustawienie „Temperatura zastępcza / ręczna”.",
           "flow_meter_entity": "Przepływomierz, który zlicza całkowitą objętość (litry, galony lub m³). ZoneFlow zapisuje wtedy, ile wody naprawdę zużyło każde podlewanie, ostrzega Cię, gdy pompa pracowała, a woda nie płynęła, i może sam zmierzyć wydajność (Konfiguruj → Wydajność).",
           "soil_moisture_entity": "Czujnik wilgotności gleby (%) przy korzeniach roślin w tej strefie. Sucha gleba przyspiesza regularne podlewanie, mokra je pomija, a pomiędzy decyduje zwykły harmonogram. Progi „sucha” i „mokra” ustawisz na stronie urządzenia strefy.",
@@ -619,6 +623,13 @@
         "outdoor": "Na zewnątrz",
         "greenhouse": "Szklarnia",
         "indoor": "Wewnątrz"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Licznik przechyleń",
+        "total_mm": "Suma opadów (mm lub in; całkowita, dzienna lub tygodniowa)",
+        "rate_mm_h": "Natężenie deszczu (mm/h)"
       }
     }
   },

@@ -22,7 +22,8 @@
           "valve_entity": "Interruttore della valvola",
           "pump_power_entity": "Sensore di potenza della pompa (facoltativo)",
           "pump_id": "ID pompa condivisa (facoltativo)",
-          "rain_counter_entity": "Contatore scatti del pluviometro (facoltativo)",
+          "rain_counter_entity": "Sensore del pluviometro (facoltativo)",
+          "rain_source_type": "Tipo di sensore del pluviometro",
           "outdoor_temp_entity": "Sensore di temperatura esterna (facoltativo)",
           "flow_meter_entity": "Flussometro (facoltativo)",
           "soil_moisture_entity": "Sensore di umidità del terreno (facoltativo)",
@@ -47,7 +48,8 @@
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
           "pump_power_entity": "Un sensore di potenza (W) sulla pompa, es. quello di una presa smart. Durante ogni irrigazione ZoneFlow controlla che la pompa assorba davvero corrente e ti avvisa se non succede. Lascia vuoto se non ce l'hai.",
           "pump_id": "Solo per le zone servite dalla stessa pompa: dai a tutte lo stesso nome qui (uno qualsiasi, es. \"Pompa A\") e irrigheranno a turno invece che tutte insieme. Lascia vuoto se questa zona ha una pompa o un'alimentazione d'acqua tutta sua.",
-          "rain_counter_entity": "Un contatore del pluviometro che sale di uno a ogni scatto della sua bascula. Così ZoneFlow toglie la pioggia dall'acqua da dare, lascia prima asciugare il terreno bagnato e interrompe un'irrigazione quando comincia a piovere. Quanta pioggia vale uno scatto lo imposti nella pagina del dispositivo della zona, con \"Pluviometro: mm per scatto (taratura)\". Senza pluviometro, ZoneFlow irriga come se non piovesse mai.",
+          "rain_counter_entity": "Il sensore del tuo pluviometro: un contatore di scatti, un totale di pioggia in millimetri o un'intensità di pioggia (scegli sotto). ZoneFlow sottrae poi la pioggia da ciò che irriga, lascia asciugare prima il terreno bagnato e interrompe un'irrigazione quando inizia a piovere. Senza pluviometro, ZoneFlow irriga come se non piovesse mai.",
+          "rain_source_type": "Cosa riporta il sensore. Contatore di scatti: un numero che sale di uno a ogni scatto della vaschetta (la dimensione di uno scatto si imposta nella pagina del dispositivo della zona, Pluviometro: mm per scatto). Totale di pioggia in mm: un totale progressivo che sale soltanto, oppure che riparte ogni giorno o settimana, per esempio da Ecowitt, Ambient Weather o Tempest (funziona anche un totale in pollici). Intensità di pioggia: la pioggia attuale in mm all'ora, che ZoneFlow somma nel tempo (meno preciso). Un sensore che mostra solo l'ultima ora o le ultime 24 ore non funziona: usa un totale. Cambiare sensore o tipo fa ripartire lo storico della pioggia.",
           "outdoor_temp_entity": "Un sensore di temperatura esterna. Con questo, ZoneFlow irriga da solo di più quando fa caldo e di meno quando fa fresco, e la protezione antigelo sospende l'irrigazione quando gela. Senza, decide l'impostazione Temperatura di riserva / manuale.",
           "flow_meter_entity": "Un contatore d'acqua che conta il volume totale (litri, galloni o m³). Così ZoneFlow registra quanta acqua ha usato davvero ogni irrigazione, ti avvisa se la pompa ha funzionato ma l'acqua non è passata, e può misurare la portata per te (Configura → Portata: misurala con il flussometro).",
           "soil_moisture_entity": "Un sensore di umidità del terreno (%) all'altezza delle radici di questa zona. Il terreno secco anticipa l'irrigazione ordinaria, quello bagnato la fa saltare, e nel mezzo decide il programma normale. Le soglie di secco e bagnato sono nella pagina del dispositivo della zona.",
@@ -270,7 +272,8 @@
           "valve_entity": "Interruttore della valvola",
           "pump_power_entity": "Sensore di potenza della pompa (facoltativo)",
           "pump_id": "ID pompa condivisa (facoltativo)",
-          "rain_counter_entity": "Contatore scatti del pluviometro (facoltativo)",
+          "rain_counter_entity": "Sensore del pluviometro (facoltativo)",
+          "rain_source_type": "Tipo di sensore del pluviometro",
           "outdoor_temp_entity": "Sensore di temperatura esterna (facoltativo)",
           "flow_meter_entity": "Flussometro (facoltativo)",
           "soil_moisture_entity": "Sensore di umidità del terreno (facoltativo)",
@@ -295,7 +298,8 @@
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
           "pump_power_entity": "Un sensore di potenza (W) sulla pompa, es. quello di una presa smart. Durante ogni irrigazione ZoneFlow controlla che la pompa assorba davvero corrente e ti avvisa se non succede. Lascia vuoto se non ce l'hai.",
           "pump_id": "Solo per le zone servite dalla stessa pompa: dai a tutte lo stesso nome qui (uno qualsiasi, es. \"Pompa A\") e irrigheranno a turno invece che tutte insieme. Lascia vuoto se questa zona ha una pompa o un'alimentazione d'acqua tutta sua.",
-          "rain_counter_entity": "Un contatore del pluviometro che sale di uno a ogni scatto della sua bascula. Così ZoneFlow toglie la pioggia dall'acqua da dare, lascia prima asciugare il terreno bagnato e interrompe un'irrigazione quando comincia a piovere. Quanta pioggia vale uno scatto lo imposti nella pagina del dispositivo della zona, con \"Pluviometro: mm per scatto (taratura)\". Senza pluviometro, ZoneFlow irriga come se non piovesse mai.",
+          "rain_counter_entity": "Il sensore del tuo pluviometro: un contatore di scatti, un totale di pioggia in millimetri o un'intensità di pioggia (scegli sotto). ZoneFlow sottrae poi la pioggia da ciò che irriga, lascia asciugare prima il terreno bagnato e interrompe un'irrigazione quando inizia a piovere. Senza pluviometro, ZoneFlow irriga come se non piovesse mai.",
+          "rain_source_type": "Cosa riporta il sensore. Contatore di scatti: un numero che sale di uno a ogni scatto della vaschetta (la dimensione di uno scatto si imposta nella pagina del dispositivo della zona, Pluviometro: mm per scatto). Totale di pioggia in mm: un totale progressivo che sale soltanto, oppure che riparte ogni giorno o settimana, per esempio da Ecowitt, Ambient Weather o Tempest (funziona anche un totale in pollici). Intensità di pioggia: la pioggia attuale in mm all'ora, che ZoneFlow somma nel tempo (meno preciso). Un sensore che mostra solo l'ultima ora o le ultime 24 ore non funziona: usa un totale. Cambiare sensore o tipo fa ripartire lo storico della pioggia.",
           "outdoor_temp_entity": "Un sensore di temperatura esterna. Con questo, ZoneFlow irriga da solo di più quando fa caldo e di meno quando fa fresco, e la protezione antigelo sospende l'irrigazione quando gela. Senza, decide l'impostazione Temperatura di riserva / manuale.",
           "flow_meter_entity": "Un contatore d'acqua che conta il volume totale (litri, galloni o m³). Così ZoneFlow registra quanta acqua ha usato davvero ogni irrigazione, ti avvisa se la pompa ha funzionato ma l'acqua non è passata, e può misurare la portata per te (Configura → Portata: misurala con il flussometro).",
           "soil_moisture_entity": "Un sensore di umidità del terreno (%) all'altezza delle radici di questa zona. Il terreno secco anticipa l'irrigazione ordinaria, quello bagnato la fa saltare, e nel mezzo decide il programma normale. Le soglie di secco e bagnato sono nella pagina del dispositivo della zona.",
@@ -619,6 +623,13 @@
         "outdoor": "All’aperto",
         "greenhouse": "Serra",
         "indoor": "Al chiuso"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Contatore di scatti",
+        "total_mm": "Totale di pioggia (mm o in; complessivo, giornaliero o settimanale)",
+        "rate_mm_h": "Intensità di pioggia (mm/h)"
       }
     }
   },

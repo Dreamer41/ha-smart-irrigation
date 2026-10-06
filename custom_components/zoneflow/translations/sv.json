@@ -22,7 +22,8 @@
           "valve_entity": "Ventilbrytare",
           "pump_power_entity": "Pumpens effektsensor (valfritt)",
           "pump_id": "Delat pump-ID (valfritt)",
-          "rain_counter_entity": "Regnmätarens vippräknare (valfritt)",
+          "rain_counter_entity": "Regnmätarsensor (valfritt)",
+          "rain_source_type": "Typ av regnmätarsensor",
           "outdoor_temp_entity": "Utetemperatursensor (valfritt)",
           "flow_meter_entity": "Flödesmätare (valfritt)",
           "soil_moisture_entity": "Jordfuktighetssensor (valfritt)",
@@ -47,7 +48,8 @@
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
           "pump_power_entity": "En effektsensor (W) på pumpen, t.ex. från ett smart uttag. Vid varje vattning kontrollerar ZoneFlow att pumpen verkligen drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
           "pump_id": "Bara för zoner som går på samma pump: ge dem alla samma namn här (vilket som helst, t.ex. ”Pump A”), så turas de om i stället för att köra samtidigt. Lämna tomt om zonen har egen pump eller egen vattenförsörjning.",
-          "rain_counter_entity": "En räknare på regnmätaren som ökar med ett för varje vipp. ZoneFlow drar då av regnet från det som ska vattnas, låter blöt jord torka upp först och stoppar en vattning när det börjar regna. Hur mycket regn en vipp motsvarar ställer du in på zonens enhetssida under ”Regnmätare mm per vipp (kalibrering)”. Utan regnmätare vattnar ZoneFlow som om det aldrig regnade.",
+          "rain_counter_entity": "Sensorn på din regnmätare: en vippräknare, en regnsumma i millimeter eller en regnintensitet (välj nedan). ZoneFlow drar då av regnet från det den vattnar, låter blöt jord torka först och avbryter en vattning när det börjar regna. Utan regnmätare vattnar ZoneFlow som om det aldrig regnade.",
+          "rain_source_type": "Vad sensorn rapporterar. Vippräknare: ett tal som ökar med ett för varje vipp av skålen (storleken på en vipp ställer du in på zonens enhetssida, Regnmätare mm per vipp). Regnsumma i mm: en löpande summa som bara ökar, eller som börjar om varje dag eller vecka, till exempel från Ecowitt, Ambient Weather eller Tempest (en summa i tum fungerar också). Regnintensitet: det aktuella regnet i mm per timme, som ZoneFlow summerar över tid (mindre exakt). En sensor som bara visar senaste timmen eller senaste 24 timmarna fungerar inte: använd en summa. Byter du sensor eller typ börjar regnhistoriken om.",
           "outdoor_temp_entity": "En utetemperatursensor. Med den vattnar ZoneFlow själv mer i varmt väder och mindre i svalt väder, och frostskyddet håller inne vattningen när det fryser. Utan den avgör inställningen ”Reserv-/manuell temperatur”.",
           "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar då hur mycket vatten varje vattning faktiskt använde, varnar dig om pumpen gick men inget vatten rann, och kan mäta flödet åt dig (Konfigurera → Flöde).",
           "soil_moisture_entity": "En jordfuktighetssensor (%) i zonens rotzon. Torr jord tidigarelägger rutinvattningen, vid blöt jord hoppas den över, och däremellan avgör det vanliga schemat. Torr- och blötgränsen finns på zonens enhetssida.",
@@ -270,7 +272,8 @@
           "valve_entity": "Ventilbrytare",
           "pump_power_entity": "Pumpens effektsensor (valfritt)",
           "pump_id": "Delat pump-ID (valfritt)",
-          "rain_counter_entity": "Regnmätarens vippräknare (valfritt)",
+          "rain_counter_entity": "Regnmätarsensor (valfritt)",
+          "rain_source_type": "Typ av regnmätarsensor",
           "outdoor_temp_entity": "Utetemperatursensor (valfritt)",
           "flow_meter_entity": "Flödesmätare (valfritt)",
           "soil_moisture_entity": "Jordfuktighetssensor (valfritt)",
@@ -295,7 +298,8 @@
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
           "pump_power_entity": "En effektsensor (W) på pumpen, t.ex. från ett smart uttag. Vid varje vattning kontrollerar ZoneFlow att pumpen verkligen drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
           "pump_id": "Bara för zoner som går på samma pump: ge dem alla samma namn här (vilket som helst, t.ex. ”Pump A”), så turas de om i stället för att köra samtidigt. Lämna tomt om zonen har egen pump eller egen vattenförsörjning.",
-          "rain_counter_entity": "En räknare på regnmätaren som ökar med ett för varje vipp. ZoneFlow drar då av regnet från det som ska vattnas, låter blöt jord torka upp först och stoppar en vattning när det börjar regna. Hur mycket regn en vipp motsvarar ställer du in på zonens enhetssida under ”Regnmätare mm per vipp (kalibrering)”. Utan regnmätare vattnar ZoneFlow som om det aldrig regnade.",
+          "rain_counter_entity": "Sensorn på din regnmätare: en vippräknare, en regnsumma i millimeter eller en regnintensitet (välj nedan). ZoneFlow drar då av regnet från det den vattnar, låter blöt jord torka först och avbryter en vattning när det börjar regna. Utan regnmätare vattnar ZoneFlow som om det aldrig regnade.",
+          "rain_source_type": "Vad sensorn rapporterar. Vippräknare: ett tal som ökar med ett för varje vipp av skålen (storleken på en vipp ställer du in på zonens enhetssida, Regnmätare mm per vipp). Regnsumma i mm: en löpande summa som bara ökar, eller som börjar om varje dag eller vecka, till exempel från Ecowitt, Ambient Weather eller Tempest (en summa i tum fungerar också). Regnintensitet: det aktuella regnet i mm per timme, som ZoneFlow summerar över tid (mindre exakt). En sensor som bara visar senaste timmen eller senaste 24 timmarna fungerar inte: använd en summa. Byter du sensor eller typ börjar regnhistoriken om.",
           "outdoor_temp_entity": "En utetemperatursensor. Med den vattnar ZoneFlow själv mer i varmt väder och mindre i svalt väder, och frostskyddet håller inne vattningen när det fryser. Utan den avgör inställningen ”Reserv-/manuell temperatur”.",
           "flow_meter_entity": "En vattenmätare som räknar upp den totala volymen (liter, gallon eller m³). ZoneFlow loggar då hur mycket vatten varje vattning faktiskt använde, varnar dig om pumpen gick men inget vatten rann, och kan mäta flödet åt dig (Konfigurera → Flöde).",
           "soil_moisture_entity": "En jordfuktighetssensor (%) i zonens rotzon. Torr jord tidigarelägger rutinvattningen, vid blöt jord hoppas den över, och däremellan avgör det vanliga schemat. Torr- och blötgränsen finns på zonens enhetssida.",
@@ -619,6 +623,13 @@
         "outdoor": "Utomhus",
         "greenhouse": "Växthus",
         "indoor": "Inomhus"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Vippräknare",
+        "total_mm": "Regnsumma (mm eller tum; total, daglig eller veckovis)",
+        "rate_mm_h": "Regnintensitet (mm/h)"
       }
     }
   },

@@ -22,7 +22,8 @@
           "valve_entity": "Klepschakelaar",
           "pump_power_entity": "Vermogenssensor pomp (optioneel)",
           "pump_id": "ID gedeelde pomp (optioneel)",
-          "rain_counter_entity": "Kiepteller regenmeter (optioneel)",
+          "rain_counter_entity": "Regenmetersensor (optioneel)",
+          "rain_source_type": "Type regenmetersensor",
           "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
           "flow_meter_entity": "Watermeter (optioneel)",
           "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
@@ -47,7 +48,8 @@
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bv. van een slimme stekker. Bij elke watergift controleert ZoneFlow of de pomp echt stroom trekt, en waarschuwt je als dat niet zo is. Laat leeg als je er geen hebt.",
           "pump_id": "Alleen voor zones op dezelfde pomp: geef ze hier allemaal dezelfde naam (maakt niet uit welke, bv. \"Pomp A\"), dan draaien ze om de beurt in plaats van tegelijk. Laat leeg als deze zone een eigen pomp of wateraansluiting heeft.",
-          "rain_counter_entity": "Een teller van de regenmeter die bij elke kiep van het bakje één omhoog gaat. ZoneFlow trekt de regen dan af van de watergift, laat natte grond eerst opdrogen en stopt een watergift als het gaat regenen. Hoeveel regen één kiep is, stel je in op de apparaatpagina van de zone (Regenmeter mm per kiep). Zonder regenmeter geeft ZoneFlow water alsof het nooit regent.",
+          "rain_counter_entity": "De sensor van uw regenmeter: een kiepteller, een regentotaal in millimeters of een regenintensiteit (kies hieronder). ZoneFlow trekt de regen dan af van wat het sproeit, laat natte grond eerst opdrogen en stopt een beurt als het begint te regenen. Zonder regenmeter sproeit ZoneFlow alsof het nooit regent.",
+          "rain_source_type": "Wat de sensor meldt. Kiepteller: een getal dat met één stijgt bij elke kiep van het bakje (de grootte van een kiep stelt u in op de apparaatpagina van de zone, Regenmeter mm per kiep). Regentotaal in mm: een oplopend totaal dat alleen stijgt, of dat elke dag of week opnieuw begint, bijvoorbeeld van Ecowitt, Ambient Weather of Tempest (een totaal in inches werkt ook). Regenintensiteit: de huidige regen in mm per uur, die ZoneFlow in de tijd optelt (minder nauwkeurig). Een sensor die alleen het laatste uur of de laatste 24 uur toont, werkt niet: gebruik een totaal. Als u de sensor of het type wijzigt, begint de regengeschiedenis opnieuw.",
           "outdoor_temp_entity": "Een buitentemperatuursensor. Daarmee geeft ZoneFlow vanzelf meer water als het warm is en minder als het koel is, en houdt de vorstbeveiliging de watergift tegen als het vriest. Zonder sensor bepaalt de instelling Reserve- / handmatige temperatuur het.",
           "flow_meter_entity": "Een watermeter die het totale volume optelt (liters, gallons of m³). ZoneFlow legt dan vast hoeveel water elke watergift echt gebruikte, waarschuwt je als de pomp draaide maar er geen water stroomde, en kan het debiet voor je meten (Configureren → Debiet).",
           "soil_moisture_entity": "Een bodemvochtsensor (%) bij de wortels van de planten in deze zone. Droge grond haalt de routinewatergift naar voren, natte grond slaat hem over, en daartussen bepaalt het normale schema. De grenzen voor droog en nat staan op de apparaatpagina van de zone.",
@@ -270,7 +272,8 @@
           "valve_entity": "Klepschakelaar",
           "pump_power_entity": "Vermogenssensor pomp (optioneel)",
           "pump_id": "ID gedeelde pomp (optioneel)",
-          "rain_counter_entity": "Kiepteller regenmeter (optioneel)",
+          "rain_counter_entity": "Regenmetersensor (optioneel)",
+          "rain_source_type": "Type regenmetersensor",
           "outdoor_temp_entity": "Buitentemperatuursensor (optioneel)",
           "flow_meter_entity": "Watermeter (optioneel)",
           "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
@@ -295,7 +298,8 @@
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bv. van een slimme stekker. Bij elke watergift controleert ZoneFlow of de pomp echt stroom trekt, en waarschuwt je als dat niet zo is. Laat leeg als je er geen hebt.",
           "pump_id": "Alleen voor zones op dezelfde pomp: geef ze hier allemaal dezelfde naam (maakt niet uit welke, bv. \"Pomp A\"), dan draaien ze om de beurt in plaats van tegelijk. Laat leeg als deze zone een eigen pomp of wateraansluiting heeft.",
-          "rain_counter_entity": "Een teller van de regenmeter die bij elke kiep van het bakje één omhoog gaat. ZoneFlow trekt de regen dan af van de watergift, laat natte grond eerst opdrogen en stopt een watergift als het gaat regenen. Hoeveel regen één kiep is, stel je in op de apparaatpagina van de zone (Regenmeter mm per kiep). Zonder regenmeter geeft ZoneFlow water alsof het nooit regent.",
+          "rain_counter_entity": "De sensor van uw regenmeter: een kiepteller, een regentotaal in millimeters of een regenintensiteit (kies hieronder). ZoneFlow trekt de regen dan af van wat het sproeit, laat natte grond eerst opdrogen en stopt een beurt als het begint te regenen. Zonder regenmeter sproeit ZoneFlow alsof het nooit regent.",
+          "rain_source_type": "Wat de sensor meldt. Kiepteller: een getal dat met één stijgt bij elke kiep van het bakje (de grootte van een kiep stelt u in op de apparaatpagina van de zone, Regenmeter mm per kiep). Regentotaal in mm: een oplopend totaal dat alleen stijgt, of dat elke dag of week opnieuw begint, bijvoorbeeld van Ecowitt, Ambient Weather of Tempest (een totaal in inches werkt ook). Regenintensiteit: de huidige regen in mm per uur, die ZoneFlow in de tijd optelt (minder nauwkeurig). Een sensor die alleen het laatste uur of de laatste 24 uur toont, werkt niet: gebruik een totaal. Als u de sensor of het type wijzigt, begint de regengeschiedenis opnieuw.",
           "outdoor_temp_entity": "Een buitentemperatuursensor. Daarmee geeft ZoneFlow vanzelf meer water als het warm is en minder als het koel is, en houdt de vorstbeveiliging de watergift tegen als het vriest. Zonder sensor bepaalt de instelling Reserve- / handmatige temperatuur het.",
           "flow_meter_entity": "Een watermeter die het totale volume optelt (liters, gallons of m³). ZoneFlow legt dan vast hoeveel water elke watergift echt gebruikte, waarschuwt je als de pomp draaide maar er geen water stroomde, en kan het debiet voor je meten (Configureren → Debiet).",
           "soil_moisture_entity": "Een bodemvochtsensor (%) bij de wortels van de planten in deze zone. Droge grond haalt de routinewatergift naar voren, natte grond slaat hem over, en daartussen bepaalt het normale schema. De grenzen voor droog en nat staan op de apparaatpagina van de zone.",
@@ -619,6 +623,13 @@
         "outdoor": "Buiten",
         "greenhouse": "Kas",
         "indoor": "Binnen"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Kiepteller",
+        "total_mm": "Regentotaal (mm of in; totaal, dagelijks of wekelijks)",
+        "rate_mm_h": "Regenintensiteit (mm/u)"
       }
     }
   },

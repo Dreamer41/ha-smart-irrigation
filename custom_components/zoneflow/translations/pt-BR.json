@@ -22,7 +22,8 @@
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
           "pump_id": "ID da bomba compartilhada (opcional)",
-          "rain_counter_entity": "Contador de basculadas do pluviômetro (opcional)",
+          "rain_counter_entity": "Sensor do pluviômetro (opcional)",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
           "outdoor_temp_entity": "Sensor de temperatura externa (opcional)",
           "flow_meter_entity": "Medidor de vazão (opcional)",
           "soil_moisture_entity": "Sensor de umidade do solo (opcional)",
@@ -47,7 +48,8 @@
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: ele liga e desliga o interruptor e sempre garante que ele fique desligado no final.",
           "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Durante cada irrigação, o ZoneFlow confere se a bomba está mesmo consumindo energia e avisa você se não estiver. Deixe em branco se não tiver um.",
           "pump_id": "Só para zonas que usam a mesma bomba: dê a todas o mesmo nome aqui (qualquer nome, ex.: \"Bomba A\") e elas se revezam em vez de funcionar ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprio.",
-          "rain_counter_entity": "Um contador do pluviômetro que sobe uma unidade a cada basculada (cada vez que a báscula vira). Com ele, o ZoneFlow desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe a irrigação quando começa a chover. Quanta chuva vale uma basculada você define na página do dispositivo da zona (Pluviômetro: mm por basculada). Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_counter_entity": "O sensor do seu pluviômetro: um contador de basculadas, um total de chuva em milímetros ou uma intensidade de chuva (escolha abaixo). O ZoneFlow então desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe uma irrigação quando começa a chover. Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_source_type": "O que o sensor informa. Contador de basculadas: um número que aumenta de um a cada basculada da caçamba (o tamanho de uma basculada se ajusta na página do dispositivo da zona, Pluviômetro: mm por basculada). Total de chuva em mm: um total acumulado que só aumenta, ou que recomeça todo dia ou semana, por exemplo do Ecowitt, Ambient Weather ou Tempest (um total em polegadas também funciona). Intensidade de chuva: a chuva atual em mm por hora, que o ZoneFlow soma ao longo do tempo (menos exato). Um sensor que mostra só a última hora ou as últimas 24 horas não funciona: use um total. Trocar o sensor ou o tipo recomeça o histórico de chuva.",
           "outdoor_temp_entity": "Um sensor de temperatura externa. Com ele, o ZoneFlow irriga sozinho mais no calor e menos no tempo fresco, e a proteção contra geada segura a irrigação quando está congelando. Sem ele, quem decide é a configuração Temperatura de reserva / manual.",
           "flow_meter_entity": "Um hidrômetro que registra o volume total (litros, galões ou m³). Com ele, o ZoneFlow registra quanta água cada irrigação realmente usou, avisa você se a bomba funcionou mas a água não passou, e pode medir a vazão para você (Configurar → Vazão).",
           "soil_moisture_entity": "Um sensor de umidade do solo (%) na região das raízes desta zona. Solo seco antecipa a irrigação de rotina, solo úmido faz ela ser pulada e, entre os dois, quem decide é o horário normal. Os limites de seco e úmido ficam na página do dispositivo da zona.",
@@ -270,7 +272,8 @@
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
           "pump_id": "ID da bomba compartilhada (opcional)",
-          "rain_counter_entity": "Contador de basculadas do pluviômetro (opcional)",
+          "rain_counter_entity": "Sensor do pluviômetro (opcional)",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
           "outdoor_temp_entity": "Sensor de temperatura externa (opcional)",
           "flow_meter_entity": "Medidor de vazão (opcional)",
           "soil_moisture_entity": "Sensor de umidade do solo (opcional)",
@@ -295,7 +298,8 @@
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: ele liga e desliga o interruptor e sempre garante que ele fique desligado no final.",
           "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Durante cada irrigação, o ZoneFlow confere se a bomba está mesmo consumindo energia e avisa você se não estiver. Deixe em branco se não tiver um.",
           "pump_id": "Só para zonas que usam a mesma bomba: dê a todas o mesmo nome aqui (qualquer nome, ex.: \"Bomba A\") e elas se revezam em vez de funcionar ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprio.",
-          "rain_counter_entity": "Um contador do pluviômetro que sobe uma unidade a cada basculada (cada vez que a báscula vira). Com ele, o ZoneFlow desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe a irrigação quando começa a chover. Quanta chuva vale uma basculada você define na página do dispositivo da zona (Pluviômetro: mm por basculada). Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_counter_entity": "O sensor do seu pluviômetro: um contador de basculadas, um total de chuva em milímetros ou uma intensidade de chuva (escolha abaixo). O ZoneFlow então desconta a chuva do que irriga, deixa o solo molhado secar primeiro e interrompe uma irrigação quando começa a chover. Sem pluviômetro, o ZoneFlow irriga como se nunca chovesse.",
+          "rain_source_type": "O que o sensor informa. Contador de basculadas: um número que aumenta de um a cada basculada da caçamba (o tamanho de uma basculada se ajusta na página do dispositivo da zona, Pluviômetro: mm por basculada). Total de chuva em mm: um total acumulado que só aumenta, ou que recomeça todo dia ou semana, por exemplo do Ecowitt, Ambient Weather ou Tempest (um total em polegadas também funciona). Intensidade de chuva: a chuva atual em mm por hora, que o ZoneFlow soma ao longo do tempo (menos exato). Um sensor que mostra só a última hora ou as últimas 24 horas não funciona: use um total. Trocar o sensor ou o tipo recomeça o histórico de chuva.",
           "outdoor_temp_entity": "Um sensor de temperatura externa. Com ele, o ZoneFlow irriga sozinho mais no calor e menos no tempo fresco, e a proteção contra geada segura a irrigação quando está congelando. Sem ele, quem decide é a configuração Temperatura de reserva / manual.",
           "flow_meter_entity": "Um hidrômetro que registra o volume total (litros, galões ou m³). Com ele, o ZoneFlow registra quanta água cada irrigação realmente usou, avisa você se a bomba funcionou mas a água não passou, e pode medir a vazão para você (Configurar → Vazão).",
           "soil_moisture_entity": "Um sensor de umidade do solo (%) na região das raízes desta zona. Solo seco antecipa a irrigação de rotina, solo úmido faz ela ser pulada e, entre os dois, quem decide é o horário normal. Os limites de seco e úmido ficam na página do dispositivo da zona.",
@@ -619,6 +623,13 @@
         "outdoor": "Ao ar livre",
         "greenhouse": "Estufa",
         "indoor": "Interna"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Contador de basculadas",
+        "total_mm": "Total de chuva (mm ou in; acumulado, diário ou semanal)",
+        "rate_mm_h": "Intensidade de chuva (mm/h)"
       }
     }
   },

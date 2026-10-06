@@ -22,7 +22,8 @@
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
           "pump_id": "ID de bomba compartida (opcional)",
-          "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
+          "rain_counter_entity": "Sensor del pluviómetro (opcional)",
+          "rain_source_type": "Tipo de sensor del pluviómetro",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Caudalímetro (opcional)",
           "soil_moisture_entity": "Sensor de humedad del suelo (opcional)",
@@ -47,7 +48,8 @@
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
           "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej., el de un enchufe inteligente. En cada riego, ZoneFlow comprueba que la bomba consume corriente de verdad y te avisa si no es así. Déjalo vacío si no tienes uno.",
           "pump_id": "Solo para zonas que funcionan con la misma bomba: ponles a todas el mismo nombre aquí (el que quieras, p. ej., \"Bomba A\") y regarán por turnos en lugar de a la vez. Déjalo vacío si esta zona tiene su propia bomba o toma de agua.",
-          "rain_counter_entity": "Un contador del pluviómetro que sube de uno en uno con cada vuelco de su cazoleta. Así ZoneFlow descuenta la lluvia de lo que riega, deja que el suelo mojado se seque primero y detiene un riego cuando empieza a llover. Cuánta lluvia equivale a un vuelco se ajusta en la página del dispositivo de la zona, con \"Pluviómetro: mm por vuelco (calibración)\". Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_counter_entity": "El sensor de tu pluviómetro: un contador de vuelcos, un total de lluvia en milímetros o una intensidad de lluvia (elige abajo). ZoneFlow descuenta entonces la lluvia de lo que riega, deja secar primero el suelo mojado y detiene un riego cuando empieza a llover. Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_source_type": "Lo que informa el sensor. Contador de vuelcos: un número que sube uno con cada vuelco del cubilete (el tamaño de un vuelco se ajusta en la página del dispositivo de la zona, Pluviómetro: mm por vuelco). Total de lluvia en mm: un total acumulado que solo sube, o que empieza de nuevo cada día o semana, por ejemplo de Ecowitt, Ambient Weather o Tempest (un total en pulgadas también sirve). Intensidad de lluvia: la lluvia actual en mm por hora, que ZoneFlow suma con el tiempo (menos exacto). Un sensor que solo muestra la última hora o las últimas 24 horas no sirve: usa un total. Cambiar el sensor o el tipo reinicia el historial de lluvia.",
           "outdoor_temp_entity": "Un sensor de temperatura exterior. Con él, ZoneFlow riega por sí solo más cuando hace calor y menos cuando hace fresco, y la protección antiheladas detiene el riego cuando hiela. Sin él, decide el ajuste Temperatura de respaldo / manual.",
           "flow_meter_entity": "Un contador de agua que va sumando el volumen total (litros, galones o m³). Así ZoneFlow registra cuánta agua usó realmente cada riego, te avisa si la bomba funcionó pero no pasó agua, y puede medir el caudal por ti (Configurar → Caudal: medirlo con el caudalímetro).",
           "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
@@ -270,7 +272,8 @@
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
           "pump_id": "ID de bomba compartida (opcional)",
-          "rain_counter_entity": "Contador de vuelcos del pluviómetro (opcional)",
+          "rain_counter_entity": "Sensor del pluviómetro (opcional)",
+          "rain_source_type": "Tipo de sensor del pluviómetro",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Caudalímetro (opcional)",
           "soil_moisture_entity": "Sensor de humedad del suelo (opcional)",
@@ -295,7 +298,8 @@
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
           "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej., el de un enchufe inteligente. En cada riego, ZoneFlow comprueba que la bomba consume corriente de verdad y te avisa si no es así. Déjalo vacío si no tienes uno.",
           "pump_id": "Solo para zonas que funcionan con la misma bomba: ponles a todas el mismo nombre aquí (el que quieras, p. ej., \"Bomba A\") y regarán por turnos en lugar de a la vez. Déjalo vacío si esta zona tiene su propia bomba o toma de agua.",
-          "rain_counter_entity": "Un contador del pluviómetro que sube de uno en uno con cada vuelco de su cazoleta. Así ZoneFlow descuenta la lluvia de lo que riega, deja que el suelo mojado se seque primero y detiene un riego cuando empieza a llover. Cuánta lluvia equivale a un vuelco se ajusta en la página del dispositivo de la zona, con \"Pluviómetro: mm por vuelco (calibración)\". Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_counter_entity": "El sensor de tu pluviómetro: un contador de vuelcos, un total de lluvia en milímetros o una intensidad de lluvia (elige abajo). ZoneFlow descuenta entonces la lluvia de lo que riega, deja secar primero el suelo mojado y detiene un riego cuando empieza a llover. Sin pluviómetro, ZoneFlow riega como si nunca lloviera.",
+          "rain_source_type": "Lo que informa el sensor. Contador de vuelcos: un número que sube uno con cada vuelco del cubilete (el tamaño de un vuelco se ajusta en la página del dispositivo de la zona, Pluviómetro: mm por vuelco). Total de lluvia en mm: un total acumulado que solo sube, o que empieza de nuevo cada día o semana, por ejemplo de Ecowitt, Ambient Weather o Tempest (un total en pulgadas también sirve). Intensidad de lluvia: la lluvia actual en mm por hora, que ZoneFlow suma con el tiempo (menos exacto). Un sensor que solo muestra la última hora o las últimas 24 horas no sirve: usa un total. Cambiar el sensor o el tipo reinicia el historial de lluvia.",
           "outdoor_temp_entity": "Un sensor de temperatura exterior. Con él, ZoneFlow riega por sí solo más cuando hace calor y menos cuando hace fresco, y la protección antiheladas detiene el riego cuando hiela. Sin él, decide el ajuste Temperatura de respaldo / manual.",
           "flow_meter_entity": "Un contador de agua que va sumando el volumen total (litros, galones o m³). Así ZoneFlow registra cuánta agua usó realmente cada riego, te avisa si la bomba funcionó pero no pasó agua, y puede medir el caudal por ti (Configurar → Caudal: medirlo con el caudalímetro).",
           "soil_moisture_entity": "Un sensor de humedad del suelo (%) a la altura de las raíces de esta zona. Con el suelo seco se adelanta el riego habitual, con el suelo húmedo se omite, y entre medias decide la programación normal. Los umbrales seco y húmedo están en la página del dispositivo de la zona.",
@@ -619,6 +623,13 @@
         "outdoor": "Exterior",
         "greenhouse": "Invernadero",
         "indoor": "Interior"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Contador de vuelcos",
+        "total_mm": "Total de lluvia (mm o in; acumulado, diario o semanal)",
+        "rate_mm_h": "Intensidad de lluvia (mm/h)"
       }
     }
   },

@@ -22,7 +22,8 @@
           "valve_entity": "Venttiilin kytkin",
           "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
           "pump_id": "Yhteisen pumpun tunnus (valinnainen)",
-          "rain_counter_entity": "Sademittarin kippauslaskuri (valinnainen)",
+          "rain_counter_entity": "Sademittarin anturi (valinnainen)",
+          "rain_source_type": "Sademittarin anturin tyyppi",
           "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
           "flow_meter_entity": "Virtausmittari (valinnainen)",
           "soil_moisture_entity": "Maan kosteusanturi (valinnainen)",
@@ -47,7 +48,8 @@
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
           "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, että pumppu todella ottaa virtaa, ja varoittaa sinua, jos ei ota. Jätä tyhjäksi, jos sinulla ei ole sellaista.",
           "pump_id": "Vain vyöhykkeille, jotka käyttävät samaa pumppua: anna niille kaikille tähän sama nimi (mikä tahansa, esim. \"Pumppu A\"), niin ne vuorottelevat eivätkä käy yhtä aikaa. Jätä tyhjäksi, jos vyöhykkeellä on oma pumppu tai vedensyöttö.",
-          "rain_counter_entity": "Sademittarin laskuri, joka kasvaa yhdellä aina, kun mittarin kuppi kippaa. ZoneFlow vähentää silloin sateen kastelumäärästä, antaa märän maan ensin kuivua ja keskeyttää kastelun, kun alkaa sataa. Yhden kippauksen sademäärän asetat vyöhykkeen laitesivulla kohdassa Sademittarin mm/kippaus (kalibrointi). Ilman sademittaria ZoneFlow kastelee kuin ei koskaan sataisi.",
+          "rain_counter_entity": "Sademittarin anturi: kippauslaskuri, sademäärän summa millimetreinä tai sateen voimakkuus (valitse alta). ZoneFlow vähentää sitten sateen kastelusta, antaa märän maan kuivua ensin ja pysäyttää kastelun, kun alkaa sataa. Ilman sademittaria ZoneFlow kastelee ikään kuin ei koskaan satasi.",
+          "rain_source_type": "Mitä anturi kertoo. Kippauslaskuri: luku, joka kasvaa yhdellä jokaisella kauhan kippauksella (yhden kippauksen koon asetat vyöhykkeen laitesivulla, Sademittarin mm/kippaus (kalibrointi)). Sademäärän summa mm: juokseva summa, joka vain kasvaa tai alkaa alusta joka päivä tai viikko, esimerkiksi Ecowitt-, Ambient Weather- tai Tempest-laitteesta (summa tuumina käy myös). Sateen voimakkuus: nykyinen sade mm tunnissa, jonka ZoneFlow laskee yhteen ajan mittaan (epätarkempi). Anturi, joka näyttää vain viimeisen tunnin tai viimeiset 24 tuntia, ei toimi: käytä summaa. Anturin tai tyypin vaihtaminen aloittaa sadehistorian alusta.",
           "outdoor_temp_entity": "Ulkolämpötila-anturi. Sen avulla ZoneFlow kastelee itsestään enemmän helteellä ja vähemmän viileällä säällä, ja hallasuoja estää kastelun pakkasella. Ilman anturia asetus Vara- / käsisäätölämpötila ratkaisee.",
           "flow_meter_entity": "Vesimittari, joka laskee kokonaismäärää ylöspäin (litroina, gallonoina tai m³). ZoneFlow kirjaa silloin, paljonko vettä kukin kastelu todella käytti, varoittaa sinua, jos pumppu kävi mutta vettä ei virrannut, ja voi mitata virtaaman puolestasi (Määritä → Virtaama).",
           "soil_moisture_entity": "Maan kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa peruskastelua, märällä maalla se ohitetaan, ja niiden välillä noudatetaan normaalia aikataulua. Kuiva- ja märkäraja ovat vyöhykkeen laitesivulla.",
@@ -270,7 +272,8 @@
           "valve_entity": "Venttiilin kytkin",
           "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
           "pump_id": "Yhteisen pumpun tunnus (valinnainen)",
-          "rain_counter_entity": "Sademittarin kippauslaskuri (valinnainen)",
+          "rain_counter_entity": "Sademittarin anturi (valinnainen)",
+          "rain_source_type": "Sademittarin anturin tyyppi",
           "outdoor_temp_entity": "Ulkolämpötila-anturi (valinnainen)",
           "flow_meter_entity": "Virtausmittari (valinnainen)",
           "soil_moisture_entity": "Maan kosteusanturi (valinnainen)",
@@ -295,7 +298,8 @@
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
           "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, että pumppu todella ottaa virtaa, ja varoittaa sinua, jos ei ota. Jätä tyhjäksi, jos sinulla ei ole sellaista.",
           "pump_id": "Vain vyöhykkeille, jotka käyttävät samaa pumppua: anna niille kaikille tähän sama nimi (mikä tahansa, esim. \"Pumppu A\"), niin ne vuorottelevat eivätkä käy yhtä aikaa. Jätä tyhjäksi, jos vyöhykkeellä on oma pumppu tai vedensyöttö.",
-          "rain_counter_entity": "Sademittarin laskuri, joka kasvaa yhdellä aina, kun mittarin kuppi kippaa. ZoneFlow vähentää silloin sateen kastelumäärästä, antaa märän maan ensin kuivua ja keskeyttää kastelun, kun alkaa sataa. Yhden kippauksen sademäärän asetat vyöhykkeen laitesivulla kohdassa Sademittarin mm/kippaus (kalibrointi). Ilman sademittaria ZoneFlow kastelee kuin ei koskaan sataisi.",
+          "rain_counter_entity": "Sademittarin anturi: kippauslaskuri, sademäärän summa millimetreinä tai sateen voimakkuus (valitse alta). ZoneFlow vähentää sitten sateen kastelusta, antaa märän maan kuivua ensin ja pysäyttää kastelun, kun alkaa sataa. Ilman sademittaria ZoneFlow kastelee ikään kuin ei koskaan satasi.",
+          "rain_source_type": "Mitä anturi kertoo. Kippauslaskuri: luku, joka kasvaa yhdellä jokaisella kauhan kippauksella (yhden kippauksen koon asetat vyöhykkeen laitesivulla, Sademittarin mm/kippaus (kalibrointi)). Sademäärän summa mm: juokseva summa, joka vain kasvaa tai alkaa alusta joka päivä tai viikko, esimerkiksi Ecowitt-, Ambient Weather- tai Tempest-laitteesta (summa tuumina käy myös). Sateen voimakkuus: nykyinen sade mm tunnissa, jonka ZoneFlow laskee yhteen ajan mittaan (epätarkempi). Anturi, joka näyttää vain viimeisen tunnin tai viimeiset 24 tuntia, ei toimi: käytä summaa. Anturin tai tyypin vaihtaminen aloittaa sadehistorian alusta.",
           "outdoor_temp_entity": "Ulkolämpötila-anturi. Sen avulla ZoneFlow kastelee itsestään enemmän helteellä ja vähemmän viileällä säällä, ja hallasuoja estää kastelun pakkasella. Ilman anturia asetus Vara- / käsisäätölämpötila ratkaisee.",
           "flow_meter_entity": "Vesimittari, joka laskee kokonaismäärää ylöspäin (litroina, gallonoina tai m³). ZoneFlow kirjaa silloin, paljonko vettä kukin kastelu todella käytti, varoittaa sinua, jos pumppu kävi mutta vettä ei virrannut, ja voi mitata virtaaman puolestasi (Määritä → Virtaama).",
           "soil_moisture_entity": "Maan kosteusanturi (%) tämän vyöhykkeen juuristoalueella. Kuiva maa aikaistaa peruskastelua, märällä maalla se ohitetaan, ja niiden välillä noudatetaan normaalia aikataulua. Kuiva- ja märkäraja ovat vyöhykkeen laitesivulla.",
@@ -619,6 +623,13 @@
         "outdoor": "Ulkona",
         "greenhouse": "Kasvihuone",
         "indoor": "Sisällä"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Kippauslaskuri",
+        "total_mm": "Sademäärän summa (mm tai in; kokonais-, päivä- tai viikkosumma)",
+        "rate_mm_h": "Sateen voimakkuus (mm/h)"
       }
     }
   },

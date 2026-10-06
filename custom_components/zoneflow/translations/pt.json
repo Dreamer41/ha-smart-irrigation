@@ -22,7 +22,8 @@
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
           "pump_id": "ID da bomba partilhada (opcional)",
-          "rain_counter_entity": "Contador do medidor de chuva (opcional)",
+          "rain_counter_entity": "Sensor do medidor de chuva (opcional)",
+          "rain_source_type": "Tipo de sensor do medidor de chuva",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Medidor de fluxo (opcional)",
           "soil_moisture_entity": "Sensor de humidade do solo (opcional)",
@@ -47,7 +48,8 @@
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
           "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Em cada rega, o ZoneFlow verifica se a bomba consome mesmo energia e avisa-o se não consumir. Deixe em branco se não tiver.",
           "pump_id": "Só para zonas que usam a mesma bomba: dê-lhes aqui o mesmo nome (qualquer um, ex.: \"Bomba A\") e passam a regar à vez em vez de ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprios.",
-          "rain_counter_entity": "Um contador do medidor de chuva que sobe uma unidade a cada báscula. O ZoneFlow desconta então a chuva ao que rega, deixa o solo molhado secar primeiro e para uma rega quando começa a chover. Quanta chuva vale uma báscula define-se na página do dispositivo da zona (Medidor de chuva: mm por báscula). Sem medidor, o ZoneFlow rega como se nunca chovesse.",
+          "rain_counter_entity": "O sensor do seu medidor de chuva: um contador de básculas, um total de chuva em milímetros ou uma intensidade de chuva (escolha abaixo). O ZoneFlow desconta então a chuva do que rega, deixa o solo molhado secar primeiro e interrompe uma rega quando começa a chover. Sem medidor de chuva, o ZoneFlow rega como se nunca chovesse.",
+          "rain_source_type": "O que o sensor indica. Contador de básculas: um número que aumenta de um a cada báscula do recipiente (o tamanho de uma báscula define-se na página do dispositivo da zona, Medidor de chuva: mm por báscula). Total de chuva em mm: um total acumulado que só aumenta, ou que recomeça todos os dias ou semanas, por exemplo do Ecowitt, Ambient Weather ou Tempest (um total em polegadas também funciona). Intensidade de chuva: a chuva atual em mm por hora, que o ZoneFlow soma ao longo do tempo (menos exato). Um sensor que mostra apenas a última hora ou as últimas 24 horas não funciona: use um total. Mudar o sensor ou o tipo recomeça o histórico de chuva.",
           "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow rega sozinho mais quando está calor e menos quando está fresco, e a proteção contra geada suspende a rega quando está a gelar. Sem ele, quem decide é a definição Temperatura de reserva / manual.",
           "flow_meter_entity": "Um medidor de fluxo que conta o volume total (litros, galões ou m³). O ZoneFlow regista então quanta água cada rega gastou realmente, avisa-o se a bomba trabalhou mas a água não correu, e pode medir o fluxo por si (Configurar → Fluxo).",
           "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado dispensa-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
@@ -270,7 +272,8 @@
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
           "pump_id": "ID da bomba partilhada (opcional)",
-          "rain_counter_entity": "Contador do medidor de chuva (opcional)",
+          "rain_counter_entity": "Sensor do medidor de chuva (opcional)",
+          "rain_source_type": "Tipo de sensor do medidor de chuva",
           "outdoor_temp_entity": "Sensor de temperatura exterior (opcional)",
           "flow_meter_entity": "Medidor de fluxo (opcional)",
           "soil_moisture_entity": "Sensor de humidade do solo (opcional)",
@@ -295,7 +298,8 @@
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
           "pump_power_entity": "Um sensor de potência (W) na bomba, por exemplo de uma tomada inteligente. Em cada rega, o ZoneFlow verifica se a bomba consome mesmo energia e avisa-o se não consumir. Deixe em branco se não tiver.",
           "pump_id": "Só para zonas que usam a mesma bomba: dê-lhes aqui o mesmo nome (qualquer um, ex.: \"Bomba A\") e passam a regar à vez em vez de ao mesmo tempo. Deixe em branco se esta zona tiver bomba ou abastecimento de água próprios.",
-          "rain_counter_entity": "Um contador do medidor de chuva que sobe uma unidade a cada báscula. O ZoneFlow desconta então a chuva ao que rega, deixa o solo molhado secar primeiro e para uma rega quando começa a chover. Quanta chuva vale uma báscula define-se na página do dispositivo da zona (Medidor de chuva: mm por báscula). Sem medidor, o ZoneFlow rega como se nunca chovesse.",
+          "rain_counter_entity": "O sensor do seu medidor de chuva: um contador de básculas, um total de chuva em milímetros ou uma intensidade de chuva (escolha abaixo). O ZoneFlow desconta então a chuva do que rega, deixa o solo molhado secar primeiro e interrompe uma rega quando começa a chover. Sem medidor de chuva, o ZoneFlow rega como se nunca chovesse.",
+          "rain_source_type": "O que o sensor indica. Contador de básculas: um número que aumenta de um a cada báscula do recipiente (o tamanho de uma báscula define-se na página do dispositivo da zona, Medidor de chuva: mm por báscula). Total de chuva em mm: um total acumulado que só aumenta, ou que recomeça todos os dias ou semanas, por exemplo do Ecowitt, Ambient Weather ou Tempest (um total em polegadas também funciona). Intensidade de chuva: a chuva atual em mm por hora, que o ZoneFlow soma ao longo do tempo (menos exato). Um sensor que mostra apenas a última hora ou as últimas 24 horas não funciona: use um total. Mudar o sensor ou o tipo recomeça o histórico de chuva.",
           "outdoor_temp_entity": "Um sensor de temperatura exterior. Com ele, o ZoneFlow rega sozinho mais quando está calor e menos quando está fresco, e a proteção contra geada suspende a rega quando está a gelar. Sem ele, quem decide é a definição Temperatura de reserva / manual.",
           "flow_meter_entity": "Um medidor de fluxo que conta o volume total (litros, galões ou m³). O ZoneFlow regista então quanta água cada rega gastou realmente, avisa-o se a bomba trabalhou mas a água não correu, e pode medir o fluxo por si (Configurar → Fluxo).",
           "soil_moisture_entity": "Um sensor de humidade do solo (%) junto às raízes das plantas desta zona. Solo seco antecipa a rega de rotina, solo molhado dispensa-a e, entre os dois, decide o horário normal. Os limites seco e molhado estão na página do dispositivo da zona.",
@@ -619,6 +623,13 @@
         "outdoor": "Exterior",
         "greenhouse": "Estufa",
         "indoor": "Interior"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Contador de básculas",
+        "total_mm": "Total de chuva (mm ou in; acumulado, diário ou semanal)",
+        "rate_mm_h": "Intensidade de chuva (mm/h)"
       }
     }
   },

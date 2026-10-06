@@ -22,7 +22,8 @@
           "valve_entity": "Interrupteur de la vanne",
           "pump_power_entity": "Capteur de puissance de la pompe (facultatif)",
           "pump_id": "ID de pompe partagée (facultatif)",
-          "rain_counter_entity": "Compteur de basculements du pluviomètre (facultatif)",
+          "rain_counter_entity": "Capteur du pluviomètre (facultatif)",
+          "rain_source_type": "Type de capteur du pluviomètre",
           "outdoor_temp_entity": "Capteur de température extérieure (facultatif)",
           "flow_meter_entity": "Débitmètre (facultatif)",
           "soil_moisture_entity": "Sonde d'humidité du sol (facultatif)",
@@ -47,7 +48,8 @@
           "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
           "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. celui d'une prise connectée. Pendant chaque arrosage, ZoneFlow vérifie que la pompe consomme vraiment du courant et vous prévient si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
           "pump_id": "Seulement pour les zones alimentées par la même pompe : donnez-leur à toutes le même nom ici (n'importe lequel, ex. « Pompe A ») et elles arrosent chacune à leur tour au lieu de fonctionner en même temps. Laissez vide si cette zone a sa propre pompe ou sa propre arrivée d'eau.",
-          "rain_counter_entity": "Un compteur de pluviomètre qui augmente de un à chaque basculement de son auget. ZoneFlow déduit alors la pluie de ce qu'il arrose, laisse d'abord sécher un sol mouillé et arrête un arrosage quand il se met à pleuvoir. La quantité de pluie d'un basculement se règle sur la page de l'appareil de la zone, avec « Pluviomètre : mm par basculement (étalonnage) ». Sans pluviomètre, ZoneFlow arrose comme s'il ne pleuvait jamais.",
+          "rain_counter_entity": "Le capteur de votre pluviomètre : un compteur de basculements, un cumul de pluie en millimètres ou une intensité de pluie (à choisir ci-dessous). ZoneFlow déduit alors la pluie de ce qu'il arrose, laisse d'abord sécher un sol mouillé et arrête un arrosage quand il se met à pleuvoir. Sans pluviomètre, ZoneFlow arrose comme s'il ne pleuvait jamais.",
+          "rain_source_type": "Ce que le capteur indique. Compteur de basculements : un nombre qui augmente de un à chaque basculement de l'augette (la taille d'un basculement se règle sur la page de l'appareil de la zone, Pluviomètre : mm par basculement). Cumul de pluie en mm : un total qui ne fait qu'augmenter, ou qui repart de zéro chaque jour ou chaque semaine, par exemple d'Ecowitt, Ambient Weather ou Tempest (un cumul en pouces convient aussi). Intensité de pluie : la pluie actuelle en mm par heure, que ZoneFlow additionne dans le temps (moins précis). Un capteur qui n'indique que la dernière heure ou les dernières 24 heures ne convient pas : utilisez un cumul. Changer de capteur ou de type repart d'un historique de pluie vide.",
           "outdoor_temp_entity": "Un capteur de température extérieure. Avec lui, ZoneFlow arrose de lui-même davantage par temps chaud et moins par temps frais, et la protection antigel suspend l'arrosage quand il gèle. Sans lui, c'est le réglage Température de secours / manuelle qui décide.",
           "flow_meter_entity": "Un compteur d'eau qui totalise le volume (litres, gallons ou m³). ZoneFlow note alors la quantité d'eau réellement utilisée à chaque arrosage, vous prévient si la pompe a tourné sans que l'eau circule, et peut mesurer le débit pour vous (Configurer → Débit : le mesurer avec le débitmètre).",
           "soil_moisture_entity": "Une sonde d'humidité du sol (%) placée au niveau des racines de cette zone. Un sol sec avance l'arrosage régulier, un sol humide le fait sauter, et entre les deux c'est le programme normal qui décide. Les seuils sec et humide se trouvent sur la page de l'appareil de la zone.",
@@ -270,7 +272,8 @@
           "valve_entity": "Interrupteur de la vanne",
           "pump_power_entity": "Capteur de puissance de la pompe (facultatif)",
           "pump_id": "ID de pompe partagée (facultatif)",
-          "rain_counter_entity": "Compteur de basculements du pluviomètre (facultatif)",
+          "rain_counter_entity": "Capteur du pluviomètre (facultatif)",
+          "rain_source_type": "Type de capteur du pluviomètre",
           "outdoor_temp_entity": "Capteur de température extérieure (facultatif)",
           "flow_meter_entity": "Débitmètre (facultatif)",
           "soil_moisture_entity": "Sonde d'humidité du sol (facultatif)",
@@ -295,7 +298,8 @@
           "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
           "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. celui d'une prise connectée. Pendant chaque arrosage, ZoneFlow vérifie que la pompe consomme vraiment du courant et vous prévient si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
           "pump_id": "Seulement pour les zones alimentées par la même pompe : donnez-leur à toutes le même nom ici (n'importe lequel, ex. « Pompe A ») et elles arrosent chacune à leur tour au lieu de fonctionner en même temps. Laissez vide si cette zone a sa propre pompe ou sa propre arrivée d'eau.",
-          "rain_counter_entity": "Un compteur de pluviomètre qui augmente de un à chaque basculement de son auget. ZoneFlow déduit alors la pluie de ce qu'il arrose, laisse d'abord sécher un sol mouillé et arrête un arrosage quand il se met à pleuvoir. La quantité de pluie d'un basculement se règle sur la page de l'appareil de la zone, avec « Pluviomètre : mm par basculement (étalonnage) ». Sans pluviomètre, ZoneFlow arrose comme s'il ne pleuvait jamais.",
+          "rain_counter_entity": "Le capteur de votre pluviomètre : un compteur de basculements, un cumul de pluie en millimètres ou une intensité de pluie (à choisir ci-dessous). ZoneFlow déduit alors la pluie de ce qu'il arrose, laisse d'abord sécher un sol mouillé et arrête un arrosage quand il se met à pleuvoir. Sans pluviomètre, ZoneFlow arrose comme s'il ne pleuvait jamais.",
+          "rain_source_type": "Ce que le capteur indique. Compteur de basculements : un nombre qui augmente de un à chaque basculement de l'augette (la taille d'un basculement se règle sur la page de l'appareil de la zone, Pluviomètre : mm par basculement). Cumul de pluie en mm : un total qui ne fait qu'augmenter, ou qui repart de zéro chaque jour ou chaque semaine, par exemple d'Ecowitt, Ambient Weather ou Tempest (un cumul en pouces convient aussi). Intensité de pluie : la pluie actuelle en mm par heure, que ZoneFlow additionne dans le temps (moins précis). Un capteur qui n'indique que la dernière heure ou les dernières 24 heures ne convient pas : utilisez un cumul. Changer de capteur ou de type repart d'un historique de pluie vide.",
           "outdoor_temp_entity": "Un capteur de température extérieure. Avec lui, ZoneFlow arrose de lui-même davantage par temps chaud et moins par temps frais, et la protection antigel suspend l'arrosage quand il gèle. Sans lui, c'est le réglage Température de secours / manuelle qui décide.",
           "flow_meter_entity": "Un compteur d'eau qui totalise le volume (litres, gallons ou m³). ZoneFlow note alors la quantité d'eau réellement utilisée à chaque arrosage, vous prévient si la pompe a tourné sans que l'eau circule, et peut mesurer le débit pour vous (Configurer → Débit : le mesurer avec le débitmètre).",
           "soil_moisture_entity": "Une sonde d'humidité du sol (%) placée au niveau des racines de cette zone. Un sol sec avance l'arrosage régulier, un sol humide le fait sauter, et entre les deux c'est le programme normal qui décide. Les seuils sec et humide se trouvent sur la page de l'appareil de la zone.",
@@ -619,6 +623,13 @@
         "outdoor": "Extérieur",
         "greenhouse": "Serre",
         "indoor": "Intérieur"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Compteur de basculements",
+        "total_mm": "Cumul de pluie (mm ou po ; total, journalier ou hebdomadaire)",
+        "rate_mm_h": "Intensité de pluie (mm/h)"
       }
     }
   },

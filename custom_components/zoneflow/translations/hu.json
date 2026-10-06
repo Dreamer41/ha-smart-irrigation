@@ -22,7 +22,8 @@
           "valve_entity": "Szelepkapcsoló",
           "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
           "pump_id": "Közös szivattyú azonosítója (opcionális)",
-          "rain_counter_entity": "Esőmérő billenésszámlálója (opcionális)",
+          "rain_counter_entity": "Esőmérő szenzora (opcionális)",
+          "rain_source_type": "Az esőmérő szenzorának típusa",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő (opcionális)",
           "flow_meter_entity": "Átfolyásmérő (opcionális)",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
@@ -47,7 +48,8 @@
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
           "pump_power_entity": "A szivattyú teljesítményérzékelője (W), pl. egy okoskonnektorból. A ZoneFlow minden öntözéskor ellenőrzi, hogy a szivattyú tényleg vesz-e fel áramot, és szól, ha nem. Hagyd üresen, ha nincs ilyened.",
           "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adj itt mindegyiknek ugyanazt a nevet (bármilyet, pl. \"A szivattyú\"), és akkor egymás után futnak, nem egyszerre. Hagyd üresen, ha ennek a zónának saját szivattyúja vagy vízellátása van.",
-          "rain_counter_entity": "Esőmérő-számláló, amely a billenőedény minden billenésével eggyel nő. A ZoneFlow ekkor levonja az esőt az öntözésből, hagyja előbb kiszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Hogy egy billenés mennyi eső, azt a zóna eszközoldalán állítod be (Esőmérő mm/billenés). Esőmérő nélkül a ZoneFlow úgy öntöz, mintha sosem esne.",
+          "rain_counter_entity": "Az esőmérő szenzora: billenésszámláló, esőmennyiség-összeg milliméterben vagy eső intenzitás (válasszon lent). A ZoneFlow ekkor levonja az esőt az öntözésből, előbb hagyja megszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Esőmérő nélkül a ZoneFlow úgy öntöz, mintha soha nem esne.",
+          "rain_source_type": "Amit a szenzor jelent. Billenésszámláló: egy szám, amely a vödör minden billenésére eggyel nő (egy billenés méretét a zóna eszközoldalán állíthatja be, Esőmérő mm/billenés). Esőösszeg mm-ben: egy futó összeg, amely csak nő, vagy minden nap vagy héten újrakezdődik, például Ecowitt, Ambient Weather vagy Tempest esetén (a hüvelykben megadott összeg is működik). Eső intenzitás: az aktuális eső mm/óra értékben, amit a ZoneFlow az idő során összead (kevésbé pontos). Az a szenzor, amely csak az utolsó órát vagy az utolsó 24 órát mutatja, nem működik: használjon összeget. A szenzor vagy a típus módosítása újrakezdi az esőelőzményeket.",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő. Vele a ZoneFlow magától többet öntöz melegben és kevesebbet hűvösben, a fagyvédelem pedig fagyban visszatartja az öntözést. Nélküle a Tartalék / kézi hőmérséklet beállítás dönt.",
           "flow_meter_entity": "Vízóra, amely a teljes mennyiséget számolja (liter, gallon vagy m³). A ZoneFlow ekkor naplózza, mennyi vizet használt valójában minden öntözés, szól, ha a szivattyú ment, de nem folyt víz, és meg is tudja mérni a vízhozamot (Konfigurálás → Vízhozam).",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
@@ -270,7 +272,8 @@
           "valve_entity": "Szelepkapcsoló",
           "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
           "pump_id": "Közös szivattyú azonosítója (opcionális)",
-          "rain_counter_entity": "Esőmérő billenésszámlálója (opcionális)",
+          "rain_counter_entity": "Esőmérő szenzora (opcionális)",
+          "rain_source_type": "Az esőmérő szenzorának típusa",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő (opcionális)",
           "flow_meter_entity": "Átfolyásmérő (opcionális)",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
@@ -295,7 +298,8 @@
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
           "pump_power_entity": "A szivattyú teljesítményérzékelője (W), pl. egy okoskonnektorból. A ZoneFlow minden öntözéskor ellenőrzi, hogy a szivattyú tényleg vesz-e fel áramot, és szól, ha nem. Hagyd üresen, ha nincs ilyened.",
           "pump_id": "Csak az ugyanarról a szivattyúról működő zónákhoz: adj itt mindegyiknek ugyanazt a nevet (bármilyet, pl. \"A szivattyú\"), és akkor egymás után futnak, nem egyszerre. Hagyd üresen, ha ennek a zónának saját szivattyúja vagy vízellátása van.",
-          "rain_counter_entity": "Esőmérő-számláló, amely a billenőedény minden billenésével eggyel nő. A ZoneFlow ekkor levonja az esőt az öntözésből, hagyja előbb kiszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Hogy egy billenés mennyi eső, azt a zóna eszközoldalán állítod be (Esőmérő mm/billenés). Esőmérő nélkül a ZoneFlow úgy öntöz, mintha sosem esne.",
+          "rain_counter_entity": "Az esőmérő szenzora: billenésszámláló, esőmennyiség-összeg milliméterben vagy eső intenzitás (válasszon lent). A ZoneFlow ekkor levonja az esőt az öntözésből, előbb hagyja megszáradni a nedves talajt, és leállítja az öntözést, ha esni kezd. Esőmérő nélkül a ZoneFlow úgy öntöz, mintha soha nem esne.",
+          "rain_source_type": "Amit a szenzor jelent. Billenésszámláló: egy szám, amely a vödör minden billenésére eggyel nő (egy billenés méretét a zóna eszközoldalán állíthatja be, Esőmérő mm/billenés). Esőösszeg mm-ben: egy futó összeg, amely csak nő, vagy minden nap vagy héten újrakezdődik, például Ecowitt, Ambient Weather vagy Tempest esetén (a hüvelykben megadott összeg is működik). Eső intenzitás: az aktuális eső mm/óra értékben, amit a ZoneFlow az idő során összead (kevésbé pontos). Az a szenzor, amely csak az utolsó órát vagy az utolsó 24 órát mutatja, nem működik: használjon összeget. A szenzor vagy a típus módosítása újrakezdi az esőelőzményeket.",
           "outdoor_temp_entity": "Kültéri hőmérséklet-érzékelő. Vele a ZoneFlow magától többet öntöz melegben és kevesebbet hűvösben, a fagyvédelem pedig fagyban visszatartja az öntözést. Nélküle a Tartalék / kézi hőmérséklet beállítás dönt.",
           "flow_meter_entity": "Vízóra, amely a teljes mennyiséget számolja (liter, gallon vagy m³). A ZoneFlow ekkor naplózza, mennyi vizet használt valójában minden öntözés, szól, ha a szivattyú ment, de nem folyt víz, és meg is tudja mérni a vízhozamot (Konfigurálás → Vízhozam).",
           "soil_moisture_entity": "Talajnedvesség-érzékelő (%) a zóna gyökérzónájában. Száraz talajnál előrébb hozza a rendszeres öntözést, nedvesnél kihagyja, a kettő között a normál ütemezés dönt. A száraz és a nedves küszöb a zóna eszközoldalán van.",
@@ -619,6 +623,13 @@
         "outdoor": "Kültéri",
         "greenhouse": "Üvegház",
         "indoor": "Beltéri"
+      }
+    },
+    "rain_source": {
+      "options": {
+        "tips": "Billenésszámláló",
+        "total_mm": "Esőösszeg (mm vagy in; teljes, napi vagy heti)",
+        "rate_mm_h": "Eső intenzitás (mm/h)"
       }
     }
   },
