@@ -141,3 +141,55 @@ async def test_rain_per_reading_in_inches(hass, tmp_path):
     _entry, controller = await _zone(hass, tmp_path, "amount_mm", 0.0, "in")
     await _set(hass, 0.01, "in")
     assert controller.rain_windows()["24h"] == pytest.approx(0.254)
+
+
+def test_two_heavy_days_in_a_row_on_a_daily_total_are_not_read_as_a_glitch():
+    """25 mm, back to 0 at midnight, then the next day's total rises 24 -> 27
+    in one reading: that is rain, not a glitch ending (the count would have
+    to jump back to near yesterday's level from near zero)."""
+    from custom_components.zoneflow import calculations as calc
+
+    total, last, drop_from, drop_ts, since = 25.0, 25.0, None, None, 0.0
+    now = 1_000_000.0
+    total, last, drop_from, drop_ts, since = calc.track_tip_total(total, last, drop_from, drop_ts, since, 0.0, now, 0.5)
+    for value in (6.0, 18.0, 24.0, 27.0):
+        now += 600
+        total, last, drop_from, drop_ts, since = calc.track_tip_total(
+            total, last, drop_from, drop_ts, since, value, now, 0.5
+        )
+    assert total == pytest.approx(25.0 + 27.0)  # yesterday's 25 and today's 27
+
+
+def test_a_real_glitch_on_a_total_is_still_recognised():
+    from custom_components.zoneflow import calculations as calc
+
+    total, last, drop_from, drop_ts, since = 1000.0, 1000.0, None, None, 0.0
+    now = 1_000_000.0
+    total, last, drop_from, drop_ts, since = calc.track_tip_total(total, last, drop_from, drop_ts, since, 0.0, now, 0.5)
+    total, last, drop_from, drop_ts, since = calc.track_tip_total(total, last, drop_from, drop_ts, since, 1002.0, now + 3600, 0.5)
+    assert total == pytest.approx(1002.0)
+
+
+@pytest.mark.asyncio
+async def test_rain_today_starts_at_zero_when_the_first_reading_arrives_after_startup(hass, tmp_path):
+    entry, controller = await _setup(hass, csv_path=str(tmp_path / "f.csv"))
+    state = controller.store.state
+    state.rain_samples = []
+    state.rain_counter_total_tips = state.rain_counter_last_tips = None
+    state.rain_midnight_baseline_mm = 0.0
+    hass.states.async_set(RAIN_COUNTER, "436")  # the sensor was unavailable at startup, now reports
+    await hass.async_block_till_done()
+    assert controller.today_rain_mm() == pytest.approx(0.0, abs=0.01)
+    hass.states.async_set(RAIN_COUNTER, "437")
+    await hass.async_block_till_done()
+    assert controller.today_rain_mm() == pytest.approx(0.2997, abs=0.01)
+
+
+@pytest.mark.asyncio
+async def test_an_attribute_only_change_is_not_a_new_rain_reading(hass, tmp_path):
+    _entry, controller = await _zone(hass, tmp_path, "amount_mm", 0.0)
+    hass.states.async_set(RAIN_COUNTER, "0.2", {"unit_of_measurement": "mm", "note": "a"})
+    await hass.async_block_till_done()
+    hass.states.async_set(RAIN_COUNTER, "0.2", {"unit_of_measurement": "mm", "note": "b"})  # attribute only
+    await hass.async_block_till_done()
+    assert controller.rain_windows()["24h"] == pytest.approx(0.2)

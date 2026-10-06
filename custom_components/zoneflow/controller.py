@@ -1044,6 +1044,7 @@ class ZoneFlowController:
             state.rain_counter_since_drop_tips,
             tips,
             now_ts,
+            0.5 if self.rain_source_type == RAIN_SOURCE_TOTAL else 0.0,
         )
 
     def _record_rain_sample(self, seed_only: bool) -> None:
@@ -1051,12 +1052,15 @@ class ZoneFlowController:
         self._align_rain_calibration()
         cumulative_mm = (state.rain_counter_total_tips or 0.0) * self._rain_mm_factor()
         tracker = state.rain_tracker()
+        first_sample = not tracker.samples
         if not seed_only:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
+            if first_sample:
+                state.rain_midnight_baseline_mm = cumulative_mm
             self.hass.async_create_task(self.store.async_save())
             self._check_significant_rain()
-        elif not tracker.samples:
+        elif first_sample:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
             # Rain tracking starts here (a new zone, or a changed sensor): what
@@ -1090,6 +1094,13 @@ class ZoneFlowController:
         new_state: State | None = event.data.get("new_state")
         if new_state is None:
             return
+        old_state: State | None = event.data.get("old_state")
+        if (
+            self.rain_source_type == RAIN_SOURCE_AMOUNT
+            and old_state is not None
+            and old_state.state == new_state.state
+        ):
+            return  # only an attribute changed: not a new reading (a repeat comes as a state report)
         self._sync_rain_from_counter_state(new_state)
 
     def _check_significant_rain(self) -> None:

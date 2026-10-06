@@ -1111,8 +1111,10 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             per_emitter_l_h = float(user_input["emitter_flow"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
             area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
             mm_per_min = round(float(user_input["emitters"])) * per_emitter_l_h / area_m2 / 60
-            await self._set_zone_flow(controller, round(float(user_input["emitters"])) * per_emitter_l_h / 60)
-            return await self._apply_flow_rate(controller, mm_per_min)
+            result = await self._apply_flow_rate(controller, mm_per_min)
+            if result.get("reason") == "flow_rate_set":  # only when the entry was accepted
+                await self._set_zone_flow(controller, round(float(user_input["emitters"])) * per_emitter_l_h / 60)
+            return result
         return self.async_show_form(
             step_id="flow_rate",
             data_schema=vol.Schema(
@@ -1149,8 +1151,10 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             liters = float(user_input["volume"]) * (units.LITERS_PER_GALLON if imperial else 1.0)
             area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
             mm_per_min = liters / area_m2 / float(user_input["minutes"])
-            await self._set_zone_flow(controller, liters / float(user_input["minutes"]))
-            return await self._apply_flow_rate(controller, mm_per_min)
+            result = await self._apply_flow_rate(controller, mm_per_min)
+            if result.get("reason") == "flow_rate_set":
+                await self._set_zone_flow(controller, liters / float(user_input["minutes"]))
+            return result
         return self.async_show_form(
             step_id="flow_volume",
             data_schema=vol.Schema(

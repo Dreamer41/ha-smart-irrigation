@@ -148,6 +148,7 @@ def track_tip_total(
     since_drop: float,
     tips: float,
     now_ts: float,
+    min_return_fraction: float = 0.0,
 ) -> tuple[float, float, float | None, float | None, float]:
     """Turn a raw rain-gauge tip count into an ever-growing total, surviving
     both real resets and glitches. Returns the new
@@ -167,6 +168,10 @@ def track_tip_total(
       counter back on exactly its old total in one jump is not a realistic
       event, so a genuine reset isn't mistaken for this; counters below
       RAIN_COUNTER_GLITCH_MIN_TIPS are always treated as real resets.
+    - `min_return_fraction`: for a rain total in mm that starts again every
+      day or week, a heavy day can land just above yesterday's final value
+      with a jump of a few mm, which is not a glitch ending. With a fraction
+      (0.5), the jump back must restore at least that part of the old level.
     """
     if total is None or last is None:
         return tips, tips, None, None, 0.0
@@ -176,6 +181,7 @@ def track_tip_total(
         drop_from is not None
         and drop_from <= tips <= drop_from + RAIN_COUNTER_GLITCH_RETURN_TOLERANCE_TIPS
         and tips - last > 1
+        and tips - last >= drop_from * min_return_fraction
     ):
         return total - since_drop + (tips - drop_from), tips, None, None, 0.0
     if tips >= last:

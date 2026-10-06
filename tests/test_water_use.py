@@ -140,3 +140,15 @@ async def test_a_flow_meter_that_counts_nothing_falls_back_to_zone_flow(hass, fa
     controller._run_liters = 15.0  # a meter that counted is believed
     controller._count_for_summary(10.0, "routine")
     assert controller.store.state.last_cycle_liters == pytest.approx(15.0)
+
+
+@pytest.mark.asyncio
+async def test_a_refused_emitter_entry_leaves_zone_flow_alone(hass, fake_valve_services, tmp_path):
+    entry, controller = await _zone(hass, tmp_path)
+    await controller.numbers["zone_flow_l_min"].async_set_metric_value(3.0)
+    result = await _options(hass, entry, "flow_rate")
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {"emitters": 100, "emitter_flow": 10.0, "area": 0.1}
+    )
+    assert result["reason"] == "flow_rate_out_of_range"
+    assert controller.number("zone_flow_l_min") == pytest.approx(3.0)
