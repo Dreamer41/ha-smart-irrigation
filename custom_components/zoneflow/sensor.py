@@ -776,6 +776,8 @@ class ZoneFlowStatusSensor(_Base):
         attributes["valve"] = self._controller.valve_entity
         # For the overview card's default icon (the plant preset at setup).
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
+        # For the cards: the garden area the zone is shown under (or None).
+        attributes["garden_area"] = self._controller.garden_area
         # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
         registry = dr.async_get(self.hass)
 

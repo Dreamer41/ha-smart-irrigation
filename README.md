@@ -283,6 +283,15 @@ You get an **overview** tab and **one tab per zone** with the full ZoneFlow
 card. It is built from your zones each time the dashboard opens, so a new
 zone appears by itself. To edit it by hand later, ⋮ → **Take control**.
 
+**Garden areas.** To see what is where, put each zone in a part of the garden
+under **Configure → Garden area** (a name of your own: *Backyard*, *Front
+yard*; pick one already in use or type a new one). The overview card then
+groups the zones under their area's heading (zones with no area under
+*Other*), and the dashboard above gets **one tab per area** with its zones
+side by side. A crop follows its greenhouse's area. Without areas, nothing
+changes. Zones can share one rain gauge or weather entity; choose the same
+entity in each zone.
+
 **The ZoneFlow card comes with the integration** — nothing to install or
 add as a resource. Edit a dashboard → **Add card** → **ZoneFlow zone** →
 pick the zone. Or in YAML:

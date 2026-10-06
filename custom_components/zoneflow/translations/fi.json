@@ -261,6 +261,7 @@
           "flow_measure": "Virtaama: mittaa virtausmittarilla",
           "greenhouse_devices": "Venttiili, anturit ja ilmastolaitteet",
           "watering": "Kasteluasetukset",
+          "garden_area": "Puutarhan alue (takapiha, etupiha…)",
           "zone_type": "Vyöhyketyyppi",
           "weather_underground": "Weather Underground -sade",
           "crop_valve": "Kasvin venttiili",
@@ -505,6 +506,16 @@
           "heads": "Laske mukaan jokainen suutin, jota tämä venttiili syöttää.",
           "head_flow": "Mitä yksi suutin antaa, pakkauksesta tai suutintaulukosta.",
           "head_flow_unit": "Yksikkö, jossa yhden suuttimen virtaama on annettu."
+        }
+      },
+      "garden_area": {
+        "title": "Puutarhan alue",
+        "description": "Missä puutarhan osassa tämä vyöhyke on, esimerkiksi Takapiha tai Etupiha. Kortit ryhmittelevät vyöhykkeet sen mukaan. Valitse jo käytössä oleva nimi tai kirjoita uusi; tyhjä tarkoittaa ei aluetta. Kasvi seuraa kasvihuoneensa aluetta.",
+        "data": {
+          "garden_area": "Puutarhan alue"
+        },
+        "data_description": {
+          "garden_area": "Samannimiset vyöhykkeet ryhmitellään yhteen."
         }
       }
     },

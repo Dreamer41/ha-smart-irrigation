@@ -261,6 +261,7 @@
           "flow_measure": "Caudal: medirlo con el caudalímetro",
           "greenhouse_devices": "Válvula, sensores y dispositivos de clima",
           "watering": "Ajustes de riego",
+          "garden_area": "Área del jardín (patio trasero, jardín delantero…)",
           "zone_type": "Tipo de zona",
           "weather_underground": "Lluvia de Weather Underground",
           "crop_valve": "Válvula del cultivo",
@@ -505,6 +506,16 @@
           "heads": "Cuente cada emisor que alimenta esta válvula.",
           "head_flow": "Lo que da un emisor, según su paquete o tabla de boquillas.",
           "head_flow_unit": "La unidad en la que se indica el caudal de un emisor."
+        }
+      },
+      "garden_area": {
+        "title": "Área del jardín",
+        "description": "En qué parte del jardín está esta zona, por ejemplo Patio trasero o Jardín delantero. Las tarjetas agrupan las zonas según esto. Elige un nombre ya usado o escribe uno nuevo; vacío significa sin área. Un cultivo sigue el área de su invernadero.",
+        "data": {
+          "garden_area": "Área del jardín"
+        },
+        "data_description": {
+          "garden_area": "Las zonas con el mismo nombre se agrupan."
         }
       }
     },

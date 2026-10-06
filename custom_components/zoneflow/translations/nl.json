@@ -261,6 +261,7 @@
           "flow_measure": "Debiet: meten met de watermeter",
           "greenhouse_devices": "Klep, sensoren en klimaatapparaten",
           "watering": "Bewateringsinstellingen",
+          "garden_area": "Tuingedeelte (achtertuin, voortuin…)",
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regen",
           "crop_valve": "Gewasklep",
@@ -505,6 +506,16 @@
           "heads": "Tel elke druppelaar mee die door deze klep wordt gevoed.",
           "head_flow": "Wat één druppelaar geeft, volgens de verpakking of sproeiertabel.",
           "head_flow_unit": "De eenheid waarin het debiet van één druppelaar wordt vermeld."
+        }
+      },
+      "garden_area": {
+        "title": "Tuingedeelte",
+        "description": "In welk deel van de tuin deze zone ligt, bijvoorbeeld Achtertuin of Voortuin. De kaarten groeperen de zones hierop. Kies een naam die al in gebruik is of typ een nieuwe; leeg betekent geen gedeelte. Een gewas volgt het tuingedeelte van zijn kas.",
+        "data": {
+          "garden_area": "Tuingedeelte"
+        },
+        "data_description": {
+          "garden_area": "Zones met dezelfde naam worden samen gegroepeerd."
         }
       }
     },

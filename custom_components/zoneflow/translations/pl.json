@@ -261,6 +261,7 @@
           "flow_measure": "Wydajność: zmierz przepływomierzem",
           "greenhouse_devices": "Zawór, czujniki i urządzenia klimatyzacyjne",
           "watering": "Ustawienia podawania wody",
+          "garden_area": "Obszar ogrodu (tył domu, przód domu…)",
           "zone_type": "Typ strefy",
           "weather_underground": "Deszcz Weather Underground",
           "crop_valve": "Zawór uprawy",
@@ -505,6 +506,16 @@
           "heads": "Policz każdy emiter zasilany przez ten zawór.",
           "head_flow": "Ile daje jeden emiter, z jego opakowania lub tabeli dysz.",
           "head_flow_unit": "Jednostka, w której podany jest przepływ jednego emitera."
+        }
+      },
+      "garden_area": {
+        "title": "Obszar ogrodu",
+        "description": "W której części ogrodu znajduje się ta strefa, na przykład Tył domu lub Przód domu. Karty grupują strefy według tego. Wybierz nazwę już używaną lub wpisz nową; puste oznacza brak obszaru. Uprawa należy do obszaru swojej szklarni.",
+        "data": {
+          "garden_area": "Obszar ogrodu"
+        },
+        "data_description": {
+          "garden_area": "Strefy o tej samej nazwie są grupowane razem."
         }
       }
     },

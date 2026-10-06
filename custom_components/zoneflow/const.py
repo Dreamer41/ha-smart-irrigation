@@ -57,6 +57,10 @@ CONF_WU_STATIONS = "stations"
 CONF_USE_WU = "use_weather_underground"
 WU_DATA_KEY = "zoneflow_weather_underground"
 REPAIR_WU_NO_DATA_SECONDS = 6 * 3600
+# 1.6.6: the part of the garden a zone is in ("Backyard", "Front yard"), a name of
+# the person's own. Only for grouping in the cards; a crop follows its greenhouse.
+CONF_GARDEN_AREA = "garden_area"
+GARDEN_AREA_MAX_LENGTH = 40
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
 # What that sensor reports (1.6.5): a tip counter (the default, as always), a
 # running rain total in mm (lifetime, or one that starts again every day or

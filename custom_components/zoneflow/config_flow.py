@@ -59,6 +59,8 @@ from .const import (
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
+    CONF_GARDEN_AREA,
+    GARDEN_AREA_MAX_LENGTH,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     RAIN_SOURCE_OPTIONS,
@@ -955,6 +957,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             if _greenhouses(self.hass, exclude_entry_id=self._config_entry.entry_id):
                 options.append("greenhouse_link")
         if not crop:
+            options.append("garden_area")  # a crop is in its greenhouse's area
             options.append("zone_type")  # a crop is whatever its greenhouse is
         return self.async_show_menu(step_id="init", menu_options=options)
 
@@ -1015,6 +1018,48 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             step_id="weather_underground",
             data_schema=vol.Schema(
                 {vol.Required(CONF_USE_WU, default=bool(self._merged().get(CONF_USE_WU, False))): bool}
+            ),
+        )
+
+    def _garden_areas(self) -> list[str]:
+        """The area names already in use (every zone, as typed), sorted."""
+        names: dict[str, str] = {}
+        for entry in self.hass.config_entries.async_entries(DOMAIN):
+            if _is_wu_entry(entry):
+                continue
+            value = entry.options.get(CONF_GARDEN_AREA, entry.data.get(CONF_GARDEN_AREA))
+            value = " ".join(str(value).split()) if value else ""
+            if value:
+                names.setdefault(value.casefold(), value)
+        return sorted(names.values(), key=str.casefold)
+
+    async def async_step_garden_area(self, user_input: dict[str, Any] | None = None):
+        """Which part of the garden the zone is in ("Backyard"): a name of
+        the person's own, picked from the ones already used or typed. Only
+        for grouping the zones in the cards."""
+        areas = self._garden_areas()
+        if user_input is not None:
+            name = " ".join(str(user_input.get(CONF_GARDEN_AREA) or "").split())[:GARDEN_AREA_MAX_LENGTH]
+            # The same name in other letters (backyard / Backyard) is the same area.
+            name = next((a for a in areas if a.casefold() == name.casefold()), name)
+            options = dict(self._config_entry.options)
+            if name:
+                options[CONF_GARDEN_AREA] = name
+            else:
+                options.pop(CONF_GARDEN_AREA, None)
+            return self.async_create_entry(title="", data=options)
+        current = " ".join(str(self._merged().get(CONF_GARDEN_AREA) or "").split())
+        key = vol.Optional(CONF_GARDEN_AREA, description={"suggested_value": current}) if current else vol.Optional(CONF_GARDEN_AREA)
+        return self.async_show_form(
+            step_id="garden_area",
+            data_schema=vol.Schema(
+                {
+                    key: selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=areas, custom_value=True, mode=selector.SelectSelectorMode.DROPDOWN
+                        )
+                    )
+                }
             ),
         )
 

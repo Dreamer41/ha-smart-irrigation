@@ -261,6 +261,7 @@
           "flow_measure": "Prietok: zmerať prietokomerom",
           "greenhouse_devices": "Ventil, senzory a klimatické zariadenia",
           "watering": "Nastavenia zavlažovania",
+          "garden_area": "Záhradná oblasť (zadná záhrada, predná záhrada…)",
           "zone_type": "Typ zóny",
           "weather_underground": "Zrážky Weather Underground",
           "crop_valve": "Ventil plodiny",
@@ -505,6 +506,16 @@
           "heads": "Spočítajte každý emitor, ktorý tento ventil napája.",
           "head_flow": "Koľko jeden emitor dáva, z obalu alebo tabuľky trysiek.",
           "head_flow_unit": "Jednotka, v ktorej je uvedený prietok jedného emitora."
+        }
+      },
+      "garden_area": {
+        "title": "Záhradná oblasť",
+        "description": "V ktorej časti záhrady je táto zóna, napríklad Zadná záhrada alebo Predná záhrada. Karty podľa toho zóny zoskupujú. Vyberte už použitý názov alebo napíšte nový; prázdne znamená bez oblasti. Plodina patrí do oblasti svojho skleníka.",
+        "data": {
+          "garden_area": "Záhradná oblasť"
+        },
+        "data_description": {
+          "garden_area": "Zóny s rovnakým názvom sa zoskupia."
         }
       }
     },

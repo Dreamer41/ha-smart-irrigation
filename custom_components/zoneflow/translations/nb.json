@@ -261,6 +261,7 @@
           "flow_measure": "Vannmengde: mål den med vannmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheter",
           "watering": "Vanningsinnstillinger",
+          "garden_area": "Hageområde (bakhage, forhage…)",
           "zone_type": "Sonetype",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Kulturventil",
@@ -505,6 +506,16 @@
           "heads": "Tell hvert utløp som denne ventilen forsyner.",
           "head_flow": "Hva ett utløp gir, fra pakken eller dysetabellen.",
           "head_flow_unit": "Enheten gjennomstrømningen for ett utløp oppgis i."
+        }
+      },
+      "garden_area": {
+        "title": "Hageområde",
+        "description": "Hvilken del av hagen sonen ligger i, for eksempel Bakhage eller Forhage. Kortene grupperer sonene etter dette. Velg et navn som allerede brukes, eller skriv et nytt; tomt betyr ingen område. En avling følger området til drivhuset sitt.",
+        "data": {
+          "garden_area": "Hageområde"
+        },
+        "data_description": {
+          "garden_area": "Soner med samme navn grupperes sammen."
         }
       }
     },

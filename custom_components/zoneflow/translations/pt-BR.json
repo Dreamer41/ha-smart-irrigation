@@ -261,6 +261,7 @@
           "flow_measure": "Vazão: medir com o medidor de vazão",
           "greenhouse_devices": "Válvula, sensores e dispositivos de clima",
           "watering": "Configurações de irrigação",
+          "garden_area": "Área do jardim (quintal, jardim da frente…)",
           "zone_type": "Tipo de zona",
           "weather_underground": "Chuva do Weather Underground",
           "crop_valve": "Válvula da cultura",
@@ -505,6 +506,16 @@
           "heads": "Conte cada emissor alimentado por esta válvula.",
           "head_flow": "O que um emissor fornece, conforme a embalagem ou tabela de bocais.",
           "head_flow_unit": "A unidade em que a vazão de um emissor é informada."
+        }
+      },
+      "garden_area": {
+        "title": "Área do jardim",
+        "description": "Em que parte do jardim está esta zona, por exemplo Quintal ou Jardim da frente. Os cartões agrupam as zonas por isso. Escolha um nome já usado ou digite um novo; vazio significa sem área. Uma cultura segue a área da sua estufa.",
+        "data": {
+          "garden_area": "Área do jardim"
+        },
+        "data_description": {
+          "garden_area": "Zonas com o mesmo nome são agrupadas."
         }
       }
     },

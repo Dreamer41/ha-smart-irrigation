@@ -233,3 +233,18 @@ async def test_a_zone_that_names_itself_as_its_greenhouse_is_just_a_zone(hass, f
     c = _ctl(hass, crop)
     assert not c.is_crop and c.has_valve
     assert c.crops == []  # not a crop of itself
+
+
+@pytest.mark.asyncio
+async def test_a_crop_is_in_its_greenhouses_garden_area(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_GARDEN_AREA
+
+    await _seed_all(hass)
+    house = _climate_only_entry(hass)
+    crop = _crop(hass, "Tomatoes", VALVE_A, house)
+    await _load(hass, house)
+    assert _ctl(hass, house).garden_area is None and _ctl(hass, crop).garden_area is None
+    hass.config_entries.async_update_entry(house, options={**house.options, CONF_GARDEN_AREA: "Backyard"})
+    await hass.async_block_till_done()
+    assert _ctl(hass, house).garden_area == "Backyard"
+    assert _ctl(hass, crop).garden_area == "Backyard"  # follows its greenhouse

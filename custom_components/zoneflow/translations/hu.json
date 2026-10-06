@@ -261,6 +261,7 @@
           "flow_measure": "Vízhozam: mérés az átfolyásmérővel",
           "greenhouse_devices": "Szelep, érzékelők és klímaeszközök",
           "watering": "Öntözési beállítások",
+          "garden_area": "Kerti terület (hátsó kert, elülső kert…)",
           "zone_type": "Zónatípus",
           "weather_underground": "Weather Underground eső",
           "crop_valve": "Növény szelepe",
@@ -505,6 +506,16 @@
           "heads": "Számoljon meg minden csepegtetőt, amit ez a szelep táplál.",
           "head_flow": "Amit egy csepegtető ad, a csomagolása vagy fúvókatáblázata alapján.",
           "head_flow_unit": "Mértékegység, amiben az egy csepegtető vízhozama meg van adva."
+        }
+      },
+      "garden_area": {
+        "title": "Kerti terület",
+        "description": "A kert melyik részén van ez a zóna, például Hátsó kert vagy Elülső kert. A kártyák ez alapján csoportosítják a zónákat. Válasszon egy már használt nevet vagy írjon újat; üresen nincs terület. A növény a saját üvegházának területét követi.",
+        "data": {
+          "garden_area": "Kerti terület"
+        },
+        "data_description": {
+          "garden_area": "Az azonos nevű zónák egy csoportba kerülnek."
         }
       }
     },

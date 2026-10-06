@@ -88,7 +88,8 @@ const I18N = {
       "add_zone": "Add zone",
       "show_add": "Show the Add zone button",
       "next_feed": "Next fertilizing",
-      "feed_due": "Fertilize now"
+      "feed_due": "Fertilize now",
+      "other_area": "Other"
     },
     "tips": {
       "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
@@ -206,7 +207,8 @@ const I18N = {
       "add_zone": "Zone hinzufügen",
       "show_add": "Schaltfläche „Zone hinzufügen“ anzeigen",
       "next_feed": "Nächste Düngung",
-      "feed_due": "Jetzt düngen"
+      "feed_due": "Jetzt düngen",
+      "other_area": "Sonstige"
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -324,7 +326,8 @@ const I18N = {
       "add_zone": "Añadir zona",
       "show_add": "Mostrar el botón Añadir zona",
       "next_feed": "Próximo abonado",
-      "feed_due": "Abonar ya"
+      "feed_due": "Abonar ya",
+      "other_area": "Otras"
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -442,7 +445,8 @@ const I18N = {
       "add_zone": "Lisää vyöhyke",
       "show_add": "Näytä Lisää vyöhyke -painike",
       "next_feed": "Seuraava lannoitus",
-      "feed_due": "Lannoita nyt"
+      "feed_due": "Lannoita nyt",
+      "other_area": "Muut"
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -560,7 +564,8 @@ const I18N = {
       "add_zone": "Ajouter une zone",
       "show_add": "Afficher le bouton Ajouter une zone",
       "next_feed": "Prochain apport d'engrais",
-      "feed_due": "Engrais à apporter"
+      "feed_due": "Engrais à apporter",
+      "other_area": "Autres"
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -678,7 +683,8 @@ const I18N = {
       "add_zone": "Aggiungi zona",
       "show_add": "Mostra il pulsante Aggiungi zona",
       "next_feed": "Prossima concimazione",
-      "feed_due": "Concima ora"
+      "feed_due": "Concima ora",
+      "other_area": "Altre"
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -796,7 +802,8 @@ const I18N = {
       "add_zone": "Zone toevoegen",
       "show_add": "Knop Zone toevoegen tonen",
       "next_feed": "Volgende bemesting",
-      "feed_due": "Nu bemesten"
+      "feed_due": "Nu bemesten",
+      "other_area": "Overige"
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -914,7 +921,8 @@ const I18N = {
       "add_zone": "Dodaj strefę",
       "show_add": "Pokaż przycisk Dodaj strefę",
       "next_feed": "Następne nawożenie",
-      "feed_due": "Nawieź teraz"
+      "feed_due": "Nawieź teraz",
+      "other_area": "Inne"
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -1032,7 +1040,8 @@ const I18N = {
       "add_zone": "Adicionar zona",
       "show_add": "Mostrar o botão Adicionar zona",
       "next_feed": "Próxima adubação",
-      "feed_due": "Adubar agora"
+      "feed_due": "Adubar agora",
+      "other_area": "Outras"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1150,7 +1159,8 @@ const I18N = {
       "add_zone": "Lägg till zon",
       "show_add": "Visa knappen Lägg till zon",
       "next_feed": "Nästa gödsling",
-      "feed_due": "Gödsla nu"
+      "feed_due": "Gödsla nu",
+      "other_area": "Övriga"
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -1268,7 +1278,8 @@ const I18N = {
       "add_zone": "Přidat zónu",
       "show_add": "Zobrazit tlačítko Přidat zónu",
       "next_feed": "Další hnojení",
-      "feed_due": "Pohnojit teď"
+      "feed_due": "Pohnojit teď",
+      "other_area": "Ostatní"
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -1386,7 +1397,8 @@ const I18N = {
       "add_zone": "Tilføj zone",
       "show_add": "Vis knappen Tilføj zone",
       "next_feed": "Næste gødskning",
-      "feed_due": "Gød nu"
+      "feed_due": "Gød nu",
+      "other_area": "Øvrige"
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -1504,7 +1516,8 @@ const I18N = {
       "add_zone": "Zóna hozzáadása",
       "show_add": "A Zóna hozzáadása gomb megjelenítése",
       "next_feed": "Következő tápanyag-utánpótlás",
-      "feed_due": "Tápanyag most"
+      "feed_due": "Tápanyag most",
+      "other_area": "Egyéb"
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -1622,7 +1635,8 @@ const I18N = {
       "add_zone": "Legg til sone",
       "show_add": "Vis knappen Legg til sone",
       "next_feed": "Neste gjødsling",
-      "feed_due": "Gjødsle nå"
+      "feed_due": "Gjødsle nå",
+      "other_area": "Andre"
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -1740,7 +1754,8 @@ const I18N = {
       "add_zone": "Adicionar zona",
       "show_add": "Mostrar o botão Adicionar zona",
       "next_feed": "Próxima adubação",
-      "feed_due": "Adubar agora"
+      "feed_due": "Adubar agora",
+      "other_area": "Outras"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1858,7 +1873,8 @@ const I18N = {
       "add_zone": "Добавить зону",
       "show_add": "Показывать кнопку «Добавить зону»",
       "next_feed": "Следующая подкормка",
-      "feed_due": "Подкормить сейчас"
+      "feed_due": "Подкормить сейчас",
+      "other_area": "Прочее"
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -1976,7 +1992,8 @@ const I18N = {
       "add_zone": "Pridať zónu",
       "show_add": "Zobraziť tlačidlo Pridať zónu",
       "next_feed": "Ďalšie hnojenie",
-      "feed_due": "Pohnojiť teraz"
+      "feed_due": "Pohnojiť teraz",
+      "other_area": "Ostatné"
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -2094,7 +2111,8 @@ const I18N = {
       "add_zone": "Додати зону",
       "show_add": "Показувати кнопку «Додати зону»",
       "next_feed": "Наступне підживлення",
-      "feed_due": "Підживити зараз"
+      "feed_due": "Підживити зараз",
+      "other_area": "Інше"
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -2212,7 +2230,8 @@ const I18N = {
       "add_zone": "添加区域",
       "show_add": "显示“添加区域”按钮",
       "next_feed": "下次施肥",
-      "feed_due": "立即施肥"
+      "feed_due": "立即施肥",
+      "other_area": "其他"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -3062,6 +3081,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
         parent: status?.attributes?.greenhouse?.device_id || null,
+        area: status?.attributes?.garden_area || null,
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -3081,6 +3101,18 @@ class ZoneFlowOverviewCard extends HTMLElement {
       ordered.push(zone);
       ordered.push(...shown.filter((z) => z.parent === zone.device_id).map((z) => ({ ...z, crop: true })));
     }
+    // Garden areas: the zones under their area's heading (areas by name, the
+    // zones with no area last). Without any area nothing changes.
+    if (ordered.some((z) => z.area)) {
+      const groups = new Map();
+      for (const z of ordered) {
+        const key = z.area || "";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(z);
+      }
+      const names = [...groups.keys()].sort((a, b) => (a === "" ? 1 : b === "" ? -1 : a.localeCompare(b, hass.locale?.language)));
+      return names.flatMap((name) => groups.get(name).map((z, i) => ({ ...z, areaStart: i === 0, areaName: name })));
+    }
     return ordered;
   }
 
@@ -3088,7 +3120,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false]),
       this._config.device_ids || null,
       this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
@@ -3144,6 +3176,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .details { padding: 0 8px 8px; }
       .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
       .zone.crop { margin-left: 36px; }
+      .area-title { margin: 14px 12px 6px; font-size: 0.85em; font-weight: 500; letter-spacing: 0.04em;
+        text-transform: uppercase; color: var(--secondary-text-color); }
       ${this._config.embedded ? `
       ha-card { box-shadow: none; border: none; background: none; }
       .title { display: none; }` : ""}
@@ -3202,6 +3236,12 @@ class ZoneFlowOverviewCard extends HTMLElement {
     card.appendChild(head);
 
     for (const zone of zones) {
+      if (zone.areaStart) {
+        const heading = document.createElement("div");
+        heading.className = "area-title";
+        heading.textContent = zone.areaName || tr("other_area");
+        card.appendChild(heading);
+      }
       const wrap = document.createElement("div");
       wrap.className = zone.crop ? "zone crop" : "zone";
       const row = document.createElement("div");
@@ -3477,24 +3517,52 @@ function buildDashboard(hass) {
     cards: [{ type: "custom:zoneflow-overview-card" }],
   });
   const used = new Set(["overview"]);
-  const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
-  const ids = new Set(zones.map((z) => z.device_id));
-  for (const zone of zones) {
-    if (ids.has(parentOf(zone))) continue; // a crop: on its greenhouse's tab
-    let path = slug(zone.name);
-    for (let n = 2; used.has(path); n += 1) path = `${slug(zone.name)}-${n}`;
+  const unique = (name) => {
+    let path = slug(name);
+    for (let n = 2; used.has(path); n += 1) path = `${slug(name)}-${n}`;
     used.add(path);
+    return path;
+  };
+  const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
+  const areaOf = (zone) => hass.states?.[zone.status]?.attributes?.garden_area || null;
+  const ids = new Set(zones.map((z) => z.device_id));
+  const cardsFor = (zone) => {
+    // A greenhouse's crops have their own cards beside it: not listed again.
     const crops = zones.filter((z) => parentOf(z) === zone.device_id);
+    return [
+      { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },
+      ...crops.map((c) => ({ type: "custom:zoneflow-card", device_id: c.device_id })),
+    ];
+  };
+  const tops = zones.filter((z) => !ids.has(parentOf(z))); // not a crop
+  // Garden areas: one tab per area, its zones side by side.
+  const areas = new Map();
+  for (const zone of tops) {
+    const area = areaOf(zone);
+    if (!area) continue;
+    if (!areas.has(area)) areas.set(area, []);
+    areas.get(area).push(zone);
+  }
+  const areaNames = [...areas.keys()].sort((a, b) => a.localeCompare(b, hass.locale?.language || undefined));
+  for (const area of areaNames) {
+    const cards = areas.get(area).flatMap(cardsFor);
+    views.push({
+      title: area,
+      path: unique(area),
+      icon: "mdi:flower-outline",
+      ...(cards.length === 1 ? { type: "panel" } : {}),
+      cards,
+    });
+  }
+  for (const zone of tops) {
+    if (areaOf(zone)) continue; // on its area's tab
+    const cards = cardsFor(zone);
     views.push({
       title: zone.name,
-      path,
-      icon: crops.length ? "mdi:greenhouse" : zoneIcon(hass, zone),
-      ...(crops.length ? {} : { type: "panel" }),
-      cards: [
-        // The crops have their own cards on this tab: not listed again.
-        { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },
-        ...crops.map((c) => ({ type: "custom:zoneflow-card", device_id: c.device_id })),
-      ],
+      path: unique(zone.name),
+      icon: cards.length > 1 ? "mdi:greenhouse" : zoneIcon(hass, zone),
+      ...(cards.length > 1 ? {} : { type: "panel" }),
+      cards,
     });
   }
   return { title: "ZoneFlow", views };

@@ -261,6 +261,7 @@
           "flow_measure": "Flöde: mät med flödesmätaren",
           "greenhouse_devices": "Ventil, givare och klimatenheter",
           "watering": "Bevattningsinställningar",
+          "garden_area": "Trädgårdsområde (bakgård, framgård…)",
           "zone_type": "Zontyp",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Grödans ventil",
@@ -505,6 +506,16 @@
           "heads": "Räkna varje droppare som den här ventilen försörjer.",
           "head_flow": "Vad en droppare ger, från dess förpackning eller munstyckstabell.",
           "head_flow_unit": "Enheten flödet för en droppare anges i."
+        }
+      },
+      "garden_area": {
+        "title": "Trädgårdsområde",
+        "description": "Vilken del av trädgården zonen ligger i, till exempel Bakgård eller Framgård. Korten grupperar zonerna efter det. Välj ett namn som redan används eller skriv ett nytt; tomt betyder inget område. En gröda följer sitt växthus område.",
+        "data": {
+          "garden_area": "Trädgårdsområde"
+        },
+        "data_description": {
+          "garden_area": "Zoner med samma namn grupperas tillsammans."
         }
       }
     },

@@ -261,6 +261,7 @@
           "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen",
           "greenhouse_devices": "Ventil, Sensoren und Klimageräte",
           "watering": "Bewässerungseinstellungen",
+          "garden_area": "Gartenbereich (Hinterhof, Vorgarten …)",
           "zone_type": "Zonentyp",
           "weather_underground": "Weather Underground-Regen",
           "crop_valve": "Kulturventil",
@@ -505,6 +506,16 @@
           "heads": "Zählen Sie jeden Tropfer mit, den dieses Ventil versorgt.",
           "head_flow": "Was ein Tropfer liefert, laut Verpackung oder Düsentabelle.",
           "head_flow_unit": "Die Einheit, in der der Durchfluss eines Tropfers angegeben ist."
+        }
+      },
+      "garden_area": {
+        "title": "Gartenbereich",
+        "description": "In welchem Teil des Gartens diese Zone liegt, zum Beispiel Hinterhof oder Vorgarten. Die Karten gruppieren die Zonen danach. Wählen Sie einen schon verwendeten Namen oder tippen Sie einen neuen; leer bedeutet kein Bereich. Eine Kultur folgt dem Bereich ihres Gewächshauses.",
+        "data": {
+          "garden_area": "Gartenbereich"
+        },
+        "data_description": {
+          "garden_area": "Zonen mit demselben Namen werden zusammen gruppiert."
         }
       }
     },

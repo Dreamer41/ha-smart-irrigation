@@ -261,6 +261,7 @@
           "flow_measure": "流量：用水表测量",
           "greenhouse_devices": "阀门、传感器与环境设备",
           "watering": "浇水设置",
+          "garden_area": "花园地块（后院、前院…）",
           "zone_type": "分区类型",
           "weather_underground": "Weather Underground 降雨",
           "crop_valve": "作物阀门",
@@ -505,6 +506,16 @@
           "heads": "计算此阀门供水的所有灌水器。",
           "head_flow": "单个灌水器的出水量，得自其包装或喷头图表。",
           "head_flow_unit": "给出单个灌水器流量的单位。"
+        }
+      },
+      "garden_area": {
+        "title": "花园地块",
+        "description": "此区域位于花园的哪个地块，例如后院或前院。卡片会据此对区域分组。选择已使用的名称或输入新名称；留空表示不属于任何地块。作物跟随其温室所在的地块。",
+        "data": {
+          "garden_area": "花园地块"
+        },
+        "data_description": {
+          "garden_area": "名称相同的区域会分到一组。"
         }
       }
     },

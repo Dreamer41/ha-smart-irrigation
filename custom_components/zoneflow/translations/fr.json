@@ -261,6 +261,7 @@
           "flow_measure": "Débit : le mesurer avec le débitmètre",
           "greenhouse_devices": "Vanne, capteurs et appareils climatiques",
           "watering": "Paramètres d'arrosage",
+          "garden_area": "Partie du jardin (arrière-cour, jardin de devant…)",
           "zone_type": "Type de zone",
           "weather_underground": "Pluie Weather Underground",
           "crop_valve": "Vanne de la culture",
@@ -505,6 +506,16 @@
           "heads": "Comptez chaque goutteur alimenté par cette vanne.",
           "head_flow": "Ce que fournit un goutteur, d'après son emballage ou la charte des buses.",
           "head_flow_unit": "L'unité dans laquelle le débit d'un goutteur est donné."
+        }
+      },
+      "garden_area": {
+        "title": "Partie du jardin",
+        "description": "Dans quelle partie du jardin se trouve cette zone, par exemple Arrière-cour ou Jardin de devant. Les cartes regroupent les zones selon cela. Choisissez un nom déjà utilisé ou saisissez-en un nouveau ; vide signifie aucune partie. Une culture suit la partie de sa serre.",
+        "data": {
+          "garden_area": "Partie du jardin"
+        },
+        "data_description": {
+          "garden_area": "Les zones portant le même nom sont regroupées."
         }
       }
     },

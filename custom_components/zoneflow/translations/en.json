@@ -276,6 +276,7 @@
           "flow_measure": "Flow rate: measure it with the flow meter",
           "greenhouse_devices": "Valve, sensors and climate devices",
           "watering": "Watering settings",
+          "garden_area": "Garden area (backyard, front yard…)",
           "zone_type": "Zone type",
           "weather_underground": "Weather Underground rain",
           "crop_valve": "Crop valve",
@@ -520,6 +521,16 @@
           "heads": "Count every head this valve feeds.",
           "head_flow": "What one head gives, from its package or nozzle chart.",
           "head_flow_unit": "The unit the flow of one head is given in."
+        }
+      },
+      "garden_area": {
+        "title": "Garden area",
+        "description": "Which part of the garden this zone is in, for example Backyard or Front yard. The cards group the zones by it. Pick a name already in use or type a new one; leave it empty for no area. A crop follows its greenhouse's area.",
+        "data": {
+          "garden_area": "Garden area"
+        },
+        "data_description": {
+          "garden_area": "Zones with the same name are grouped together."
         }
       }
     },

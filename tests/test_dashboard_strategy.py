@@ -164,3 +164,92 @@ def test_a_greenhouse_tab_holds_its_crops(tmp_path):
         {"type": "custom:zoneflow-card", "device_id": "c2"},  # Peppers, then Tomatoes: by name
         {"type": "custom:zoneflow-card", "device_id": "c1"},
     ]
+
+
+def _with_area(states, name, area):
+    states[f"sensor.{name.lower().replace(' ', '_')}_status"]["attributes"]["garden_area"] = area
+
+
+def test_garden_areas_get_one_tab_each_and_the_rest_keep_their_own(tmp_path):
+    entities, states, devices = {}, {}, {}
+    for device, name, plant, area in (
+        ("d1", "Tomatoes", "tomatoes", "Backyard"),
+        ("d2", "Chilis", "chilis", "Backyard"),
+        ("d3", "Lawn", "lawn", "Front yard"),
+        ("d4", "Shed", "herbs", None),
+    ):
+        _zone(entities, states, device, name, plant)
+        _with_area(states, name, area)
+        devices[device] = {"name": name}
+    out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
+    views = out["views"]
+    assert [v["path"] for v in views] == ["overview", "backyard", "front-yard", "shed"]
+    assert views[1]["title"] == "Backyard" and views[1]["icon"] == "mdi:flower-outline"
+    assert views[1]["cards"] == [  # its zones side by side, by name
+        {"type": "custom:zoneflow-card", "device_id": "d2"},
+        {"type": "custom:zoneflow-card", "device_id": "d1"},
+    ]
+    assert "type" not in views[1]
+    assert views[2]["type"] == "panel"  # one zone: the whole width
+    assert views[3]["title"] == "Shed" and views[3]["cards"] == [{"type": "custom:zoneflow-card", "device_id": "d4"}]
+
+
+def test_a_greenhouse_and_its_crops_sit_on_their_areas_tab(tmp_path):
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "gh", "Tunnel", "custom", climate=True)
+    _zone(entities, states, "c1", "Tomatoes", "tomatoes", climate=True, hidden_climate=True)
+    _zone(entities, states, "o1", "Lawn", "lawn")
+    states["sensor.tomatoes_status"]["attributes"]["greenhouse"] = {"name": "Tunnel", "device_id": "gh"}
+    for name in ("Tunnel", "Tomatoes", "Lawn"):
+        _with_area(states, name, "Backyard")  # a crop reports its greenhouse's area
+    devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Tomatoes"}, "o1": {"name": "Lawn"}})
+    out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
+    assert [v["path"] for v in out["views"]] == ["overview", "backyard"]
+    assert out["views"][1]["cards"] == [
+        {"type": "custom:zoneflow-card", "device_id": "o1"},
+        {"type": "custom:zoneflow-card", "device_id": "gh", "show_crops": False},
+        {"type": "custom:zoneflow-card", "device_id": "c1"},
+    ]
+
+
+OVERVIEW_HARNESS = HARNESS.replace(
+    'const strategy = registry["ll-strategy-dashboard-zoneflow"];',
+    'const card = registry["zoneflow-overview-card"];',
+).replace(
+    'strategy.generate({ type: "custom:zoneflow" }, hass).then((out) => console.log(JSON.stringify(out)));',
+    'const zones = card.prototype._zones.call({ _hass: hass, _config: {} });\n'
+    'console.log(JSON.stringify(zones.map((z) => [z.name, z.areaName === undefined ? null : z.areaName, !!z.areaStart])));',
+)
+
+
+def test_the_overview_card_groups_zones_under_their_area(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    for device, name, area in (("d1", "Tomatoes", "Backyard"), ("d2", "Lawn", "Front yard"), ("d3", "Shed", None), ("d4", "Chilis", "Backyard")):
+        _zone(entities, states, device, name, "lawn")
+        _with_area(states, name, area)
+        devices[device] = {"name": name}
+    harness = tmp_path / "overview.js"
+    harness.write_text(OVERVIEW_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
+    assert json.loads(done.stdout) == [
+        ["Chilis", "Backyard", True], ["Tomatoes", "Backyard", False],
+        ["Lawn", "Front yard", True],
+        ["Shed", "", True],  # no area: last, under "Other"
+    ]
+
+
+def test_without_any_area_the_overview_is_as_before(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    for device, name in (("d1", "Tomatoes"), ("d2", "Lawn")):
+        _zone(entities, states, device, name, "lawn")
+        devices[device] = {"name": name}
+    harness = tmp_path / "overview.js"
+    harness.write_text(OVERVIEW_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
+    assert json.loads(done.stdout) == [["Lawn", None, False], ["Tomatoes", None, False]]

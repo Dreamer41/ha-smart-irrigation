@@ -261,6 +261,7 @@
           "flow_measure": "Portata: misurala con il flussometro",
           "greenhouse_devices": "Valvola, sensori e dispositivi climatici",
           "watering": "Impostazioni di irrigazione",
+          "garden_area": "Area del giardino (retro, davanti…)",
           "zone_type": "Tipo di zona",
           "weather_underground": "Pioggia Weather Underground",
           "crop_valve": "Valvola della coltura",
@@ -505,6 +506,16 @@
           "heads": "Conta ogni erogatore alimentato da questa valvola.",
           "head_flow": "Quanto eroga un erogatore, dalla confezione o dalla tabella degli ugelli.",
           "head_flow_unit": "L'unità in cui viene espresso il flusso di un erogatore."
+        }
+      },
+      "garden_area": {
+        "title": "Area del giardino",
+        "description": "In quale parte del giardino si trova questa zona, per esempio Retro o Davanti. Le schede raggruppano le zone in base a questo. Scegli un nome già in uso o scrivine uno nuovo; vuoto significa nessuna area. Una coltura segue l'area della sua serra.",
+        "data": {
+          "garden_area": "Area del giardino"
+        },
+        "data_description": {
+          "garden_area": "Le zone con lo stesso nome vengono raggruppate."
         }
       }
     },

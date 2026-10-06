@@ -81,6 +81,7 @@ from .const import (
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
+    CONF_GARDEN_AREA,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     CONF_ROUTINE_SUN_MODE,
@@ -381,6 +382,16 @@ class ZoneFlowController:
         if not entry_id or entry_id == self.entry.entry_id:  # a zone can't be a crop of itself
             return None
         return self.hass.config_entries.async_get_entry(entry_id)
+
+    @property
+    def garden_area(self) -> str | None:
+        """The garden area this zone is shown under (a name of the person's
+        own), or None. A crop is in its greenhouse's area."""
+        parent = self.parent_entry
+        entry = parent if parent is not None else self.entry
+        value = entry.options.get(CONF_GARDEN_AREA, entry.data.get(CONF_GARDEN_AREA))
+        value = " ".join(str(value).split()) if value else ""
+        return value or None
 
     @property
     def is_crop(self) -> bool:

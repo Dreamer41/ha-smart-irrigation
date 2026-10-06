@@ -261,6 +261,7 @@
           "flow_measure": "Flow: mål det med flowmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheder",
           "watering": "Vandingsindstillinger",
+          "garden_area": "Haveområde (baghave, forhave…)",
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Afgrøde-ventil",
@@ -505,6 +506,16 @@
           "heads": "Tæl hver drypper, som denne ventil forsyner.",
           "head_flow": "Hvad én drypper giver, fra emballagen eller dysetabellen.",
           "head_flow_unit": "Enheden, som flowet for én drypper er opgivet i."
+        }
+      },
+      "garden_area": {
+        "title": "Haveområde",
+        "description": "Hvilken del af haven zonen er i, for eksempel Baghave eller Forhave. Kortene grupperer zonerne efter det. Vælg et navn, der allerede bruges, eller skriv et nyt; tomt betyder intet område. En afgrøde følger sit drivhus' område.",
+        "data": {
+          "garden_area": "Haveområde"
+        },
+        "data_description": {
+          "garden_area": "Zoner med samme navn grupperes sammen."
         }
       }
     },

@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [Unreleased]
+
+- **New**: **garden areas**. Each zone can be put in a part of the garden of your own naming (**Configure → Garden area**, for example *Backyard* or *Front yard*; pick one already in use or type a new one). The overview card groups the zones under their area's heading (zones with no area under *Other*), and the auto-generated dashboard (`strategy: custom:zoneflow`) gets one tab per area with its zones side by side. A crop follows its greenhouse's area. Nothing changes for zones that have no area
+
 ## [1.6.5] — Water use in litres and rain from weather stations
 
 - **New**: **rain from weather stations**. A new setting, **Rain gauge sensor type** (Configure → Zone settings), tells ZoneFlow what the rain sensor reports: a **tip counter** (as before), a **rain total** in mm or inches (lifetime, daily or weekly, as from Ecowitt, Ambient Weather or Davis), a **rain rate** in mm/h, which is added up over time, or **rain per reading** (the amount since the previous update, as the Tempest *Precipitation* sensor reports it). Only the increase of a total counts, so a reset at midnight is not rain, and the tip size setting is hidden for totals and rates. Changing the sensor or the type starts the rain history again. New guide: [docs/RAIN-GAUGES.md](docs/RAIN-GAUGES.md)
