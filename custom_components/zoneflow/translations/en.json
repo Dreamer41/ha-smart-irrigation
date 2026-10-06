@@ -269,6 +269,7 @@
         "menu_options": {
           "settings": "Zone settings (entities, soil, schedule…)",
           "flow_rate": "Flow rate: work it out from the emitters",
+          "flow_volume": "Flow rate: measure it by the litres a service run gives",
           "flow_measure": "Flow rate: measure it with the flow meter",
           "greenhouse_devices": "Valve, sensors and climate devices",
           "watering": "Watering settings",
@@ -332,7 +333,7 @@
       },
       "flow_rate": {
         "title": "Emitter flow rate",
-        "description": "How much water the zone's emitters put on the area they wet. 1 litre on 1 m² is 1 mm. For drippers at single plants, use the area around them that actually gets wet. The result replaces the zone's Emitter Flow Rate Calibration.",
+        "description": "How much water the zone's emitters put on the area they wet. 1 litre on 1 m² is 1 mm. This assumes every emitter on the zone's valve gives the same flow. For drippers at single plants, use the area around them that actually gets wet. The result replaces the zone's Emitter Flow Rate Calibration. With mixed emitters, measure instead (\"Flow rate: measure it by the litres a service run gives\").",
         "data": {
           "emitters": "Number of emitters (drippers, sprayers) in the zone",
           "emitter_flow": "Flow of one emitter",
@@ -486,6 +487,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
+        }
+      },
+      "flow_volume": {
+        "title": "Measure the flow rate by volume",
+        "description": "Press one of the zone's Service Run buttons (a longer run, such as 15 min, is more accurate) and catch or read the water: a bucket or barrel at the emitters, or the difference on a water meter. Then enter the minutes the valve was open, the litres, and the area the emitters wet. \n\nThe result is the zone's AVERAGE: litres divided by area and minutes, and it replaces the zone's Emitter Flow Rate Calibration. ZoneFlow has one rate per zone, so it cannot tell emitters apart. For a precise result, every emitter on a zone's valve should be the same type and flow; put different emitters on separate valves (separate zones). On a mixed zone the plants on the weaker emitters get less than the average shown.",
+        "data": {
+          "minutes": "Minutes the valve was open",
+          "volume": "Water that came out",
+          "area": "Area the emitters water"
+        },
+        "data_description": {
+          "minutes": "The Service Run's length, as pressed (1, 5, 10 or 15 min).",
+          "volume": "All the water the zone's emitters gave during the run (litres, or gallons in US units).",
+          "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
       }
     },

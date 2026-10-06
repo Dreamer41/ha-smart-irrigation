@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.6.4] — Rain gauge fix, measure flow by volume
+
+- **Fixed**: **rain amounts that were too high** on zones with a rain gauge. The rain windows keep cumulative millimetres (tips × mm per tip), so a calibration that differed from the one the samples were recorded with — the *Rain Gauge mm per Tip* slider moved, or a restart that read the default before the saved value was restored — added (all tips so far) × (the difference) on the next tip: about 4 mm of rain that never fell with 436 tips and 0.309 vs 0.300. The stored samples are now rescaled to the calibration in use. A wrong amount already recorded fades out of the 14-day window by itself
+- **New**: **Configure → Flow rate: measure it by the litres a service run gave** — for zones without a flow meter. Press a Service Run button (15 min is the most accurate), catch or read the water (bucket, barrel, water meter), and enter the minutes, litres and wet area; ZoneFlow sets the Emitter Flow Rate Calibration. The result is the zone's **average**: ZoneFlow has one rate per zone, so for a precise result every emitter on a zone's valve should be the same type and flow. Put different emitters on separate valves (zones); the plants on the weaker emitters of a mixed zone get less than the average shown. The emitter-count option now says it assumes equal emitters
+- **Fixed**: deleting the Weather Underground entry now switches "use Weather Underground" off in the zones that used it, so manual rain is offered again (before, those zones kept hiding it and rain read 0)
+- **Changed**: the integration's `iot_class` is now `cloud_polling`, since Weather Underground calls a cloud service (optional)
+
 ## [1.6.3] — 15-minute service run
 
 - **New**: a **Service Run 15 min** button next to the 1, 5 and 10 minute ones, for a longer flow-calibration test. Like the others it is never counted as watering and respects the daily safety cap

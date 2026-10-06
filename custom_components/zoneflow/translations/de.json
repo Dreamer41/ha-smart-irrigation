@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Zoneneinstellungen (Entitäten, Boden, Zeitplan …)",
           "flow_rate": "Durchflussrate: aus den Tropfern berechnen",
+          "flow_volume": "Durchflussrate: Gemessen an den Litern eines Wartungslaufs",
           "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen",
           "greenhouse_devices": "Ventil, Sensoren und Klimageräte",
           "watering": "Bewässerungseinstellungen",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Durchflussrate der Tropfer",
-        "description": "Wie viel Wasser die Tropfer der Zone auf die Fläche bringen, die sie benetzen. 1 Liter auf 1 m² sind 1 mm. Bei Tropfern an Einzelpflanzen nimm die Fläche um sie herum, die wirklich nass wird. Das Ergebnis ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone.",
+        "description": "Wie viel Wasser die Tropfer/Sprüher der Zone auf die gewässerte Fläche abgeben. 1 Liter auf 1 m² entspricht 1 mm. Dies setzt voraus, dass jeder Tropfer/Sprüher am Ventil der Zone denselben Durchfluss liefert. Verwenden Sie bei Tropfern an Einzelpflanzen die Fläche um sie herum, die tatsächlich nass wird. Das Ergebnis ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone. Bei gemischten Tropfern/Sprühern messen Sie stattdessen („Durchflussrate: Gemessen an den Litern eines Wartungslaufs“).",
         "data": {
           "emitters": "Anzahl Tropfer bzw. Sprüher in der Zone",
           "emitter_flow": "Durchfluss eines Tropfers",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Das Gewächshaus oder die Innenzone mit den Klimageräten, oder „-“ für keine."
+        }
+      },
+      "flow_volume": {
+        "title": "Durchflussrate nach Volumen messen",
+        "description": "Drücken Sie eine der Wartungslauf-Tasten der Zone (ein längerer Lauf, z. B. 15 Min., ist genauer) und fangen Sie das Wasser auf oder lesen Sie es ab: ein Eimer oder Fass an den Tropfern/Sprühern oder die Differenz an einem Wasserzähler. Geben Sie dann die Minuten ein, die das Ventil geöffnet war, die Liter und die gewässerte Fläche.\n\nDas Ergebnis ist der DURCHSCHNITT der Zone: Liter geteilt durch Fläche und Minuten. Es ersetzt die Tropfer-Durchflussrate (Kalibrierung) der Zone. ZoneFlow verwendet eine Rate pro Zone und kann Tropfer/Sprüher nicht unterscheiden. Für ein genaues Ergebnis sollte jeder Tropfer/Sprüher an einem Zonenventil vom gleichen Typ und Durchfluss sein; setzen Sie unterschiedliche Tropfer/Sprüher auf separate Ventile (separate Zonen). In einer gemischten Zone erhalten die Pflanzen an den schwächeren Tropfern/Sprühern weniger als den angezeigten Durchschnitt.",
+        "data": {
+          "minutes": "Minuten, die das Ventil geöffnet war",
+          "volume": "Ausgetretenes Wasser",
+          "area": "Von den Tropfern/Sprühern bewässerte Fläche"
+        },
+        "data_description": {
+          "minutes": "Die Dauer des Wartungslaufs wie gedrückt (1, 5, 10 oder 15 Min.).",
+          "volume": "Das gesamte Wasser, das die Tropfer/Sprüher der Zone während des Laufs abgegeben haben (Liter oder Gallonen in US-Einheiten).",
+          "area": "Die Fläche, die tatsächlich nass wird. Addieren Sie bei Tropfern an Einzelpflanzen die nassen Stellen um sie herum, nicht das gesamte Beet."
         }
       }
     },

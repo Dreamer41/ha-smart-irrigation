@@ -117,6 +117,26 @@ async def test_flow_rate_from_the_emitters(hass, fake_valve_services, tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_flow_rate_from_the_litres_a_service_run_gave(hass, fake_valve_services, tmp_path):
+    entry, controller = await _zone(hass, tmp_path)
+    result = await _options(hass, entry, "flow_volume")
+    assert result["step_id"] == "flow_volume"
+    # 15 min, 36 L caught, 10 m2: 36 / 10 / 15 = 0.24 mm/min (the zone average)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {"minutes": 15, "volume": 36.0, "area": 10.0}
+    )
+    assert result["type"] == FlowResultType.ABORT and result["reason"] == "flow_rate_set"
+    assert controller.number("flow_rate_mm_per_min") == pytest.approx(0.24, abs=0.001)
+
+    result = await _options(hass, entry, "flow_volume")
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {"minutes": 1, "volume": 5000.0, "area": 0.1}
+    )
+    assert result["reason"] == "flow_rate_out_of_range"
+    assert controller.number("flow_rate_mm_per_min") == pytest.approx(0.24, abs=0.001)
+
+
+@pytest.mark.asyncio
 async def test_flow_rate_from_the_emitters_imperial(hass, fake_valve_services, tmp_path):
     hass.config.units = US_CUSTOMARY_SYSTEM
     entry, controller = await _zone(hass, tmp_path)

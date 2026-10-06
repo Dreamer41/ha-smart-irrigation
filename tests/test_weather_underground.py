@@ -294,6 +294,17 @@ async def test_unloading_the_wu_entry_leaves_the_zone_without_wu_rain(hass, fake
     assert zone.today_rain_mm() == 0.0
 
 
+@pytest.mark.asyncio
+async def test_deleting_the_wu_entry_gives_the_zone_manual_rain_back(hass, fake_valve_services, fake_wu):
+    zone, _source, wu_entry = await _setup_all(hass)
+    assert zone.uses_wu and not zone.manual_rain_available
+    await hass.config_entries.async_remove(wu_entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][zone.entry.entry_id]  # reloaded by the option change
+    assert not zone.uses_wu and zone.manual_rain_available
+    assert not zone.entry.options.get(CONF_USE_WU)
+
+
 @pytest.mark.parametrize(
     "payload",
     [

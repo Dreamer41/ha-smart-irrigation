@@ -254,6 +254,7 @@
         "menu_options": {
           "settings": "Soneinnstillinger (entiteter, jord, tidsplan…)",
           "flow_rate": "Vannmengde: regn den ut fra utløpene",
+          "flow_volume": "Vannmengde: mål den ut fra litrene en servicekjøring gir",
           "flow_measure": "Vannmengde: mål den med vannmåleren",
           "greenhouse_devices": "Ventil, sensorer og klimaenheter",
           "watering": "Vanningsinnstillinger",
@@ -317,7 +318,7 @@
       },
       "flow_rate": {
         "title": "Vannmengde fra utløp",
-        "description": "Hvor mye vann sonens utløp gir på arealet de fukter. 1 liter på 1 m² er 1 mm. For dryppere ved enkeltplanter bruker du arealet rundt dem som faktisk blir vått. Resultatet erstatter sonens Kalibrering av vannmengde.",
+        "description": "Hvor mye vann sonens spredere/dryppere tilfører området de væter. 1 liter på 1 m² er 1 mm. Dette forutsetter at alle spredere/dryppere på sonens ventil gir samme gjennomstrømning. For dryppere ved enkelte planter brukes området rundt dem som faktisk blir vått. Resultatet erstatter sonens Kalibrering av vannmengde. Med blandede spredere/dryppere bør du måle i stedet («Vannmengde: mål den ut fra litrene en servicekjøring gir»).",
         "data": {
           "emitters": "Antall utløp (dryppere, spredere) i sonen",
           "emitter_flow": "Vannmengde per utløp",
@@ -471,6 +472,20 @@
         },
         "data_description": {
           "greenhouse_entry_id": "Drivhuset eller innendørssonen med klimaerhetene, eller «-» for ingen."
+        }
+      },
+      "flow_volume": {
+        "title": "Mål gjennomstrømningen etter volum",
+        "description": "Trykk på en av sonens Servicekjøring-knapper (en lengre kjøring, som 15 min, er mer nøyaktig) og samle opp eller les av vannet: en bøtte eller tønne ved sprederne/drypperne, eller differansen på en vannmåler. Angi deretter minuttene ventilen var åpen, litrene og arealet sprederne/drypperne væter.\n\nResultatet er sonens GJENNOMSNITT: liter delt på areal og minutter, og det erstatter sonens Kalibrering av vannmengde. ZoneFlow har én verdi per sone, så den kan ikke skille mellom ulike spredere/dryppere. For et nøyaktig resultat bør alle spredere/dryppere på en zones ventil være av samme type og ytelse; plasser ulike spredere/dryppere på separate ventiler (separate soner). I en blandet sone får plantene ved de svakere sprederne/drypperne mindre enn det viste gjennomsnittet.",
+        "data": {
+          "minutes": "Minutter ventilen var åpen",
+          "volume": "Vann som kom ut",
+          "area": "Areal sprederne/drypperne vanner"
+        },
+        "data_description": {
+          "minutes": "Servicekjøringens varighet, som valgt (1, 5, 10 eller 15 min).",
+          "volume": "Alt vannet sonens spredere/dryppere ga under kjøringen (liter, eller gallons i US-enheter).",
+          "area": "Arealet som faktisk blir vått. For dryppere ved enkelte planter legger du sammen de våte flekkene rundt dem, ikke hele bedet."
         }
       }
     },
