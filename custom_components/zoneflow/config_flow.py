@@ -60,6 +60,9 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_RAIN_COUNTER_ENTITY,
+    CONF_RAIN_SOURCE,
+    RAIN_SOURCE_OPTIONS,
+    RAIN_SOURCE_TIPS,
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
@@ -155,6 +158,9 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             # independent-pump setups never need this).
             vol.Optional(CONF_PUMP_ID, default=defaults.get(CONF_PUMP_ID, "")): str,
             rain_counter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=["counter", "sensor"])),
+            vol.Optional(CONF_RAIN_SOURCE, default=defaults.get(CONF_RAIN_SOURCE) or RAIN_SOURCE_TIPS): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=RAIN_SOURCE_OPTIONS, translation_key="rain_source")
+            ),
             outdoor_temp_key: selector.EntitySelector(
                 selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
@@ -271,6 +277,7 @@ def _duplicate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | Non
 _WATERING_LEAVES_OUT = {
     CONF_VALVE_ENTITY,
     CONF_RAIN_COUNTER_ENTITY,
+    CONF_RAIN_SOURCE,
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_WEATHER_ENTITY,
     CONF_NOTIFY_ENTITY,

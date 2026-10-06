@@ -81,6 +81,7 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_RAIN_COUNTER_ENTITY,
+    CONF_RAIN_SOURCE,
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
@@ -145,6 +146,12 @@ from .const import (
     DEFAULT_SUN_OFFSET_MINUTES,
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
+    RAIN_RATE_MAX_GAP_SECONDS,
+    RAIN_SOURCE_OPTIONS,
+    RAIN_SOURCE_RATE,
+    RAIN_SOURCE_TIPS,
+    RAIN_SOURCE_TOTAL,
+    RAIN_UNIT_TO_MM,
 )
 from .rain_tracker import MANUAL_RAIN_MAX_AGE_MINUTES, RAIN_WINDOWS_MINUTES, SHORT_RAIN_WINDOWS
 from .state_store import IrrigationStateStore
@@ -477,6 +484,40 @@ class ZoneFlowController:
         return self.entry.options.get(CONF_RAIN_COUNTER_ENTITY, self.entry.data.get(CONF_RAIN_COUNTER_ENTITY))
 
     @property
+    def rain_source_type(self) -> str:
+        """What the rain gauge sensor reports: tips (a counter, the default),
+        total_mm (a running total in mm) or rate_mm_h."""
+        value = self.entry.options.get(CONF_RAIN_SOURCE, self.entry.data.get(CONF_RAIN_SOURCE))
+        return value if value in RAIN_SOURCE_OPTIONS else RAIN_SOURCE_TIPS
+
+    def _rain_unit_factor(self, new_state: State) -> float:
+        """A total or rate in inches (or cm) as mm."""
+        unit = str(new_state.attributes.get("unit_of_measurement") or "").strip().lower()
+        return RAIN_UNIT_TO_MM.get(unit, 1.0)
+
+    def _rain_mm_factor(self) -> float:
+        """mm per unit of the stored rain total: the tip size for a tip
+        counter, 1 for a total or rate that is already in mm."""
+        if self.rain_source_type == RAIN_SOURCE_TIPS:
+            return self.number("rain_mm_per_tip")
+        return 1.0
+
+    def _reset_rain_if_source_changed(self) -> None:
+        """The stored rain history is in the units of one sensor and type;
+        when either changes it would read as a jump, so it starts again."""
+        state = self.store.state
+        signature = f"{self.rain_source_type}|{self.rain_counter_entity or ''}"
+        if state.rain_source_signature is not None and state.rain_source_signature != signature:
+            state.rain_counter_total_tips = state.rain_counter_last_tips = None
+            state.rain_counter_drop_from = state.rain_counter_drop_ts = None
+            state.rain_counter_since_drop_tips = 0.0
+            state.rain_samples = []
+            state.rain_midnight_baseline_mm = 0.0
+            state.rain_samples_mm_per_tip = None
+            state.rain_rate_last_mm_h = state.rain_rate_last_ts = None
+        state.rain_source_signature = signature
+
+    @property
     def uses_wu(self) -> bool:
         """Weather Underground rain (1.6.1): only for an outdoor zone without
         a rain gauge that opted in. A gauge always wins."""
@@ -739,6 +780,7 @@ class ZoneFlowController:
         # entirely when no rain gauge is configured -- the tracker simply
         # stays empty, and rain_windows()/today_rain_mm() already return
         # 0.0 for an empty tracker (the correct "assume no rain" fallback).
+        self._reset_rain_if_source_changed()
         if self.rain_counter_entity:
             counter_state = self.hass.states.get(self.rain_counter_entity)
             if counter_state is not None:
@@ -941,8 +983,31 @@ class ZoneFlowController:
             tips = float(new_state.state)
         except (TypeError, ValueError):
             return
-        # The rain windows assume an ever-growing total; see
-        # calc.track_tip_total for how resets and glitches are told apart.
+        if not math.isfinite(tips):
+            return
+        source = self.rain_source_type
+        if source != RAIN_SOURCE_TIPS:
+            tips *= self._rain_unit_factor(new_state)  # inches -> mm
+        now_ts = dt_util.utcnow().timestamp()
+        if source == RAIN_SOURCE_RATE:
+            # A rain rate (mm/h): add up rate x time since the last reading.
+            rate = max(tips, 0.0)
+            total = state.rain_counter_total_tips or 0.0
+            if not seed_only and state.rain_rate_last_ts is not None and state.rain_rate_last_mm_h:
+                gap = min(max(now_ts - state.rain_rate_last_ts, 0.0), RAIN_RATE_MAX_GAP_SECONDS)
+                total += state.rain_rate_last_mm_h * gap / 3600
+            state.rain_counter_total_tips = total
+            state.rain_counter_last_tips = rate
+            state.rain_rate_last_mm_h = rate
+            state.rain_rate_last_ts = now_ts
+        else:
+            # The rain windows assume an ever-growing total; see
+            # calc.track_tip_total for how resets and glitches are told apart.
+            self._track_rain_total(tips, now_ts)
+        self._record_rain_sample(seed_only)
+
+    def _track_rain_total(self, tips: float, now_ts: float) -> None:
+        state = self.store.state
         (
             state.rain_counter_total_tips,
             state.rain_counter_last_tips,
@@ -956,10 +1021,13 @@ class ZoneFlowController:
             state.rain_counter_drop_ts,
             state.rain_counter_since_drop_tips,
             tips,
-            dt_util.utcnow().timestamp(),
+            now_ts,
         )
+
+    def _record_rain_sample(self, seed_only: bool) -> None:
+        state = self.store.state
         self._align_rain_calibration()
-        cumulative_mm = state.rain_counter_total_tips * self.number("rain_mm_per_tip")
+        cumulative_mm = (state.rain_counter_total_tips or 0.0) * self._rain_mm_factor()
         tracker = state.rain_tracker()
         if not seed_only:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
@@ -978,7 +1046,7 @@ class ZoneFlowController:
         show up as rain that never fell. Rescale what is stored to the
         calibration now in use, so only real tips make rain."""
         state = self.store.state
-        mm_per_tip = self.number("rain_mm_per_tip")
+        mm_per_tip = self._rain_mm_factor()
         old = state.rain_samples_mm_per_tip
         if old is None or old <= 0 or mm_per_tip <= 0:
             state.rain_samples_mm_per_tip = mm_per_tip if mm_per_tip > 0 else old

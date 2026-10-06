@@ -154,6 +154,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden.add(("number", "rain_mm_per_tip"))
     elif not controller.rain_counter_entity:
         hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
+    elif controller.rain_source_type != "tips":
+        hidden.add(("number", "rain_mm_per_tip"))  # a total or rate is already in mm
     if not controller.manual_rain_available:
         hidden |= MANUAL_RAIN
     if not controller.pump_power_entity:

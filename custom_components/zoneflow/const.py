@@ -58,6 +58,23 @@ CONF_USE_WU = "use_weather_underground"
 WU_DATA_KEY = "zoneflow_weather_underground"
 REPAIR_WU_NO_DATA_SECONDS = 6 * 3600
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
+# What that sensor reports (1.6.5): a tip counter (the default, as always), a
+# running rain total in mm (lifetime, or one that starts again every day or
+# week -- Ecowitt, Ambient Weather, Tempest, ...), or a rain rate in mm/h.
+CONF_RAIN_SOURCE = "rain_source_type"
+RAIN_SOURCE_TIPS = "tips"
+RAIN_SOURCE_TOTAL = "total_mm"
+RAIN_SOURCE_RATE = "rate_mm_h"
+RAIN_SOURCE_OPTIONS = [RAIN_SOURCE_TIPS, RAIN_SOURCE_TOTAL, RAIN_SOURCE_RATE]
+# Rain units a station may report, as mm (or mm/h for a rate).
+RAIN_UNIT_TO_MM = {
+    "mm": 1.0, "mm/h": 1.0, "mm/hr": 1.0, "l/m²": 1.0, "l/m2": 1.0,
+    "cm": 10.0, "cm/h": 10.0,
+    "in": 25.4, "in/h": 25.4, "in/hr": 25.4, "inch": 25.4, "inches": 25.4,
+}
+# A rain-rate reading counts at most this long until the next one (a sensor
+# that stopped updating must not keep adding rain).
+RAIN_RATE_MAX_GAP_SECONDS = 900
 CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
 CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter
 # Optional -- a % soil-moisture sensor. When configured AND currently
