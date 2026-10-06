@@ -51,6 +51,10 @@ class IrrigationState:
     rain_counter_drop_from: float | None = None
     rain_counter_drop_ts: float | None = None
     rain_counter_since_drop_tips: float = 0.0
+    # The mm-per-tip the stored rain samples (and today's baseline) were
+    # recorded with; they are rescaled when the calibration changes
+    # (controller._align_rain_calibration).
+    rain_samples_mm_per_tip: float | None = None
 
     # Mutex / safety
     lock_on: bool = False

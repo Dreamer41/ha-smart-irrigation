@@ -14,6 +14,13 @@ Ideas queued for upcoming releases.
 
 ## Shipped
 
+### 1.6.4 — rain gauge fix, measure flow by volume
+
+- Rain from a gauge no longer jumps when the mm-per-tip calibration differs
+  from the one the stored samples were recorded with.
+- Configure → Flow rate: measure it by the litres a service run gave.
+- Deleting the Weather Underground entry gives manual rain back.
+
 ### 1.6.3 — 15-minute service run
 
 - A Service Run 15 min button for longer flow-calibration tests.
