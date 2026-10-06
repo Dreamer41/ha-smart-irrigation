@@ -79,3 +79,42 @@ async def test_rain_today_starts_at_zero_on_a_gauge_that_already_has_a_count(has
     assert controller.today_rain_mm() == 0.0
     await _tip(hass, 437)
     assert controller.today_rain_mm() == pytest.approx(0.2997, abs=0.01)
+
+
+@pytest.mark.asyncio
+async def test_no_setting_change_makes_phantom_rain_or_changes_the_history(hass, tmp_path):
+    """Move every numeric setting to its minimum and its maximum, with a tip
+    after each: the rain only ever grows by that tip, and the rain already
+    recorded does not change (except by the tip size itself, which rescales
+    the whole record, as a corrected calibration should)."""
+    from custom_components.zoneflow.const import NUMBER_DEFS
+
+    entry, controller = await _zone(hass, tmp_path)
+    tips = 436
+    await _tip(hass, tips + 1)
+    tips += 1
+    mm_per_tip = controller.number("rain_mm_per_tip")
+    expected_total = mm_per_tip  # one real tip so far
+    assert controller.rain_windows()["24h"] == pytest.approx(expected_total, abs=0.01)
+    failures = []
+    exercised = 0
+    for key, (_name, low, high, _step, _unit) in NUMBER_DEFS.items():
+        entity = controller.numbers.get(key)
+        if entity is None:
+            continue
+        exercised += 1
+        for value in (high, low):
+            before_ratio = 1.0
+            if key == "rain_mm_per_tip":
+                before_ratio = value / controller.number("rain_mm_per_tip")
+            await entity.async_set_metric_value(value)
+            expected_total *= before_ratio
+            await _tip(hass, tips + 1)
+            tips += 1
+            expected_total += controller.number("rain_mm_per_tip")
+            got = controller.rain_windows()["24h"]
+            if abs(got - expected_total) > 0.02:
+                failures.append((key, value, round(got, 3), round(expected_total, 3)))
+                expected_total = got  # carry on from what it shows
+    assert exercised > 30
+    assert not failures, failures
