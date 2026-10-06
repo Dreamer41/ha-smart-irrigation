@@ -1059,6 +1059,9 @@ class ZoneFlowController:
         elif not tracker.samples:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
             state.save_rain_tracker(tracker)
+            # Rain tracking starts here (a new zone, or a changed sensor): what
+            # the sensor already held is no rain of today.
+            state.rain_midnight_baseline_mm = cumulative_mm
 
     def _align_rain_calibration(self) -> None:
         """The rain samples hold cumulative mm (tips x mm per tip). If the

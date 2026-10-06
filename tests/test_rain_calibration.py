@@ -59,3 +59,23 @@ async def test_a_default_read_at_startup_then_the_saved_value_makes_no_phantom_r
     controller.store.state.save_rain_tracker(tracker)
     await _tip(hass, 439)
     assert controller.rain_windows()["24h"] == pytest.approx(0.309 * 3, abs=0.01)
+
+
+@pytest.mark.asyncio
+async def test_rain_today_starts_at_zero_on_a_gauge_that_already_has_a_count(hass, tmp_path):
+    """A zone set up on (or switched to) a sensor that already holds 436 tips
+    must not call that history rain of today."""
+    from .test_manual_rain import _setup
+
+    hass.states.async_set(RAIN_COUNTER, "436")
+    entry, controller = await _setup(hass, csv_path=str(tmp_path / "f.csv"))
+    # _setup writes 0 first; start the way a fresh zone does: no samples yet.
+    state = controller.store.state
+    state.rain_samples = []
+    state.rain_counter_total_tips = state.rain_counter_last_tips = None
+    state.rain_midnight_baseline_mm = 0.0
+    hass.states.async_set(RAIN_COUNTER, "436")
+    controller._sync_rain_from_counter_state(hass.states.get(RAIN_COUNTER), seed_only=True)
+    assert controller.today_rain_mm() == 0.0
+    await _tip(hass, 437)
+    assert controller.today_rain_mm() == pytest.approx(0.2997, abs=0.01)
