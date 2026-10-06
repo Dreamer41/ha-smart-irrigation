@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Gezondheidsnotities"
+      },
+      "garden_area": {
+        "name": "Tuingedeelte"
       }
     }
   },

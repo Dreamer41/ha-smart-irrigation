@@ -29,7 +29,7 @@ async def test_setting_an_area_names_it_and_blank_clears_it(hass, fake_valve_ser
     assert hass.data[DOMAIN][entry.entry_id].garden_area == "Back yard"
     await _set_area(hass, entry, "")
     assert hass.data[DOMAIN][entry.entry_id].garden_area is None
-    assert CONF_GARDEN_AREA not in entry.options
+    assert CONF_GARDEN_AREA not in entry.options  # kept with the zone, not in its setup
 
 
 @pytest.mark.asyncio
@@ -60,3 +60,27 @@ async def test_the_status_sensor_tells_the_cards_the_area(hass, fake_valve_servi
     )
     await async_update_entity(hass, status)
     assert hass.states.get(status).attributes["garden_area"] == "Front yard"
+
+
+@pytest.mark.asyncio
+async def test_the_zones_garden_area_field_sets_it_without_a_reload(hass, fake_valve_services, tmp_path):
+    from homeassistant.helpers import entity_registry as er
+
+    entry, controller = await _zone(hass, tmp_path)
+    registry = er.async_get(hass)
+    field = next(
+        e.entity_id for e in er.async_entries_for_config_entry(registry, entry.entry_id)
+        if e.domain == "text" and e.translation_key == "garden_area"
+    )
+    assert hass.states.get(field).state == ""
+    await hass.services.async_call("text", "set_value", {"entity_id": field, "value": "  Front   yard"}, blocking=True)
+    await hass.async_block_till_done()
+    assert hass.data[DOMAIN][entry.entry_id] is controller  # not reloaded
+    assert controller.garden_area == "Front yard" and hass.states.get(field).state == "Front yard"
+    # Saved with the zone's state, so it survives a reload.
+    assert controller.store.state.garden_area == "Front yard"
+    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.data[DOMAIN][entry.entry_id].garden_area == "Front yard"
+    await hass.services.async_call("text", "set_value", {"entity_id": field, "value": ""}, blocking=True)
+    assert hass.data[DOMAIN][entry.entry_id].garden_area is None

@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Kuntomuistiinpanot"
+      },
+      "garden_area": {
+        "name": "Puutarhan alue"
       }
     }
   },

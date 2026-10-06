@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Helsenotater"
+      },
+      "garden_area": {
+        "name": "Hageområde"
       }
     }
   },

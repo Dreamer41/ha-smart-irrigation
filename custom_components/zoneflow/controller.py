@@ -82,6 +82,7 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_GARDEN_AREA,
+    GARDEN_AREA_MAX_LENGTH,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     CONF_ROUTINE_SUN_MODE,
@@ -383,15 +384,46 @@ class ZoneFlowController:
             return None
         return self.hass.config_entries.async_get_entry(entry_id)
 
+    @staticmethod
+    def _clean_area(value: Any) -> str:
+        return " ".join(str(value).split())[:GARDEN_AREA_MAX_LENGTH] if value else ""
+
     @property
     def garden_area(self) -> str | None:
         """The garden area this zone is shown under (a name of the person's
         own), or None. A crop is in its greenhouse's area."""
         parent = self.parent_entry
-        entry = parent if parent is not None else self.entry
-        value = entry.options.get(CONF_GARDEN_AREA, entry.data.get(CONF_GARDEN_AREA))
-        value = " ".join(str(value).split()) if value else ""
-        return value or None
+        if parent is not None:
+            parent_controller = self.hass.data.get(DOMAIN, {}).get(parent.entry_id)
+            if parent_controller is not None:
+                return parent_controller.garden_area
+            entry = parent
+            value = entry.options.get(CONF_GARDEN_AREA, entry.data.get(CONF_GARDEN_AREA))
+        else:
+            value = self.store.state.garden_area
+            if value is None:  # not set here: a name an earlier setup kept in the entry
+                value = self.entry.options.get(CONF_GARDEN_AREA, self.entry.data.get(CONF_GARDEN_AREA))
+        return self._clean_area(value) or None
+
+    def known_garden_areas(self) -> list[str]:
+        """The area names in use by any zone, as typed, sorted."""
+        names: dict[str, str] = {}
+        for controller in self.hass.data.get(DOMAIN, {}).values():
+            area = getattr(controller, "garden_area", None)
+            if area:
+                names.setdefault(area.casefold(), area)
+        return sorted(names.values(), key=str.casefold)
+
+    async def async_set_garden_area(self, value: str | None) -> None:
+        """Put the zone in a garden area ("" or None: no area). The same name
+        in other letters is the same area. A crop's area is its greenhouse's."""
+        name = self._clean_area(value)
+        name = next((a for a in self.known_garden_areas() if a.casefold() == name.casefold()), name)
+        self.store.state.garden_area = name
+        await self.store.async_save()
+        self._notify_status()
+        for crop in self.crops:
+            crop._notify_status()
 
     @property
     def is_crop(self) -> bool:

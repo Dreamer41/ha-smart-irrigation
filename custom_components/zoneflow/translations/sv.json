@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Hälsoanteckningar"
+      },
+      "garden_area": {
+        "name": "Trädgårdsområde"
       }
     }
   },

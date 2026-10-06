@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Poznámky ke zdraví"
+      },
+      "garden_area": {
+        "name": "Zahradní oblast"
       }
     }
   },

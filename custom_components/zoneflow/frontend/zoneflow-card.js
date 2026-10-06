@@ -50,7 +50,8 @@ const I18N = {
       "notifications": "Notifications",
       "more": "More",
       "climate": "Climate control",
-      "misting": "Misting"
+      "misting": "Misting",
+      "garden": "Garden area"
     },
     "overview": {
       "title": "Garden",
@@ -169,7 +170,8 @@ const I18N = {
       "notifications": "Benachrichtigungen",
       "more": "Mehr",
       "climate": "Klimasteuerung",
-      "misting": "Vernebelung"
+      "misting": "Vernebelung",
+      "garden": "Gartenbereich"
     },
     "overview": {
       "title": "Garten",
@@ -288,7 +290,8 @@ const I18N = {
       "notifications": "Notificaciones",
       "more": "Más",
       "climate": "Control de clima",
-      "misting": "Nebulización"
+      "misting": "Nebulización",
+      "garden": "Área del jardín"
     },
     "overview": {
       "title": "Jardín",
@@ -407,7 +410,8 @@ const I18N = {
       "notifications": "Ilmoitukset",
       "more": "Lisää",
       "climate": "Ilmastonsäätö",
-      "misting": "Sumutus"
+      "misting": "Sumutus",
+      "garden": "Puutarhan alue"
     },
     "overview": {
       "title": "Puutarha",
@@ -526,7 +530,8 @@ const I18N = {
       "notifications": "Notifications",
       "more": "Plus",
       "climate": "Contrôle du climat",
-      "misting": "Brumisation"
+      "misting": "Brumisation",
+      "garden": "Partie du jardin"
     },
     "overview": {
       "title": "Jardin",
@@ -645,7 +650,8 @@ const I18N = {
       "notifications": "Notifiche",
       "more": "Altro",
       "climate": "Controllo climatico",
-      "misting": "Nebulizzazione"
+      "misting": "Nebulizzazione",
+      "garden": "Area del giardino"
     },
     "overview": {
       "title": "Giardino",
@@ -764,7 +770,8 @@ const I18N = {
       "notifications": "Meldingen",
       "more": "Meer",
       "climate": "Klimaatbeheersing",
-      "misting": "Nevelen"
+      "misting": "Nevelen",
+      "garden": "Tuingedeelte"
     },
     "overview": {
       "title": "Tuin",
@@ -883,7 +890,8 @@ const I18N = {
       "notifications": "Powiadomienia",
       "more": "Więcej",
       "climate": "Sterowanie klimatem",
-      "misting": "Zamgławianie"
+      "misting": "Zamgławianie",
+      "garden": "Obszar ogrodu"
     },
     "overview": {
       "title": "Ogród",
@@ -1002,7 +1010,8 @@ const I18N = {
       "notifications": "Notificações",
       "more": "Mais",
       "climate": "Controlo de clima",
-      "misting": "Nebulização"
+      "misting": "Nebulização",
+      "garden": "Área do jardim"
     },
     "overview": {
       "title": "Jardim",
@@ -1121,7 +1130,8 @@ const I18N = {
       "notifications": "Aviseringar",
       "more": "Mer",
       "climate": "Klimatstyrning",
-      "misting": "Dimmning"
+      "misting": "Dimmning",
+      "garden": "Trädgårdsområde"
     },
     "overview": {
       "title": "Trädgård",
@@ -1240,7 +1250,8 @@ const I18N = {
       "notifications": "Oznámení",
       "more": "Další",
       "climate": "Řízení klimatu",
-      "misting": "Mlžení"
+      "misting": "Mlžení",
+      "garden": "Zahradní oblast"
     },
     "overview": {
       "title": "Zahrada",
@@ -1359,7 +1370,8 @@ const I18N = {
       "notifications": "Notifikationer",
       "more": "Mere",
       "climate": "Klimastyring",
-      "misting": "Forstøvning"
+      "misting": "Forstøvning",
+      "garden": "Haveområde"
     },
     "overview": {
       "title": "Have",
@@ -1478,7 +1490,8 @@ const I18N = {
       "notifications": "Értesítések",
       "more": "Egyéb",
       "climate": "Klímaszabályozás",
-      "misting": "Párásítás"
+      "misting": "Párásítás",
+      "garden": "Kerti terület"
     },
     "overview": {
       "title": "Kert",
@@ -1597,7 +1610,8 @@ const I18N = {
       "notifications": "Varsler",
       "more": "Mer",
       "climate": "Klimastyring",
-      "misting": "Tåkelegging"
+      "misting": "Tåkelegging",
+      "garden": "Hageområde"
     },
     "overview": {
       "title": "Hage",
@@ -1716,7 +1730,8 @@ const I18N = {
       "notifications": "Notificações",
       "more": "Mais",
       "climate": "Controle de clima",
-      "misting": "Nebulização"
+      "misting": "Nebulização",
+      "garden": "Área do jardim"
     },
     "overview": {
       "title": "Jardim",
@@ -1835,7 +1850,8 @@ const I18N = {
       "notifications": "Уведомления",
       "more": "Ещё",
       "climate": "Управление климатом",
-      "misting": "Туманообразование"
+      "misting": "Туманообразование",
+      "garden": "Участок сада"
     },
     "overview": {
       "title": "Сад",
@@ -1954,7 +1970,8 @@ const I18N = {
       "notifications": "Oznámenia",
       "more": "Viac",
       "climate": "Riadenie klímy",
-      "misting": "Zahmlievanie"
+      "misting": "Zahmlievanie",
+      "garden": "Záhradná oblasť"
     },
     "overview": {
       "title": "Záhrada",
@@ -2073,7 +2090,8 @@ const I18N = {
       "notifications": "Сповіщення",
       "more": "Більше",
       "climate": "Клімат-контроль",
-      "misting": "Туманоутворення"
+      "misting": "Туманоутворення",
+      "garden": "Ділянка саду"
     },
     "overview": {
       "title": "Сад",
@@ -2192,7 +2210,8 @@ const I18N = {
       "notifications": "通知",
       "more": "更多",
       "climate": "环境控制",
-      "misting": "喷雾"
+      "misting": "喷雾",
+      "garden": "花园地块"
     },
     "overview": {
       "title": "花园",
@@ -2318,6 +2337,7 @@ const ONLY_WHEN = {
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const SETTINGS_GROUPS = [
+  ["garden", ["text.garden_area"]],
   ["climate", [
     "number.heat_temp", "number.vent_temp", "number.fan_temp", "number.climate_hysteresis",
     "number.outside_margin", "number.max_humidity", "number.vent_open_pct", "switch.auto_resume", "number.auto_resume_hours",

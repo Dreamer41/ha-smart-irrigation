@@ -6,7 +6,7 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
-- **New**: **garden areas**. Each zone can be put in a part of the garden of your own naming (**Configure → Garden area**, for example *Backyard* or *Front yard*; pick one already in use or type a new one). The overview card groups the zones under their area's heading (zones with no area under *Other*), and the auto-generated dashboard (`strategy: custom:zoneflow`) gets one tab per area with its zones side by side. A crop follows its greenhouse's area. Nothing changes for zones that have no area
+- **New**: **garden areas**. Each zone can be put in a part of the garden of your own naming (the **Garden Area** field in the zone's settings on its card, or **Configure → Garden area** with a dropdown of the names in use; for example *Backyard* or *Front yard*). The overview card groups the zones under their area's heading (zones with no area under *Other*), and the auto-generated dashboard (`strategy: custom:zoneflow`) gets one tab per area with its zones side by side. A crop follows its greenhouse's area. Nothing changes for zones that have no area
 
 ## [1.6.5] — Water use in litres and rain from weather stations
 

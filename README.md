@@ -284,8 +284,9 @@ card. It is built from your zones each time the dashboard opens, so a new
 zone appears by itself. To edit it by hand later, ⋮ → **Take control**.
 
 **Garden areas.** To see what is where, put each zone in a part of the garden
-under **Configure → Garden area** (a name of your own: *Backyard*, *Front
-yard*; pick one already in use or type a new one). The overview card then
+in the **Garden Area** field in the zone's settings on its card (a name of
+your own: *Backyard*, *Front yard*), or under **Configure → Garden area**,
+which offers the names already in use. The overview card then
 groups the zones under their area's heading (zones with no area under
 *Other*), and the dashboard above gets **one tab per area** with its zones
 side by side. A crop follows its greenhouse's area. Without areas, nothing

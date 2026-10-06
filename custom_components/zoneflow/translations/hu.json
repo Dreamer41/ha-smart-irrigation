@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Egészségügyi jegyzetek"
+      },
+      "garden_area": {
+        "name": "Kerti terület"
       }
     }
   },

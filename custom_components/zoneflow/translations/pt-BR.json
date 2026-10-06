@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "Notas de saúde"
+      },
+      "garden_area": {
+        "name": "Área do jardim"
       }
     }
   },

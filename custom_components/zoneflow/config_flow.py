@@ -60,7 +60,6 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_GARDEN_AREA,
-    GARDEN_AREA_MAX_LENGTH,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     RAIN_SOURCE_OPTIONS,
@@ -1021,34 +1020,18 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             ),
         )
 
-    def _garden_areas(self) -> list[str]:
-        """The area names already in use (every zone, as typed), sorted."""
-        names: dict[str, str] = {}
-        for entry in self.hass.config_entries.async_entries(DOMAIN):
-            if _is_wu_entry(entry):
-                continue
-            value = entry.options.get(CONF_GARDEN_AREA, entry.data.get(CONF_GARDEN_AREA))
-            value = " ".join(str(value).split()) if value else ""
-            if value:
-                names.setdefault(value.casefold(), value)
-        return sorted(names.values(), key=str.casefold)
-
     async def async_step_garden_area(self, user_input: dict[str, Any] | None = None):
         """Which part of the garden the zone is in ("Backyard"): a name of
         the person's own, picked from the ones already used or typed. Only
-        for grouping the zones in the cards."""
-        areas = self._garden_areas()
+        for grouping the zones in the cards. (The zone's Garden Area field
+        does the same.)"""
+        controller = self._controller()
+        if controller is None:
+            return self.async_abort(reason="zone_not_loaded")
         if user_input is not None:
-            name = " ".join(str(user_input.get(CONF_GARDEN_AREA) or "").split())[:GARDEN_AREA_MAX_LENGTH]
-            # The same name in other letters (backyard / Backyard) is the same area.
-            name = next((a for a in areas if a.casefold() == name.casefold()), name)
-            options = dict(self._config_entry.options)
-            if name:
-                options[CONF_GARDEN_AREA] = name
-            else:
-                options.pop(CONF_GARDEN_AREA, None)
-            return self.async_create_entry(title="", data=options)
-        current = " ".join(str(self._merged().get(CONF_GARDEN_AREA) or "").split())
+            await controller.async_set_garden_area(user_input.get(CONF_GARDEN_AREA))
+            return self.async_create_entry(title="", data=dict(self._config_entry.options))
+        current = controller.garden_area or ""
         key = vol.Optional(CONF_GARDEN_AREA, description={"suggested_value": current}) if current else vol.Optional(CONF_GARDEN_AREA)
         return self.async_show_form(
             step_id="garden_area",
@@ -1056,7 +1039,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
                 {
                     key: selector.SelectSelector(
                         selector.SelectSelectorConfig(
-                            options=areas, custom_value=True, mode=selector.SelectSelectorMode.DROPDOWN
+                            options=controller.known_garden_areas(), custom_value=True,
+                            mode=selector.SelectSelectorMode.DROPDOWN,
                         )
                     )
                 }

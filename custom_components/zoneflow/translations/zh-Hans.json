@@ -1183,6 +1183,9 @@
     "text": {
       "health_notes": {
         "name": "健康备注"
+      },
+      "garden_area": {
+        "name": "花园地块"
       }
     }
   },
