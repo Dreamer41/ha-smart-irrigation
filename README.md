@@ -1,6 +1,8 @@
 # ZoneFlow Irrigation
 
-**Smart irrigation for Home Assistant.** Full documentation: **[zoneflowirrigation.com](https://zoneflowirrigation.com/)**
+**ZoneFlow turns Home Assistant into the irrigation controller.** Use the valves, pumps, sensors and weather hardware you already have — from simple Zigbee relays to more advanced flow and soil sensors.
+
+Full documentation: **[zoneflowirrigation.com](https://zoneflowirrigation.com/)**
 
 ZoneFlow works out when and how much each part of your garden needs water, from the plant, the soil, the weather and the rain, then runs the valve and tells you in plain words what it did and why. It also controls the climate of a greenhouse or indoor grow space. Only a valve switch is required; every sensor is optional and each one adds a capability.
 
