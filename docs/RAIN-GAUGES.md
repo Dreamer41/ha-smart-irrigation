@@ -60,7 +60,10 @@ with the hardware):
 A quick rule when your station offers many rain sensors:
 
 - *Total*, *Lifetime*, *Today*, *Day*, *Daily*, *Week*, *Month*, *Year*,
-  *Accumulation Local Day* → **Rain total**.
+  *Accumulation Local Day* → **Rain total**. A lifetime total only ever goes
+  up; the others (today, this week, local day...) are totals for that period
+  and start again at its end. Both work: ZoneFlow counts only the increases,
+  so the restart is not rain.
 - *Rate*, *Intensity* → **Rain rate** (only if there is no total).
 - *Previous minute*, *Precipitation* that updates every minute → **Rain per
   reading**.
