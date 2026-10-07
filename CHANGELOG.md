@@ -6,6 +6,7 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+- **Changed (docs)**: the README is now a short introduction that points to the website and to the guides in `docs/`. The long README moved, unchanged, to [docs/GUIDE.md](docs/GUIDE.md). New [docs/CALIBRATION.md](docs/CALIBRATION.md): how to set the flow rate, Zone Flow (litres) and the rain gauge
 - **New**: **garden areas**. Each zone can be put in a part of the garden of your own naming (the **Garden Area** dropdown in the zone's settings on its card, with the names already in use and *New area…*, or **Configure → Garden area** with a dropdown of the names in use; for example *Backyard* or *Front yard*). The overview card groups the zones under their area's heading (zones with no area under *Other*), and the auto-generated dashboard (`strategy: custom:zoneflow`) gets one tab per area with its zones side by side. A crop follows its greenhouse's area. Nothing changes for zones that have no area
 
 ## [1.6.5] — Water use in litres and rain from weather stations

@@ -1,18 +1,22 @@
-# Website Content: Calibration (Plain Language)
+# Calibration
 
-**Purpose**: Copy for the ZoneFlow website explaining how to calibrate a zone. Plain language, no code. Written so it can be pasted section by section and edited. Menu names are the ones in Home Assistant (Settings → Devices & services → ZoneFlow → the zone → **Configure**).
+How to set the numbers ZoneFlow needs about your watering system, so that every watering is the right size: the **flow rate calibration** (the one number that must be right), **Zone Flow** (litres, optional) and the **rain gauge** tip size (tipping-bucket gauges only).
 
----
+Menu names below are the ones in Home Assistant: Settings → Devices & services → ZoneFlow → the zone → **Configure**.
 
-## Headline
+**On this page**
 
-### One Number Decides How Much Water Your Plants Get. Here's How To Get It Right.
-
----
-
-## Short Explanation (Elevator Pitch)
-
-ZoneFlow works out how much water each plant needs, then turns that into minutes with the valve open. To do that it needs to know one thing about your watering system: **how much water ends up on the ground every minute**. That is the *flow rate calibration*. Get it right and every watering is the right size. This page shows three easy ways to find it, from "read the packaging" to "catch the water in a bucket".
+- [What calibration means](#what-calibration-means)
+- [Pick your method](#pick-your-method)
+- [Method 1: calculate it from the emitters](#method-1-calculate-it-from-your-emitters)
+- [Method 2: measure it with a bucket](#method-2-measure-it-with-a-bucket-recommended)
+- [Method 3: a flow meter](#method-3-let-a-flow-meter-do-it)
+- [The area they water](#the-area-they-water-the-most-common-mix-up)
+- [Zone Flow (litres)](#zone-flow-litres-not-depth)
+- [The rain gauge](#calibrating-the-rain-gauge)
+- [Mixed emitters](#drippers-of-different-sizes-on-one-valve)
+- [Checking it, and when to repeat it](#how-to-check-that-it-is-right)
+- [Quick answers](#quick-answers)
 
 ---
 

@@ -17,7 +17,8 @@ Checklist for every release (GitHub release titled "ZoneFlow X.Y.Z", tag
 1. `custom_components/zoneflow/manifest.json` version bumped.
 2. Full test suite passes (`pytest tests/ -q`) and the GitHub checks
    (Tests, HASSfest, HACS) are green.
-3. README.md and AI_SETUP.md describe the new behaviour (AI_SETUP's
+3. docs/GUIDE.md (the full guide; README.md stays a short introduction) and
+   AI_SETUP.md describe the new behaviour (AI_SETUP's
    dashboard template in §9 includes any new entities).
 4. ROADMAP.md: move shipped items to "Shipped".
 5. **Release notes always include an "Update your dashboard" section.**
