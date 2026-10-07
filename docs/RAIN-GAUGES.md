@@ -49,8 +49,8 @@ with the hardware):
   relying on it. If it behaves like a daily total, use **Rain total**.
 - **Davis WeatherLink**: several integrations exist, and the names differ.
   Typically there are a day, month and year total (*Rain Day*, *Rainfall Day*,
-  *Month*, *Year*: use one as a **Rain total**) and a *Rain Rate* (**Rain
-  rate**). *Last hour*, *Last 24 hours* and *Storm* values cannot be used.
+  *Month*, *Year*: use one as a **Rain total**) and a rate (*Rain Rate*, *Rain
+  Rate Latest*: **Rain rate**). *Last hour*, *Last 24 hours* and *Storm* values cannot be used.
 - **Your own tipping bucket** (ESPHome, Zigbee, Tuya, rtl_433 over MQTT): a
   tip counter is a **Tip counter**; if it already reports millimetres, use
   **Rain total**.
