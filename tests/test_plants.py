@@ -122,6 +122,8 @@ async def test_the_status_lists_the_plants(hass, fake_valve_services):
     book = _book(hass)
     extra = book.create("Basil", "herbs", zone.entry_id, False, "user")
     await hass.async_block_till_done()
+    plants = hass.states.get("sensor.tomatoes_status").attributes["plants"]
+    assert [(p["name"], p["main"]) for p in plants] == [("Tomatoes", True)]  # listed as soon as the zone starts
     _ctl(hass, zone)._notify_status()
     await hass.async_block_till_done()
     plants = hass.states.get("sensor.tomatoes_status").attributes["plants"]

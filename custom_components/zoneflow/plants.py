@@ -210,6 +210,7 @@ class ZonePlants:
             plant["snapshot"] = self.values()
         self._last = self.values()
         self._unsub = async_track_time_interval(c.hass, self._tick, CHECK_INTERVAL)
+        c._notify_status()  # the Status sensor lists the plants
 
     @callback
     def _tick(self, _now=None) -> None:
