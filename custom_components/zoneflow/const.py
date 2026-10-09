@@ -67,6 +67,10 @@ CONF_AREA_NAME = "area_name"
 CONF_AREA_MM_PER_TIP = "area_rain_mm_per_tip"
 AREA_DATA_KEY = "zoneflow_areas"
 AREA_NAME_MAX_LENGTH = 40
+# A zone made from another zone or a saved preset starts with its settings
+# (presets.py): the choice in the setup form, and what the controller applies once.
+CONF_START_FROM = "start_from"
+CONF_START_STATE = "initial_state"
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
 # What that sensor reports (1.6.5): a tip counter (the default, as always), a
 # running rain total in mm (lifetime, or one that starts again every day or

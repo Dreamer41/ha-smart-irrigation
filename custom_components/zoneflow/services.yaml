@@ -314,3 +314,70 @@ add_plant_note:
       required: true
       selector:
         text:
+
+save_preset:
+  name: Save Preset
+  description: >-
+    Saves a zone's watering settings (not its valve, sensors, flow rate,
+    planting date or notes) under a name, to start other zones from. The same
+    name replaces the preset.
+  fields:
+    name:
+      name: Name
+      description: What to call the preset.
+      required: true
+      selector:
+        text:
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+copy_settings:
+  name: Copy Settings
+  description: >-
+    Gives a zone another zone's watering settings, or a saved preset's. Not
+    the valve, sensors, flow rate, planting date or notes.
+  fields:
+    source_device_id:
+      name: Copy From Zone
+      description: The zone to copy the settings from (or choose a preset).
+      selector:
+        device:
+          integration: zoneflow
+    preset:
+      name: Preset
+      description: The name of a saved preset (or choose a zone to copy from).
+      selector:
+        text:
+    device_id:
+      name: Zone Device
+      description: The zone that gets the settings. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+delete_preset:
+  name: Delete Preset
+  description: Deletes a saved preset.
+  fields:
+    name:
+      name: Name
+      description: The preset's name.
+      required: true
+      selector:
+        text:

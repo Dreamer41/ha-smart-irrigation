@@ -211,6 +211,9 @@ class IrrigationState:
     # the count over.
     offline_since: dict[str, float] = field(default_factory=dict)
 
+    # The settings a zone was started with (const.CONF_START_STATE) were put in place.
+    initial_applied: bool = False
+
     # Snooze Today (button.py's ZoneFlowSnoozeTodayButton): the local
     # calendar date (ISO "YYYY-MM-DD") this snooze applies to, or None
     # when not snoozed. Compared against the local date at each cycle's

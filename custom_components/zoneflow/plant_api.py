@@ -8,6 +8,7 @@ from homeassistant.helpers import device_registry as dr
 
 from . import plant_actions
 from .const import DOMAIN
+from . import presets
 from .plants import async_get_book
 
 
@@ -21,10 +22,12 @@ async def ws_plants(hass: HomeAssistant, connection: websocket_api.ActiveConnect
         connection.send_error(msg["id"], "not_found", "No such ZoneFlow zone")
         return
     book = await async_get_book(hass)
+    saved = await presets.async_get_book(hass)
     connection.send_result(
         msg["id"],
         {
             "zone": controllers[zone_id].entry.title,
+            "presets": [{"id": p["id"], "name": p["name"]} for p in saved.listing()],
             "plants": [
                 {
                     "id": p["id"],

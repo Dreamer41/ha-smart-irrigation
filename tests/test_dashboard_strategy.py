@@ -415,6 +415,15 @@ const run = async () => {
   result.names = all().filter((e) => e.className === "plant-name").map((e) => e._text);
   result.badges = all().filter((e) => e.className.startsWith("plant-badge")).map((e) => e._text);
   result.makeMainButtons = buttons("Make main plant").length;
+  // Every click re-draws the popup: take hold of the controls first.
+  const copyBtn = buttons("Copy")[0];
+  const useBtn = buttons("Use preset")[0];
+  const delBtn = buttons("Delete preset")[0];
+  const saveBtn = buttons("Save this zone's settings as a preset")[0];
+  const presetName = all().filter((e) => e.tag === "input" && e.placeholder === "Preset name")[0];
+  const zoneSelects = all().filter((e) => e.tag === "select" && e.children[0]?.value === "d2");
+  const sourceSelect = zoneSelects[zoneSelects.length - 1];  // the last one is the copy list
+  const presetSelect = all().filter((e) => e.tag === "select" && e.children[0]?.value === "Hot bed")[0];
   buttons("Make main plant")[0].listeners.click();
   await Promise.resolve();
   // Move the main plant: the first panel is the main plant's.
@@ -434,6 +443,14 @@ const run = async () => {
   modes[0].value = "archive";
   buttons("Add a plant")[0].listeners.click();
   await Promise.resolve();
+  // Copy settings from another zone, use / delete a preset, save one.
+  sourceSelect.value = "d2"; presetSelect.value = "Hot bed";
+  copyBtn.listeners.click();
+  useBtn.listeners.click();
+  delBtn.listeners.click();
+  presetName.value = " Cool bed ";
+  saveBtn.listeners.click();
+  await Promise.resolve();
   result.calls = calls;
   console.log(JSON.stringify(result));
 };
@@ -451,7 +468,7 @@ def test_the_plants_popup_lists_the_plants_and_calls_the_services(tmp_path):
     states["sensor.chilis_status"]["attributes"]["plants"] = [{"id": "c", "name": "Chilis", "main": True}]
     states["sensor.tomatoes_status"]["attributes"]["plants"] = [
         {"id": "t", "name": "Tomatoes", "main": True}, {"id": "b", "name": "Basil", "main": False}]
-    ws = {"zone": "Tomatoes", "plants": [
+    ws = {"zone": "Tomatoes", "presets": [{"id": "p1", "name": "Hot bed"}], "plants": [
         {"id": "t", "name": "Tomatoes", "type": "tomatoes", "main": True, "history": [{"ts": "2026-10-09T09:00:00+00:00", "kind": "created", "text": "Added to ZoneFlow"}]},
         {"id": "b", "name": "Basil", "type": "herbs", "main": False, "history": []},
     ]}
@@ -469,4 +486,8 @@ def test_the_plants_popup_lists_the_plants_and_calls_the_services(tmp_path):
         ["zoneflow", "set_main_plant", {"plant_id": "b"}],
         ["zoneflow", "move_plant", {"plant_id": "t", "device_id": "d2", "old_main": "extra"}],
         ["zoneflow", "add_plant", {"name": "Basil", "plant_type": "herbs", "device_id": "d1", "old_main": "archive"}],
+        ["zoneflow", "copy_settings", {"source_device_id": "d2", "device_id": "d1"}],
+        ["zoneflow", "copy_settings", {"preset": "Hot bed", "device_id": "d1"}],
+        ["zoneflow", "delete_preset", {"name": "Hot bed"}],
+        ["zoneflow", "save_preset", {"name": "Cool bed", "device_id": "d1"}],
     ]

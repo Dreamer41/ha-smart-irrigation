@@ -22,7 +22,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, location, messages, units, wu_logic
+from . import calculations as calc, greenhouse_logic, location, messages, presets, units, wu_logic
 from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP
 
 from .const import (
@@ -61,6 +61,8 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_AREA_ID,
+    CONF_START_FROM,
+    CONF_START_STATE,
     CONF_AREA_MM_PER_TIP,
     CONF_AREA_NAME,
     ENTRY_TYPE_AREA,
@@ -572,6 +574,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._crop_pump_id: str | None = None
         self._wu: dict[str, Any] = {}
         self._wu_candidates: list[dict[str, Any]] = []
+        self._bundle: dict[str, Any] = {}
 
     def _offer_wu(self) -> bool:
         """Weather Underground rain is offered once a zone exists, and only
@@ -711,6 +714,28 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="wu_stations", data_schema=_wu_station_schema(self._wu_candidates, nearest), errors=errors
         )
 
+    async def _start_choices(self) -> list[tuple[str, str]]:
+        """(value, label): start from the plant type, a copy of a zone, or a saved preset."""
+        out = [("", messages.text(self.hass, "start_from.none"))]
+        for entry in sorted(self.hass.config_entries.async_entries(DOMAIN), key=lambda e: e.title.casefold()):
+            if _is_wu_entry(entry) or _is_area_entry(entry) or not _merged_entry(entry).get(CONF_VALVE_ENTITY):
+                continue
+            out.append((f"zone:{entry.entry_id}", messages.text(self.hass, "start_from.zone", zone=entry.title)))
+        for preset in (await presets.async_get_book(self.hass)).listing():
+            out.append((f"preset:{preset['id']}", messages.text(self.hass, "start_from.preset", name=preset["name"])))
+        return out
+
+    async def _start_bundle(self, choice: str) -> dict[str, Any]:
+        """The settings bundle behind a start-from choice (empty for none)."""
+        kind, _, ident = (choice or "").partition(":")
+        if kind == "zone":
+            controller = self.hass.data.get(DOMAIN, {}).get(ident)
+            return presets.capture(controller) if controller is not None else {}
+        if kind == "preset":
+            preset = (await presets.async_get_book(self.hass)).presets.get(ident)
+            return preset["bundle"] if preset else {}
+        return {}
+
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         if user_input is None and not self._menu_done and len(self._menu_options()) > 1:
             return await self.async_step_start()
@@ -723,9 +748,19 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._zone_name = zone_name
                 self._plant = user_input.get(CONF_PLANT, PLANT_CUSTOM)
                 self._zone_type = user_input.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+                self._bundle = await self._start_bundle(user_input.get(CONF_START_FROM, ""))
                 if self._zone_type != ZONE_TYPE_OUTDOOR:
                     return await self.async_step_greenhouse_devices()
                 return await self.async_step_entities()
+        choices = await self._start_choices()
+        start_field: dict[Any, Any] = {}
+        if len(choices) > 1:
+            start_field[vol.Optional(CONF_START_FROM, default="")] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[selector.SelectOptionDict(value=v, label=label) for v, label in choices],
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            )
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -741,6 +776,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_ZONE_TYPE, default=self._zone_type): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),
+                    **start_field,
                 }
             ),
             errors=errors,
@@ -764,6 +800,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if (preset := PLANT_PRESETS.get(self._plant)) is not None:
             defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
             defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
+        defaults.update((self._bundle.get("options") or {}))  # a copy of another zone: its way of watering
         return self.async_show_form(
             step_id="entities",
             data_schema=_schema(defaults),
@@ -860,6 +897,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if (preset := PLANT_PRESETS.get(self._plant)) is not None:
             defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
             defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
+        defaults.update((self._bundle.get("options") or {}))
         return self.async_show_form(step_id="watering", data_schema=_watering_schema(defaults), errors=errors)
 
     def _imperial(self) -> bool:
@@ -905,13 +943,20 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     **self._data,
                     CONF_PLANT: self._plant,
                     CONF_CLIMATE: self._climate,
-                    CONF_INITIAL_NUMBERS: {**plant_numbers, **_site_numbers(self._data), **metric},
+                    CONF_INITIAL_NUMBERS: {
+                        **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric
+                    },
                 }
+                if self._bundle.get("state"):
+                    data[CONF_START_STATE] = dict(self._bundle["state"])
                 if self._zone_type != ZONE_TYPE_OUTDOOR:
                     data[CONF_ZONE_TYPE] = self._zone_type
                     data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
                 return self.async_create_entry(title=self._zone_name, data=data)
-        preset = CLIMATE_PRESETS[self._climate]
+        preset = {
+            **CLIMATE_PRESETS[self._climate],
+            **{k: v for k, v in (self._bundle.get("numbers") or {}).items() if k in CLIMATE_NUMBER_KEYS},
+        }
         schema = {}
         for key in CLIMATE_NUMBER_KEYS:
             _name, lo, hi, metric_step, metric_unit = NUMBER_DEFS[key]

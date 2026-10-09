@@ -14,7 +14,7 @@ from homeassistant.helpers import issue_registry as ir
 
 import homeassistant.util.dt as dt_util
 
-from . import frontend, issues, location, plant_actions, plant_api, plants as plants_module, summary, units, visibility
+from . import frontend, issues, location, plant_actions, plant_api, plants as plants_module, presets, summary, units, visibility
 from . import greenhouse as greenhouse_module
 from . import area as area_module
 from .area import AREA_SHARED_KEYS, AreaController
@@ -50,6 +50,9 @@ SERVICE_MOVE_PLANT = "move_plant"
 SERVICE_REMOVE_PLANT = "remove_plant"
 SERVICE_SET_MAIN_PLANT = "set_main_plant"
 SERVICE_ADD_PLANT_NOTE = "add_plant_note"
+SERVICE_SAVE_PRESET = "save_preset"
+SERVICE_COPY_SETTINGS = "copy_settings"
+SERVICE_DELETE_PRESET = "delete_preset"
 
 # These five are domain-level services, not entity-platform services, so
 # Home Assistant's automatic area/device -> entity expansion (the thing
@@ -114,6 +117,15 @@ ADD_PLANT_SCHEMA = vol.Schema(
 MOVE_PLANT_SCHEMA = vol.Schema(
     {vol.Required("plant_id"): cv.string, vol.Optional("old_main"): _OLD_MAIN, **_ZONE_TARGET_FIELDS}
 )
+SAVE_PRESET_SCHEMA = vol.Schema({vol.Required("name"): cv.string, **_ZONE_TARGET_FIELDS})
+COPY_SETTINGS_SCHEMA = vol.Schema(
+    {
+        vol.Optional("source_device_id"): cv.string,
+        vol.Optional("preset"): cv.string,
+        **_ZONE_TARGET_FIELDS,
+    }
+)
+DELETE_PRESET_SCHEMA = vol.Schema({vol.Required("name"): cv.string})
 PLANT_ID_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string})
 PLANT_NOTE_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Required("text"): cv.string})
 
@@ -175,6 +187,15 @@ def _resolve_controller(hass: HomeAssistant, call: ServiceCall) -> ZoneFlowContr
         raise ServiceValidationError("The given target matches more than one ZoneFlow zone -- target exactly one.")
 
     return controllers[next(iter(matched_entry_ids))]
+
+
+def _controller_of_device(hass: HomeAssistant, device_id: str) -> ZoneFlowController:
+    device = dr.async_get(hass).async_get(device_id)
+    controllers = hass.data.get(DOMAIN, {})
+    for entry_id in device.config_entries if device else ():
+        if entry_id in controllers:
+            return controllers[entry_id]
+    raise ServiceValidationError("The given source doesn't match any ZoneFlow zone.")
 
 
 def is_wu_entry(entry: ConfigEntry) -> bool:
@@ -353,6 +374,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         async def _handle_add_plant_note(call: ServiceCall) -> None:
             await plant_actions.add_note(hass, call.data["plant_id"], call.data["text"])
 
+        async def _handle_save_preset(call: ServiceCall) -> None:
+            await presets.save_preset(hass, _resolve_controller(hass, call), call.data["name"])
+
+        async def _handle_copy_settings(call: ServiceCall) -> None:
+            source = None
+            if call.data.get("source_device_id"):
+                source = _controller_of_device(hass, call.data["source_device_id"])
+            await presets.copy_settings(hass, _resolve_controller(hass, call), source, call.data.get("preset"))
+
+        async def _handle_delete_preset(call: ServiceCall) -> None:
+            await presets.delete_preset(hass, call.data["name"])
+
+        hass.services.async_register(DOMAIN, SERVICE_SAVE_PRESET, _handle_save_preset, schema=SAVE_PRESET_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_COPY_SETTINGS, _handle_copy_settings, schema=COPY_SETTINGS_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_DELETE_PRESET, _handle_delete_preset, schema=DELETE_PRESET_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT, _handle_add_plant, schema=ADD_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_MOVE_PLANT, _handle_move_plant, schema=MOVE_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_REMOVE_PLANT, _handle_remove_plant, schema=PLANT_ID_SCHEMA)
@@ -444,6 +480,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_REMOVE_PLANT,
                 SERVICE_SET_MAIN_PLANT,
                 SERVICE_ADD_PLANT_NOTE,
+                SERVICE_SAVE_PRESET,
+                SERVICE_COPY_SETTINGS,
+                SERVICE_DELETE_PRESET,
             ):
                 hass.services.async_remove(DOMAIN, service)
             summary.async_teardown(hass)

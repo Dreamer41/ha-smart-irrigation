@@ -175,7 +175,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "de": {
@@ -336,7 +347,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "es": {
@@ -497,7 +519,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "fi": {
@@ -658,7 +691,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "fr": {
@@ -819,7 +863,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "it": {
@@ -980,7 +1035,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "nl": {
@@ -1141,7 +1207,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "pl": {
@@ -1302,7 +1379,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "pt": {
@@ -1463,7 +1551,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "sv": {
@@ -1624,7 +1723,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "cs": {
@@ -1785,7 +1895,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "da": {
@@ -1946,7 +2067,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "hu": {
@@ -2107,7 +2239,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "nb": {
@@ -2268,7 +2411,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "pt-BR": {
@@ -2429,7 +2583,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "ru": {
@@ -2590,7 +2755,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "sk": {
@@ -2751,7 +2927,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "uk": {
@@ -2912,7 +3099,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   },
   "zh-Hans": {
@@ -3073,7 +3271,18 @@ const I18N = {
       "old_main_keep": "It stays the main plant; this plant joins as a record",
       "move_button": "Move",
       "no_other_zones": "There is no other zone to move it to.",
-      "this_zone_title": "Plants in this zone"
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
     }
   }
 };
@@ -3796,6 +4005,65 @@ class ZoneFlowCard extends HTMLElement {
     });
     form.append(name, type, mode, add);
     body.appendChild(form);
+
+    // Copy this zone's settings from another zone, or use / save a preset.
+    body.appendChild(make("div", "group-title", tp("copy_title")));
+    const copyRow = make("div", "plant-form");
+    const sources = make("select", "area-select");
+    for (const zone of others) {
+      const option = make("option", "", zone.name);
+      option.value = zone.device_id;
+      sources.appendChild(option);
+    }
+    const copyButton = make("button", "plant-button", tp("copy_button"));
+    copyButton.addEventListener("click", () => {
+      const zone = others.find((z) => z.device_id === sources.value);
+      if (zone && (window.confirm?.(tp("confirm_copy").replace("{name}", zone.name)) ?? true)) {
+        act("copy_settings", { source_device_id: zone.device_id, device_id: this._config.device_id });
+      }
+    });
+    if (others.length) {
+      copyRow.append(sources, copyButton);
+      body.appendChild(copyRow);
+    }
+    body.appendChild(make("div", "group-title", tp("preset_title")));
+    const presetRow = make("div", "plant-form");
+    if (data.presets?.length) {
+      const chosen = make("select", "area-select");
+      for (const preset of data.presets) {
+        const option = make("option", "", preset.name);
+        option.value = preset.name;
+        chosen.appendChild(option);
+      }
+      const use = make("button", "plant-button", tp("preset_apply"));
+      use.addEventListener("click", () => {
+        if (window.confirm?.(tp("confirm_preset").replace("{name}", chosen.value)) ?? true) {
+          act("copy_settings", { preset: chosen.value, device_id: this._config.device_id });
+        }
+      });
+      const drop = make("button", "plant-button", tp("preset_delete"));
+      drop.addEventListener("click", () => {
+        if (window.confirm?.(tp("confirm_delete").replace("{name}", chosen.value)) ?? true) {
+          act("delete_preset", { name: chosen.value });
+        }
+      });
+      presetRow.append(chosen, use, drop);
+    } else {
+      presetRow.appendChild(make("div", "group-note", tp("no_presets")));
+    }
+    body.appendChild(presetRow);
+    const saveRow = make("div", "plant-form");
+    const presetName = make("input", "area-input");
+    presetName.type = "text";
+    presetName.maxLength = 40;
+    presetName.placeholder = tp("preset_name");
+    const save = make("button", "plant-button", tp("preset_save"));
+    save.addEventListener("click", () => {
+      const name = presetName.value.trim();
+      if (name) act("save_preset", { name, device_id: this._config.device_id });
+    });
+    saveRow.append(presetName, save);
+    body.appendChild(saveRow);
   }
 
   _shortName(conf) {

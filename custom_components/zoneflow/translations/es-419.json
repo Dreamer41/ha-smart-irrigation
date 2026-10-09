@@ -7,12 +7,14 @@
         "data": {
           "zone_name": "Nombre de la zona",
           "plant": "Qué hay plantado",
-          "zone_type": "Dónde crece"
+          "zone_type": "Dónde crece",
+          "start_from": "Start from"
         },
         "data_description": {
           "zone_name": "Pasa a ser el nombre del dispositivo de la zona y el comienzo de los nombres de sus entidades, y aparece en los mensajes del teléfono. P. ej., \"Bancal de tomates\", \"Césped delantero\".",
           "plant": "Rellena valores iniciales razonables para este cultivo: objetivos semanales de agua, coeficiente de cultivo, riego profundo y rampa de crecimiento. \"Otra cosa\" parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona.",
-          "zone_type": "Exterior es como siempre ha funcionado ZoneFlow. Las zonas de invernadero e interior añaden control de clima (ventiladores, rejillas de ventilación, nebulización, calefactor), pueden funcionar sin válvula y no tienen pluviómetro ni pronóstico del tiempo debido al techo."
+          "zone_type": "Exterior es como siempre ha funcionado ZoneFlow. Las zonas de invernadero e interior añaden control de clima (ventiladores, rejillas de ventilación, nebulización, calefactor), pueden funcionar sin válvula y no tienen pluviómetro ni pronóstico del tiempo debido al techo.",
+          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied."
         }
       },
       "entities": {
@@ -1477,6 +1479,56 @@
           "description": "What to write down."
         }
       }
+    },
+    "save_preset": {
+      "name": "Save Preset",
+      "description": "Saves a zone's watering settings (not its valve, sensors, flow rate, planting date or notes) under a name, to start other zones from. The same name replaces the preset.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "What to call the preset."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Copy Settings",
+      "description": "Gives a zone another zone's watering settings, or a saved preset's. Not the valve, sensors, flow rate, planting date or notes.",
+      "fields": {
+        "source_device_id": {
+          "name": "Copy From Zone",
+          "description": "The zone to copy the settings from (or choose a preset)."
+        },
+        "preset": {
+          "name": "Preset",
+          "description": "The name of a saved preset (or choose a zone to copy from)."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone that gets the settings."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Delete Preset",
+      "description": "Deletes a saved preset.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "The preset's name."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1557,6 +1609,18 @@
     },
     "plant_note_required": {
       "message": "Write the note first."
+    },
+    "preset_name_required": {
+      "message": "Give the preset a name."
+    },
+    "preset_not_found": {
+      "message": "There is no preset with that name."
+    },
+    "copy_same_zone": {
+      "message": "Choose a different zone to copy from."
+    },
+    "copy_source_required": {
+      "message": "Choose a zone or a preset to copy from."
     }
   },
   "issues": {

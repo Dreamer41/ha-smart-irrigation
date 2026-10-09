@@ -84,6 +84,7 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_AREA_ID,
+    CONF_START_STATE,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     CONF_ROUTINE_SUN_MODE,
@@ -860,6 +861,15 @@ class ZoneFlowController:
         await messages.async_setup(self.hass)
         await self.store.async_load()
         state = self.store.state
+        # A zone made from another zone or a preset starts with its saved-state
+        # settings (the rest went into the entry and the sliders at setup).
+        start_state = self.entry.data.get(CONF_START_STATE)
+        if isinstance(start_state, dict) and not state.initial_applied:
+            for key, value in start_state.items():
+                if hasattr(state, key):
+                    setattr(state, key, value)
+            state.initial_applied = True
+            await self.store.async_save()
         if state.paused:
             self._paused_event.set()
             self._schedule_resume()

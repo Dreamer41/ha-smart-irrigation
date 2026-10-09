@@ -264,7 +264,8 @@
       "demoted": "Now a record only in {zone}",
       "archived": "Archived from {zone}",
       "removed": "Removed from {zone}",
-      "note": "{text}"
+      "note": "{text}",
+      "copied": "Settings copied from {source}"
     },
     "setting": {
       "growth_stage_mode": "Growth stage mode",
@@ -279,5 +280,10 @@
       "growth_ramp_profile": "Growth ramp",
       "deep_soak_enabled": "Deep soak"
     }
+  },
+  "start_from": {
+    "none": "The plant type's usual settings",
+    "zone": "A copy of {zone}",
+    "preset": "Preset: {name}"
   }
 }
