@@ -786,7 +786,13 @@ class ZoneFlowStatusSensor(_Base):
         # A sensor this zone has of its own where its area has another: the
         # card says so ("uses its own rain gauge, not Backyard's").
         attributes["area_overrides"] = self._controller.area_overrides()
+        # The plants in this zone (the main one first), for the cards.
+        attributes["plants"] = self._controller.plants.summary() if self._controller.plants else []
         attributes["area_note"] = self._controller.area_note()
+        # The area's own Pause switch and Snooze button, for its heading on the cards.
+        area_entities = self._controller.area_entities()
+        attributes["area_pause"] = area_entities.get("pause")
+        attributes["area_snooze"] = area_entities.get("snooze")
         # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
         registry = dr.async_get(self.hass)
 

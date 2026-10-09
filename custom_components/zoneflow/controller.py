@@ -30,6 +30,7 @@ from typing import Any
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
 from homeassistant.components import persistent_notification
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.event import (
     async_call_later,
     async_track_point_in_time,
@@ -344,6 +345,8 @@ class ZoneFlowController:
         # Greenhouse / indoor climate control (1.6). Does nothing for a zone
         # with no climate devices.
         self.greenhouse = GreenhouseManager(self, lambda: STARTUP_GRACE_SECONDS)
+        # The plant in this zone (plants.ZonePlants), set once the entities exist.
+        self.plants: Any = None
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -426,6 +429,18 @@ class ZoneFlowController:
             if own and shared and own != shared:
                 out.append(key)
         return out
+
+    def area_entities(self) -> dict[str, str]:
+        """The area's Pause switch and Snooze button, for the cards."""
+        area_id = self.area_entry_id
+        if not area_id or self.area is None:
+            return {}
+        registry = er.async_get(self.hass)
+        found = {
+            "pause": registry.async_get_entity_id("switch", DOMAIN, f"{area_id}_pause"),
+            "snooze": registry.async_get_entity_id("button", DOMAIN, f"{area_id}_snooze_today"),
+        }
+        return {key: value for key, value in found.items() if value}
 
     def area_note(self) -> str:
         """The overrides in words, in the user's language ("" when none)."""
@@ -994,6 +1009,8 @@ class ZoneFlowController:
         # the valve closed and the lock released, so the reloaded zone
         # starts clean instead of racing an unsupervised old cycle.
         await self._interrupt_cycle("the zone was reloaded")
+        if self.plants is not None:
+            await self.plants.async_unload()
         await self.greenhouse.async_unload()  # misters off first
         if self._startup_unsub is not None:
             self._startup_unsub()

@@ -13,7 +13,7 @@ from homeassistant.helpers import issue_registry as ir
 
 import homeassistant.util.dt as dt_util
 
-from . import frontend, issues, summary, units, visibility
+from . import frontend, issues, plants as plants_module, summary, units, visibility
 from . import greenhouse as greenhouse_module
 from .area import AREA_SHARED_KEYS, AreaController
 from .const import (
@@ -223,6 +223,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # Hide what this zone doesn't use (see visibility.py).
     await visibility.async_apply(hass, entry, controller)
+    # The zone's plant: its record and history (plants.py).
+    controller.plants = plants_module.ZonePlants(controller, await plants_module.async_get_book(hass))
+    await controller.plants.async_start()
     _link_crop_devices(hass)
     # A greenhouse's card lists its crops: tell it about this one.
     if (parent := hass.data[DOMAIN].get(controller.parent_entry_id or "")) is not None:
@@ -440,6 +443,9 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
                 hass.config_entries.async_update_entry(zone, options={**zone.options, CONF_USE_WU: False})
         return
     issues.async_remove(hass, entry.entry_id)
+    book = await plants_module.async_get_book(hass)
+    book.archive_zone(entry.entry_id)  # its plants stay on record
+    await book.async_flush()
     _release_crops(hass, entry)
     if entry.data.get(CONF_ZONE_TYPE, "outdoor") != "outdoor":
         await greenhouse_module.async_release_devices(hass, entry)

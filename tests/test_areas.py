@@ -379,3 +379,14 @@ async def test_an_area_is_renamed_and_its_sensors_changed_in_configure(hass, fak
     assert area.title == "Back garden"
     assert _ctl(hass, zone).garden_area == "Back garden" and _ctl(hass, zone).rain_mm_per_tip == pytest.approx(0.5)
     assert _ctl(hass, zone).outdoor_temp_entity is None  # cleared in the form
+
+
+@pytest.mark.asyncio
+async def test_the_status_names_the_areas_pause_and_snooze_for_the_cards(hass, fake_valve_services):
+    area = _area(hass)
+    zone = _zone(hass, **{CONF_AREA_ID: area.entry_id})
+    alone = _zone(hass, "Chilis", VALVE_B)
+    await _boot(hass, area, zone, alone)
+    attrs = hass.states.get("sensor.tomatoes_status").attributes
+    assert attrs["area_pause"] == "switch.backyard_pause" and attrs["area_snooze"] == "button.backyard_snooze_today"
+    assert hass.states.get("sensor.chilis_status").attributes["area_pause"] is None

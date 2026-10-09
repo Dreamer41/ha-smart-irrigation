@@ -278,3 +278,25 @@ def test_the_area_names_in_use_are_listed_once_each(tmp_path):
     hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
     done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
     assert json.loads(done.stdout) == ["Backyard", "Front yard"]
+
+
+def test_an_area_tab_starts_with_the_areas_pause_and_snooze(tmp_path):
+    entities, states, devices = {}, {}, {}
+    for device, name in (("d1", "Tomatoes"), ("d2", "Chilis")):
+        _zone(entities, states, device, name, "tomatoes")
+        _with_area(states, name, "Backyard")
+        attrs = states[f"sensor.{name.lower()}_status"]["attributes"]
+        attrs["area_pause"], attrs["area_snooze"] = "switch.backyard_pause", "button.backyard_snooze_today"
+        devices[device] = {"name": name}
+    out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
+    cards = out["views"][1]["cards"]
+    assert cards[0] == {
+        "type": "entities", "entities": ["switch.backyard_pause", "button.backyard_snooze_today"], "show_header_toggle": False,
+    }
+    assert [c["device_id"] for c in cards[1:]] == ["d2", "d1"]
+    # No controls known (an older status): the tab is just the zones.
+    for name in ("Tomatoes", "Chilis"):
+        states[f"sensor.{name.lower()}_status"]["attributes"].pop("area_pause")
+        states[f"sensor.{name.lower()}_status"]["attributes"].pop("area_snooze")
+    out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
+    assert all(c["type"] == "custom:zoneflow-card" for c in out["views"][1]["cards"])

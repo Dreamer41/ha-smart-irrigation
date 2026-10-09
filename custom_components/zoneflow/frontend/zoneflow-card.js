@@ -55,6 +55,8 @@ const I18N = {
     },
     "overview": {
       "title": "Garden",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area",
       "zone": "Zone",
       "status": "Status",
       "next": "Next",
@@ -215,7 +217,9 @@ const I18N = {
       "show_add": "Schaltfläche „Zone hinzufügen“ anzeigen",
       "next_feed": "Nächste Düngung",
       "feed_due": "Jetzt düngen",
-      "other_area": "Sonstige"
+      "other_area": "Sonstige",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -340,7 +344,9 @@ const I18N = {
       "show_add": "Mostrar el botón Añadir zona",
       "next_feed": "Próximo abonado",
       "feed_due": "Abonar ya",
-      "other_area": "Otras"
+      "other_area": "Otras",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -465,7 +471,9 @@ const I18N = {
       "show_add": "Näytä Lisää vyöhyke -painike",
       "next_feed": "Seuraava lannoitus",
       "feed_due": "Lannoita nyt",
-      "other_area": "Muut"
+      "other_area": "Muut",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -590,7 +598,9 @@ const I18N = {
       "show_add": "Afficher le bouton Ajouter une zone",
       "next_feed": "Prochain apport d'engrais",
       "feed_due": "Engrais à apporter",
-      "other_area": "Autres"
+      "other_area": "Autres",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -715,7 +725,9 @@ const I18N = {
       "show_add": "Mostra il pulsante Aggiungi zona",
       "next_feed": "Prossima concimazione",
       "feed_due": "Concima ora",
-      "other_area": "Altre"
+      "other_area": "Altre",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -840,7 +852,9 @@ const I18N = {
       "show_add": "Knop Zone toevoegen tonen",
       "next_feed": "Volgende bemesting",
       "feed_due": "Nu bemesten",
-      "other_area": "Overige"
+      "other_area": "Overige",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -965,7 +979,9 @@ const I18N = {
       "show_add": "Pokaż przycisk Dodaj strefę",
       "next_feed": "Następne nawożenie",
       "feed_due": "Nawieź teraz",
-      "other_area": "Inne"
+      "other_area": "Inne",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -1090,7 +1106,9 @@ const I18N = {
       "show_add": "Mostrar o botão Adicionar zona",
       "next_feed": "Próxima adubação",
       "feed_due": "Adubar agora",
-      "other_area": "Outras"
+      "other_area": "Outras",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1215,7 +1233,9 @@ const I18N = {
       "show_add": "Visa knappen Lägg till zon",
       "next_feed": "Nästa gödsling",
       "feed_due": "Gödsla nu",
-      "other_area": "Övriga"
+      "other_area": "Övriga",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -1340,7 +1360,9 @@ const I18N = {
       "show_add": "Zobrazit tlačítko Přidat zónu",
       "next_feed": "Další hnojení",
       "feed_due": "Pohnojit teď",
-      "other_area": "Ostatní"
+      "other_area": "Ostatní",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -1465,7 +1487,9 @@ const I18N = {
       "show_add": "Vis knappen Tilføj zone",
       "next_feed": "Næste gødskning",
       "feed_due": "Gød nu",
-      "other_area": "Øvrige"
+      "other_area": "Øvrige",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -1590,7 +1614,9 @@ const I18N = {
       "show_add": "A Zóna hozzáadása gomb megjelenítése",
       "next_feed": "Következő tápanyag-utánpótlás",
       "feed_due": "Tápanyag most",
-      "other_area": "Egyéb"
+      "other_area": "Egyéb",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -1715,7 +1741,9 @@ const I18N = {
       "show_add": "Vis knappen Legg til sone",
       "next_feed": "Neste gjødsling",
       "feed_due": "Gjødsle nå",
-      "other_area": "Andre"
+      "other_area": "Andre",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -1840,7 +1868,9 @@ const I18N = {
       "show_add": "Mostrar o botão Adicionar zona",
       "next_feed": "Próxima adubação",
       "feed_due": "Adubar agora",
-      "other_area": "Outras"
+      "other_area": "Outras",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1965,7 +1995,9 @@ const I18N = {
       "show_add": "Показывать кнопку «Добавить зону»",
       "next_feed": "Следующая подкормка",
       "feed_due": "Подкормить сейчас",
-      "other_area": "Прочее"
+      "other_area": "Прочее",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -2090,7 +2122,9 @@ const I18N = {
       "show_add": "Zobraziť tlačidlo Pridať zónu",
       "next_feed": "Ďalšie hnojenie",
       "feed_due": "Pohnojiť teraz",
-      "other_area": "Ostatné"
+      "other_area": "Ostatné",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -2215,7 +2249,9 @@ const I18N = {
       "show_add": "Показувати кнопку «Додати зону»",
       "next_feed": "Наступне підживлення",
       "feed_due": "Підживити зараз",
-      "other_area": "Інше"
+      "other_area": "Інше",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -2340,7 +2376,9 @@ const I18N = {
       "show_add": "显示“添加区域”按钮",
       "next_feed": "下次施肥",
       "feed_due": "立即施肥",
-      "other_area": "其他"
+      "other_area": "其他",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -3216,6 +3254,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
         feedDue: Boolean(feed?.attributes?.due),
         parent: status?.attributes?.greenhouse?.device_id || null,
         area: status?.attributes?.garden_area || null,
+        areaPause: status?.attributes?.area_pause || null,
+        areaSnooze: status?.attributes?.area_snooze || null,
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -3254,7 +3294,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null]),
       this._config.device_ids || null,
       this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
@@ -3275,6 +3315,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
     const root = this.shadowRoot;
     root.innerHTML = "";
+    this._areaButtons = [];
     const style = document.createElement("style");
     style.textContent = `
       ha-card { display: block; container-type: inline-size; }
@@ -3311,7 +3352,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
       .zone.crop { margin-left: 36px; }
       .area-title { margin: 14px 12px 6px; font-size: 0.85em; font-weight: 500; letter-spacing: 0.04em;
-        text-transform: uppercase; color: var(--secondary-text-color); }
+        text-transform: uppercase; color: var(--secondary-text-color); display: flex; align-items: center; gap: 4px; }
+      .area-title span { flex: 1; }
+      .area-title ha-icon-button { --mdc-icon-button-size: 32px; --mdc-icon-size: 18px; color: var(--secondary-text-color); }
+      .area-title ha-icon-button.on { color: var(--warning-color, #ff9800); }
       ${this._config.embedded ? `
       ha-card { box-shadow: none; border: none; background: none; }
       .title { display: none; }` : ""}
@@ -3373,7 +3417,26 @@ class ZoneFlowOverviewCard extends HTMLElement {
       if (zone.areaStart) {
         const heading = document.createElement("div");
         heading.className = "area-title";
-        heading.textContent = zone.areaName || tr("other_area");
+        const headingText = document.createElement("span");
+        headingText.textContent = zone.areaName || tr("other_area");
+        heading.appendChild(headingText);
+        // The area's own Pause and Snooze Today.
+        for (const [entity, icon, key, domain, service] of [
+          [zone.areaPause, "mdi:pause-circle-outline", "pause_area", "switch", "toggle"],
+          [zone.areaSnooze, "mdi:sleep", "snooze_area", "button", "press"],
+        ]) {
+          if (!zone.areaName || !entity) continue;
+          const button = document.createElement("ha-icon-button");
+          button.label = t(hass, `overview.${key}`);
+          button.title = t(hass, `overview.${key}`);
+          const buttonIcon = document.createElement("ha-icon");
+          buttonIcon.setAttribute("icon", icon);
+          button.appendChild(buttonIcon);
+          button.addEventListener("click", () => hass.callService(domain, service, { entity_id: entity }));
+          button.dataset.entity = entity;
+          (this._areaButtons ||= []).push(button);
+          heading.appendChild(button);
+        }
         card.appendChild(heading);
       }
       const wrap = document.createElement("div");
@@ -3467,6 +3530,9 @@ class ZoneFlowOverviewCard extends HTMLElement {
 
   _update(zones) {
     const hass = this._hass;
+    for (const button of this._areaButtons || []) {
+      button.classList.toggle("on", hass.states?.[button.dataset.entity]?.state === "on");
+    }
     for (const zone of zones) {
       const row = this._rows?.[zone.device_id];
       if (!row) continue;
@@ -3680,6 +3746,10 @@ function buildDashboard(hass) {
   const areaNames = [...areas.keys()].sort((a, b) => a.localeCompare(b, hass.locale?.language || undefined));
   for (const area of areaNames) {
     const cards = areas.get(area).flatMap(cardsFor);
+    // The area's own Pause and Snooze Today, first on its tab.
+    const attrs = hass.states?.[areas.get(area)[0].status]?.attributes || {};
+    const controls = [attrs.area_pause, attrs.area_snooze].filter(Boolean);
+    if (controls.length) cards.unshift({ type: "entities", entities: controls, show_header_toggle: false });
     views.push({
       title: area,
       path: unique(area),
