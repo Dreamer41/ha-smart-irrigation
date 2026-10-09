@@ -3010,10 +3010,74 @@ class ZoneFlowController:
     def skip_hit_rate(self) -> tuple[int, int]:
         return calc.skip_hit_rate(self.store.state.forecast_skip_journal, dt_util.utcnow().timestamp())
 
+    def _deep_soak_waits_for_routine(self, now_ts: float) -> bool:
+        """True while a due deep soak should hold off for the next routine
+        slot (see calc.deep_soak_waits_for_routine). A zone that has never
+        run a routine has nothing to stretch around."""
+        state = self.store.state
+        if state.last_routine_ts is None:
+            return False
+        return calc.deep_soak_waits_for_routine(
+            now_ts - state.last_routine_ts,
+            now_ts - (state.last_deep_soak_ts or 0.0),
+            self.number("deep_soak_interval_days"),
+            calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+            ROUTINE_INTERVAL_BUFFER_SECONDS,
+            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+        )
+
+    def _stretch_deep_soak_ts(self, deep_ts: float) -> float:
+        """The estimated deep soak time moved out to the routine's due time
+        when the deep soak would wait for it."""
+        state = self.store.state
+        if state.last_routine_ts is None or state.last_deep_soak_ts is None:
+            return deep_ts
+        interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        routine_due_ts = state.last_routine_ts + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS
+        latest = (
+            state.last_deep_soak_ts
+            + self.number("deep_soak_interval_days") * 86400
+            - DEEP_SOAK_INTERVAL_BUFFER_SECONDS
+            + interval * 86400
+        )
+        return max(deep_ts, min(routine_due_ts, latest))
+
+    def _deep_soak_would_replace_routine(self, now_ts: float) -> bool:
+        """True when a due routine should run as the deep soak instead: the
+        deep soak is due and its own early gates (dry-down, wet fortnight,
+        runtime caps) would let it run, so skipping the routine can't leave
+        the zone unwatered."""
+        state = self.store.state
+        if not self.deep_soak_enabled or state.paused or state.last_deep_soak_ts is None:
+            return False  # a zone that never soaked keeps its own soak slot
+        if not calc.deep_soak_due(
+            now_ts - (state.last_deep_soak_ts or 0.0),
+            self.number("deep_soak_interval_days"),
+            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+        ):
+            return False
+        if not calc.drydown_satisfied(
+            now_ts - (state.last_significant_rain_ts or 0.0), self.number("deep_soak_drydown_days")
+        ):
+            return False
+        if self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
+            return False
+        plan = calc.plan_deep_soak(
+            self.number("deep_soak_target_mm"),
+            self.number("flow_rate_mm_per_min"),
+            pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
+            min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+            site=self.site,
+        )
+        if plan.total_runtime_minutes > self.number("deep_soak_max_runtime_minutes"):
+            return False
+        return state.today_runtime_minutes + plan.total_runtime_minutes <= self.number("max_daily_runtime_minutes")
+
     @_tracked_run
-    async def run_deep_soak(self) -> None:
+    async def run_deep_soak(self, *, replacing_routine: bool = False) -> None:
         """Port of avocado_deep_soak. Called by the 05:00 trigger and by the
-        manual 'Run Deep Soak Now' button/service — same code, same gates."""
+        manual 'Run Deep Soak Now' button/service — same code, same gates.
+        `replacing_routine` is set when a due routine hands over to it."""
         if not self.has_valve or not self.deep_soak_enabled:
             # Silent, like every other routine gate below -- a zone that has
             # deliberately turned this cycle off shouldn't get a log entry
@@ -3042,6 +3106,8 @@ class ZoneFlowController:
             DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
         ):
             return
+        if not (replacing_routine or self._manual_press) and self._deep_soak_waits_for_routine(now_ts):
+            return  # due, but a routine ran recently: wait for the next routine slot
         await self._refresh_wu_rain()
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("deep_soak_drydown_days")
@@ -3234,6 +3300,12 @@ class ZoneFlowController:
         hot_threshold = self.number("hot_temp_threshold")
         interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
         interval_due = calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS)
+
+        # A due deep soak replaces this routine instead of adding a second
+        # watering on top of it.
+        if interval_due and not manual and self._deep_soak_would_replace_routine(now_ts):
+            await self.run_deep_soak(replacing_routine=True)
+            return
 
         # Soil moisture (if configured and currently readable) becomes the
         # direct decider at the extremes, ahead of the plain time-interval
@@ -4274,6 +4346,7 @@ class ZoneFlowController:
                 self.number("deep_soak_drydown_days"),
                 now_ts,
             )
+            deep_next = self._stretch_deep_soak_ts(deep_next)
             if deep_next <= now_ts and self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
                 deep_next = None
         return routine_next, deep_next
@@ -4359,6 +4432,7 @@ class ZoneFlowController:
                     - DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
                     drydown_end,
                 )
+                deep_est = self._stretch_deep_soak_ts(deep_est)
             deep = self.next_slot("deep_soak", max(deep_est, not_before))
         return routine, deep
 

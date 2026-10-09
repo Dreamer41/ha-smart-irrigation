@@ -82,15 +82,16 @@ async def test_a_dry_normal_month_waters_the_weekly_target_on_a_4_day_rhythm(has
     _check_invariants(sim, c)
 
     # Day 0: deep soak is due and runs, and it counts as the routine watering
-    # too, so the routine interval restarts from it: routine on day 4, 8, 12,
-    # then the day-14 soak restarts it again -> 18, 22, 26. (Before this rule
-    # the routine ran on day 1, right after the soak.)
-    assert sim.deep_soak_days() == [0, 14]
+    # too, so the routine interval restarts from it: routine on day 4, 8, 12.
+    # The soak is due again on day 14, but a routine ran on day 12, so it waits
+    # for the next routine slot (day 16) and replaces that routine; the
+    # routine then resumes 20, 24.
+    assert sim.deep_soak_days() == [0, 16]
     assert sim.results[0].routine_attempted_during_soak and sim.results[0].routine_mm == 0
-    assert sim.routine_days() == [4, 8, 12, 18, 22, 26]
-    # 6 routine runs x (35 mm/week x 4/7) = 120 mm of routine water (the two
+    assert sim.routine_days() == [4, 8, 12, 20, 24]
+    # 5 routine runs x (35 mm/week x 4/7) = 100 mm of routine water (the two
     # 25 mm deep soaks come on top).
-    assert sim.routine_total() == pytest.approx(120.0, rel=0.03)
+    assert sim.routine_total() == pytest.approx(100.0, rel=0.03)
     assert all(r.deep_soak_mm == pytest.approx(25.0, abs=0.5) for r in sim.results if r.deep_soak_mm)
     # A routine run always comes a full interval after the previous watering
     # of either kind. (A deep soak keeps its own 14-day clock, so it can
@@ -124,7 +125,7 @@ async def test_a_cool_month_waters_less(hass, fake_valve_services, monkeypatch, 
     # soak restarts the interval, as in the normal month).
     doses = [r.routine_mm for r in sim.results if r.routine_mm > 0]
     assert doses and all(d == pytest.approx(25.0 * 4 / 7, abs=0.6) for d in doses)
-    assert sim.routine_days() == [4, 8, 12, 18, 22, 26]
+    assert sim.routine_days() == [4, 8, 12, 20, 24]
 
 
 @pytest.mark.asyncio
@@ -169,8 +170,9 @@ async def test_fahrenheit_home_assistant_waters_exactly_like_celsius(hass, fake_
     await sim.run(_days(21, HOT, unit=unit))
     _check_invariants(sim, c)
     # Identical expectations for both units: hot tier, every 3 days, counted
-    # from the latest watering (the day-0 and day-14 deep soaks included).
-    assert sim.routine_days() == [3, 6, 9, 12, 17, 20]
+    # from the latest watering (the day-0 soak, and the day-15 soak that
+    # waits for and replaces that routine, included).
+    assert sim.routine_days() == [3, 6, 9, 12, 18]
     assert c.store.state.peak_temp_day_history_c[0] == pytest.approx(34.0, abs=0.05)
     assert c.store.state.min_temp_day_history_c[0] == pytest.approx(26.0, abs=0.05)
 
@@ -192,7 +194,10 @@ async def test_et_curve_replaces_roughly_the_water_the_plant_used(hass, fake_val
     # Water applied over days 1..27 should be in line with what was used
     # (routine replaces demand in arrears; allow for the 3-day averaging lag
     # and the first/last partial intervals).
-    assert sim.routine_total() == pytest.approx(used, rel=0.2)
+    # A deep soak after day 0 takes the place of a routine run, so it counts
+    # as applied water here too.
+    applied = sim.routine_total() + sum(r.deep_soak_mm for r in sim.results[1:])
+    assert applied == pytest.approx(used, rel=0.2)
 
     # The weekly target the model chose follows the weather: in the cool
     # fortnight ~ET0(22-27C) x 7 x 0.8, in the hot one ~ET0(26-34C) x 7 x 0.8.

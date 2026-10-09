@@ -413,7 +413,7 @@ async def test_abort_during_a_pulse_closes_the_valve_and_records_nothing(hass, f
 @pytest.mark.asyncio
 async def test_deep_soak_delivers_its_target_depth(hass, fake_valve_services, monkeypatch, tmp_path):
     controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
-    _history(controller, last_routine_days_ago=1, last_deep_days_ago=14)
+    _history(controller, last_routine_days_ago=5, last_deep_days_ago=14)
     await _set(controller, deep_soak_max_runtime_minutes=150)
 
     await controller.run_deep_soak()
