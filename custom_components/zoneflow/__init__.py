@@ -14,7 +14,7 @@ from homeassistant.helpers import issue_registry as ir
 
 import homeassistant.util.dt as dt_util
 
-from . import frontend, issues, location, plant_actions, plant_api, plants as plants_module, presets, summary, units, visibility
+from . import calibration, frontend, issues, location, plant_actions, plant_api, plants as plants_module, presets, summary, units, visibility
 from . import greenhouse as greenhouse_module
 from . import area as area_module
 from .area import AREA_SHARED_KEYS, AreaController
@@ -51,6 +51,8 @@ SERVICE_REMOVE_PLANT = "remove_plant"
 SERVICE_SET_MAIN_PLANT = "set_main_plant"
 SERVICE_ADD_PLANT_NOTE = "add_plant_note"
 SERVICE_SAVE_PRESET = "save_preset"
+SERVICE_WATER_NOW = "water_now"
+SERVICE_CALIBRATE_FLOW = "calibrate_flow"
 SERVICE_COPY_SETTINGS = "copy_settings"
 SERVICE_DELETE_PRESET = "delete_preset"
 
@@ -76,6 +78,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     (frontend.py has the rest)."""
     await frontend.async_register(hass)
     websocket_api.async_register_command(hass, plant_api.ws_plants)
+    websocket_api.async_register_command(hass, plant_api.ws_check)
     return True
 
 
@@ -116,6 +119,18 @@ ADD_PLANT_SCHEMA = vol.Schema(
 )
 MOVE_PLANT_SCHEMA = vol.Schema(
     {vol.Required("plant_id"): cv.string, vol.Optional("old_main"): _OLD_MAIN, **_ZONE_TARGET_FIELDS}
+)
+WATER_NOW_SCHEMA = vol.Schema(
+    {vol.Optional("minutes", default=10): vol.All(vol.Coerce(float), vol.Range(min=1, max=900)), **_ZONE_TARGET_FIELDS}
+)
+CALIBRATE_FLOW_SCHEMA = vol.Schema(
+    {
+        # In the zone's units: litres (gallons), m2 (ft2).
+        vol.Required("volume"): vol.All(vol.Coerce(float), vol.Range(min=0.01)),
+        vol.Required("area"): vol.All(vol.Coerce(float), vol.Range(min=0.1)),
+        vol.Optional("minutes", default=15): vol.All(vol.Coerce(float), vol.Range(min=1, max=240)),
+        **_ZONE_TARGET_FIELDS,
+    }
 )
 SAVE_PRESET_SCHEMA = vol.Schema({vol.Required("name"): cv.string, **_ZONE_TARGET_FIELDS})
 COPY_SETTINGS_SCHEMA = vol.Schema(
@@ -374,6 +389,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         async def _handle_add_plant_note(call: ServiceCall) -> None:
             await plant_actions.add_note(hass, call.data["plant_id"], call.data["text"])
 
+        async def _handle_water_now(call: ServiceCall) -> None:
+            await _resolve_controller(hass, call).water_now(call.data["minutes"])
+
+        async def _handle_calibrate_flow(call: ServiceCall) -> None:
+            await calibration.calibrate_from_volume(
+                _resolve_controller(hass, call), call.data["volume"], call.data["area"], call.data["minutes"]
+            )
+
+        hass.services.async_register(DOMAIN, SERVICE_WATER_NOW, _handle_water_now, schema=WATER_NOW_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_CALIBRATE_FLOW, _handle_calibrate_flow, schema=CALIBRATE_FLOW_SCHEMA)
+
         async def _handle_save_preset(call: ServiceCall) -> None:
             await presets.save_preset(hass, _resolve_controller(hass, call), call.data["name"])
 
@@ -481,6 +507,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_SET_MAIN_PLANT,
                 SERVICE_ADD_PLANT_NOTE,
                 SERVICE_SAVE_PRESET,
+                SERVICE_WATER_NOW,
+                SERVICE_CALIBRATE_FLOW,
                 SERVICE_COPY_SETTINGS,
                 SERVICE_DELETE_PRESET,
             ):

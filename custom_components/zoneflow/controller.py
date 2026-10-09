@@ -343,6 +343,7 @@ class ZoneFlowController:
         self._frost_rechecks = 0
         self._frost_rechecking = False
         self._frost_notified: set[str] = set()
+        self._service_counted = False
         # Greenhouse / indoor climate control (1.6). Does nothing for a zone
         # with no climate devices.
         self.greenhouse = GreenhouseManager(self, lambda: STARTUP_GRACE_SECONDS)
@@ -3766,8 +3767,25 @@ class ZoneFlowController:
             listener()
         self._notify_status()
 
+    async def water_now(self, minutes: float) -> None:
+        """Water for `minutes` by hand ("Water now" with a duration). Within
+        the safety limits: not while paused, no longer than the routine cap,
+        and inside the day's runtime cap. It counts as watering in the water
+        record (litres, last watering amount) but does not move the routine
+        or deep soak schedule."""
+        self._refuse_without_valve()
+        self._refuse_if_paused()
+        minutes = float(minutes)
+        cap = self.number("max_runtime_minutes")
+        if minutes < 1 or minutes > cap:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="water_now_out_of_range",
+                translation_placeholders={"max": f"{cap:.0f}"},
+            )
+        await self.start_service_run(minutes, counted=True)
+
     async def start_service_run(
-        self, minutes: float, *, from_switch: bool = False, measure_area: float | None = None
+        self, minutes: float, *, from_switch: bool = False, measure_area: float | None = None, counted: bool = False
     ) -> None:
         """Run the valve for `minutes` to check emitters, flush a line or
         find a leak -- the 1/5/10 min buttons and the Service Mode switch.
@@ -3799,20 +3817,23 @@ class ZoneFlowController:
         shortened = float(minutes) > room
         minutes = min(float(minutes), room)
         self._service_active = True
+        self._service_counted = counted
         self._service_stop.clear()
         self._notify_service_listeners()
-        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area))
+        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area, counted))
 
     async def _service_task(
-        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None
+        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None,
+        counted: bool = False,
     ) -> None:
         """Owns the service-run flags, so they're cleared however the run
         ends -- including a zone that started stopping before it began."""
         self._measuring = measure_area is not None
         try:
-            await self._service_run(minutes, from_switch, shortened, measure_area)
+            await self._service_run(minutes, from_switch, shortened, measure_area, counted)
         finally:
             self._measuring = False
+            self._service_counted = False
             self._service_active = False
             self._service_stop.clear()
             self._notify_service_listeners()
@@ -3824,7 +3845,8 @@ class ZoneFlowController:
 
     @_tracked_run
     async def _service_run(
-        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None
+        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None,
+        counted: bool = False,
     ) -> None:
         state = self.store.state
         if state.lock_on:
@@ -3856,8 +3878,12 @@ class ZoneFlowController:
         ran = self._delivered_minutes
         auto_off = completed and from_switch
         cap_note = " (shortened to fit today's runtime safety cap)" if shortened else ""
+        if counted and (completed or ran > 0):
+            # "Water now": the water went on, so the record shows it.
+            self._count_for_summary(ran, "manual")
+            await self.store.async_save()
         await self._log_event(
-            event_type=SERVICE_RUN_KIND,
+            event_type="Manual Watering" if counted else SERVICE_RUN_KIND,
             status="Auto-Off" if auto_off else ("Completed" if completed else "Stopped"),
             target_mm=0.0,
             deducted_mm=0.0,
@@ -3866,7 +3892,10 @@ class ZoneFlowController:
             message="service_auto_off_capped" if shortened else "service_auto_off",
             params={"minutes": f"{ran:.0f}"},
             level=LEVEL_WARNING,
-            extra_log=f"Service run: {ran:.1f} min, not counted as watering{cap_note}.",
+            extra_log=(
+                f"Manual watering: {ran:.1f} min, counted in the water record{cap_note}."
+                if counted else f"Service run: {ran:.1f} min, not counted as watering{cap_note}."
+            ),
         )
         if measure_area is not None:
             await self._finish_flow_measurement(measure_area, minutes, stopped_by_person)
@@ -4575,7 +4604,12 @@ class ZoneFlowController:
             key = "with_next_deep_soak" if next_cycle == "deep_soak" else "with_next"
             return self._msg(f"status.{key}", status=text, when=self._when(next_ts))
 
-        if self._service_active:
+        if self._service_active and self._service_counted:
+            result.update(
+                code="watering", cycle="manual_water",
+                text=self._msg("status.watering", cycle=self._msg("cycle.manual_water")),
+            )
+        elif self._service_active:
             result.update(code="service_run", text=self._msg("status.service_run"))
             return result
         if self._waiting_pump_kind is not None:

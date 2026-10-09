@@ -11,7 +11,8 @@
     "deep_soak": "Глубокий полив",
     "routine": "Регулярный полив",
     "service_run": "Сервисный запуск",
-    "test_pulse": "Тестовый импульс"
+    "test_pulse": "Тестовый импульс",
+    "manual_water": "Manual watering"
   },
   "notify": {
     "heavy_rain": {
@@ -285,5 +286,58 @@
     "none": "The plant type's usual settings",
     "zone": "A copy of {zone}",
     "preset": "Preset: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "The valve {entity} answers.",
+      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+    },
+    "rain": {
+      "ok": "The rain gauge {entity} reports.",
+      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
+      "wu": "Rain comes from Weather Underground.",
+      "manual": "Rain is added by hand.",
+      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+    },
+    "temperature": {
+      "ok": "Outdoor temperature is {value} {unit}.",
+      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
+      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+    },
+    "weather": {
+      "ok": "The weather forecast {entity} is available.",
+      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
+      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+    },
+    "flow": {
+      "ok": "The flow rate is set ({value} mm/min).",
+      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+    },
+    "volume": {
+      "ok": "Water use is shown in litres.",
+      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+    },
+    "soil": {
+      "ok": "The soil moisture probe reports {value} %.",
+      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+    },
+    "pump": {
+      "ok": "The pump power sensor {entity} reports.",
+      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+    },
+    "paused": {
+      "zone": "This zone is paused: no watering until you switch Pause off.",
+      "area": "The area {area} is paused: no watering until you switch its Pause off."
+    },
+    "last": {
+      "ok": "Last watering: {when}.",
+      "never": "ZoneFlow has not watered this zone yet.",
+      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+    },
+    "notify": {
+      "ok": "Phone messages go to {entity}.",
+      "none": "No phone to notify. You will not get messages about watering.",
+      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+    }
   }
 }

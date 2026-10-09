@@ -1529,6 +1529,50 @@
           "description": "The preset's name."
         }
       }
+    },
+    "water_now": {
+      "name": "Water Now",
+      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. Counts in the water record (litres), but does not move the routine or deep soak schedule.",
+      "fields": {
+        "minutes": {
+          "name": "Minutes",
+          "description": "How long to water."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Calibrate Flow Rate",
+      "description": "Sets the flow rate from a measured run: the water that came out (collected in a bucket or read from a water meter), the area it fell on, and how long the valve was open. Also sets Zone Flow, for litres.",
+      "fields": {
+        "volume": {
+          "name": "Water",
+          "description": "How much water came out (litres, or gallons on an imperial zone)."
+        },
+        "area": {
+          "name": "Area",
+          "description": "The area that water fell on (m2, or ft2 on an imperial zone)."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "How long the valve was open."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1621,6 +1665,15 @@
     },
     "copy_source_required": {
       "message": "Choose a zone or a preset to copy from."
+    },
+    "water_now_out_of_range": {
+      "message": "Water for at least 1 minute and at most {max} minutes (this zone's safety cap)."
+    },
+    "calibration_out_of_range": {
+      "message": "Those numbers give a flow rate this zone cannot have. Check the water, the area and the minutes."
+    },
+    "calibration_unavailable": {
+      "message": "This zone has no flow rate setting to calibrate."
     }
   },
   "issues": {

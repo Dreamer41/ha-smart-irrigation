@@ -187,6 +187,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "de": {
@@ -359,6 +385,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "es": {
@@ -531,6 +583,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "fi": {
@@ -703,6 +781,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "fr": {
@@ -875,6 +979,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "it": {
@@ -1047,6 +1177,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "nl": {
@@ -1219,6 +1375,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "pl": {
@@ -1391,6 +1573,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "pt": {
@@ -1563,6 +1771,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "sv": {
@@ -1735,6 +1969,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "cs": {
@@ -1907,6 +2167,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "da": {
@@ -2079,6 +2365,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "hu": {
@@ -2251,6 +2563,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "nb": {
@@ -2423,6 +2761,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "pt-BR": {
@@ -2595,6 +2959,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "ru": {
@@ -2767,6 +3157,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "sk": {
@@ -2939,6 +3355,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "uk": {
@@ -3111,6 +3553,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   },
   "zh-Hans": {
@@ -3283,6 +3751,32 @@ const I18N = {
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
       "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
     }
   }
 };
@@ -3557,6 +4051,13 @@ class ZoneFlowCard extends HTMLElement {
       .area-label { flex: 1; min-width: 0; }
       .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
         border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
+      .check-headline { font-weight: 500; margin: 4px 0 8px; }
+      .check-headline.warn, .check-item.warn ha-icon { color: var(--warning-color, #ff9800); }
+      .check-headline.fail, .check-item.fail ha-icon { color: var(--error-color, #db4437); }
+      .check-item.ok ha-icon { color: var(--success-color, #43a047); }
+      .check-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; flex-wrap: wrap; }
+      .check-text { flex: 1; min-width: 180px; }
+      .waternow-minutes { min-width: 56px; text-align: center; }
       .plant { border: 1px solid var(--divider-color); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
       .plant-head { display: flex; align-items: center; gap: 8px; }
       .plant-name { flex: 1; font-weight: 500; }
@@ -3661,6 +4162,8 @@ class ZoneFlowCard extends HTMLElement {
       ]),
       ...rows(CONTROLS),
       ...buttons([["button.resume_automatic", t(hass, "resume_automatic"), "mdi:play-circle-outline"]]),
+      // Water by hand for a number of minutes.
+      ...(valve ? [{ custom: "water_now" }] : []),
       // Manual rain (outdoor zones without a rain gauge): the amount, then
       // the button that records it.
       ...rows(["number.manual_rain_mm"]),
@@ -3709,6 +4212,14 @@ class ZoneFlowCard extends HTMLElement {
     this._popups = {};
     if (this._config.show_journal) this._popups.journal = { icon: "mdi:notebook-outline", parts: [[null, journal]] };
     if (this._config.show_settings) this._popups.settings = { icon: "mdi:cog-outline", parts: groups };
+    // Check my setup and the guided calibration (a zone that waters).
+    if (valve) {
+      this._popups.check = { icon: "mdi:clipboard-check-outline", custom: "check", parts: [], label: t(hass, "check.title") };
+      this._popups.calibrate = {
+        icon: "mdi:ruler", custom: "calibrate", parts: [], label: t(hass, "calibrate.title"),
+        runEntity: visible["button.service_run_15_min"]?.entity_id,
+      };
+    }
     // The plants in this zone (a zone that waters has at least its main plant).
     if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
@@ -3787,6 +4298,8 @@ class ZoneFlowCard extends HTMLElement {
     const body = document.createElement("div");
     body.className = "dlg-body";
     if (popup.custom === "plants") this._plantsBody(body);
+    if (popup.custom === "check") this._checkBody(body);
+    if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       if (groupKey) {
         const heading = document.createElement("div");
@@ -3844,6 +4357,92 @@ class ZoneFlowCard extends HTMLElement {
     });
     this.shadowRoot.appendChild(dialog);
     dialog.showModal();
+  }
+
+  async _checkBody(body) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "check.loading")));
+    let data;
+    try {
+      data = await hass.callWS({ type: "zoneflow/check", device_id: this._config.device_id });
+    } catch (err) {
+      body.textContent = String(err?.message || err);
+      return;
+    }
+    body.textContent = "";
+    const headline = { ok: "check.all_good", info: "check.all_good", warn: "check.needs_a_look", fail: "check.needs_fixing" }[data.level];
+    body.appendChild(make("div", `check-headline ${data.level}`, t(hass, headline)));
+    const ICONS = { ok: "mdi:check-circle-outline", info: "mdi:information-outline", warn: "mdi:alert-outline", fail: "mdi:close-circle-outline" };
+    for (const item of data.items) {
+      const row = make("div", `check-item ${item.level}`);
+      const icon = document.createElement("ha-icon");
+      icon.setAttribute("icon", ICONS[item.level] || ICONS.info);
+      row.append(icon, make("span", "check-text", item.text));
+      if (item.action === "calibrate" && this._popups?.calibrate) {
+        const button = make("button", "plant-button", t(hass, "check.calibrate"));
+        button.addEventListener("click", () => this._openPopup("calibrate"));
+        row.appendChild(button);
+      }
+      body.appendChild(row);
+    }
+    const again = make("button", "plant-button", t(hass, "check.again"));
+    again.addEventListener("click", () => this._checkBody(body));
+    body.appendChild(again);
+  }
+
+  _calibrateBody(body, popup) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const attrs = hass.states?.[Object.values(hass.entities || {}).find(
+      (e) => e.device_id === this._config.device_id && e.translation_key === "status")?.entity_id]?.attributes || {};
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "calibrate.intro")));
+    body.appendChild(make("div", "", t(hass, "calibrate.step1")));
+    const run = make("button", "plant-button", t(hass, "calibrate.run"));
+    run.disabled = !popup.runEntity;
+    run.addEventListener("click", () => hass.callService("button", "press", { entity_id: popup.runEntity }));
+    body.appendChild(run);
+    body.appendChild(make("div", "", t(hass, "calibrate.step2")));
+    const field = (labelKey, unit, value) => {
+      const row = make("label", "plant-choice");
+      const input = make("input", "area-input");
+      input.type = "number";
+      input.value = value;
+      input.min = "0";
+      row.append(document.createTextNode(`${t(hass, labelKey)} (${unit}) `), input);
+      body.appendChild(row);
+      return input;
+    };
+    const water = field("calibrate.water", attrs.volume_unit || "L", "");
+    const area = field("calibrate.area", attrs.area_unit || "m²", "");
+    const minutes = field("calibrate.minutes", t(hass, "waternow.min"), "15");
+    const done = make("div", "group-note");
+    const set = make("button", "plant-button", t(hass, "calibrate.set"));
+    set.addEventListener("click", async () => {
+      done.textContent = "";
+      try {
+        await hass.callService("zoneflow", "calibrate_flow", {
+          volume: Number(water.value), area: Number(area.value), minutes: Number(minutes.value),
+          device_id: this._config.device_id,
+        });
+        done.textContent = t(hass, "calibrate.done");
+      } catch (err) {
+        done.textContent = err?.message || String(err);
+      }
+    });
+    body.append(set, done);
   }
 
   async _plantsBody(body) {
@@ -4076,6 +4675,41 @@ class ZoneFlowCard extends HTMLElement {
     return conf;
   }
 
+  _waterNowRow() {
+    const wrap = document.createElement("div");
+    wrap.className = "area-row waternow";
+    const label = document.createElement("span");
+    label.className = "area-label";
+    let minutes = this._waterNowMinutes || 10;
+    const shown = document.createElement("span");
+    shown.className = "waternow-minutes";
+    const draw = () => { shown.textContent = `${minutes} ${t(this._hass, "waternow.min")}`; };
+    const step = (delta) => {
+      minutes = Math.min(Math.max(minutes + delta, 1), 120);
+      this._waterNowMinutes = minutes;
+      draw();
+    };
+    const mk = (text, fn) => {
+      const el = document.createElement("button");
+      el.className = "plant-button";
+      el.textContent = text;
+      el.addEventListener("click", fn);
+      return el;
+    };
+    const start = mk(t(this._hass, "waternow.start"), async () => {
+      try {
+        await this._hass.callService("zoneflow", "water_now", { minutes, device_id: this._config.device_id });
+      } catch (err) {
+        window.alert?.(err?.message || String(err));
+      }
+    });
+    label.textContent = t(this._hass, "waternow.label");
+    draw();
+    wrap.append(label, mk("−", () => step(-5)), shown, mk("+", () => step(5)), start);
+    Object.defineProperty(wrap, "hass", { set: () => {} });
+    return wrap;
+  }
+
   _locationRow(conf) {
     // "Where is this?": the select entity's places, plus "New area..." (a name
     // typed here makes the area and puts this zone in it) and "New greenhouse..."
@@ -4155,7 +4789,8 @@ class ZoneFlowCard extends HTMLElement {
           const conf = this._shortName(raw);
           const add = (before) => {
             const isLocation = this._hass.entities?.[conf.entity]?.translation_key === "location";
-            const row = isLocation ? this._locationRow(conf) : helpers.createRowElement(conf);
+            const row = conf.custom === "water_now" ? this._waterNowRow()
+              : isLocation ? this._locationRow(conf) : helpers.createRowElement(conf);
             row.hass = this._hass;
             if (conf._tip) row.title = conf._tip;
             // A row that has to be recreated replaces just itself.

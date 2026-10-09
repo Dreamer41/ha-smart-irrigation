@@ -8,8 +8,22 @@ from homeassistant.helpers import device_registry as dr
 
 from . import plant_actions
 from .const import DOMAIN
-from . import presets
+from . import presets, setup_check
 from .plants import async_get_book
+
+
+@websocket_api.websocket_command({vol.Required("type"): "zoneflow/check", vol.Required("device_id"): str})
+@websocket_api.async_response
+async def ws_check(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
+    """The zone's Check my setup list."""
+    device = dr.async_get(hass).async_get(msg["device_id"])
+    controllers = hass.data.get(DOMAIN, {})
+    zone_id = next((e for e in (device.config_entries if device else ()) if e in controllers), None)
+    if zone_id is None:
+        connection.send_error(msg["id"], "not_found", "No such ZoneFlow zone")
+        return
+    items = setup_check.run_checks(controllers[zone_id])
+    connection.send_result(msg["id"], {"zone": controllers[zone_id].entry.title, "level": setup_check.summary(items), "items": items})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "zoneflow/plants", vol.Required("device_id"): str})

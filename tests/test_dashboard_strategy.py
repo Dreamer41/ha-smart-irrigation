@@ -382,6 +382,7 @@ class El {
   constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this._text = ""; this.value = ""; this.hidden = false; this.className = ""; this.checked = false; }
   append(...c) { for (const x of c) this.children.push(typeof x === "string" ? { text: x, children: [] } : x); }
   appendChild(c) { this.children.push(c); }
+  setAttribute(k, v) { this.attrs = { ...(this.attrs || {}), [k]: v }; }
   addEventListener(type, fn) { this.listeners[type] = fn; }
   set textContent(v) { this._text = v; if (v === "") this.children = []; }
   get textContent() { return this._text; }
@@ -490,4 +491,77 @@ def test_the_plants_popup_lists_the_plants_and_calls_the_services(tmp_path):
         ["zoneflow", "copy_settings", {"preset": "Hot bed", "device_id": "d1"}],
         ["zoneflow", "delete_preset", {"name": "Hot bed"}],
         ["zoneflow", "save_preset", {"name": "Cool bed", "device_id": "d1"}],
+    ]
+
+
+_PREAMBLE = PLANTS_HARNESS[: PLANTS_HARNESS.index("const run = async")]
+
+CHECK_HARNESS = _PREAMBLE + r"""
+hass.callWS = async (msg) => { calls.push(["ws", msg.type]); return input.ws; };
+const run = async () => {
+  const result = {};
+  const popups = { calibrate: { runEntity: "button.tomatoes_service_run_15_min" }, check: {} };
+  const ctx2 = { _hass: hass, _config: { device_id: "d1" }, _popups: popups, _openPopup: (key) => calls.push(["open", key]) };
+  const body = new El("div");
+  await proto._checkBody.call(ctx2, body);
+  const all = () => walk(body);
+  result.headline = all().filter((e) => e.className.startsWith("check-headline")).map((e) => [e.className, e._text]);
+  result.items = all().filter((e) => e.className.startsWith("check-item")).map((e) => e.className);
+  const calibrate = all().filter((e) => e.tag === "button" && e._text === "Calibrate")[0];
+  calibrate.listeners.click();
+
+  const cal = new El("div");
+  proto._calibrateBody.call(ctx2, cal, popups.calibrate);
+  const inputs = walk(cal).filter((e) => e.tag === "input");
+  const labels = walk(cal).filter((e) => e.text && e.text.includes("("));
+  result.labels = labels.map((l) => l.text);
+  const [water, area, minutes] = inputs;
+  water.value = "30"; area.value = "10";
+  result.minutesDefault = minutes.value;
+  walk(cal).filter((e) => e.tag === "button" && e._text === "Run 15 minutes")[0].listeners.click();
+  walk(cal).filter((e) => e.tag === "button" && e._text === "Set the flow rate")[0].listeners.click();
+  await Promise.resolve();
+
+  const row = proto._waterNowRow.call({ _hass: hass, _config: { device_id: "d1" } });
+  const rowButtons = walk(row).filter((e) => e.tag === "button");
+  rowButtons[1].listeners.click();  // +5
+  rowButtons[1].listeners.click();  // +5
+  rowButtons[0].listeners.click();  // -5
+  result.shown = walk(row).filter((e) => e.className === "waternow-minutes")[0]._text;
+  rowButtons[2].listeners.click();  // Start
+  await Promise.resolve();
+  result.calls = calls;
+  console.log(JSON.stringify(result));
+};
+run();
+"""
+
+
+def test_the_check_calibrate_and_water_now_controls(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "d1", "Tomatoes", "tomatoes")
+    devices["d1"] = {"name": "Tomatoes"}
+    states["sensor.tomatoes_status"]["attributes"].update(volume_unit="L", area_unit="m²")
+    ws = {"zone": "Tomatoes", "level": "warn", "items": [
+        {"id": "flow", "level": "warn", "text": "The flow rate is still the example value.", "action": "calibrate"},
+        {"id": "valve", "level": "ok", "text": "The valve answers.", "action": None}]}
+    harness = tmp_path / "check.js"
+    harness.write_text(CHECK_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": ws})],
+                          capture_output=True, encoding="utf-8", timeout=60, check=False)
+    assert done.returncode == 0, done.stderr[-800:]
+    out = json.loads(done.stdout)
+    assert out["headline"] == [["check-headline warn", "A few things to look at."]]
+    assert out["items"] == ["check-item warn", "check-item ok"]
+    assert out["labels"] == ["Water that came out (L) ", "Watered area (m²) ", "Minutes the valve was open (min) "]
+    assert out["minutesDefault"] == "15" and out["shown"] == "15 min"
+    assert out["calls"] == [
+        ["ws", "zoneflow/check"],
+        ["open", "calibrate"],
+        ["button", "press", {"entity_id": "button.tomatoes_service_run_15_min"}],
+        ["zoneflow", "calibrate_flow", {"volume": 30, "area": 10, "minutes": 15, "device_id": "d1"}],
+        ["zoneflow", "water_now", {"minutes": 15, "device_id": "d1"}],
     ]

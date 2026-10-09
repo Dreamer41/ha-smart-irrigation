@@ -381,3 +381,82 @@ delete_preset:
       required: true
       selector:
         text:
+
+water_now:
+  name: Water Now
+  description: >-
+    Waters the zone by hand for a number of minutes. Not while the zone is
+    paused, never longer than the zone's Routine Max Safety Runtime Cap, and
+    inside the day's runtime cap. Counts in the water record (litres), but does
+    not move the routine or deep soak schedule.
+  fields:
+    minutes:
+      name: Minutes
+      description: How long to water.
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 900
+          mode: box
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+calibrate_flow:
+  name: Calibrate Flow Rate
+  description: >-
+    Sets the flow rate from a measured run: the water that came out (collected
+    in a bucket or read from a water meter), the area it fell on, and how long
+    the valve was open. Also sets Zone Flow, for litres.
+  fields:
+    volume:
+      name: Water
+      description: How much water came out (litres, or gallons on an imperial zone).
+      required: true
+      selector:
+        number:
+          min: 0.01
+          max: 1000000
+          step: 0.01
+          mode: box
+    area:
+      name: Area
+      description: The area that water fell on (m2, or ft2 on an imperial zone).
+      required: true
+      selector:
+        number:
+          min: 0.1
+          max: 100000
+          step: 0.1
+          mode: box
+    minutes:
+      name: Minutes
+      description: How long the valve was open.
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 240
+          mode: box
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
