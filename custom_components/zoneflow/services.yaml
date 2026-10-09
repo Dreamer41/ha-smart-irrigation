@@ -165,3 +165,152 @@ add_rain:
         entity:
           integration: zoneflow
           multiple: true
+
+create_area:
+  name: Create Area
+  description: >-
+    Makes a new area (a part of the garden such as Backyard). Target a zone and
+    it moves into the new area, which starts with that zone's rain gauge,
+    outdoor temperature, weather and phone settings.
+  fields:
+    name:
+      name: Name
+      description: What the area is called, for example Backyard or Front yard.
+      required: true
+      example: Backyard
+      selector:
+        text:
+    device_id:
+      name: Zone Device
+      description: The zone to put in the new area (optional).
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to that zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+add_plant:
+  name: Add Plant
+  description: >-
+    Adds a plant to a zone. In a zone with no main plant it becomes the main
+    plant and its type's settings go onto the zone; otherwise it is a record
+    only (history, notes), unless Old Main Plant says it takes over.
+  fields:
+    name:
+      name: Name
+      description: What the plant is called.
+      required: true
+      selector:
+        text:
+    plant_type:
+      name: Plant Type
+      description: Starting settings for this kind of plant (custom if left out).
+      selector:
+        text:
+    old_main:
+      name: Old Main Plant
+      description: >-
+        Only when the zone already has a main plant. What becomes of it:
+        keep it there as a record or archive it.
+      selector:
+        select:
+          options:
+            - extra
+            - archive
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+move_plant:
+  name: Move Plant
+  description: >-
+    Moves a plant, with its history, to another zone. Its settings go onto the
+    zone it arrives in.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id (shown in the zone's Status attributes).
+      required: true
+      selector:
+        text:
+    old_main:
+      name: Old Main Plant
+      description: >-
+        Only when the zone already has a main plant. What becomes of it:
+        keep it there as a record, archive it, swap it to the zone this plant
+        leaves, or keep this plant as a record only.
+      selector:
+        select:
+          options:
+            - extra
+            - archive
+            - swap
+            - keep
+    device_id:
+      name: Zone Device
+      description: The zone it goes to. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+remove_plant:
+  name: Remove Plant
+  description: >-
+    Takes a plant out of its zone. It stays on record with its history. The
+    next plant in the zone becomes the main plant.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+
+set_main_plant:
+  name: Set Main Plant
+  description: >-
+    Makes a plant the main plant of its zone: its settings go onto the zone and
+    the old main plant stays as a record.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+
+add_plant_note:
+  name: Add Plant Note
+  description: Adds a note to a plant's history.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+    text:
+      name: Note
+      description: What to write down.
+      required: true
+      selector:
+        text:

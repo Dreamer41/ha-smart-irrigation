@@ -18,6 +18,9 @@ from . import messages
 from .area import AREA_SHARED_KEYS, areas, get_area
 from .const import (
     CONF_AREA_ID,
+    CONF_AREA_MM_PER_TIP,
+    CONF_RAIN_COUNTER_ENTITY,
+    CONF_RAIN_SOURCE,
     CONF_PARENT_ZONE,
     CONF_ZONE_TYPE,
     CROP_INHERITED_KEYS,
@@ -55,6 +58,16 @@ def greenhouse_entries(hass: HomeAssistant, exclude_entry_id: str | None = None)
         if any(data.get(role) for role in DEVICE_ROLE_KEYS):
             found.append(entry)
     return sorted(found, key=lambda e: e.title.casefold())
+
+
+def area_defaults(controller: Any) -> dict[str, Any]:
+    """A new area made from a zone starts with the sensors the zone has now
+    (and, for a rain gauge, its tip size)."""
+    merged = _merged(controller.entry)
+    defaults: dict[str, Any] = {key: merged.get(key) for key in (*AREA_SHARED_KEYS, CONF_RAIN_SOURCE)}
+    if merged.get(CONF_RAIN_COUNTER_ENTITY):
+        defaults[CONF_AREA_MM_PER_TIP] = controller.number("rain_mm_per_tip")
+    return defaults
 
 
 def is_greenhouse_with_devices(entry: ConfigEntry) -> bool:

@@ -142,6 +142,40 @@ const I18N = {
       "none": "No area",
       "new": "New area…",
       "name": "Area name"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "de": {
@@ -269,6 +303,40 @@ const I18N = {
       "none": "Kein Bereich",
       "new": "Neuer Bereich …",
       "name": "Name des Bereichs"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "es": {
@@ -396,6 +464,40 @@ const I18N = {
       "none": "Sin área",
       "new": "Nueva área…",
       "name": "Nombre del área"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "fi": {
@@ -523,6 +625,40 @@ const I18N = {
       "none": "Ei aluetta",
       "new": "Uusi alue…",
       "name": "Alueen nimi"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "fr": {
@@ -650,6 +786,40 @@ const I18N = {
       "none": "Aucune partie",
       "new": "Nouvelle partie…",
       "name": "Nom de la partie"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "it": {
@@ -777,6 +947,40 @@ const I18N = {
       "none": "Nessuna area",
       "new": "Nuova area…",
       "name": "Nome dell'area"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "nl": {
@@ -904,6 +1108,40 @@ const I18N = {
       "none": "Geen gedeelte",
       "new": "Nieuw gedeelte…",
       "name": "Naam van het gedeelte"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "pl": {
@@ -1031,6 +1269,40 @@ const I18N = {
       "none": "Brak obszaru",
       "new": "Nowy obszar…",
       "name": "Nazwa obszaru"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "pt": {
@@ -1158,6 +1430,40 @@ const I18N = {
       "none": "Sem área",
       "new": "Nova área…",
       "name": "Nome da área"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "sv": {
@@ -1285,6 +1591,40 @@ const I18N = {
       "none": "Inget område",
       "new": "Nytt område…",
       "name": "Områdets namn"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "cs": {
@@ -1412,6 +1752,40 @@ const I18N = {
       "none": "Bez oblasti",
       "new": "Nová oblast…",
       "name": "Název oblasti"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "da": {
@@ -1539,6 +1913,40 @@ const I18N = {
       "none": "Intet område",
       "new": "Nyt område…",
       "name": "Områdets navn"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "hu": {
@@ -1666,6 +2074,40 @@ const I18N = {
       "none": "Nincs terület",
       "new": "Új terület…",
       "name": "A terület neve"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "nb": {
@@ -1793,6 +2235,40 @@ const I18N = {
       "none": "Ingen område",
       "new": "Nytt område…",
       "name": "Områdets navn"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "pt-BR": {
@@ -1920,6 +2396,40 @@ const I18N = {
       "none": "Sem área",
       "new": "Nova área…",
       "name": "Nome da área"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "ru": {
@@ -2047,6 +2557,40 @@ const I18N = {
       "none": "Без участка",
       "new": "Новый участок…",
       "name": "Название участка"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "sk": {
@@ -2174,6 +2718,40 @@ const I18N = {
       "none": "Bez oblasti",
       "new": "Nová oblasť…",
       "name": "Názov oblasti"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "uk": {
@@ -2301,6 +2879,40 @@ const I18N = {
       "none": "Без ділянки",
       "new": "Нова ділянка…",
       "name": "Назва ділянки"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   },
   "zh-Hans": {
@@ -2428,6 +3040,40 @@ const I18N = {
       "none": "无地块",
       "new": "新地块…",
       "name": "地块名称"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone"
     }
   }
 };
@@ -2469,6 +3115,7 @@ const ONLY_WHEN = {
 };
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
+const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
 const SETTINGS_GROUPS = [
   ["garden", ["select.location"]],
   ["climate", [
@@ -2697,6 +3344,25 @@ class ZoneFlowCard extends HTMLElement {
       dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
       dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
       dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
+      .area-row { display: flex; align-items: center; gap: 8px; padding: 6px 16px; min-height: 40px; }
+      .area-label { flex: 1; min-width: 0; }
+      .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
+        border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
+      .plant { border: 1px solid var(--divider-color); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+      .plant-head { display: flex; align-items: center; gap: 8px; }
+      .plant-name { flex: 1; font-weight: 500; }
+      .plant-badge { font-size: 0.75em; color: var(--secondary-text-color); }
+      .plant-badge.main { color: var(--primary-color); font-weight: 500; }
+      .plant-actions, .plant-form, .plant-noterow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+      .plant-button { font: inherit; color: var(--primary-color); background: none; border: 1px solid var(--divider-color);
+        border-radius: 16px; padding: 4px 12px; cursor: pointer; }
+      .plant-button:hover { background: var(--secondary-background-color); }
+      .plant-panel { margin-top: 8px; }
+      .plant-choice { display: block; padding: 3px 0; }
+      .plant-history { margin-top: 8px; max-height: 240px; overflow-y: auto; }
+      .plant-event { display: flex; gap: 10px; padding: 3px 0; font-size: 0.9em; }
+      .plant-when { color: var(--secondary-text-color); white-space: nowrap; }
+      .plant-form .area-input { flex: 1; min-width: 120px; }
       .group-note { color: var(--secondary-text-color); font-size: 0.85em; margin: -4px 0 8px; line-height: 1.35; }
       .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
         letter-spacing: 0.04em; margin: 16px 0 2px; }
@@ -2834,12 +3500,16 @@ class ZoneFlowCard extends HTMLElement {
     this._popups = {};
     if (this._config.show_journal) this._popups.journal = { icon: "mdi:notebook-outline", parts: [[null, journal]] };
     if (this._config.show_settings) this._popups.settings = { icon: "mdi:cog-outline", parts: groups };
+    // The plants in this zone (a zone that waters has at least its main plant).
+    if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
+      this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
+    }
     if (this._config.show_diagnostics) {
       this._popups.diagnostics = { icon: "mdi:chart-box-outline", parts: [[null, diagnostics]] };
     }
     for (const [key, popup] of Object.entries(this._popups)) {
       popup.parts = popup.parts.filter(([, confs]) => confs.length);
-      if (!popup.parts.length) delete this._popups[key];
+      if (!popup.parts.length && !popup.custom) delete this._popups[key];
     }
     section("now", now);
     // A greenhouse: its crops, as in the overview card (status, next and
@@ -2869,7 +3539,7 @@ class ZoneFlowCard extends HTMLElement {
         const button = document.createElement("button");
         const icon = document.createElement("ha-icon");
         icon.setAttribute("icon", popup.icon);
-        button.append(icon, document.createTextNode(t(hass, key)));
+        button.append(icon, document.createTextNode(popup.label || t(hass, key)));
         button.addEventListener("click", () => this._openPopup(key));
         bar.appendChild(button);
       }
@@ -2886,13 +3556,13 @@ class ZoneFlowCard extends HTMLElement {
     this.shadowRoot.querySelector("dialog")?.remove();
     this._popupKey = key;
     const dialog = document.createElement("dialog");
-    dialog.setAttribute("aria-label", t(hass, key));
+    dialog.setAttribute("aria-label", popup.label || t(hass, key));
     const box = document.createElement("div");
     box.className = "dlg";
     const header = document.createElement("header");
     const title = document.createElement("div");
     title.className = "dlg-title";
-    title.textContent = t(hass, key);
+    title.textContent = popup.label || t(hass, key);
     const device = hass.devices?.[this._config.device_id];
     const sub = document.createElement("span");
     sub.className = "dlg-sub";
@@ -2907,6 +3577,7 @@ class ZoneFlowCard extends HTMLElement {
     header.append(title, close);
     const body = document.createElement("div");
     body.className = "dlg-body";
+    if (popup.custom === "plants") this._plantsBody(body);
     for (const [groupKey, confs] of popup.parts) {
       if (groupKey) {
         const heading = document.createElement("div");
@@ -2966,6 +3637,167 @@ class ZoneFlowCard extends HTMLElement {
     dialog.showModal();
   }
 
+  async _plantsBody(body) {
+    const hass = this._hass;
+    const tp = (key) => t(hass, `plants.${key}`);
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", tp("loading")));
+    let data;
+    try {
+      data = await hass.callWS({ type: "zoneflow/plants", device_id: this._config.device_id });
+    } catch (err) {
+      body.textContent = String(err?.message || err);
+      return;
+    }
+    body.textContent = "";
+    const rerender = () => this._plantsBody(body);
+    const act = async (service, payload) => {
+      try {
+        await hass.callService("zoneflow", service, payload);
+      } catch (err) {
+        window.alert?.(err?.message || String(err));
+      }
+      rerender();
+    };
+    const hasMain = data.plants.some((p) => p.main);
+    const others = allZones(hass).filter((z) => z.device_id !== this._config.device_id);
+    const zoneHasMain = (zone) => (hass.states?.[zone.status]?.attributes?.plants || []).some((p) => p.main);
+
+    for (const plant of data.plants) {
+      const box = make("div", "plant");
+      const head = make("div", "plant-head");
+      head.append(make("span", "plant-name", plant.name), make("span", `plant-badge${plant.main ? " main" : ""}`, plant.main ? tp("main") : tp("record")));
+      box.appendChild(head);
+      const actions = make("div", "plant-actions");
+      const button = (label, fn) => {
+        const el = make("button", "plant-button", label);
+        el.addEventListener("click", fn);
+        actions.appendChild(el);
+        return el;
+      };
+      if (!plant.main) button(tp("make_main"), () => act("set_main_plant", { plant_id: plant.id }));
+      const movePanel = make("div", "plant-panel");
+      movePanel.hidden = true;
+      button(tp("move"), () => { movePanel.hidden = !movePanel.hidden; });
+      button(tp("remove"), () => {
+        if (window.confirm?.(tp("confirm_remove")) ?? true) act("remove_plant", { plant_id: plant.id });
+      });
+      const historyPanel = make("div", "plant-panel");
+      historyPanel.hidden = true;
+      button(tp("history"), () => { historyPanel.hidden = !historyPanel.hidden; });
+      box.appendChild(actions);
+
+      // Move: where to, and what becomes of the main plant already there.
+      if (!others.length) {
+        movePanel.appendChild(make("div", "group-note", tp("no_other_zones")));
+      } else {
+        const target = make("select", "area-select");
+        for (const zone of others) {
+          const option = make("option", "", zone.name);
+          option.value = zone.device_id;
+          target.appendChild(option);
+        }
+        const choices = make("div", "plant-choices");
+        const radios = [];
+        const drawChoices = () => {
+          choices.textContent = "";
+          radios.length = 0;
+          const zone = others.find((z) => z.device_id === target.value);
+          if (!zone || !zoneHasMain(zone)) return;
+          choices.appendChild(make("div", "group-note", tp("old_main_question")));
+          for (const key of plant.main ? ["extra", "archive", "swap", "keep"] : ["extra", "archive", "keep"]) {
+            const row = make("label", "plant-choice");
+            const radio = make("input");
+            radio.type = "radio";
+            radio.name = `old-main-${plant.id}`;
+            radio.value = key;
+            radio.checked = radios.length === 0;
+            radios.push(radio);
+            row.append(radio, document.createTextNode(` ${tp(`old_main_${key}`)}`));
+            choices.appendChild(row);
+          }
+        };
+        target.addEventListener("change", drawChoices);
+        const go = make("button", "plant-button", tp("move_button"));
+        go.addEventListener("click", () => {
+          const payload = { plant_id: plant.id, device_id: target.value };
+          const chosen = radios.find((r) => r.checked);
+          if (chosen) payload.old_main = chosen.value;
+          act("move_plant", payload);
+        });
+        movePanel.append(make("div", "group-note", tp("move_to")), target, choices, go);
+        drawChoices();
+      }
+      box.appendChild(movePanel);
+
+      // History, newest first, and a note.
+      const list = make("div", "plant-history");
+      if (!plant.history.length) list.appendChild(make("div", "group-note", tp("no_history")));
+      for (const event of plant.history) {
+        const row = make("div", "plant-event");
+        const when = new Date(event.ts);
+        const stamp = Number.isNaN(when.getTime()) ? "" : when.toLocaleString(hass.locale?.language || undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+        row.append(make("span", "plant-when", stamp), make("span", "plant-what", event.text));
+        list.appendChild(row);
+      }
+      const note = make("input", "area-input");
+      note.type = "text";
+      note.maxLength = 255;
+      note.placeholder = tp("note_placeholder");
+      const addNote = make("button", "plant-button", tp("add_note"));
+      const send = () => {
+        const text = note.value.trim();
+        if (text) act("add_plant_note", { plant_id: plant.id, text });
+      };
+      addNote.addEventListener("click", send);
+      note.addEventListener("keydown", (ev) => { if (ev.key === "Enter") send(); });
+      const noteRow = make("div", "plant-noterow");
+      noteRow.append(note, addNote);
+      historyPanel.append(noteRow, list);
+      box.appendChild(historyPanel);
+      body.appendChild(box);
+    }
+
+    // Add a plant.
+    body.appendChild(make("div", "group-title", tp("add")));
+    const form = make("div", "plant-form");
+    const name = make("input", "area-input");
+    name.type = "text";
+    name.maxLength = 40;
+    name.placeholder = tp("name");
+    const type = make("select", "area-select");
+    for (const key of PLANT_TYPES) {
+      const option = make("option", "", key.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()));
+      option.value = key;
+      type.appendChild(option);
+    }
+    const mode = make("select", "area-select");
+    for (const [value, key] of hasMain
+      ? [["", "as_record"], ["extra", "take_over_keep"], ["archive", "take_over_archive"]]
+      : [["", "as_record"]]) {
+      const option = make("option", "", tp(key));
+      option.value = value;
+      mode.appendChild(option);
+    }
+    mode.hidden = !hasMain;
+    const add = make("button", "plant-button", tp("add"));
+    add.addEventListener("click", () => {
+      const value = name.value.trim();
+      if (!value) return;
+      const payload = { name: value, plant_type: type.value, device_id: this._config.device_id };
+      if (mode.value) payload.old_main = mode.value;
+      act("add_plant", payload);
+    });
+    form.append(name, type, mode, add);
+    body.appendChild(form);
+  }
+
   _shortName(conf) {
     // "Chilis Soil Moisture" -> "Soil Moisture": the card already says which zone.
     if (conf.name || !conf.entity) return conf;
@@ -2976,6 +3808,76 @@ class ZoneFlowCard extends HTMLElement {
     return conf;
   }
 
+  _locationRow(conf) {
+    // "Where is this?": the select entity's places, plus "New area..." (a name
+    // typed here makes the area and puts this zone in it) and "New greenhouse..."
+    // (opens the add-zone dialog; a greenhouse needs its devices).
+    const wrap = document.createElement("div");
+    wrap.className = "area-row";
+    const label = document.createElement("span");
+    label.className = "area-label";
+    const select = document.createElement("select");
+    select.className = "area-select";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "area-input";
+    input.maxLength = 40;
+    input.hidden = true;
+    wrap.append(label, select, input);
+    const NEW_AREA = "__new_area__";
+    const NEW_GREENHOUSE = "__new_greenhouse__";
+    let shown = null;
+    let current = "";
+    select.addEventListener("change", () => {
+      if (select.value === NEW_AREA) {
+        input.hidden = false;
+        input.placeholder = t(this._hass, "location.area_name");
+        input.focus();
+        return;
+      }
+      input.hidden = true;
+      if (select.value === NEW_GREENHOUSE) {
+        select.value = current;
+        history.pushState(null, "", "/config/integrations/dashboard/add?domain=zoneflow");
+        window.dispatchEvent(new CustomEvent("location-changed"));
+        return;
+      }
+      this._hass.callService("select", "select_option", { entity_id: conf.entity, option: select.value });
+    });
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Enter") return;
+      const name = input.value.trim();
+      if (!name) return;
+      input.hidden = true;
+      input.value = "";
+      this._hass.callService("zoneflow", "create_area", { name, device_id: this._config.device_id });
+    });
+    Object.defineProperty(wrap, "hass", {
+      set: (hass) => {
+        const state = hass.states?.[conf.entity];
+        const options = state?.attributes?.options || [];
+        current = state && !["unknown", "unavailable"].includes(state.state) ? state.state : "";
+        const signature = JSON.stringify([options, current, hass.locale?.language, conf.name]);
+        if (signature === shown) return;
+        shown = signature;
+        label.textContent = conf.name || t(hass, "groups.garden");
+        select.textContent = "";
+        const option = (value, text) => {
+          const el = document.createElement("option");
+          el.value = value;
+          el.textContent = text;
+          select.appendChild(el);
+        };
+        for (const name of options) option(name, name);
+        option(NEW_AREA, t(hass, "location.new_area"));
+        if (hass.user?.is_admin) option(NEW_GREENHOUSE, t(hass, "location.new_greenhouse"));
+        select.value = current;
+        input.hidden = true;
+      },
+    });
+    return wrap;
+  }
+
   _addRows(list, confs) {
     const build = this._buildId;
     this._helpers().then(
@@ -2984,7 +3886,8 @@ class ZoneFlowCard extends HTMLElement {
         for (const raw of confs) {
           const conf = this._shortName(raw);
           const add = (before) => {
-            const row = helpers.createRowElement(conf);
+            const isLocation = this._hass.entities?.[conf.entity]?.translation_key === "location";
+            const row = isLocation ? this._locationRow(conf) : helpers.createRowElement(conf);
             row.hass = this._hass;
             if (conf._tip) row.title = conf._tip;
             // A row that has to be recreated replaces just itself.

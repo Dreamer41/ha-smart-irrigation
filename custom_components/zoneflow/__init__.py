@@ -6,6 +6,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.components import websocket_api
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -13,11 +14,13 @@ from homeassistant.helpers import issue_registry as ir
 
 import homeassistant.util.dt as dt_util
 
-from . import frontend, issues, plants as plants_module, summary, units, visibility
+from . import frontend, issues, location, plant_actions, plant_api, plants as plants_module, summary, units, visibility
 from . import greenhouse as greenhouse_module
+from . import area as area_module
 from .area import AREA_SHARED_KEYS, AreaController
 from .const import (
     AREA_DATA_KEY,
+    AREA_NAME_MAX_LENGTH,
     CONF_AREA_ID,
     CONF_AREA_MM_PER_TIP,
     CONF_ENTRY_TYPE,
@@ -41,6 +44,12 @@ SERVICE_TEST_PULSE = "test_pulse"
 SERVICE_SNOOZE_TODAY = "snooze_today"
 SERVICE_SEND_WEEKLY_SUMMARY = "send_weekly_summary"
 SERVICE_ADD_RAIN = "add_rain"
+SERVICE_CREATE_AREA = "create_area"
+SERVICE_ADD_PLANT = "add_plant"
+SERVICE_MOVE_PLANT = "move_plant"
+SERVICE_REMOVE_PLANT = "remove_plant"
+SERVICE_SET_MAIN_PLANT = "set_main_plant"
+SERVICE_ADD_PLANT_NOTE = "add_plant_note"
 
 # These five are domain-level services, not entity-platform services, so
 # Home Assistant's automatic area/device -> entity expansion (the thing
@@ -63,6 +72,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     and the sooner the cards are there, the fewer pages open without them
     (frontend.py has the rest)."""
     await frontend.async_register(hass)
+    websocket_api.async_register_command(hass, plant_api.ws_plants)
     return True
 
 
@@ -82,6 +92,30 @@ ADD_RAIN_SCHEMA = vol.Schema(
         **_ZONE_TARGET_FIELDS,
     }
 )
+
+
+CREATE_AREA_SCHEMA = vol.Schema(
+    {
+        vol.Required("name"): vol.All(cv.string, vol.Length(max=AREA_NAME_MAX_LENGTH)),
+        **_ZONE_TARGET_FIELDS,
+    }
+)
+
+
+_OLD_MAIN = vol.In(plant_actions.OLD_MAIN_CHOICES)
+ADD_PLANT_SCHEMA = vol.Schema(
+    {
+        vol.Required("name"): cv.string,
+        vol.Optional("plant_type"): cv.string,
+        vol.Optional("old_main"): _OLD_MAIN,
+        **_ZONE_TARGET_FIELDS,
+    }
+)
+MOVE_PLANT_SCHEMA = vol.Schema(
+    {vol.Required("plant_id"): cv.string, vol.Optional("old_main"): _OLD_MAIN, **_ZONE_TARGET_FIELDS}
+)
+PLANT_ID_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string})
+PLANT_NOTE_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Required("text"): cv.string})
 
 
 def _resolve_controller(hass: HomeAssistant, call: ServiceCall) -> ZoneFlowController:
@@ -280,6 +314,51 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         hass.services.async_register(DOMAIN, SERVICE_ADD_RAIN, _handle_add_rain, schema=ADD_RAIN_SCHEMA)
 
+        async def _handle_create_area(call: ServiceCall) -> None:
+            # A new area, named; with a zone targeted, that zone moves into it
+            # and the area starts with the zone's sensors.
+            name = " ".join(call.data["name"].split())
+            if not name:
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="area_name_required")
+            if any(a.name.casefold() == name.casefold() for a in area_module.areas(hass)):
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="area_name_exists")
+            zone = _resolve_controller(hass, call) if (
+                call.data.get(ATTR_DEVICE_ID) or call.data.get(ATTR_ENTITY_ID)
+            ) else None
+            data = {"name": name, **(location.area_defaults(zone) if zone is not None else {})}
+            result = await hass.config_entries.flow.async_init(
+                DOMAIN, context={"source": "area_create"}, data=data
+            )
+            if zone is not None:
+                await location.async_set(hass, zone.entry, location.AREA_PREFIX + result["result"].entry_id)
+
+        hass.services.async_register(DOMAIN, SERVICE_CREATE_AREA, _handle_create_area, schema=CREATE_AREA_SCHEMA)
+
+        async def _handle_add_plant(call: ServiceCall) -> None:
+            zone = _resolve_controller(hass, call)
+            await plant_actions.add_plant(
+                hass, zone.entry.entry_id, call.data["name"], call.data.get("plant_type"), call.data.get("old_main")
+            )
+
+        async def _handle_move_plant(call: ServiceCall) -> None:
+            zone = _resolve_controller(hass, call)  # the zone it goes to
+            await plant_actions.move_plant(hass, call.data["plant_id"], zone.entry.entry_id, call.data.get("old_main"))
+
+        async def _handle_remove_plant(call: ServiceCall) -> None:
+            await plant_actions.remove_plant(hass, call.data["plant_id"])
+
+        async def _handle_set_main_plant(call: ServiceCall) -> None:
+            await plant_actions.set_main(hass, call.data["plant_id"])
+
+        async def _handle_add_plant_note(call: ServiceCall) -> None:
+            await plant_actions.add_note(hass, call.data["plant_id"], call.data["text"])
+
+        hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT, _handle_add_plant, schema=ADD_PLANT_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_MOVE_PLANT, _handle_move_plant, schema=MOVE_PLANT_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_REMOVE_PLANT, _handle_remove_plant, schema=PLANT_ID_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_SET_MAIN_PLANT, _handle_set_main_plant, schema=PLANT_ID_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT_NOTE, _handle_add_plant_note, schema=PLANT_NOTE_SCHEMA)
+
         async def _handle_send_weekly_summary(call: ServiceCall) -> None:
             # Now, to every phone with a zone that has a weekly summary set --
             # a preview; the weekly counts carry on until the real one.
@@ -359,6 +438,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_SNOOZE_TODAY,
                 SERVICE_SEND_WEEKLY_SUMMARY,
                 SERVICE_ADD_RAIN,
+                SERVICE_CREATE_AREA,
+                SERVICE_ADD_PLANT,
+                SERVICE_MOVE_PLANT,
+                SERVICE_REMOVE_PLANT,
+                SERVICE_SET_MAIN_PLANT,
+                SERVICE_ADD_PLANT_NOTE,
             ):
                 hass.services.async_remove(DOMAIN, service)
             summary.async_teardown(hass)

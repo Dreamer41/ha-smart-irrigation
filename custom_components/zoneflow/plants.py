@@ -25,7 +25,7 @@ from homeassistant.helpers.storage import Store
 import homeassistant.util.dt as dt_util
 from datetime import timedelta
 
-from .const import CONF_PLANT, DOMAIN, PLANT_CUSTOM
+from .const import CONF_DEEP_SOAK_ENABLED, CONF_PLANT, DOMAIN, PLANT_CUSTOM
 
 BOOK_KEY = "zoneflow_plant_book"
 STORE_VERSION = 1
@@ -227,6 +227,29 @@ class ZonePlants:
                     self.book.log_setting(plant["id"], key, old, value)
             plant["snapshot"] = now
         self._last = now
+
+    async def async_apply(self, snapshot: dict[str, Any]) -> None:
+        """Put a plant's settings on the zone (a plant arriving, or becoming
+        the main one). Not logged as edits of the plant."""
+        c = self.controller
+        for key in PLANT_NUMBER_KEYS:
+            if snapshot.get(key) is not None and key in c.numbers:
+                await c.numbers[key].async_set_metric_value(float(snapshot[key]))
+        state = c.store.state
+        for key in PLANT_STATE_KEYS:
+            if key in snapshot:
+                setattr(state, key, snapshot[key])
+        if snapshot.get("growth_ramp_profile") is not None:
+            state.growth_ramp_profile_override = snapshot["growth_ramp_profile"]
+        await c.store.async_save()
+        self._last = self.values()
+        wanted = snapshot.get("deep_soak_enabled")
+        if wanted is not None and bool(wanted) != c.deep_soak_enabled:
+            # Deep soak on/off is kept in the zone's settings: changing it restarts the zone.
+            c.hass.config_entries.async_update_entry(
+                c.entry, options={**c.entry.options, CONF_DEEP_SOAK_ENABLED: bool(wanted)}
+            )
+        c._notify_status()
 
     async def async_unload(self) -> None:
         if self._unsub is not None:

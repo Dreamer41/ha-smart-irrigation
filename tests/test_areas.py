@@ -390,3 +390,31 @@ async def test_the_status_names_the_areas_pause_and_snooze_for_the_cards(hass, f
     attrs = hass.states.get("sensor.tomatoes_status").attributes
     assert attrs["area_pause"] == "switch.backyard_pause" and attrs["area_snooze"] == "button.backyard_snooze_today"
     assert hass.states.get("sensor.chilis_status").attributes["area_pause"] is None
+
+
+@pytest.mark.asyncio
+async def test_create_area_service_makes_an_area_from_a_zone_and_moves_it_in(hass, fake_valve_services):
+    from homeassistant.helpers import device_registry as dr
+
+    zone = _zone(hass, **{CONF_RAIN_COUNTER_ENTITY: OWN_RAIN, CONF_OUTDOOR_TEMP_ENTITY: OWN_TEMP})
+    other = _zone(hass, "Chilis", VALVE_B)
+    await _boot(hass, zone, other)
+    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, zone.entry_id)})
+    await hass.services.async_call(DOMAIN, "create_area", {"name": " Vegetable   beds ", "device_id": device.id}, blocking=True)
+    await hass.async_block_till_done()
+    areas = list(hass.data[AREA_DATA_KEY].values())
+    assert [a.name for a in areas] == ["Vegetable beds"]
+    c = _ctl(hass, zone)
+    assert c.area is areas[0] and c.rain_counter_entity == OWN_RAIN and c.outdoor_temp_entity == OWN_TEMP
+    assert areas[0].rain_counter_entity == OWN_RAIN
+    assert _ctl(hass, other).area is None  # only the targeted zone moved
+
+    # A second area with an empty target is just an empty area; the same name is refused.
+    await hass.services.async_call(DOMAIN, "create_area", {"name": "Front yard"}, blocking=True)
+    assert len(hass.data[AREA_DATA_KEY]) == 2
+    from homeassistant.exceptions import ServiceValidationError
+
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(DOMAIN, "create_area", {"name": "front YARD"}, blocking=True)
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(DOMAIN, "create_area", {"name": "   "}, blocking=True)

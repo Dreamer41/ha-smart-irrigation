@@ -1191,11 +1191,10 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         errors: dict[str, str] = {}
         controller = self._controller()
         merged = self._merged()
-        defaults: dict[str, Any] = {
-            key: merged.get(key) for key in (*AREA_SHARED_KEYS, CONF_RAIN_SOURCE)
-        }
-        if controller is not None and merged.get(CONF_RAIN_COUNTER_ENTITY):
-            defaults[CONF_AREA_MM_PER_TIP] = controller.number("rain_mm_per_tip")
+        defaults: dict[str, Any] = (
+            location.area_defaults(controller) if controller is not None
+            else {key: merged.get(key) for key in (*AREA_SHARED_KEYS, CONF_RAIN_SOURCE)}
+        )
         if user_input is not None:
             name = _clean_name(user_input.get(CONF_AREA_NAME))
             if not name:

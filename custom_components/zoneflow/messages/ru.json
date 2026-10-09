@@ -252,5 +252,32 @@
       "weather_entity": "Uses its own weather entity, not {area}'s.",
       "notify_entity": "Sends to its own phone, not {area}'s."
     }
+  },
+  "plants": {
+    "on": "on",
+    "off": "off",
+    "history": {
+      "created": "Added to ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Moved from {from_zone} to {to_zone}",
+      "promoted": "Became the main plant of {zone}",
+      "demoted": "Now a record only in {zone}",
+      "archived": "Archived from {zone}",
+      "removed": "Removed from {zone}",
+      "note": "{text}"
+    },
+    "setting": {
+      "growth_stage_mode": "Growth stage mode",
+      "demand_model": "Watering method",
+      "deficit_enabled": "Deficit mode",
+      "deficit_until_ts": "Deficit mode until",
+      "planting_date_ts": "Planting date",
+      "health_status": "Health",
+      "health_notes": "Health notes",
+      "fertilizing_interval_months": "Fertilizing interval",
+      "last_fertilizing_ts": "Last fertilized",
+      "growth_ramp_profile": "Growth ramp",
+      "deep_soak_enabled": "Deep soak"
+    }
   }
 }

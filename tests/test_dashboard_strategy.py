@@ -300,3 +300,173 @@ def test_an_area_tab_starts_with_the_areas_pause_and_snooze(tmp_path):
         states[f"sensor.{name.lower()}_status"]["attributes"].pop("area_snooze")
     out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
     assert all(c["type"] == "custom:zoneflow-card" for c in out["views"][1]["cards"])
+
+
+LOCATION_ROW_HARNESS = r"""
+const fs = require("fs");
+const vm = require("vm");
+const registry = {};
+class El {
+  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this._text = ""; this.value = ""; this.hidden = false; }
+  append(...c) { this.children.push(...c); }
+  appendChild(c) { this.children.push(c); }
+  addEventListener(type, fn) { this.listeners[type] = fn; }
+  focus() {}
+  set textContent(v) { this._text = v; if (v === "") this.children = []; }
+  get textContent() { return this._text; }
+}
+const pushed = [];
+const sandbox = {
+  window: { customElements: { get: (t) => registry[t], define: (t, c) => { registry[t] = c; } }, customCards: [], addEventListener() {},
+            dispatchEvent() {} },
+  HTMLElement: class {},
+  document: { createElement: (tag) => new El(tag) },
+  history: { pushState: (...a) => pushed.push(a[2]) },
+  CustomEvent: class {},
+  console: { info() {} },
+  setTimeout: () => 0,
+  Intl, Object, Set, Map, WeakMap, Promise, Math, JSON, Date, String, Number, Array,
+};
+vm.createContext(sandbox);
+vm.runInContext(fs.readFileSync(process.argv[2], "utf8"), sandbox);
+const hass = JSON.parse(process.argv[3]);
+const calls = [];
+hass.callService = (domain, service, data) => calls.push([domain, service, data]);
+const ctx = { _hass: hass, _config: { device_id: "d1" } };
+const row = registry["zoneflow-card"].prototype._locationRow.call(ctx, { entity: "select.tomatoes_where_is_this", name: "Where is this?" });
+row.hass = hass;
+const [label, select, input] = row.children;
+const result = { label: label.textContent, options: select.children.map((o) => [o.value, o.textContent]), selected: select.value };
+select.value = "Backyard"; select.listeners.change();
+select.value = "__new_area__"; select.listeners.change();
+result.inputShown = !input.hidden;
+input.value = "  Side garden "; input.listeners.keydown({ key: "Enter" });
+select.value = "__new_greenhouse__"; select.listeners.change();
+result.afterGreenhouse = select.value;
+result.pushed = pushed;
+result.calls = calls;
+console.log(JSON.stringify(result));
+"""
+
+
+def test_the_location_row_offers_the_places_a_new_area_and_a_new_greenhouse(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    harness = tmp_path / "location.js"
+    harness.write_text(LOCATION_ROW_HARNESS, encoding="utf-8")
+    hass = {
+        "states": {"select.tomatoes_where_is_this": {
+            "state": "None", "attributes": {"options": ["None", "Backyard", "Tunnel (greenhouse)"]}}},
+        "locale": {"language": "en"}, "user": {"is_admin": True},
+    }
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, encoding="utf-8", timeout=60, check=True)
+    out = json.loads(done.stdout)
+    assert out["label"] == "Where is this?"
+    assert out["options"] == [
+        ["None", "None"], ["Backyard", "Backyard"], ["Tunnel (greenhouse)", "Tunnel (greenhouse)"],
+        ["__new_area__", "New area…"], ["__new_greenhouse__", "New greenhouse…"],
+    ]
+    assert out["selected"] == "None" and out["inputShown"] is True
+    assert out["calls"] == [
+        ["select", "select_option", {"entity_id": "select.tomatoes_where_is_this", "option": "Backyard"}],
+        ["zoneflow", "create_area", {"name": "Side garden", "device_id": "d1"}],
+    ]
+    assert out["pushed"] == ["/config/integrations/dashboard/add?domain=zoneflow"] and out["afterGreenhouse"] == "None"
+
+
+PLANTS_HARNESS = r"""
+const fs = require("fs");
+const vm = require("vm");
+const registry = {};
+class El {
+  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this._text = ""; this.value = ""; this.hidden = false; this.className = ""; this.checked = false; }
+  append(...c) { for (const x of c) this.children.push(typeof x === "string" ? { text: x, children: [] } : x); }
+  appendChild(c) { this.children.push(c); }
+  addEventListener(type, fn) { this.listeners[type] = fn; }
+  set textContent(v) { this._text = v; if (v === "") this.children = []; }
+  get textContent() { return this._text; }
+}
+const sandbox = {
+  window: { customElements: { get: (t) => registry[t], define: (t, c) => { registry[t] = c; } }, customCards: [], addEventListener() {},
+            confirm: () => true, alert() {} },
+  HTMLElement: class {},
+  document: { createElement: (tag) => new El(tag), createTextNode: (text) => ({ text, children: [] }) },
+  console: { info() {} },
+  setTimeout: () => 0,
+  Intl, Object, Set, Map, WeakMap, Promise, Math, JSON, Date, String, Number, Array,
+};
+vm.createContext(sandbox);
+vm.runInContext(fs.readFileSync(process.argv[2], "utf8"), sandbox);
+const input = JSON.parse(process.argv[3]);
+const calls = [];
+const hass = input.hass;
+hass.callService = async (domain, service, data) => { calls.push([domain, service, data]); };
+hass.callWS = async () => input.ws;
+const proto = registry["zoneflow-card"].prototype;
+const ctx = { _hass: hass, _config: { device_id: "d1" } };
+ctx._plantsBody = proto._plantsBody;
+const walk = (el, out = []) => { out.push(el); for (const c of el.children || []) walk(c, out); return out; };
+const run = async () => {
+  const body = new El("div");
+  await proto._plantsBody.call(ctx, body);
+  const all = () => walk(body);
+  const buttons = (label) => all().filter((e) => e.tag === "button" && e._text === label);
+  const result = {};
+  result.names = all().filter((e) => e.className === "plant-name").map((e) => e._text);
+  result.badges = all().filter((e) => e.className.startsWith("plant-badge")).map((e) => e._text);
+  result.makeMainButtons = buttons("Make main plant").length;
+  buttons("Make main plant")[0].listeners.click();
+  await Promise.resolve();
+  // Move the main plant: the first panel is the main plant's.
+  const selects = all().filter((e) => e.tag === "select" && e.className === "area-select" && e.children.length && e.children[0].value === "d2");
+  result.targets = selects[0].children.map((o) => [o.value, o._text]);
+  selects[0].value = "d2"; selects[0].listeners.change();
+  result.choices = all().filter((e) => e.className === "plant-choice").map((e) => e.children[0].value);
+  buttons("Move")[0].listeners.click();
+  await Promise.resolve();
+  // Add a plant.
+  const names = all().filter((e) => e.tag === "input" && e.placeholder === "Name");
+  names[0].value = "  Basil ";
+  const types = all().filter((e) => e.tag === "select" && e.children[0]?.value === "custom");
+  types[0].value = "herbs";
+  const modes = all().filter((e) => e.tag === "select" && e.children[0]?._text === "Record only (the zone keeps watering as it is)");
+  result.modeOptions = modes[0].children.map((o) => o.value);
+  modes[0].value = "archive";
+  buttons("Add a plant")[0].listeners.click();
+  await Promise.resolve();
+  result.calls = calls;
+  console.log(JSON.stringify(result));
+};
+run();
+"""
+
+
+def test_the_plants_popup_lists_the_plants_and_calls_the_services(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    for device, name in (("d1", "Tomatoes"), ("d2", "Chilis")):
+        _zone(entities, states, device, name, "tomatoes")
+        devices[device] = {"name": name}
+    states["sensor.chilis_status"]["attributes"]["plants"] = [{"id": "c", "name": "Chilis", "main": True}]
+    states["sensor.tomatoes_status"]["attributes"]["plants"] = [
+        {"id": "t", "name": "Tomatoes", "main": True}, {"id": "b", "name": "Basil", "main": False}]
+    ws = {"zone": "Tomatoes", "plants": [
+        {"id": "t", "name": "Tomatoes", "type": "tomatoes", "main": True, "history": [{"ts": "2026-10-09T09:00:00+00:00", "kind": "created", "text": "Added to ZoneFlow"}]},
+        {"id": "b", "name": "Basil", "type": "herbs", "main": False, "history": []},
+    ]}
+    harness = tmp_path / "plants.js"
+    harness.write_text(PLANTS_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": ws})], capture_output=True, encoding="utf-8", timeout=60, check=True)
+    out = json.loads(done.stdout)
+    assert out["names"] == ["Tomatoes", "Basil"] and out["badges"] == ["Main plant", "Record only"]
+    assert out["makeMainButtons"] == 1
+    assert out["targets"] == [["d2", "Chilis"]]
+    assert out["choices"] == ["extra", "archive", "swap", "keep"]  # Chilis already has a main plant
+    assert out["modeOptions"] == ["", "extra", "archive"]
+    assert out["calls"] == [
+        ["zoneflow", "set_main_plant", {"plant_id": "b"}],
+        ["zoneflow", "move_plant", {"plant_id": "t", "device_id": "d2", "old_main": "extra"}],
+        ["zoneflow", "add_plant", {"name": "Basil", "plant_type": "herbs", "device_id": "d1", "old_main": "archive"}],
+    ]
