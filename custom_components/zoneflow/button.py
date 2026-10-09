@@ -9,10 +9,15 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, SERVICE_RUN_BUTTON_MINUTES
+from .const import CONF_ENTRY_TYPE, DOMAIN, ENTRY_TYPE_AREA, SERVICE_RUN_BUTTON_MINUTES
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    if entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_AREA:
+        from .area_entities import async_setup_area_buttons
+
+        async_setup_area_buttons(hass, entry, async_add_entities)
+        return
     controller = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         [

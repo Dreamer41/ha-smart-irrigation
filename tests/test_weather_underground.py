@@ -131,9 +131,9 @@ async def test_setup_flow_offers_wu_once_a_zone_exists_and_creates_the_entry(has
     assert [s["id"] for s in data[CONF_WU_STATIONS]] == ["ISAMUI2", "ISAMUI1"]
     assert "secret" not in result["title"]
 
-    # One per Home Assistant: no menu any more.
+    # One per Home Assistant: no Weather Underground in the menu any more.
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
-    assert result["type"] == FlowResultType.FORM and result["step_id"] == "user"
+    assert result["type"] == FlowResultType.MENU and "weather_underground" not in result["menu_options"]
 
 
 @pytest.mark.asyncio

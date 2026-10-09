@@ -201,7 +201,8 @@
     "skipped_frost": "{cycle}: vynecháno v {time}, {temp} je pod ochranou před mrazem ({limit})",
     "waiting_frost": "{cycle}: pozdrženo v {time}, {temp} je pod ochranou před mrazem ({limit}); kontroluje se každou hodinu",
     "waiting_deep_soak": "{cycle}: čeká od {time}, jakmile se oteplí, má přednost hloubková zálivka",
-    "paused_until": "Pozastaveno do {until}"
+    "paused_until": "Pozastaveno do {until}",
+    "paused_area": "Paused: no watering while {area} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: váš týden",
@@ -237,6 +238,19 @@
       "off": "vypnuto",
       "limited": "zapnuto po část času",
       "outside": "zapnuto po část času, když je venku chladno"
+    }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
     }
   }
 }

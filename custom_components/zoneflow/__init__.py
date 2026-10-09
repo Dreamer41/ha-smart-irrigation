@@ -15,7 +15,23 @@ import homeassistant.util.dt as dt_util
 
 from . import frontend, issues, summary, units, visibility
 from . import greenhouse as greenhouse_module
-from .const import CONF_ENTRY_TYPE, CONF_PARENT_ZONE, CONF_USE_WU, CONF_ZONE_TYPE, CROP_INHERITED_KEYS, DOMAIN, ENTRY_TYPE_WU, PLATFORMS, WU_DATA_KEY
+from .area import AREA_SHARED_KEYS, AreaController
+from .const import (
+    AREA_DATA_KEY,
+    CONF_AREA_ID,
+    CONF_AREA_MM_PER_TIP,
+    CONF_ENTRY_TYPE,
+    CONF_PARENT_ZONE,
+    CONF_RAIN_SOURCE,
+    CONF_USE_WU,
+    CONF_ZONE_TYPE,
+    CROP_INHERITED_KEYS,
+    DOMAIN,
+    ENTRY_TYPE_AREA,
+    ENTRY_TYPE_WU,
+    PLATFORMS,
+    WU_DATA_KEY,
+)
 from .controller import ZoneFlowController
 
 SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
@@ -133,6 +149,49 @@ def is_wu_entry(entry: ConfigEntry) -> bool:
 
 
 WU_PLATFORMS = [Platform.SENSOR]
+AREA_PLATFORMS = [Platform.SWITCH, Platform.BUTTON, Platform.SENSOR]
+
+
+def is_area_entry(entry: ConfigEntry) -> bool:
+    """An area (area.py), not a zone."""
+    return entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_AREA
+
+
+def _entry_area_id(hass: HomeAssistant, entry: ConfigEntry) -> str | None:
+    """The area a zone entry is in (a crop is in its greenhouse's)."""
+    merged = {**entry.data, **entry.options}
+    parent_id = merged.get(CONF_PARENT_ZONE)
+    if parent_id:
+        parent = hass.config_entries.async_get_entry(parent_id)
+        if parent is not None:
+            merged = {**parent.data, **parent.options}
+    return merged.get(CONF_AREA_ID) or None
+
+
+def _area_zone_entries(hass: HomeAssistant, area_id: str) -> list[ConfigEntry]:
+    return [
+        e for e in hass.config_entries.async_entries(DOMAIN)
+        if not is_wu_entry(e) and not is_area_entry(e) and _entry_area_id(hass, e) == area_id
+    ]
+
+
+async def _async_setup_area(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    area = AreaController(hass, entry)
+    await area.async_setup()
+    hass.data.setdefault(AREA_DATA_KEY, {})[entry.entry_id] = area
+    await hass.config_entries.async_forward_entry_setups(entry, AREA_PLATFORMS)
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+    # Zones that loaded before their area read none of its sensors: start them
+    # again so they listen to the area's. A paused area pauses its zones.
+    for zone in _area_zone_entries(hass, entry.entry_id):
+        controller = hass.data.get(DOMAIN, {}).get(zone.entry_id)
+        if controller is None:
+            continue
+        if not controller.had_area_at_setup:
+            await hass.config_entries.async_reload(zone.entry_id)
+        elif area.paused:
+            await controller.on_area_paused()
+    return True
 
 
 async def _async_setup_wu(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -154,6 +213,8 @@ async def _async_setup_wu(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if is_wu_entry(entry):
         return await _async_setup_wu(hass, entry)
+    if is_area_entry(entry):
+        return await _async_setup_area(hass, entry)
     hass.data.setdefault(DOMAIN, {})
     controller = ZoneFlowController(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = controller
@@ -231,6 +292,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    if is_area_entry(entry):
+        # The area's sensors changed: its zones read them again.
+        zones = [z for z in _area_zone_entries(hass, entry.entry_id) if z.state is ConfigEntryState.LOADED]
+        await hass.config_entries.async_reload(entry.entry_id)
+        for zone in zones:
+            await hass.config_entries.async_reload(zone.entry_id)
+        return
     await hass.config_entries.async_reload(entry.entry_id)
     # A greenhouse's crops read its sensors: they follow its changes.
     for crop in _crop_entries(hass, entry.entry_id):
@@ -261,6 +329,11 @@ def _link_crop_devices(hass: HomeAssistant) -> None:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    if is_area_entry(entry):
+        unloaded = await hass.config_entries.async_unload_platforms(entry, AREA_PLATFORMS)
+        if unloaded:
+            hass.data.get(AREA_DATA_KEY, {}).pop(entry.entry_id, None)
+        return unloaded
     if is_wu_entry(entry):
         unloaded = await hass.config_entries.async_unload_platforms(entry, WU_PLATFORMS)
         if unloaded:
@@ -313,9 +386,48 @@ def _release_crops(hass: HomeAssistant, greenhouse: ConfigEntry) -> None:
         )
 
 
+async def _release_area_zones(hass: HomeAssistant, area: ConfigEntry) -> None:
+    """An area was deleted: its zones keep working on their own, with a copy
+    of the sensors they were getting from it, and a note in Repairs (until the
+    next restart)."""
+    source = {**area.data, **area.options}
+    for zone in hass.config_entries.async_entries(DOMAIN):
+        if is_wu_entry(zone) or is_area_entry(zone):
+            continue
+        merged = {**zone.data, **zone.options}
+        if merged.get(CONF_AREA_ID) != area.entry_id:
+            continue
+        options = {key: value for key, value in zone.options.items() if key != CONF_AREA_ID}
+        data = {key: value for key, value in zone.data.items() if key != CONF_AREA_ID}
+        for key in AREA_SHARED_KEYS:
+            if source.get(key) and not merged.get(key):
+                options[key] = source[key]
+        controller = hass.data.get(DOMAIN, {}).get(zone.entry_id)
+        if source.get("rain_counter_entity") and not merged.get("rain_counter_entity"):
+            options[CONF_RAIN_SOURCE] = source.get(CONF_RAIN_SOURCE)
+            # The gauge's tip size goes with it, as the zone's own slider.
+            number = controller.numbers.get("rain_mm_per_tip") if controller is not None else None
+            if number is not None and source.get(CONF_AREA_MM_PER_TIP):
+                await number.async_set_metric_value(float(source[CONF_AREA_MM_PER_TIP]))
+        hass.config_entries.async_update_entry(zone, data=data, options=options)
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            f"{zone.entry_id}_area_removed",
+            is_fixable=False,
+            is_persistent=False,
+            severity=ir.IssueSeverity.WARNING,
+            translation_key="area_removed",
+            translation_placeholders={"zone": zone.title, "area": area.title},
+        )
+
+
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """A zone was deleted: clear its Repairs issues. The last one also takes
     the dashboard card's loader away (frontend.py)."""
+    if is_area_entry(entry):
+        await _release_area_zones(hass, entry)
+        return
     if is_wu_entry(entry):
         from .wu import ISSUE_NO_DATA
 
@@ -324,7 +436,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
         # rain is offered again (it stays hidden while "use Weather
         # Underground" is on).
         for zone in hass.config_entries.async_entries(DOMAIN):
-            if not is_wu_entry(zone) and zone.options.get(CONF_USE_WU, zone.data.get(CONF_USE_WU)):
+            if not is_wu_entry(zone) and not is_area_entry(zone) and zone.options.get(CONF_USE_WU, zone.data.get(CONF_USE_WU)):
                 hass.config_entries.async_update_entry(zone, options={**zone.options, CONF_USE_WU: False})
         return
     issues.async_remove(hass, entry.entry_id)
@@ -332,7 +444,8 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     if entry.data.get(CONF_ZONE_TYPE, "outdoor") != "outdoor":
         await greenhouse_module.async_release_devices(hass, entry)
     others = [
-        e for e in hass.config_entries.async_entries(DOMAIN) if e.entry_id != entry.entry_id and not is_wu_entry(e)
+        e for e in hass.config_entries.async_entries(DOMAIN)
+        if e.entry_id != entry.entry_id and not is_wu_entry(e) and not is_area_entry(e)
     ]
     if not others:
         await frontend.async_remove_loader(hass)

@@ -180,7 +180,8 @@
         "menu_options": {
           "zone": "Zone hinzufügen",
           "weather_underground": "Weather Underground-Regen einrichten",
-          "crop": "Kultur zu einem Gewächshaus hinzufügen"
+          "crop": "Kultur zu einem Gewächshaus hinzufügen",
+          "area": "Add an area (a part of the garden)"
         }
       },
       "weather_underground": {
@@ -228,6 +229,28 @@
         "data_description": {
           "valve_entity": "Ein Schalter, der das Wasser für diese Kultur öffnet. Jede Kultur benötigt ein eigenes Ventil."
         }
+      },
+      "area": {
+        "title": "New area",
+        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
       }
     },
     "error": {
@@ -243,7 +266,9 @@
       "wu_invalid_key": "Weather Underground hat den API-Schlüssel abgelehnt.",
       "wu_cannot_connect": "Weather Underground konnte nicht erreicht werden. Versuchen Sie es später erneut.",
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
-      "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen."
+      "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     },
     "abort": {
       "already_configured": "Weather Underground-Regen ist bereits eingerichtet."
@@ -261,11 +286,11 @@
           "flow_measure": "Durchflussrate: mit dem Durchflussmesser messen",
           "greenhouse_devices": "Ventil, Sensoren und Klimageräte",
           "watering": "Bewässerungseinstellungen",
-          "garden_area": "Gartenbereich (Hinterhof, Vorgarten …)",
           "zone_type": "Zonentyp",
           "weather_underground": "Weather Underground-Regen",
           "crop_valve": "Kulturventil",
-          "greenhouse_link": "Gewächshaus"
+          "greenhouse_link": "Gewächshaus",
+          "location": "Where is this? (area or greenhouse)"
         }
       },
       "settings": {
@@ -508,14 +533,74 @@
           "head_flow_unit": "Die Einheit, in der der Durchfluss eines Tropfers angegeben ist."
         }
       },
-      "garden_area": {
-        "title": "Gartenbereich",
-        "description": "In welchem Teil des Gartens diese Zone liegt, zum Beispiel Hinterhof oder Vorgarten. Die Karten gruppieren die Zonen danach. Wählen Sie einen schon verwendeten Namen oder tippen Sie einen neuen; leer bedeutet kein Bereich. Eine Kultur folgt dem Bereich ihres Gewächshauses.",
+      "location": {
+        "title": "Where is this?",
+        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
         "data": {
-          "garden_area": "Gartenbereich"
+          "location": "Place"
         },
         "data_description": {
-          "garden_area": "Zonen mit demselben Namen werden zusammen gruppiert."
+          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+        }
+      },
+      "location_sensors": {
+        "title": "Use the area's sensors?",
+        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "data": {
+          "rain_counter_entity": "Use the area's rain gauge",
+          "outdoor_temp_entity": "Use the area's outdoor temperature",
+          "weather_entity": "Use the area's weather entity",
+          "notify_entity": "Use the area's phone"
+        },
+        "data_description": {
+          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
+          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
+          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+        }
+      },
+      "new_area": {
+        "title": "New area",
+        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
+      },
+      "area_settings": {
+        "title": "Area",
+        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
         }
       }
     },
@@ -527,7 +612,8 @@
       "zone_busy": "Die Zone (oder ihre Pumpe) ist beschäftigt, oder das heutige Laufzeit-Sicherheitslimit ist ausgeschöpft. Versuche es später erneut.",
       "flow_rate_disabled": "Die Entität „Tropfer-Durchflussrate (Kalibrierung)“ der Zone ist deaktiviert. Aktiviere sie (Geräteseite der Zone → Entitäten) und versuche es erneut.",
       "zone_flow_set": "Zonendurchfluss auf {flow} eingestellt. Er wird nur für die Wasserverbrauchsschätzung verwendet.",
-      "zone_flow_out_of_range": "Dies ergibt einen Zonendurchfluss außerhalb des zulässigen Bereichs (0 bis 2000 L/min). Überprüfen Sie die Zahlen."
+      "zone_flow_out_of_range": "Dies ergibt einen Zonendurchfluss außerhalb des zulässigen Bereichs (0 bis 2000 L/min). Überprüfen Sie die Zahlen.",
+      "location_not_available": "That place is not available."
     },
     "error": {
       "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
@@ -542,7 +628,9 @@
       "wu_cannot_connect": "Weather Underground konnte nicht erreicht werden. Versuchen Sie es später erneut.",
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
       "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
-      "greenhouse_has_crops": "Dieses Gewächshaus enthält Kulturen. Verschieben Sie diese zuerst in ein anderes Gewächshaus oder entfernen Sie sie (Konfigurieren -> Gewächshaus der jeweiligen Kultur)."
+      "greenhouse_has_crops": "Dieses Gewächshaus enthält Kulturen. Verschieben Sie diese zuerst in ein anderes Gewächshaus oder entfernen Sie sie (Konfigurieren -> Gewächshaus der jeweiligen Kultur).",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     }
   },
   "selector": {
@@ -1178,14 +1266,14 @@
           "limited": "Teilweise eingeschaltet",
           "outside": "Teilweise eingeschaltet, wenn es draußen kalt ist"
         }
+      },
+      "location": {
+        "name": "Where is this?"
       }
     },
     "text": {
       "health_notes": {
         "name": "Gesundheitsnotizen"
-      },
-      "garden_area": {
-        "name": "Gartenbereich"
       }
     }
   },
@@ -1336,6 +1424,12 @@
     },
     "nothing_on_hold": {
       "message": "Nichts ist angehalten: Alle Geräte stehen bereits unter der Steuerung von ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "That place is not available any more."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
     }
   },
   "issues": {
@@ -1390,6 +1484,10 @@
     "greenhouse_removed": {
       "title": "{zone}: Das Gewächshaus wurde entfernt",
       "description": "Das Gewächshaus {greenhouse} wurde gelöscht, daher ist {zone} jetzt eine eigenständige Zone. Sie gießt weiterhin und behält die Innensensoren des Gewächshauses. Um sie in ein anderes Gewächshaus zu setzen, nutzen Sie Konfigurieren -> Gewächshaus der Zone."
+    },
+    "area_removed": {
+      "title": "{zone}: its area was removed",
+      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
     }
   }
 }

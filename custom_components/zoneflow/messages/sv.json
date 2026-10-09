@@ -201,7 +201,8 @@
     "skipped_frost": "{cycle} överhoppad {time}: {temp}, under frostskyddet ({limit})",
     "waiting_frost": "{cycle} väntar {time}: {temp}, under frostskyddet ({limit}); kollar igen varje timme",
     "waiting_deep_soak": "{cycle} väntar sedan {time}: djupvattningen går först när det är varmt nog",
-    "paused_until": "Pausad till {until}"
+    "paused_until": "Pausad till {until}",
+    "paused_area": "Paused: no watering while {area} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: din vecka",
@@ -237,6 +238,19 @@
       "off": "av",
       "limited": "på en del av tiden",
       "outside": "på en del av tiden vid kyla ute"
+    }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
     }
   }
 }

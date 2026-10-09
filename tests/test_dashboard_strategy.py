@@ -263,7 +263,7 @@ GARDEN_AREAS_HARNESS = HARNESS.replace(
 )
 
 
-def test_the_garden_area_dropdown_lists_each_area_in_use_once(tmp_path):
+def test_the_area_names_in_use_are_listed_once_each(tmp_path):
     if shutil.which("node") is None:
         pytest.skip("node is not installed")
     entities, states, devices = {}, {}, {}
@@ -278,71 +278,3 @@ def test_the_garden_area_dropdown_lists_each_area_in_use_once(tmp_path):
     hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
     done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
     assert json.loads(done.stdout) == ["Backyard", "Front yard"]
-
-
-AREA_ROW_HARNESS = r"""
-const fs = require("fs");
-const vm = require("vm");
-const registry = {};
-class El {
-  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this._text = ""; this.value = ""; this.hidden = false; }
-  append(...c) { this.children.push(...c); }
-  appendChild(c) { this.children.push(c); }
-  addEventListener(type, fn) { this.listeners[type] = fn; }
-  focus() { this.focused = true; }
-  set textContent(v) { this._text = v; if (v === "") this.children = []; }
-  get textContent() { return this._text; }
-}
-const sandbox = {
-  window: { customElements: { get: (t) => registry[t], define: (t, c) => { registry[t] = c; } }, customCards: [], addEventListener() {} },
-  HTMLElement: class {},
-  document: { createElement: (tag) => new El(tag) },
-  console: { info() {} },
-  setTimeout: () => 0,
-  Intl, Object, Set, Map, WeakMap, Promise, Math, JSON, Date, String, Number, Array,
-};
-vm.createContext(sandbox);
-vm.runInContext(fs.readFileSync(process.argv[2], "utf8"), sandbox);
-const hass = JSON.parse(process.argv[3]);
-const calls = [];
-hass.callService = (domain, service, data) => calls.push([domain, service, data]);
-const card = registry["zoneflow-card"].prototype;
-const row = card._areaRow.call({ _hass: hass }, { entity: "text.tomatoes_garden_area", name: "Garden area" });
-row.hass = hass;
-const [label, select, input] = row.children;
-const options = select.children.map((o) => [o.value, o.textContent]);
-const result = { label: label.textContent, options, selected: select.value, inputHidden: input.hidden };
-select.value = "Front yard"; select.listeners.change();
-select.value = ""; select.listeners.change();
-select.value = "__new__"; select.listeners.change();
-result.newShowsInput = !input.hidden;
-input.value = "  Side garden "; input.listeners.keydown({ key: "Enter" });
-result.afterEnterHidden = input.hidden;
-result.calls = calls;
-console.log(JSON.stringify(result));
-"""
-
-
-def test_the_garden_area_row_offers_the_areas_in_use_none_and_new(tmp_path):
-    if shutil.which("node") is None:
-        pytest.skip("node is not installed")
-    entities, states, devices = {}, {}, {}
-    for device, name, area in (("d1", "Tomatoes", "Backyard"), ("d2", "Lawn", "Front yard")):
-        _zone(entities, states, device, name, "lawn")
-        _with_area(states, name, area)
-        devices[device] = {"name": name}
-    states["text.tomatoes_garden_area"] = {"entity_id": "text.tomatoes_garden_area", "state": "Backyard", "attributes": {}}
-    harness = tmp_path / "row.js"
-    harness.write_text(AREA_ROW_HARNESS, encoding="utf-8")
-    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
-    done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, encoding="utf-8", timeout=60, check=True)
-    out = json.loads(done.stdout)
-    assert out["label"] == "Garden area"
-    assert out["options"] == [["", "No area"], ["Backyard", "Backyard"], ["Front yard", "Front yard"], ["__new__", "New area\u2026"]]
-    assert out["selected"] == "Backyard" and out["inputHidden"] is True
-    assert out["newShowsInput"] is True and out["afterEnterHidden"] is True
-    assert out["calls"] == [
-        ["text", "set_value", {"entity_id": "text.tomatoes_garden_area", "value": "Front yard"}],
-        ["text", "set_value", {"entity_id": "text.tomatoes_garden_area", "value": ""}],
-        ["text", "set_value", {"entity_id": "text.tomatoes_garden_area", "value": "Side garden"}],
-    ]

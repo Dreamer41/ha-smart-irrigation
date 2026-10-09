@@ -51,7 +51,7 @@ const I18N = {
       "more": "More",
       "climate": "Climate control",
       "misting": "Misting",
-      "garden": "Garden area"
+      "garden": "Where is this?"
     },
     "overview": {
       "title": "Garden",
@@ -2432,7 +2432,7 @@ const ONLY_WHEN = {
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const SETTINGS_GROUPS = [
-  ["garden", ["text.garden_area"]],
+  ["garden", ["select.location"]],
   ["climate", [
     "number.heat_temp", "number.vent_temp", "number.fan_temp", "number.climate_hysteresis",
     "number.outside_margin", "number.max_humidity", "number.vent_open_pct", "switch.auto_resume", "number.auto_resume_hours",
@@ -2628,6 +2628,7 @@ class ZoneFlowCard extends HTMLElement {
       .header ha-icon { color: var(--state-icon-color, var(--primary-color)); }
       .title { font-size: 1.25em; font-weight: 500; line-height: 1.2; }
       .status { padding: 4px 16px 12px; font-size: 1.05em; color: var(--primary-text-color); }
+      .area-note { padding: 0 16px 8px; font-size: 0.85em; color: var(--secondary-text-color); }
       .status.warn { color: var(--warning-color, #db4437); }
       .status .code { display: block; font-size: 0.75em; color: var(--secondary-text-color); margin-top: 2px; }
       .in-greenhouse { display: flex; align-items: center; gap: 6px; padding: 0 16px 8px; margin-top: -6px;
@@ -2658,10 +2659,6 @@ class ZoneFlowCard extends HTMLElement {
       dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
       dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
       dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
-      .area-row { display: flex; align-items: center; gap: 8px; padding: 6px 16px; min-height: 40px; }
-      .area-label { flex: 1; min-width: 0; }
-      .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
-        border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
       .group-note { color: var(--secondary-text-color); font-size: 0.85em; margin: -4px 0 8px; line-height: 1.35; }
       .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
         letter-spacing: 0.04em; margin: 16px 0 2px; }
@@ -2683,6 +2680,7 @@ class ZoneFlowCard extends HTMLElement {
       missing.textContent = t(hass, this._config.device_id ? "not_found" : "pick_zone");
       card.appendChild(missing);
       this._statusEl = undefined;
+      this._noteEl = undefined;
       return;
     }
 
@@ -2702,6 +2700,10 @@ class ZoneFlowCard extends HTMLElement {
     this._statusEl = document.createElement("div");
     this._statusEl.className = "status";
     card.appendChild(this._statusEl);
+    this._noteEl = document.createElement("div");
+    this._noteEl.className = "area-note";
+    this._noteEl.hidden = true;
+    card.appendChild(this._noteEl);
     // A crop: which greenhouse it is in.
     if (statusAttrs.greenhouse?.name) {
       const where = document.createElement("div");
@@ -2936,69 +2938,6 @@ class ZoneFlowCard extends HTMLElement {
     return conf;
   }
 
-  _areaRow(conf) {
-    // The Garden Area field as a dropdown of the areas in use (Home Assistant's
-    // own text row would need the name typed), with "New area..." for a new one.
-    const wrap = document.createElement("div");
-    wrap.className = "area-row";
-    const label = document.createElement("span");
-    label.className = "area-label";
-    const select = document.createElement("select");
-    select.className = "area-select";
-    const input = document.createElement("input");
-    input.type = "text";
-    input.className = "area-input";
-    input.maxLength = 40;
-    input.hidden = true;
-    wrap.append(label, select, input);
-    const NEW = "__new__";
-    let shown = null;
-    const save = (value) => this._hass.callService("text", "set_value", { entity_id: conf.entity, value });
-    select.addEventListener("change", () => {
-      if (select.value === NEW) {
-        input.hidden = false;
-        input.placeholder = t(this._hass, "garden.name");
-        input.focus();
-        return;
-      }
-      input.hidden = true;
-      save(select.value);
-    });
-    input.addEventListener("keydown", (ev) => {
-      if (ev.key !== "Enter") return;
-      const value = input.value.trim();
-      if (!value) return;
-      input.hidden = true;
-      input.value = "";
-      save(value);
-    });
-    Object.defineProperty(wrap, "hass", {
-      set: (hass) => {
-        const raw = hass.states?.[conf.entity]?.state;
-        const current = raw && !["unknown", "unavailable"].includes(raw) ? raw : "";
-        const names = gardenAreas(hass);
-        if (current && !names.some((n) => n.toLowerCase() === current.toLowerCase())) names.push(current);
-        const signature = JSON.stringify([names, current, hass.locale?.language, conf.name]);
-        if (signature === shown) return;
-        shown = signature;
-        label.textContent = conf.name || t(hass, "groups.garden");
-        select.textContent = "";
-        const option = (value, text) => {
-          const el = document.createElement("option");
-          el.value = value;
-          el.textContent = text;
-          select.appendChild(el);
-        };
-        option("", t(hass, "garden.none"));
-        for (const name of names) option(name, name);
-        option(NEW, t(hass, "garden.new"));
-        select.value = names.find((n) => n.toLowerCase() === current.toLowerCase()) || "";
-        input.hidden = true;
-      },
-    });
-    return wrap;
-  }
-
   _addRows(list, confs) {
     const build = this._buildId;
     this._helpers().then(
@@ -3007,8 +2946,7 @@ class ZoneFlowCard extends HTMLElement {
         for (const raw of confs) {
           const conf = this._shortName(raw);
           const add = (before) => {
-            const isArea = this._hass.entities?.[conf.entity]?.translation_key === "garden_area";
-            const row = isArea ? this._areaRow(conf) : helpers.createRowElement(conf);
+            const row = helpers.createRowElement(conf);
             row.hass = this._hass;
             if (conf._tip) row.title = conf._tip;
             // A row that has to be recreated replaces just itself.
@@ -3040,6 +2978,9 @@ class ZoneFlowCard extends HTMLElement {
     const status = hass.states[(visible["sensor.status"] || visible["sensor.greenhouse_status"])?.entity_id];
     const code = status?.attributes?.code;
     this._statusEl.textContent = status ? status.state : "";
+    const note = status?.attributes?.area_note || "";
+    this._noteEl.textContent = note;
+    this._noteEl.hidden = !note;
     this._statusEl.classList.toggle("warn", ["lock_held", "refused_daily_cap", "refused_runtime_cap",
       "refused_deep_soak_cap", "interrupted", "failsafe", "mist_halted"].includes(code));
   }

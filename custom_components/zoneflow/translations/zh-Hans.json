@@ -180,7 +180,8 @@
         "menu_options": {
           "zone": "添加区域",
           "weather_underground": "设置 Weather Underground 降雨",
-          "crop": "向温室添加作物"
+          "crop": "向温室添加作物",
+          "area": "Add an area (a part of the garden)"
         }
       },
       "weather_underground": {
@@ -228,6 +229,28 @@
         "data_description": {
           "valve_entity": "用于开启此作物水源的开关。每种作物都需要独立的阀门。"
         }
+      },
+      "area": {
+        "title": "New area",
+        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
       }
     },
     "error": {
@@ -243,7 +266,9 @@
       "wu_invalid_key": "Weather Underground 拒绝了该 API 密钥。",
       "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
       "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
-      "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。"
+      "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     },
     "abort": {
       "already_configured": "Weather Underground 降雨功能已设置。"
@@ -261,11 +286,11 @@
           "flow_measure": "流量：用水表测量",
           "greenhouse_devices": "阀门、传感器与环境设备",
           "watering": "浇水设置",
-          "garden_area": "花园地块（后院、前院…）",
           "zone_type": "分区类型",
           "weather_underground": "Weather Underground 降雨",
           "crop_valve": "作物阀门",
-          "greenhouse_link": "温室"
+          "greenhouse_link": "温室",
+          "location": "Where is this? (area or greenhouse)"
         }
       },
       "settings": {
@@ -508,14 +533,74 @@
           "head_flow_unit": "给出单个灌水器流量的单位。"
         }
       },
-      "garden_area": {
-        "title": "花园地块",
-        "description": "此区域位于花园的哪个地块，例如后院或前院。卡片会据此对区域分组。选择已使用的名称或输入新名称；留空表示不属于任何地块。作物跟随其温室所在的地块。",
+      "location": {
+        "title": "Where is this?",
+        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
         "data": {
-          "garden_area": "花园地块"
+          "location": "Place"
         },
         "data_description": {
-          "garden_area": "名称相同的区域会分到一组。"
+          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+        }
+      },
+      "location_sensors": {
+        "title": "Use the area's sensors?",
+        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "data": {
+          "rain_counter_entity": "Use the area's rain gauge",
+          "outdoor_temp_entity": "Use the area's outdoor temperature",
+          "weather_entity": "Use the area's weather entity",
+          "notify_entity": "Use the area's phone"
+        },
+        "data_description": {
+          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
+          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
+          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+        }
+      },
+      "new_area": {
+        "title": "New area",
+        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
+      },
+      "area_settings": {
+        "title": "Area",
+        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
         }
       }
     },
@@ -527,7 +612,8 @@
       "zone_busy": "该区域（或其水泵）正忙，或今天的运行时长安全上限已用完。请稍后再试。",
       "flow_rate_disabled": "该区域的“灌水器流量校准”实体已被禁用。请启用它（该区域的设备页面 → 其实体）后重试。",
       "zone_flow_set": "区域流量已设置为 {flow}。仅用于用水量估算。",
-      "zone_flow_out_of_range": "计算出的区域流量超出了设置允许的范围（0 至 2000 L/min）。请检查数字。"
+      "zone_flow_out_of_range": "计算出的区域流量超出了设置允许的范围（0 至 2000 L/min）。请检查数字。",
+      "location_not_available": "That place is not available."
     },
     "error": {
       "valve_already_used": "另一个 ZoneFlow 区域已在使用此阀门。",
@@ -542,7 +628,9 @@
       "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
       "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
       "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
-      "greenhouse_has_crops": "此温室中有作物。请先将它们移动到另一个温室或进行移除（每种作物的 配置 -> 温室）。"
+      "greenhouse_has_crops": "此温室中有作物。请先将它们移动到另一个温室或进行移除（每种作物的 配置 -> 温室）。",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     }
   },
   "selector": {
@@ -1178,14 +1266,14 @@
           "limited": "部分时间开启",
           "outside": "仅室外寒冷时部分时间开启"
         }
+      },
+      "location": {
+        "name": "Where is this?"
       }
     },
     "text": {
       "health_notes": {
         "name": "健康备注"
-      },
-      "garden_area": {
-        "name": "花园地块"
       }
     }
   },
@@ -1336,6 +1424,12 @@
     },
     "nothing_on_hold": {
       "message": "没有暂停事项：所有设备均已处于 ZoneFlow 的控制之下。"
+    },
+    "location_not_available": {
+      "message": "That place is not available any more."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
     }
   },
   "issues": {
@@ -1390,6 +1484,10 @@
     "greenhouse_removed": {
       "title": "{zone}：其温室已被移除",
       "description": "温室 {greenhouse} 已被删除，因此 {zone} 现在是一个独立区域。它将继续进行浇水并保留温室的内部传感器。如需将其放入另一个温室，请使用该区域的 配置 -> 温室。"
+    },
+    "area_removed": {
+      "title": "{zone}: its area was removed",
+      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
     }
   }
 }

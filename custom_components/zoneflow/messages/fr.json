@@ -201,7 +201,8 @@
     "skipped_frost": "{cycle} sauté à {time} : {temp}, sous le seuil antigel ({limit})",
     "waiting_frost": "{cycle} en attente à {time} : {temp}, sous le seuil antigel ({limit}) ; nouvel essai toutes les heures",
     "waiting_deep_soak": "{cycle} en attente depuis {time} : l'arrosage profond passe d'abord dès qu'il fait assez chaud",
-    "paused_until": "En pause jusqu'au {until}"
+    "paused_until": "En pause jusqu'au {until}",
+    "paused_area": "Paused: no watering while {area} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow : votre semaine",
@@ -237,6 +238,19 @@
       "off": "éteint",
       "limited": "allumé une partie du temps",
       "outside": "allumé une partie du temps s'il fait froid dehors"
+    }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
     }
   }
 }

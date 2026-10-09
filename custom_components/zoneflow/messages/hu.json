@@ -201,7 +201,8 @@
     "skipped_frost": "{cycle} kihagyva ({time}): {temp}, a fagyvédelmi határ ({limit}) alatt",
     "waiting_frost": "{cycle} várakozik ({time}): {temp}, a fagyvédelmi határ ({limit}) alatt; óránként újra ellenőrzi",
     "waiting_deep_soak": "{cycle} vár ({time} óta): előbb a mélyöntözés jön, amint elég meleg lesz",
-    "paused_until": "Szüneteltetve, eddig: {until}"
+    "paused_until": "Szüneteltetve, eddig: {until}",
+    "paused_area": "Paused: no watering while {area} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: a heted",
@@ -237,6 +238,19 @@
       "off": "kikapcsolva",
       "limited": "az idő egy részében bekapcsolva",
       "outside": "az idő egy részében bekapcsolva, ha kint hideg van"
+    }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
     }
   }
 }

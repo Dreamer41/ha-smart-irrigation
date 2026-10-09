@@ -201,7 +201,8 @@
     "skipped_frost": "{cycle} skipped at {time}: {temp}, below the frost guard ({limit})",
     "waiting_frost": "{cycle} on hold at {time}: {temp}, below the frost guard ({limit}); checking again hourly",
     "waiting_deep_soak": "{cycle} waiting since {time}: the deep soak goes first once it's warm enough",
-    "paused_until": "Paused until {until}"
+    "paused_until": "Paused until {until}",
+    "paused_area": "Paused: no watering while {area} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: your week",
@@ -237,6 +238,19 @@
       "off": "off",
       "limited": "on part of the time",
       "outside": "on part of the time while cold outside"
+    }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
     }
   }
 }

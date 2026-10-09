@@ -201,7 +201,8 @@
     "skipped_frost": "{cycle} um {time} übersprungen: {temp}, unter dem Frostschutz ({limit})",
     "waiting_frost": "{cycle} um {time} angehalten: {temp}, unter dem Frostschutz ({limit}); stündliche Neuprüfung",
     "waiting_deep_soak": "{cycle} wartet seit {time}: Die Tiefenbewässerung kommt zuerst, sobald es warm genug ist",
-    "paused_until": "Pausiert bis {until}"
+    "paused_until": "Pausiert bis {until}",
+    "paused_area": "Paused: no watering while {area} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: deine Woche",
@@ -237,6 +238,19 @@
       "off": "aus",
       "limited": "teilweise eingeschaltet",
       "outside": "teilweise eingeschaltet, wenn es draußen kalt ist"
+    }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
     }
   }
 }

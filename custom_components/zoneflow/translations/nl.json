@@ -180,7 +180,8 @@
         "menu_options": {
           "zone": "Zone toevoegen",
           "weather_underground": "Weather Underground-regen instellen",
-          "crop": "Voeg een gewas toe aan een kas"
+          "crop": "Voeg een gewas toe aan een kas",
+          "area": "Add an area (a part of the garden)"
         }
       },
       "weather_underground": {
@@ -228,6 +229,28 @@
         "data_description": {
           "valve_entity": "Een schakelaar die het water voor dit gewas opent. Elk gewas heeft een eigen klep nodig."
         }
+      },
+      "area": {
+        "title": "New area",
+        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
       }
     },
     "error": {
@@ -243,7 +266,9 @@
       "wu_invalid_key": "Weather Underground heeft de API-sleutel geweigerd.",
       "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
-      "wu_pick_1_to_3": "Kies 1, 2 of 3 stations."
+      "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     },
     "abort": {
       "already_configured": "Weather Underground-regen is al ingesteld."
@@ -261,11 +286,11 @@
           "flow_measure": "Debiet: meten met de watermeter",
           "greenhouse_devices": "Klep, sensoren en klimaatapparaten",
           "watering": "Bewateringsinstellingen",
-          "garden_area": "Tuingedeelte (achtertuin, voortuin…)",
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regen",
           "crop_valve": "Gewasklep",
-          "greenhouse_link": "Kas"
+          "greenhouse_link": "Kas",
+          "location": "Where is this? (area or greenhouse)"
         }
       },
       "settings": {
@@ -508,14 +533,74 @@
           "head_flow_unit": "De eenheid waarin het debiet van één druppelaar wordt vermeld."
         }
       },
-      "garden_area": {
-        "title": "Tuingedeelte",
-        "description": "In welk deel van de tuin deze zone ligt, bijvoorbeeld Achtertuin of Voortuin. De kaarten groeperen de zones hierop. Kies een naam die al in gebruik is of typ een nieuwe; leeg betekent geen gedeelte. Een gewas volgt het tuingedeelte van zijn kas.",
+      "location": {
+        "title": "Where is this?",
+        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
         "data": {
-          "garden_area": "Tuingedeelte"
+          "location": "Place"
         },
         "data_description": {
-          "garden_area": "Zones met dezelfde naam worden samen gegroepeerd."
+          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+        }
+      },
+      "location_sensors": {
+        "title": "Use the area's sensors?",
+        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "data": {
+          "rain_counter_entity": "Use the area's rain gauge",
+          "outdoor_temp_entity": "Use the area's outdoor temperature",
+          "weather_entity": "Use the area's weather entity",
+          "notify_entity": "Use the area's phone"
+        },
+        "data_description": {
+          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
+          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
+          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+        }
+      },
+      "new_area": {
+        "title": "New area",
+        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
+      },
+      "area_settings": {
+        "title": "Area",
+        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
         }
       }
     },
@@ -527,7 +612,8 @@
       "zone_busy": "De zone (of de pomp) is bezig, of de dagelijkse veiligheidslimiet is op. Probeer het later opnieuw.",
       "flow_rate_disabled": "De entiteit Kalibratie debiet druppelaars van de zone is uitgeschakeld. Schakel hem in (apparaatpagina van de zone → entiteiten) en probeer het opnieuw.",
       "zone_flow_set": "Zonedebiet ingesteld op {flow}. Het wordt alleen gebruikt voor de schatting van het waterverbruik.",
-      "zone_flow_out_of_range": "Dat komt uit op een zonedebiet dat buiten de toegestane instelling valt (0 tot 2000 L/min). Controleer de getallen."
+      "zone_flow_out_of_range": "Dat komt uit op een zonedebiet dat buiten de toegestane instelling valt (0 tot 2000 L/min). Controleer de getallen.",
+      "location_not_available": "That place is not available."
     },
     "error": {
       "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
@@ -542,7 +628,9 @@
       "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
-      "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas)."
+      "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas).",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     }
   },
   "selector": {
@@ -1178,14 +1266,14 @@
           "limited": "Deels van de tijd aan",
           "outside": "Deels van de tijd aan bij koud weer buiten"
         }
+      },
+      "location": {
+        "name": "Where is this?"
       }
     },
     "text": {
       "health_notes": {
         "name": "Gezondheidsnotities"
-      },
-      "garden_area": {
-        "name": "Tuingedeelte"
       }
     }
   },
@@ -1336,6 +1424,12 @@
     },
     "nothing_on_hold": {
       "message": "Er staat niets op pauze: alle apparaten staan al onder bediening van ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "That place is not available any more."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
     }
   },
   "issues": {
@@ -1390,6 +1484,10 @@
     "greenhouse_removed": {
       "title": "{zone}: de kas is verwijderd",
       "description": "Kas {greenhouse} is verwijderd, dus {zone} is nu een zelfstandige zone. Deze blijft sproeien en behoudt de interne sensoren van de kas. Gebruik Configureer -> Kas van de zone om deze in een andere kas te plaatsen."
+    },
+    "area_removed": {
+      "title": "{zone}: its area was removed",
+      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
     }
   }
 }

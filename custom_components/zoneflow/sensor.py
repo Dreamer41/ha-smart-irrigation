@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -32,6 +32,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         from .wu_sensor import async_setup_wu_sensors
 
         async_setup_wu_sensors(hass, entry, async_add_entities)
+        return
+    if entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_AREA:
+        from .area_entities import async_setup_area_sensors
+
+        async_setup_area_sensors(hass, entry, async_add_entities)
         return
     controller = hass.data[DOMAIN][entry.entry_id]
     entities: list[SensorEntity] = [
@@ -778,6 +783,10 @@ class ZoneFlowStatusSensor(_Base):
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
         # For the cards: the garden area the zone is shown under (or None).
         attributes["garden_area"] = self._controller.garden_area
+        # A sensor this zone has of its own where its area has another: the
+        # card says so ("uses its own rain gauge, not Backyard's").
+        attributes["area_overrides"] = self._controller.area_overrides()
+        attributes["area_note"] = self._controller.area_note()
         # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
         registry = dr.async_get(self.hass)
 

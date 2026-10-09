@@ -180,7 +180,8 @@
         "menu_options": {
           "zone": "Přidat zónu",
           "weather_underground": "Nastavit srážky Weather Underground",
-          "crop": "Přidat plodinu do skleníku"
+          "crop": "Přidat plodinu do skleníku",
+          "area": "Add an area (a part of the garden)"
         }
       },
       "weather_underground": {
@@ -228,6 +229,28 @@
         "data_description": {
           "valve_entity": "Spínač, který otevírá vodu pro tuto plodinu. Každá plodina potřebuje vlastní ventil."
         }
+      },
+      "area": {
+        "title": "New area",
+        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
       }
     },
     "error": {
@@ -243,7 +266,9 @@
       "wu_invalid_key": "Weather Underground odmítl klíč API.",
       "wu_cannot_connect": "Nelze se spojit s Weather Underground. Zkuste to znovu později.",
       "wu_no_stations": "Žádné stanice v okruhu. Bez stanice v blízkosti vám tato funkce nepomůže.",
-      "wu_pick_1_to_3": "Vyberte 1, 2 nebo 3 stanice."
+      "wu_pick_1_to_3": "Vyberte 1, 2 nebo 3 stanice.",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     },
     "abort": {
       "already_configured": "Srážky Weather Underground jsou již nastaveny."
@@ -261,11 +286,11 @@
           "flow_measure": "Průtok: změřit průtokoměrem",
           "greenhouse_devices": "Ventil, snímače a klimatická zařízení",
           "watering": "Nastavení zavlažování",
-          "garden_area": "Zahradní oblast (zadní zahrada, přední zahrada…)",
           "zone_type": "Typ zóny",
           "weather_underground": "Dešťové srážky Weather Underground",
           "crop_valve": "Ventil plodiny",
-          "greenhouse_link": "Skleník"
+          "greenhouse_link": "Skleník",
+          "location": "Where is this? (area or greenhouse)"
         }
       },
       "settings": {
@@ -508,14 +533,74 @@
           "head_flow_unit": "Jednotka, ve které je uveden průtok jednoho emitoru."
         }
       },
-      "garden_area": {
-        "title": "Zahradní oblast",
-        "description": "Ve které části zahrady je tato zóna, například Zadní zahrada nebo Přední zahrada. Karty podle toho zóny seskupují. Vyberte už použitý název nebo napište nový; prázdné pole znamená bez oblasti. Plodina patří do oblasti svého skleníku.",
+      "location": {
+        "title": "Where is this?",
+        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
         "data": {
-          "garden_area": "Zahradní oblast"
+          "location": "Place"
         },
         "data_description": {
-          "garden_area": "Zóny se stejným názvem se seskupí."
+          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+        }
+      },
+      "location_sensors": {
+        "title": "Use the area's sensors?",
+        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "data": {
+          "rain_counter_entity": "Use the area's rain gauge",
+          "outdoor_temp_entity": "Use the area's outdoor temperature",
+          "weather_entity": "Use the area's weather entity",
+          "notify_entity": "Use the area's phone"
+        },
+        "data_description": {
+          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
+          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
+          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+        }
+      },
+      "new_area": {
+        "title": "New area",
+        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
+      },
+      "area_settings": {
+        "title": "Area",
+        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
         }
       }
     },
@@ -527,7 +612,8 @@
       "zone_busy": "Zóna (nebo její čerpadlo) je zaneprázdněná, nebo je dnešní bezpečnostní limit doby vyčerpán. Zkuste to později.",
       "flow_rate_disabled": "Entita Kalibrace průtoku emitorů této zóny je zakázaná. Povolte ji (stránka zařízení zóny → její entity) a zkuste to znovu.",
       "zone_flow_set": "Průtok zóny nastaven na {flow}. Používá se pouze pro odhad spotřeby vody.",
-      "zone_flow_out_of_range": "Výsledek je mimo rozsah povolený nastavením (0 až 2000 L/min). Zkontrolujte čísla."
+      "zone_flow_out_of_range": "Výsledek je mimo rozsah povolený nastavením (0 až 2000 L/min). Zkontrolujte čísla.",
+      "location_not_available": "That place is not available."
     },
     "error": {
       "valve_already_used": "Jiná zóna ZoneFlow už tento ventil používá.",
@@ -542,7 +628,9 @@
       "wu_cannot_connect": "Nelze se spojit s Weather Underground. Zkuste to znovu později.",
       "wu_no_stations": "Žádné stanice v okruhu. Bez stanice v blízkosti vám tato funkce nepomůže.",
       "wu_pick_1_to_3": "Vyberte 1, 2 nebo 3 stanice.",
-      "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Nejprve je přesuňte do jiného skleníku nebo je odeberte (Nastavit -> Skleník u každé plodiny)."
+      "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Nejprve je přesuňte do jiného skleníku nebo je odeberte (Nastavit -> Skleník u každé plodiny).",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     }
   },
   "selector": {
@@ -1178,14 +1266,14 @@
           "limited": "Zapnuto po část času",
           "outside": "Zapnuto po část času, když je venku chladno"
         }
+      },
+      "location": {
+        "name": "Where is this?"
       }
     },
     "text": {
       "health_notes": {
         "name": "Poznámky ke zdraví"
-      },
-      "garden_area": {
-        "name": "Zahradní oblast"
       }
     }
   },
@@ -1336,6 +1424,12 @@
     },
     "nothing_on_hold": {
       "message": "Nic není pozastaveno: všechna zařízení jsou již pod řízením ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "That place is not available any more."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
     }
   },
   "issues": {
@@ -1390,6 +1484,10 @@
     "greenhouse_removed": {
       "title": "{zone}: jeho skleník byl odebrán",
       "description": "Skleník {greenhouse} byl smazán, takže {zone} je nyní samostatnou zónou. Nadále zalévá a ponechává si vnitřní snímače skleníku. Chcete-li ji umístit do jiného skleníku, použijte Konfigurovat -> Skleník v nabídce zóny."
+    },
+    "area_removed": {
+      "title": "{zone}: its area was removed",
+      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
     }
   }
 }

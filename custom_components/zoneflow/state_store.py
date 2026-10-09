@@ -119,9 +119,6 @@ class IrrigationState:
     # "l" only counts runs whose litres were known; about 400 days are kept.
     water_ledger: dict = field(default_factory=dict)
     last_cycle_runtime_min: float | None = None
-    # The garden area the zone is shown under (set from the zone's Garden Area
-    # field or Configure). None: not set here; "": cleared on purpose.
-    garden_area: str | None = None
 
     # Live dashboard overrides (select.py) -- both are pure convenience
     # layers on top of the config-flow/planting-date-driven values, not a
