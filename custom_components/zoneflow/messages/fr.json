@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone} : utilisation du capteur de température de secours",
       "message": "Le capteur principal de température intérieure ({entity}) ne fonctionne plus. Le contrôle climatique se poursuit avec le capteur de secours."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

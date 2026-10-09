@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: používa sa záložný senzor teploty",
       "message": "Hlavný senzor vnútornej teploty ({entity}) prestal fungovať. Riadenie klímy pokračuje so záložným."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

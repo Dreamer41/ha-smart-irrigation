@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: reserve-temperatuursensor in gebruik",
       "message": "De hoofd-binnentemperatuursensor ({entity}) werkt niet meer. De klimaatbeheersing gaat door met de reservesensor."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

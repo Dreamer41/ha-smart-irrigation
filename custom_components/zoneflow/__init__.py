@@ -14,7 +14,7 @@ from homeassistant.helpers import issue_registry as ir
 
 import homeassistant.util.dt as dt_util
 
-from . import calibration, frontend, issues, location, plant_actions, plant_api, plants as plants_module, presets, summary, units, visibility
+from . import calibration, frontend, issues, location, notification_actions, plant_actions, plant_api, plants as plants_module, presets, summary, units, visibility
 from . import greenhouse as greenhouse_module
 from . import area as area_module
 from .area import AREA_SHARED_KEYS, AreaController
@@ -286,6 +286,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if is_area_entry(entry):
         return await _async_setup_area(hass, entry)
     hass.data.setdefault(DOMAIN, {})
+    notification_actions.async_register(hass)
     controller = ZoneFlowController(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = controller
     await controller.async_setup()
@@ -514,6 +515,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             ):
                 hass.services.async_remove(DOMAIN, service)
             summary.async_teardown(hass)
+            notification_actions.async_unregister(hass)
     return unloaded
 
 

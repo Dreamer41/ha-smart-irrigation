@@ -46,7 +46,7 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, units, visibility
+from . import calculations as calc, issues, messages, notification_actions, units, visibility
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
@@ -4274,12 +4274,30 @@ class ZoneFlowController:
 
         if notify_phone and self.notify_entity and (always_notify or self._notify_allowed(level)):
             try:
-                await self.hass.services.async_call(
-                    "notify",
-                    "send_message",
-                    {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
-                    blocking=True,
-                )
+                verbs = notification_actions.ACTIONS_FOR_MESSAGE.get(message or "", ())
+                legacy = notification_actions.legacy_service(self.hass, self.notify_entity) if verbs else None
+                if legacy is not None:
+                    # The companion app's service takes action buttons.
+                    await self.hass.services.async_call(
+                        "notify",
+                        legacy,
+                        {
+                            "title": phone_title,
+                            "message": phone_msg,
+                            "data": {
+                                "tag": f"zoneflow_{self.entry.entry_id}",
+                                "actions": notification_actions.build(self.hass, self.entry.entry_id, verbs),
+                            },
+                        },
+                        blocking=True,
+                    )
+                else:
+                    await self.hass.services.async_call(
+                        "notify",
+                        "send_message",
+                        {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
+                        blocking=True,
+                    )
             except Exception:  # noqa: BLE001 - never let a notify failure break irrigation logic
                 _LOGGER.exception("Failed to send phone notification for %s", event_type)
 

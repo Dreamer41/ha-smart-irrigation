@@ -92,7 +92,9 @@ const I18N = {
       "show_add": "Show the Add zone button",
       "next_feed": "Next fertilizing",
       "feed_due": "Fertilize now",
-      "other_area": "Other"
+      "other_area": "Other",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "tips": {
       "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
@@ -213,7 +215,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "de": {
     "now": "Jetzt",
@@ -290,7 +296,9 @@ const I18N = {
       "feed_due": "Jetzt düngen",
       "other_area": "Sonstige",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -411,7 +419,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "es": {
     "now": "Ahora",
@@ -488,7 +500,9 @@ const I18N = {
       "feed_due": "Abonar ya",
       "other_area": "Otras",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -609,7 +623,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "fi": {
     "now": "Nyt",
@@ -686,7 +704,9 @@ const I18N = {
       "feed_due": "Lannoita nyt",
       "other_area": "Muut",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -807,7 +827,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "fr": {
     "now": "Maintenant",
@@ -884,7 +908,9 @@ const I18N = {
       "feed_due": "Engrais à apporter",
       "other_area": "Autres",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -1005,7 +1031,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "it": {
     "now": "Adesso",
@@ -1082,7 +1112,9 @@ const I18N = {
       "feed_due": "Concima ora",
       "other_area": "Altre",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -1203,7 +1235,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "nl": {
     "now": "Nu",
@@ -1280,7 +1316,9 @@ const I18N = {
       "feed_due": "Nu bemesten",
       "other_area": "Overige",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -1401,7 +1439,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "pl": {
     "now": "Teraz",
@@ -1478,7 +1520,9 @@ const I18N = {
       "feed_due": "Nawieź teraz",
       "other_area": "Inne",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -1599,7 +1643,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "pt": {
     "now": "Agora",
@@ -1676,7 +1724,9 @@ const I18N = {
       "feed_due": "Adubar agora",
       "other_area": "Outras",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1797,7 +1847,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "sv": {
     "now": "Nu",
@@ -1874,7 +1928,9 @@ const I18N = {
       "feed_due": "Gödsla nu",
       "other_area": "Övriga",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -1995,7 +2051,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "cs": {
     "now": "Teď",
@@ -2072,7 +2132,9 @@ const I18N = {
       "feed_due": "Pohnojit teď",
       "other_area": "Ostatní",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -2193,7 +2255,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "da": {
     "now": "Nu",
@@ -2270,7 +2336,9 @@ const I18N = {
       "feed_due": "Gød nu",
       "other_area": "Øvrige",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -2391,7 +2459,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "hu": {
     "now": "Most",
@@ -2468,7 +2540,9 @@ const I18N = {
       "feed_due": "Tápanyag most",
       "other_area": "Egyéb",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -2589,7 +2663,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "nb": {
     "now": "Nå",
@@ -2666,7 +2744,9 @@ const I18N = {
       "feed_due": "Gjødsle nå",
       "other_area": "Andre",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -2787,7 +2867,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "pt-BR": {
     "now": "Agora",
@@ -2864,7 +2948,9 @@ const I18N = {
       "feed_due": "Adubar agora",
       "other_area": "Outras",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -2985,7 +3071,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "ru": {
     "now": "Сейчас",
@@ -3062,7 +3152,9 @@ const I18N = {
       "feed_due": "Подкормить сейчас",
       "other_area": "Прочее",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -3183,7 +3275,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "sk": {
     "now": "Teraz",
@@ -3260,7 +3356,9 @@ const I18N = {
       "feed_due": "Pohnojiť teraz",
       "other_area": "Ostatné",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -3381,7 +3479,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "uk": {
     "now": "Зараз",
@@ -3458,7 +3560,9 @@ const I18N = {
       "feed_due": "Підживити зараз",
       "other_area": "Інше",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -3579,7 +3683,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   },
   "zh-Hans": {
     "now": "当前",
@@ -3656,7 +3764,9 @@ const I18N = {
       "feed_due": "立即施肥",
       "other_area": "其他",
       "pause_area": "Pause the whole area",
-      "snooze_area": "Skip today's watering in the whole area"
+      "snooze_area": "Skip today's watering in the whole area",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -3777,7 +3887,11 @@ const I18N = {
       "label": "Water now for",
       "start": "Start",
       "min": "min"
-    }
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help"
   }
 };
 
@@ -3819,6 +3933,16 @@ const ONLY_WHEN = {
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
+// "?" beside a settings group: the guide that explains it. The watering-method
+// choice (temperature tiers, ET, soil probe) has a blog post of its own: put
+// its address in METHOD_HELP_URL and the "?" appears next to How much water.
+const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";
+const METHOD_HELP_URL = "";
+const HELP_LINKS = {
+  amounts: [`${GUIDE}CALIBRATION.md`, METHOD_HELP_URL],
+  water_use: [`${GUIDE}CALIBRATION.md`],
+  rain: [`${GUIDE}RAIN-GAUGES.md`],
+};
 const SETTINGS_GROUPS = [
   ["garden", ["select.location"]],
   ["climate", [
@@ -3926,12 +4050,12 @@ class ZoneFlowCard extends HTMLElement {
   }
 
   static getStubConfig(hass) {
-    return { device_id: firstZoneDevice(hass) || "" };
+    return { device_id: firstZoneDevice(hass) || "", simple: true };
   }
 
   setConfig(config) {
     if (!config) throw new Error("Pick a ZoneFlow zone (device_id).");
-    this._config = { show_journal: true, show_settings: true, show_diagnostics: false, ...config };
+    this._config = { show_journal: true, show_settings: true, show_diagnostics: false, simple: false, ...config };
     this._signature = undefined;
     if (this._hass) this._render();
   }
@@ -3983,6 +4107,8 @@ class ZoneFlowCard extends HTMLElement {
       device?.name_by_user || device?.name,
       statusAttrs.greenhouse || null,
       statusAttrs.crops || null,
+      !!this._config.simple,
+      !!this._showAdvanced,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
@@ -4051,6 +4177,11 @@ class ZoneFlowCard extends HTMLElement {
       .area-label { flex: 1; min-width: 0; }
       .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
         border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
+      .advanced-toggle { display: block; margin: 4px 16px 14px; padding: 6px 12px; font: inherit; color: var(--primary-color);
+        background: none; border: none; cursor: pointer; }
+      .help-link { display: inline-block; margin-left: 8px; width: 18px; height: 18px; line-height: 18px; text-align: center;
+        border: 1px solid var(--secondary-text-color); border-radius: 50%; font-size: 0.8em; text-decoration: none;
+        color: var(--secondary-text-color); text-transform: none; }
       .check-headline { font-weight: 500; margin: 4px 0 8px; }
       .check-headline.warn, .check-item.warn ha-icon { color: var(--warning-color, #ff9800); }
       .check-headline.fail, .check-item.fail ha-icon { color: var(--error-color, #db4437); }
@@ -4231,11 +4362,14 @@ class ZoneFlowCard extends HTMLElement {
       popup.parts = popup.parts.filter(([, confs]) => confs.length);
       if (!popup.parts.length && !popup.custom) delete this._popups[key];
     }
-    section("now", now);
+    // Simple view: status and the few controls; the rest behind "Advanced settings".
+    const simple = !!this._config.simple;
+    const showAll = !simple || !!this._showAdvanced;
+    if (showAll) section("now", now);
     // A greenhouse: its crops, as in the overview card (status, next and
     // last watering, Water now; tap one for its full card).
     const crops = (statusAttrs.crops || []).map((c) => c.device_id).filter(Boolean);
-    if (crops.length && this._config.show_crops !== false) {
+    if (crops.length && this._config.show_crops !== false && showAll) {
       const el = document.createElement("div");
       el.className = "section crops";
       const heading = document.createElement("div");
@@ -4250,9 +4384,20 @@ class ZoneFlowCard extends HTMLElement {
     } else {
       this._cropList = undefined;
     }
-    section("controls", controls);
-    section("service", service);
-    if (Object.keys(this._popups).length) {
+    if (showAll) {
+      section("controls", controls);
+      section("service", service);
+    } else {
+      section("controls", [
+        ...buttons([
+          ["button.run_routine", t(hass, "water_now"), "mdi:watering-can"],
+          ["button.snooze_today", t(hass, "snooze"), "mdi:sleep"],
+        ]),
+        ...rows(["switch.pause"]),
+        ...buttons([["button.resume_automatic", t(hass, "resume_automatic"), "mdi:play-circle-outline"]]),
+      ]);
+    }
+    if (showAll && Object.keys(this._popups).length) {
       const bar = document.createElement("div");
       bar.className = "more";
       for (const [key, popup] of Object.entries(this._popups)) {
@@ -4264,6 +4409,17 @@ class ZoneFlowCard extends HTMLElement {
         bar.appendChild(button);
       }
       card.appendChild(bar);
+    }
+    if (simple) {
+      const toggle = document.createElement("button");
+      toggle.className = "advanced-toggle";
+      toggle.textContent = t(hass, this._showAdvanced ? "hide_advanced" : "advanced");
+      toggle.addEventListener("click", () => {
+        this._showAdvanced = !this._showAdvanced;
+        this._signature = undefined;
+        this._render();
+      });
+      card.appendChild(toggle);
     }
     // Rebuilt while a popup was open (e.g. a setting appeared): open again.
     if (this._popupKey && this._popups[this._popupKey]) this._openPopup(this._popupKey);
@@ -4305,6 +4461,16 @@ class ZoneFlowCard extends HTMLElement {
         const heading = document.createElement("div");
         heading.className = "group-title";
         heading.textContent = t(hass, `groups.${groupKey}`);
+        for (const url of (HELP_LINKS[groupKey] || []).filter(Boolean)) {
+          const help = document.createElement("a");
+          help.className = "help-link";
+          help.href = url;
+          help.target = "_blank";
+          help.rel = "noopener";
+          help.title = t(hass, "help");
+          help.textContent = "?";
+          heading.appendChild(help);
+        }
         body.appendChild(heading);
         // Some groups say in plain words what their settings are for.
         const noteText = t(hass, `groups.${groupKey}_note`);
@@ -4408,7 +4574,14 @@ class ZoneFlowCard extends HTMLElement {
     const attrs = hass.states?.[Object.values(hass.entities || {}).find(
       (e) => e.device_id === this._config.device_id && e.translation_key === "status")?.entity_id]?.attributes || {};
     body.textContent = "";
-    body.appendChild(make("div", "group-note", t(hass, "calibrate.intro")));
+    const intro = make("div", "group-note", t(hass, "calibrate.intro"));
+    const helpLink = make("a", "help-link", "?");
+    helpLink.href = `${GUIDE}CALIBRATION.md`;
+    helpLink.target = "_blank";
+    helpLink.rel = "noopener";
+    helpLink.title = t(hass, "help");
+    intro.appendChild(helpLink);
+    body.appendChild(intro);
     body.appendChild(make("div", "", t(hass, "calibrate.step1")));
     const run = make("button", "plant-button", t(hass, "calibrate.run"));
     run.disabled = !popup.runEntity;
@@ -4848,6 +5021,7 @@ class ZoneFlowCardEditor extends HTMLElement {
       this._form.computeLabel = (schema) => t(this._hass, schema.name === "device_id" ? "zone" : schema.name);
       this._form.schema = [
         { name: "device_id", required: true, selector: { device: { filter: { integration: "zoneflow" } } } },
+        { name: "simple", selector: { boolean: {} } },
         { name: "show_journal", selector: { boolean: {} } },
         { name: "show_settings", selector: { boolean: {} } },
         { name: "show_diagnostics", selector: { boolean: {} } },
@@ -4859,7 +5033,7 @@ class ZoneFlowCardEditor extends HTMLElement {
       this.appendChild(this._form);
     }
     this._form.hass = this._hass;
-    this._form.data = { show_journal: true, show_settings: true, show_diagnostics: false, ...this._config };
+    this._form.data = { show_journal: true, show_settings: true, show_diagnostics: false, simple: false, ...this._config };
   }
 }
 
@@ -5108,12 +5282,41 @@ class ZoneFlowOverviewCard extends HTMLElement {
       this._config.title,
       this._config.show_add,
       !!this._hass.user?.is_admin,
+      this._dashboardState || null,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
       this._build(zones);
     }
     this._update(zones);
+    this._checkDashboard();
+  }
+
+  async _checkDashboard() {
+    // Does a "zoneflow" dashboard exist? Asked once, for admins.
+    if (this._dashboardState || this._dashboardAsked || !this._hass?.user?.is_admin || this._config.show_add === false) return;
+    this._dashboardAsked = true;
+    try {
+      const list = await this._hass.callWS({ type: "lovelace/dashboards/list" });
+      this._dashboardState = list.some((d) => d.url_path === "zoneflow") ? "exists" : "missing";
+    } catch (err) {
+      this._dashboardState = "exists"; // cannot tell: offer nothing
+    }
+    this._render();
+  }
+
+  async _createDashboard() {
+    // One click: a sidebar dashboard that uses the ZoneFlow strategy.
+    const hass = this._hass;
+    await hass.callWS({
+      type: "lovelace/dashboards/create",
+      url_path: "zoneflow", mode: "storage", title: "ZoneFlow", icon: "mdi:sprinkler-variant",
+      show_in_sidebar: true, require_admin: false,
+    });
+    await hass.callWS({ type: "lovelace/config/save", url_path: "zoneflow", config: { strategy: { type: "custom:zoneflow" } } });
+    this._dashboardState = "exists";
+    history.pushState(null, "", "/zoneflow");
+    window.dispatchEvent(new CustomEvent("location-changed"));
   }
 
   _build(zones) {
@@ -5200,6 +5403,24 @@ class ZoneFlowOverviewCard extends HTMLElement {
         window.dispatchEvent(new CustomEvent("location-changed"));
       });
       card.appendChild(add);
+      if (this._dashboardState === "missing" && !this._config.embedded) {
+        const make = document.createElement("button");
+        make.className = "add";
+        const makeIcon = document.createElement("ha-icon");
+        makeIcon.setAttribute("icon", "mdi:view-dashboard-outline");
+        make.append(makeIcon, document.createTextNode(tr("create_dashboard")));
+        make.addEventListener("click", async () => {
+          make.disabled = true;
+          make.lastChild.textContent = tr("creating_dashboard");
+          try {
+            await this._createDashboard();
+          } catch (err) {
+            make.disabled = false;
+            make.lastChild.textContent = String(err?.message || err);
+          }
+        });
+        card.appendChild(make);
+      }
     };
     if (!zones.length) {
       const empty = document.createElement("div");

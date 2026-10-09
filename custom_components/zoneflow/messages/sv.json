@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: använder reservtemperaturgivaren",
       "message": "Huvudgivaren för innetemperatur ({entity}) slutade fungera. Klimatstyrningen fortsätter med reservgivaren."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

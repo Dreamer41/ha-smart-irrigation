@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: bruker reserve-temperatursensor",
       "message": "Hovedsensoren for innvendig temperatur ({entity}) sluttet å fungere. Klimastyringen fortsetter med reservesensoren."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: käytössä vara-anturi",
       "message": "Ensisijainen sisälämpötila-anturi ({entity}) lakkasi toimimasta. Ilmastonsäätö jatkuu vara-anturin avulla."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

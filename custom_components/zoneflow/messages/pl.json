@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: używanie zapasowego czujnika temperatury",
       "message": "Główny czujnik temperatury wewnętrznej ({entity}) przestał działać. Kontrola klimatu jest kontynuowana z użyciem czujnika zapasowego."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

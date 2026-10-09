@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: використовується резервний датчик температури",
       "message": "Основний датчик температури всередині ({entity}) припинив працювати. Клімат-контроль продовжує роботу за резервним."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: usando o sensor de temperatura de backup",
       "message": "O sensor de temperatura interna principal ({entity}) parou de funcionar. O controle de clima continua com o backup."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

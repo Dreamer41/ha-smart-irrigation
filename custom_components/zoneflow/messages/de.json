@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: Verwende Backup-Temperatursensor",
       "message": "Der Haupt-Innen-Temperatursensor ({entity}) funktioniert nicht mehr. Die Klimasteuerung wird mit dem Backup-Sensor fortgesetzt."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

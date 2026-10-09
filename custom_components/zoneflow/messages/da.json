@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: bruger reserve temperatursensor",
       "message": "Den primære indendørs temperatursensor ({entity}) holdt op med at virke. Klimastyringen fortsætter med reserven."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: tartalék hőmérséklet-érzékelő használatban",
       "message": "A fő belső hőmérséklet-érzékelő ({entity}) leállt. A klímaszabályozás a tartalék érzékelővel folytatódik."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

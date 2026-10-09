@@ -161,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}：正在使用备用温度传感器",
       "message": "主室内温度传感器（{entity}）已停止工作。环境控制已切换至备用传感器继续运行。"
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {

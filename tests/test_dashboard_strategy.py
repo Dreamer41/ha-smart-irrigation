@@ -383,6 +383,8 @@ class El {
   append(...c) { for (const x of c) this.children.push(typeof x === "string" ? { text: x, children: [] } : x); }
   appendChild(c) { this.children.push(c); }
   setAttribute(k, v) { this.attrs = { ...(this.attrs || {}), [k]: v }; }
+  insertBefore(el) { this.children.push(el); }
+  remove() {}
   addEventListener(type, fn) { this.listeners[type] = fn; }
   set textContent(v) { this._text = v; if (v === "") this.children = []; }
   get textContent() { return this._text; }
@@ -565,3 +567,122 @@ def test_the_check_calibrate_and_water_now_controls(tmp_path):
         ["zoneflow", "calibrate_flow", {"volume": 30, "area": 10, "minutes": 15, "device_id": "d1"}],
         ["zoneflow", "water_now", {"minutes": 15, "device_id": "d1"}],
     ]
+
+
+DASHBOARD_HARNESS = (_PREAMBLE + r"""
+const over = registry["zoneflow-overview-card"].prototype;
+const make = (list, fail) => ({
+  _hass: { user: { is_admin: true }, callWS: async (msg) => { calls.push(msg.type + (msg.url_path ? ":" + msg.url_path : "")); if (fail) throw new Error("no"); return msg.type.endsWith("list") ? list : {}; } },
+  _config: {},
+  _render() { calls.push("render"); },
+});
+const run = async () => {
+  const result = {};
+  const a = make([{ url_path: "lovelace" }]);
+  await over._checkDashboard.call(a);
+  result.missing = a._dashboardState;
+  const b = make([{ url_path: "zoneflow" }]);
+  await over._checkDashboard.call(b);
+  result.exists = b._dashboardState;
+  const c = make([], true);
+  await over._checkDashboard.call(c);
+  result.unknown = c._dashboardState;
+  const d = make([]);
+  d._hass.user.is_admin = false;
+  await over._checkDashboard.call(d);
+  result.nonAdmin = d._dashboardState || null;
+  calls.length = 0;
+  hass.callWS = a._hass.callWS;
+  sandbox.history.pushState = (...x) => calls.push("go:" + x[2]);
+  await over._createDashboard.call(a);
+  result.created = [...calls];
+  console.log(JSON.stringify(result));
+};
+run();
+""").replace("const sandbox = {", "const sandbox = { CustomEvent: class {}, history: { pushState() {} },").replace(
+    "window: {", "window: { dispatchEvent() {}, ", 1)
+
+
+def test_one_click_dashboard_creation(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    harness = tmp_path / "dash.js"
+    harness.write_text(DASHBOARD_HARNESS, encoding="utf-8")
+    hass = {"entities": {}, "states": {}, "devices": {}, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": {}})],
+                          capture_output=True, encoding="utf-8", timeout=60, check=False)
+    assert done.returncode == 0, done.stderr[-800:]
+    out = json.loads(done.stdout)
+    assert out["missing"] == "missing" and out["exists"] == "exists"
+    assert out["unknown"] == "exists" and out["nonAdmin"] is None
+    assert out["created"] == ["lovelace/dashboards/create:zoneflow", "lovelace/config/save:zoneflow", "go:/zoneflow"]
+
+
+SIMPLE_HARNESS = _PREAMBLE.replace(
+    "document: { createElement: (tag) => new El(tag), createTextNode: (text) => ({ text, children: [] }) },",
+    "document: { createElement: (tag) => new El(tag), createTextNode: (text) => ({ text, children: [] }) },\n"
+    "  CustomEvent: class {},",
+).replace("window: {", "window: { loadCardHelpers: async () => ({ createRowElement: (conf) => { const e = new El('row'); e.conf = conf; return e; } }), ", 1) + r"""
+const proto2 = registry["zoneflow-card"].prototype;
+const buildCard = async (simple, advanced) => {
+  const root = new El("root");
+  root.innerHTML = "";
+  const ctx = Object.create(proto2);
+  Object.assign(ctx, { _hass: hass, _config: { device_id: "d1", simple, show_journal: true, show_settings: true }, shadowRoot: root,
+                       _showAdvanced: advanced, _render() { calls.push("render"); } });
+  const visible = {};
+  for (const key of input.keys) visible[key] = { entity_id: key.replace(".", "." + "tomatoes_"), entity_category: null };
+  proto2._build.call(ctx, visible, "switch.valve", { valve: "switch.valve", plants: [{ id: "t", name: "T", main: true }] });
+  for (let i = 0; i < 6; i++) await Promise.resolve();
+  const all = walk(root);
+  return {
+    titles: all.filter((e) => e.className === "section-title").map((e) => e._text),
+    more: all.filter((e) => e.className === "more").length,
+    toggle: all.filter((e) => e.className === "advanced-toggle").map((e) => e._text),
+    ctx, all,
+  };
+};
+const run = async () => {
+  const simple = await buildCard(true, false);
+  const open = await buildCard(true, true);
+  const normal = await buildCard(false, false);
+  simple.all.filter((e) => e.className === "advanced-toggle")[0].listeners.click();
+  console.log(JSON.stringify({
+    simple: [simple.titles, simple.more, simple.toggle],
+    open: [open.titles, open.more, open.toggle],
+    normal: [normal.titles, normal.more, normal.toggle],
+    flipped: simple.ctx._showAdvanced, calls,
+  }));
+};
+run();
+"""
+
+
+def test_the_simple_view_shows_the_few_controls_and_hides_the_rest_behind_advanced(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "d1", "Tomatoes", "tomatoes")
+    devices["d1"] = {"name": "Tomatoes"}
+    keys = ["sensor.status", "button.run_routine", "button.snooze_today", "switch.pause", "button.run_deep_soak", "switch.service_mode"]
+    harness = tmp_path / "simple.js"
+    harness.write_text(SIMPLE_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": {}, "keys": keys})],
+                          capture_output=True, encoding="utf-8", timeout=60, check=False)
+    assert done.returncode == 0, done.stderr[-1200:]
+    out = json.loads(done.stdout)
+    assert out["simple"] == [["Controls"], 0, ["Advanced settings"]]
+    assert out["open"][0] == ["Controls", "Service & checks (not counted as watering)"] and out["open"][1] == 1 and out["open"][2] == ["Hide advanced settings"]
+    assert out["normal"][0] == ["Controls", "Service & checks (not counted as watering)"] and out["normal"][1] == 1 and out["normal"][2] == []
+    assert out["flipped"] is True and "render" in out["calls"]
+
+
+def test_the_help_links_point_at_guides_that_exist():
+    import re
+
+    text = CARD.read_text(encoding="utf-8")
+    base = re.search(r'const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";', text)
+    assert base, "the guide base address changed"
+    for name in set(re.findall(r"\$\{GUIDE\}([A-Z-]+\.md)", text)):
+        assert (CARD.parents[3] / "docs" / name).is_file(), name
