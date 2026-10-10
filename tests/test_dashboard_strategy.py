@@ -343,7 +343,7 @@ const ctx = { _hass: hass, _config: { device_id: "d1" } };
 const row = registry["zoneflow-card"].prototype._locationRow.call(ctx, { entity: "select.tomatoes_where_is_this", name: "Where is this?" });
 row.hass = hass;
 const [label, select, input] = row.children;
-const result = { label: label.textContent, options: select.children.map((o) => [o.value, o.textContent]), selected: select.value };
+const result = { label: select.title, labelHidden: label.hidden, options: select.children.map((o) => [o.value, o.textContent]), selected: select.value };
 select.value = "Backyard"; select.listeners.change();
 select.value = "__new_area__"; select.listeners.change();
 result.inputShown = !input.hidden;
@@ -368,7 +368,7 @@ def test_the_location_row_offers_the_places_a_new_area_and_a_new_greenhouse(tmp_
     }
     done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, encoding="utf-8", timeout=60, check=True)
     out = json.loads(done.stdout)
-    assert out["label"] == "Where is this?"
+    assert out["label"] == "Where is this?" and out["labelHidden"] is True  # hover text only: the heading above says it on screen
     assert out["options"] == [
         ["None", "None"], ["Backyard", "Backyard"], ["Tunnel (greenhouse)", "Tunnel (greenhouse)"],
         ["__new_area__", "New area…"], ["__new_greenhouse__", "New greenhouse…"],
@@ -814,7 +814,7 @@ def test_the_overview_keeps_each_greenhouse_and_its_crops_in_a_group_of_its_own(
 def test_the_watering_method_help_link_points_at_the_blog_post():
     text = CARD.read_text(encoding="utf-8")
     assert 'const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";' in text
-    assert "amounts: [`${GUIDE}CALIBRATION.md`, METHOD_HELP_URL]" in text  # shown beside How much water
+    assert "amounts: [METHOD_HELP_URL]" in text  # one "?" beside How much water (the flow rate has its own in Calibrate)
 
 
 PLANTS_LINE_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async")] + r"""

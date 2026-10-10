@@ -4243,7 +4243,7 @@ const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs"
 const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";
 const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";
 const HELP_LINKS = {
-  amounts: [`${GUIDE}CALIBRATION.md`, METHOD_HELP_URL],
+  amounts: [METHOD_HELP_URL], // the flow rate's own help is in the Calibrate popup
   water_use: [`${GUIDE}CALIBRATION.md`],
   rain: [`${GUIDE}RAIN-GAUGES.md`],
 };
@@ -5299,7 +5299,8 @@ class ZoneFlowCard extends HTMLElement {
         const signature = JSON.stringify([options, current, hass.locale?.language, conf.name]);
         if (signature === shown) return;
         shown = signature;
-        label.textContent = conf.name || t(hass, "groups.garden");
+        label.hidden = true; // the group heading already says "Where is this?"
+        select.title = conf.name || t(hass, "groups.garden");
         select.textContent = "";
         const option = (value, text) => {
           const el = document.createElement("option");
