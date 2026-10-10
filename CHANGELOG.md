@@ -6,6 +6,8 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.0] — Areas, plants and easier setup
+
 - **Changed (docs)**: the README is now a short introduction that points to the website and to the guides in `docs/`. The long README moved, unchanged, to [docs/GUIDE.md](docs/GUIDE.md). New [docs/CALIBRATION.md](docs/CALIBRATION.md): how to set the flow rate, Zone Flow (litres) and the rain gauge
 - **New**: **areas**. An area is a part of the garden (*Backyard*, *Front yard*) that holds the sensors its zones share: the rain gauge (with its tip size), the outdoor temperature, the weather entity and the phone to notify. Add one from the add-integration menu (*Add an area*) or from a zone's **Configure -> Where is this?** (*New area* makes one from that zone's own sensors). A zone uses its area's sensors unless it has one of its own, and its card says so ("Uses its own rain gauge, not Backyard's"). Each area has its own **Pause** and **Snooze Today** (a second layer: a zone's own Pause stays as it is) and a **Water Used** total in litres. The zone's **Where is this?** dropdown (on its card, and in Configure) moves it between areas and greenhouses; the overview card and the generated dashboard group zones by area. Zones with no area work as before
 - **Changed**: a **deep soak that comes due soon after a routine watering now waits for the next routine slot and replaces that routine**, instead of watering again the next day. It waits at most one routine interval (3 or 4 days) past its due date. A manual *Run Deep Soak Now* still runs at once, and a zone that has never done a deep soak is not affected

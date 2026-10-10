@@ -174,6 +174,22 @@ zones are outdoor zones and don't change. Add sensors or devices later under
 
 Full details, settings and troubleshooting: **[docs/GREENHOUSE.md](GREENHOUSE.md)**.
 
+## Areas, plants and easy setup (1.7)
+
+- **Areas** (*Backyard*, *Front yard*) share a rain gauge, outdoor
+  temperature, weather entity and phone between their zones, and have their own
+  Pause and Snooze Today. A zone with a sensor of its own keeps using it.
+- **Plants.** Each zone has a main plant (it drives the watering) and any
+  number of other plants kept as records (history and notes). Plants can be
+  moved between zones with their history, and the **Plants** button on the zone
+  card does all of it.
+- **Copy settings and presets** start a new bed from an existing one.
+- **Check my setup**, the guided **Calibrate**, **Water now for N minutes**,
+  **Why?**, a **Simple view**, a **My Garden** summary and **Fix** buttons in
+  Repairs make setup and daily use easier.
+
+Everything, step by step: **[docs/AREAS-AND-PLANTS.md](AREAS-AND-PLANTS.md)**.
+
 ## Multiple irrigation zones and shared pumps
 
 Add the integration once per zone — each has its own name, valve, targets
@@ -535,6 +551,14 @@ The zone services target a zone (any of its entities or its device).
 - `zoneflow.send_weekly_summary` — sends the weekly summary now to every
   phone with a zone that has a Weekly Summary day (a preview: the week's
   counts carry on). No target.
+- `zoneflow.water_now` (minutes, default 10) — water by hand within the
+  safety limits; counts in the water record, not in the schedule.
+- `zoneflow.calibrate_flow` (water, area, minutes) — set the flow rate from a
+  measured run.
+- `zoneflow.create_area` (name; optionally a zone to put in it) — make an area.
+- `zoneflow.add_plant`, `move_plant`, `set_main_plant`, `remove_plant`,
+  `add_plant_note` — plants (see [docs/AREAS-AND-PLANTS.md](AREAS-AND-PLANTS.md)).
+- `zoneflow.save_preset`, `copy_settings`, `delete_preset` — settings presets.
 
 ## Testing
 

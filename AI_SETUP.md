@@ -1370,6 +1370,12 @@ same `weather.*` entity is completely normal.
    unavailable weather entity never blocks a run either.
 
 ### 7.5 One zone, two different crops
+
+**Since 1.7:** the second crop can be added as a plant record in the same zone
+(`zoneflow.add_plant`, or the zone card's **Plants** button): its history and
+notes are kept, but only the zone's *main plant* drives the watering, so the
+compromise below is still needed for the numbers.
+
 If a single valve/zone actually waters two different crops planted
 together (a shared bed, a mixed container, two things sharing one drip
 line) and the person wants ZoneFlow to treat it as one zone rather than
@@ -1405,6 +1411,17 @@ both:
    suggest splitting into two zones (two valves) as the more correct
    long-term fix — a compromise is for when splitting isn't practical,
    not a substitute for it when the two crops are just too different.
+
+### 7.5a Areas, plants and presets (1.7+)
+
+If the garden has several parts that share sensors (a backyard with one rain
+gauge and thermometer, a front yard), make an **area** for each (Add entry →
+Add an area, or `zoneflow.create_area`) and put the zones in it (the zone's
+**Where is this?** dropdown). The zones then use the area's rain gauge,
+outdoor temperature, weather entity and phone; a zone that has its own keeps
+it. For a new bed like an existing one, use **Start from** in the add-zone
+form, or `zoneflow.copy_settings`, or save a preset with
+`zoneflow.save_preset`. These never copy the valve, sensors or flow rate.
 
 ### 7.6 A sensor drops out later (already configured, now unavailable)
 Worth mentioning proactively once, rather than waiting for the person to
@@ -2605,7 +2622,10 @@ restated version of this whole guide.
 ## 9b. Updating an existing dashboard after a ZoneFlow update
 
 A dashboard using the built-in ZoneFlow card needs nothing: it picks up new
-entities by itself -- including, since 1.6, the climate rows (status,
+entities by itself -- including, since 1.7, the **Where is this?** dropdown
+(`select.<zone>_where_is_this`), and for each area its Pause, Snooze Today and
+water-used entities (`switch.<area>_pause`, `button.<area>_snooze_today`,
+`sensor.<area>_water_used_past_30_days`, `sensor.<area>_water_used_this_year`) -- including, since 1.6, the climate rows (status,
 inside VPD, ventilation allowed, misting today), the Greenhouse Control
 switch and the climate settings groups of a greenhouse or indoor zone, and a
 greenhouse icon for a zone with no valve. Since 1.6.1 it also shows a
