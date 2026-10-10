@@ -14,5 +14,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/Dreamer41/ha-smart-irrigation/issues",
   "requirements": [],
-  "version": "1.7.0"
+  "version": "1.7.1"
 }

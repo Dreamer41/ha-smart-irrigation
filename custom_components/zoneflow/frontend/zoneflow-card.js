@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.7.0";
+const CARD_VERSION = "1.7.1";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
