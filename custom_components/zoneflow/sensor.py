@@ -783,6 +783,8 @@ class ZoneFlowStatusSensor(_Base):
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
         # For the cards: the garden area the zone is shown under (or None).
         attributes["garden_area"] = self._controller.garden_area
+        # outdoor / greenhouse / indoor: the cards keep a greenhouse and its crops apart.
+        attributes["zone_type"] = self._controller.zone_type
         # A sensor this zone has of its own where its area has another: the
         # card says so ("uses its own rain gauge, not Backyard's").
         attributes["area_overrides"] = self._controller.area_overrides()

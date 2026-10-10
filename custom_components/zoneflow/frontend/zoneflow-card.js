@@ -5461,6 +5461,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
         parent: status?.attributes?.greenhouse?.device_id || null,
+        // A greenhouse or indoor zone (not a crop of one) is a group of its own.
+        house: Boolean(status?.attributes?.zone_type && status.attributes.zone_type !== "outdoor" && !status?.attributes?.greenhouse?.device_id),
         area: status?.attributes?.garden_area || null,
         areaPause: status?.attributes?.area_pause || null,
         areaSnooze: status?.attributes?.area_snooze || null,
@@ -5483,17 +5485,22 @@ class ZoneFlowOverviewCard extends HTMLElement {
       ordered.push(zone);
       ordered.push(...shown.filter((z) => z.parent === zone.device_id).map((z) => ({ ...z, crop: true })));
     }
-    // Garden areas: the zones under their area's heading (areas by name, the
-    // zones with no area last). Without any area nothing changes.
-    if (ordered.some((z) => z.area)) {
+    // Garden areas: the zones under their area's heading (areas by name, then
+    // each greenhouse with its crops as a group of its own, the zones with no
+    // area last). Without any area or greenhouse nothing changes.
+    const houseIds = new Set(ordered.filter((z) => z.house).map((z) => z.device_id));
+    if (ordered.some((z) => z.area) || houseIds.size) {
       const groups = new Map();
       for (const z of ordered) {
-        const key = z.area || "";
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(z);
+        const houseOf = z.house ? z.device_id : houseIds.has(z.parent) ? z.parent : null;
+        const house = houseOf ? ordered.find((x) => x.device_id === houseOf) : null;
+        const key = house ? `house:${house.device_id}` : z.area ? `area:${z.area}` : "";
+        if (!groups.has(key)) groups.set(key, { kind: house ? "house" : z.area ? "area" : "other", name: house ? house.name : z.area || "", zones: [] });
+        groups.get(key).zones.push(z);
       }
-      const names = [...groups.keys()].sort((a, b) => (a === "" ? 1 : b === "" ? -1 : a.localeCompare(b, hass.locale?.language)));
-      return names.flatMap((name) => groups.get(name).map((z, i) => ({ ...z, areaStart: i === 0, areaName: name })));
+      const rank = { area: 0, house: 1, other: 2 };
+      const list = [...groups.values()].sort((a, b) => rank[a.kind] - rank[b.kind] || a.name.localeCompare(b.name, hass.locale?.language));
+      return list.flatMap((g) => g.zones.map((z, i) => ({ ...z, areaStart: i === 0, areaName: g.name, areaKind: g.kind })));
     }
     return ordered;
   }
@@ -5502,7 +5509,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null, z.areaKind || null]),
       this._config.device_ids || null,
       this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
@@ -5596,6 +5603,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .area-title { margin: 14px 12px 6px; font-size: 0.85em; font-weight: 500; letter-spacing: 0.04em;
         text-transform: uppercase; color: var(--secondary-text-color); display: flex; align-items: center; gap: 4px; }
       .area-title span { flex: 1; }
+      .area-title > ha-icon { --mdc-icon-size: 18px; color: var(--state-icon-color, var(--primary-color)); }
       .area-title ha-icon-button { --mdc-icon-button-size: 32px; --mdc-icon-size: 18px; color: var(--secondary-text-color); }
       .area-title ha-icon-button.on { color: var(--warning-color, #ff9800); }
       ${this._config.embedded ? `
@@ -5681,6 +5689,11 @@ class ZoneFlowOverviewCard extends HTMLElement {
       if (zone.areaStart) {
         const heading = document.createElement("div");
         heading.className = "area-title";
+        if (zone.areaKind === "house") {
+          const houseIcon = document.createElement("ha-icon");
+          houseIcon.setAttribute("icon", "mdi:greenhouse");
+          heading.appendChild(houseIcon);
+        }
         const headingText = document.createElement("span");
         headingText.textContent = zone.areaName || tr("other_area");
         heading.appendChild(headingText);
@@ -5689,7 +5702,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
           [zone.areaPause, "mdi:pause-circle-outline", "pause_area", "switch", "toggle"],
           [zone.areaSnooze, "mdi:sleep", "snooze_area", "button", "press"],
         ]) {
-          if (!zone.areaName || !entity) continue;
+          if (!zone.areaName || !entity || zone.areaKind === "house") continue;
           const button = document.createElement("ha-icon-button");
           button.label = t(hass, `overview.${key}`);
           button.title = t(hass, `overview.${key}`);
@@ -6043,7 +6056,10 @@ function buildDashboard(hass) {
     return path;
   };
   const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
-  const areaOf = (zone) => hass.states?.[zone.status]?.attributes?.garden_area || null;
+  const typeOf = (zone) => hass.states?.[zone.status]?.attributes?.zone_type || "outdoor";
+  // A greenhouse or indoor zone with its crops has a tab of its own, not its area's.
+  const isHouse = (zone) => typeOf(zone) !== "outdoor" && !parentOf(zone);
+  const areaOf = (zone) => (isHouse(zone) ? null : hass.states?.[zone.status]?.attributes?.garden_area || null);
   const ids = new Set(zones.map((z) => z.device_id));
   const cardsFor = (zone) => {
     // A greenhouse's crops have their own cards beside it: not listed again.

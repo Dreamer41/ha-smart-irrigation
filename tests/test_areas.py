@@ -479,3 +479,16 @@ async def test_a_zone_set_up_before_its_area_waits_for_it(hass, fake_valve_servi
     c = _ctl(hass, zone)
     assert c.area is not None and c.rain_counter_entity == AREA_RAIN and c.had_area_at_setup
     assert first is None
+
+
+@pytest.mark.asyncio
+async def test_the_status_says_what_kind_of_zone_it_is(hass, fake_valve_services):
+    house = _climate_only_entry(hass)
+    crop = _crop(hass, "Tomatoes", VALVE_A, house)
+    outdoor = _zone(hass, "Lawn", VALVE_B)
+    await _boot(hass, house, crop, outdoor)
+    kinds = {
+        entry.title: hass.states.get(f"sensor.{entry.title.lower().replace(' ', '_')}_status").attributes["zone_type"]
+        for entry in (crop, outdoor)
+    }
+    assert kinds == {"Tomatoes": "greenhouse", "Lawn": "outdoor"}

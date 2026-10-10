@@ -194,19 +194,23 @@ def test_garden_areas_get_one_tab_each_and_the_rest_keep_their_own(tmp_path):
     assert views[3]["title"] == "Shed" and views[3]["cards"] == [{"type": "custom:zoneflow-card", "device_id": "d4"}]
 
 
-def test_a_greenhouse_and_its_crops_sit_on_their_areas_tab(tmp_path):
+def test_a_greenhouse_and_its_crops_have_a_tab_of_their_own_apart_from_the_area(tmp_path):
     entities, states, devices = {}, {}, {}
     _zone(entities, states, "gh", "Tunnel", "custom", climate=True)
     _zone(entities, states, "c1", "Tomatoes", "tomatoes", climate=True, hidden_climate=True)
     _zone(entities, states, "o1", "Lawn", "lawn")
     states["sensor.tomatoes_status"]["attributes"]["greenhouse"] = {"name": "Tunnel", "device_id": "gh"}
+    states["sensor.tunnel_status"]["attributes"]["zone_type"] = "greenhouse"
+    states["sensor.tomatoes_status"]["attributes"]["zone_type"] = "greenhouse"
+    states["sensor.lawn_status"]["attributes"]["zone_type"] = "outdoor"
     for name in ("Tunnel", "Tomatoes", "Lawn"):
-        _with_area(states, name, "Backyard")  # a crop reports its greenhouse's area
+        _with_area(states, name, "Backyard")  # even in the area, the greenhouse stands apart
     devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Tomatoes"}, "o1": {"name": "Lawn"}})
     out = _run(tmp_path, {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}})
-    assert [v["path"] for v in out["views"]] == ["overview", "backyard"]
-    assert out["views"][1]["cards"] == [
-        {"type": "custom:zoneflow-card", "device_id": "o1"},
+    assert [v["path"] for v in out["views"]] == ["overview", "backyard", "tunnel"]
+    assert out["views"][1]["cards"] == [{"type": "custom:zoneflow-card", "device_id": "o1"}]  # the outdoor zones only
+    assert out["views"][2]["icon"] == "mdi:greenhouse"
+    assert out["views"][2]["cards"] == [
         {"type": "custom:zoneflow-card", "device_id": "gh", "show_crops": False},
         {"type": "custom:zoneflow-card", "device_id": "c1"},
     ]
@@ -218,7 +222,7 @@ OVERVIEW_HARNESS = HARNESS.replace(
 ).replace(
     'strategy.generate({ type: "custom:zoneflow" }, hass).then((out) => console.log(JSON.stringify(out)));',
     'const zones = card.prototype._zones.call({ _hass: hass, _config: {} });\n'
-    'console.log(JSON.stringify(zones.map((z) => [z.name, z.areaName === undefined ? null : z.areaName, !!z.areaStart])));',
+    'console.log(JSON.stringify(zones.map((z) => [z.name, z.areaName === undefined ? null : z.areaName, !!z.areaStart, z.areaKind || null])));',
 )
 
 
@@ -235,9 +239,9 @@ def test_the_overview_card_groups_zones_under_their_area(tmp_path):
     hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
     done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
     assert json.loads(done.stdout) == [
-        ["Chilis", "Backyard", True], ["Tomatoes", "Backyard", False],
-        ["Lawn", "Front yard", True],
-        ["Shed", "", True],  # no area: last, under "Other"
+        ["Chilis", "Backyard", True, "area"], ["Tomatoes", "Backyard", False, "area"],
+        ["Lawn", "Front yard", True, "area"],
+        ["Shed", "", True, "other"],  # no area: last, under "Other"
     ]
 
 
@@ -252,7 +256,7 @@ def test_without_any_area_the_overview_is_as_before(tmp_path):
     harness.write_text(OVERVIEW_HARNESS, encoding="utf-8")
     hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
     done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
-    assert json.loads(done.stdout) == [["Lawn", None, False], ["Tomatoes", None, False]]
+    assert json.loads(done.stdout) == [["Lawn", None, False, None], ["Tomatoes", None, False, None]]
 
 
 GARDEN_AREAS_HARNESS = HARNESS.replace(
@@ -768,3 +772,31 @@ def test_my_garden_summary_chips(tmp_path):
     assert texts[0] == "Watering now: Tomatoes"
     assert texts[1].startswith("Next: Lawn")  # the soonest of the zones that have a next watering
     assert "Rain today: 6.0 mm" in texts and "Needs a look: Lawn" in texts and "Water used, 30 days: 150 L" in texts
+
+
+def test_the_overview_keeps_each_greenhouse_and_its_crops_in_a_group_of_its_own(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "gh", "Tunnel", "custom", climate=True)
+    _zone(entities, states, "c1", "Peppers", "chilis", climate=True, hidden_climate=True)
+    _zone(entities, states, "c2", "Basil", "herbs", climate=True, hidden_climate=True)
+    _zone(entities, states, "o1", "Lawn", "lawn")
+    _zone(entities, states, "o2", "Beds", "tomatoes")
+    for name in ("Peppers", "Basil"):
+        states[f"sensor.{name.lower()}_status"]["attributes"]["greenhouse"] = {"name": "Tunnel", "device_id": "gh"}
+        states[f"sensor.{name.lower()}_status"]["attributes"]["zone_type"] = "greenhouse"
+    states["sensor.tunnel_status"]["attributes"]["zone_type"] = "greenhouse"
+    for name, area in (("Tunnel", "Backyard"), ("Peppers", "Backyard"), ("Basil", "Backyard"), ("Lawn", "Backyard"), ("Beds", None)):
+        _with_area(states, name, area)
+    devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Peppers"}, "c2": {"name": "Basil"}, "o1": {"name": "Lawn"}, "o2": {"name": "Beds"}})
+    harness = tmp_path / "overview.js"
+    harness.write_text(OVERVIEW_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps(hass)], capture_output=True, text=True, timeout=60, check=True)
+    assert json.loads(done.stdout) == [
+        ["Lawn", "Backyard", True, "area"],           # the outdoor area first
+        ["Tunnel", "Tunnel", True, "house"],          # then the greenhouse, with its crops, under its own heading
+        ["Basil", "Tunnel", False, "house"], ["Peppers", "Tunnel", False, "house"],
+        ["Beds", "", True, "other"],                  # no area: last
+    ]
