@@ -587,3 +587,29 @@ async def test_the_setup_form_does_not_ask_for_an_area_when_there_is_none(hass, 
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert "location" not in {k.schema for k in result["data_schema"].schema}
 
+
+@pytest.mark.asyncio
+async def test_a_water_now_press_in_a_paused_area_or_greenhouse_is_refused(hass, fake_valve_services):
+    """The manual routine press waters when not due, but never through the
+    area's or the greenhouse's Pause."""
+    area = _area(hass)
+    house = _climate_only_entry(hass, **{CONF_AREA_ID: area.entry_id})
+    crop = _crop(hass, "Tomatoes", VALVE_A, house)
+    await _boot(hass, area, house, crop)
+    c = _ctl(hass, crop)
+    spy = AsyncMock(return_value=True)
+    c._run_pulses = spy
+
+    await c.run_routine_now()
+    await hass.async_block_till_done()
+    spy.assert_called_once()  # a free zone waters on the press
+
+    await _area_ctl(hass, area).set_paused(True)
+    with pytest.raises(ServiceValidationError):
+        await c.run_routine_now()
+    await _area_ctl(hass, area).set_paused(False)
+
+    await _ctl(hass, house).set_paused(True)
+    with pytest.raises(ServiceValidationError):
+        await c.run_routine_now()
+    spy.assert_called_once()
