@@ -36,6 +36,7 @@ from .const import (
     ENTRY_TYPE_AREA,
     ENTRY_TYPE_WU,
     PLATFORMS,
+    READY_DAYS_MAX,
     WU_DATA_KEY,
 )
 from .controller import ZoneFlowController
@@ -55,6 +56,7 @@ SERVICE_REMOVE_PLANT = "remove_plant"
 SERVICE_SET_MAIN_PLANT = "set_main_plant"
 SERVICE_RENAME_PLANT = "rename_plant"
 SERVICE_ADD_PLANT_NOTE = "add_plant_note"
+SERVICE_SET_PLANT_READY = "set_plant_ready"
 SERVICE_SAVE_PRESET = "save_preset"
 SERVICE_WATER_NOW = "water_now"
 SERVICE_CALIBRATE_FLOW = "calibrate_flow"
@@ -122,7 +124,16 @@ ADD_PLANT_SCHEMA = vol.Schema(
         vol.Required("name"): cv.string,
         vol.Optional("plant_type"): cv.string,
         vol.Optional("old_main"): _OLD_MAIN,
+        vol.Optional("ready_days"): vol.All(vol.Coerce(int), vol.Range(min=0, max=READY_DAYS_MAX)),
+        vol.Optional("planted"): cv.date,
         **_ZONE_TARGET_FIELDS,
+    }
+)
+SET_PLANT_READY_SCHEMA = vol.Schema(
+    {
+        vol.Required("plant_id"): cv.string,
+        vol.Optional("ready_days"): vol.All(vol.Coerce(int), vol.Range(min=0, max=READY_DAYS_MAX)),
+        vol.Optional("planted"): cv.date,
     }
 )
 MOVE_PLANT_SCHEMA = vol.Schema(
@@ -160,6 +171,11 @@ COPY_SETTINGS_SCHEMA = vol.Schema(
 DELETE_PRESET_SCHEMA = vol.Schema({vol.Required("name"): cv.string})
 PLANT_ID_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string})
 PLANT_NOTE_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Required("text"): cv.string})
+
+
+def _date_ts(day) -> float | None:
+    """A date from a service call, as the start of that day (local time)."""
+    return dt_util.start_of_local_day(day).timestamp() if day is not None else None
 
 
 def _resolve_controller(hass: HomeAssistant, call: ServiceCall) -> ZoneFlowController:
@@ -418,7 +434,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         async def _handle_add_plant(call: ServiceCall) -> None:
             zone = _resolve_controller(hass, call)
             await plant_actions.add_plant(
-                hass, zone.entry.entry_id, call.data["name"], call.data.get("plant_type"), call.data.get("old_main")
+                hass, zone.entry.entry_id, call.data["name"], call.data.get("plant_type"), call.data.get("old_main"),
+                call.data.get("ready_days"), _date_ts(call.data.get("planted")),
+            )
+
+        async def _handle_set_plant_ready(call: ServiceCall) -> None:
+            await plant_actions.set_plant_ready(
+                hass, call.data["plant_id"], call.data.get("ready_days"), _date_ts(call.data.get("planted"))
             )
 
         async def _handle_move_plant(call: ServiceCall) -> None:
@@ -466,6 +488,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_COPY_SETTINGS, _handle_copy_settings, schema=COPY_SETTINGS_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_DELETE_PRESET, _handle_delete_preset, schema=DELETE_PRESET_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT, _handle_add_plant, schema=ADD_PLANT_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_SET_PLANT_READY, _handle_set_plant_ready, schema=SET_PLANT_READY_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_MOVE_PLANT, _handle_move_plant, schema=MOVE_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_REMOVE_PLANT, _handle_remove_plant, schema=PLANT_ID_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_RENAME_PLANT, _handle_rename_plant, schema=RENAME_PLANT_SCHEMA)
@@ -559,6 +582,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_SET_MAIN_PLANT,
                 SERVICE_RENAME_PLANT,
                 SERVICE_ADD_PLANT_NOTE,
+                SERVICE_SET_PLANT_READY,
                 SERVICE_SAVE_PRESET,
                 SERVICE_WATER_NOW,
                 SERVICE_CALIBRATE_FLOW,

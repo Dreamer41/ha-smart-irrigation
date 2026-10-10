@@ -199,7 +199,18 @@ const I18N = {
       "confirm_delete": "Delete the preset {name}?",
       "preset_name": "Preset name",
       "preset_save": "Save this zone's settings as a preset",
-      "no_presets": "No saved presets yet."
+      "no_presets": "No saved presets yet.",
+      "stage_seed": "Seed",
+      "stage_seedling": "Seedling",
+      "stage_ready": "Ready to move",
+      "stage_established": "Established",
+      "days_left": "{n} days to go",
+      "ready_after": "Ready to move after (days)",
+      "planted_on": "Planted",
+      "follow": "Follow",
+      "unfollow": "Stop following",
+      "ready_badge": "Ready to move: {names}",
+      "usual_days": "Usual for this type: {n} days"
     },
     "check": {
       "title": "Check my setup",
@@ -419,7 +430,18 @@ const I18N = {
       "no_presets": "Noch keine gespeicherten Voreinstellungen.",
       "rename": "Umbenennen",
       "rename_prompt": "Neuer Name",
-      "use_settings": "Auch die Bewässerungseinstellungen dieser Pflanze für die neue Zone übernehmen (sonst behält die Zone ihre bisherige Bewässerung)"
+      "use_settings": "Auch die Bewässerungseinstellungen dieser Pflanze für die neue Zone übernehmen (sonst behält die Zone ihre bisherige Bewässerung)",
+      "stage_seed": "Samen",
+      "stage_seedling": "Sämling",
+      "stage_ready": "Bereit zum Umsetzen",
+      "stage_established": "Etabliert",
+      "days_left": "Noch {n} Tage",
+      "ready_after": "Bereit zum Umsetzen nach (Tage)",
+      "planted_on": "Gepflanzt",
+      "follow": "Verfolgen",
+      "unfollow": "Nicht mehr verfolgen",
+      "ready_badge": "Bereit zum Umsetzen: {names}",
+      "usual_days": "Üblich für diese Art: {n} Tage"
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -639,7 +661,18 @@ const I18N = {
       "no_presets": "Aún no hay ajustes preestablecidos guardados.",
       "rename": "Renombrar",
       "rename_prompt": "Nuevo nombre",
-      "use_settings": "Usar también los ajustes de riego de esta planta en la nueva zona (si no, la zona conserva su riego actual)"
+      "use_settings": "Usar también los ajustes de riego de esta planta en la nueva zona (si no, la zona conserva su riego actual)",
+      "stage_seed": "Semilla",
+      "stage_seedling": "Plántula",
+      "stage_ready": "Lista para trasplantar",
+      "stage_established": "Establecida",
+      "days_left": "Faltan {n} días",
+      "ready_after": "Lista para trasplantar tras (días)",
+      "planted_on": "Plantada",
+      "follow": "Seguir",
+      "unfollow": "Dejar de seguir",
+      "ready_badge": "Lista para trasplantar: {names}",
+      "usual_days": "Habitual para este tipo: {n} días"
     },
     "check": {
       "title": "Comprobar mi configuración",
@@ -859,7 +892,18 @@ const I18N = {
       "no_presets": "Ei vielä tallennettuja esiasetuksia.",
       "rename": "Nimeä uudelleen",
       "rename_prompt": "Uusi nimi",
-      "use_settings": "Käytä myös tämän kasvin kastelun asetuksia uudella vyöhykkeellä (muuten vyöhyke säilyttää nykyisen kastelutapansa)"
+      "use_settings": "Käytä myös tämän kasvin kastelun asetuksia uudella vyöhykkeellä (muuten vyöhyke säilyttää nykyisen kastelutapansa)",
+      "stage_seed": "Siemen",
+      "stage_seedling": "Taimi",
+      "stage_ready": "Valmis siirrettäväksi",
+      "stage_established": "Vakiintunut",
+      "days_left": "{n} päivää jäljellä",
+      "ready_after": "Valmis siirrettäväksi (päivää)",
+      "planted_on": "Istutettu",
+      "follow": "Seuraa",
+      "unfollow": "Lopeta seuranta",
+      "ready_badge": "Valmis siirrettäväksi: {names}",
+      "usual_days": "Tyypillisesti tälle lajille: {n} päivää"
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -1079,7 +1123,18 @@ const I18N = {
       "no_presets": "Aucun préréglage enregistré pour l'instant.",
       "rename": "Renommer",
       "rename_prompt": "Nouveau nom",
-      "use_settings": "Utiliser aussi les réglages d'arrosage de cette plante sur la nouvelle zone (sinon la zone garde son arrosage actuel)"
+      "use_settings": "Utiliser aussi les réglages d'arrosage de cette plante sur la nouvelle zone (sinon la zone garde son arrosage actuel)",
+      "stage_seed": "Graine",
+      "stage_seedling": "Semis",
+      "stage_ready": "Prête à être repiquée",
+      "stage_established": "Installée",
+      "days_left": "Encore {n} jours",
+      "ready_after": "Prête à repiquer après (jours)",
+      "planted_on": "Plantée",
+      "follow": "Suivre",
+      "unfollow": "Ne plus suivre",
+      "ready_badge": "Prête à repiquer : {names}",
+      "usual_days": "Habituel pour ce type : {n} jours"
     },
     "check": {
       "title": "Vérifier ma configuration",
@@ -1299,7 +1354,18 @@ const I18N = {
       "no_presets": "Ancora nessuna preimpostazione salvata.",
       "rename": "Rinomina",
       "rename_prompt": "Nuovo nome",
-      "use_settings": "Usa anche le impostazioni di irrigazione di questa pianta nella nuova zona (altrimenti la zona mantiene l'irrigazione attuale)"
+      "use_settings": "Usa anche le impostazioni di irrigazione di questa pianta nella nuova zona (altrimenti la zona mantiene l'irrigazione attuale)",
+      "stage_seed": "Seme",
+      "stage_seedling": "Piantina",
+      "stage_ready": "Pronta per il trapianto",
+      "stage_established": "Affermata",
+      "days_left": "Mancano {n} giorni",
+      "ready_after": "Pronta per il trapianto dopo (giorni)",
+      "planted_on": "Piantata",
+      "follow": "Segui",
+      "unfollow": "Smetti di seguire",
+      "ready_badge": "Pronta per il trapianto: {names}",
+      "usual_days": "Abituale per questo tipo: {n} giorni"
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1519,7 +1585,18 @@ const I18N = {
       "no_presets": "Nog geen opgeslagen voorinstellingen.",
       "rename": "Hernoemen",
       "rename_prompt": "Nieuwe naam",
-      "use_settings": "Ook de bewateringsinstellingen van deze plant op de nieuwe zone gebruiken (anders houdt de zone haar huidige bewatering)"
+      "use_settings": "Ook de bewateringsinstellingen van deze plant op de nieuwe zone gebruiken (anders houdt de zone haar huidige bewatering)",
+      "stage_seed": "Zaad",
+      "stage_seedling": "Zaailing",
+      "stage_ready": "Klaar om te verplaatsen",
+      "stage_established": "Gevestigd",
+      "days_left": "Nog {n} dagen",
+      "ready_after": "Klaar om te verplaatsen na (dagen)",
+      "planted_on": "Geplant",
+      "follow": "Volgen",
+      "unfollow": "Niet meer volgen",
+      "ready_badge": "Klaar om te verplaatsen: {names}",
+      "usual_days": "Gebruikelijk voor dit type: {n} dagen"
     },
     "check": {
       "title": "Mijn instellingen controleren",
@@ -1739,7 +1816,18 @@ const I18N = {
       "no_presets": "Brak zapisanych szablonów.",
       "rename": "Zmień nazwę",
       "rename_prompt": "Nowa nazwa",
-      "use_settings": "Użyj też ustawień podlewania tej rośliny w nowej strefie (w przeciwnym razie strefa zachowa obecny sposób podlewania)"
+      "use_settings": "Użyj też ustawień podlewania tej rośliny w nowej strefie (w przeciwnym razie strefa zachowa obecny sposób podlewania)",
+      "stage_seed": "Nasiono",
+      "stage_seedling": "Sadzonka",
+      "stage_ready": "Gotowa do przesadzenia",
+      "stage_established": "Ukorzeniona",
+      "days_left": "Zostało {n} dni",
+      "ready_after": "Gotowa do przesadzenia po (dniach)",
+      "planted_on": "Posadzona",
+      "follow": "Śledź",
+      "unfollow": "Przestań śledzić",
+      "ready_badge": "Gotowe do przesadzenia: {names}",
+      "usual_days": "Zwykle dla tego typu: {n} dni"
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -1959,7 +2047,18 @@ const I18N = {
       "no_presets": "Ainda não há pré-definições guardadas.",
       "rename": "Mudar o nome",
       "rename_prompt": "Novo nome",
-      "use_settings": "Usar também as definições de rega desta planta na nova zona (caso contrário, a zona mantém a rega atual)"
+      "use_settings": "Usar também as definições de rega desta planta na nova zona (caso contrário, a zona mantém a rega atual)",
+      "stage_seed": "Semente",
+      "stage_seedling": "Plântula",
+      "stage_ready": "Pronta para transplantar",
+      "stage_established": "Estabelecida",
+      "days_left": "Faltam {n} dias",
+      "ready_after": "Pronta para transplantar após (dias)",
+      "planted_on": "Plantada",
+      "follow": "Acompanhar",
+      "unfollow": "Deixar de acompanhar",
+      "ready_badge": "Pronta para transplantar: {names}",
+      "usual_days": "Habitual para este tipo: {n} dias"
     },
     "check": {
       "title": "Verificar a minha configuração",
@@ -2179,7 +2278,18 @@ const I18N = {
       "no_presets": "Inga sparade förinställningar ännu.",
       "rename": "Byt namn",
       "rename_prompt": "Nytt namn",
-      "use_settings": "Använd även den här växtens bevattningsinställningar i den nya zonen (annars behåller zonen sin nuvarande bevattning)"
+      "use_settings": "Använd även den här växtens bevattningsinställningar i den nya zonen (annars behåller zonen sin nuvarande bevattning)",
+      "stage_seed": "Frö",
+      "stage_seedling": "Planta",
+      "stage_ready": "Redo att flyttas",
+      "stage_established": "Etablerad",
+      "days_left": "{n} dagar kvar",
+      "ready_after": "Redo att flyttas efter (dagar)",
+      "planted_on": "Planterad",
+      "follow": "Följ",
+      "unfollow": "Sluta följa",
+      "ready_badge": "Redo att flyttas: {names}",
+      "usual_days": "Vanligt för denna typ: {n} dagar"
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -2399,7 +2509,18 @@ const I18N = {
       "no_presets": "Zatím žádné uložené předvolby.",
       "rename": "Přejmenovat",
       "rename_prompt": "Nový název",
-      "use_settings": "Použít také nastavení zálivky této rostliny v nové zóně (jinak zóna zachová dosavadní zálivku)"
+      "use_settings": "Použít také nastavení zálivky této rostliny v nové zóně (jinak zóna zachová dosavadní zálivku)",
+      "stage_seed": "Semeno",
+      "stage_seedling": "Sazenice",
+      "stage_ready": "Připraveno k přesazení",
+      "stage_established": "Zakořeněno",
+      "days_left": "Zbývá {n} dní",
+      "ready_after": "Připraveno k přesazení po (dnech)",
+      "planted_on": "Zasazeno",
+      "follow": "Sledovat",
+      "unfollow": "Přestat sledovat",
+      "ready_badge": "K přesazení: {names}",
+      "usual_days": "Obvykle pro tento druh: {n} dní"
     },
     "check": {
       "title": "Zkontrolovat mé nastavení",
@@ -2619,7 +2740,18 @@ const I18N = {
       "no_presets": "Ingen gemte forudindstillinger endnu.",
       "rename": "Omdøb",
       "rename_prompt": "Nyt navn",
-      "use_settings": "Brug også denne plantes vandingsindstillinger i den nye zone (ellers beholder zonen sin nuværende vanding)"
+      "use_settings": "Brug også denne plantes vandingsindstillinger i den nye zone (ellers beholder zonen sin nuværende vanding)",
+      "stage_seed": "Frø",
+      "stage_seedling": "Kimplante",
+      "stage_ready": "Klar til flytning",
+      "stage_established": "Etableret",
+      "days_left": "{n} dage endnu",
+      "ready_after": "Klar til flytning efter (dage)",
+      "planted_on": "Plantet",
+      "follow": "Følg",
+      "unfollow": "Stop med at følge",
+      "ready_badge": "Klar til flytning: {names}",
+      "usual_days": "Normalt for denne type: {n} dage"
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -2839,7 +2971,18 @@ const I18N = {
       "no_presets": "Még nincsenek elmentett előbeállítások.",
       "rename": "Átnevezés",
       "rename_prompt": "Új név",
-      "use_settings": "A növény öntözési beállításait is használja az új zónában (egyébként a zóna megtartja a jelenlegi öntözést)"
+      "use_settings": "A növény öntözési beállításait is használja az új zónában (egyébként a zóna megtartja a jelenlegi öntözést)",
+      "stage_seed": "Mag",
+      "stage_seedling": "Palánta",
+      "stage_ready": "Kész az átültetésre",
+      "stage_established": "Begyökeresedett",
+      "days_left": "Még {n} nap",
+      "ready_after": "Átültethető ennyi nap után",
+      "planted_on": "Elültetve",
+      "follow": "Követés",
+      "unfollow": "Követés leállítása",
+      "ready_badge": "Kész az átültetésre: {names}",
+      "usual_days": "Ennél a típusnál szokásos: {n} nap"
     },
     "check": {
       "title": "Beállítások ellenőrzése",
@@ -3059,7 +3202,18 @@ const I18N = {
       "no_presets": "Ingen lagrede forhåndsinnstillinger ennå.",
       "rename": "Gi nytt navn",
       "rename_prompt": "Nytt navn",
-      "use_settings": "Bruk også denne plantens vanningsinnstillinger i den nye sonen (ellers beholder sonen sin nåværende vanning)"
+      "use_settings": "Bruk også denne plantens vanningsinnstillinger i den nye sonen (ellers beholder sonen sin nåværende vanning)",
+      "stage_seed": "Frø",
+      "stage_seedling": "Småplante",
+      "stage_ready": "Klar til å flyttes",
+      "stage_established": "Etablert",
+      "days_left": "{n} dager igjen",
+      "ready_after": "Klar til å flyttes etter (dager)",
+      "planted_on": "Plantet",
+      "follow": "Følg",
+      "unfollow": "Slutt å følge",
+      "ready_badge": "Klar til å flyttes: {names}",
+      "usual_days": "Vanlig for denne typen: {n} dager"
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -3279,7 +3433,18 @@ const I18N = {
       "no_presets": "Nenhuma predefinição salva ainda.",
       "rename": "Renomear",
       "rename_prompt": "Novo nome",
-      "use_settings": "Usar também as configurações de irrigação desta planta na nova zona (caso contrário, a zona mantém a irrigação atual)"
+      "use_settings": "Usar também as configurações de irrigação desta planta na nova zona (caso contrário, a zona mantém a irrigação atual)",
+      "stage_seed": "Semente",
+      "stage_seedling": "Muda",
+      "stage_ready": "Pronta para transplantar",
+      "stage_established": "Estabelecida",
+      "days_left": "Faltam {n} dias",
+      "ready_after": "Pronta para transplantar após (dias)",
+      "planted_on": "Plantada",
+      "follow": "Acompanhar",
+      "unfollow": "Parar de acompanhar",
+      "ready_badge": "Pronta para transplantar: {names}",
+      "usual_days": "Usual para este tipo: {n} dias"
     },
     "check": {
       "title": "Verificar minha configuração",
@@ -3499,7 +3664,18 @@ const I18N = {
       "no_presets": "Сохранённых пресетов пока нет.",
       "rename": "Переименовать",
       "rename_prompt": "Новое имя",
-      "use_settings": "Также использовать настройки полива этого растения в новой зоне (иначе зона сохранит нынешний полив)"
+      "use_settings": "Также использовать настройки полива этого растения в новой зоне (иначе зона сохранит нынешний полив)",
+      "stage_seed": "Семя",
+      "stage_seedling": "Рассада",
+      "stage_ready": "Готово к пересадке",
+      "stage_established": "Укоренилось",
+      "days_left": "Ещё {n} дн.",
+      "ready_after": "Готово к пересадке через (дней)",
+      "planted_on": "Посажено",
+      "follow": "Отслеживать",
+      "unfollow": "Не отслеживать",
+      "ready_badge": "Готово к пересадке: {names}",
+      "usual_days": "Обычно для этого типа: {n} дн."
     },
     "check": {
       "title": "Проверить настройки",
@@ -3719,7 +3895,18 @@ const I18N = {
       "no_presets": "Zatiaľ žiadne uložené predvoľby.",
       "rename": "Premenovať",
       "rename_prompt": "Nový názov",
-      "use_settings": "Použiť aj nastavenia polievania tejto rastliny v novej zóne (inak zóna zachová doterajšie polievanie)"
+      "use_settings": "Použiť aj nastavenia polievania tejto rastliny v novej zóne (inak zóna zachová doterajšie polievanie)",
+      "stage_seed": "Semeno",
+      "stage_seedling": "Sadenica",
+      "stage_ready": "Pripravená na presadenie",
+      "stage_established": "Zakorenená",
+      "days_left": "Zostáva {n} dní",
+      "ready_after": "Pripravená na presadenie po (dňoch)",
+      "planted_on": "Zasadená",
+      "follow": "Sledovať",
+      "unfollow": "Prestať sledovať",
+      "ready_badge": "Na presadenie: {names}",
+      "usual_days": "Zvyčajne pre tento druh: {n} dní"
     },
     "check": {
       "title": "Skontrolovať moje nastavenie",
@@ -3939,7 +4126,18 @@ const I18N = {
       "no_presets": "Поки немає збережених пресетів.",
       "rename": "Перейменувати",
       "rename_prompt": "Нова назва",
-      "use_settings": "Також використати налаштування поливу цієї рослини в новій зоні (інакше зона зберігає нинішній полив)"
+      "use_settings": "Також використати налаштування поливу цієї рослини в новій зоні (інакше зона зберігає нинішній полив)",
+      "stage_seed": "Насіння",
+      "stage_seedling": "Розсада",
+      "stage_ready": "Готове до пересадки",
+      "stage_established": "Вкорінилось",
+      "days_left": "Ще {n} дн.",
+      "ready_after": "Готове до пересадки через (днів)",
+      "planted_on": "Посаджено",
+      "follow": "Відстежувати",
+      "unfollow": "Не відстежувати",
+      "ready_badge": "Готове до пересадки: {names}",
+      "usual_days": "Зазвичай для цього типу: {n} дн."
     },
     "check": {
       "title": "Перевірити мої налаштування",
@@ -4159,7 +4357,18 @@ const I18N = {
       "no_presets": "暂无已保存的预设。",
       "rename": "重命名",
       "rename_prompt": "新名称",
-      "use_settings": "同时在新区域使用这株植物的浇水设置（否则该区域保持目前的浇水方式）"
+      "use_settings": "同时在新区域使用这株植物的浇水设置（否则该区域保持目前的浇水方式）",
+      "stage_seed": "种子",
+      "stage_seedling": "幼苗",
+      "stage_ready": "可以移栽",
+      "stage_established": "已成活",
+      "days_left": "还有 {n} 天",
+      "ready_after": "多少天后可移栽",
+      "planted_on": "种植日期",
+      "follow": "跟踪",
+      "unfollow": "停止跟踪",
+      "ready_badge": "可以移栽:{names}",
+      "usual_days": "此类型通常:{n} 天"
     },
     "check": {
       "title": "检查我的设置",
@@ -4506,6 +4715,10 @@ class ZoneFlowCard extends HTMLElement {
       .plant-button { font: inherit; color: var(--primary-color); background: none; border: 1px solid var(--divider-color);
         border-radius: 16px; padding: 4px 12px; cursor: pointer; }
       .plant-button:hover { background: var(--secondary-background-color); }
+      .plant-stage { font-weight: 500; margin: 4px 0; }
+      .plant-stage.ready { color: var(--success-color, #43a047); }
+      .plant-nursery .area-input[type="number"] { width: 110px; }
+      .ready { color: var(--success-color, #43a047); font-weight: 500; }
       .plant-panel { margin-top: 8px; }
       .plant-choice { display: block; padding: 3px 0; }
       .plant-history { margin-top: 8px; max-height: 240px; overflow-y: auto; }
@@ -5011,6 +5224,43 @@ class ZoneFlowCard extends HTMLElement {
       const head = make("div", "plant-head");
       head.append(make("span", "plant-name", plant.name), make("span", `plant-badge${plant.main ? " main" : ""}`, plant.main ? tp("main") : tp("record")));
       box.appendChild(head);
+      // A nursery plant: where it is on the way to "ready to move", and how to follow one.
+      if (plant.stage || plant.ready_days_default) {
+        const nursery = make("div", "plant-nursery");
+        if (plant.stage) {
+          const left = plant.days_left == null || ["ready", "established"].includes(plant.stage)
+            ? "" : ` · ${tp("days_left").replace("{n}", plant.days_left)}`;
+          nursery.appendChild(make("div", `plant-stage ${plant.stage}`, tp(`stage_${plant.stage}`) + left));
+        }
+        const row = make("div", "plant-form");
+        const days = make("input", "area-input");
+        days.type = "number";
+        days.min = 1;
+        days.max = 365;
+        days.title = tp("ready_after");
+        days.placeholder = tp("ready_after");
+        days.value = plant.ready_days || plant.ready_days_default || "";
+        const planted = make("input", "area-input");
+        planted.type = "date";
+        planted.title = tp("planted_on");
+        planted.value = plant.planted || "";
+        const follow = make("button", "plant-button", tp("follow"));
+        follow.addEventListener("click", () => {
+          const payload = { plant_id: plant.id };
+          if (Number(days.value) > 0) payload.ready_days = Number(days.value);
+          if (planted.value) payload.planted = planted.value;
+          act("set_plant_ready", payload);
+        });
+        row.append(days, planted, follow);
+        if (plant.stage) {
+          const stop = make("button", "plant-button", tp("unfollow"));
+          stop.addEventListener("click", () => act("set_plant_ready", { plant_id: plant.id, ready_days: 0 }));
+          row.appendChild(stop);
+        }
+        nursery.appendChild(row);
+        if (plant.ready_days_default) nursery.appendChild(make("div", "group-note", tp("usual_days").replace("{n}", plant.ready_days_default)));
+        box.appendChild(nursery);
+      }
       const actions = make("div", "plant-actions");
       const button = (label, fn) => {
         const el = make("button", "plant-button", label);
@@ -5122,6 +5372,12 @@ class ZoneFlowCard extends HTMLElement {
       option.value = key;
       type.appendChild(option);
     }
+    const readyDays = make("input", "area-input");
+    readyDays.type = "number";
+    readyDays.min = 1;
+    readyDays.max = 365;
+    readyDays.title = tp("ready_after");
+    readyDays.placeholder = tp("ready_after");
     const mode = make("select", "area-select");
     for (const [value, key] of hasMain
       ? [["", "as_record"], ["extra", "take_over_keep"], ["archive", "take_over_archive"]]
@@ -5137,9 +5393,10 @@ class ZoneFlowCard extends HTMLElement {
       if (!value) return;
       const payload = { name: value, plant_type: type.value, device_id: this._config.device_id };
       if (mode.value) payload.old_main = mode.value;
+      if (Number(readyDays.value) > 0) payload.ready_days = Number(readyDays.value);
       act("add_plant", payload);
     });
-    form.append(name, type, mode, add);
+    form.append(name, type, readyDays, mode, add);
     body.appendChild(form);
 
     // Copy this zone's settings from another zone, or use / save a preset.
@@ -5365,8 +5622,12 @@ class ZoneFlowCard extends HTMLElement {
     this._noteEl.hidden = !note;
     const plants = Array.isArray(status?.attributes?.plants) ? status.attributes.plants : [];
     const mixed = plants.length > 1;
-    this._plantsEl.textContent = mixed ? `${t(hass, "plants.title")}: ${plants.map((p) => p.name).join(", ")}` : "";
-    this._plantsEl.hidden = !mixed;
+    const ready = plants.filter((p) => p.stage === "ready");
+    const names = mixed ? `${t(hass, "plants.title")}: ${plants.map((p) => p.name).join(", ")}` : "";
+    const badge = ready.length ? t(hass, "plants.ready_badge").replace("{names}", ready.map((p) => p.name).join(", ")) : "";
+    this._plantsEl.textContent = [names, badge].filter(Boolean).join(" · ");
+    this._plantsEl.classList.toggle("ready", ready.length > 0);
+    this._plantsEl.hidden = !(mixed || ready.length);
     const methodId = status?.attributes?.valve ? visible["select.demand_model"]?.entity_id : undefined;
     const method = methodId ? hass.states[methodId] : undefined;
     if (method) {
@@ -5609,6 +5870,9 @@ class ZoneFlowOverviewCard extends HTMLElement {
         button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
+        // Nursery plants that have reached their "ready to move" day.
+        readyPlants: (Array.isArray(status?.attributes?.plants) ? status.attributes.plants : [])
+          .filter((p) => p.stage === "ready").map((p) => p.name),
         parent: status?.attributes?.greenhouse?.device_id || null,
         // A greenhouse or indoor zone (not a crop of one) is a group of its own.
         house: Boolean(status?.attributes?.zone_type && status.attributes.zone_type !== "outdoor" && !status?.attributes?.greenhouse?.device_id),
@@ -5900,9 +6164,17 @@ class ZoneFlowOverviewCard extends HTMLElement {
       feedIcon.setAttribute("icon", "mdi:sprout");
       const feedText = document.createElement("span");
       feed.append(feedIcon, feedText);
+      // Nursery plants ready to move, small under the name.
+      const ready = document.createElement("small");
+      ready.className = "feed due";
+      ready.hidden = true;
+      const readyIcon = document.createElement("ha-icon");
+      readyIcon.setAttribute("icon", "mdi:seed-outline");
+      const readyText = document.createElement("span");
+      ready.append(readyIcon, readyText);
       const names = document.createElement("div");
       names.className = "names";
-      names.append(label, feed);
+      names.append(label, feed, ready);
       name.append(icon, names);
       const status = document.createElement("div");
       status.className = "status";
@@ -5952,7 +6224,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       if (!details.hidden) this._fillDetails(zone, details);
       wrap.append(row, details);
       card.appendChild(wrap);
-      this._rows[zone.device_id] = { status, statusIcon, statusText, next, last, water, details, feed, feedText };
+      this._rows[zone.device_id] = { status, statusIcon, statusText, next, last, water, details, feed, feedText, ready, readyText };
     }
     addButton();
   }
@@ -6053,6 +6325,9 @@ class ZoneFlowOverviewCard extends HTMLElement {
       row.feed.classList.toggle("due", zone.feedDue);
       row.feedText.textContent = zone.feed ? (zone.feedDue ? t(hass, "overview.feed_due") : formatDay(hass, zone.feed)) : "";
       row.feed.title = zone.feed ? `${t(hass, "overview.next_feed")}: ${formatDay(hass, zone.feed)}` : "";
+      row.ready.hidden = !zone.readyPlants?.length;
+      row.readyText.textContent = zone.readyPlants?.length
+        ? t(hass, "plants.ready_badge").replace("{names}", zone.readyPlants.join(", ")) : "";
       if (!row.details.hidden) {
         const inner = row.details.querySelector("zoneflow-card");
         if (inner) inner.hass = hass;

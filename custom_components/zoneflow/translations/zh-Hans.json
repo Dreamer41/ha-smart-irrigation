@@ -9,14 +9,16 @@
           "plant": "种植的作物",
           "zone_type": "种植环境",
           "start_from": "起点",
-          "location": "位置在哪里？"
+          "location": "位置在哪里？",
+          "quick_setup": "快速设置(推荐)"
         },
         "data_description": {
           "zone_name": "将作为该区域的设备名称和实体名称的开头，也会出现在手机消息中。例如“番茄畦”“前院草坪”。",
           "plant": "为这种作物填入合适的初始值：每周水量目标、作物系数、深层浇灌和生长期递增。“其他”则从通用值开始。所有值以后都可以在该区域的设备页面上修改。",
           "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。",
           "start_from": "选择从其他区域的浇水设置副本或已保存的预设开始，而非使用该植物类型的默认设置。阀门、传感器和流量数据绝不会被复制。",
-          "location": "这个区域所在的上级区域（如果有）。除非你为它指定自己的传感器，否则它会使用上级区域的雨量计、温度传感器、天气和手机。"
+          "location": "这个区域所在的上级区域（如果有）。除非你为它指定自己的传感器，否则它会使用上级区域的雨量计、温度传感器、天气和手机。",
+          "quick_setup": "只询问阀门和供水方式,其余根据植物类型和 ZoneFlow 找到的传感器自动填写。之后可在“配置”中更改所有内容。取消勾选可立即查看所有设置。"
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+        }
+      },
+      "quick": {
+        "title": "ZoneFlow 灌溉",
+        "description": "哪个阀门为这个区域浇水,方式如何?\n\nZoneFlow 会使用下面找到的传感器。之后可在“配置”中更改,或返回并取消勾选“快速设置”。\n\n{suggestions}",
+        "data": {
+          "valve_entity": "阀门开关",
+          "irrigation_method": "水分如何输送给植物？"
+        },
+        "data_description": {
+          "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
+          "irrigation_method": "水是如何输送的。在沙土上使用滴灌或渗灌管时，新区域至少从 2 段开始，让水留在根区。实际浇多少水由流量决定（配置 → 流量）。"
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "原主植物",
           "description": "仅当区域已有主植物时适用。其处理方式：保留为记录或归档。"
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "区域设备",
           "description": "区域。仅在配置了 2 个及以上区域时需要。"
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "备注",
           "description": "需要记录的内容。"
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "该区域没有可供校准的流量设置。"
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

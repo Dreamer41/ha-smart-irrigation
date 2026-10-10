@@ -9,14 +9,16 @@
           "plant": "Vad som växer här",
           "zone_type": "Där det växer",
           "start_from": "Starta från",
-          "location": "Var finns detta?"
+          "location": "Var finns detta?",
+          "quick_setup": "Snabbinställning (rekommenderas)"
         },
         "data_description": {
           "zone_name": "Blir zonens enhetsnamn och början på dess entitetsnamn, och syns i mobilmeddelanden. T.ex. ”Tomatbädden”, ”Gräsmattan”.",
           "plant": "Fyller i rimliga startvärden för den här växten: veckomål för vatten, växtfaktor, djupvattning och upptrappning. ”Något annat” utgår från allmänna värden. Allt kan ändras senare på zonens enhetssida.",
           "zone_type": "Utomhus är hur ZoneFlow alltid har fungerat. Växthus och inomhuszoner lägger till klimatstyrning (fläktar, vädring, dimmning, värmare), kan fungera utan ventil och har ingen regnmätare eller prognos på grund av taket.",
           "start_from": "Starta från en kopia av en annan zons bevattningsinställningar eller en sparad förinställning istället för växttypens. Ventil, sensorer och flöde kopieras aldrig.",
-          "location": "Området som den här zonen finns i, om något. Den använder då områdets regnmätare, temperatursensor, väder och telefon, om du inte ger den egna."
+          "location": "Området som den här zonen finns i, om något. Den använder då områdets regnmätare, temperatursensor, väder och telefon, om du inte ger den egna.",
+          "quick_setup": "Frågar bara efter ventilen och hur vattnet levereras, och fyller i resten utifrån växttypen och de sensorer ZoneFlow hittade. Du kan ändra allt senare under Konfigurera. Avmarkera för att se alla inställningar nu."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+        }
+      },
+      "quick": {
+        "title": "ZoneFlow bevattning",
+        "description": "Vilken ventil bevattnar den här zonen, och hur?\n\nZoneFlow använder sensorerna det hittade nedan. Ändra dem senare under Konfigurera, eller gå tillbaka och avmarkera Snabbinställning.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Ventilbrytare",
+          "irrigation_method": "Hur når vattnet växterna?"
+        },
+        "data_description": {
+          "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
+          "irrigation_method": "Hur vattnet kommer ut. Med droppslang eller svettslang på sandjord börjar en ny zon med minst två pulser, så att vattnet stannar i rotzonen. Hur mycket vatten det ger styrs av flödet (Konfigurera → Flöde)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Gammal huvudväxt",
           "description": "Endast när zonen redan har en huvudväxt. Vad som händer med den: behåll som anteckning eller arkivera."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Zonenhet",
           "description": "Zonen. Krävs endast om 2 eller fler zoner är konfigurerade."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Anteckning",
           "description": "Vad som ska antecknas."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "Denna zon har ingen flödesinställning att kalibrera."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

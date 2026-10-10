@@ -9,14 +9,16 @@
           "plant": "Was hier wächst",
           "zone_type": "Anbauort",
           "start_from": "Starten von",
-          "location": "Wo befindet sich dies?"
+          "location": "Wo befindet sich dies?",
+          "quick_setup": "Schnelleinrichtung (empfohlen)"
         },
         "data_description": {
           "zone_name": "Wird zum Gerätenamen der Zone und zum Anfang ihrer Entitätsnamen und erscheint in Handy-Nachrichten. Z. B. „Tomatenbeet“, „Rasen vorne“.",
           "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern.",
           "zone_type": "Außenbereich ist die bisherige Funktionsweise von ZoneFlow. Gewächshaus- und Innenraumbereiche fügen eine Klimasteuerung hinzu (Lüfter, Belüftung, Vernebelung, Heizung), können ohne Ventil arbeiten und haben aufgrund des Dachs keinen Regensensor oder Wetterbericht.",
           "start_from": "Starten Sie mit einer Kopie der Bewässerungseinstellungen einer anderen Zone oder einer gespeicherten Voreinstellung statt der des Pflanzentyps. Ventil, Sensoren und Durchflussrate werden niemals kopiert.",
-          "location": "Der Bereich, in dem sich diese Zone befindet, falls vorhanden. Sie nutzt dann Regenmesser, Temperatursensor, Wetter und Handy des Bereichs, solange du ihr keine eigenen gibst."
+          "location": "Der Bereich, in dem sich diese Zone befindet, falls vorhanden. Sie nutzt dann Regenmesser, Temperatursensor, Wetter und Handy des Bereichs, solange du ihr keine eigenen gibst.",
+          "quick_setup": "Fragt nur nach dem Ventil und der Art der Bewässerung und ergänzt den Rest aus der Pflanzenart und den gefundenen Sensoren. Alles lässt sich später unter Konfigurieren ändern. Haken entfernen, um alle Einstellungen jetzt zu sehen."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Optional. Wohin die Zonen dieses Bereichs ihre Telefonnachrichten senden.",
           "area_name": "Wie der Bereich heißt, zum Beispiel Hintergarten oder Vorgarten.",
           "rain_source_type": "Was der Regenmessersensor meldet: einen Kippzähler, eine Gesamtregenmenge, eine Regenrate oder den Regen seit der letzten Messung."
+        }
+      },
+      "quick": {
+        "title": "ZoneFlow Bewässerung",
+        "description": "Welches Ventil bewässert diese Zone, und wie?\n\nZoneFlow verwendet die unten gefundenen Sensoren. Ändern Sie sie später unter Konfigurieren, oder gehen Sie zurück und entfernen Sie den Haken bei Schnelleinrichtung.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Ventilschalter",
+          "irrigation_method": "Wie gelangt das Wasser zu den Pflanzen?"
+        },
+        "data_description": {
+          "valve_entity": "Der Schalter, der das Ventil dieser Zone öffnet (oder ihre Pumpe startet). Das Einzige, ohne das ZoneFlow nicht auskommt: ZoneFlow schaltet ihn ein und aus und sorgt immer dafür, dass er am Ende aus ist.",
+          "irrigation_method": "Wie das Wasser ausgebracht wird. Mit Tropfbewässerung oder Perlschlauch auf Sandboden startet eine neue Zone mit mindestens zwei Durchgängen, damit das Wasser im Wurzelbereich bleibt. Wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Alte Hauptpflanze",
           "description": "Nur wenn die Zone bereits eine Hauptpflanze hat. Was aus ihr wird: als Eintrag behalten oder archivieren."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Zonen-Gerät",
           "description": "Die Zone. Nur erforderlich, wenn 2 oder mehr Zonen konfiguriert sind."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Notiz",
           "description": "Was aufgeschrieben werden soll."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "Diese Zone hat keine Durchflussrate-Einstellung zum Kalibrieren."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

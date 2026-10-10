@@ -9,14 +9,16 @@
           "plant": "O que está plantado",
           "zone_type": "Onde ela cultiva",
           "start_from": "Iniciar a partir de",
-          "location": "Onde fica isso?"
+          "location": "Onde fica isso?",
+          "quick_setup": "Configuração rápida (recomendada)"
         },
         "data_description": {
           "zone_name": "Vira o nome do dispositivo da zona e o início dos nomes das entidades, e aparece nas mensagens no celular. Ex.: \"Canteiro de tomates\", \"Gramado da frente\".",
           "plant": "Preenche valores iniciais adequados para esta cultura: metas semanais de água, coeficiente de cultura, irrigação profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Você pode alterar tudo depois na página do dispositivo da zona.",
           "zone_type": "Ao ar livre é como o ZoneFlow sempre funcionou. Zonas de estufa e internas adicionam controle de clima (ventiladores, aberturas de ventilação, nebulização, aquecedor), podem funcionar sem válvula e não possuem medidor de chuva ou previsão do tempo devido ao teto.",
           "start_from": "Inicie a partir de uma cópia das configurações de irrigação de outra zona ou de uma predefinição salva em vez das do tipo de planta. A válvula, os sensores e a vazão nunca são copiados.",
-          "location": "A área em que esta zona está, se houver. Ela passa a usar o pluviômetro, o sensor de temperatura, o clima e o celular da área, a menos que você dê os seus próprios."
+          "location": "A área em que esta zona está, se houver. Ela passa a usar o pluviômetro, o sensor de temperatura, o clima e o celular da área, a menos que você dê os seus próprios.",
+          "quick_setup": "Pergunta só pela válvula e como a água chega, e preenche o resto pelo tipo de planta e pelos sensores que o ZoneFlow encontrou. Você pode mudar tudo depois em Configurar. Desmarque para ver todas as configurações agora."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Opcional. Para onde as zonas desta área enviam suas mensagens de celular.",
           "area_name": "Como a área é chamada, por ejemplo Quintal ou Jardim da frente.",
           "rain_source_type": "O que o sensor do pluviômetro reporta: um contador de basculada, chuva total, taxa de chuva ou a chuva desde a última leitura."
+        }
+      },
+      "quick": {
+        "title": "Irrigação ZoneFlow",
+        "description": "Qual válvula irriga esta zona, e como?\n\nO ZoneFlow usa os sensores que encontrou abaixo. Mude-os depois em Configurar, ou volte e desmarque Configuração rápida.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Interruptor da válvula",
+          "irrigation_method": "Como a água chega até as plantas?"
+        },
+        "data_description": {
+          "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: ele liga e desliga o interruptor e sempre garante que ele fique desligado no final.",
+          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pela vazão (Configurar → Vazão)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Antiga planta principal",
           "description": "Apenas quando a zona já tem uma planta principal. O que acontece com ela: manter como registro ou arquivar."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Dispositivo da zona",
           "description": "A zona. Apenas necessário se houver 2 ou mais zonas configuradas."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Nota",
           "description": "O que escrever."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "Esta zona não tem configuração de vazão para calibrar."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

@@ -166,6 +166,10 @@
       "water": "Sproei {minutes} min",
       "snooze": "Vandaag overslaan",
       "fertilized": "Bemest"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} is klaar om te verplaatsen",
+      "message": "Hij heeft zoveel dagen gegroeid als u hebt ingesteld. Open het dialoogvenster Planten van de zone om hem naar zijn bed te verplaatsen."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Gearchiveerd uit {zone}",
       "removed": "Verwijderd uit {zone}",
       "note": "{text}",
-      "copied": "Instellingen gekopieerd van {source}"
+      "copied": "Instellingen gekopieerd van {source}",
+      "ready": "Klaar om te verplaatsen ({days} dagen na het planten)",
+      "tracking": "Gevolgd tot klaar om te verplaatsen: {days} dagen na het planten",
+      "tracking_off": "Wordt niet meer gevolgd tot klaar om te verplaatsen"
     },
     "setting": {
       "growth_stage_mode": "Groeifasemodus",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Stap {n} van {total}"
+    "progress": "Stap {n} van {total}",
+    "nothing_found": "Er zijn geen sensoren gevonden. Voeg ze later toe bij Configureren."
   }
 }

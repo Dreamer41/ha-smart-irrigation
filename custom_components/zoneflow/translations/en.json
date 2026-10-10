@@ -9,14 +9,16 @@
           "plant": "What's planted",
           "zone_type": "Where it grows",
           "start_from": "Start from",
-          "location": "Where is this?"
+          "location": "Where is this?",
+          "quick_setup": "Quick setup (recommended)"
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
           "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof.",
           "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied.",
-          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own.",
+          "quick_setup": "Asks only for the valve and how the water is delivered, and fills in the rest from the plant type and the sensors ZoneFlow found. You can change everything later in Configure. Untick to see every setting now."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
           "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
+      },
+      "quick": {
+        "title": "ZoneFlow Irrigation",
+        "description": "Which valve waters this zone, and how?\n\nZoneFlow uses the sensors it found below. Change them later in Configure, or go back and untick Quick setup.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Valve switch",
+          "irrigation_method": "How does the water get to the plants?"
+        },
+        "data_description": {
+          "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
+          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Old Main Plant",
           "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record or archive it."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Zone Device",
           "description": "The zone. Only needed with 2+ zones configured."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Note",
           "description": "What to write down."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "This zone has no flow rate setting to calibrate."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

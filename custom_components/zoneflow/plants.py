@@ -26,7 +26,7 @@ from homeassistant.helpers.storage import Store
 import homeassistant.util.dt as dt_util
 from datetime import timedelta
 
-from .const import CONF_DEEP_SOAK_ENABLED, CONF_PLANT, DOMAIN, PLANT_CUSTOM
+from .const import CONF_DEEP_SOAK_ENABLED, CONF_PLANT, DOMAIN, PLANT_CUSTOM, PLANT_READY_DAYS
 
 BOOK_KEY = "zoneflow_plant_book"
 STORE_VERSION = 1
@@ -69,6 +69,51 @@ PLANT_STATE_KEYS = (
     "fertilizing_interval_months",
     "last_fertilizing_ts",
 )
+
+
+STAGE_SEED = "seed"
+STAGE_SEEDLING = "seedling"
+STAGE_READY = "ready"
+STAGE_ESTABLISHED = "established"
+# The first part of the wait is "seed" (germinating), the rest "seedling".
+SEED_SHARE = 0.2
+
+
+def default_ready_days(kind: str | None) -> int | None:
+    return PLANT_READY_DAYS.get(kind or "")
+
+
+def planting_ts(plant: dict[str, Any], zone: Any = None) -> float | None:
+    """When a plant was planted: the zone's planting date for its main plant
+    (that is where the person sets it), the saved one for a record."""
+    if plant.get("main") and zone is not None:
+        value = zone.store.state.planting_date_ts
+    else:
+        value = (plant.get("snapshot") or {}).get("planting_date_ts")
+    return float(value) if isinstance(value, (int, float)) else None
+
+
+def stage_of(plant: dict[str, Any], planted_ts: float | None, now_ts: float | None = None) -> dict[str, Any] | None:
+    """Where a nursery plant is: None for a plant that is not being tracked
+    (no "ready after" days), else its stage and the days left. A plant that has
+    been moved on is established."""
+    days = plant.get("ready_days")
+    if not days:
+        return None
+    if plant.get("transplanted_ts"):
+        return {"stage": STAGE_ESTABLISHED, "days_left": 0, "ready_days": int(days)}
+    if planted_ts is None:
+        return {"stage": STAGE_SEED, "days_left": None, "ready_days": int(days)}  # no planting date yet
+    now_ts = dt_util.utcnow().timestamp() if now_ts is None else now_ts
+    age_days = max(now_ts - planted_ts, 0.0) / 86400.0
+    left = int(days - age_days + 0.999)  # whole days, rounded up
+    if age_days >= days:
+        stage = STAGE_READY
+    elif age_days >= days * SEED_SHARE:
+        stage = STAGE_SEEDLING
+    else:
+        stage = STAGE_SEED
+    return {"stage": stage, "days_left": max(left, 0), "ready_days": int(days)}
 
 
 class PlantBook:
@@ -236,6 +281,7 @@ class ZonePlants:
     @callback
     def _tick(self, _now=None) -> None:
         self.check()
+        self.controller.hass.async_create_task(self.async_check_ready())
 
     def check(self) -> None:
         """Log what changed in the plant's settings since last time."""
@@ -285,7 +331,27 @@ class ZonePlants:
 
     # --- for the cards --------------------------------------------------------
     def summary(self) -> list[dict[str, Any]]:
-        return [
-            {"id": p["id"], "name": p["name"], "type": p.get("type"), "main": bool(p.get("main"))}
-            for p in self.book.in_zone(self.zone_id)
-        ]
+        out = []
+        for p in self.book.in_zone(self.zone_id):
+            row = {"id": p["id"], "name": p["name"], "type": p.get("type"), "main": bool(p.get("main"))}
+            stage = stage_of(p, planting_ts(p, self.controller))
+            if stage is not None:
+                row.update(stage=stage["stage"], days_left=stage["days_left"])
+            out.append(row)
+        return out
+
+    async def async_check_ready(self) -> None:
+        """One phone message for each plant that has just become ready to move
+        (it is not repeated; setting new days starts it again)."""
+        changed = False
+        for plant in self.book.in_zone(self.zone_id):
+            stage = stage_of(plant, planting_ts(plant, self.controller))
+            if stage is None or stage["stage"] != STAGE_READY or plant.get("ready_notified"):
+                continue
+            plant["ready_notified"] = True
+            changed = True
+            self.book.add_history(plant["id"], "ready", days=stage["ready_days"])
+            await self.controller.notify_plant_ready(plant["name"])
+        if changed:
+            self.book._save()
+            self.controller._notify_status()

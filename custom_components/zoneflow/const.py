@@ -70,6 +70,7 @@ AREA_NAME_MAX_LENGTH = 40
 # A zone made from another zone or a saved preset starts with its settings
 # (presets.py): the choice in the setup form, and what the controller applies once.
 CONF_START_FROM = "start_from"
+CONF_QUICK_SETUP = "quick_setup"  # first setup form: ask only for the valve and how it is watered
 CONF_START_STATE = "initial_state"
 CONF_RAIN_COUNTER_ENTITY = "rain_counter_entity"  # optional -- rain-aware gates simply never fire without it
 # What that sensor reports (1.6.5): a tip counter (the default, as always), a
@@ -739,6 +740,18 @@ PLANT_PRESETS: dict[str, dict] = {
     },
 }
 PLANT_OPTIONS = [PLANT_CUSTOM, *PLANT_PRESETS]
+# Plants raised from seed in a nursery are ready to move to their bed about
+# this many days after planting (1.7.1). Types that are not raised that way
+# have no figure; a plant's own number (the person's) always wins.
+PLANT_READY_DAYS: dict[str, int] = {
+    "tomatoes": 42,
+    "chilis": 56,
+    "leafy_vegetables": 28,
+    "herbs": 35,
+    "strawberries": 42,
+    "flowers": 42,
+}
+READY_DAYS_MAX = 365
 
 # Flow-rate measurement with a flow meter (options -> Flow rate): a service
 # run this long, then litres / area / minutes.

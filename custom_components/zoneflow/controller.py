@@ -4196,6 +4196,20 @@ class ZoneFlowController:
             event_type="Fertilized", status="INFO", target_mm=0.0, deducted_mm=0.0, runtime=0
         )
 
+    async def notify_plant_ready(self, plant_name: str) -> None:
+        """A nursery plant has reached its "ready to move" day: one phone
+        message (and a line in the log)."""
+        await self._log_event(
+            event_type="Plant Ready To Move",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="plant_ready",
+            params={"zone": self.entry.title, "plant": plant_name},
+        )
+
     async def _on_fertilize_check(self, now=None) -> None:
         """Each morning: on (or after) the due date, one phone reminder per
         feed -- not while the zone is paused (winter, holidays)."""

@@ -9,14 +9,16 @@
           "plant": "Mitä on istutettu",
           "zone_type": "Kasvupaikka",
           "start_from": "Aloituskohta",
-          "location": "Missä tämä sijaitsee?"
+          "location": "Missä tämä sijaitsee?",
+          "quick_setup": "Pika-asennus (suositus)"
         },
         "data_description": {
           "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
           "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla.",
           "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi.",
           "start_from": "Aloita toisen vyöhykkeen kasteluasetusten kopiolla tai tallennetulla esiasetuksella kasvityypin asetusten sijaan. Venttiiliä, antureita ja virtaamaa ei koskaan kopioida.",
-          "location": "Alue, jossa tämä vyöhyke on, jos jokin. Vyöhyke käyttää silloin alueen sademittaria, lämpötila-anturia, säätä ja puhelinta, ellet anna sille omia."
+          "location": "Alue, jossa tämä vyöhyke on, jos jokin. Vyöhyke käyttää silloin alueen sademittaria, lämpötila-anturia, säätä ja puhelinta, ellet anna sille omia.",
+          "quick_setup": "Kysyy vain venttiilin ja kastelutavan ja täyttää loput kasvityypin ja löydettyjen antureiden perusteella. Voit muuttaa kaiken myöhemmin kohdassa Määritä. Poista rasti nähdäksesi kaikki asetukset nyt."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
           "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+        }
+      },
+      "quick": {
+        "title": "ZoneFlow-kastelu",
+        "description": "Mikä venttiili kastelee tämän vyöhykkeen, ja miten?\n\nZoneFlow käyttää alla löytämiään antureita. Muuta niitä myöhemmin kohdassa Määritä tai palaa takaisin ja poista Pika-asennus.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Venttiilin kytkin",
+          "irrigation_method": "Miten vesi pääsee kasveille?"
+        },
+        "data_description": {
+          "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
+          "irrigation_method": "Miten vesi jaetaan. Tippukastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke aloittaa vähintään kahdella jaksolla, jotta vesi pysyy juuristoalueella. Vesimäärän ratkaisee virtaama (Määritä → Virtaama)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Vanha pääkasvi",
           "description": "Vain kun vyöhykkeellä on jo pääkasvi. Mitä sille tapahtuu: säilytä se merkintänä tai arkistoi."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Vyöhykelaite",
           "description": "Vyöhyke. Tarvitaan vain, jos määritettynä on vähintään 2 vyöhykettä."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Muistiinpano",
           "description": "Mitä kirjoitetaan muistiin."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "Tällä vyöhykkeellä ei ole kalibroitavaa virtaama-asetusta."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

@@ -166,6 +166,10 @@
       "water": "Water {minutes} min",
       "snooze": "Snooze today",
       "fertilized": "Fertilized"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} is ready to move",
+      "message": "It has grown for the number of days you set. Open the zone's Plants dialog to move it to its bed."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archived from {zone}",
       "removed": "Removed from {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Settings copied from {source}",
+      "ready": "Ready to move ({days} days after planting)",
+      "tracking": "Followed towards ready to move: {days} days after planting",
+      "tracking_off": "No longer followed towards ready to move"
     },
     "setting": {
       "growth_stage_mode": "Growth stage mode",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "Step {n} of {total}",
+    "nothing_found": "No sensors were found. Add them later in Configure."
   }
 }

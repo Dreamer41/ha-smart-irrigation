@@ -1,6 +1,9 @@
 """The zone card asks for a zone's plants and their histories here."""
 from __future__ import annotations
 
+from datetime import datetime
+
+import homeassistant.util.dt as dt_util
 import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant
@@ -9,7 +12,7 @@ from homeassistant.helpers import device_registry as dr
 from . import plant_actions
 from .const import DOMAIN
 from . import presets, setup_check, why
-from .plants import async_get_book
+from .plants import async_get_book, default_ready_days, planting_ts, stage_of
 
 
 def controller_for_device(hass: HomeAssistant, device_id: str):
@@ -42,6 +45,20 @@ async def ws_check(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
     connection.send_result(msg["id"], {"zone": controller.entry.title, "level": setup_check.summary(items), "items": items})
 
 
+def _ready_fields(plant: dict, controller) -> dict:
+    """What the card shows about a nursery plant: its stage and the days the
+    type usually takes (the suggestion for a plant that is not followed yet)."""
+    planted = planting_ts(plant, controller)
+    stage = stage_of(plant, planted)
+    out = {
+        "ready_days_default": default_ready_days(plant.get("type")),
+        "planted": datetime.fromtimestamp(planted, tz=dt_util.UTC).date().isoformat() if planted else None,
+    }
+    if stage is not None:
+        out.update(ready_days=stage["ready_days"], stage=stage["stage"], days_left=stage["days_left"])
+    return out
+
+
 @websocket_api.websocket_command({vol.Required("type"): "zoneflow/plants", vol.Required("device_id"): str})
 @websocket_api.async_response
 async def ws_plants(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
@@ -64,6 +81,7 @@ async def ws_plants(hass: HomeAssistant, connection: websocket_api.ActiveConnect
                     "type": p.get("type"),
                     "main": bool(p.get("main")),
                     "history": plant_actions.history(hass, p),
+                    **_ready_fields(p, controller),
                 }
                 for p in book.in_zone(zone_id)
             ],

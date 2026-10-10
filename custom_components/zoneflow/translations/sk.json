@@ -9,14 +9,16 @@
           "plant": "Čo je zasadené",
           "zone_type": "Kde rastie",
           "start_from": "Začať z",
-          "location": "Kde sa nachádza?"
+          "location": "Kde sa nachádza?",
+          "quick_setup": "Rýchle nastavenie (odporúčané)"
         },
         "data_description": {
           "zone_name": "Stane sa názvom zariadenia zóny a začiatkom názvov jej entít a zobrazuje sa v správach v telefóne. Napr. „Záhon paradajok“, „Predný trávnik“.",
           "plant": "Vyplní rozumné počiatočné hodnoty pre túto plodinu: týždenné ciele vody, koeficient plodiny, hĺbkovú zálievku a rastovú krivku. „Niečo iné“ začína so všeobecnými hodnotami. Všetko môžete neskôr zmeniť na stránke zariadenia zóny.",
           "zone_type": "Vonku je spôsob, akým ZoneFlow fungoval vždy. Skleníkové a vnútorné zóny pridávajú riadenie klímy (ventilátory, vetranie, hmloviny, ohrievač), môžu fungovať bez ventilu a kvôli streche nemajú zrážkomer ani predpoveď.",
           "start_from": "Začnite kópiou nastavení zalievania inej zóny alebo uloženej predvoľby namiesto nastavení typu rastliny. Ventil, snímače a prietok sa nikdy nekopírujú.",
-          "location": "Oblasť, v ktorej sa táto zóna nachádza, ak nejaká je. Zóna potom používa zrážkomer, snímač teploty, počasie a telefón oblasti, ak jej nedáte vlastné."
+          "location": "Oblasť, v ktorej sa táto zóna nachádza, ak nejaká je. Zóna potom používa zrážkomer, snímač teploty, počasie a telefón oblasti, ak jej nedáte vlastné.",
+          "quick_setup": "Opýta sa len na ventil a spôsob dodávky vody, zvyšok doplní podľa druhu rastliny a nájdených senzorov. Všetko môžete neskôr zmeniť v Konfigurácii. Zrušte zaškrtnutie, ak chcete vidieť všetky nastavenia hneď."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
           "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania."
+        }
+      },
+      "quick": {
+        "title": "Zavlažovanie ZoneFlow",
+        "description": "Ktorý ventil zavlažuje túto zónu a ako?\n\nZoneFlow použije senzory, ktoré našiel nižšie. Zmeníte ich neskôr v Konfigurácii, alebo sa vráťte a zrušte Rýchle nastavenie.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Spínač ventilu",
+          "irrigation_method": "Ako sa voda dostáva k rastlinám?"
+        },
+        "data_description": {
+          "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
+          "irrigation_method": "Ako sa voda privádza. S kvapkovou alebo priesakovou hadicou na piesočnatej pôde začne nová zóna aspoň s dvoma pulzmi, aby voda zostala v koreňovej zóne. Množstvo vody určuje prietok (Konfigurovať → Prietok)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Stará hlavná rastlina",
           "description": "Iba ak zóna už má hlavnú rastlinu. Čo sa s ňou stane: ponechať ako záznam alebo archivovať."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Zariadenie zóny",
           "description": "Zóna. Vyžaduje sa iba pri konfigurácii 2 a viac zón."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Poznámka",
           "description": "Čo zapísať."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "Táto zóna nemá žiadne nastavenie prietoku na kalibráciu."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

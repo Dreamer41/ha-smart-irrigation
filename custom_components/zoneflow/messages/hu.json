@@ -166,6 +166,10 @@
       "water": "Öntözés {minutes} perc",
       "snooze": "Mai öntözés kihagyása",
       "fertilized": "Trágyázva"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} kész az átültetésre",
+      "message": "Annyi napot nőtt, amennyit beállított. Nyissa meg a zóna Növények ablakát, és vigye át az ágyásba."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archiválva innen: {zone}",
       "removed": "Eltávolítva innen: {zone}",
       "note": "{text}",
-      "copied": "Beállítások másolva innen: {source}"
+      "copied": "Beállítások másolva innen: {source}",
+      "ready": "Kész az átültetésre ({days} nappal az ültetés után)",
+      "tracking": "Követve az átültetésig: {days} nappal az ültetés után",
+      "tracking_off": "Már nem követjük az átültetésig"
     },
     "setting": {
       "growth_stage_mode": "Növekedési fázis mód",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "{n} / {total} lépés"
+    "progress": "{n} / {total} lépés",
+    "nothing_found": "Nem találtunk érzékelőt. Adja hozzá őket később a Beállításokban."
   }
 }

@@ -166,6 +166,10 @@
       "water": "Podlewaj {minutes} min",
       "snooze": "Pomiń dzisiaj",
       "fertilized": "Nawożone"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} jest gotowa do przesadzenia",
+      "message": "Rosła tyle dni, ile ustawiono. Otwórz okno Rośliny strefy, aby przenieść ją na grządkę."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Zarchiwizowano ze strefy {zone}",
       "removed": "Usunięto ze strefy {zone}",
       "note": "{text}",
-      "copied": "Skopiowano ustawienia z {source}"
+      "copied": "Skopiowano ustawienia z {source}",
+      "ready": "Gotowa do przesadzenia ({days} dni po posadzeniu)",
+      "tracking": "Śledzona do przesadzenia: {days} dni po posadzeniu",
+      "tracking_off": "Nie jest już śledzona do przesadzenia"
     },
     "setting": {
       "growth_stage_mode": "Tryb fazy wzrostu",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Krok {n} z {total}"
+    "progress": "Krok {n} z {total}",
+    "nothing_found": "Nie znaleziono czujników. Dodaj je później w Konfiguracji."
   }
 }

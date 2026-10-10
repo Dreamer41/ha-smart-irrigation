@@ -9,14 +9,16 @@
           "plant": "Hva som vokser her",
           "zone_type": "Hvor det dyrkes",
           "start_from": "Start fra",
-          "location": "Hvor er dette?"
+          "location": "Hvor er dette?",
+          "quick_setup": "Hurtigoppsett (anbefalt)"
         },
         "data_description": {
           "zone_name": "Blir enhetsnavnet til sonen og starten på entitetsnavnene, og vises i telefonvarsler. F.eks. \"Tomatbed\", \"Plenen foran\".",
           "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside.",
           "zone_type": "Utendørs er slik ZoneFlow alltid har fungert. Drivhus og innendørssoner legger til klimastyring (vifter, lufting, tåkelegging, varmeovn), kan fungere uten ventil, og har hverken regnmåler eller værvarsel på grunn av taket.",
           "start_from": "Start fra en kopi av en annen zones vanningsinnstillinger eller en lagret forhåndsinnstilling i stedet for plantetypens. Ventil, sensorer og gjennomstrømning kopieres aldri.",
-          "location": "Området denne sonen er i, hvis noe. Den bruker da områdets regnmåler, temperatursensor, vær og telefon, med mindre du gir den egne."
+          "location": "Området denne sonen er i, hvis noe. Den bruker da områdets regnmåler, temperatursensor, vær og telefon, med mindre du gir den egne.",
+          "quick_setup": "Spør bare om ventilen og hvordan vannet leveres, og fyller ut resten fra plantetypen og sensorene ZoneFlow fant. Du kan endre alt senere under Konfigurer. Fjern haken for å se alle innstillinger nå."
         }
       },
       "entities": {
@@ -254,6 +256,18 @@
           "notify_entity": "Valgfritt. Hvor sonene i dette området sender sine telefonmeldinger.",
           "area_name": "Hva området kalles, for eksempel Bakgård eller Forhage.",
           "rain_source_type": "Hva regnmålersensoren rapporterer: en vippteller, en total regnmengde, en regnintensitet eller regn siden siste avlesning."
+        }
+      },
+      "quick": {
+        "title": "ZoneFlow vanning",
+        "description": "Hvilken ventil vanner denne sonen, og hvordan?\n\nZoneFlow bruker sensorene det fant under. Endre dem senere under Konfigurer, eller gå tilbake og fjern Hurtigoppsett.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Ventilbryter",
+          "irrigation_method": "Hvordan kommer vannet til plantene?"
+        },
+        "data_description": {
+          "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
+          "irrigation_method": "Hvordan vannet kommer ut. Med dryppslange eller sildreslange på sand starter en ny sone med minst to pulser, så vannet blir i rotsonen. Hvor mye vann den gir, bestemmes av vannmengden (Konfigurer → Vannmengde)."
         }
       }
     },
@@ -1405,6 +1419,14 @@
           "name": "Gammel hovedplante",
           "description": "Kun når sonen allerede har en hovedplante. Hva som skjer med den: behold den som registrering eller arkiver den."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Soneenhet",
           "description": "Sonen. Kun nødvendig når 2 eller flere soner er konfigurert."
@@ -1468,6 +1490,24 @@
         "text": {
           "name": "Notat",
           "description": "Hva som skal skrives ned."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1705,9 @@
     },
     "calibration_unavailable": {
       "message": "Denne sonen har ingen gjennomstrømningsinnstilling å kalibrere."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

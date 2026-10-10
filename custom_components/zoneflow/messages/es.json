@@ -166,6 +166,10 @@
       "water": "Regar {minutes} min",
       "snooze": "Omitir hoy",
       "fertilized": "Fertilizado"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} está lista para trasplantar",
+      "message": "Ha crecido los días que indicó. Abra el diálogo Plantas de la zona para moverla a su bancal."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archivado de {zone}",
       "removed": "Quitado de {zone}",
       "note": "{text}",
-      "copied": "Ajustes copiados de {source}"
+      "copied": "Ajustes copiados de {source}",
+      "ready": "Lista para trasplantar ({days} días después de plantar)",
+      "tracking": "Seguida hasta estar lista para trasplantar: {days} días después de plantar",
+      "tracking_off": "Ya no se sigue hasta estar lista para trasplantar"
     },
     "setting": {
       "growth_stage_mode": "Modo de etapa de crecimiento",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Paso {n} de {total}"
+    "progress": "Paso {n} de {total}",
+    "nothing_found": "No se encontró ningún sensor. Añádalos después en Configurar."
   }
 }

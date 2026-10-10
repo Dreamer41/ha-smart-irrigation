@@ -166,6 +166,10 @@
       "water": "Kastele {minutes} min",
       "snooze": "Ohita tänään",
       "fertilized": "Lannoitettu"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} on valmis siirrettäväksi",
+      "message": "Se on kasvanut asettamasi päivämäärän verran. Avaa vyöhykkeen Kasvit-ikkuna ja siirrä se kasvupenkkiin."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Arkistoitu vyöhykkeeltä {zone}",
       "removed": "Poistettu vyöhykkeeltä {zone}",
       "note": "{text}",
-      "copied": "Asetukset kopioitu kohteesta {source}"
+      "copied": "Asetukset kopioitu kohteesta {source}",
+      "ready": "Valmis siirrettäväksi ({days} päivää istutuksesta)",
+      "tracking": "Seurataan siirtovalmiuteen: {days} päivää istutuksesta",
+      "tracking_off": "Ei enää seurata siirtovalmiuteen"
     },
     "setting": {
       "growth_stage_mode": "Kasvuvaihetila",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Vaihe {n} / {total}"
+    "progress": "Vaihe {n} / {total}",
+    "nothing_found": "Antureita ei löytynyt. Lisää ne myöhemmin kohdassa Määritä."
   }
 }
