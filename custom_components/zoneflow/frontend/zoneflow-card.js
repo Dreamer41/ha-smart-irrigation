@@ -5002,6 +5002,8 @@ class ZoneFlowCard extends HTMLElement {
     };
     const hasMain = data.plants.some((p) => p.main);
     const others = allZones(hass).filter((z) => z.device_id !== this._config.device_id);
+    // Copying settings needs a zone that waters: a greenhouse with no valve has none to give.
+    const watering = others.filter((z) => hass.states?.[z.status]?.attributes?.valve);
     const zoneHasMain = (zone) => (hass.states?.[zone.status]?.attributes?.plants || []).some((p) => p.main);
 
     for (const plant of data.plants) {
@@ -5144,19 +5146,19 @@ class ZoneFlowCard extends HTMLElement {
     body.appendChild(make("div", "group-title", tp("copy_title")));
     const copyRow = make("div", "plant-form");
     const sources = make("select", "area-select");
-    for (const zone of others) {
+    for (const zone of watering) {
       const option = make("option", "", zone.name);
       option.value = zone.device_id;
       sources.appendChild(option);
     }
     const copyButton = make("button", "plant-button", tp("copy_button"));
     copyButton.addEventListener("click", () => {
-      const zone = others.find((z) => z.device_id === sources.value);
+      const zone = watering.find((z) => z.device_id === sources.value);
       if (zone && (window.confirm?.(tp("confirm_copy").replace("{name}", zone.name)) ?? true)) {
         act("copy_settings", { source_device_id: zone.device_id, device_id: this._config.device_id });
       }
     });
-    if (others.length) {
+    if (watering.length) {
       copyRow.append(sources, copyButton);
       body.appendChild(copyRow);
     }

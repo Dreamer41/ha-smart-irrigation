@@ -477,6 +477,8 @@ def test_the_plants_popup_lists_the_plants_and_calls_the_services(tmp_path):
     for device, name in (("d1", "Tomatoes"), ("d2", "Chilis")):
         _zone(entities, states, device, name, "tomatoes")
         devices[device] = {"name": name}
+    states["sensor.chilis_status"]["attributes"]["valve"] = "switch.chilis"  # a zone that waters can be copied from
+    states["sensor.tomatoes_status"]["attributes"]["valve"] = "switch.tomatoes"
     states["sensor.chilis_status"]["attributes"]["plants"] = [{"id": "c", "name": "Chilis", "main": True}]
     states["sensor.tomatoes_status"]["attributes"]["plants"] = [
         {"id": "t", "name": "Tomatoes", "main": True}, {"id": "b", "name": "Basil", "main": False}]
