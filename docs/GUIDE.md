@@ -325,7 +325,11 @@ title: Chili bed                 # optional: instead of the zone's name
 icon: mdi:chili-hot              # optional
 ```
 
-<img src="screenshots/card.png" width="380" alt="The ZoneFlow card: status sentence, valve, soil moisture, next watering, controls and service runs">
+<img src="screenshots/card.png" width="380" alt="The ZoneFlow card in its Simple view: status sentence, the plants in the zone, how it is watered, Why?, Water now, Snooze and Pause">
+
+The full card (with **Advanced settings** open) adds the sensors, the controls, service runs and the buttons for **Plant journal**, **Settings**, **Check my setup**, **Calibrate the flow rate** and **Plants**:
+
+<img src="screenshots/card-advanced.png" width="380" alt="The full ZoneFlow card: status, plants, watering method, valve, soil moisture, rain, targets and water used">
 
 It shows the zone's Status sentence up top, then the valve, soil moisture
 and next watering, the controls (water now, snooze, pause) and service
@@ -333,7 +337,7 @@ runs. **Plant journal** and **Settings** at the bottom open in a popup,
 like Home Assistant's own entity dialogs: every setting in groups, and a
 link to the zone's device page (for admins).
 
-<img src="screenshots/settings-popup.png" width="380" alt="The ZoneFlow Settings popup: settings grouped under headings, with a link to the device page">
+<img src="screenshots/settings-popup.png" width="380" alt="The ZoneFlow Settings popup: where the zone is, then the settings in groups, with a link to the device page">
 
 It finds the zone's entities
 through its device and leaves out whatever the zone doesn't use, so after
@@ -363,7 +367,7 @@ each: status, next watering, last watering and a 💧 water-now button.
 Click a zone to open its full card right there. Admins get an **Add
 zone** button at the bottom that starts the setup of a new zone.
 
-<img src="screenshots/overview.png" width="520" alt="The ZoneFlow overview card: every zone with its status, next and last watering and a water-now button">
+<img src="screenshots/overview.png" width="520" alt="The ZoneFlow overview card: a My Garden summary, then the zones grouped by area with each one's status, next watering and last watering in mm and litres">
 
 ```yaml
 type: custom:zoneflow-overview-card
@@ -383,7 +387,7 @@ a tab per zone with its ZoneFlow card if you like.
 A hand-built page per zone (what the AI setup guide made before the card
 existed) looks like this:
 
-<img src="screenshots/dashboard-zone.png" width="100%" alt="ZoneFlow zone dashboard: status with soil moisture, manual controls, health journal and growth profile">
+<img src="screenshots/dashboard-zone.png" width="100%" alt="The generated ZoneFlow dashboard: a tab per area with the area's Pause and Snooze Today and a card for each zone">
 
 ## Languages
 

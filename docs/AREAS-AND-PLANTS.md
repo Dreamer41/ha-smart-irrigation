@@ -4,6 +4,8 @@ ZoneFlow 1.7.0 adds areas, plants with a history of their own, presets, and a se
 
 ## Areas
 
+<img src="screenshots/overview.png" width="520" alt="The overview card grouped by area (Backyard, Nursery), each with its own Pause and Snooze Today">
+
 An **area** is a part of your garden, for example *Backyard* or *Front yard*. It holds the sensors its zones have in common:
 
 - the rain gauge (and the size of one tip),
@@ -24,6 +26,8 @@ An area also adds up the litres its zones used (last 30 days, this year).
 Zones that are in no area work exactly as before.
 
 ## Plants
+
+<img src="screenshots/plants-popup.png" width="380" alt="The Plants popup: a main plant and a record, each with Move, Rename, Remove and History, and a plant's history with notes">
 
 A zone is a place: valve, soil, slope, flow. The **plant** in it is the living thing, with a name, a type, a planting date, its watering targets and care settings, and a **history**: planted, fertilized, a setting changed, moved, removed, notes.
 
@@ -48,6 +52,10 @@ Starting a new bed from an existing one is quick:
 - When you add a new zone, the first screen has **Start from**: a copy of another zone or a saved preset, instead of the plant type's usual settings.
 
 ## Easy setup
+
+<img src="screenshots/setup-zone-form.png" width="380" alt="Adding a zone: the form asks which area it is in and what to start from">
+
+<img src="screenshots/check-my-setup.png" width="380" alt="Check my setup: a checklist with the problems first">
 
 - **Check my setup** (a zone card button) is a plain checklist: is the valve answering, do the sensors report, is the flow rate set, when did it last water. Problems come first and say what to do.
 - **Calibrate the flow rate** (a zone card button): run the valve for 15 minutes, catch the water, enter how much came out and the area, and the flow rate and Zone Flow are set. See also [Calibration](CALIBRATION.md).
