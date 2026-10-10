@@ -256,12 +256,7 @@ async def test_the_routine_waits_for_a_frost_held_deep_soak(hass, fake_valve_ser
     _history(controller, last_routine_days_ago=5, last_deep_days_ago=20)
     await controller.run_deep_soak()  # 05:00: frost
     hass.states.async_set(OUTDOOR_TEMP, "5.0")
-    await controller.run_routine_irrigation()  # 05:30: warm enough, but the deep soak goes first
-    await hass.async_block_till_done()
-    assert controller.clock.pulses_for(VALVE) == []
-    assert controller.status()["code"] == "waiting_deep_soak"
-
-    async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=FROST_RETRY_SECONDS + 1))
+    await controller.run_routine_irrigation()  # 05:30: warm enough, so the due routine hands over to the deep soak
     await hass.async_block_till_done()
     # Only the deep soak ran (it counts as the routine watering too).
     assert "Deep Soak Completed" in (tmp_path / "p.csv").read_text()

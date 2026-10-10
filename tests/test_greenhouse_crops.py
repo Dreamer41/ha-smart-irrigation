@@ -149,9 +149,9 @@ async def test_crop_configure_menu_and_link_unlink(hass, fake_valve_services):
     )
     await _load(hass, house)
     menu = await hass.config_entries.options.async_init(loose.entry_id)
-    assert "greenhouse_link" in menu["menu_options"]
-    result = await hass.config_entries.options.async_configure(menu["flow_id"], {"next_step_id": "greenhouse_link"})
-    result = await hass.config_entries.options.async_configure(result["flow_id"], {CONF_PARENT_ZONE: house.entry_id})
+    assert "location" in menu["menu_options"]
+    result = await hass.config_entries.options.async_configure(menu["flow_id"], {"next_step_id": "location"})
+    result = await hass.config_entries.options.async_configure(result["flow_id"], {"location": f"gh:{house.entry_id}"})
     assert result["type"] == FlowResultType.CREATE_ENTRY
     await hass.async_block_till_done()
     c = _ctl(hass, loose)
@@ -162,8 +162,8 @@ async def test_crop_configure_menu_and_link_unlink(hass, fake_valve_services):
     assert "zone_type" not in menu["menu_options"] and "greenhouse_devices" not in menu["menu_options"]
 
     # Back on its own: it keeps a copy of the greenhouse's sensor.
-    result = await hass.config_entries.options.async_configure(menu["flow_id"], {"next_step_id": "greenhouse_link"})
-    result = await hass.config_entries.options.async_configure(result["flow_id"], {CONF_PARENT_ZONE: ""})
+    result = await hass.config_entries.options.async_configure(menu["flow_id"], {"next_step_id": "location"})
+    result = await hass.config_entries.options.async_configure(result["flow_id"], {"location": ""})
     await hass.async_block_till_done()
     c = _ctl(hass, loose)
     assert not c.is_crop and c.inside_temp_entity == INSIDE_TEMP

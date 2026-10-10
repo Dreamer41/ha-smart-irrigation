@@ -11,7 +11,8 @@
     "deep_soak": "Diepe watergift",
     "routine": "Routinewatergift",
     "service_run": "Proefdraaien",
-    "test_pulse": "Testpuls"
+    "test_pulse": "Testpuls",
+    "manual_water": "Handmatige sproeibeurt"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: reserve-temperatuursensor in gebruik",
       "message": "De hoofd-binnentemperatuursensor ({entity}) werkt niet meer. De klimaatbeheersing gaat door met de reservesensor."
+    },
+    "action": {
+      "water": "Sproei {minutes} min",
+      "snooze": "Vandaag overslaan",
+      "fertilized": "Bemest"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle} overgeslagen om {time}: {temp}, onder de vorstbeveiliging ({limit})",
     "waiting_frost": "{cycle} wacht sinds {time}: {temp}, onder de vorstbeveiliging ({limit}); elk uur opnieuw gecontroleerd",
     "waiting_deep_soak": "{cycle} wacht sinds {time}: de diepe watergift gaat voor zodra het warm genoeg is",
-    "paused_until": "Gepauzeerd tot {until}"
+    "paused_until": "Gepauzeerd tot {until}",
+    "paused_area": "Gepauzeerd: geen water zolang {area} gepauzeerd is",
+    "paused_house": "Gepauzeerd: geen water zolang de kas {house} gepauzeerd is"
   },
   "summary": {
     "title": "💧 ZoneFlow: je week",
@@ -238,5 +246,148 @@
       "limited": "deels van de tijd aan",
       "outside": "deels van de tijd aan bij koud weer buiten"
     }
+  },
+  "location": {
+    "none": "Geen",
+    "greenhouse": "kas",
+    "new_area": "Nieuw gebied..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Gebruikt een eigene regenmeter, niet die van {area}.",
+      "outdoor_temp_entity": "Gebruikt een eigene buitentemperatursensor, niet die van {area}.",
+      "weather_entity": "Gebruikt een eigene weer-entiteit, niet die van {area}.",
+      "notify_entity": "Verstuurt naar de eigen telefoon, niet die van {area}."
+    }
+  },
+  "plants": {
+    "on": "aan",
+    "off": "uit",
+    "history": {
+      "created": "Toegevoegd aan ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Verplaatst van {from_zone} naar {to_zone}",
+      "promoted": "Werd de hoofdplant van {zone}",
+      "demoted": "Nu alleen vastlegging in {zone}",
+      "archived": "Gearchiveerd uit {zone}",
+      "removed": "Verwijderd uit {zone}",
+      "note": "{text}",
+      "copied": "Instellingen gekopieerd van {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Groeifasemodus",
+      "demand_model": "Sproeimethode",
+      "deficit_enabled": "Tekortmodus",
+      "deficit_until_ts": "Tekortmodus tot",
+      "planting_date_ts": "Plantdatum",
+      "health_status": "Gezondheid",
+      "health_notes": "Gezondheidsnotities",
+      "fertilizing_interval_months": "Bemestingsinterval",
+      "last_fertilizing_ts": "Laatst bemest",
+      "growth_ramp_profile": "Groeicurve",
+      "deep_soak_enabled": "Diepe watergift"
+    }
+  },
+  "start_from": {
+    "none": "Standaardinstellingen voor dit planttype",
+    "zone": "Kopie van {zone}",
+    "preset": "Voorinstelling: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "De klep {entity} antwoordt.",
+      "fail": "De klep {entity} is niet beschikbaar. Controleer het apparaat en de verbinding in Home Assistant: niets kan sproeien tot deze antwoordt."
+    },
+    "rain": {
+      "ok": "De regenmeter {entity} geeft waarden door.",
+      "fail": "De regenmeter {entity} is niet beschikbaar. Tot deze terug is, gaat ZoneFlow er van uit dat het niet regent.",
+      "wu": "Regen komt van Weather Underground.",
+      "manual": "Regen wordt handmatig toegevoegd.",
+      "none": "Geen regenmeter. ZoneFlow gaat er van uit dat het nooit regent, tenzij je handmatig regen toevoegt of Weather Underground gebruikt."
+    },
+    "temperature": {
+      "ok": "Buitentemperatuur is {value} {unit}.",
+      "none": "Geen buitentemperatursensor. De instelling Terugvaltemperatuur bepaalt hoe warm ZoneFlow denkt dat het is.",
+      "fail": "De temperatuursensor {entity} is niet beschikbaar. Ondertussen wordt de terugvaltemperatuur gebruikt."
+    },
+    "weather": {
+      "ok": "De weervoorspelling {entity} is beschikbaar.",
+      "none": "Geen weer-entiteit, dus een regenvoorspelling kan een sproeibeurt niet overslaan.",
+      "fail": "De weer-entiteit {entity} is niet beschikbaar, dus de voorspelling wordt voorlopig genegeerd."
+    },
+    "flow": {
+      "ok": "Het debiet is ingesteld ({value} mm/min).",
+      "default": "Het debiet is nog de voorbeeldwaarde. Kalibreer het zodat elke sproeibeurt de juiste tijd duurt."
+    },
+    "volume": {
+      "ok": "Waterverbruik wordt getoond in liters.",
+      "none": "Waterverbruik wordt alleen in mm getoond. Stel het Zonedebiet in om liters te zien."
+    },
+    "soil": {
+      "ok": "De bodemvochtsensor geeft {value} % aan.",
+      "fail": "De bodemvochtsensor {entity} is niet beschikbaar. De zone sproeit volgens de kalender tot deze terug is."
+    },
+    "pump": {
+      "ok": "De vermogenssensor van de pomp {entity} geeft waarden door.",
+      "fail": "De vermogenssensor van de pomp {entity} is niet beschikbaar, dus de pompcontrole wordt overgeslagen."
+    },
+    "paused": {
+      "zone": "Deze zone is gepauzeerd: geen water tot je Pauze uitzet.",
+      "area": "Het gebied {area} is gepauzeerd: geen water tot je de Pauze uitzet.",
+      "house": "De kas {house} is gepauzeerd: geen water tot je de Pauze uitzet."
+    },
+    "last": {
+      "ok": "Laatste sproeibeurt: {when}.",
+      "never": "ZoneFlow heeft deze zone noch niet besproeid.",
+      "overdue": "De laatste sproeibeurt was {days} dagen geleden, langer dan verwacht. Controleer de klep en de status."
+    },
+    "notify": {
+      "ok": "Telefoonberichten gaan naar {entity}.",
+      "none": "Geen telefoon om te melden. Je krijgt geen berichten over het sproeien.",
+      "fail": "De telefoon {entity} bestaat niet meer, dus er komen geen berichten an."
+    }
+  },
+  "why": {
+    "method": "Sproeimethode: {method}.",
+    "method_temperature": "temperatuurniveaus (een warmere week krijgt meer water)",
+    "method_et": "evapotranspiratie (het watergebruik van de plant, berekend op basis van temperatuur)",
+    "temperature": "Gebruikte temperatuur: {value} ({source}), dus een {tier} week.",
+    "source": {
+      "sensor": "het gemiddelde van de maximumtemperaturen van de afgelopen dagen",
+      "last_known": "van de afgelopen dagen, sensor is nu offline",
+      "fallback": "Terugvaltemperatuur, nog geen volledige dag vastgelegd",
+      "manual": "de instelling Terugval- / Handmatige temperatuur"
+    },
+    "tier": {
+      "hot": "hete",
+      "normal": "normale",
+      "cool": "koele"
+    },
+    "target": "Weekdoel: {target}.",
+    "scale": "Doel aangepast naar {pct} % door groeifase, tekortmodus en mulch.",
+    "rain": "Regenvoordeel sinds laatste sproeibeurt: {credit} (regen afgelopen 7 dagen: {rain}).",
+    "needed": "Als er nu gesproeid wordt: {needed} toevoegen, ca. {minutes} min.",
+    "forecast": "Er werd regen voorspeld, dus de laatste {n} sproeibeurten op rij zijn overgeslagen.",
+    "soil": "Bodemvocht {pct} % ({status}).",
+    "soil_dry": "droog",
+    "soil_wet": "nat",
+    "soil_ok": "gemiddeld"
+  },
+  "suggest": {
+    "heading": "Mogelijke entiteiten gevonden in je Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Klep",
+      "rain": "Regenmeter",
+      "temperature": "Buitentemperatuur",
+      "weather": "Weer",
+      "soil": "Bodemvocht",
+      "flow": "Stroommeter",
+      "pump": "Pompvermogen",
+      "notify": "Telefoon"
+    }
+  },
+  "setup": {
+    "progress": "Stap {n} van {total}"
   }
 }

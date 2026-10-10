@@ -11,7 +11,8 @@
     "deep_soak": "Arrosage profond",
     "routine": "Arrosage régulier",
     "service_run": "Test de maintenance",
-    "test_pulse": "Test de vanne"
+    "test_pulse": "Test de vanne",
+    "manual_water": "Arrosage manuel"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone} : utilisation du capteur de température de secours",
       "message": "Le capteur principal de température intérieure ({entity}) ne fonctionne plus. Le contrôle climatique se poursuit avec le capteur de secours."
+    },
+    "action": {
+      "water": "Arroser {minutes} min",
+      "snooze": "Sauter aujourd'hui",
+      "fertilized": "Fertilisé"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle} sauté à {time} : {temp}, sous le seuil antigel ({limit})",
     "waiting_frost": "{cycle} en attente à {time} : {temp}, sous le seuil antigel ({limit}) ; nouvel essai toutes les heures",
     "waiting_deep_soak": "{cycle} en attente depuis {time} : l'arrosage profond passe d'abord dès qu'il fait assez chaud",
-    "paused_until": "En pause jusqu'au {until}"
+    "paused_until": "En pause jusqu'au {until}",
+    "paused_area": "En pause : aucun arrosage tant que {area} est en pause",
+    "paused_house": "En pause : aucun arrosage tant que la serre {house} est en pause"
   },
   "summary": {
     "title": "💧 ZoneFlow : votre semaine",
@@ -238,5 +246,148 @@
       "limited": "allumé une partie du temps",
       "outside": "allumé une partie du temps s'il fait froid dehors"
     }
+  },
+  "location": {
+    "none": "Aucune",
+    "greenhouse": "serre",
+    "new_area": "Nouvelle zone..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Utilise son propre pluviomètre, pas celui de {area}.",
+      "outdoor_temp_entity": "Utilise son propre capteur de température extérieure, pas celui de {area}.",
+      "weather_entity": "Utilise sa propre entité météo, pas celle de {area}.",
+      "notify_entity": "Envoie sur son propre téléphone, pas sur celui de {area}."
+    }
+  },
+  "plants": {
+    "on": "activé",
+    "off": "désactivé",
+    "history": {
+      "created": "Ajouté à ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Déplacé de {from_zone} vers {to_zone}",
+      "promoted": "Est devenue la plante principale de {zone}",
+      "demoted": "Désormais enregistrement seul dans {zone}",
+      "archived": "Archivé depuis {zone}",
+      "removed": "Retiré de {zone}",
+      "note": "{text}",
+      "copied": "Paramètres copiés depuis {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Mode stade de croissance",
+      "demand_model": "Méthode d'arrosage",
+      "deficit_enabled": "Mode déficit",
+      "deficit_until_ts": "Mode déficit jusqu'à",
+      "planting_date_ts": "Date de plantation",
+      "health_status": "Santé",
+      "health_notes": "Notes de santé",
+      "fertilizing_interval_months": "Intervalle de fertilisation",
+      "last_fertilizing_ts": "Dernière fertilisation",
+      "growth_ramp_profile": "Courbe de croissance",
+      "deep_soak_enabled": "Arrosage profond"
+    }
+  },
+  "start_from": {
+    "none": "Paramètres habituels du type de plante",
+    "zone": "Une copie de {zone}",
+    "preset": "Préréglage : {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "La vanne {entity} répond.",
+      "fail": "La vanne {entity} n'est pas disponible. Vérifiez l'appareil et sa connexion dans Home Assistant : aucun arrosage possible sans réponse."
+    },
+    "rain": {
+      "ok": "Le pluviomètre {entity} émet des données.",
+      "fail": "Le pluviomètre {entity} n'est pas disponible. En son absence, ZoneFlow suppose qu'il ne pleut pas.",
+      "wu": "La pluie provient de Weather Underground.",
+      "manual": "La pluie est ajoutée manuellement.",
+      "none": "Aucun pluviomètre. ZoneFlow suppose qu'il ne pleut jamais, sauf si vous ajoutez la pluie manuellement ou utilisez Weather Underground."
+    },
+    "temperature": {
+      "ok": "La température extérieure est de {value} {unit}.",
+      "none": "Aucun capteur de température extérieure. La température de secours détermine la chaleur estimée par ZoneFlow.",
+      "fail": "Le capteur de température {entity} n'est pas disponible. La température de secours est utilisée en attendant."
+    },
+    "weather": {
+      "ok": "Les prévisions météo {entity} sont disponibles.",
+      "none": "Aucune entité météo, une prévision de pluie ne peut donc pas annuler un arrosage.",
+      "fail": "L'entité météo {entity} n'est pas disponible, les prévisions sont donc ignorées pour l'instant."
+    },
+    "flow": {
+      "ok": "Le débit est réglé ({value} mm/min).",
+      "default": "Le débit est toujours la valeur d'exemple. Étalonnez-le pour que chaque arrosage dure le temps nécessaire."
+    },
+    "volume": {
+      "ok": "La consommation d'eau est affichée en litres.",
+      "none": "La consommation d'eau est affichée en mm uniquement. Réglez le Débit de zone pour voir les litres."
+    },
+    "soil": {
+      "ok": "Le capteur d'humidité du sol indique {value} %.",
+      "fail": "Le capteur d'humidité du sol {entity} n'est pas disponible. La zone arrose selon le calendrier en son absence."
+    },
+    "pump": {
+      "ok": "Le capteur de puissance de la pompe {entity} émet des données.",
+      "fail": "Le capteur de puissance de la pompe {entity} n'est pas disponible, le contrôle est donc ignoré."
+    },
+    "paused": {
+      "zone": "Cette zone est en pause : aucun arrosage tant que vous ne désactivez pas Pause.",
+      "area": "La zone {area} est en pause : aucun arrosage tant que vous ne désactivez pas sa Pause.",
+      "house": "La serre {house} est en pause : aucun arrosage tant que vous ne désactivez pas sa Pause."
+    },
+    "last": {
+      "ok": "Dernier arrosage : {when}.",
+      "never": "ZoneFlow n'a pas encore arrosé cette zone.",
+      "overdue": "Le dernier arrosage remonte à {days} jours, plus longtemps que prévu. Vérifiez la vanne et l'état."
+    },
+    "notify": {
+      "ok": "Les messages téléphoniques sont envoyés à {entity}.",
+      "none": "Aucun téléphone à notifier. Vous ne recevrez pas de messages concernant l'arrosage.",
+      "fail": "Le téléphone {entity} n'existe plus, aucun message ne vous parviendra."
+    }
+  },
+  "why": {
+    "method": "Méthode d'arrosage : {method}.",
+    "method_temperature": "niveaux de température (une semaine plus chaude reçoit plus d'eau)",
+    "method_et": "évapotranspiration (consommation d'eau calculée selon la température)",
+    "temperature": "Température utilisée : {value} ({source}), soit une semaine {tier}.",
+    "source": {
+      "sensor": "la moyenne des maximales des derniers jours",
+      "last_known": "des derniers jours, le capteur est hors ligne actuellement",
+      "fallback": "Température de secours, aucune journée complète enregistrée pour l'instant",
+      "manual": "le paramètre Température de secours / manuelle"
+    },
+    "tier": {
+      "hot": "chaude",
+      "normal": "normale",
+      "cool": "fraîche"
+    },
+    "target": "Objectif hebdomadaire : {target}.",
+    "scale": "Cet objectif est ajusté à {pct} % selon le stade de croissance, le mode déficit et le paillis.",
+    "rain": "Crédit de pluie depuis le dernier arrosage : {credit} (pluie ces 7 derniers jours : {rain}).",
+    "needed": "Si arrosage maintenant : {needed} à ajouter, env. {minutes} min.",
+    "forecast": "De la pluie était prévue, les {n} derniers arrosages d'affilée ont donc été annulés.",
+    "soil": "Humidité du sol {pct} % ({status}).",
+    "soil_dry": "sec",
+    "soil_wet": "humide",
+    "soil_ok": "moyen"
+  },
+  "suggest": {
+    "heading": "Éléments probables trouvés dans votre Home Assistant :",
+    "line": "{role} : {names}",
+    "role": {
+      "valve": "Vanne",
+      "rain": "Pluviomètre",
+      "temperature": "Température extérieure",
+      "weather": "Météo",
+      "soil": "Humidité du sol",
+      "flow": "Débitmètre",
+      "pump": "Puissance de la pompe",
+      "notify": "Téléphone"
+    }
+  },
+  "setup": {
+    "progress": "Étape {n} sur {total}"
   }
 }

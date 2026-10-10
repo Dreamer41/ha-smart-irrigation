@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Nome da zona",
           "plant": "O que está plantado",
-          "zone_type": "Onde ela cultiva"
+          "zone_type": "Onde ela cultiva",
+          "start_from": "Iniciar a partir de",
+          "location": "Onde fica isso?"
         },
         "data_description": {
           "zone_name": "Vira o nome do dispositivo da zona e o início dos nomes das entidades, e aparece nas mensagens no celular. Ex.: \"Canteiro de tomates\", \"Gramado da frente\".",
           "plant": "Preenche valores iniciais adequados para esta cultura: metas semanais de água, coeficiente de cultura, irrigação profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Você pode alterar tudo depois na página do dispositivo da zona.",
-          "zone_type": "Ao ar livre é como o ZoneFlow sempre funcionou. Zonas de estufa e internas adicionam controle de clima (ventiladores, aberturas de ventilação, nebulização, aquecedor), podem funcionar sem válvula e não possuem medidor de chuva ou previsão do tempo devido ao teto."
+          "zone_type": "Ao ar livre é como o ZoneFlow sempre funcionou. Zonas de estufa e internas adicionam controle de clima (ventiladores, aberturas de ventilação, nebulização, aquecedor), podem funcionar sem válvula e não possuem medidor de chuva ou previsão do tempo devido ao teto.",
+          "start_from": "Inicie a partir de uma cópia das configurações de irrigação de outra zona ou de uma predefinição salva em vez das do tipo de planta. A válvula, os sensores e a vazão nunca são copiados.",
+          "location": "A área em que esta zona está, se houver. Ela passa a usar o pluviômetro, o sensor de temperatura, o clima e o celular da área, a menos que você dê os seus próprios."
         }
       },
       "entities": {
         "title": "Irrigação ZoneFlow",
-        "description": "Aponte aqui para as suas entidades reais. A integração nunca cria entidades físicas próprias. Só o interruptor da válvula é obrigatório -- todo o resto é opcional, e a zona se adapta ao que ficar em branco.",
+        "description": "{progress}\n\nAponte isso para suas entidades reais. Ela nunca cria entidades físicas próprias. Apenas o interruptor da válvula é obrigatório – todo o resto abaixo funciona perfeitamente se deixado sem configurar. Deixe um campo em branco se não o tiver.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interruptor da válvula",
           "pump_power_entity": "Sensor de potência da bomba (opcional)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Sensor de umidade do solo (opcional)",
           "notify_entity": "Destino das notificações no celular (opcional)",
           "weather_entity": "Fonte da previsão do tempo (opcional)",
-          "soil_type": "Tipo de solo",
-          "drainage": "Drenagem",
-          "slope": "Declividade",
-          "irrigation_method": "Método de irrigação",
-          "growth_ramp_profile": "Rampa automática de crescimento",
+          "soil_type": "Conhece o tipo de solo? (pule se não)",
+          "drainage": "A água drena lentamente? (pule se não souber)",
+          "slope": "O terreno é inclinado? (pule se for plano ou se não tiver certeza)",
+          "irrigation_method": "Como a água chega até as plantas?",
+          "growth_ramp_profile": "É uma planta jovem que precisa de menos água no início? (pule se não)",
           "csv_path": "Caminho do arquivo CSV de histórico",
           "deep_soak_enabled": "Ativar o ciclo de irrigação profunda",
           "deep_soak_time": "Horário da irrigação profunda",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Clima",
-        "description": "Como é a estação de crescimento onde fica esta zona? Isto só preenche os controles de temperatura da próxima página -- você pode alterar todos os valores lá e, depois, na página do dispositivo da zona.",
+        "description": "{progress}\n\nComo é a temporada de cultivo onde esta zona está? Isso apenas preenche previamente os seletores de temperatura na página seguinte – você pode alterar todos os valores lá e mais tarde na página do dispositivo da zona.",
         "data": {
           "climate": "Clima"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Limites de temperatura",
-        "description": "O ZoneFlow faz a média da temperatura MÁXIMA diária dos últimos 3 dias. A partir do limite de calor, irriga com mais frequência (a cada 3 dias) com a meta semanal de calor; abaixo do limite de tempo fresco, usa a meta semanal de tempo fresco; entre os dois, é o normal.\n\nA temperatura de reserva é usada quando não há leitura real: sem sensor de temperatura, ela é o seu controle manual (aumente numa onda de calor, diminua num período frio); com sensor, só é usada até o sensor registrar o primeiro dia completo, e depois de 3 dias sem nenhuma leitura.",
+        "description": "{progress}\n\nO ZoneFlow calcula a média da temperatura MÁXIMA diária dos últimos 3 dias. No nível Quente ou acima, irriga com mais frequência (a cada 3 dias) com a meta semanal quente; abaixo de Frio usa a meta semanal fria; no meio é normal.\n\nA temperatura de reserva é usada quando não há uma leitura real: sem sensor de temperatura é o seu controle manual (aumente para uma onda de calor, diminua para uma onda de frio); com sensor é usada apenas até o sensor registrar seu primeiro dia completo, e após 3 dias sem uma única leitura.",
         "data": {
           "hot_temp_threshold": "Limite de calor",
           "cool_temp_threshold": "Limite de tempo fresco",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Adicionar uma zona",
           "weather_underground": "Configurar chuva do Weather Underground",
-          "crop": "Adicionar uma cultura a uma estufa"
+          "crop": "Adicionar uma cultura a uma estufa",
+          "area": "Adicionar uma área (uma parte do jardim)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "Um interruptor que abre a água desta cultura. Cada cultura precisa de sua própria válvula."
         }
+      },
+      "area": {
+        "title": "Nova área",
+        "description": "Uma parte do jardim, por ejemplo Quintal ou Jardim da frente. Suas zonas usam os sensores configurados aqui, a menos que uma zona tenha os seus próprios.",
+        "data": {
+          "area_name": "Nome",
+          "rain_counter_entity": "Pluviômetro",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
+          "area_rain_mm_per_tip": "Pluviômetro: mm por basculada",
+          "outdoor_temp_entity": "Sensor de temperatura externa",
+          "weather_entity": "Entidade de clima (previsão)",
+          "notify_entity": "Celular para notificações"
+        },
+        "data_description": {
+          "rain_counter_entity": "Opcional. As zonas desta área leem a chuva a partir daqui, a menos que uma zona tenha seu próprio pluviômetro.",
+          "area_rain_mm_per_tip": "Apenas para contador de basculada: quantos mm de chuva corresponde a uma basculada.",
+          "outdoor_temp_entity": "Opcional. Define o nível de irrigação quente / frio para as zonas desta área.",
+          "weather_entity": "Opcional. Permite que as zonas desta área pulem a irrigação quando houver previsão de chuva.",
+          "notify_entity": "Opcional. Para onde as zonas desta área enviam suas mensagens de celular.",
+          "area_name": "Como a área é chamada, por ejemplo Quintal ou Jardim da frente.",
+          "rain_source_type": "O que o sensor do pluviômetro reporta: um contador de basculada, chuva total, taxa de chuva ou a chuva desde a última leitura."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "O Weather Underground recusou a chave API.",
       "wu_cannot_connect": "Não foi possível conectar ao Weather Underground. Tente novamente mais tarde.",
       "wu_no_stations": "Nenhuma estação dentro do raio. Sem uma estação próxima, este recurso não ajudará.",
-      "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações."
+      "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
+      "area_name_required": "Dê um nome à área.",
+      "area_name_exists": "Já existe uma área com este nome."
     },
     "abort": {
       "already_configured": "A chuva do Weather Underground já está configurada."
@@ -264,7 +293,7 @@
           "zone_type": "Tipo de zona",
           "weather_underground": "Chuva do Weather Underground",
           "crop_valve": "Válvula da cultura",
-          "greenhouse_link": "Estufa"
+          "location": "Onde fica isso? (área ou estufa)"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "Um interruptor que abre a água desta cultura. Cada cultura precisa de sua própria válvula."
         }
       },
-      "greenhouse_link": {
-        "title": "Estufa",
-        "description": "Torne esta zona uma cultura de uma estufa: ela passa a usar os sensores internos dessa estufa e é mostrada com ela. Selecione \"-\" para torná-la novamente uma zona independente (mantém uma cópia dos sensores da estufa).",
-        "data": {
-          "greenhouse_entry_id": "Parte da estufa"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "A estufa ou zona interna com os dispositivos de clima, ou \"-\" para nenhuma."
-        }
-      },
       "flow_volume": {
         "title": "Medir a vazão por volume",
         "description": "Pressione um dos botões Ciclo de manutenção da zona (um ciclo mais longo, como 15 min, é mais preciso) e recolha ou leia a água: um balde ou tambor nos emissores, ou a diferença em um hidrômetro. Em seguida, informe os minutos em que a válvula ficou aberta, os litros e a área que os emissores molham.\n\nO resultado é a MÉDIA da zona: litros divididos pela área e pelos minutos, e substitui a Calibração da vazão dos emissores da zona. O ZoneFlow possui uma única taxa por zona, portanto não consegue diferenciar os emissores. Para um resultado preciso, todos os emissores na válvula de uma zona devem ser do mesmo tipo e vazão; coloque emissores diferentes em válvulas separadas (zonas separadas). Em uma zona mista, as plantas nos emissores mais fracos recebem menos do que a média mostrada. Também define a Vazão da zona, os litros por minuto usados para a estimativa de uso de água.",
@@ -506,6 +525,76 @@
           "head_flow": "O que um emissor fornece, conforme a embalagem ou tabela de bocais.",
           "head_flow_unit": "A unidade em que a vazão de um emissor é informada."
         }
+      },
+      "location": {
+        "title": "Onde fica isso?",
+        "description": "A área ou estufa onde esta zona se encontra. Uma zona usa os sensores de sua área a menos que tenha os seus próprios. Em uma estufa, é um cultivo dela. Escolha Nova área para criar uma área a partir dos próprios sensores desta zona.",
+        "data": {
+          "location": "Local"
+        },
+        "data_description": {
+          "location": "Uma área, uma estufa ou nenhum. Mover a zona a reinicia para que leia os sensores do novo local."
+        }
+      },
+      "location_sensors": {
+        "title": "Usar os sensores da área?",
+        "description": "Esta zona tem seu próprio sensor onde a área tem um diferente. Marque para usar o da área; desmarque para manter o próprio da zona.",
+        "data": {
+          "rain_counter_entity": "Usar o pluviômetro da área",
+          "outdoor_temp_entity": "Usar a temperatura externa da área",
+          "weather_entity": "Usar a entidade de clima da área",
+          "notify_entity": "Usar o celular da área"
+        },
+        "data_description": {
+          "rain_counter_entity": "Marque para usar o pluviômetro da área em vez do próprio desta zona.",
+          "outdoor_temp_entity": "Marque para usar o sensor de temperatura externa da área em vez do próprio desta zona.",
+          "weather_entity": "Marque para usar a entidade de clima da área em vez da própria desta zona.",
+          "notify_entity": "Marque para enviar para o celular da área em vez do próprio desta zona."
+        }
+      },
+      "new_area": {
+        "title": "Nova área",
+        "description": "Uma área criada a partir dos sensores desta zona. A zona muda-se para ela e outras zonas podem se juntar mais tarde.",
+        "data": {
+          "area_name": "Nome",
+          "rain_counter_entity": "Pluviômetro",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
+          "area_rain_mm_per_tip": "Pluviômetro: mm por basculada",
+          "outdoor_temp_entity": "Sensor de temperatura externa",
+          "weather_entity": "Entidade de clima (previsão)",
+          "notify_entity": "Celular para notificações"
+        },
+        "data_description": {
+          "rain_counter_entity": "Opcional. As zonas desta área leem a chuva a partir daqui, a menos que uma zona tenha seu próprio pluviômetro.",
+          "area_rain_mm_per_tip": "Apenas para contador de basculada: quantos mm de chuva corresponde a uma basculada.",
+          "outdoor_temp_entity": "Opcional. Define o nível de irrigação quente / frio para as zonas desta área.",
+          "weather_entity": "Opcional. Permite que as zonas desta área pulem a irrigação quando houver previsão de chuva.",
+          "notify_entity": "Opcional. Para onde as zonas desta área enviam suas mensagens de celular.",
+          "area_name": "Como a área é chamada, por ejemplo Quintal ou Jardim da frente.",
+          "rain_source_type": "O que o sensor do pluviômetro reporta: um contador de basculada, chuva total, taxa de chuva ou a chuva desde a última leitura."
+        }
+      },
+      "area_settings": {
+        "title": "Área",
+        "description": "O nome da área e os sensores que suas zonas compartilham. Uma zona com sensor próprio continua a usá-lo.",
+        "data": {
+          "area_name": "Nome",
+          "rain_counter_entity": "Pluviômetro",
+          "rain_source_type": "Tipo de sensor do pluviômetro",
+          "area_rain_mm_per_tip": "Pluviômetro: mm por basculada",
+          "outdoor_temp_entity": "Sensor de temperatura externa",
+          "weather_entity": "Entidade de clima (previsão)",
+          "notify_entity": "Celular para notificações"
+        },
+        "data_description": {
+          "rain_counter_entity": "Opcional. As zonas desta área leem a chuva a partir daqui, a menos que uma zona tenha seu próprio pluviômetro.",
+          "area_rain_mm_per_tip": "Apenas para contador de basculada: quantos mm de chuva corresponde a uma basculada.",
+          "outdoor_temp_entity": "Opcional. Define o nível de irrigação quente / frio para as zonas desta área.",
+          "weather_entity": "Opcional. Permite que as zonas desta área pulem a irrigação quando houver previsão de chuva.",
+          "notify_entity": "Opcional. Para onde as zonas desta área enviam suas mensagens de celular.",
+          "area_name": "Como a área é chamada, por ejemplo Quintal ou Jardim da frente.",
+          "rain_source_type": "O que o sensor do pluviômetro reporta: um contador de basculada, chuva total, taxa de chuva ou a chuva desde a última leitura."
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "A zona (ou a bomba dela) está ocupada, ou o limite de segurança diário de funcionamento já foi atingido. Tente novamente mais tarde.",
       "flow_rate_disabled": "A entidade Calibração da vazão dos emissores da zona está desativada. Ative-a (página do dispositivo da zona → entidades) e tente novamente.",
       "zone_flow_set": "Vazão da zona definida para {flow}. Usada apenas para a estimativa de uso de água.",
-      "zone_flow_out_of_range": "Isso resulta em uma vazão de zona fora do permitido pela configuração (0 a 2000 L/min). Verifique os números."
+      "zone_flow_out_of_range": "Isso resulta em uma vazão de zona fora do permitido pela configuração (0 a 2000 L/min). Verifique os números.",
+      "location_not_available": "Esse local não está disponível."
     },
     "error": {
       "valve_already_used": "Outra zona do ZoneFlow já usa esta válvula.",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "Não foi possível conectar ao Weather Underground. Tente novamente mais tarde.",
       "wu_no_stations": "Nenhuma estação dentro do raio. Sem uma estação próxima, este recurso não ajudará.",
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
-      "greenhouse_has_crops": "Esta estufa tem culturas. Mova-as para outra estufa ou remova-as primeiro (Configurar -> Estufa de cada cultura)."
+      "greenhouse_has_crops": "Esta estufa tem culturas. Mova-as para outra estufa ou remova-as primeiro (Configurar -> Estufa de cada cultura).",
+      "area_name_required": "Dê um nome à área.",
+      "area_name_exists": "Já existe uma área com este nome."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "Ligado parte do tempo",
           "outside": "Parte do tempo enquanto estiver frio fora"
         }
+      },
+      "location": {
+        "name": "Onde fica isso?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Qualquer entidade do dispositivo da zona (alternativa ao Dispositivo da zona)."
         }
       }
+    },
+    "create_area": {
+      "name": "Criar área",
+      "description": "Cria uma nova área (uma parte do jardim como Quintal). Selecione uma zona e ela muda-se para a nova área, que começa com as configurações de pluviômetro, temperatura externa, clima e celular dessa zona.",
+      "fields": {
+        "name": {
+          "name": "Nome",
+          "description": "Como a área é chamada, por ejemplo Quintal ou Jardim da frente."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona a ser colocada na nova área (opcional)."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo dessa zona (alternativa a Dispositivo da zona)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Adicionar planta",
+      "description": "Adiciona uma planta a uma zona. Em uma zona sem planta principal, torna-se a planta principal e as configurações do seu tipo vão para a zona; caso contrário, é apenas um registro (histórico, notas), a menos que Antiga planta principal indique que assume o controle.",
+      "fields": {
+        "name": {
+          "name": "Nome",
+          "description": "Como a planta é chamada."
+        },
+        "plant_type": {
+          "name": "Tipo de planta",
+          "description": "Configurações iniciais para este tipo de planta (personalizadas se omitido)."
+        },
+        "old_main": {
+          "name": "Antiga planta principal",
+          "description": "Apenas quando a zona já tem uma planta principal. O que acontece com ela: manter como registro ou arquivar."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona. Apenas necessário se houver 2 ou mais zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo da zona (alternativa a Dispositivo da zona)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Mover planta",
+      "description": "Move uma planta, com seu histórico, para outra zona. Suas configurações vão para a zona de destino.",
+      "fields": {
+        "plant_id": {
+          "name": "Planta",
+          "description": "O ID da planta (mostrado nos atributos de status da zona)."
+        },
+        "old_main": {
+          "name": "Antiga planta principal",
+          "description": "Apenas quando a zona já tem uma planta principal. O que acontece com ela: manter como registro, arquivar, trocá-la para a zona que esta planta deixa, ou manter esta planta apenas como registro."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona para onde vai."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo da zona (alternativa a Dispositivo da zona)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Remover planta",
+      "description": "Remove uma planta de sua zona. Ela permanece registrada com seu histórico. A próxima planta na zona torna-se a planta principal.",
+      "fields": {
+        "plant_id": {
+          "name": "Planta",
+          "description": "O ID da planta."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Definir planta principal",
+      "description": "Torna uma planta a planta principal de sua zona: suas configurações vão para a zona e a antiga planta principal permanece como registro.",
+      "fields": {
+        "plant_id": {
+          "name": "Planta",
+          "description": "O ID da planta."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Adicionar nota à planta",
+      "description": "Adiciona uma nota ao histórico de uma planta.",
+      "fields": {
+        "plant_id": {
+          "name": "Planta",
+          "description": "O ID da planta."
+        },
+        "text": {
+          "name": "Nota",
+          "description": "O que escrever."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Salvar predefinição",
+      "description": "Salva as configurações de irrigação de uma zona (não sua válvula, sensores, vazão, data de plantio ou notas) sob um nome, para iniciar outras zonas a partir delas. O mesmo nome substitui a predefinição.",
+      "fields": {
+        "name": {
+          "name": "Nome",
+          "description": "Como chamar a predefinição."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona. Apenas necessário se houver 2 ou mais zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo da zona (alternativa a Dispositivo da zona)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Copiar configurações",
+      "description": "Aplica a uma zona as configurações de irrigação de outra zona ou de uma predefinição salva. Não inclui válvula, sensores, vazão, data de plantio ou notas.",
+      "fields": {
+        "source_device_id": {
+          "name": "Copiar da zona",
+          "description": "A zona de onde copiar as configurações (ou escolha uma predefinição)."
+        },
+        "preset": {
+          "name": "Predefinição",
+          "description": "O nome de uma predefinição salva (ou escolha uma zona para copiar)."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona que recebe as configurações."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo da zona (alternativa a Dispositivo da zona)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Excluir predefinição",
+      "description": "Exclui uma predefinição salva.",
+      "fields": {
+        "name": {
+          "name": "Nome",
+          "description": "O nome da predefinição."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Irrigar agora",
+      "description": "Irriga a zona manualmente durante um determinado número de minutos. Não funciona com a zona em pausa, nunca ultrapassa o Limite máximo de segurança de irrigação de rotina da zona e respeita o limite diário de funcionamento. Conta no registro de água (litros), mas não altera o agendamento da irrigação de rotina ou profunda.",
+      "fields": {
+        "minutes": {
+          "name": "Minutos",
+          "description": "Quanto tempo irrigar."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona. Apenas necessário se houver 2 ou mais zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo da zona (alternativa a Dispositivo da zona)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Calibrar vazão",
+      "description": "Define a vazão a partir de um ciclo medido: a água que saiu (recolhida em um balde ou lida em um hidrômetro), a área coberta e o tempo em que a válvula ficou aberta. Define também a Vazão da zona para litros.",
+      "fields": {
+        "volume": {
+          "name": "Água",
+          "description": "Quanta água saiu (litros, ou galões em uma zona imperial)."
+        },
+        "area": {
+          "name": "Área",
+          "description": "A área onde a água caiu (m2, ou ft2 em uma zona imperial)."
+        },
+        "minutes": {
+          "name": "Minutos",
+          "description": "Quanto tempo a válvula ficou aberta."
+        },
+        "device_id": {
+          "name": "Dispositivo da zona",
+          "description": "A zona. Apenas necessário se houver 2 ou mais zonas configuradas."
+        },
+        "entity_id": {
+          "name": "Entidade da zona",
+          "description": "Qualquer entidade pertencente ao dispositivo da zona (alternativa a Dispositivo da zona)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Nenhum dispositivo está suspenso: todos já estão sob o controle do ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "Esse local não está mais disponível."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "Uma estufa com dispositivos de clima não pode ser uma cultura de outra estufa."
+    },
+    "area_name_required": {
+      "message": "Dê um nome à área."
+    },
+    "area_name_exists": {
+      "message": "Já existe uma área com este nome."
+    },
+    "plant_zone_not_available": {
+      "message": "Essa zona não está disponível."
+    },
+    "plant_name_required": {
+      "message": "Dê um nome à planta."
+    },
+    "plant_not_found": {
+      "message": "Essa planta não existe."
+    },
+    "plant_same_zone": {
+      "message": "A planta já está nessa zona."
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} já tem uma planta principal. Indique o que acontece com ela (Antiga planta principal)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Apenas uma zona com válvula pode ter uma planta principal."
+    },
+    "plant_note_required": {
+      "message": "Escreva a nota primeiro."
+    },
+    "preset_name_required": {
+      "message": "Dê um nome à predefinição."
+    },
+    "preset_not_found": {
+      "message": "Não existe nenhuma predefinição com esse nome."
+    },
+    "copy_same_zone": {
+      "message": "Escolha uma zona diferente para copiar."
+    },
+    "copy_source_required": {
+      "message": "Escolha uma zona ou predefinição para copiar."
+    },
+    "water_now_out_of_range": {
+      "message": "Irrigue por pelo menos 1 minuto e no máximo {max} minutos (limite de segurança desta zona)."
+    },
+    "calibration_out_of_range": {
+      "message": "Estes números dão uma vazão que esta zona não pode ter. Verifique a água, a área e os minutos."
+    },
+    "calibration_unavailable": {
+      "message": "Esta zona não tem configuração de vazão para calibrar."
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline há {days} dias",
-      "description": "{entity}, usado pela zona {zone}, está offline há {days} dias. A zona continua funcionando sem ele (veja o que isso significa no README), mas verifique o dispositivo -- ou remova-o da zona em Configurar. Isso se resolve sozinho quando o sensor voltar a enviar dados."
+      "description": "{entity}, usado pela zona {zone}, está offline há {days} dias. A zona continua funcionando sem ele (veja o que isso significa no README), mas verifique o dispositivo -- ou remova-o da zona em Configurar. Isso se resolve sozinho quando o sensor voltar a enviar dados.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Substituir o sensor",
+            "description": "O sensor {entity} usado por {zone} está offline há dias. Escolha um sensor para usar em alternativa ou deixe em branco para parar de usá-lo (a zona funcionará sem ele).",
+            "data": {
+              "replacement": "Sensor de substituição"
+            },
+            "data_description": {
+              "replacement": "Deixe em branco para remover o sensor desta zona."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Esta zona não existe mais."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: destino de notificação no celular não encontrado",
-      "description": "A zona {zone} envia as notificações para o celular por {entity}, que não existe mais no Home Assistant, então nenhuma notificação chega. Escolha o destino atual em Configurar, na zona. Isso se resolve sozinho quando ele voltar a existir."
+      "description": "A zona {zone} envia as notificações para o celular por {entity}, que não existe mais no Home Assistant, então nenhuma notificação chega. Escolha o destino atual em Configurar, na zona. Isso se resolve sozinho quando ele voltar a existir.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Escolher outro celular",
+            "description": "O celular {entity} não existe mais, portanto {zone} não pode enviar mensagens. Escolha outro celular ou deixe em branco.",
+            "data": {
+              "notify_entity": "Celular para notificações"
+            },
+            "data_description": {
+              "notify_entity": "Deixe em branco para parar de receber mensagens no celular desta zona."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Esta zona não existe mais."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: calibre a vazão dos emissores",
-      "description": "A zona {zone} ainda usa a Calibração da vazão dos emissores padrão (0,24 mm/min). É o número que decide quanta água cada irrigação aplica, então meça-o para os seus emissores: em Configurar → Vazão da zona, dá para calcular a partir dos emissores ou medir com um medidor de vazão. Se 0,24 mm/min estiver mesmo certo para esta zona, ignore este aviso."
+      "description": "A zona {zone} ainda usa a Calibração da vazão dos emissores padrão (0,24 mm/min). É o número que decide quanta água cada irrigação aplica, então meça-o para os seus emissores: em Configurar → Vazão da zona, dá para calcular a partir dos emissores ou medir com um medidor de vazão. Se 0,24 mm/min estiver mesmo certo para esta zona, ignore este aviso.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Definir vazão por medição",
+            "description": "{zone} ainda tem a vazão de exemplo, portanto seus tempos de irrigação são estimativas. Coloque um balde debaixo dos emissores (ou anote seu hidrômetro) e abra a válvula por 15 minutos. Abrir agora?",
+            "data": {
+              "run": "Abrir a válvula por 15 minutos agora"
+            },
+            "data_description": {
+              "run": "Desmarque se você já tiver executado."
+            }
+          },
+          "measure": {
+            "title": "Quanta água saiu?",
+            "description": "Informe quanto {zone} forneceu nesse ciclo, a área irrigada e quantos minutos a válvula ficou aberta.",
+            "data": {
+              "volume": "Água que saiu",
+              "area": "Área irrigada",
+              "minutes": "Minutos em que a válvula ficou aberta"
+            },
+            "data_description": {
+              "volume": "Litros (galões em uma zona imperial).",
+              "area": "Metros quadrados (pés quadrados em uma zona imperial).",
+              "minutes": "Normalmente 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Estes números dão uma vazão que esta zona não pode ter. Verifique-os."
+        },
+        "abort": {
+          "zone_gone": "Esta zona não existe mais.",
+          "zone_busy": "A zona está ocupada. Tente novamente em um momento."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: válvula compartilhada com outra zona",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: sua estufa foi removida",
       "description": "A estufa {greenhouse} foi excluída, portanto {zone} agora é uma zona independente. Ela continua irrigando e mantém os sensores internos da estufa. Para colocá-la em outra estufa, use Configurar -> Estufa da zona."
+    },
+    "area_removed": {
+      "title": "{zone}: sua área foi removida",
+      "description": "A área {area} foi excluída, portanto {zone} agora usa uma cópia dos sensores que obteve dela. Para colocá-la em outra área, use Configurar -> Onde fica isto? da zona."
     }
   }
 }

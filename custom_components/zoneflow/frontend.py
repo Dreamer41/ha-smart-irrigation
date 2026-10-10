@@ -13,7 +13,7 @@ the first way, and showed "Configuration error" until it was reloaded.
    Dashboards -> Resources. Home Assistant loads that list from the first
    second, and the loader keeps trying until ZoneFlow is up. On a normal
    page it asks for the same URL as 1, so the card still loads once.
-   Dashboards in YAML mode can't have a resource added for them; the README
+   Dashboards in YAML mode can't have a resource added for them; docs/GUIDE.md
    says how to add it by hand. Removing the last zone removes both.
 """
 from __future__ import annotations

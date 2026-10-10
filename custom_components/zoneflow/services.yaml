@@ -165,3 +165,336 @@ add_rain:
         entity:
           integration: zoneflow
           multiple: true
+
+create_area:
+  name: Create Area
+  description: >-
+    Makes a new area (a part of the garden such as Backyard). Target a zone and
+    it moves into the new area, which starts with that zone's rain gauge,
+    outdoor temperature, weather and phone settings.
+  fields:
+    name:
+      name: Name
+      description: What the area is called, for example Backyard or Front yard.
+      required: true
+      example: Backyard
+      selector:
+        text:
+    device_id:
+      name: Zone Device
+      description: The zone to put in the new area (optional).
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to that zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+add_plant:
+  name: Add Plant
+  description: >-
+    Adds a plant to a zone. In a zone with no main plant it becomes the main
+    plant and its type's settings go onto the zone; otherwise it is a record
+    only (history, notes), unless Old Main Plant says it takes over.
+  fields:
+    name:
+      name: Name
+      description: What the plant is called.
+      required: true
+      selector:
+        text:
+    plant_type:
+      name: Plant Type
+      description: Starting settings for this kind of plant (custom if left out).
+      selector:
+        text:
+    old_main:
+      name: Old Main Plant
+      description: >-
+        Only when the zone already has a main plant. What becomes of it:
+        keep it there as a record or archive it.
+      selector:
+        select:
+          options:
+            - extra
+            - archive
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+move_plant:
+  name: Move Plant
+  description: >-
+    Moves a plant, with its history, to another zone. The zone keeps the way it
+    is watered; the plant brings its own details (planting date, health,
+    fertilizing). Turn on Use The Plant's Watering Settings to bring those too.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id (shown in the zone's Status attributes).
+      required: true
+      selector:
+        text:
+    old_main:
+      name: Old Main Plant
+      description: >-
+        Only when the zone already has a main plant. What becomes of it:
+        keep it there as a record, archive it, swap it to the zone this plant
+        leaves, or keep this plant as a record only.
+      selector:
+        select:
+          options:
+            - extra
+            - archive
+            - swap
+            - keep
+    use_plant_settings:
+      name: Use The Plant's Watering Settings
+      description: >-
+        Off (the default): the zone keeps the way it is watered and the plant
+        only brings its own details (planting date, health, fertilizing). On:
+        the plant's watering settings (targets, method, deficit mode, growth
+        ramp, deep soak) go onto the zone too.
+      default: false
+      selector:
+        boolean:
+    device_id:
+      name: Zone Device
+      description: The zone it goes to. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+remove_plant:
+  name: Remove Plant
+  description: >-
+    Takes a plant out of its zone. It stays on record with its history. The
+    next plant in the zone becomes the main plant.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+
+rename_plant:
+  name: Rename Plant
+  description: Gives a plant another name (its history stays).
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+    name:
+      name: Name
+      description: The new name.
+      required: true
+      selector:
+        text:
+
+set_main_plant:
+  name: Set Main Plant
+  description: >-
+    Makes a plant the main plant of its zone; the old main plant stays as a
+    record. The zone keeps the way it is watered unless Use The Plant's
+    Watering Settings is on.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+    use_plant_settings:
+      name: Use The Plant's Watering Settings
+      description: >-
+        Off (the default): the zone keeps the way it is watered and the plant
+        only brings its own details. On: the plant's watering settings go onto
+        the zone too.
+      default: false
+      selector:
+        boolean:
+
+add_plant_note:
+  name: Add Plant Note
+  description: Adds a note to a plant's history.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+    text:
+      name: Note
+      description: What to write down.
+      required: true
+      selector:
+        text:
+
+save_preset:
+  name: Save Preset
+  description: >-
+    Saves a zone's watering settings (not its valve, sensors, flow rate,
+    planting date or notes) under a name, to start other zones from. The same
+    name replaces the preset.
+  fields:
+    name:
+      name: Name
+      description: What to call the preset.
+      required: true
+      selector:
+        text:
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+copy_settings:
+  name: Copy Settings
+  description: >-
+    Gives a zone another zone's watering settings, or a saved preset's. Not
+    the valve, sensors, flow rate, planting date or notes.
+  fields:
+    source_device_id:
+      name: Copy From Zone
+      description: The zone to copy the settings from (or choose a preset).
+      selector:
+        device:
+          integration: zoneflow
+    preset:
+      name: Preset
+      description: The name of a saved preset (or choose a zone to copy from).
+      selector:
+        text:
+    device_id:
+      name: Zone Device
+      description: The zone that gets the settings. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+delete_preset:
+  name: Delete Preset
+  description: Deletes a saved preset.
+  fields:
+    name:
+      name: Name
+      description: The preset's name.
+      required: true
+      selector:
+        text:
+
+water_now:
+  name: Water Now
+  description: >-
+    Waters the zone by hand for a number of minutes. Not while the zone is
+    paused, never longer than the zone's Routine Max Safety Runtime Cap, and
+    inside the day's runtime cap. Counts in the water record (litres), but does
+    not move the routine or deep soak schedule.
+  fields:
+    minutes:
+      name: Minutes
+      description: How long to water.
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 900
+          mode: box
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+calibrate_flow:
+  name: Calibrate Flow Rate
+  description: >-
+    Sets the flow rate from a measured run: the water that came out (collected
+    in a bucket or read from a water meter), the area it fell on, and how long
+    the valve was open. Also sets Zone Flow, for litres.
+  fields:
+    volume:
+      name: Water
+      description: How much water came out (litres, or gallons on an imperial zone).
+      required: true
+      selector:
+        number:
+          min: 0.01
+          max: 1000000
+          step: 0.01
+          mode: box
+    area:
+      name: Area
+      description: The area that water fell on (m2, or ft2 on an imperial zone).
+      required: true
+      selector:
+        number:
+          min: 0.1
+          max: 100000
+          step: 0.1
+          mode: box
+    minutes:
+      name: Minutes
+      description: How long the valve was open.
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 240
+          mode: box
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow

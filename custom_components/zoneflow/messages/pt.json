@@ -11,7 +11,8 @@
     "deep_soak": "Rega profunda",
     "routine": "Rega de rotina",
     "service_run": "Ciclo de manutenção",
-    "test_pulse": "Pulso de teste"
+    "test_pulse": "Pulso de teste",
+    "manual_water": "Rega manual"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: a utilizar o sensor de temperatura de reserva",
       "message": "O sensor de temperatura interior principal ({entity}) deixou de funcionar. O controlo de clima continua com o de reserva."
+    },
+    "action": {
+      "water": "Regar {minutes} min",
+      "snooze": "Não regar hoje",
+      "fertilized": "Fertilizado"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle} dispensada às {time}: {temp}, abaixo da proteção contra geada ({limit})",
     "waiting_frost": "{cycle} em espera às {time}: {temp}, abaixo da proteção contra geada ({limit}); verifica de novo a cada hora",
     "waiting_deep_soak": "{cycle} em espera desde as {time}: a rega profunda vai primeiro, quando aquecer o suficiente",
-    "paused_until": "Em pausa até {until}"
+    "paused_until": "Em pausa até {until}",
+    "paused_area": "Em pausa: sem rega enquanto {area} estiver em pausa",
+    "paused_house": "Em pausa: sem rega enquanto a estufa {house} estiver em pausa"
   },
   "summary": {
     "title": "💧 ZoneFlow: a sua semana",
@@ -238,5 +246,148 @@
       "limited": "ligado parte do tempo",
       "outside": "ligado parte do tempo enquanto estive frio lá fora"
     }
+  },
+  "location": {
+    "none": "Nenhum",
+    "greenhouse": "estufa",
+    "new_area": "Nova área..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Usa o seu próprio medidor de chuva, não o de {area}.",
+      "outdoor_temp_entity": "Usa o seu próprio sensor de temperatura exterior, não o de {area}.",
+      "weather_entity": "Usa a sua própria entidade meteorológica, não a de {area}.",
+      "notify_entity": "Envia para o seu próprio telemóvel, não para o de {area}."
+    }
+  },
+  "plants": {
+    "on": "ligado",
+    "off": "desligado",
+    "history": {
+      "created": "Adicionado ao ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Movido de {from_zone} para {to_zone}",
+      "promoted": "Tornou-se a planta principal de {zone}",
+      "demoted": "Agora apenas registo em {zone}",
+      "archived": "Arquivado de {zone}",
+      "removed": "Removido de {zone}",
+      "note": "{text}",
+      "copied": "Definições copiadas de {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Modo de fase de crescimento",
+      "demand_model": "Método de rega",
+      "deficit_enabled": "Modo de défice",
+      "deficit_until_ts": "Modo de défice até",
+      "planting_date_ts": "Data de plantação",
+      "health_status": "Saúde",
+      "health_notes": "Notas de saúde",
+      "fertilizing_interval_months": "Intervalo de fertilização",
+      "last_fertilizing_ts": "Última fertilização",
+      "growth_ramp_profile": "Rampa de crescimento",
+      "deep_soak_enabled": "Rega profunda"
+    }
+  },
+  "start_from": {
+    "none": "Definições habituais do tipo de planta",
+    "zone": "Uma cópia de {zone}",
+    "preset": "Pré-definição: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "A válvula {entity} responde.",
+      "fail": "A válvula {entity} não está disponível. Verifique o dispositivo e a sua ligação no Home Assistant: nada pode regar até que responda."
+    },
+    "rain": {
+      "ok": "O medidor de chuva {entity} reporta dados.",
+      "fail": "O medidor de chuva {entity} não está disponível. Até voltar, o ZoneFlow assume que não chove.",
+      "wu": "A chuva vem do Weather Underground.",
+      "manual": "A chuva é adicionada manualmente.",
+      "none": "Nenhum medidor de chuva. O ZoneFlow assume que nunca chove, a menos que adicione chuva manualmente ou use o Weather Underground."
+    },
+    "temperature": {
+      "ok": "A temperatura exterior é {value} {unit}.",
+      "none": "Nenhum sensor de temperatura exterior. A definição de temperatura de recurso decide o calor que o ZoneFlow assume.",
+      "fail": "O sensor de temperatura {entity} não está disponível. Entretando, usa-se a temperatura de recurso."
+    },
+    "weather": {
+      "ok": "A previsão meteorológica {entity} está disponível.",
+      "none": "Nenhuma entidade meteorológica, pelo que uma previsão de chuva não pode cancelar uma rega.",
+      "fail": "A entidade meteorológica {entity} não está disponível, pelo que a previsão é ignorada por agora."
+    },
+    "flow": {
+      "ok": "O fluxo está definido ({value} mm/min).",
+      "default": "O fluxo ainda é o valor de exemplo. Calibre-o para que cada rega corra durante o tempo certo."
+    },
+    "volume": {
+      "ok": "O uso de água é mostrado em litros.",
+      "none": "O uso de água é mostrado apenas em mm. Defina o Fluxo da zona para ver litros."
+    },
+    "soil": {
+      "ok": "O sensor de humidade do solo indica {value} %.",
+      "fail": "O sensor de humidade do solo {entity} não está disponível. A zona rega por calendário até voltar."
+    },
+    "pump": {
+      "ok": "O sensor de potência da bomba {entity} reporta dados.",
+      "fail": "O sensor de potência da bomba {entity} não está disponível, pelo que a verificação da bomba é ignorada."
+    },
+    "paused": {
+      "zone": "Esta zona está em pausa: sem rega até desligar a Pausa.",
+      "area": "A área {area} está em pausa: sem rega até desligar a sua Pausa.",
+      "house": "A estufa {house} está em pausa: sem rega até desligar a sua Pausa."
+    },
+    "last": {
+      "ok": "Última rega: {when}.",
+      "never": "O ZoneFlow ainda não regou esta zona.",
+      "overdue": "A última rega foi há {days} dias, mais tempo do que o esperado. Verifique a válvula e o estado."
+    },
+    "notify": {
+      "ok": "As mensagens do telemóvel vão para {entity}.",
+      "none": "Nenhum telemóvel para notificar. Não receberá mensagens sobre a rega.",
+      "fail": "O telemóvel {entity} já não existe, pelo que não receberá mensagens."
+    }
+  },
+  "why": {
+    "method": "Método de rega: {method}.",
+    "method_temperature": "níveis de temperatura (uma semana mais quente recebe mais água)",
+    "method_et": "evapotranspiração (a água usada pela planta, calculada a partir da temperatura)",
+    "temperature": "Temperatura usada: {value} ({source}), portanto uma semana {tier}.",
+    "source": {
+      "sensor": "a média das máximas dos últimos dias",
+      "last_known": "dos últimos dias, o sensor está offline agora",
+      "fallback": "Temperatura de recurso, ainda sem dia completo registado",
+      "manual": "a definição de Temperatura de recurso / manual"
+    },
+    "tier": {
+      "hot": "quente",
+      "normal": "normal",
+      "cool": "fresca"
+    },
+    "target": "Meta semanal: {target}.",
+    "scale": "A meta é ajustada para {pct} % pela fase de crescimento, modo de défice e mulching.",
+    "rain": "Crédito de chuva desde a última rega: {credit} (chuva nos últimos 7 dias: {rain}).",
+    "needed": "Se regasse agora: {needed} a adicionar, cerca de {minutes} min.",
+    "forecast": "Havia previsão de chuva, pelo que as últimas {n} regas seguidas foram canceladas.",
+    "soil": "Humidade do solo {pct} % ({status}).",
+    "soil_dry": "seco",
+    "soil_wet": "húmido",
+    "soil_ok": "médio"
+  },
+  "suggest": {
+    "heading": "Possíveis elementos encontrados no seu Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Válvula",
+      "rain": "Medidor de chuva",
+      "temperature": "Temperatura exterior",
+      "weather": "Meteorologia",
+      "soil": "Humidade do solo",
+      "flow": "Medidor de fluxo",
+      "pump": "Potência da bomba",
+      "notify": "Telemóvel"
+    }
+  },
+  "setup": {
+    "progress": "Passo {n} de {total}"
   }
 }

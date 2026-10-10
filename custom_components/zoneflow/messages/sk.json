@@ -11,7 +11,8 @@
     "deep_soak": "Hĺbková zálievka",
     "routine": "Bežná zálievka",
     "service_run": "Servisný chod",
-    "test_pulse": "Testovací pulz"
+    "test_pulse": "Testovací pulz",
+    "manual_water": "Ručná zálievka"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: používa sa záložný senzor teploty",
       "message": "Hlavný senzor vnútornej teploty ({entity}) prestal fungovať. Riadenie klímy pokračuje so záložným."
+    },
+    "action": {
+      "water": "Zalievať {minutes} min",
+      "snooze": "Dnes vynechať",
+      "fertilized": "Hnojené"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle}: vynechané o {time}, {temp} je pod ochranou pred mrazom ({limit})",
     "waiting_frost": "{cycle}: pozdržané o {time}, {temp} je pod ochranou pred mrazom ({limit}); kontroluje sa každú hodinu",
     "waiting_deep_soak": "{cycle}: čaká od {time}, keď sa oteplí, má prednosť hĺbková zálievka",
-    "paused_until": "Pozastavené do {until}"
+    "paused_until": "Pozastavené do {until}",
+    "paused_area": "Pozastavené: nepolieva sa, kým je oblasť {area} pozastavená",
+    "paused_house": "Pozastavené: nepolieva sa, kým je skleník {house} pozastavený"
   },
   "summary": {
     "title": "💧 ZoneFlow: váš týždeň",
@@ -238,5 +246,148 @@
       "limited": "zapnutý časť času",
       "outside": "zapnutý časť času, keď je vonku chladno"
     }
+  },
+  "location": {
+    "none": "Žiadna",
+    "greenhouse": "skleník",
+    "new_area": "Nová oblasť..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Používa vlastný zrážkomer, nie zrážkomer oblasti {area}.",
+      "outdoor_temp_entity": "Používa vlastný snímač vonkajšej teploty, nie snímač oblasti {area}.",
+      "weather_entity": "Používa vlastnú entitu počasia, nie entitu oblasti {area}.",
+      "notify_entity": "Odosiela na vlastný telefón, nie na telefón oblasti {area}."
+    }
+  },
+  "plants": {
+    "on": "zapnutá",
+    "off": "vypnutá",
+    "history": {
+      "created": "Pridané do ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Presunuté z {from_zone} do {to_zone}",
+      "promoted": "Stala sa hlavnou rastlinou v {zone}",
+      "demoted": "Teraz iba ako záznam v {zone}",
+      "archived": "Archivované z {zone}",
+      "removed": "Odstránené z {zone}",
+      "note": "{text}",
+      "copied": "Nastavenia skopírované z {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Režim fázy rastu",
+      "demand_model": "Spôsob zalievania",
+      "deficit_enabled": "Režim deficitu",
+      "deficit_until_ts": "Režim deficitu do",
+      "planting_date_ts": "Dátum výsadby",
+      "health_status": "Zdravie",
+      "health_notes": "Poznámky o zdraví",
+      "fertilizing_interval_months": "Interval hnojenia",
+      "last_fertilizing_ts": "Naposledy hnojené",
+      "growth_ramp_profile": "Rastová krivka",
+      "deep_soak_enabled": "Hĺbková zálievka"
+    }
+  },
+  "start_from": {
+    "none": "Bežné nastavenia pre tento typ rastliny",
+    "zone": "Kópia zóny {zone}",
+    "preset": "Predvoľba: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "Ventil {entity} odpovedá.",
+      "fail": "Ventil {entity} nie je k dispozícii. Skontrolujte zariadenie a jeho pripojenie v Home Assistant: kým neodpovie, nič nemôže zalievať."
+    },
+    "rain": {
+      "ok": "Zrážkomer {entity} hlási stav.",
+      "fail": "Zrážkomer {entity} nie je k dispozícii. Kým sa nevráti, ZoneFlow predpokladá, že neprší.",
+      "wu": "Údaje o daždi pochádzajú zo služby Weather Underground.",
+      "manual": "Dážď sa pridáva ručne.",
+      "none": "Bez zrážkomera. ZoneFlow predpokladá, že nikdy neprší, kým nepridáte dážď ručne alebo nepoužijete Weather Underground."
+    },
+    "temperature": {
+      "ok": "Vonkajšia teplota je {value} {unit}.",
+      "none": "Bez snímača vonkajšej teploty. Nastavenie záložnej teploty určuje, aké teplé prostredie ZoneFlow predpokladá.",
+      "fail": "Snímač teploty {entity} nie je k dispozícii. Medzitým sa používa záložná teplota."
+    },
+    "weather": {
+      "ok": "Predpoveď počasia {entity} je k dispozícii.",
+      "none": "Bez entity počasia nemôže predpoveď mưa přeskočiť zálievku.",
+      "fail": "Entita počasia {entity} nie je k dispozícii, preto sa predpoveď nateraz ignoruje."
+    },
+    "flow": {
+      "ok": "Prietok je nastavený ({value} mm/min).",
+      "default": "Prietok je stále na ukážkovej hodnote. Skalibrujte ho, aby každá zálievka trvala správny čas."
+    },
+    "volume": {
+      "ok": "Spotreba vody sa zobrazuje v litroch.",
+      "none": "Spotreba vody sa zobrazuje iba v mm. Nastavte Prietok zóny, aby ste videli litre."
+    },
+    "soil": {
+      "ok": "Snímač vlhkosti pôdy hlási {value} %.",
+      "fail": "Snímač vlhkosti pôdy {entity} nie je k dispozícii. Kým sa nevráti, zóna zalieva podľa kalendára."
+    },
+    "pump": {
+      "ok": "Snímač výkonu čerpadla {entity} hlási stav.",
+      "fail": "Snímač výkonu čerpadla {entity} nie je k dispozícii, preto sa kontrola čerpadla preskakuje."
+    },
+    "paused": {
+      "zone": "Táto zóna je pozastavená: nepolieva sa, kým nevypnete Pozastavenie.",
+      "area": "Oblasť {area} je pozastavená: nepolieva sa, kým nevypnete jej Pozastavenie.",
+      "house": "Skleník {house} je pozastavený: nepolieva sa, kým nevypnete jeho Pozastavenie."
+    },
+    "last": {
+      "ok": "Posledná zálievka: {when}.",
+      "never": "ZoneFlow túto zónu ešte nepolieval.",
+      "overdue": "Posledná zálievka bola pred {days} dňami, čo je dlhšie, než sa očakávalo. Skontrolujte ventil a stav."
+    },
+    "notify": {
+      "ok": "Správy na telefón sa odosielajú na {entity}.",
+      "none": "Žiadny telefón na upozornenie. Nebudete dostávať správy o zalievaní.",
+      "fail": "Telefón {entity} už neexistuje, takže vám neprídu žiadne správy."
+    }
+  },
+  "why": {
+    "method": "Spôsob zalievania: {method}.",
+    "method_temperature": "teplotné úrovne (teplejší týždeň dostane viac vody)",
+    "method_et": "evapotranspirácia (spotreba vody rastlinou vypočítaná z teploty)",
+    "temperature": "Použitá teplota: {value} ({source}), takže {tier} týždeň.",
+    "source": {
+      "sensor": "priemer maximálnych teplôt za posledné dni",
+      "last_known": "z posledných dní, snímač je teraz offline",
+      "fallback": "Záložná teplota, dosiaľ nebol zaznamenaný celý deň",
+      "manual": "nastavenie Záložná / Ručná teplota"
+    },
+    "tier": {
+      "hot": "horúci",
+      "normal": "bežný",
+      "cool": "chladný"
+    },
+    "target": "Týždenný cieľ: {target}.",
+    "scale": "Tento cieľ je upravený na {pct} % podľa fázy rastu, režimu deficitu a mulču.",
+    "rain": "Započítaný dážď od poslednej zálievky: {credit} (dážď za posledných 7 dní: {rain}).",
+    "needed": "Pri zalievaní teraz: potreba pridať {needed}, cca {minutes} min.",
+    "forecast": "Bol predpovedaný dážď, preto bolo preskočených posledných {n} zálievok v rade.",
+    "soil": "Vlhkosť pôdy {pct} % ({status}).",
+    "soil_dry": "sucho",
+    "soil_wet": "mokro",
+    "soil_ok": "stredná"
+  },
+  "suggest": {
+    "heading": "Pravdepodobné položky nájdené vo vašom Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Ventil",
+      "rain": "Zrážkomer",
+      "temperature": "Vonkajšia teplota",
+      "weather": "Počasie",
+      "soil": "Vlhkosť pôdy",
+      "flow": "Prietokomer",
+      "pump": "Výkon čerpadla",
+      "notify": "Telefón"
+    }
+  },
+  "setup": {
+    "progress": "Krok {n} z {total}"
   }
 }

@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Nazwa strefy",
           "plant": "Co tu rośnie",
-          "zone_type": "Miejsce uprawy"
+          "zone_type": "Miejsce uprawy",
+          "start_from": "Rozpocznij od",
+          "location": "Gdzie to jest?"
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
           "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy.",
-          "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody."
+          "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody.",
+          "start_from": "Rozpocznij od kopii ustawień podlewania innej strefy lub zapisanego szablonu zamiast ustawień typu rośliny. Zawór, czujniki i przepływ nigdy nie są kopiowane.",
+          "location": "Obszar, w którym znajduje się ta strefa, jeśli jakiś jest. Strefa używa wtedy deszczomierza, czujnika temperatury, pogody i telefonu obszaru, chyba że nadasz jej własne."
         }
       },
       "entities": {
         "title": "Nawadnianie ZoneFlow",
-        "description": "Wskaż swoje istniejące encje. Integracja nigdy nie tworzy własnych encji fizycznych. Wymagany jest tylko przełącznik zaworu – wszystko inne poniżej można pominąć, strefa poradzi sobie bez tego.",
+        "description": "{progress}\n\nWskaż tutaj swoje rzeczywiste encje. Integracja nigdy nie tworzy własnych fizycznych encji. Wymagany jest tylko przełącznik zaworu – cała reszta poniżej działa prawidłowo nawet bez konfiguracji. Pozostaw pole puste, jeśli go nie masz.\n\n{suggestions}",
         "data": {
           "valve_entity": "Przełącznik zaworu",
           "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Czujnik wilgotności gleby (opcjonalnie)",
           "notify_entity": "Cel powiadomień na telefon (opcjonalnie)",
           "weather_entity": "Źródło prognozy pogody (opcjonalnie)",
-          "soil_type": "Rodzaj gleby",
-          "drainage": "Przepuszczalność gleby",
-          "slope": "Nachylenie",
-          "irrigation_method": "Sposób nawadniania",
-          "growth_ramp_profile": "Narastanie dawki wg fazy wzrostu",
+          "soil_type": "Czy znasz typ gleby? (pomiń, jeśli nie)",
+          "drainage": "Czy woda odpływa wolno? (pomiń, jeśli nie wiesz)",
+          "slope": "Czy teren jest nachylony? (pomiń, jeśli jest płaski lub nie masz pewności)",
+          "irrigation_method": "Jak woda dociera do roślin?",
+          "growth_ramp_profile": "Czy to młoda roślina, która na początku potrzebuje mniej wody? (pomiń, jeśli nie)",
           "csv_path": "Ścieżka pliku dziennika CSV",
           "deep_soak_enabled": "Włącz głębokie podlewanie",
           "deep_soak_time": "Godzina głębokiego podlewania",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Klimat",
-        "description": "Jak wygląda sezon wegetacyjny tam, gdzie jest ta strefa? To tylko wstępnie ustawia suwaki temperatur na następnej stronie – każdą wartość możesz tam zmienić, a później także na stronie urządzenia strefy.",
+        "description": "{progress}\n\nJak wygląda sezon wegetacyjny tam, gdzie znajduje się ta strefa? To tylko wstępnie wypełnia suwaki temperatury na następnej stronie – możesz zmienić każdą wartość tam, a do tego później na stronie urządzenia strefy.",
         "data": {
           "climate": "Klimat"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Progi temperatury",
-        "description": "ZoneFlow uśrednia NAJWYŻSZĄ dzienną temperaturę z ostatnich 3 dni. Gdy średnia osiąga próg upału lub go przekracza, podlewa częściej (co 3 dni) z tygodniową dawką na upał; poniżej progu chłodu stosuje tygodniową dawkę na chłód; pomiędzy – normalną.\n\nTemperatura zastępcza jest używana, gdy brak prawdziwego odczytu: bez czujnika temperatury to Twoje ręczne sterowanie (podnieś ją na czas upałów, obniż na czas chłodów); z czujnikiem jest używana tylko do czasu, aż czujnik zapisze pierwszy pełny dzień, oraz po 3 dniach bez żadnego odczytu.",
+        "description": "{progress}\n\nZoneFlow oblicza średnią z dziennych MAKSYMALNYCH temperatur z последних 3 dni. Przy wartości równej lub wyższej niż Gorąco podlewa częściej (co 3 dni) z gorącą dawką tygodniową; poniżej wartości Chłodno używa chłodnej dawki tygodniowej; pomiędzy nimi obowiązuje tryb normalny.\n\nTemperatura zastępcza jest używana, gdy brak rzeczywistego odczytu: bez czujnika temperatury służy jako ręczne sterowanie (zwiększ podczas fali upałów, zmniejsz podczas chłodów); z czujnikiem jest używana tylko do momentu zarejestrowania pierwszego pełnego dnia oraz po 3 dniach bez ani jednego odczytu.",
         "data": {
           "hot_temp_threshold": "Próg upału",
           "cool_temp_threshold": "Próg chłodu",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Dodaj strefę",
           "weather_underground": "Skonfiguruj deszcz Weather Underground",
-          "crop": "Dodaj uprawę do szklarni"
+          "crop": "Dodaj uprawę do szklarni",
+          "area": "Dodaj obszar (część ogrodu)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
         }
+      },
+      "area": {
+        "title": "Nowy obszar",
+        "description": "Część ogrodu, na przykład Ogród za domem lub Przedogródek. Jej strefy używają czujników ustawionych tutaj, chyba że strefa ma własne.",
+        "data": {
+          "area_name": "Nazwa",
+          "rain_counter_entity": "Deszczomierz",
+          "rain_source_type": "Typ czujnika deszczomierza",
+          "area_rain_mm_per_tip": "Deszczomierz: mm na przechył",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej",
+          "weather_entity": "Encja pogody (prognoza)",
+          "notify_entity": "Telefon do powiadomień"
+        },
+        "data_description": {
+          "rain_counter_entity": "Opcjonalnie. Strefy tego obszaru odczytują opady z niego, chyba że strefa ma własny deszczomierz.",
+          "area_rain_mm_per_tip": "Tylko dla licznika przechyłów: ile mm deszczu oznacza jeden przechył.",
+          "outdoor_temp_entity": "Opcjonalnie. Ustala gorący / chłodny poziom podlewania dla stref tego obszaru.",
+          "weather_entity": "Opcjonalnie. Pozwala strefom tego obszaru pominąć podlewanie, gdy prognozowany jest deszcz.",
+          "notify_entity": "Opcjonalnie. Gdzie strefy tego obszaru wysyłają wiadomości na telefon.",
+          "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
+          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground odrzucił klucz API.",
       "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
       "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
-      "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje."
+      "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
+      "area_name_required": "Nadaj nazwę obszarowi.",
+      "area_name_exists": "Obszar o tej nazwie již istnieje."
     },
     "abort": {
       "already_configured": "Deszcz Weather Underground jest już skonfigurowany."
@@ -264,7 +293,7 @@
           "zone_type": "Typ strefy",
           "weather_underground": "Deszcz Weather Underground",
           "crop_valve": "Zawór uprawy",
-          "greenhouse_link": "Szklarnia"
+          "location": "Gdzie to jest? (obszar lub szklarnia)"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
         }
       },
-      "greenhouse_link": {
-        "title": "Szklarnia",
-        "description": "Zrób z tej strefy uprawę w szklarni: będzie wtedy korzystać z czujników wewnętrznych tej szklarni i wyświetlać się wraz z nią. Wybierz „-”, aby ponownie uczynić ją samodzielną strefą (zachowa kopię czujników szklarni).",
-        "data": {
-          "greenhouse_entry_id": "Część szklarni"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi, lub „-” dla braku."
-        }
-      },
       "flow_volume": {
         "title": "Zmierz przepływ na podstawie objętości",
         "description": "Naciśnij jeden z przycisków Uruchom serwisowo dla strefy (dłuższy bieg, np. 15 min, jest dokładniejszy) i złap lub odczytaj wodę: wiadro lub beczkę pod emiterami albo różnicę na wodomierzu. Następnie wprowadź czas w minutach, przez który zawór był otwarty, liczbę litrów oraz obszar zwilżany przez emitery.\n\nWynikiem jest ŚREDNIA dla strefy: litry podzielone przez obszar i minuty, i zastępuje on Kalibrację wydajności emiterów strefy. ZoneFlow używa jednej wartości przepływu dla strefy, więc nie rozróżnia poszczególnych emiterów. Aby uzyskać dokładny wynik, każdy emiter na zaworze strefy powinien być tego samego typu i mieć taki sam przepływ; umieść różne emitery na osobnych zaworach (osobne strefy). W strefie mieszanej rośliny przy słabszych emiterach otrzymają mniej niż wyświetlana średnia. Ustawia również Przepływ w strefie, czyli litry na minutę używane do szacowania zużycia wody.",
@@ -506,6 +525,76 @@
           "head_flow": "Ile daje jeden emiter, z jego opakowania lub tabeli dysz.",
           "head_flow_unit": "Jednostka, w której podany jest przepływ jednego emitera."
         }
+      },
+      "location": {
+        "title": "Gdzie to jest?",
+        "description": "Obszar lub szklarnia, w której znajduje się ta strefa. Strefa używa czujników swojego obszaru, chyba że ma własne. W szklarni stanowi jej uprawę. Wybierz Nowy obszar, aby utworzyć obszar z własnych czujników tej strefy.",
+        "data": {
+          "location": "Miejsce"
+        },
+        "data_description": {
+          "location": "Obszar, szklarnia lub brak. Przeniesienie strefy uruchamia ją ponownie, aby odczytała czujniki nowego miejsca."
+        }
+      },
+      "location_sensors": {
+        "title": "Użyć czujników obszaru?",
+        "description": "Ta strefa ma własny czujnik tam, gdzie obszar ma inny. Zaznacz, aby użyć czujnika obszaru; odznacz, aby zachować własny czujnik strefy.",
+        "data": {
+          "rain_counter_entity": "Użyj deszczomierza obszaru",
+          "outdoor_temp_entity": "Użyj temperatury zewnętrznej obszaru",
+          "weather_entity": "Użyj encji pogody obszaru",
+          "notify_entity": "Użyj telefonu obszaru"
+        },
+        "data_description": {
+          "rain_counter_entity": "Zaznacz, aby używać deszczomierza obszaru zamiast własnego deszczomierza tej strefy.",
+          "outdoor_temp_entity": "Zaznacz, aby używać czujnika temperatury zewnętrznej obszaru zamiast własnego czujnika tej strefy.",
+          "weather_entity": "Zaznacz, aby używać encji pogody obszaru zamiast własnej encji pogody tej strefy.",
+          "notify_entity": "Zaznacz, aby wysyłać na telefon obszaru zamiast własnego telefonu tej strefy."
+        }
+      },
+      "new_area": {
+        "title": "Nowy obszar",
+        "description": "Obszar utworzony z czujników tej strefy. Strefa przenosi się do niego, a inne strefy mogą dołączyć do niego później.",
+        "data": {
+          "area_name": "Nazwa",
+          "rain_counter_entity": "Deszczomierz",
+          "rain_source_type": "Typ czujnika deszczomierza",
+          "area_rain_mm_per_tip": "Deszczomierz: mm na przechył",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej",
+          "weather_entity": "Encja pogody (prognoza)",
+          "notify_entity": "Telefon do powiadomień"
+        },
+        "data_description": {
+          "rain_counter_entity": "Opcjonalnie. Strefy tego obszaru odczytują opady z niego, chyba że strefa ma własny deszczomierz.",
+          "area_rain_mm_per_tip": "Tylko dla licznika przechyłów: ile mm deszczu oznacza jeden przechył.",
+          "outdoor_temp_entity": "Opcjonalnie. Ustala gorący / chłodny poziom podlewania dla stref tego obszaru.",
+          "weather_entity": "Opcjonalnie. Pozwala strefom tego obszaru pominąć podlewanie, gdy prognozowany jest deszcz.",
+          "notify_entity": "Opcjonalnie. Gdzie strefy tego obszaru wysyłają wiadomości na telefon.",
+          "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
+          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
+        }
+      },
+      "area_settings": {
+        "title": "Obszar",
+        "description": "Nazwa obszaru i czujniki dzielone przez jego strefy. Strefa z własnym czujnikiem nadal go używa.",
+        "data": {
+          "area_name": "Nazwa",
+          "rain_counter_entity": "Deszczomierz",
+          "rain_source_type": "Typ czujnika deszczomierza",
+          "area_rain_mm_per_tip": "Deszczomierz: mm na przechył",
+          "outdoor_temp_entity": "Czujnik temperatury zewnętrznej",
+          "weather_entity": "Encja pogody (prognoza)",
+          "notify_entity": "Telefon do powiadomień"
+        },
+        "data_description": {
+          "rain_counter_entity": "Opcjonalnie. Strefy tego obszaru odczytują opady z niego, chyba że strefa ma własny deszczomierz.",
+          "area_rain_mm_per_tip": "Tylko dla licznika przechyłów: ile mm deszczu oznacza jeden przechył.",
+          "outdoor_temp_entity": "Opcjonalnie. Ustala gorący / chłodny poziom podlewania dla stref tego obszaru.",
+          "weather_entity": "Opcjonalnie. Pozwala strefom tego obszaru pominąć podlewanie, gdy prognozowany jest deszcz.",
+          "notify_entity": "Opcjonalnie. Gdzie strefy tego obszaru wysyłają wiadomości na telefon.",
+          "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
+          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "Strefa (lub jej pompa) jest zajęta albo dzisiejszy limit czasu pracy został wyczerpany. Spróbuj później.",
       "flow_rate_disabled": "Encja „Kalibracja wydajności emiterów” tej strefy jest wyłączona. Włącz ją (strona urządzenia strefy → encje) i spróbuj ponownie.",
       "zone_flow_set": "Przepływ w strefie ustawiony na {flow}. Jest używany wyłącznie do szacowania zużycia wody.",
-      "zone_flow_out_of_range": "Daje to przepływ w strefie spoza zakresu dozwolonego w ustawieniach (od 0 do 2000 L/min). Sprawdź liczby."
+      "zone_flow_out_of_range": "Daje to przepływ w strefie spoza zakresu dozwolonego w ustawieniach (od 0 do 2000 L/min). Sprawdź liczby.",
+      "location_not_available": "To miejsce jest niedostępne."
     },
     "error": {
       "valve_already_used": "Inna strefa ZoneFlow już korzysta z tego zaworu.",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "Nie udało się połączyć z Weather Underground. Spróbuj ponownie później.",
       "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
       "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
-      "greenhouse_has_crops": "Ta szklarnia zawiera uprawy. Najpierw przenieś je do innej szklarni lub usuń (Konfiguruj -> Szklarnia dla każdej uprawy)."
+      "greenhouse_has_crops": "Ta szklarnia zawiera uprawy. Najpierw przenieś je do innej szklarni lub usuń (Konfiguruj -> Szklarnia dla każdej uprawy).",
+      "area_name_required": "Nadaj nazwę obszarowi.",
+      "area_name_exists": "Obszar o tej nazwie již istnieje."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "Włączony przez część czasu",
           "outside": "Część czasu, gdy na zewnątrz jest zimno"
         }
+      },
+      "location": {
+        "name": "Gdzie to jest?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Dowolna encja należąca do urządzenia strefy (zamiast „Urządzenie strefy”)."
         }
       }
+    },
+    "create_area": {
+      "name": "Utwórz obszar",
+      "description": "Tworzy nowy obszar (część ogrodu, np. Ogród za domem). Wskaż strefę, a przeniesie się ona do nowego obszaru, który rozpocznie z ustawieniami deszczomierza, temperatury zewnętrznej, pogody i telefonu tej strefy.",
+      "fields": {
+        "name": {
+          "name": "Nazwa",
+          "description": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa do umieszczenia w новым obszarze (opcjonalnie)."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia tej strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Dodaj roślinę",
+      "description": "Dodaje roślinę do strefy. W strefie bez głównej rośliny staje się ona główną rośliną, a ustawienia jej typu przechodzą na strefę; w przeciwnym razie jest tylko wpisem (historia, notatki), chyba że Stara główna roślina określa, że przejmuje rolę.",
+      "fields": {
+        "name": {
+          "name": "Nazwa",
+          "description": "Jak nazywa się roślina."
+        },
+        "plant_type": {
+          "name": "Typ rośliny",
+          "description": "Początkowe ustawienia dla tego rodzaju rośliny (własne, jeśli pominięto)."
+        },
+        "old_main": {
+          "name": "Stara główna roślina",
+          "description": "Tylko gdy strefa ma już główną roślinę. Co się z nią stanie: zachowaj jako wpis lub zarchiwizuj."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa. Wymagane tylko przy skonfigurowanych co najmniej 2 strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Przenieś roślinę",
+      "description": "Przenosi roślinę z jej historią do innej strefy. Jej ustawienia przechodzą na nową strefę.",
+      "fields": {
+        "plant_id": {
+          "name": "Roślina",
+          "description": "Identyfikator rośliny (pokazany w atrybutach stanu strefy)."
+        },
+        "old_main": {
+          "name": "Stara główna roślina",
+          "description": "Tylko gdy strefa ma już główną roślinę. Co się z nią stanie: zachowaj jako wpis, zarchiwizuj, zamień do strefy, którą ta roślina opuszcza, lub zachowaj tę roślinę tylko jako wpis."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa, do której przechodzi."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Usuń roślinę",
+      "description": "Usuwa roślinę ze strefy. Pozostaje w ewidencji wraz z historią. Następna roślina w strefie staje się główną rośliną.",
+      "fields": {
+        "plant_id": {
+          "name": "Roślina",
+          "description": "Identyfikator rośliny."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Ustaw główną roślinę",
+      "description": "Ustawia roślinę jako główną roślinę jej strefy: jej ustawienia przechodzą na strefę, a stara główna roślina pozostaje jako wpis.",
+      "fields": {
+        "plant_id": {
+          "name": "Roślina",
+          "description": "Identyfikator rośliny."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Dodaj notatkę do rośliny",
+      "description": "Dodaje notatkę do historii rośliny.",
+      "fields": {
+        "plant_id": {
+          "name": "Roślina",
+          "description": "Identyfikator rośliny."
+        },
+        "text": {
+          "name": "Notatka",
+          "description": "Co zapisać."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Zapisz szablon",
+      "description": "Zapisuje ustawienia podlewania strefy (bez zaworu, czujników, przepływu, daty sadzenia i notatek) pod nazwą, aby rozpoczynać z nich inne strefy. Ta sama nazwa zastępuje szablon.",
+      "fields": {
+        "name": {
+          "name": "Nazwa",
+          "description": "Jak nazwać szablon."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa. Wymagane tylko przy skonfigurowanych co najmniej 2 strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Kopiuj ustawienia",
+      "description": "Kopiuje do strefy ustawienia podlewania innej strefy lub zapisanego szablonu. Nie obejmuje zaworu, czujników, przepływu, daty sadzenia ani notatek.",
+      "fields": {
+        "source_device_id": {
+          "name": "Kopiuj ze strefy",
+          "description": "Strefa, z której mają zostać skopiowane ustawienia (lub wybierz szablon)."
+        },
+        "preset": {
+          "name": "Szablon",
+          "description": "Nazwa zapisanego szablonu (lub wybierz strefę, z której chcesz skopiować)."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa, która otrzymuje ustawienia."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Usuń szablon",
+      "description": "Usuwa zapisany szablon.",
+      "fields": {
+        "name": {
+          "name": "Nazwa",
+          "description": "Nazwa szablonu."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Podlej teraz",
+      "description": "Podlewa strefę ręcznie przez określoną liczbę minut. Nie podczas wstrzymania strefy, nigdy dłużej niż Maksymalny bezpieczny czas podlewania regularnego strefy i w ramach dziennego limitu czasu pracy. Liczy się w rejestrze wody (litry), ale nie przesuwa harmonogramu podlewania regularnego ani głębokiego.",
+      "fields": {
+        "minutes": {
+          "name": "Minuty",
+          "description": "Jak długo podlewać."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa. Wymagane tylko przy skonfigurowanych co najmniej 2 strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Kalibruj przepływ",
+      "description": "Ustawia przepływ na podstawie pomiaru: woda, która wypłynęła (zebrana do wiadra lub odczytana z wodomierza), powierzchnia i czas otwarcia zaworu. Ustawia również Przepływ w strefie w litrach.",
+      "fields": {
+        "volume": {
+          "name": "Woda",
+          "description": "Ile wody wypłynęło (litry, lub galony w strefie z jednostkami imperialnymi)."
+        },
+        "area": {
+          "name": "Obszar",
+          "description": "Powierzchnia, na którą spadła woda (m2, lub ft2 w strefie z jednostkami imperialnymi)."
+        },
+        "minutes": {
+          "name": "Minuty",
+          "description": "Jak długo zawór był otwarty."
+        },
+        "device_id": {
+          "name": "Urządzenie strefy",
+          "description": "Strefa. Wymagane tylko przy skonfigurowanych co najmniej 2 strefach."
+        },
+        "entity_id": {
+          "name": "Encja strefy",
+          "description": "Dowolna encja należąca do urządzenia strefy (alternatywa dla Urządzenie strefy)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Nic nie jest wstrzymane: wszystkie urządzenia są już pod kontrolą ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "To miejsce nie jest już dostępne."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "Szklarnia z urządzeniami klimatycznymi nie może być uprawą w иной szklarni."
+    },
+    "area_name_required": {
+      "message": "Nadaj nazwę obszarowi."
+    },
+    "area_name_exists": {
+      "message": "Obszar o tej nazwie již istnieje."
+    },
+    "plant_zone_not_available": {
+      "message": "Ta strefa nie jest dostępna."
+    },
+    "plant_name_required": {
+      "message": "Nadaj roślinie nazwę."
+    },
+    "plant_not_found": {
+      "message": "Ta roślina nie istnieje."
+    },
+    "plant_same_zone": {
+      "message": "Roślina znajduje się już w tej strefie."
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} ma już główną roślinę. Określ, co się z nią stanie (Stara główna roślina)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Tylko strefa z zaworem może mieć główną roślinę."
+    },
+    "plant_note_required": {
+      "message": "Najpierw napisz notatkę."
+    },
+    "preset_name_required": {
+      "message": "Nadaj szablonowi nazwę."
+    },
+    "preset_not_found": {
+      "message": "Nie ma szablonu o tej nazwie."
+    },
+    "copy_same_zone": {
+      "message": "Wybierz inną strefę, z której chcesz skopiować."
+    },
+    "copy_source_required": {
+      "message": "Wybierz strefę lub szablon, z którego chcesz skopiować."
+    },
+    "water_now_out_of_range": {
+      "message": "Podlewaj przez co najmniej 1 minutę i maksymalnie {max} minut (limit bezpieczeństwa tej strefy)."
+    },
+    "calibration_out_of_range": {
+      "message": "Te liczby dają przepływ, jakiego ta strefa nie może mieć. Sprawdź wodę, powierzchnię i minuty."
+    },
+    "calibration_unavailable": {
+      "message": "Ta strefa nie ma ustawienia przepływu do kalibracji."
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: czujnik offline (dni: {days})",
-      "description": "Encja {entity}, używana przez strefę {zone}, jest offline (dni: {days}). Strefa działa dalej bez niej (co to oznacza – zob. README), ale sprawdź urządzenie – albo usuń je ze strefy w „Konfiguruj”. To zgłoszenie zniknie samo, gdy czujnik znów zacznie raportować."
+      "description": "Encja {entity}, używana przez strefę {zone}, jest offline (dni: {days}). Strefa działa dalej bez niej (co to oznacza – zob. README), ale sprawdź urządzenie – albo usuń je ze strefy w „Konfiguruj”. To zgłoszenie zniknie samo, gdy czujnik znów zacznie raportować.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Zastąp czujnik",
+            "description": "Czujnik {entity} używany przez {zone} jest offline od dni. Wybierz czujnik zastępczy lub pozostaw puste, aby przestać go używać (strefa będzie działać bez niego).",
+            "data": {
+              "replacement": "Czujnik zastępczy"
+            },
+            "data_description": {
+              "replacement": "Pozostaw puste, aby usunąć czujnik z tej strefy."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Ta strefa już nie istnieje."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: brak celu powiadomień na telefon",
-      "description": "Strefa {zone} wysyła powiadomienia na telefon do celu {entity}, który już nie istnieje w Home Assistant, więc powiadomienia nie docierają. Wybierz aktualny cel powiadomień w „Konfiguruj” strefy. To zgłoszenie zniknie samo, gdy cel znów będzie istniał."
+      "description": "Strefa {zone} wysyła powiadomienia na telefon do celu {entity}, który już nie istnieje w Home Assistant, więc powiadomienia nie docierają. Wybierz aktualny cel powiadomień w „Konfiguruj” strefy. To zgłoszenie zniknie samo, gdy cel znów będzie istniał.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Wybierz inny telefon",
+            "description": "Telefon {entity} już nie istnieje, więc {zone} nie może wysyłać wiadomości. Wybierz inny telefon lub pozostaw puste.",
+            "data": {
+              "notify_entity": "Telefon do powiadomień"
+            },
+            "data_description": {
+              "notify_entity": "Pozostaw puste, aby zatrzymać wiadomości na telefon z tej strefy."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Ta strefa już nie istnieje."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: skalibruj wydajność emiterów",
-      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to."
+      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Ustaw przepływ poprzez pomiar",
+            "description": "{zone} nadal ma przykładowy przepływ, więc czas podlewania jest szacunkowy. Umieść wiadro pod emiterami (lub zanotuj stan wodomierza), a następnie uruchom zawór na 15 minut. Uruchomić teraz?",
+            "data": {
+              "run": "Uruchom zawór na 15 minut teraz"
+            },
+            "data_description": {
+              "run": "Odznacz, jeśli już to uruchomiono."
+            }
+          },
+          "measure": {
+            "title": "Ile wody wypłynęło?",
+            "description": "Wprowadź ilość wody podaną przez {zone} podczas tego biegu, nawadnianą powierzchnię oraz czas otwarcia zaworu w minutach.",
+            "data": {
+              "volume": "Woda, która wypłynęła",
+              "area": "Nawadniana powierzchnia",
+              "minutes": "Minuty otwarcia zaworu"
+            },
+            "data_description": {
+              "volume": "Litry (galony w strefie z jednostkami imperialnymi).",
+              "area": "Metry kwadratowe (stopy kwadratowe w strefie z jednostkami imperialnymi).",
+              "minutes": "Zazwyczaj 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Te liczby dają przepływ, jakiego ta strefa nie może mieć. Sprawdź je."
+        },
+        "abort": {
+          "zone_gone": "Ta strefa już nie istnieje.",
+          "zone_busy": "Strefa jest zajęta. Spróbuj ponowanie za chwilę."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: zawór współdzielony z inną strefą",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: jej szklarnia została usunięta",
       "description": "Szklarnia {greenhouse} została usunięta, więc {zone} jest teraz samodzielną strefą. Kontynuuje podlanie i zachowuje czujniki wewnętrzne szklarni. Aby umieścić ją w innej szklarni, użyj Konfiguruj -> Szklarnia dla danej strefy."
+    },
+    "area_removed": {
+      "title": "{zone}: jej obszar został usunięty",
+      "description": "Obszar {area} został usunięty, więc {zone} używa teraz kopii czujników z niego pobranych. Aby umieścić ją w innym obszarze, użyj opcji Konfiguruj -> Gdzie to jest? w strefie."
     }
   }
 }

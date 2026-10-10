@@ -35,19 +35,40 @@ with the hardware):
 - **Ambient Weather**: *Lifetime rain*, *Yearly, Monthly, Weekly and Daily
   rain*, *Event rain*, *Last 24 hours rain* (rolling, not usable) and an hourly
   rate. Use *Lifetime rain* or *Daily rain* as a **Rain total**.
-- **WeatherFlow Tempest**: *Precipitation* is the amount over the previous
-  minute, and *Precipitation intensity* is a rate. Use *Precipitation* as
-  **Rain per reading**.
+- **WeatherFlow Tempest**: two integrations exist. The local one has
+  *Precipitation* (the amount over the previous minute, use it as **Rain per
+  reading**) and *Precipitation intensity* (a rate). The cloud one has
+  *Precipitation Accumulation Local Day* (the rain of today, starting again at
+  local midnight: use it as a **Rain total**), plus *Last 1 Hour* and
+  *Yesterday* values that cannot be used. Prefer the *Local Day* one over the
+  *Local Day Final* one, which is only corrected later.
 - **Netatmo rain module**: *Rain* (the latest measurement), *Rain last hour*
   (rolling, off by default) and *sum_rain_24*, which Home Assistant reports as a
   total that goes up. Netatmo describes it as the rain of the day, though some
   users report a rolling 24 hours: check it against your own gauge before
   relying on it. If it behaves like a daily total, use **Rain total**.
-- **Davis WeatherLink**: usually a daily total and a rate; use the daily
-  total as a **Rain total**.
+- **Davis WeatherLink**: several integrations exist, and the names differ.
+  Typically there are a day, month and year total (*Rain Day*, *Rainfall Day*,
+  *Month*, *Year*: use one as a **Rain total**) and a rate (*Rain Rate*, *Rain
+  Rate Latest*: **Rain rate**). *Last hour*, *Last 24 hours* and *Storm* values cannot be used.
 - **Your own tipping bucket** (ESPHome, Zigbee, Tuya, rtl_433 over MQTT): a
   tip counter is a **Tip counter**; if it already reports millimetres, use
   **Rain total**.
+
+## Choosing by the name
+
+A quick rule when your station offers many rain sensors:
+
+- *Total*, *Lifetime*, *Today*, *Day*, *Daily*, *Week*, *Month*, *Year*,
+  *Accumulation Local Day* → **Rain total**. A lifetime total only ever goes
+  up; the others (today, this week, local day...) are totals for that period
+  and start again at its end. Both work: ZoneFlow counts only the increases,
+  so the restart is not rain.
+- *Rate*, *Intensity* → **Rain rate** (only if there is no total).
+- *Previous minute*, *Precipitation* that updates every minute → **Rain per
+  reading**.
+- *Last hour*, *Last 24 hours*, *Storm*, *Event*, *Yesterday* → not usable:
+  they go up and down or cover one rain event.
 
 ## Good to know
 

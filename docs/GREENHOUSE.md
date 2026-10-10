@@ -34,6 +34,8 @@ the soil's own reading is the truth.
 
 ## Several crops in one greenhouse (1.6.1)
 
+<img src="screenshots/greenhouse.png" width="520" alt="A greenhouse and its five crops as a group of their own on the overview card, with Pause and Snooze Today for the whole greenhouse">
+
 A greenhouse can hold several **crops**, each with its own valve, soil probe,
 plant type, schedule and watering settings. The greenhouse is the zone with
 the climate (inside sensors and the fans, vents, misters and heater); its

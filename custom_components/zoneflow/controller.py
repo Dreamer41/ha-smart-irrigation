@@ -30,6 +30,7 @@ from typing import Any
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
 from homeassistant.components import persistent_notification
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.event import (
     async_call_later,
     async_track_point_in_time,
@@ -45,7 +46,8 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, units, visibility
+from . import calculations as calc, issues, messages, notification_actions, units, visibility
+from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
@@ -81,6 +83,8 @@ from .const import (
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
+    CONF_AREA_ID,
+    CONF_START_STATE,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     CONF_ROUTINE_SUN_MODE,
@@ -339,9 +343,12 @@ class ZoneFlowController:
         self._frost_rechecks = 0
         self._frost_rechecking = False
         self._frost_notified: set[str] = set()
+        self._service_counted = False
         # Greenhouse / indoor climate control (1.6). Does nothing for a zone
         # with no climate devices.
         self.greenhouse = GreenhouseManager(self, lambda: STARTUP_GRACE_SECONDS)
+        # The plant in this zone (plants.ZonePlants), set once the entities exist.
+        self.plants: Any = None
 
     # ------------------------------------------------------------------
     # Config accessors
@@ -381,6 +388,105 @@ class ZoneFlowController:
         if not entry_id or entry_id == self.entry.entry_id:  # a zone can't be a crop of itself
             return None
         return self.hass.config_entries.async_get_entry(entry_id)
+
+    @property
+    def area_entry_id(self) -> str | None:
+        """The area this zone is in (the entry id), or None. A crop is in its
+        greenhouse's area."""
+        parent = self.parent_entry
+        source = parent if parent is not None else self.entry
+        return source.options.get(CONF_AREA_ID, source.data.get(CONF_AREA_ID)) or None
+
+    @property
+    def area(self):
+        """The AreaController of this zone's area, or None."""
+        return get_area(self.hass, self.area_entry_id)
+
+    @property
+    def garden_area(self) -> str | None:
+        """The area's name, as the cards show it."""
+        area = self.area
+        return area.name if area is not None else None
+
+    def _own_value(self, key: str) -> Any:
+        return self.entry.options.get(key, self.entry.data.get(key)) or None
+
+    def _area_value(self, key: str) -> Any:
+        """The zone's own sensor for `key`, else its area's."""
+        own = self._own_value(key)
+        if own:
+            return own
+        area = self.area
+        return (area.option(key) or None) if area is not None else None
+
+    def area_overrides(self) -> list[str]:
+        """Which of the area's shared settings this zone does its own way: it
+        has one of its own and the area has a different one."""
+        area = self.area
+        if area is None:
+            return []
+        out = []
+        for key in AREA_SHARED_KEYS:
+            own, shared = self._own_value(key), area.option(key) or None
+            if own and shared and own != shared:
+                out.append(key)
+        return out
+
+    def own_controls(self) -> dict[str, str]:
+        """This zone's own Pause switch and Snooze button, for the cards."""
+        registry = er.async_get(self.hass)
+        entry_id = self.entry.entry_id
+        found = {
+            "pause": registry.async_get_entity_id("switch", DOMAIN, f"{entry_id}_pause"),
+            "snooze": registry.async_get_entity_id("button", DOMAIN, f"{entry_id}_snooze_today"),
+        }
+        return {key: value for key, value in found.items() if value}
+
+    def area_entities(self) -> dict[str, str]:
+        """The area's Pause switch and Snooze button, for the cards."""
+        area_id = self.area_entry_id
+        if not area_id or self.area is None:
+            return {}
+        registry = er.async_get(self.hass)
+        found = {
+            "pause": registry.async_get_entity_id("switch", DOMAIN, f"{area_id}_pause"),
+            "snooze": registry.async_get_entity_id("button", DOMAIN, f"{area_id}_snooze_today"),
+        }
+        return {key: value for key, value in found.items() if value}
+
+    def area_note(self) -> str:
+        """The overrides in words, in the user's language ("" when none)."""
+        area = self.area
+        if area is None:
+            return ""
+        return " ".join(
+            self._msg(f"area.override.{key}", area=area.name) for key in self.area_overrides()
+        )
+
+    @property
+    def rain_from_area(self) -> bool:
+        """The zone reads its rain from its area's gauge (it has none of its own)."""
+        area = self.area
+        return bool(self.is_outdoor and area is not None and area.rain_counter_entity and not self._own_value(CONF_RAIN_COUNTER_ENTITY))
+
+    @property
+    def rain_mm_per_tip(self) -> float:
+        """Tip size of the gauge in use: the area's, or this zone's own slider."""
+        area = self.area
+        if self.rain_from_area and area is not None:
+            return area.rain_mm_per_tip
+        return self.number("rain_mm_per_tip")
+
+    async def on_area_paused(self) -> None:
+        """The area was paused: stop what this zone is doing, as its own Pause does."""
+        self._paused_event.set()
+        self._cancel_frost_wait()
+
+    async def on_area_resumed(self) -> None:
+        """An area or greenhouse stopped pausing this zone: free it unless
+        something else still does."""
+        if not self.paused:
+            self._paused_event.clear()
 
     @property
     def is_crop(self) -> bool:
@@ -440,7 +546,7 @@ class ZoneFlowController:
         """The outside sensor itself. Outdoor zones water by it (that is
         outdoor_temp_entity below); greenhouse and indoor zones keep it for
         the ventilation gate (1.6), and water by the inside sensor."""
-        return self.entry.options.get(CONF_OUTDOOR_TEMP_ENTITY, self.entry.data.get(CONF_OUTDOOR_TEMP_ENTITY)) or None
+        return self._area_value(CONF_OUTDOOR_TEMP_ENTITY)
 
     @property
     def fan_entities(self) -> list[str]:
@@ -485,12 +591,14 @@ class ZoneFlowController:
         empty tracker, which is the correct "assume no rain" fallback."""
         if not self.is_outdoor:
             return None  # a roof: no rain gauge
-        return self.entry.options.get(CONF_RAIN_COUNTER_ENTITY, self.entry.data.get(CONF_RAIN_COUNTER_ENTITY))
+        return self._area_value(CONF_RAIN_COUNTER_ENTITY)
 
     @property
     def rain_source_type(self) -> str:
         """What the rain gauge sensor reports: tips (a counter, the default),
         total_mm (a running total in mm) or rate_mm_h."""
+        if self.rain_from_area:
+            return self.area.rain_source_type  # the gauge is the area's: so is its type
         value = self.entry.options.get(CONF_RAIN_SOURCE, self.entry.data.get(CONF_RAIN_SOURCE))
         return value if value in RAIN_SOURCE_OPTIONS else RAIN_SOURCE_TIPS
 
@@ -503,7 +611,7 @@ class ZoneFlowController:
         """mm per unit of the stored rain total: the tip size for a tip
         counter, 1 for a total or rate that is already in mm."""
         if self.rain_source_type == RAIN_SOURCE_TIPS:
-            return self.number("rain_mm_per_tip")
+            return self.rain_mm_per_tip
         return 1.0
 
     def _reset_rain_if_source_changed(self) -> None:
@@ -562,7 +670,7 @@ class ZoneFlowController:
         picks the hot/cool/normal tier -- see watering_temp."""
         if not self.is_outdoor:
             return self.inside_temp_entity  # under a roof, water by the inside temperature
-        return self.entry.options.get(CONF_OUTDOOR_TEMP_ENTITY, self.entry.data.get(CONF_OUTDOOR_TEMP_ENTITY))
+        return self._area_value(CONF_OUTDOOR_TEMP_ENTITY)
 
     @property
     def flow_meter_entity(self) -> str | None:
@@ -640,13 +748,13 @@ class ZoneFlowController:
 
     @property
     def notify_entity(self) -> str | None:
-        return self.entry.options.get(CONF_NOTIFY_ENTITY, self.entry.data.get(CONF_NOTIFY_ENTITY))
+        return self._area_value(CONF_NOTIFY_ENTITY)
 
     @property
     def weather_entity(self) -> str | None:
         if not self.is_outdoor:
             return None  # a roof: the outdoor forecast doesn't apply
-        return self.entry.options.get(CONF_WEATHER_ENTITY, self.entry.data.get(CONF_WEATHER_ENTITY))
+        return self._area_value(CONF_WEATHER_ENTITY)
 
     @property
     def csv_path(self) -> str:
@@ -760,9 +868,21 @@ class ZoneFlowController:
         # ever clear a lock that was set BEFORE this, i.e. left over from
         # before the restart (see _on_startup).
         self._setup_ts = dt_util.utcnow().timestamp()
+        # Whether the area's sensors were there when this zone started: an area
+        # that loads later starts the zone again (__init__._async_setup_area).
+        self.had_area_at_setup = self.area is not None or not self.area_entry_id
         await messages.async_setup(self.hass)
         await self.store.async_load()
         state = self.store.state
+        # A zone made from another zone or a preset starts with its saved-state
+        # settings (the rest went into the entry and the sliders at setup).
+        start_state = self.entry.data.get(CONF_START_STATE)
+        if isinstance(start_state, dict) and not state.initial_applied:
+            for key, value in start_state.items():
+                if hasattr(state, key):
+                    setattr(state, key, value)
+            state.initial_applied = True
+            await self.store.async_save()
         if state.paused:
             self._paused_event.set()
             self._schedule_resume()
@@ -912,6 +1032,8 @@ class ZoneFlowController:
         # the valve closed and the lock released, so the reloaded zone
         # starts clean instead of racing an unsupervised old cycle.
         await self._interrupt_cycle("the zone was reloaded")
+        if self.plants is not None:
+            await self.plants.async_unload()
         await self.greenhouse.async_unload()  # misters off first
         if self._startup_unsub is not None:
             self._startup_unsub()
@@ -1351,8 +1473,33 @@ class ZoneFlowController:
     # Pause and frost guard
     # ------------------------------------------------------------------
     @property
-    def paused(self) -> bool:
+    def own_paused(self) -> bool:
+        """This zone's own Pause switch."""
         return self.store.state.paused
+
+    @property
+    def parent_controller(self):
+        """The greenhouse this zone is a crop of (its controller), or None."""
+        parent_id = self.parent_entry_id
+        return self.hass.data.get(DOMAIN, {}).get(parent_id) if parent_id else None
+
+    def paused_by(self) -> str | None:
+        """What is pausing this zone: "own" (its Pause switch), "house" (its
+        greenhouse's Pause), "area" (its area's Pause), or None."""
+        if self.store.state.paused:
+            return "own"
+        parent = self.parent_controller
+        if parent is not None and parent is not self and parent.store.state.paused:
+            return "house"
+        area = self.area
+        if area is not None and area.paused:
+            return "area"
+        return None
+
+    @property
+    def paused(self) -> bool:
+        """No watering: the zone's own Pause, its greenhouse's, or its area's."""
+        return self.paused_by() is not None
 
     async def set_paused(self, on: bool, until_ts: float | None = None) -> None:
         """The Pause switch: no deep soak or routine watering -- scheduled
@@ -1385,9 +1532,17 @@ class ZoneFlowController:
         else:
             state.paused_since_ts = None
             state.pause_ended_ts = now_ts
-            self._paused_event.clear()
+            if not self.paused:
+                self._paused_event.clear()
         await self.store.async_save()
         self._notify_status()
+        for crop in self.crops:
+            # A greenhouse's Pause is its crops' Pause too.
+            if on:
+                await crop.on_area_paused()
+            else:
+                await crop.on_area_resumed()
+            crop._notify_status()
         await self._log_event(
             event_type="Paused" if on else "Resumed",
             status="INFO",
@@ -1433,7 +1588,12 @@ class ZoneFlowController:
         )
 
     def _refuse_if_paused(self) -> None:
-        if self.store.state.paused:
+        by = self.paused_by()
+        if by == "house":  # name the greenhouse that is paused, in the words the Status uses
+            raise ServiceValidationError(self._msg("status.paused_house", house=self.parent_entry.title if self.parent_entry else ""))
+        if by == "area":
+            raise ServiceValidationError(self._msg("status.paused_area", area=self.garden_area or ""))
+        if by is not None:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_paused")
 
     async def run_deep_soak_now(self) -> None:
@@ -1612,7 +1772,7 @@ class ZoneFlowController:
             ),
             default=0,
         )
-        if not held or self.store.state.paused or not isinstance(rechecks, int) or rechecks >= FROST_RETRY_COUNT:
+        if not held or self.paused or not isinstance(rechecks, int) or rechecks >= FROST_RETRY_COUNT:
             return
         self._frost_rechecks = rechecks
         self._frost_held = held
@@ -2967,10 +3127,74 @@ class ZoneFlowController:
     def skip_hit_rate(self) -> tuple[int, int]:
         return calc.skip_hit_rate(self.store.state.forecast_skip_journal, dt_util.utcnow().timestamp())
 
+    def _deep_soak_waits_for_routine(self, now_ts: float) -> bool:
+        """True while a due deep soak should hold off for the next routine
+        slot (see calc.deep_soak_waits_for_routine). A zone that has never
+        run a routine has nothing to stretch around."""
+        state = self.store.state
+        if state.last_routine_ts is None:
+            return False
+        return calc.deep_soak_waits_for_routine(
+            now_ts - state.last_routine_ts,
+            now_ts - (state.last_deep_soak_ts or 0.0),
+            self.number("deep_soak_interval_days"),
+            calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+            ROUTINE_INTERVAL_BUFFER_SECONDS,
+            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+        )
+
+    def _stretch_deep_soak_ts(self, deep_ts: float) -> float:
+        """The estimated deep soak time moved out to the routine's due time
+        when the deep soak would wait for it."""
+        state = self.store.state
+        if state.last_routine_ts is None or state.last_deep_soak_ts is None:
+            return deep_ts
+        interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        routine_due_ts = state.last_routine_ts + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS
+        latest = (
+            state.last_deep_soak_ts
+            + self.number("deep_soak_interval_days") * 86400
+            - DEEP_SOAK_INTERVAL_BUFFER_SECONDS
+            + interval * 86400
+        )
+        return max(deep_ts, min(routine_due_ts, latest))
+
+    def _deep_soak_would_replace_routine(self, now_ts: float) -> bool:
+        """True when a due routine should run as the deep soak instead: the
+        deep soak is due and its own early gates (dry-down, wet fortnight,
+        runtime caps) would let it run, so skipping the routine can't leave
+        the zone unwatered."""
+        state = self.store.state
+        if not self.deep_soak_enabled or self.paused or state.last_deep_soak_ts is None:
+            return False  # a zone that never soaked keeps its own soak slot
+        if not calc.deep_soak_due(
+            now_ts - (state.last_deep_soak_ts or 0.0),
+            self.number("deep_soak_interval_days"),
+            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+        ):
+            return False
+        if not calc.drydown_satisfied(
+            now_ts - (state.last_significant_rain_ts or 0.0), self.number("deep_soak_drydown_days")
+        ):
+            return False
+        if self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
+            return False
+        plan = calc.plan_deep_soak(
+            self.number("deep_soak_target_mm"),
+            self.number("flow_rate_mm_per_min"),
+            pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
+            min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+            site=self.site,
+        )
+        if plan.total_runtime_minutes > self.number("deep_soak_max_runtime_minutes"):
+            return False
+        return state.today_runtime_minutes + plan.total_runtime_minutes <= self.number("max_daily_runtime_minutes")
+
     @_tracked_run
-    async def run_deep_soak(self) -> None:
+    async def run_deep_soak(self, *, replacing_routine: bool = False) -> None:
         """Port of avocado_deep_soak. Called by the 05:00 trigger and by the
-        manual 'Run Deep Soak Now' button/service — same code, same gates."""
+        manual 'Run Deep Soak Now' button/service — same code, same gates.
+        `replacing_routine` is set when a due routine hands over to it."""
         if not self.has_valve or not self.deep_soak_enabled:
             # Silent, like every other routine gate below -- a zone that has
             # deliberately turned this cycle off shouldn't get a log entry
@@ -2980,7 +3204,7 @@ class ZoneFlowController:
             return
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
-        if state.paused:
+        if self.paused:
             return  # the Status sensor says so; nothing to log every day
 
         if state.lock_on:
@@ -2999,6 +3223,8 @@ class ZoneFlowController:
             DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
         ):
             return
+        if not (replacing_routine or self._manual_press) and self._deep_soak_waits_for_routine(now_ts):
+            return  # due, but a routine ran recently: wait for the next routine slot
         await self._refresh_wu_rain()
         if not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("deep_soak_drydown_days")
@@ -3078,7 +3304,7 @@ class ZoneFlowController:
             )
             return
 
-        if state.lock_on or self._service_active or state.paused:
+        if state.lock_on or self._service_active or self.paused:
             # Something took the zone (or it was paused) while this cycle
             # was checking its gates.
             return
@@ -3169,7 +3395,7 @@ class ZoneFlowController:
         now_ts = dt_util.utcnow().timestamp()
         last_run_ts = state.last_routine_ts or 0.0
         elapsed_seconds = now_ts - last_run_ts
-        if state.paused:
+        if self.paused:
             return  # the Status sensor says so; nothing to log every day
 
         if state.lock_on:
@@ -3191,6 +3417,12 @@ class ZoneFlowController:
         hot_threshold = self.number("hot_temp_threshold")
         interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
         interval_due = calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS)
+
+        # A due deep soak replaces this routine instead of adding a second
+        # watering on top of it.
+        if interval_due and not manual and self._deep_soak_would_replace_routine(now_ts):
+            await self.run_deep_soak(replacing_routine=True)
+            return
 
         # Soil moisture (if configured and currently readable) becomes the
         # direct decider at the extremes, ahead of the plain time-interval
@@ -3372,7 +3604,7 @@ class ZoneFlowController:
             )
             return
 
-        if state.lock_on or self._service_active or state.paused:
+        if state.lock_on or self._service_active or self.paused:
             # Something took the zone (or it was paused) while this cycle
             # was checking its gates.
             return
@@ -3575,8 +3807,25 @@ class ZoneFlowController:
             listener()
         self._notify_status()
 
+    async def water_now(self, minutes: float) -> None:
+        """Water for `minutes` by hand ("Water now" with a duration). Within
+        the safety limits: not while paused, no longer than the routine cap,
+        and inside the day's runtime cap. It counts as watering in the water
+        record (litres, last watering amount) but does not move the routine
+        or deep soak schedule."""
+        self._refuse_without_valve()
+        self._refuse_if_paused()
+        minutes = float(minutes)
+        cap = self.number("max_runtime_minutes")
+        if minutes < 1 or minutes > cap:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="water_now_out_of_range",
+                translation_placeholders={"max": f"{cap:.0f}"},
+            )
+        await self.start_service_run(minutes, counted=True)
+
     async def start_service_run(
-        self, minutes: float, *, from_switch: bool = False, measure_area: float | None = None
+        self, minutes: float, *, from_switch: bool = False, measure_area: float | None = None, counted: bool = False
     ) -> None:
         """Run the valve for `minutes` to check emitters, flush a line or
         find a leak -- the 1/5/10 min buttons and the Service Mode switch.
@@ -3608,20 +3857,23 @@ class ZoneFlowController:
         shortened = float(minutes) > room
         minutes = min(float(minutes), room)
         self._service_active = True
+        self._service_counted = counted
         self._service_stop.clear()
         self._notify_service_listeners()
-        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area))
+        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area, counted))
 
     async def _service_task(
-        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None
+        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None,
+        counted: bool = False,
     ) -> None:
         """Owns the service-run flags, so they're cleared however the run
         ends -- including a zone that started stopping before it began."""
         self._measuring = measure_area is not None
         try:
-            await self._service_run(minutes, from_switch, shortened, measure_area)
+            await self._service_run(minutes, from_switch, shortened, measure_area, counted)
         finally:
             self._measuring = False
+            self._service_counted = False
             self._service_active = False
             self._service_stop.clear()
             self._notify_service_listeners()
@@ -3633,7 +3885,8 @@ class ZoneFlowController:
 
     @_tracked_run
     async def _service_run(
-        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None
+        self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None,
+        counted: bool = False,
     ) -> None:
         state = self.store.state
         if state.lock_on:
@@ -3665,8 +3918,12 @@ class ZoneFlowController:
         ran = self._delivered_minutes
         auto_off = completed and from_switch
         cap_note = " (shortened to fit today's runtime safety cap)" if shortened else ""
+        if counted and (completed or ran > 0):
+            # "Water now": the water went on, so the record shows it.
+            self._count_for_summary(ran, "manual")
+            await self.store.async_save()
         await self._log_event(
-            event_type=SERVICE_RUN_KIND,
+            event_type="Manual Watering" if counted else SERVICE_RUN_KIND,
             status="Auto-Off" if auto_off else ("Completed" if completed else "Stopped"),
             target_mm=0.0,
             deducted_mm=0.0,
@@ -3675,7 +3932,10 @@ class ZoneFlowController:
             message="service_auto_off_capped" if shortened else "service_auto_off",
             params={"minutes": f"{ran:.0f}"},
             level=LEVEL_WARNING,
-            extra_log=f"Service run: {ran:.1f} min, not counted as watering{cap_note}.",
+            extra_log=(
+                f"Manual watering: {ran:.1f} min, counted in the water record{cap_note}."
+                if counted else f"Service run: {ran:.1f} min, not counted as watering{cap_note}."
+            ),
         )
         if measure_area is not None:
             await self._finish_flow_measurement(measure_area, minutes, stopped_by_person)
@@ -3786,7 +4046,14 @@ class ZoneFlowController:
         moment the calendar date changes, with no separate cleanup needed,
         and it means "skip today" always means today's local calendar day
         regardless of what time the button was pressed."""
-        return self.store.state.snooze_date_iso == dt_util.now().date().isoformat()
+        today = dt_util.now().date().isoformat()
+        if self.store.state.snooze_date_iso == today:
+            return True
+        parent = self.parent_controller
+        if parent is not None and parent is not self and parent.store.state.snooze_date_iso == today:
+            return True  # its greenhouse is snoozed
+        area = self.area
+        return area is not None and area.snoozed_today
 
     async def snooze_today(self) -> None:
         """Manual 'Snooze Today' button/service. Skips whichever of this
@@ -3800,6 +4067,8 @@ class ZoneFlowController:
         self.store.state.snooze_date_iso = dt_util.now().date().isoformat()
         await self.store.async_save()
         self._notify_status()
+        for crop in self.crops:
+            crop._notify_status()  # a greenhouse's Snooze Today is its crops' too
         await self._register_self_tune_signal("skip")
         await self._log_event(
             event_type="Manual Snooze Today",
@@ -4051,12 +4320,30 @@ class ZoneFlowController:
 
         if notify_phone and self.notify_entity and (always_notify or self._notify_allowed(level)):
             try:
-                await self.hass.services.async_call(
-                    "notify",
-                    "send_message",
-                    {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
-                    blocking=True,
-                )
+                verbs = notification_actions.ACTIONS_FOR_MESSAGE.get(message or "", ())
+                legacy = notification_actions.legacy_service(self.hass, self.notify_entity) if verbs else None
+                if legacy is not None:
+                    # The companion app's service takes action buttons.
+                    await self.hass.services.async_call(
+                        "notify",
+                        legacy,
+                        {
+                            "title": phone_title,
+                            "message": phone_msg,
+                            "data": {
+                                "tag": f"zoneflow_{self.entry.entry_id}",
+                                "actions": notification_actions.build(self.hass, self.entry.entry_id, verbs),
+                            },
+                        },
+                        blocking=True,
+                    )
+                else:
+                    await self.hass.services.async_call(
+                        "notify",
+                        "send_message",
+                        {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
+                        blocking=True,
+                    )
             except Exception:  # noqa: BLE001 - never let a notify failure break irrigation logic
                 _LOGGER.exception("Failed to send phone notification for %s", event_type)
 
@@ -4203,7 +4490,7 @@ class ZoneFlowController:
         if code == "done":
             if today in state.summary_skip_days:
                 state.summary_skip_days.remove(today)
-        elif not code.startswith("waiting") and not self._manual_press and not self._stopping and not state.paused:
+        elif not code.startswith("waiting") and not self._manual_press and not self._stopping and not self.paused:
             if today not in state.summary_skip_days:
                 # (Only the last few weeks matter, whenever the summary is sent.)
                 state.summary_skip_days = [*state.summary_skip_days[-27:], today]
@@ -4231,6 +4518,7 @@ class ZoneFlowController:
                 self.number("deep_soak_drydown_days"),
                 now_ts,
             )
+            deep_next = self._stretch_deep_soak_ts(deep_next)
             if deep_next <= now_ts and self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
                 deep_next = None
         return routine_next, deep_next
@@ -4316,6 +4604,7 @@ class ZoneFlowController:
                     - DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
                     drydown_end,
                 )
+                deep_est = self._stretch_deep_soak_ts(deep_est)
             deep = self.next_slot("deep_soak", max(deep_est, not_before))
         return routine, deep
 
@@ -4379,6 +4668,12 @@ class ZoneFlowController:
             key = "with_next_deep_soak" if next_cycle == "deep_soak" else "with_next"
             return self._msg(f"status.{key}", status=text, when=self._when(next_ts))
 
+        if self._service_active and self._service_counted:
+            result.update(
+                code="watering", cycle="manual_water",
+                text=self._msg("status.watering", cycle=self._msg("cycle.manual_water")),
+            )
+            return result
         if self._service_active:
             result.update(code="service_run", text=self._msg("status.service_run"))
             return result
@@ -4399,8 +4694,8 @@ class ZoneFlowController:
             else:
                 result.update(code="lock_held", text=self._msg("status.lock_held"))
             return result
-        if state.paused:
-            until = state.pause_until_ts
+        if self.paused:
+            until = state.pause_until_ts if state.paused else None
             result.update(
                 code="paused",
                 next_watering=None,
@@ -4409,6 +4704,10 @@ class ZoneFlowController:
                     self._msg("status.paused_until", until=self._when(until, "datetime"))
                     if until is not None
                     else self._msg("status.paused")
+                    if state.paused
+                    else self._msg("status.paused_house", house=self.parent_entry.title if self.parent_entry else "")
+                    if self.paused_by() == "house"
+                    else self._msg("status.paused_area", area=self.garden_area or "")
                 ),
             )
             return result

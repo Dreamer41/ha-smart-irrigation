@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Názov zóny",
           "plant": "Čo je zasadené",
-          "zone_type": "Kde rastie"
+          "zone_type": "Kde rastie",
+          "start_from": "Začať z",
+          "location": "Kde sa nachádza?"
         },
         "data_description": {
           "zone_name": "Stane sa názvom zariadenia zóny a začiatkom názvov jej entít a zobrazuje sa v správach v telefóne. Napr. „Záhon paradajok“, „Predný trávnik“.",
           "plant": "Vyplní rozumné počiatočné hodnoty pre túto plodinu: týždenné ciele vody, koeficient plodiny, hĺbkovú zálievku a rastovú krivku. „Niečo iné“ začína so všeobecnými hodnotami. Všetko môžete neskôr zmeniť na stránke zariadenia zóny.",
-          "zone_type": "Vonku je spôsob, akým ZoneFlow fungoval vždy. Skleníkové a vnútorné zóny pridávajú riadenie klímy (ventilátory, vetranie, hmloviny, ohrievač), môžu fungovať bez ventilu a kvôli streche nemajú zrážkomer ani predpoveď."
+          "zone_type": "Vonku je spôsob, akým ZoneFlow fungoval vždy. Skleníkové a vnútorné zóny pridávajú riadenie klímy (ventilátory, vetranie, hmloviny, ohrievač), môžu fungovať bez ventilu a kvôli streche nemajú zrážkomer ani predpoveď.",
+          "start_from": "Začnite kópiou nastavení zalievania inej zóny alebo uloženej predvoľby namiesto nastavení typu rastliny. Ventil, snímače a prietok sa nikdy nekopírujú.",
+          "location": "Oblasť, v ktorej sa táto zóna nachádza, ak nejaká je. Zóna potom používa zrážkomer, snímač teploty, počasie a telefón oblasti, ak jej nedáte vlastné."
         }
       },
       "entities": {
         "title": "Zavlažovanie ZoneFlow",
-        "description": "Priraďte svoje skutočné entity. Integrácia nikdy nevytvára vlastné fyzické entity. Povinný je iba spínač ventilu – všetko ostatné nižšie môžete nechať prázdne a zóna bude fungovať aj bez toho.",
+        "description": "{progress}\n\nNasmerujte toto na svoje skutočné entity. Nikdy nevytvára vlastné fyzické entity. Vyžaduje sa iba spínač ventila – všetko ostatné nižšie funguje správne aj bez nastavenia. Nechajte pole prázdne, ak ho nemáte.\n\n{suggestions}",
         "data": {
           "valve_entity": "Spínač ventilu",
           "pump_power_entity": "Snímač príkonu čerpadla (voliteľné)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Snímač vlhkosti pôdy (voliteľné)",
           "notify_entity": "Cieľ oznámení v telefóne (voliteľné)",
           "weather_entity": "Zdroj predpovede počasia (voliteľné)",
-          "soil_type": "Typ pôdy",
-          "drainage": "Odvodnenie",
-          "slope": "Sklon",
-          "irrigation_method": "Spôsob zavlažovania",
-          "growth_ramp_profile": "Automatická rastová krivka",
+          "soil_type": "Poznáte typ pôdy? (preskočte, ak nie)",
+          "drainage": "Odtieka voda pomaly? (preskočte, ak neviete)",
+          "slope": "Je pozemok v svahu? (preskočte, ak je na rovine alebo si nie ste istí)",
+          "irrigation_method": "Ako sa voda dostáva k rastlinám?",
+          "growth_ramp_profile": "Ide o mladú rastlinu, ktorá sprvu potrebuje menej vody? (preskočte, ak nie)",
           "csv_path": "Cesta k súboru denníka CSV",
           "deep_soak_enabled": "Zapnúť hĺbkovú zálievku",
           "deep_soak_time": "Čas hĺbkovej zálievky",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Podnebie",
-        "description": "Aké je vegetačné obdobie tam, kde je táto zóna? Vyplní sa tým len predvolené nastavenie teplotných posuvníkov na ďalšej stránke – každú hodnotu tam môžete zmeniť, aj neskôr na stránke zariadenia zóny.",
+        "description": "{progress}\n\nAké je vegetačné obdobie v mieste tejto zóny? Toto iba predvyplní posuvníky teploty na ďalšej stránke – každú hodnotu tam môžete zmeniť a neskôr upraviť na stránke zariadenia zóny.",
         "data": {
           "climate": "Podnebie"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Teplotné prahy",
-        "description": "ZoneFlow priemeruje denné MAXIMÁLNE teploty za posledné 3 dni. Pri prahu Horúco alebo nad ním polieva častejšie (každé 3 dni) s týždenným cieľom pre horúco; pod prahom Chladno použije týždenný cieľ pre chladno; medzi nimi je normálne počasie.\n\nNáhradná teplota sa použije, keď nie je k dispozícii skutočné meranie: bez snímača teploty ňou riadite ručne (pri vlne horúčav ju zvýšte, pri ochladení znížte); so snímačom sa použije len dovtedy, kým snímač nezaznamená prvý celý deň, a po 3 dňoch bez jediného merania.",
+        "description": "{progress}\n\nZoneFlow priemeruje dennú MAXIMÁLNU teplotu za posledné 3 dni. Pri teplote na úrovni Horúco alebo vyššej zalieva častejšie (každé 3 dni) s horúcim týždenným cieľom; pod úrovňou Chladno používa chladný týždenný cieľ; medzi tým platí bežný stav.\n\nZáložná teplota sa používa v prípade, že nie je k dispozícii žiadny skutočný údaj: bez snímača teploty slúži na ručné riadenie (zvýšte pre vlnu horúčav, znížte pre chladné obdobie); so snímačom sa používa iba do zaznamenania prvého celého dňa a po 3 dňoch bez jediného odčítania.",
         "data": {
           "hot_temp_threshold": "Prah horúceho počasia",
           "cool_temp_threshold": "Prah chladného počasia",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Pridať zónu",
           "weather_underground": "Nastaviť zrážky Weather Underground",
-          "crop": "Pridať plodinu do skleníka"
+          "crop": "Pridať plodinu do skleníka",
+          "area": "Pridať oblasť (časť záhrady)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "Spínač, ktorý otvára vodu pre túto plodinu. Každá plodina potrebuje vlastný ventil."
         }
+      },
+      "area": {
+        "title": "Nová oblasť",
+        "description": "Časť záhrady, napríklad Zadná záhrada alebo Predzáhradka. Jej zóny používajú tu nastavené snímače, kým zóna nemá vlastné.",
+        "data": {
+          "area_name": "Názov",
+          "rain_counter_entity": "Zrážkomer",
+          "rain_source_type": "Typ snímača zrážkomera",
+          "area_rain_mm_per_tip": "Zrážkomer: mm na preklopenie",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty",
+          "weather_entity": "Entita počasia (predpoveď)",
+          "notify_entity": "Telefón na upozornenia"
+        },
+        "data_description": {
+          "rain_counter_entity": "Voliteľné. Zóny tejto oblasti z neho čítajú zrážky, kým zóna nemá vlastný zrážkomer.",
+          "area_rain_mm_per_tip": "Iba pre počítadlo preklopení: koľko mm zrážok predstavuje jedno preklopenie.",
+          "outdoor_temp_entity": "Voliteľné. Nastavuje horúcu / chladnú úroveň zalievania pre zóny tejto oblasti.",
+          "weather_entity": "Voliteľné. Umožňuje zónam tejto oblasti preskočiť zálievku, ak je predpovedaný dážď.",
+          "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
+          "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
+          "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground odmietol kľúč API.",
       "wu_cannot_connect": "Napadlo spojiť sa s Weather Underground. Skúste to znova neskôr.",
       "wu_no_stations": "Žiadne stanice v okruhu. Bez stanice v blízkosti vám táto funkcia nepomôže.",
-      "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice."
+      "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice.",
+      "area_name_required": "Pomenujte oblasť.",
+      "area_name_exists": "Oblasť s týmto názvom už existuje."
     },
     "abort": {
       "already_configured": "Dážď Weather Underground je už nastavený."
@@ -264,7 +293,7 @@
           "zone_type": "Typ zóny",
           "weather_underground": "Zrážky Weather Underground",
           "crop_valve": "Ventil plodiny",
-          "greenhouse_link": "Skleník"
+          "location": "Kde sa nachádza? (oblasť alebo skleník)"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "Spínač, ktorý otvára vodu pre túto plodinu. Každá plodina potrebuje vlastný ventil."
         }
       },
-      "greenhouse_link": {
-        "title": "Skleník",
-        "description": "Urobte z tejto zóny plodinu skleníka: bude potom využívať vnútorné snímače daného skleníka a zobrazovať sa s ním. Vyberte „-“, ak z nej chcete opäť urobiť samostatnú zónu (ponechá si kópiu snímačov skleníka).",
-        "data": {
-          "greenhouse_entry_id": "Súčasť skleníka"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Skleník alebo vnútorná zóna s klimatickými zariadeniami, alebo „-“ pre žiadny."
-        }
-      },
       "flow_volume": {
         "title": "Zmerajte prietok podľa objemu",
         "description": "Stlačte jedno z tlačidiel Servisný chod pre zónu (dlhší beh, napríklad 15 min, je presnejší) a zachyťte alebo odčítajte vodu: vedro alebo sud pod emitormi, prípadne rozdiel na vodomere. Potom zadajte minúty, počas ktorých bol ventil otvorený, litre a plochu, ktorú emitory zavlažujú.\n\nVýsledkom je PRIEMER zóny: litre delené plochou a minútami, a tento výsledok nahradí Kalibráciu prietoku emitorov zóny. ZoneFlow používa pre každú zónu iba jeden prietok, takže nemôže rozlišovať jednotlivé emitory. Pre presný výsledok by mal byť každý emitor na ventile zóny rovnakého typu a prietoku; rôzne emitory umiestnite na samostatné ventily (samostatné zóny). V zmiešanej zóne dostanú rastliny pri slabších emitoroch menej ako zobrazený priemer. Nastavuje aj Prietok zóny, čo sú litre za minútu použité na odhad spotreby vody.",
@@ -506,6 +525,76 @@
           "head_flow": "Koľko jeden emitor dáva, z obalu alebo tabuľky trysiek.",
           "head_flow_unit": "Jednotka, v ktorej je uvedený prietok jedného emitora."
         }
+      },
+      "location": {
+        "title": "Kde sa nachádza?",
+        "description": "Oblasť alebo skleník, v ktorom sa táto zóna nachádza. Zóna používa snímače svojej oblasti, kým nemá vlastné. V skleníku tvorí jeho plodinu. Zvoľte Nová oblasť na vytvorenie oblasti z vlastných snímačov tejto zóny.",
+        "data": {
+          "location": "Miesto"
+        },
+        "data_description": {
+          "location": "Oblasť, skleník alebo žiadne. Presun zóny ju reštartuje, aby načítala snímače nového miesta."
+        }
+      },
+      "location_sensors": {
+        "title": "Použiť snímače oblasti?",
+        "description": "Táto zóna má vlastný snímač tam, kde má oblasť iný. Zaškrtnite pre použitie snímača oblasti; odškrtnite pre zachovanie vlastného snímača zóny.",
+        "data": {
+          "rain_counter_entity": "Použiť zrážkomer oblasti",
+          "outdoor_temp_entity": "Použiť vonkajšiu teplotu oblasti",
+          "weather_entity": "Použiť entitu počasia oblasti",
+          "notify_entity": "Použiť telefón oblasti"
+        },
+        "data_description": {
+          "rain_counter_entity": "Zaškrtnite pre použitie zrážkomera oblasti namiesto vlastného zrážkomera tejto zóny.",
+          "outdoor_temp_entity": "Zaškrtnite pre použitie snímača vonkajšej teploty oblasti namiesto vlastného snímača tejto zóny.",
+          "weather_entity": "Zaškrtnite pre použitie entity počasia oblasti namiesto vlastnej entity počasia tejto zóny.",
+          "notify_entity": "Zaškrtnite pre odosielanie na telefón oblasti namiesto vlastného telefónu tejto zóny."
+        }
+      },
+      "new_area": {
+        "title": "Nová oblasť",
+        "description": "Oblasť vytvorená zo snímačov tejto zóny. Zóna sa do nej presunie a ďalšie zóny sa môžu pripojiť neskôr.",
+        "data": {
+          "area_name": "Názov",
+          "rain_counter_entity": "Zrážkomer",
+          "rain_source_type": "Typ snímača zrážkomera",
+          "area_rain_mm_per_tip": "Zrážkomer: mm na preklopenie",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty",
+          "weather_entity": "Entita počasia (predpoveď)",
+          "notify_entity": "Telefón na upozornenia"
+        },
+        "data_description": {
+          "rain_counter_entity": "Voliteľné. Zóny tejto oblasti z neho čítajú zrážky, kým zóna nemá vlastný zrážkomer.",
+          "area_rain_mm_per_tip": "Iba pre počítadlo preklopení: koľko mm zrážok predstavuje jedno preklopenie.",
+          "outdoor_temp_entity": "Voliteľné. Nastavuje horúcu / chladnú úroveň zalievania pre zóny tejto oblasti.",
+          "weather_entity": "Voliteľné. Umožňuje zónam tejto oblasti preskočiť zálievku, ak je predpovedaný dážď.",
+          "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
+          "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
+          "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania."
+        }
+      },
+      "area_settings": {
+        "title": "Oblasť",
+        "description": "Názov oblasti a snímače, ktoré jej zóny zdieľajú. Zóna s vlastným snímačom ho naďalej používa.",
+        "data": {
+          "area_name": "Názov",
+          "rain_counter_entity": "Zrážkomer",
+          "rain_source_type": "Typ snímača zrážkomera",
+          "area_rain_mm_per_tip": "Zrážkomer: mm na preklopenie",
+          "outdoor_temp_entity": "Snímač vonkajšej teploty",
+          "weather_entity": "Entita počasia (predpoveď)",
+          "notify_entity": "Telefón na upozornenia"
+        },
+        "data_description": {
+          "rain_counter_entity": "Voliteľné. Zóny tejto oblasti z neho čítajú zrážky, kým zóna nemá vlastný zrážkomer.",
+          "area_rain_mm_per_tip": "Iba pre počítadlo preklopení: koľko mm zrážok predstavuje jedno preklopenie.",
+          "outdoor_temp_entity": "Voliteľné. Nastavuje horúcu / chladnú úroveň zalievania pre zóny tejto oblasti.",
+          "weather_entity": "Voliteľné. Umožňuje zónam tejto oblasti preskočiť zálievku, ak je predpovedaný dážď.",
+          "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
+          "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
+          "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania."
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "Zóna (alebo jej čerpadlo) je zaneprázdnená, alebo je dnešný bezpečnostný limit doby chodu vyčerpaný. Skúste to neskôr.",
       "flow_rate_disabled": "Entita Kalibrácia prietoku emitorov je v tejto zóne zakázaná. Povoľte ju (stránka zariadenia zóny → jej entity) a skúste to znova.",
       "zone_flow_set": "Prietok zóny nastavený na {flow}. Používa sa iba na odhad spotreby vody.",
-      "zone_flow_out_of_range": "To vychádza na prietok zóny mimo rozsahu, ktorý nastavenie povoľuje (0 až 2000 L/min). Skontrolujte čísla."
+      "zone_flow_out_of_range": "To vychádza na prietok zóny mimo rozsahu, ktorý nastavenie povoľuje (0 až 2000 L/min). Skontrolujte čísla.",
+      "location_not_available": "Toto miesto nie je k dispozícii."
     },
     "error": {
       "valve_already_used": "Iná zóna ZoneFlow už používa tento ventil.",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "Napadlo spojiť sa s Weather Underground. Skúste to znova neskôr.",
       "wu_no_stations": "Žiadne stanice v okruhu. Bez stanice v blízkosti vám táto funkcia nepomôže.",
       "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice.",
-      "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Najprv ich presuňte do iného skleníka alebo ich odstráňte (Nakonfigurovať -> Skleník pri každej plodine)."
+      "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Najprv ich presuňte do iného skleníka alebo ich odstráňte (Nakonfigurovať -> Skleník pri každej plodine).",
+      "area_name_required": "Pomenujte oblasť.",
+      "area_name_exists": "Oblasť s týmto názvom už existuje."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "Zapnuté časť času",
           "outside": "Časť času, keď je vonku chladno"
         }
+      },
+      "location": {
+        "name": "Kde sa nachádza?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Ľubovoľná entita zariadenia zóny (namiesto Zariadenia zóny)."
         }
       }
+    },
+    "create_area": {
+      "name": "Vytvoriť oblasť",
+      "description": "Vytvorí novú oblasť (časť záhrady, napríklad Zadná záhrada). Cieľová zóna sa do novej oblasti presunie, pričom nová oblasť prevezme zrážkomer, vonkajšiu teplotu, počasie a nastavenia telefónu tejto zóny.",
+      "fields": {
+        "name": {
+          "name": "Názov",
+          "description": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna, ktorá sa má vložiť do novej oblasti (voliteľné)."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu danej zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Pridať rastlinu",
+      "description": "Pridá rastlinu do zóny. V zóne bez hlavnej rastliny sa stane hlavnou rastlinou a nastavenia jej typu sa aplikujú na zónu; inak slúži iba ako záznam (história, poznámky), kým Stará hlavná rastlina neurčuje prevzatie.",
+      "fields": {
+        "name": {
+          "name": "Názov",
+          "description": "Ako sa rastlina volá."
+        },
+        "plant_type": {
+          "name": "Typ rastliny",
+          "description": "Počiatočné nastavenia pre tento druh rastliny (vlastné, ak je vynechané)."
+        },
+        "old_main": {
+          "name": "Stará hlavná rastlina",
+          "description": "Iba ak zóna už má hlavnú rastlinu. Čo sa s ňou stane: ponechať ako záznam alebo archivovať."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna. Vyžaduje sa iba pri konfigurácii 2 a viac zón."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Presunúť rastlinu",
+      "description": "Presunie rastlinu s jej históriou do inej zóny. Jej nastavenia sa aplikujú na novú zónu.",
+      "fields": {
+        "plant_id": {
+          "name": "Rastlina",
+          "description": "ID rastliny (zobrazené v atribútoch stavu zóny)."
+        },
+        "old_main": {
+          "name": "Stará hlavná rastlina",
+          "description": "Iba ak zóna už má hlavnú rastlinu. Čo sa s ňou stane: ponechať ako záznam, archivovať, vymeniť ju do zóny, ktorú táto rastlina opúšťa, alebo ponechať túto rastlinu iba ako záznam."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna, do ktorej sa presúva."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Odobrať rastlinu",
+      "description": "Odoberie rastlinu zo zóny. Zostáva v evidencii s jej históriou. Ďalšia rastlina v zóne sa stáva hlavnou rastlinou.",
+      "fields": {
+        "plant_id": {
+          "name": "Rastlina",
+          "description": "ID rastliny."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Nastaviť hlavnú rastlinu",
+      "description": "Nastaví rastlinu ako hlavnú rastlinu jej zóny: jej nastavenia sa aplikujú na zónu a stará hlavná rastlina zostáva ako záznam.",
+      "fields": {
+        "plant_id": {
+          "name": "Rastlina",
+          "description": "ID rastliny."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Pridať poznámku k rastline",
+      "description": "Pridá poznámku do histórie rastliny.",
+      "fields": {
+        "plant_id": {
+          "name": "Rastlina",
+          "description": "ID rastliny."
+        },
+        "text": {
+          "name": "Poznámka",
+          "description": "Čo zapísať."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Uložiť predvoľbu",
+      "description": "Uloží nastavenia zalievania zóny (nie jej ventil, snímače, prietok, dátum výsadby ani poznámky) pod názvom, aby ste z nich mohli spúšťať ďalšie zóny. Rovnaký názov nahradí predvoľbu.",
+      "fields": {
+        "name": {
+          "name": "Názov",
+          "description": "Ako predvoľbu pomenovať."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna. Vyžaduje sa iba pri konfigurácii 2 a viac zón."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Kopírovať nastavenia",
+      "description": "Odovzdá zóne nastavenia zalievania inej zóny alebo uloženej predvoľby. Nepreberá ventil, snímače, prietok, dátum výsadby ani poznámky.",
+      "fields": {
+        "source_device_id": {
+          "name": "Kopírovať zo zóny",
+          "description": "Zóna, z ktorej sa majú nastavenia kopírovať (alebo vyberte predvoľbu)."
+        },
+        "preset": {
+          "name": "Predvoľba",
+          "description": "Názov uloženej predvoľby (alebo vyberte zónu, z ktorej chcete kopírovať)."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna, ktorá získa nastavenia."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Zmazať predvoľbu",
+      "description": "Zmaže uloženú predvoľbu.",
+      "fields": {
+        "name": {
+          "name": "Názov",
+          "description": "Názov predvoľby."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Zaliať teraz",
+      "description": "Zalieva zónu ručne po zadaný počet minút. Nezalieva počas pozastavenia zóny, nikdy dlhšie než podľa Maximálneho bezpečnostného času bežnej zálievky zóny a v rámci denného limitu času chodu. Započítava sa do záznamu vody (litre), ale neposúva plán bežnej ani hĺbkovej zálievky.",
+      "fields": {
+        "minutes": {
+          "name": "Minúty",
+          "description": "Ako dlho zalievať."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna. Vyžaduje sa iba pri konfigurácii 2 a viac zón."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Kalibrovať prietok",
+      "description": "Nastaví prietok na základe nameraného behu: vytečená voda (zobraná v vedre alebo odčítaná z vodomeru), plocha dopadu a čas otvorenia ventila. Nastaví aj Prietok zóny pre litre.",
+      "fields": {
+        "volume": {
+          "name": "Voda",
+          "description": "Koľko vody vytieklo (litre, alebo galóny v imperiálnej zóne)."
+        },
+        "area": {
+          "name": "Oblasť",
+          "description": "Plocha, na ktorú voda dopadla (m2, alebo ft2 v imperiálnej zóne)."
+        },
+        "minutes": {
+          "name": "Minúty",
+          "description": "Ako dlho bol ventil otvorený."
+        },
+        "device_id": {
+          "name": "Zariadenie zóny",
+          "description": "Zóna. Vyžaduje sa iba pri konfigurácii 2 a viac zón."
+        },
+        "entity_id": {
+          "name": "Entita zóny",
+          "description": "Akákoľvek entita patriaca k zariadeniu zóny (alternatíva k Zariadeniu zóny)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Nič nie je pozastavené: všetky zariadenia sú už pod riadením ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "Toto miesto už nie je k dispozícii."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "Skleník s klimatickými zariadeniami nemôže byť plodinou iného skleníka."
+    },
+    "area_name_required": {
+      "message": "Pomenujte oblasť."
+    },
+    "area_name_exists": {
+      "message": "Oblasť s týmto názvom už existuje."
+    },
+    "plant_zone_not_available": {
+      "message": "Táto zóna nie je k dispozícii."
+    },
+    "plant_name_required": {
+      "message": "Pomenujte rastlinu."
+    },
+    "plant_not_found": {
+      "message": "Táto rastlina neexistuje."
+    },
+    "plant_same_zone": {
+      "message": "Rastlina už v tejto zóne je."
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} už má hlavnú rastlinu. Určite, čo sa s ňou stane (Stará hlavná rastlina)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Iba zóna s ventilom môže mať hlavnú rastlinu."
+    },
+    "plant_note_required": {
+      "message": "Najprv napíšte poznámku."
+    },
+    "preset_name_required": {
+      "message": "Pomenujte predvoľbu."
+    },
+    "preset_not_found": {
+      "message": "Predvoľba s týmto názvom neexistuje."
+    },
+    "copy_same_zone": {
+      "message": "Vyberte inú zónu, z ktorej chcete kopírovať."
+    },
+    "copy_source_required": {
+      "message": "Vyberte zónu alebo predvoľbu, z ktorej chcete kopírovať."
+    },
+    "water_now_out_of_range": {
+      "message": "Zalievajte najmenej 1 minútu a maximálne {max} minút (bezpečnostný limit tejto zóny)."
+    },
+    "calibration_out_of_range": {
+      "message": "Tieto čísla dávajú prietok, ktorý táto zóna nemôže mať. Skontrolujte vodu, plochu a minúty."
+    },
+    "calibration_unavailable": {
+      "message": "Táto zóna nemá žiadne nastavenie prietoku na kalibráciu."
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: snímač offline (počet dní: {days})",
-      "description": "{entity}, ktorý používa zóna {zone}, je offline (počet dní: {days}). Zóna pokračuje bez neho (čo to znamená, nájdete v README), ale skontrolujte zariadenie – alebo ho zo zóny odoberte v časti Konfigurovať. Hlásenie zmizne samo, keď snímač opäť začne posielať údaje."
+      "description": "{entity}, ktorý používa zóna {zone}, je offline (počet dní: {days}). Zóna pokračuje bez neho (čo to znamená, nájdete v README), ale skontrolujte zariadenie – alebo ho zo zóny odoberte v časti Konfigurovať. Hlásenie zmizne samo, keď snímač opäť začne posielať údaje.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Vymeniť snímač",
+            "description": "Snímač {entity} používaný zónou {zone} je už niekoľko dní offline. Vyberte náhradný snímač alebo ponechajte prázdne (zóna potom bude fungovať bez neho).",
+            "data": {
+              "replacement": "Náhradný snímač"
+            },
+            "data_description": {
+              "replacement": "Ponechajte prázdne, ak chcete snímač z tejto zóny odobrať."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Táto zóna už neexistuje."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: chýba cieľ oznámení v telefóne",
-      "description": "Zóna {zone} posiela oznámenia do telefónu na {entity}, ktorý už v Home Assistant neexistuje, takže žiadne oznámenia neprichádzajú. Vyberte aktuálny cieľ oznámení v časti Konfigurovať danej zóny. Hlásenie zmizne samo, keď cieľ opäť bude existovať."
+      "description": "Zóna {zone} posiela oznámenia do telefónu na {entity}, ktorý už v Home Assistant neexistuje, takže žiadne oznámenia neprichádzajú. Vyberte aktuálny cieľ oznámení v časti Konfigurovať danej zóny. Hlásenie zmizne samo, keď cieľ opäť bude existovať.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Vybrať iný telefón",
+            "description": "Telefón {entity} už neexistuje, takže {zone} vám nemôže posielať správy. Vyberte iný telefón alebo ponechajte prázdne.",
+            "data": {
+              "notify_entity": "Telefón na upozornenia"
+            },
+            "data_description": {
+              "notify_entity": "Ponechajte prázdne, ak chcete zastaviť správy na telefón z tejto zóny."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Táto zóna už neexistuje."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: nakalibrujte prietok emitorov",
-      "description": "Zóna {zone} stále používa predvolenú Kalibráciu prietoku emitorov (0,24 mm/min). Práve toto číslo rozhoduje, koľko vody dá každá zálievka, preto ho zmerajte pre svoje emitory: v zóne cez Konfigurovať → Prietok ho vypočítate z emitorov alebo zmeriate prietokomerom. Ak je 0,24 mm/min pre túto zónu naozaj správne, toto hlásenie ignorujte."
+      "description": "Zóna {zone} stále používa predvolenú Kalibráciu prietoku emitorov (0,24 mm/min). Práve toto číslo rozhoduje, koľko vody dá každá zálievka, preto ho zmerajte pre svoje emitory: v zóne cez Konfigurovať → Prietok ho vypočítate z emitorov alebo zmeriate prietokomerom. Ak je 0,24 mm/min pre túto zónu naozaj správne, toto hlásenie ignorujte.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Nastaviť prietok meraním",
+            "description": "{zone} stále má vzorový prietok, takže jej časy zalievania sú odhady. Dajte pod emitory vedro (alebo si poznamenajte vodomer) a potom spusťte ventil na 15 minút. Spustiť teraz?",
+            "data": {
+              "run": "Spustiť ventil na 15 minút teraz"
+            },
+            "data_description": {
+              "run": "Odznačte, ak ste ho už spustili."
+            }
+          },
+          "measure": {
+            "title": "Koľko vody vytieklo?",
+            "description": "Zadajte, koľko vody zóna {zone} dala počas tohto behu, akú plochu zaliala a koľko minút bol ventil otvorený.",
+            "data": {
+              "volume": "Voda, ktorá vytiekla",
+              "area": "Zolievaná plocha",
+              "minutes": "Minúty, po ktoré bol ventil otvorený"
+            },
+            "data_description": {
+              "volume": "Litre (galóny v imperiálnej zóne).",
+              "area": "Štvorcové metre (štvorcové stopy v imperiálnej zóne).",
+              "minutes": "Obvykle 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Tieto čísla dávajú prietok, ktorý táto zóna nemôže mať. Skontrolujte ich."
+        },
+        "abort": {
+          "zone_gone": "Táto zóna už neexistuje.",
+          "zone_busy": "Zóna je zaneprázdnená. Skúste to o chvíľu znova."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: ventil zdieľaný s inou zónou",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: jej skleník bol odstránený",
       "description": "Skleník {greenhouse} bol odstránený, takže {zone} je teraz samostatnou zónou. Naďalej zalieva a ponecháva si vnútorné snímače skleníka. Ak ju chcete umiestniť do iného skleníka, použijete Nakonfigurovať -> Skleník v ponuke zóny."
+    },
+    "area_removed": {
+      "title": "{zone}: jej oblasť bola odobratá",
+      "description": "Oblasť {area} bola zmazaná, takže {zone} teraz používa kópiu snímačov, ktoré z nej získala. Ak ju chcete umiestniť do inej oblasti, použite Konfigurovať -> Kde to je? danej zóny."
     }
   }
 }

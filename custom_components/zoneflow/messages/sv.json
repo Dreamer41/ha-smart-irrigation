@@ -11,7 +11,8 @@
     "deep_soak": "Djupvattning",
     "routine": "Rutinvattning",
     "service_run": "Servicekörning",
-    "test_pulse": "Testpuls"
+    "test_pulse": "Testpuls",
+    "manual_water": "Manuell vattning"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: använder reservtemperaturgivaren",
       "message": "Huvudgivaren för innetemperatur ({entity}) slutade fungera. Klimatstyrningen fortsätter med reservgivaren."
+    },
+    "action": {
+      "water": "Vattna {minutes} min",
+      "snooze": "Hoppa över idag",
+      "fertilized": "Gödslat"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle} överhoppad {time}: {temp}, under frostskyddet ({limit})",
     "waiting_frost": "{cycle} väntar {time}: {temp}, under frostskyddet ({limit}); kollar igen varje timme",
     "waiting_deep_soak": "{cycle} väntar sedan {time}: djupvattningen går först när det är varmt nog",
-    "paused_until": "Pausad till {until}"
+    "paused_until": "Pausad till {until}",
+    "paused_area": "Pausad: ingen vattning medan {area} är pausat",
+    "paused_house": "Pausad: ingen vattning medan växthuset {house} är pausat"
   },
   "summary": {
     "title": "💧 ZoneFlow: din vecka",
@@ -238,5 +246,148 @@
       "limited": "på en del av tiden",
       "outside": "på en del av tiden vid kyla ute"
     }
+  },
+  "location": {
+    "none": "Ingen",
+    "greenhouse": "växthus",
+    "new_area": "Nytt område..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Använder sin egen regnmätare, inte {area}s.",
+      "outdoor_temp_entity": "Använder sin egen utomhustemperatursensor, inte {area}s.",
+      "weather_entity": "Använder sin egen väderentitet, inte {area}s.",
+      "notify_entity": "Skickar till sin egen telefon, inte till {area}s."
+    }
+  },
+  "plants": {
+    "on": "på",
+    "off": "av",
+    "history": {
+      "created": "Tillagd i ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Flyttad från {from_zone} till {to_zone}",
+      "promoted": "Blev huvudväxt i {zone}",
+      "demoted": "Nu endast registrering i {zone}",
+      "archived": "Arkiverad från {zone}",
+      "removed": "Borttagen från {zone}",
+      "note": "{text}",
+      "copied": "Inställningar kopierade från {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Tillväxtstadium",
+      "demand_model": "Bevattningsmetod",
+      "deficit_enabled": "Underskottstyp",
+      "deficit_until_ts": "Underskottstyp tills",
+      "planting_date_ts": "Planteringsdatum",
+      "health_status": "Hälsa",
+      "health_notes": "Hälsoanteckningar",
+      "fertilizing_interval_months": "Gödslingsintervall",
+      "last_fertilizing_ts": "Senast gödslat",
+      "growth_ramp_profile": "Tillväxtkurva",
+      "deep_soak_enabled": "Djupvattning"
+    }
+  },
+  "start_from": {
+    "none": "Växttypens vanliga inställningar",
+    "zone": "En kopia av {zone}",
+    "preset": "Förinställning: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "Ventilen {entity} svarar.",
+      "fail": "Ventilen {entity} är inte tillgänglig. Kontrollera enheten och dess anslutning i Home Assistant: ingenting kan vattna förrän den svarar."
+    },
+    "rain": {
+      "ok": "Regnmätaren {entity} rapporterar.",
+      "fail": "Regnmätaren {entity} är inte tillgänglig. Tills den är tillbaka antar ZoneFlow att det inte regnar.",
+      "wu": "Regn kommer från Weather Underground.",
+      "manual": "Regn läggs till manuellt.",
+      "none": "Ingen regnmätare. ZoneFlow antar att det aldrig regnar, såvida du inte lägger till regn manuellt eller använder Weather Underground."
+    },
+    "temperature": {
+      "ok": "Utomhustemperaturen är {value} {unit}.",
+      "none": "Ingen utomhustemperatursensor. Inställningen för reservtemperatur avgör hur varmt ZoneFlow tror att det är.",
+      "fail": "Temperatursensorn {entity} är inte tillgänglig. Reservtemperaturen används under tiden."
+    },
+    "weather": {
+      "ok": "Väderprognosen {entity} är tillgänglig.",
+      "none": "Ingen väderentitet, så en regnprognos kan inte hoppa över en vattning.",
+      "fail": "Väderentiteten {entity} är inte tillgänglig, så prognosen ignoreras för tillfället."
+    },
+    "flow": {
+      "ok": "Flödet är inställt ({value} mm/min).",
+      "default": "Flödet är fortfarande exempelvärdet. Kalibrera det så att varje vattning körs under rätt tid."
+    },
+    "volume": {
+      "ok": "Vattenanvändning visas i liter.",
+      "none": "Vattenanvändning visas endast i mm. Ställ in Zonens flöde för att se liter."
+    },
+    "soil": {
+      "ok": "Jordfuktighetssensorn rapporterar {value} %.",
+      "fail": "Jordfuktighetssensorn {entity} är inte tillgänglig. Zonen vattnar efter kalendern tills den är tillbaka."
+    },
+    "pump": {
+      "ok": "Pumpens effektsensor {entity} rapporterar.",
+      "fail": "Pumpens effektsensor {entity} är inte tillgänglig, så pumpkontrollen hoppas över."
+    },
+    "paused": {
+      "zone": "Den här zonen är pausad: ingen vattning förrän du stänger av Paus.",
+      "area": "Området {area} är pausat: ingen vattning förrän du stänger av Paus.",
+      "house": "Växthuset {house} är pausat: ingen vattning förrän du stänger av Paus."
+    },
+    "last": {
+      "ok": "Senaste vattning: {when}.",
+      "never": "ZoneFlow har inte vattnat den här zonen ännu.",
+      "overdue": "Senaste vattningen var för {days} dagar sedan, längre än väntat. Kontrollera ventilen och statusen."
+    },
+    "notify": {
+      "ok": "Telefonmeddelanden går till {entity}.",
+      "none": "Ingen telefon att avisera. Du får inga meddelanden om vattning.",
+      "fail": "Telefonen {entity} finns inte längre, så inga meddelanden når dig."
+    }
+  },
+  "why": {
+    "method": "Bevattningsmetod: {method}.",
+    "method_temperature": "temperaturnivåer (en varmare vecka får mer vatten)",
+    "method_et": "evapotranspiration (vattnet växten gjorde av med, beräknat från temperaturen)",
+    "temperature": "Använd temperatur: {value} ({source}), så en {tier} vecka.",
+    "source": {
+      "sensor": "genomsnittet av de senaste dagarnas maxtemperaturer",
+      "last_known": "från de senaste dagarna, sensorn är offline nu",
+      "fallback": "Reservtemperatur, ingen hel dag registrerad ännu",
+      "manual": "inställningen för Reserv- / Manuell temperatur"
+    },
+    "tier": {
+      "hot": "varm",
+      "normal": "normal",
+      "cool": "sval"
+    },
+    "target": "Veckomål: {target}.",
+    "scale": "Målet skalas om till {pct} % av tillväxtstadium, underskottstyp och täckodling.",
+    "rain": "Regnkredit sedan senaste vattningen: {credit} (regn de senaste 7 dagarna: {rain}).",
+    "needed": "Om det vattnades nu: {needed} att tillsätta, ca {minutes} min.",
+    "forecast": "Det var regn i prognosen, så de senaste {n} vattningarna i rad hoppades över.",
+    "soil": "Jordfuktighet {pct} % ({status}).",
+    "soil_dry": "torrt",
+    "soil_wet": "vått",
+    "soil_ok": "mittemellan"
+  },
+  "suggest": {
+    "heading": "Sannolika enheter funna i din Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Ventil",
+      "rain": "Regnmätare",
+      "temperature": "Utomhustemperatur",
+      "weather": "Väder",
+      "soil": "Jordfuktighet",
+      "flow": "Flödesmätare",
+      "pump": "Pumpeffekt",
+      "notify": "Telefon"
+    }
+  },
+  "setup": {
+    "progress": "Steg {n} av {total}"
   }
 }

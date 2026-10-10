@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Zonnamn",
           "plant": "Vad som växer här",
-          "zone_type": "Där det växer"
+          "zone_type": "Där det växer",
+          "start_from": "Starta från",
+          "location": "Var finns detta?"
         },
         "data_description": {
           "zone_name": "Blir zonens enhetsnamn och början på dess entitetsnamn, och syns i mobilmeddelanden. T.ex. ”Tomatbädden”, ”Gräsmattan”.",
           "plant": "Fyller i rimliga startvärden för den här växten: veckomål för vatten, växtfaktor, djupvattning och upptrappning. ”Något annat” utgår från allmänna värden. Allt kan ändras senare på zonens enhetssida.",
-          "zone_type": "Utomhus är hur ZoneFlow alltid har fungerat. Växthus och inomhuszoner lägger till klimatstyrning (fläktar, vädring, dimmning, värmare), kan fungera utan ventil och har ingen regnmätare eller prognos på grund av taket."
+          "zone_type": "Utomhus är hur ZoneFlow alltid har fungerat. Växthus och inomhuszoner lägger till klimatstyrning (fläktar, vädring, dimmning, värmare), kan fungera utan ventil och har ingen regnmätare eller prognos på grund av taket.",
+          "start_from": "Starta från en kopia av en annan zons bevattningsinställningar eller en sparad förinställning istället för växttypens. Ventil, sensorer och flöde kopieras aldrig.",
+          "location": "Området som den här zonen finns i, om något. Den använder då områdets regnmätare, temperatursensor, väder och telefon, om du inte ger den egna."
         }
       },
       "entities": {
         "title": "ZoneFlow bevattning",
-        "description": "Peka ut dina riktiga entiteter. Inga nya fysiska entiteter skapas. Bara ventilbrytaren krävs – allt annat nedan klarar sig utan om du lämnar det tomt.",
+        "description": "{progress}\n\nPeka denna på dina riktiga enheter. Den skapar aldrig egna fysiska enheter. Endast ventilomkopplaren krävs – allt annat nedan fungerar utmärkt även om det lämnas oinställt. Lämna ett fält tomt om du inte har något.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilbrytare",
           "pump_power_entity": "Pumpens effektsensor (valfritt)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Jordfuktighetssensor (valfritt)",
           "notify_entity": "Mobil för aviseringar (valfritt)",
           "weather_entity": "Källa för väderprognos (valfritt)",
-          "soil_type": "Jordart",
-          "drainage": "Dränering",
-          "slope": "Lutning",
-          "irrigation_method": "Bevattningsmetod",
-          "growth_ramp_profile": "Automatisk upptrappning efter tillväxtfas",
+          "soil_type": "Känner du till din jordtyp? (hoppa över om inte)",
+          "drainage": "Rinner vattnet undan långsamt? (hoppa över om du inte vet)",
+          "slope": "Lutar marken? (hoppa över om den är plan eller om du är osäker)",
+          "irrigation_method": "Hur når vattnet växterna?",
+          "growth_ramp_profile": "Är det en ung växt som behöver mindre vatten i början? (hoppa över om inte)",
           "csv_path": "Sökväg till CSV-loggfil",
           "deep_soak_enabled": "Aktivera djupvattning",
           "deep_soak_time": "Schemalagd tid för djupvattning",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Klimat",
-        "description": "Hur är växtsäsongen där zonen ligger? Det här fyller bara i temperaturreglagen på nästa sida – du kan ändra alla värden där, och senare på zonens enhetssida.",
+        "description": "{progress}\n\nHur är växtsäsongen där den här zonen finns? Detta förfyller endast temperaturreglagen på nästa sida – du kan ändra alla värden där och senare på zonens enhetssida.",
         "data": {
           "climate": "Klimat"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Temperaturgränser",
-        "description": "ZoneFlow tar medelvärdet av dagens HÖGSTA temperatur de senaste 3 dagarna. Vid eller över Varmt vattnar den oftare (var 3:e dag) med veckomålet för varmt väder; under Svalt används veckomålet för svalt väder; däremellan gäller normalt.\n\nReservtemperaturen används när det inte finns något riktigt värde att gå på: utan temperatursensor är den din manuella styrning (höj den vid värmebölja, sänk den vid köldknäpp); med sensor används den bara tills sensorn har registrerat sitt första hela dygn, och efter 3 dagar utan ett enda värde.",
+        "description": "{progress}\n\nZoneFlow beräknar genomsnittet av den dagliga MAXIMALA temperaturen under de senaste 3 dagarna. Vid eller över Varmt vattnar den oftare (var 3:e dag) med det varma veckomålet; under Sval används det svala veckomålet; däremellan gäller normalt.\n\nReservtemperaturen används när det inte finns någon verklig avläsning att gå på: utan temperatursensor fungerar den som din manuella kontroll (höj vid värmebölja, sänk vid köldknäpp); med sensor används den endast tills sensorn har registrerat sin första hela dag, samt efter 3 dagar utan en enda avläsning.",
         "data": {
           "hot_temp_threshold": "Gräns för varmt väder",
           "cool_temp_threshold": "Gräns för svalt väder",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Lägg till en zon",
           "weather_underground": "Ställ in Weather Underground-regn",
-          "crop": "Lägg till en gröda i ett växthus"
+          "crop": "Lägg till en gröda i ett växthus",
+          "area": "Lägg till ett område (en del av trädgården)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "En brytare som öppnar vattnet för den här grödan. Varje gröda behöver sin egen ventil."
         }
+      },
+      "area": {
+        "title": "Nytt område",
+        "description": "En del av trädgården, till exempel Baksida eller Framsida. Dess zoner använder sensorerna som ställts in här, såvida inte en zon har egna.",
+        "data": {
+          "area_name": "Namn",
+          "rain_counter_entity": "Regnmätare",
+          "rain_source_type": "Regnmätarens sensortyp",
+          "area_rain_mm_per_tip": "Regnmätare mm per vipp",
+          "outdoor_temp_entity": "Utomhustemperatursensor",
+          "weather_entity": "Väderentitet (prognos)",
+          "notify_entity": "Telefon för avisering"
+        },
+        "data_description": {
+          "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
+          "area_rain_mm_per_tip": "Endast för vippräknare: hur många mm regn ett vipp motsvarar.",
+          "outdoor_temp_entity": "Valfritt. Ställer in varm/sval bevattningsnivå för zonerna i det här området.",
+          "weather_entity": "Valfritt. Låter zonerna i det här området hoppa över vattning när regn finns i prognosen.",
+          "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
+          "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
+          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground nekade API-nyckeln.",
       "wu_cannot_connect": "Kunde inte nå Weather Underground. Försök igen senare.",
       "wu_no_stations": "Inga stationer inom radien. Utan en station i närheten hjälper inte denna funktion.",
-      "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer."
+      "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
+      "area_name_required": "Ge området ett namn.",
+      "area_name_exists": "Ett område med detta namn finns redan."
     },
     "abort": {
       "already_configured": "Weather Underground-regn är redan inställt."
@@ -264,7 +293,7 @@
           "zone_type": "Zontyp",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Grödans ventil",
-          "greenhouse_link": "Växthus"
+          "location": "Var finns detta? (område eller växthus)"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "En brytare som öppnar vattnet för den här grödan. Varje gröda behöver sin egen ventil."
         }
       },
-      "greenhouse_link": {
-        "title": "Växthus",
-        "description": "Gör den här zonen till en gröda i ett växthus: den använder då det växthusets invändiga sensorer och visas tillsammans med det. Välj \"-\" för att göra den till en egen zon igen (den behåller en kopia av växthusets sensorer).",
-        "data": {
-          "greenhouse_entry_id": "Del av växthus"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Växthuset eller inomhuszonen med klimatenheterna, eller \"-\" för ingen."
-        }
-      },
       "flow_volume": {
         "title": "Mät flödet efter volym",
         "description": "Tryck på en av zonens Servicekörning-knappar (en längre körning, t.ex. 15 min, är mer exakt) och fånga upp eller läs av vattnet: en hink eller tunna vid munstyckena, eller skillnaden på en vattenmätare. Ange sedan minuterna ventilen var öppen, litrarna och ytan munstyckena blöter.\n\nResultatet är zonens GENOMSNITT: liter delat med yta och minuter, och det ersätter zonens Dropparflöde (kalibrering). ZoneFlow har ett flöde per zon och kan inte skilja på olika munstycken. För ett exakt resultat bör varje munstycke på en zons ventil vara av samma typ och flöde; placera olika munstycken på separata ventiler (separata zoner). I en blandad zon får växterna vid de svagare munstyckena mindre än det visade genomsnittet. Det ställer också in Zonens flöde, som är litrarna per minut som används för uppskattningen av vattenförbrukningen.",
@@ -506,6 +525,76 @@
           "head_flow": "Vad en droppare ger, från dess förpackning eller munstyckstabell.",
           "head_flow_unit": "Enheten flödet för en droppare anges i."
         }
+      },
+      "location": {
+        "title": "Var finns detta?",
+        "description": "Området eller växthuset den här zonen finns i. En zon använder sensorerna för sitt område såvida den inte har egna. I ett växthus utgör den en gröda. Välj Nytt område för att skapa ett område från den här zonens egna sensorer.",
+        "data": {
+          "location": "Plats"
+        },
+        "data_description": {
+          "location": "Ett område, ett växthus eller inget. Om zonen flyttas startas den om så att den läser av den nya platsens sensorer."
+        }
+      },
+      "location_sensors": {
+        "title": "Använda områdets sensorer?",
+        "description": "Den här zonen har sin egen sensor där området har en annan. Markera för att använda områdets; avmarkera för att behålla zonens egna.",
+        "data": {
+          "rain_counter_entity": "Använd områdets regnmätare",
+          "outdoor_temp_entity": "Använd områdets utomhustemperatur",
+          "weather_entity": "Använd områdets väderentitet",
+          "notify_entity": "Använd områdets telefon"
+        },
+        "data_description": {
+          "rain_counter_entity": "Markera för att använda områdets regnmätare istället för den här zonens egna.",
+          "outdoor_temp_entity": "Markera för att använda områdets utomhustemperatursensor istället för den här zonens egna.",
+          "weather_entity": "Markera för att använda områdets väderentitet istället för den här zonens egna.",
+          "notify_entity": "Markera för att skicka till områdets telefon istället för den här zonens egna."
+        }
+      },
+      "new_area": {
+        "title": "Nytt område",
+        "description": "Ett område skapat från den här zonens sensorer. Zonen flyttar in i det, och andra zoner kan ansluta sig senare.",
+        "data": {
+          "area_name": "Namn",
+          "rain_counter_entity": "Regnmätare",
+          "rain_source_type": "Regnmätarens sensortyp",
+          "area_rain_mm_per_tip": "Regnmätare mm per vipp",
+          "outdoor_temp_entity": "Utomhustemperatursensor",
+          "weather_entity": "Väderentitet (prognos)",
+          "notify_entity": "Telefon för avisering"
+        },
+        "data_description": {
+          "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
+          "area_rain_mm_per_tip": "Endast för vippräknare: hur många mm regn ett vipp motsvarar.",
+          "outdoor_temp_entity": "Valfritt. Ställer in varm/sval bevattningsnivå för zonerna i det här området.",
+          "weather_entity": "Valfritt. Låter zonerna i det här området hoppa över vattning när regn finns i prognosen.",
+          "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
+          "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
+          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+        }
+      },
+      "area_settings": {
+        "title": "Område",
+        "description": "Namnet på området och sensorn som dess zoner delar. En zon med en egen sensor fortsätter att använda den.",
+        "data": {
+          "area_name": "Namn",
+          "rain_counter_entity": "Regnmätare",
+          "rain_source_type": "Regnmätarens sensortyp",
+          "area_rain_mm_per_tip": "Regnmätare mm per vipp",
+          "outdoor_temp_entity": "Utomhustemperatursensor",
+          "weather_entity": "Väderentitet (prognos)",
+          "notify_entity": "Telefon för avisering"
+        },
+        "data_description": {
+          "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
+          "area_rain_mm_per_tip": "Endast för vippräknare: hur många mm regn ett vipp motsvarar.",
+          "outdoor_temp_entity": "Valfritt. Ställer in varm/sval bevattningsnivå för zonerna i det här området.",
+          "weather_entity": "Valfritt. Låter zonerna i det här området hoppa över vattning när regn finns i prognosen.",
+          "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
+          "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
+          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "Zonen (eller dess pump) är upptagen, eller så är dagens säkerhetsgräns för körtid förbrukad. Försök igen senare.",
       "flow_rate_disabled": "Zonens entitet Dropparflöde (kalibrering) är inaktiverad. Aktivera den (zonens enhetssida → dess entiteter) och försök igen.",
       "zone_flow_set": "Zonens flöde inställt till {flow}. Det används endast för uppskattningen av vattenförbrukningen.",
-      "zone_flow_out_of_range": "Det blir ett zonflöde utanför vad inställningen tillåter (0 till 2000 L/min). Kontrollera siffrorna."
+      "zone_flow_out_of_range": "Det blir ett zonflöde utanför vad inställningen tillåter (0 till 2000 L/min). Kontrollera siffrorna.",
+      "location_not_available": "Den platsen är inte tillgänglig."
     },
     "error": {
       "valve_already_used": "En annan ZoneFlow-zon använder redan denna ventil.",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "Kunde inte nå Weather Underground. Försök igen senare.",
       "wu_no_stations": "Inga stationer inom radien. Utan en station i närheten hjälper inte denna funktion.",
       "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
-      "greenhouse_has_crops": "Det här växthuset har grödor. Flytta dem till ett annat växthus eller ta bort dem först (varje grödas Konfigurera -> Växthus)."
+      "greenhouse_has_crops": "Det här växthuset har grödor. Flytta dem till ett annat växthus eller ta bort dem först (varje grödas Konfigurera -> Växthus).",
+      "area_name_required": "Ge området ett namn.",
+      "area_name_exists": "Ett område med detta namn finns redan."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "På en del av tiden",
           "outside": "En del av tiden vid kyla ute"
         }
+      },
+      "location": {
+        "name": "Var finns detta?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Valfri entitet som hör till zonens enhet (alternativ till Zonens enhet)."
         }
       }
+    },
+    "create_area": {
+      "name": "Skapa område",
+      "description": "Skapar ett nytt område (en del av trädgården såsom Baksida). Välj en zon så flyttar den till det nya området, som startar med den zonens inställningar för regnmätare, utomhustemperatur, väder och telefon.",
+      "fields": {
+        "name": {
+          "name": "Namn",
+          "description": "Vad området kallas, till exempel Baksida eller Framsida."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen som ska placeras i det nya området (valfritt)."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör den zonens enhet (alternativ till Zonenhet)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Lägg till växt",
+      "description": "Lägger till en växt i en zon. I en zon utan huvudväxt blir den huvudväxt och dess typinställningar tillämpas på zonen; annars är den endast en anteckning (historik, anteckningar), såvida inte Gammal huvudväxt anger att den tar över.",
+      "fields": {
+        "name": {
+          "name": "Namn",
+          "description": "Vad växten kallas."
+        },
+        "plant_type": {
+          "name": "Växttyp",
+          "description": "Startinställningar för denna typ av växt (anpassade om de utelämnas)."
+        },
+        "old_main": {
+          "name": "Gammal huvudväxt",
+          "description": "Endast när zonen redan har en huvudväxt. Vad som händer med den: behåll som anteckning eller arkivera."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen. Krävs endast om 2 eller fler zoner är konfigurerade."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör zonens enhet (alternativ till Zonenhet)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Flytta växt",
+      "description": "Flyttar en växt, med dess historik, till en annan zon. Dess inställningar tillämpas på den nya zonen.",
+      "fields": {
+        "plant_id": {
+          "name": "Växt",
+          "description": "Växtens ID (visas i zonens statusattribut)."
+        },
+        "old_main": {
+          "name": "Gammal huvudväxt",
+          "description": "Endast när zonen redan har en huvudväxt. Vad som händer med den: behåll som anteckning, arkivera, byt till zonen som denna växt lämnar, eller behåll denna växt endast som anteckning."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen den flyttar till."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör zonens enhet (alternativ till Zonenhet)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Ta bort växt",
+      "description": "Tar bort en växt från dess zon. Den ligger kvar i registret med sin historik. Nästa växt i zonen blir huvudväxt.",
+      "fields": {
+        "plant_id": {
+          "name": "Växt",
+          "description": "Växtens ID."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Ställ in huvudväxt",
+      "description": "Gör en växt till huvudväxt i dess zon: dess inställningar tillämpas på zonen och den gamla huvudväxten ligger kvar som anteckning.",
+      "fields": {
+        "plant_id": {
+          "name": "Växt",
+          "description": "Växtens ID."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Lägg till växtanteckning",
+      "description": "Lägger till en anteckning i en växts historik.",
+      "fields": {
+        "plant_id": {
+          "name": "Växt",
+          "description": "Växtens ID."
+        },
+        "text": {
+          "name": "Anteckning",
+          "description": "Vad som ska antecknas."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Spara förinställning",
+      "description": "Sparar en zons bevattningsinställningar (inte dess ventil, sensorer, flöde, planteringsdatum eller anteckningar) under ett namn, för att starta andra zoner från. Samma namn ersätter förinställningen.",
+      "fields": {
+        "name": {
+          "name": "Namn",
+          "description": "Vad förinställningen ska kallas."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen. Krävs endast om 2 eller fler zoner är konfigurerade."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör zonens enhet (alternativ till Zonenhet)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Kopiera inställningar",
+      "description": "Ger en zon en annan zons bevattningsinställningar eller en sparad förinställnings. Inte ventil, sensorer, flöde, planteringsdatum eller anteckningar.",
+      "fields": {
+        "source_device_id": {
+          "name": "Kopiera från zon",
+          "description": "Zonen som inställningarna ska kopieras från (eller välj en förinställning)."
+        },
+        "preset": {
+          "name": "Förinställning",
+          "description": "Namnet på en sparad förinställning (eller välj en zon att kopiera från)."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen som tar emot inställningarna."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör zonens enhet (alternativ till Zonenhet)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Ta bort förinställning",
+      "description": "Tar bort en sparad förinställning.",
+      "fields": {
+        "name": {
+          "name": "Namn",
+          "description": "Förinställningens namn."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Vattna nu",
+      "description": "Vattnar zonen manuellt i ett antal minuter. Inte medan zonen är pausad, aldrig längre än zonens Maximal säkerhetstid för rutinvattning, och inom dagens körtidsgräns. Räknas i vattennoteringen (liter), men flyttar inte schemat för rutin- eller djupvattning.",
+      "fields": {
+        "minutes": {
+          "name": "Minuter",
+          "description": "Hur länge det ska vattnas."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen. Krävs endast om 2 eller fler zoner är konfigurerade."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör zonens enhet (alternativ till Zonenhet)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Kalibrera flöde",
+      "description": "Ställer in flödet från en uppmätt körning: vattnet som kom ut (uppsamlat i en hink eller avläst från en vattenmätare), ytan det föll på och hur länge ventilen var öppen. Ställer även in Zonens flöde för liter.",
+      "fields": {
+        "volume": {
+          "name": "Vatten",
+          "description": "Hur mycket vatten som kom ut (liter, eller gallon i en imperial zon)."
+        },
+        "area": {
+          "name": "Område",
+          "description": "Ytan som vattnet föll på (m2, eller ft2 i en imperial zon)."
+        },
+        "minutes": {
+          "name": "Minuter",
+          "description": "Hur länge ventilen var öppen."
+        },
+        "device_id": {
+          "name": "Zonenhet",
+          "description": "Zonen. Krävs endast om 2 eller fler zoner är konfigurerade."
+        },
+        "entity_id": {
+          "name": "Zonentitet",
+          "description": "Valfri enhet som tillhör zonens enhet (alternativ till Zonenhet)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Inget är satt på paus: Alla enheter står redan under ZoneFlows styrning."
+    },
+    "location_not_available": {
+      "message": "Den platsen er inte längre tillgänglig."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "Ett växthus med klimatutrustning kan inte vara en gröda i ett annat växthus."
+    },
+    "area_name_required": {
+      "message": "Ge området ett namn."
+    },
+    "area_name_exists": {
+      "message": "Ett område med detta namn finns redan."
+    },
+    "plant_zone_not_available": {
+      "message": "Den zonen är inte tillgänglig."
+    },
+    "plant_name_required": {
+      "message": "Ge växten ett namn."
+    },
+    "plant_not_found": {
+      "message": "Den växten finns inte."
+    },
+    "plant_same_zone": {
+      "message": "Växten finns redan i den zonen."
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} har redan en huvudväxt. Ange vad som händer med den (Gammal huvudväxt)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Endast en zon med en ventil kan ha en huvudväxt."
+    },
+    "plant_note_required": {
+      "message": "Skriv anteckningen först."
+    },
+    "preset_name_required": {
+      "message": "Ge förinställningen ett namn."
+    },
+    "preset_not_found": {
+      "message": "Det finns ingen förinställning med det namnet."
+    },
+    "copy_same_zone": {
+      "message": "Välj en annan zon att kopiera från."
+    },
+    "copy_source_required": {
+      "message": "Välj en zon eller förinställning att kopiera från."
+    },
+    "water_now_out_of_range": {
+      "message": "Vattna i minst 1 minut och maximalt {max} minuter (denna zons säkerhetsgräns)."
+    },
+    "calibration_out_of_range": {
+      "message": "Dessa tal ger ett flöde som denna zon inte kan ha. Kontrollera vatten, yta och minuter."
+    },
+    "calibration_unavailable": {
+      "message": "Denna zon har ingen flödesinställning att kalibrera."
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline i {days} dagar",
-      "description": "{entity}, som zonen {zone} använder, har varit offline i {days} dagar. Zonen fortsätter utan den (vad det innebär står i README), men kontrollera enheten – eller ta bort den från zonen under Konfigurera. Det här försvinner av sig självt när sensorn rapporterar igen."
+      "description": "{entity}, som zonen {zone} använder, har varit offline i {days} dagar. Zonen fortsätter utan den (vad det innebär står i README), men kontrollera enheten – eller ta bort den från zonen under Konfigurera. Det här försvinner av sig självt när sensorn rapporterar igen.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Ersätt sensorn",
+            "description": "Sensorn {entity} som används av {zone} har varit offline i flera dagar. Välj en sensor att använda istället, eller lämna tomt för att sluta använda en (zonen fungerar då utan den).",
+            "data": {
+              "replacement": "Ersättningssensor"
+            },
+            "data_description": {
+              "replacement": "Lämna tomt för att ta bort sensorn från denna zon."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Denna zon finns inte längre."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: mobil för aviseringar saknas",
-      "description": "Zonen {zone} skickar sina mobilaviseringar till {entity}, som inte längre finns i Home Assistant, så inga aviseringar kommer fram. Välj den aktuella mottagaren under zonens Konfigurera. Det här försvinner av sig självt när den finns igen."
+      "description": "Zonen {zone} skickar sina mobilaviseringar till {entity}, som inte längre finns i Home Assistant, så inga aviseringar kommer fram. Välj den aktuella mottagaren under zonens Konfigurera. Det här försvinner av sig självt när den finns igen.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Välj en annan telefon",
+            "description": "Telefonen {entity} finns inte längre, så {zone} kan inte skicka meddelanden. Välj en annan telefon eller lämna tomt.",
+            "data": {
+              "notify_entity": "Telefon för avisering"
+            },
+            "data_description": {
+              "notify_entity": "Lämna tomt för att stoppa telefonmeddelanden från denna zon."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Denna zon finns inte längre."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibrera dropparnas flöde",
-      "description": "Zonen {zone} använder fortfarande standardvärdet för Dropparflöde (kalibrering) (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flöde räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här."
+      "description": "Zonen {zone} använder fortfarande standardvärdet för Dropparflöde (kalibrering) (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flöde räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Ställ in flöde genom mätning",
+            "description": "{zone} har fortfarande exempelflödet, så dess bevattningstider är gissningar. Ställ en hink under dropparna (eller notera din vattenmätare) och kör sedan ventilen i 15 minuter. Kör den nu?",
+            "data": {
+              "run": "Kör ventilen i 15 minuter nu"
+            },
+            "data_description": {
+              "run": "Avmarkera om du redan har kört den."
+            }
+          },
+          "measure": {
+            "title": "Hur mycket vatten kom ut?",
+            "description": "Ange vad {zone} gav under den körningen, ytan den vattnade och hur många minuter ventilen var öppen.",
+            "data": {
+              "volume": "Vatten som kom ut",
+              "area": "Bevattnad yta",
+              "minutes": "Minuter ventilen var öppen"
+            },
+            "data_description": {
+              "volume": "Liter (gallon i en imperial zon).",
+              "area": "Kvadratmeter (kvadratfot i en imperial zon).",
+              "minutes": "Normalt 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Dessa tal ger ett flöde som denna zon inte kan ha. Kontrollera dem."
+        },
+        "abort": {
+          "zone_gone": "Denna zon finns inte längre.",
+          "zone_busy": "Zonen är upptagen. Försök igen om ett ögonblick."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: ventil delad med en annan zon",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: dess växthus togs bort",
       "description": "Växthuset {greenhouse} togs bort, så {zone} är nu en egen zon. Den fortsätter vattna och behåller växthusets invändiga sensorer. För att placera den i ett annat växthus använder du zonens Konfigurera -> Växthus."
+    },
+    "area_removed": {
+      "title": "{zone}: dess område togs bort",
+      "description": "Området {area} togs bort, så {zone} använder nu en kopia av sensorerna den fick därifrån. För att placera den i ett annat område, använd zonens Konfigurera -> Var är detta?"
     }
   }
 }

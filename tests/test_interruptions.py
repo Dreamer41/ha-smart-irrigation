@@ -507,7 +507,7 @@ async def test_a_light_shower_mid_cycle_does_not_stop_it(hass, fake_valve_servic
 @pytest.mark.asyncio
 async def test_heavy_rain_mid_deep_soak_stops_it_too(hass, fake_valve_services, monkeypatch, tmp_path):
     controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
-    _history(controller, last_routine_days_ago=1, last_deep_days_ago=14)
+    _history(controller, last_routine_days_ago=5, last_deep_days_ago=14)
     await _set(controller, deep_soak_max_runtime_minutes=150, deep_soak_pulse_count=3)
     before = controller.store.state.last_deep_soak_ts
 

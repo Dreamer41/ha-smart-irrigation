@@ -11,7 +11,8 @@
     "deep_soak": "Głębokie podlewanie",
     "routine": "Podlewanie regularne",
     "service_run": "Uruchomienie serwisowe",
-    "test_pulse": "Impuls testowy"
+    "test_pulse": "Impuls testowy",
+    "manual_water": "Ręczne podlewanie"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: używanie zapasowego czujnika temperatury",
       "message": "Główny czujnik temperatury wewnętrznej ({entity}) przestał działać. Kontrola klimatu jest kontynuowana z użyciem czujnika zapasowego."
+    },
+    "action": {
+      "water": "Podlewaj {minutes} min",
+      "snooze": "Pomiń dzisiaj",
+      "fertilized": "Nawożone"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle}: pominięto o {time} – {temp}, poniżej progu przymrozkowego ({limit})",
     "waiting_frost": "{cycle}: wstrzymano o {time} – {temp}, poniżej progu przymrozkowego ({limit}); sprawdzanie co godzinę",
     "waiting_deep_soak": "{cycle}: czeka od {time} – najpierw głębokie podlewanie, gdy zrobi się dość ciepło",
-    "paused_until": "Wstrzymane do {until}"
+    "paused_until": "Wstrzymane do {until}",
+    "paused_area": "Wstrzymane: brak podlewania, gdy obszar {area} jest wstrzymany",
+    "paused_house": "Wstrzymane: brak podlewania, gdy szklarnia {house} jest wstrzymana"
   },
   "summary": {
     "title": "💧 ZoneFlow: Twój tydzień",
@@ -238,5 +246,148 @@
       "limited": "włączony przez część czasu",
       "outside": "włączony przez część czasu, gdy na zewnątrz jest zimno"
     }
+  },
+  "location": {
+    "none": "Brak",
+    "greenhouse": "szklarnia",
+    "new_area": "Nowy obszar..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Używa własnego deszczomierza, a nie deszczomierza obszaru {area}.",
+      "outdoor_temp_entity": "Używa własnego czujnika temperatury zewnętrznej, a nie czujnika obszaru {area}.",
+      "weather_entity": "Używa własnej encji pogody, a nie encji obszaru {area}.",
+      "notify_entity": "Wysyła na własny telefon, a nie na telefon obszaru {area}."
+    }
+  },
+  "plants": {
+    "on": "włączone",
+    "off": "wyłączone",
+    "history": {
+      "created": "Dodano do ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Przeniesiono z {from_zone} do {to_zone}",
+      "promoted": "Stał się główną rośliną w {zone}",
+      "demoted": "Teraz tylko wpis w strefie {zone}",
+      "archived": "Zarchiwizowano ze strefy {zone}",
+      "removed": "Usunięto ze strefy {zone}",
+      "note": "{text}",
+      "copied": "Skopiowano ustawienia z {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Tryb fazy wzrostu",
+      "demand_model": "Metoda podlewania",
+      "deficit_enabled": "Tryb deficytu",
+      "deficit_until_ts": "Tryb deficytu do",
+      "planting_date_ts": "Data sadzenia",
+      "health_status": "Kondycja",
+      "health_notes": "Notatki o kondycji",
+      "fertilizing_interval_months": "Częstotliwość nawożenia",
+      "last_fertilizing_ts": "Ostatnie nawożenie",
+      "growth_ramp_profile": "Krzywa wzrostu",
+      "deep_soak_enabled": "Głębokie podlewanie"
+    }
+  },
+  "start_from": {
+    "none": "Zwykłe ustawienia dla tego typu rośliny",
+    "zone": "Kopia strefy {zone}",
+    "preset": "Szablon: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "Zawór {entity} odpowiada.",
+      "fail": "Zawór {entity} jest niedostępny. Sprawdź urządzenie i jego połączenie w Home Assistant: nic nie podleje, dopóki nie odpowie."
+    },
+    "rain": {
+      "ok": "Deszczomierz {entity} zgłasza odczyty.",
+      "fail": "Deszczomierz {entity} jest niedostępny. Dopóki nie wróci, ZoneFlow zakłada, że nie pada.",
+      "wu": "Dane o deszczu pochodzą z Weather Underground.",
+      "manual": "Deszcz jest dodawany ręcznie.",
+      "none": "Brak deszczomierza. ZoneFlow zakłada, że nigdy nie pada, chyba że dodasz deszcz ręcznie lub użyjesz Weather Underground."
+    },
+    "temperature": {
+      "ok": "Temperatura zewnętrzna wynosi {value} {unit}.",
+      "none": "Brak czujnika temperatury zewnętrznej. Ustawienie temperatury zastępczej decyduje, jak ciepło zakłada ZoneFlow.",
+      "fail": "Czujnik temperatury {entity} jest niedostępny. W międzyczasie używana jest temperatura zastępcza."
+    },
+    "weather": {
+      "ok": "Prognoza pogody {entity} jest dostępna.",
+      "none": "Brak encji pogody, więc prognoza deszczu nie może pominąć podlewania.",
+      "fail": "Encja pogody {entity} jest niedostępna, więc prognoza jest na razie ignorowana."
+    },
+    "flow": {
+      "ok": "Wydajność została ustawiona ({value} mm/min).",
+      "default": "Wydajność to wciąż wartość przykładowa. Skalibruj ją, aby każde podlewanie trwało odpowiednio długo."
+    },
+    "volume": {
+      "ok": "Zużycie wody jest pokazywane w litrach.",
+      "none": "Zużycie wody jest pokazywane tylko w mm. Ustaw Przepływ w strefie, aby widzieć litry."
+    },
+    "soil": {
+      "ok": "Czujnik wilgotności gleby zgłasza {value} %.",
+      "fail": "Czujnik wilgotności gleby {entity} jest niedostępny. Strefa podlewa według kalendarza, dopóki nie wróci."
+    },
+    "pump": {
+      "ok": "Czujnik mocy pompy {entity} zgłasza odczyty.",
+      "fail": "Czujnik mocy pompy {entity} jest niedostępny, więc sprawdzanie pompy zostaje pominięte."
+    },
+    "paused": {
+      "zone": "Ta strefa jest wstrzymana: brak podlewania, dopóki nie wyłączysz opcji „Pauza”.",
+      "area": "Obszar {area} jest wstrzymany: brak podlewania, dopóki nie wyłączysz opcji „Pauza”.",
+      "house": "Szklarnia {house} jest wstrzymana: brak podlewania, dopóki nie wyłączysz opcji „Pauza”."
+    },
+    "last": {
+      "ok": "Ostatnie podlewanie: {when}.",
+      "never": "ZoneFlow jeszcze nie podlewał tej strefy.",
+      "overdue": "Ostatnie podlewanie było {days} dni temu, dłużej niż oczekiwano. Sprawdź zawór i stan."
+    },
+    "notify": {
+      "ok": "Wiadomości na telefon trafiają do {entity}.",
+      "none": "Brak telefonu do powiadomień. Nie będziesz otrzymywać wiadomości o podlewaniu.",
+      "fail": "Telefon {entity} już nie istnieje, więc wiadomości do Ciebie nie dotrą."
+    }
+  },
+  "why": {
+    "method": "Metoda podlewania: {method}.",
+    "method_temperature": "progi temperatury (cieplejszy tydzień dostaje więcej wody)",
+    "method_et": "ewapotranspiracja (zużycie wody przez roślinę wyliczone z температуры)",
+    "temperature": "Użyta temperatura: {value} ({source}), a więc {tier} tydzień.",
+    "source": {
+      "sensor": "średnia z maksimów z ostatnich dni",
+      "last_known": "z ostatnich dni, czujnik jest teraz offline",
+      "fallback": "Temperatura zastępcza, brak zarejestrowanego całego dnia",
+      "manual": "ustawienie temperatury zastępczej / ręcznej"
+    },
+    "tier": {
+      "hot": "gorący",
+      "normal": "normalny",
+      "cool": "chłodny"
+    },
+    "target": "Dawka tygodniowa: {target}.",
+    "scale": "Dawka skalowana do {pct} % przez fazę wzrostu, tryb deficytu i ściółkowanie.",
+    "rain": "Kredyt deszczowy od ostatniego podlewania: {credit} (deszcz w ostatnich 7 dniach: {rain}).",
+    "needed": "Gdyby podlać teraz: {needed} do dodania, ok. {minutes} min.",
+    "forecast": "Prognozowano deszcz, więc pominięto ostatnie {n} podlewań z rzędu.",
+    "soil": "Wilgotność gleby {pct} % ({status}).",
+    "soil_dry": "sucho",
+    "soil_wet": "mokro",
+    "soil_ok": "umiarkowanie"
+  },
+  "suggest": {
+    "heading": "Prawdopodobne encje znalezione w Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Zawór",
+      "rain": "Deszczomierz",
+      "temperature": "Temperatura zewnętrzna",
+      "weather": "Pogoda",
+      "soil": "Wilgotność gleby",
+      "flow": "Przepływomierz",
+      "pump": "Moc pompy",
+      "notify": "Telefon"
+    }
+  },
+  "setup": {
+    "progress": "Krok {n} z {total}"
   }
 }

@@ -22,11 +22,11 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, units, wu_logic
+from . import calculations as calc, greenhouse_logic, location, messages, presets, suggest, units, wu_logic
+from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
     CONF_PARENT_ZONE,
-    CROP_INHERITED_KEYS,
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,
@@ -59,6 +59,13 @@ from .const import (
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
+    CONF_AREA_ID,
+    CONF_START_FROM,
+    CONF_START_STATE,
+    CONF_AREA_MM_PER_TIP,
+    CONF_AREA_NAME,
+    ENTRY_TYPE_AREA,
+    AREA_NAME_MAX_LENGTH,
     CONF_RAIN_COUNTER_ENTITY,
     CONF_RAIN_SOURCE,
     RAIN_SOURCE_OPTIONS,
@@ -423,6 +430,63 @@ def _is_wu_entry(entry) -> bool:
     return entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_WU
 
 
+def _is_area_entry(entry) -> bool:
+    return entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_AREA
+
+
+def _clean_name(value: Any) -> str:
+    return " ".join(str(value or "").split())[:AREA_NAME_MAX_LENGTH]
+
+
+def _area_name_taken(hass, name: str, exclude_entry_id: str | None = None) -> bool:
+    return any(
+        _is_area_entry(e) and e.entry_id != exclude_entry_id and e.title.casefold() == name.casefold()
+        for e in hass.config_entries.async_entries(DOMAIN)
+    )
+
+
+def _area_schema(defaults: dict[str, Any], *, with_name: bool = True) -> vol.Schema:
+    """An area: its name and the sensors its zones share."""
+    fields: dict[Any, Any] = {}
+    if with_name:
+        fields[vol.Required(CONF_AREA_NAME, default=defaults.get(CONF_AREA_NAME, ""))] = str
+    fields[_optional_entity_key(defaults, CONF_RAIN_COUNTER_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain=["counter", "sensor"])
+    )
+    fields[vol.Optional(CONF_RAIN_SOURCE, default=defaults.get(CONF_RAIN_SOURCE) or RAIN_SOURCE_TIPS)] = (
+        selector.SelectSelector(selector.SelectSelectorConfig(options=RAIN_SOURCE_OPTIONS, translation_key="rain_source"))
+    )
+    fields[
+        vol.Optional(CONF_AREA_MM_PER_TIP, default=defaults.get(CONF_AREA_MM_PER_TIP) or DEFAULT_AREA_MM_PER_TIP)
+    ] = selector.NumberSelector(
+        selector.NumberSelectorConfig(
+            min=0.01, max=2.0, step=0.001, unit_of_measurement="mm", mode=selector.NumberSelectorMode.BOX
+        )
+    )
+    fields[_optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+    )
+    fields[_optional_entity_key(defaults, CONF_WEATHER_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="weather")
+    )
+    fields[_optional_entity_key(defaults, CONF_NOTIFY_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="notify")
+    )
+    return vol.Schema(fields)
+
+
+def _area_data(user_input: dict[str, Any]) -> dict[str, Any]:
+    """What an area entry stores, from the form's answer (a cleared field is left out)."""
+    data: dict[str, Any] = {
+        CONF_ENTRY_TYPE: ENTRY_TYPE_AREA,
+        CONF_RAIN_SOURCE: user_input.get(CONF_RAIN_SOURCE) or RAIN_SOURCE_TIPS,
+        CONF_AREA_MM_PER_TIP: float(user_input.get(CONF_AREA_MM_PER_TIP) or DEFAULT_AREA_MM_PER_TIP),
+    }
+    for key in AREA_SHARED_KEYS:
+        data[key] = user_input.get(key) or None
+    return data
+
+
 def _wu_key_schema(defaults: dict[str, Any]) -> vol.Schema:
     return vol.Schema(
         {
@@ -509,6 +573,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._crop_pump_id: str | None = None
         self._wu: dict[str, Any] = {}
         self._wu_candidates: list[dict[str, Any]] = []
+        self._bundle: dict[str, Any] = {}
+        self._area_id: str | None = None  # the area the new zone is placed in
 
     def _offer_wu(self) -> bool:
         """Weather Underground rain is offered once a zone exists, and only
@@ -520,9 +586,29 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         options = ["zone"]
         if _greenhouses(self.hass):
             options.append("crop")
+        if any(not _is_wu_entry(e) and not _is_area_entry(e) for e in self.hass.config_entries.async_entries(DOMAIN)):
+            options.append("area")
         if self._offer_wu():
             options.append("weather_underground")
         return options
+
+    async def async_step_area(self, user_input: dict[str, Any] | None = None):
+        """A part of the garden, with the sensors its zones share."""
+        errors: dict[str, str] = {}
+        defaults = user_input or {}
+        if user_input is not None:
+            name = _clean_name(user_input.get(CONF_AREA_NAME))
+            if not name:
+                errors["base"] = "area_name_required"
+            elif _area_name_taken(self.hass, name):
+                errors["base"] = "area_name_exists"
+            else:
+                return self.async_create_entry(title=name, data=_area_data(user_input))
+        return self.async_show_form(step_id="area", data_schema=_area_schema(defaults), errors=errors)
+
+    async def async_step_area_create(self, data: dict[str, Any]):
+        """An area made from a zone's Configure (the options flow starts this)."""
+        return self.async_create_entry(title=data["name"], data=_area_data(data))
 
     async def async_step_crop(self, user_input: dict[str, Any] | None = None):
         """A crop in a greenhouse: which greenhouse, the crop's name and
@@ -628,6 +714,35 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="wu_stations", data_schema=_wu_station_schema(self._wu_candidates, nearest), errors=errors
         )
 
+    def _progress(self, n: int) -> str:
+        """"Step 2 of 4" on the steps every outdoor zone goes through (a
+        greenhouse zone's steps differ, so it gets no counter)."""
+        if self._zone_type != ZONE_TYPE_OUTDOOR:
+            return ""
+        return messages.text(self.hass, "setup.progress", n=n, total=4)
+
+    async def _start_choices(self) -> list[tuple[str, str]]:
+        """(value, label): start from the plant type, a copy of a zone, or a saved preset."""
+        out = [("", messages.text(self.hass, "start_from.none"))]
+        for entry in sorted(self.hass.config_entries.async_entries(DOMAIN), key=lambda e: e.title.casefold()):
+            if _is_wu_entry(entry) or _is_area_entry(entry) or not _merged_entry(entry).get(CONF_VALVE_ENTITY):
+                continue
+            out.append((f"zone:{entry.entry_id}", messages.text(self.hass, "start_from.zone", zone=entry.title)))
+        for preset in (await presets.async_get_book(self.hass)).listing():
+            out.append((f"preset:{preset['id']}", messages.text(self.hass, "start_from.preset", name=preset["name"])))
+        return out
+
+    async def _start_bundle(self, choice: str) -> dict[str, Any]:
+        """The settings bundle behind a start-from choice (empty for none)."""
+        kind, _, ident = (choice or "").partition(":")
+        if kind == "zone":
+            controller = self.hass.data.get(DOMAIN, {}).get(ident)
+            return presets.capture(controller) if controller is not None else {}
+        if kind == "preset":
+            preset = (await presets.async_get_book(self.hass)).presets.get(ident)
+            return preset["bundle"] if preset else {}
+        return {}
+
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         if user_input is None and not self._menu_done and len(self._menu_options()) > 1:
             return await self.async_step_start()
@@ -640,9 +755,30 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._zone_name = zone_name
                 self._plant = user_input.get(CONF_PLANT, PLANT_CUSTOM)
                 self._zone_type = user_input.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
+                self._bundle = await self._start_bundle(user_input.get(CONF_START_FROM, ""))
+                self._area_id = user_input.get("location") or None
                 if self._zone_type != ZONE_TYPE_OUTDOOR:
                     return await self.async_step_greenhouse_devices()
                 return await self.async_step_entities()
+        choices = await self._start_choices()
+        start_field: dict[Any, Any] = {}
+        known_areas = areas(self.hass)
+        if known_areas:
+            # Which area the zone goes in; it then uses the area's rain gauge, temperature and weather.
+            start_field[vol.Optional("location", default=self._area_id or "")] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[selector.SelectOptionDict(value="", label=messages.text(self.hass, "location.none"))]
+                    + [selector.SelectOptionDict(value=a.entry.entry_id, label=a.name) for a in known_areas],
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            )
+        if len(choices) > 1:
+            start_field[vol.Optional(CONF_START_FROM, default="")] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[selector.SelectOptionDict(value=v, label=label) for v, label in choices],
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            )
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -658,6 +794,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_ZONE_TYPE, default=self._zone_type): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),
+                    **start_field,
                 }
             ),
             errors=errors,
@@ -681,10 +818,27 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if (preset := PLANT_PRESETS.get(self._plant)) is not None:
             defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
             defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
+        defaults.update((self._bundle.get("options") or {}))  # a copy of another zone: its way of watering
+        # Likely entities, listed under the form; a clear single match is filled in.
+        found = suggest.find(self.hass)
+        used = {
+            value
+            for entry in self.hass.config_entries.async_entries(DOMAIN)
+            for key in (CONF_VALVE_ENTITY, CONF_SOIL_MOISTURE_ENTITY, CONF_FLOW_METER_ENTITY, CONF_PUMP_POWER_ENTITY)
+            if (value := _merged_entry(entry).get(key))
+        }
+        for key, entity_id in suggest.defaults_from(found, used).items():
+            if self._area_id and key in AREA_SHARED_KEYS:
+                continue  # the zone's area provides it
+            defaults.setdefault(key, entity_id)
         return self.async_show_form(
             step_id="entities",
             data_schema=_schema(defaults),
             errors=errors,
+            description_placeholders={
+                "progress": self._progress(2),
+                "suggestions": suggest.describe(self.hass, found),
+            },
         )
 
     async def async_step_greenhouse_devices(self, user_input: dict[str, Any] | None = None):
@@ -742,6 +896,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_ZONE_TYPE: self._zone_type,
             CONF_CLIMATE: self._climate,
             CONF_CSV_PATH: f"/config/zoneflow_{slugify(self._zone_name)}.csv",
+            **({CONF_AREA_ID: self._area_id} if self._area_id else {}),
             CONF_DEEP_SOAK_ENABLED: False,
             CONF_DEEP_SOAK_TIME: DEFAULT_DEEP_SOAK_TIME,
             CONF_ROUTINE_TIME: DEFAULT_ROUTINE_TIME,
@@ -777,6 +932,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if (preset := PLANT_PRESETS.get(self._plant)) is not None:
             defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
             defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
+        defaults.update((self._bundle.get("options") or {}))
         return self.async_show_form(step_id="watering", data_schema=_watering_schema(defaults), errors=errors)
 
     def _imperial(self) -> bool:
@@ -805,6 +961,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 }
             ),
+            description_placeholders={"progress": self._progress(3)},
         )
 
     async def async_step_temperatures(self, user_input: dict[str, Any] | None = None):
@@ -820,15 +977,23 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 plant_numbers = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
                 data = {
                     **self._data,
+                    **({CONF_AREA_ID: self._area_id} if self._area_id else {}),
                     CONF_PLANT: self._plant,
                     CONF_CLIMATE: self._climate,
-                    CONF_INITIAL_NUMBERS: {**plant_numbers, **_site_numbers(self._data), **metric},
+                    CONF_INITIAL_NUMBERS: {
+                        **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric
+                    },
                 }
+                if self._bundle.get("state"):
+                    data[CONF_START_STATE] = dict(self._bundle["state"])
                 if self._zone_type != ZONE_TYPE_OUTDOOR:
                     data[CONF_ZONE_TYPE] = self._zone_type
                     data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
                 return self.async_create_entry(title=self._zone_name, data=data)
-        preset = CLIMATE_PRESETS[self._climate]
+        preset = {
+            **CLIMATE_PRESETS[self._climate],
+            **{k: v for k, v in (self._bundle.get("numbers") or {}).items() if k in CLIMATE_NUMBER_KEYS},
+        }
         schema = {}
         for key in CLIMATE_NUMBER_KEYS:
             _name, lo, hi, metric_step, metric_unit = NUMBER_DEFS[key]
@@ -849,14 +1014,49 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     mode=selector.NumberSelectorMode.SLIDER,
                 )
             )
-        return self.async_show_form(step_id="temperatures", data_schema=vol.Schema(schema), errors=errors)
+        return self.async_show_form(
+            step_id="temperatures", data_schema=vol.Schema(schema), errors=errors,
+            description_placeholders={"progress": self._progress(4)},
+        )
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
         if _is_wu_entry(config_entry):
             return WeatherUndergroundOptionsFlow(config_entry)
+        if _is_area_entry(config_entry):
+            return AreaOptionsFlow(config_entry)
         return ZoneFlowOptionsFlow(config_entry)
+
+
+class AreaOptionsFlow(config_entries.OptionsFlow):
+    """Configure an area: its name and the sensors its zones share."""
+
+    def __init__(self, config_entry) -> None:
+        self._config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        # Its own step id: "init" is the zones' Configure menu.
+        return await self.async_step_area_settings()
+
+    async def async_step_area_settings(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
+        entry = self._config_entry
+        current = {**entry.data, **entry.options, CONF_AREA_NAME: entry.title}
+        if user_input is not None:
+            name = _clean_name(user_input.get(CONF_AREA_NAME))
+            if not name:
+                errors["base"] = "area_name_required"
+            elif _area_name_taken(self.hass, name, exclude_entry_id=entry.entry_id):
+                errors["base"] = "area_name_exists"
+            else:
+                if name != entry.title:
+                    self.hass.config_entries.async_update_entry(entry, title=name)
+                data = _area_data(user_input)
+                data.pop(CONF_ENTRY_TYPE)
+                return self.async_create_entry(title="", data=data)
+            current = {**current, **user_input}
+        return self.async_show_form(step_id="area_settings", data_schema=_area_schema(current), errors=errors)
 
 
 class WeatherUndergroundOptionsFlow(config_entries.OptionsFlow):
@@ -951,40 +1151,10 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             _is_wu_entry(e) for e in self.hass.config_entries.async_entries(DOMAIN)
         ):
             options.append("weather_underground")
-        if not outdoor and (crop or not any(self._merged().get(role) for role in DEVICE_ROLE_KEYS)):
-            if _greenhouses(self.hass, exclude_entry_id=self._config_entry.entry_id):
-                options.append("greenhouse_link")
+        options.append("location")  # the area or greenhouse it is in
         if not crop:
             options.append("zone_type")  # a crop is whatever its greenhouse is
         return self.async_show_menu(step_id="init", menu_options=options)
-
-    async def async_step_greenhouse_link(self, user_input: dict[str, Any] | None = None):
-        """Which greenhouse this zone is a crop of, or none (on its own).
-        Leaving a greenhouse keeps a copy of its inside sensors."""
-        greenhouses = _greenhouses(self.hass, exclude_entry_id=self._config_entry.entry_id)
-        current = self._merged().get(CONF_PARENT_ZONE) or ""
-        if user_input is not None:
-            chosen = user_input.get(CONF_PARENT_ZONE) or ""
-            options = {**self._config_entry.options}
-            if chosen:
-                parent = self.hass.config_entries.async_get_entry(chosen)
-                options[CONF_PARENT_ZONE] = chosen
-                options[CONF_ZONE_TYPE] = _merged_entry(parent).get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
-            else:
-                old = self.hass.config_entries.async_get_entry(current) if current else None
-                options[CONF_PARENT_ZONE] = None
-                if old is not None:
-                    source = _merged_entry(old)
-                    for key in CROP_INHERITED_KEYS:
-                        if source.get(key):
-                            options[key] = source[key]
-            return self.async_create_entry(title="", data=options)
-        return self.async_show_form(
-            step_id="greenhouse_link",
-            data_schema=vol.Schema(
-                {vol.Optional(CONF_PARENT_ZONE, default=current): _greenhouse_selector(greenhouses, with_none=True)}
-            ),
-        )
 
     async def async_step_crop_valve(self, user_input: dict[str, Any] | None = None):
         """A crop's valve (its sensors and climate are its greenhouse's)."""
@@ -1017,6 +1187,85 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
                 {vol.Required(CONF_USE_WU, default=bool(self._merged().get(CONF_USE_WU, False))): bool}
             ),
         )
+
+    _NEW_AREA = "__new_area__"
+
+    async def async_step_location(self, user_input: dict[str, Any] | None = None):
+        """Where the zone is: in an area, in a greenhouse (as a crop of it),
+        or nowhere in particular. "New area" makes one from this zone's own
+        sensors."""
+        entry = self._config_entry
+        choices = location.choices(self.hass, entry)
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            token = user_input["location"]
+            if token == self._NEW_AREA:
+                return await self.async_step_new_area()
+            self._token = token
+            if token.startswith(location.AREA_PREFIX) and location.differing_keys(
+                self.hass, entry, token[len(location.AREA_PREFIX):]
+            ):
+                return await self.async_step_location_sensors()
+            return self._finish_location(token, None, errors)
+        options = [selector.SelectOptionDict(value=t, label=label) for t, label in choices]
+        options.append(selector.SelectOptionDict(value=self._NEW_AREA, label=messages.text(self.hass, "location.new_area")))
+        current = location.current_token(entry)
+        if current not in {t for t, _ in choices}:
+            current = location.NONE_TOKEN
+        return self.async_show_form(
+            step_id="location",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("location", default=current): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.DROPDOWN)
+                    )
+                }
+            ),
+            errors=errors,
+        )
+
+    def _finish_location(self, token: str, use_area_keys: set[str] | None, errors: dict[str, str]):
+        try:
+            options = location.apply(self.hass, self._config_entry, token, use_area_keys)
+        except HomeAssistantError:
+            return self.async_abort(reason="location_not_available")
+        return self.async_create_entry(title="", data=options)
+
+    async def async_step_location_sensors(self, user_input: dict[str, Any] | None = None):
+        """The zone has its own sensor where the area has another: use the
+        area's, or keep the zone's own (an override the card says so about)."""
+        entry = self._config_entry
+        keys = location.differing_keys(self.hass, entry, self._token[len(location.AREA_PREFIX):])
+        if user_input is not None:
+            return self._finish_location(self._token, {k for k in keys if user_input.get(k)}, {})
+        return self.async_show_form(
+            step_id="location_sensors",
+            data_schema=vol.Schema({vol.Required(key, default=True): bool for key in keys}),
+        )
+
+    async def async_step_new_area(self, user_input: dict[str, Any] | None = None):
+        """Make an area from this zone's own sensors and put the zone in it."""
+        errors: dict[str, str] = {}
+        controller = self._controller()
+        merged = self._merged()
+        defaults: dict[str, Any] = (
+            location.area_defaults(controller) if controller is not None
+            else {key: merged.get(key) for key in (*AREA_SHARED_KEYS, CONF_RAIN_SOURCE)}
+        )
+        if user_input is not None:
+            name = _clean_name(user_input.get(CONF_AREA_NAME))
+            if not name:
+                errors["base"] = "area_name_required"
+            elif _area_name_taken(self.hass, name):
+                errors["base"] = "area_name_exists"
+            else:
+                result = await self.hass.config_entries.flow.async_init(
+                    DOMAIN, context={"source": "area_create"}, data={**user_input, "name": name}
+                )
+                new_id = result["result"].entry_id
+                return self._finish_location(location.AREA_PREFIX + new_id, None, errors)
+            defaults = {**defaults, **user_input}
+        return self.async_show_form(step_id="new_area", data_schema=_area_schema(defaults), errors=errors)
 
     async def async_step_zone_type(self, user_input: dict[str, Any] | None = None):
         """Change where the zone grows. Nothing is deleted: what the new

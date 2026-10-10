@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Zonenaam",
           "plant": "Wat staat er geplant",
-          "zone_type": "Waar er gekweekt wordt"
+          "zone_type": "Waar er gekweekt wordt",
+          "start_from": "Starten vanaf",
+          "location": "Waar bevindt dit zich?"
         },
         "data_description": {
           "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
           "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone.",
-          "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak."
+          "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak.",
+          "start_from": "Start vanaf een kopie van de sproei-instellingen van een andere zone of een opgeslagen voorinstelling in plaats van die van het planttype. Klep, sensoren en debiet worden nooit gecopieerd.",
+          "location": "Het gebied waarin deze zone ligt, indien van toepassing. De zone gebruikt dan de regenmeter, temperatuursensor, het weer en de telefoon van het gebied, tenzij je haar eigen opgeeft."
         }
       },
       "entities": {
         "title": "ZoneFlow-bewatering",
-        "description": "Koppel hier je bestaande entiteiten. Er worden nooit eigen fysieke entiteiten aangemaakt. Alleen de klepschakelaar is verplicht -- al het andere hieronder mag leeg blijven; de zone werkt dan met wat er is.",
+        "description": "{progress}\n\nKoppel dit aan je echte entiteiten. Het maakt nooit zelf nieuwe fysieke entiteiten aan. Alleen de klepschakelaar is verplicht – al het andere hieronder werkt prima als het niet ingesteld is. Laat een veld leeg als je er geen hebt.\n\n{suggestions}",
         "data": {
           "valve_entity": "Klepschakelaar",
           "pump_power_entity": "Vermogenssensor pomp (optioneel)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Bodemvochtsensor (optioneel)",
           "notify_entity": "Telefoon voor meldingen (optioneel)",
           "weather_entity": "Bron weersverwachting (optioneel)",
-          "soil_type": "Grondsoort",
-          "drainage": "Drainage",
-          "slope": "Helling",
-          "irrigation_method": "Bewateringsmethode",
-          "growth_ramp_profile": "Automatische opbouw per groeifase",
+          "soil_type": "Ken je je grondsoort? (sla over zo niet)",
+          "drainage": "Lopen het water langzaam weg? (sla over als je het niet weet)",
+          "slope": "Hellend terrein? (sla over als het vlak is of je het niet zeker weet)",
+          "irrigation_method": "Hoe komt het water bij de planten?",
+          "growth_ramp_profile": "Is het een jonge plant die eerst minder water nodig heeft? (sla over zo niet)",
           "csv_path": "Pad CSV-logbestand",
           "deep_soak_enabled": "Diepe watergift inschakelen",
           "deep_soak_time": "Tijdstip diepe watergift",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Klimaat",
-        "description": "Hoe is het groeiseizoen waar deze zone ligt? Dit vult alleen de temperatuurschuiven op de volgende pagina alvast in -- je kunt daar elke waarde aanpassen, en later ook op de apparaatpagina van de zone.",
+        "description": "{progress}\n\nHoe ziet het groeiseizoen eruit waar deze zone zich bevindt? Dit vult alleen de temperatuurschuiven op de volgende pagina vooraf in – je kunt elke waarde daar aanpassen en later op de apparaatpagina van de zone.",
         "data": {
           "climate": "Klimaat"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Temperatuurgrenzen",
-        "description": "ZoneFlow neemt het gemiddelde van de dagelijkse MAXIMUMtemperatuur over de laatste 3 dagen. Vanaf Warm geeft het vaker water (elke 3 dagen) met het warme weekdoel; onder Koel gebruikt het het koele weekdoel; daartussen is normaal.\n\nDe reservetemperatuur wordt gebruikt als er geen echte meting is: zonder temperatuursensor is het je handmatige knop (hoger bij een hittegolf, lager bij een koude periode); met sensor geldt hij alleen tot de sensor zijn eerste volle dag heeft gemeten, en na 3 dagen zonder één meting.",
+        "description": "{progress}\n\nZoneFlow berekent het gemiddelde van de dagelijkse MAXIMUMtemperatuur over de afgelopen 3 dagen. Op of boven Heet sproeit het vaker (om de 3 dagen) met het hete weekdoel; onder Koel gebruikt het het koele weekdoel; daartussenin is normaal.\n\nDe terugvaltemperatuur wordt gebruikt wanneer er geen echte meting beschikbaar is: zonder temperatuursensor is dit je handmatige bediening (verhoog bij een hittegolf, verlaag bij een koudeperiode); met een sensor wordt deze alleen gebruikt totdat de sensor zijn eerste volledige dag heeft vastgelegd, en na 3 dagen zonder een enkele meting.",
         "data": {
           "hot_temp_threshold": "Grens warm weer",
           "cool_temp_threshold": "Grens koel weer",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Zone toevoegen",
           "weather_underground": "Weather Underground-regen instellen",
-          "crop": "Voeg een gewas toe aan een kas"
+          "crop": "Voeg een gewas toe aan een kas",
+          "area": "Gebied toevoegen (een deel van de tuin)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "Een schakelaar die het water voor dit gewas opent. Elk gewas heeft een eigen klep nodig."
         }
+      },
+      "area": {
+        "title": "Nieuw gebied",
+        "description": "Een deel van de tuin, bijvoorbeeld Achtertuin of Voortuin. De zones gebruiken de hier ingestelde sensoren, tenzij een zone eigen sensoren heeft.",
+        "data": {
+          "area_name": "Naam",
+          "rain_counter_entity": "Regenmeter",
+          "rain_source_type": "Type regenmetersensor",
+          "area_rain_mm_per_tip": "Regenmeter mm per kiep",
+          "outdoor_temp_entity": "Buitentemperatuursensor",
+          "weather_entity": "Weer-entiteit (voorspelling)",
+          "notify_entity": "Telefoon voor meldingen"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
+          "area_rain_mm_per_tip": "Alleen voor kiepteller: hoeveel mm regen één kiep is.",
+          "outdoor_temp_entity": "Optioneel. Stelt het hete / koele sproeiniveau in voor de zones van dit gebied.",
+          "weather_entity": "Optioneel. Laat de zones van dit gebied sproeien overslaan als er regen wordt voorspeld.",
+          "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
+          "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
+          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground heeft de API-sleutel geweigerd.",
       "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
-      "wu_pick_1_to_3": "Kies 1, 2 of 3 stations."
+      "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
+      "area_name_required": "Geef het gebied een naam.",
+      "area_name_exists": "Er bestaat al een gebied met deze naam."
     },
     "abort": {
       "already_configured": "Weather Underground-regen is al ingesteld."
@@ -264,7 +293,7 @@
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regen",
           "crop_valve": "Gewasklep",
-          "greenhouse_link": "Kas"
+          "location": "Waar bevindt dit zich? (gebied of kas)"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "Een schakelaar die het water voor dit gewas opent. Elk gewas heeft een eigen klep nodig."
         }
       },
-      "greenhouse_link": {
-        "title": "Kas",
-        "description": "Maak van deze zone een gewas van een kas: het maakt dan gebruik van de interne sensoren van die kas en wordt ermee weergegeven. Kies \"-\" om er weer een zelfstandige zone van te maken (het behoudt een kopie van de kassensoren).",
-        "data": {
-          "greenhouse_entry_id": "Onderdeel van kas"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten, of \"-\" voor geen."
-        }
-      },
       "flow_volume": {
         "title": "Meet het debiet op basis van volume",
         "description": "Druk op een van de Proefdraaien-knoppen van de zone (een langere run, zoals 15 min, is nauwkeuriger) en vang het water op of lees het af: een emmer of ton bij de druppelaars/sproeiers, of het verschil op een watermeter. Voer vervolgens de minuten in dat de klep open stond, de liters en het oppervlak dat de druppelaars/sproeiers natmaken.\n\nHet resultaat is het GEMIDDELDE van de zone: liters gedeeld door oppervlak en minuten, en het vervangt de Kalibratie debiet druppelaars. ZoneFlow gebruikt één debiet per zone en kan geen onderscheid maken tussen druppelaars/sproeiers. Voor een nauwkeurig resultaat moet elke druppelaar/sproeier op de klep van een zone van hetzelfde type en debiet zijn; plaats verschillende druppelaars/sproeiers op aparte kleppen (aparte zones). In een gemengde zone krijgen de planten bij de zwakkere druppelaars/sproeiers minder dan het getoonde gemiddelde. Het stelt ook het Zonedebiet in, de liters per minuut die worden gebruikt voor de schatting van het waterverbruik.",
@@ -506,6 +525,76 @@
           "head_flow": "Wat één druppelaar geeft, volgens de verpakking of sproeiertabel.",
           "head_flow_unit": "De eenheid waarin het debiet van één druppelaar wordt vermeld."
         }
+      },
+      "location": {
+        "title": "Waar bevindt dit zich?",
+        "description": "Het gebied of de kas waarin deze zone zich bevindt. Een zone gebruikt de sensoren van zijn gebied, tenzij hij eigen sensoren heeft. In een kas is het er een gewas van. Kies Nieuw gebied om een gebied te maken op basis van de eigen sensoren van deze zone.",
+        "data": {
+          "location": "Plaats"
+        },
+        "data_description": {
+          "location": "Een gebied, een kas of geen. Het verplaatsen van de zone herstart deze zodat hij de sensoren van de nieuwe plaats leest."
+        }
+      },
+      "location_sensors": {
+        "title": "Sensoren van het gebied gebruiken?",
+        "description": "Deze zone heeft een eigen sensor waar het gebied een andere heeft. Vink aan om die van het gebied te gebruiken; vink uit om de eigen sensor te behouden.",
+        "data": {
+          "rain_counter_entity": "Gebruik de regenmeter van het gebied",
+          "outdoor_temp_entity": "Gebruik de buitentemperatuur van het gebied",
+          "weather_entity": "Gebruik de weer-entiteit van het gebied",
+          "notify_entity": "Gebruik de telefoon van het gebied"
+        },
+        "data_description": {
+          "rain_counter_entity": "Vink aan om de regenmeter van het gebied te gebruiken in plaats van die van deze zone.",
+          "outdoor_temp_entity": "Vink aan om de buitentemperatuursensor van het gebied te gebruiken in plaats van die van deze zone.",
+          "weather_entity": "Vink aan om de weer-entiteit van het gebied te gebruiken in plaats van die van deze zone.",
+          "notify_entity": "Vink aan om naar de telefoon van het gebied te sturen in plaats van de eigen telefoon van deze zone."
+        }
+      },
+      "new_area": {
+        "title": "Nieuw gebied",
+        "description": "Een gebied gemaakt op basis van de sensoren van deze zone. De zone verhuist er naartoe en andere zones kunnen zich later aansluiten.",
+        "data": {
+          "area_name": "Naam",
+          "rain_counter_entity": "Regenmeter",
+          "rain_source_type": "Type regenmetersensor",
+          "area_rain_mm_per_tip": "Regenmeter mm per kiep",
+          "outdoor_temp_entity": "Buitentemperatuursensor",
+          "weather_entity": "Weer-entiteit (voorspelling)",
+          "notify_entity": "Telefoon voor meldingen"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
+          "area_rain_mm_per_tip": "Alleen voor kiepteller: hoeveel mm regen één kiep is.",
+          "outdoor_temp_entity": "Optioneel. Stelt het hete / koele sproeiniveau in voor de zones van dit gebied.",
+          "weather_entity": "Optioneel. Laat de zones van dit gebied sproeien overslaan als er regen wordt voorspeld.",
+          "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
+          "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
+          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
+        }
+      },
+      "area_settings": {
+        "title": "Gebied",
+        "description": "De naam van het gebied en de sensoren die de zones delen. Een zone met een eigen sensor blijft die gebruiken.",
+        "data": {
+          "area_name": "Naam",
+          "rain_counter_entity": "Regenmeter",
+          "rain_source_type": "Type regenmetersensor",
+          "area_rain_mm_per_tip": "Regenmeter mm per kiep",
+          "outdoor_temp_entity": "Buitentemperatuursensor",
+          "weather_entity": "Weer-entiteit (voorspelling)",
+          "notify_entity": "Telefoon voor meldingen"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
+          "area_rain_mm_per_tip": "Alleen voor kiepteller: hoeveel mm regen één kiep is.",
+          "outdoor_temp_entity": "Optioneel. Stelt het hete / koele sproeiniveau in voor de zones van dit gebied.",
+          "weather_entity": "Optioneel. Laat de zones van dit gebied sproeien overslaan als er regen wordt voorspeld.",
+          "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
+          "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
+          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "De zone (of de pomp) is bezig, of de dagelijkse veiligheidslimiet is op. Probeer het later opnieuw.",
       "flow_rate_disabled": "De entiteit Kalibratie debiet druppelaars van de zone is uitgeschakeld. Schakel hem in (apparaatpagina van de zone → entiteiten) en probeer het opnieuw.",
       "zone_flow_set": "Zonedebiet ingesteld op {flow}. Het wordt alleen gebruikt voor de schatting van het waterverbruik.",
-      "zone_flow_out_of_range": "Dat komt uit op een zonedebiet dat buiten de toegestane instelling valt (0 tot 2000 L/min). Controleer de getallen."
+      "zone_flow_out_of_range": "Dat komt uit op een zonedebiet dat buiten de toegestane instelling valt (0 tot 2000 L/min). Controleer de getallen.",
+      "location_not_available": "Die plaats is niet beschikbaar."
     },
     "error": {
       "valve_already_used": "Een andere ZoneFlow-zone gebruikt deze klep al.",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "Kon geen verbinding maken met Weather Underground. Probeer het later opnieuw.",
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
-      "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas)."
+      "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas).",
+      "area_name_required": "Geef het gebied een naam.",
+      "area_name_exists": "Er bestaat al een gebied met deze naam."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "Deels van de tijd aan",
           "outside": "Deels van de tijd aan bij koud weer buiten"
         }
+      },
+      "location": {
+        "name": "Waar bevindt dit zich?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Een willekeurige entiteit van het apparaat van de zone (in plaats van Zone-apparaat)."
         }
       }
+    },
+    "create_area": {
+      "name": "Gebied aanmaken",
+      "description": "Maakt een nieuw gebied aan (een deel van de tuin zoals Achtertuin). Selecteer een zone en deze verhuist naar het nieuwe gebied, dat start met de instellingen voor regenmeter, buitentemperatuur, weer en telefoon van die zone.",
+      "fields": {
+        "name": {
+          "name": "Naam",
+          "description": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone die in het nieuwe gebied geplaatst moet worden (optioneel)."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van die zone (alternatief voor Zone-apparaat)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Plant toevoegen",
+      "description": "Voegt een plant toe aan een zone. In een zone zonder hoofdplant wordt het de hoofdplant en worden de type-instellingen op de zone toegepast; anders is het alleen een vastlegging (historie, notities), tenzij Oude hoofdplant aangeeft dat deze het overneemt.",
+      "fields": {
+        "name": {
+          "name": "Naam",
+          "description": "Hoe de plant heet."
+        },
+        "plant_type": {
+          "name": "Planttype",
+          "description": "Begininstellingen voor dit type plant (angepast indien leeg gelaten)."
+        },
+        "old_main": {
+          "name": "Oude hoofdplant",
+          "description": "Alleen als de zone al een hoofdplant heeft. Wat ermee gebeurt: bewaren als vastlegging of archiveren."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone. Alleen nodig als er 2 of meer zones zijn geconfigureerd."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van de zone (alternatief voor Zone-apparaat)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Plant verplaatsen",
+      "description": "Verplaatst een plant, met de historie, naar een andere zone. De instellingen worden toegepast op de nieuwe zone.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "Het id van de plant (getoond in de statusattributen van de zone)."
+        },
+        "old_main": {
+          "name": "Oude hoofdplant",
+          "description": "Alleen als de zone al een hoofdplant heeft. Wat ermee gebeurt: bewaren als vastlegging, archiveren, ruilen naar de zone die deze plant verlaat, of deze plant alleen als vastlegging bewaren."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone waar het naartoe gaat."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van de zone (alternatief voor Zone-apparaat)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Plant verwijderen",
+      "description": "Haalt een plant uit zijn zone. Deze blijft vastgelegd met de historie. De volgende plant in de zone wordt de hoofdplant.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "Het id van de plant."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Hoofdplant instellen",
+      "description": "Maakt een plant de hoofdplant van zijn zone: de instellingen worden toegepast op de zone en de oude hoofdplant blijft bewaard als vastlegging.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "Het id van de plant."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Plantnotitie toevoegen",
+      "description": "Voegt een notitie toe aan de historie van een plant.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "Het id van de plant."
+        },
+        "text": {
+          "name": "Notitie",
+          "description": "Wat op te schrijven."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Voorinstelling opslaan",
+      "description": "Slaat de sproei-instellingen van een zone op (niet de klep, sensoren, debiet, plantdatum of notities) onder een naam, om andere zones vanaf te starten. Dezelfde naam vervangt de voorinstelling.",
+      "fields": {
+        "name": {
+          "name": "Naam",
+          "description": "Hoe de voorinstelling te noemen."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone. Alleen nodig als er 2 of meer zones zijn geconfigureerd."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van de zone (alternatief voor Zone-apparaat)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Instellingen kopiëren",
+      "description": "Geeft een zone de sproei-instellingen van een andere zone of van een opgeslagen voorinstelling. Niet de klep, sensoren, debiet, plantdatum of notities.",
+      "fields": {
+        "source_device_id": {
+          "name": "Kopiëren van zone",
+          "description": "De zone om de instellingen van te kopiëren (of kies een voorinstelling)."
+        },
+        "preset": {
+          "name": "Voorinstelling",
+          "description": "De naam van een opgeslagen voorinstelling (of kies een zone om van te kopiëren)."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone die de instellingen krijgt."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van de zone (alternatief voor Zone-apparaat)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Voorinstelling verwijderen",
+      "description": "Verwijdert een opgeslagen voorinstelling.",
+      "fields": {
+        "name": {
+          "name": "Naam",
+          "description": "De naam van de voorinstelling."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Nu sproeien",
+      "description": "Sproeit de zone handmatig gedurende een aantal minuten. Niet zolang de zone gepauzeerd is, nooit langer dan de Maximale veiligheidsduur voor de routine van de zone en binnen de dagelijkse maximale draaitijd. Telt mee in de waterregistratie (liter), maar verschuift het schema voor routine- of diepe watergift niet.",
+      "fields": {
+        "minutes": {
+          "name": "Minuten",
+          "description": "Hoe lang er gesproeid moet worden."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone. Alleen nodig als er 2 of meer zones zijn geconfigureerd."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van de zone (alternatief voor Zone-apparaat)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Debiet kalibreren",
+      "description": "Stelt het debiet in op basis van een gemeten test: het uitgestroomde water (opgevangen in een emmer of afgelezen van een watermeter), het besproeide oppervlak en hoe lang de klep openstond. Stelt ook het Zonedebiet in voor liters.",
+      "fields": {
+        "volume": {
+          "name": "Water",
+          "description": "Hoeveel water er uitstroomde (liter, of gallons in een imperiale zone)."
+        },
+        "area": {
+          "name": "Gebied",
+          "description": "Het oppervlak waar het water op viel (m2, of ft2 in een imperiale zone)."
+        },
+        "minutes": {
+          "name": "Minuten",
+          "description": "Hoe lang de klep openstond."
+        },
+        "device_id": {
+          "name": "Zone-apparaat",
+          "description": "De zone. Alleen nodig als er 2 of meer zones zijn geconfigureerd."
+        },
+        "entity_id": {
+          "name": "Zone-entiteit",
+          "description": "Elke entiteit die behoort tot het apparaat van de zone (alternatief voor Zone-apparaat)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Er staat niets op pauze: alle apparaten staan al onder bediening van ZoneFlow."
+    },
+    "location_not_available": {
+      "message": "Plek is niet meer beschikbaar."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "Een kas met klimaatapparaten kan geen gewas van een andere kas zijn."
+    },
+    "area_name_required": {
+      "message": "Geef het gebied een naam."
+    },
+    "area_name_exists": {
+      "message": "Er bestaat al een gebied met deze naam."
+    },
+    "plant_zone_not_available": {
+      "message": "Die zone is niet beschikbaar."
+    },
+    "plant_name_required": {
+      "message": "Geef de plant een naam."
+    },
+    "plant_not_found": {
+      "message": "Die plant bestaat niet."
+    },
+    "plant_same_zone": {
+      "message": "De plant staat al in die zone."
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} heeft al een hoofdplant. Geef aan wat ermee gebeurt (Oude hoofdplant)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Alleen een zone met een klep kan een hoofdplant hebben."
+    },
+    "plant_note_required": {
+      "message": "Schrijf eerst de notitie."
+    },
+    "preset_name_required": {
+      "message": "Geef de voorinstelling een naam."
+    },
+    "preset_not_found": {
+      "message": "Er is geen voorinstelling met die naam."
+    },
+    "copy_same_zone": {
+      "message": "Kies een andere zone om van te kopiëren."
+    },
+    "copy_source_required": {
+      "message": "Kies een zone of voorinstelling om van te kopiëren."
+    },
+    "water_now_out_of_range": {
+      "message": "Sproei ten minste 1 minute en maximaal {max} minuten (veiligheidsgrens van deze zone)."
+    },
+    "calibration_out_of_range": {
+      "message": "Deze getallen geven een debiet dat deze zone niet kan hebben. Controleer het water, het oppervlak en de minuten."
+    },
+    "calibration_unavailable": {
+      "message": "Deze zone heeft geen debietinstelling om te kalibreren."
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor al {days} dagen offline",
-      "description": "{entity}, gebruikt door zone {zone}, is al {days} dagen offline. De zone werkt zonder verder (wat dat betekent staat in de README), maar controleer het apparaat -- of haal het uit de zone via Configureren. Dit verdwijnt vanzelf zodra de sensor weer meldt."
+      "description": "{entity}, gebruikt door zone {zone}, is al {days} dagen offline. De zone werkt zonder verder (wat dat betekent staat in de README), maar controleer het apparaat -- of haal het uit de zone via Configureren. Dit verdwijnt vanzelf zodra de sensor weer meldt.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Vervang de sensor",
+            "description": "De sensor {entity} die door {zone} wordt gebruikt is al dagen offline. Kies een vervangende sensor of laat leeg (de zone werkt dan zonder sensor).",
+            "data": {
+              "replacement": "Vervangende sensor"
+            },
+            "data_description": {
+              "replacement": "Laat leeg om de sensor uit deze zone te verwijderen."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Deze zone bestaat niet meer."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: telefoon voor meldingen ontbreekt",
-      "description": "Zone {zone} stuurt zijn telefoonmeldingen naar {entity}, maar die bestaat niet meer in Home Assistant, dus er komen geen meldingen aan. Kies de huidige telefoon via Configureren bij de zone. Dit verdwijnt vanzelf zodra die weer bestaat."
+      "description": "Zone {zone} stuurt zijn telefoonmeldingen naar {entity}, maar die bestaat niet meer in Home Assistant, dus er komen geen meldingen aan. Kies de huidige telefoon via Configureren bij de zone. Dit verdwijnt vanzelf zodra die weer bestaat.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Kies een andere telefoon",
+            "description": "De telefoon {entity} bestaat niet meer, dus {zone} kan geen berichten sturen. Kies een andere telefoon of laat leeg.",
+            "data": {
+              "notify_entity": "Telefoon voor meldingen"
+            },
+            "data_description": {
+              "notify_entity": "Laat leeg om telefoonmeldingen van deze zone te stoppen."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Deze zone bestaat niet meer."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibreer het debiet van de druppelaars",
-      "description": "Zone {zone} gebruikt nog de standaardwaarde van Kalibratie debiet druppelaars (0,24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0,24 mm/min echt voor deze zone, negeer dit dan."
+      "description": "Zone {zone} gebruikt nog de standaardwaarde van Kalibratie debiet druppelaars (0,24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0,24 mm/min echt voor deze zone, negeer dit dan.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Debiet instellen door te meten",
+            "description": "{zone} heeft noch steeds de voorbeeld-debietwaarde, dus de sproeitijden zijn gissingen. Zet een emmer onder de druppelaars (of noteer de watermeter) en laat de klep 15 minuten draaien. Nu starten?",
+            "data": {
+              "run": "Laat de klep nu 15 minuten draaien"
+            },
+            "data_description": {
+              "run": "Vink uit als u deze al heeft laten draaien."
+            }
+          },
+          "measure": {
+            "title": "Hoeveel water stroomde er uit?",
+            "description": "Voer in hoeveel {zone} in die test gaf, het besproeide oppervlak en hoeveel minuten de klep openstond.",
+            "data": {
+              "volume": "Uitgestroomd water",
+              "area": "Besproeid oppervlak",
+              "minutes": "Minuten dat de klep openstond"
+            },
+            "data_description": {
+              "volume": "Liter (gallons in een imperiale zone).",
+              "area": "Vierkante meter (vierkante voet in een imperiale zone).",
+              "minutes": "Normaal gesproken 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Deze getallen geven een debiet dat deze zone niet kan hebben. Controleer ze."
+        },
+        "abort": {
+          "zone_gone": "Deze zone bestaat niet meer.",
+          "zone_busy": "De zone is bezig. Probeer het zo opnieuw."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: klep gedeeld met een andere zone",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: de kas is verwijderd",
       "description": "Kas {greenhouse} is verwijderd, dus {zone} is nu een zelfstandige zone. Deze blijft sproeien en behoudt de interne sensoren van de kas. Gebruik Configureer -> Kas van de zone om deze in een andere kas te plaatsen."
+    },
+    "area_removed": {
+      "title": "{zone}: het gebied is verwijderd",
+      "description": "Het gebied {area} is verwijderd, dus {zone} gebruikt nu een kopie van de sensoren die daarvan afkomstig waren. Om deze in een ander gebied te plaatsen, gebruik Zonering -> Waar is dit?"
     }
   }
 }

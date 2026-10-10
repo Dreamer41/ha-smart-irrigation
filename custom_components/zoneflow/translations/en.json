@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Zone name",
           "plant": "What's planted",
-          "zone_type": "Where it grows"
+          "zone_type": "Where it grows",
+          "start_from": "Start from",
+          "location": "Where is this?"
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
           "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
-          "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof."
+          "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof.",
+          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {
         "title": "ZoneFlow Irrigation",
-        "description": "Point this at your real entities. It never creates new physical entities of its own. Only the valve switch is required -- everything else below degrades gracefully when left unset.",
+        "description": "{progress}\n\nPoint this at your real entities. It never creates new physical entities of its own. Only the valve switch is required -- everything else below degrades gracefully when left unset. Leave a field empty if you do not have one.\n\n{suggestions}",
         "data": {
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Soil moisture sensor (optional)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
-          "soil_type": "Soil type",
-          "drainage": "Drainage",
-          "slope": "Slope",
-          "irrigation_method": "Irrigation method",
-          "growth_ramp_profile": "Growth-stage auto-ramp",
+          "soil_type": "Do you know your soil type? (skip if not)",
+          "drainage": "Does water drain away slowly? (skip if you do not know)",
+          "slope": "Is the ground sloped? (skip if it is flat or you are not sure)",
+          "irrigation_method": "How does the water get to the plants?",
+          "growth_ramp_profile": "Is it a young plant that needs less water at first? (skip if not)",
           "csv_path": "CSV log file path",
           "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Climate",
-        "description": "What is the growing season like where this zone is? This only pre-fills the temperature sliders on the next page -- you can change every value there, and later on the zone's device page.",
+        "description": "{progress}\n\nWhat is the growing season like where this zone is? This only pre-fills the temperature sliders on the next page -- you can change every value there, and later on the zone's device page.",
         "data": {
           "climate": "Climate"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Temperature thresholds",
-        "description": "ZoneFlow averages the daily HIGH temperature over the last 3 days. At or above Hot it waters more often (every 3 days) with the hot weekly target; below Cool it uses the cool weekly target; in between is normal.\n\nThe fallback temperature is used when there is no real reading to go on: with no temperature sensor it is your manual control (raise it for a heat wave, lower it for a cold spell); with a sensor it is used only until the sensor has recorded its first full day, and after 3 days without a single reading.",
+        "description": "{progress}\n\nZoneFlow averages the daily HIGH temperature over the last 3 days. At or above Hot it waters more often (every 3 days) with the hot weekly target; below Cool it uses the cool weekly target; in between is normal.\n\nThe fallback temperature is used when there is no real reading to go on: with no temperature sensor it is your manual control (raise it for a heat wave, lower it for a cold spell); with a sensor it is used only until the sensor has recorded its first full day, and after 3 days without a single reading.",
         "data": {
           "hot_temp_threshold": "Hot weather threshold",
           "cool_temp_threshold": "Cool weather threshold",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Add a zone",
           "weather_underground": "Set up Weather Underground rain",
-          "crop": "Add a crop to a greenhouse"
+          "crop": "Add a crop to a greenhouse",
+          "area": "Add an area (a part of the garden)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
         }
+      },
+      "area": {
+        "title": "New area",
+        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground refused the API key.",
       "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
       "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
-      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations."
+      "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     },
     "abort": {
       "already_configured": "Weather Underground rain is already set up."
@@ -263,7 +292,9 @@
       "wu_cannot_connect": "Couldn't reach Weather Underground. Try again later.",
       "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
       "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
-      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse)."
+      "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse).",
+      "area_name_required": "Give the area a name.",
+      "area_name_exists": "An area with this name already exists."
     },
     "step": {
       "init": {
@@ -279,7 +310,7 @@
           "zone_type": "Zone type",
           "weather_underground": "Weather Underground rain",
           "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse"
+          "location": "Where is this? (area or greenhouse)"
         }
       },
       "settings": {
@@ -484,16 +515,6 @@
           "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
         }
       },
-      "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
-        "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
-        }
-      },
       "flow_volume": {
         "title": "Measure the flow rate by volume",
         "description": "Press one of the zone's Service Run buttons (a longer run, such as 15 min, is more accurate) and catch or read the water: a bucket or barrel at the emitters, or the difference on a water meter. Then enter the minutes the valve was open, the litres, and the area the emitters wet. \n\nThe result is the zone's AVERAGE: litres divided by area and minutes, and it replaces the zone's Emitter Flow Rate Calibration. ZoneFlow has one rate per zone, so it cannot tell emitters apart. For a precise result, every emitter on a zone's valve should be the same type and flow; put different emitters on separate valves (separate zones). On a mixed zone the plants on the weaker emitters get less than the average shown. It also sets Zone Flow, the litres per minute used for the water-use estimate.",
@@ -521,6 +542,76 @@
           "head_flow": "What one head gives, from its package or nozzle chart.",
           "head_flow_unit": "The unit the flow of one head is given in."
         }
+      },
+      "location": {
+        "title": "Where is this?",
+        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
+        "data": {
+          "location": "Place"
+        },
+        "data_description": {
+          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+        }
+      },
+      "location_sensors": {
+        "title": "Use the area's sensors?",
+        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "data": {
+          "rain_counter_entity": "Use the area's rain gauge",
+          "outdoor_temp_entity": "Use the area's outdoor temperature",
+          "weather_entity": "Use the area's weather entity",
+          "notify_entity": "Use the area's phone"
+        },
+        "data_description": {
+          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
+          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
+          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+        }
+      },
+      "new_area": {
+        "title": "New area",
+        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
+      },
+      "area_settings": {
+        "title": "Area",
+        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "data": {
+          "area_name": "Name",
+          "rain_counter_entity": "Rain gauge",
+          "rain_source_type": "Rain gauge sensor type",
+          "area_rain_mm_per_tip": "Rain gauge mm per tip",
+          "outdoor_temp_entity": "Outdoor temperature sensor",
+          "weather_entity": "Weather entity (forecast)",
+          "notify_entity": "Phone to notify"
+        },
+        "data_description": {
+          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
+          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
+          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
+          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
+          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
+          "area_name": "What the area is called, for example Backyard or Front yard.",
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+        }
       }
     },
     "abort": {
@@ -531,7 +622,8 @@
       "zone_busy": "The zone (or its pump) is busy, or today's runtime safety cap is used up. Try again later.",
       "flow_rate_disabled": "The zone's Emitter Flow Rate Calibration entity is disabled. Enable it (the zone's device page → its entities) and try again.",
       "zone_flow_set": "Zone flow set to {flow}. It is used for the water-use estimate only.",
-      "zone_flow_out_of_range": "That works out to a zone flow outside what the setting allows (0 to 2000 L/min). Check the numbers."
+      "zone_flow_out_of_range": "That works out to a zone flow outside what the setting allows (0 to 2000 L/min). Check the numbers.",
+      "location_not_available": "That place is not available."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "On part of the time",
           "outside": "Part of the time while cold outside"
         }
+      },
+      "location": {
+        "name": "Where is this?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
         }
       }
+    },
+    "create_area": {
+      "name": "Create Area",
+      "description": "Makes a new area (a part of the garden such as Backyard). Target a zone and it moves into the new area, which starts with that zone's rain gauge, outdoor temperature, weather and phone settings.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "What the area is called, for example Backyard or Front yard."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone to put in the new area (optional)."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to that zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Add Plant",
+      "description": "Adds a plant to a zone. In a zone with no main plant it becomes the main plant and its type's settings go onto the zone; otherwise it is a record only (history, notes), unless Old Main Plant says it takes over.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "What the plant is called."
+        },
+        "plant_type": {
+          "name": "Plant Type",
+          "description": "Starting settings for this kind of plant (custom if left out)."
+        },
+        "old_main": {
+          "name": "Old Main Plant",
+          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record or archive it."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Move Plant",
+      "description": "Moves a plant, with its history, to another zone. Its settings go onto the zone it arrives in.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id (shown in the zone's Status attributes)."
+        },
+        "old_main": {
+          "name": "Old Main Plant",
+          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record, archive it, swap it to the zone this plant leaves, or keep this plant as a record only."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone it goes to."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Remove Plant",
+      "description": "Takes a plant out of its zone. It stays on record with its history. The next plant in the zone becomes the main plant.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Set Main Plant",
+      "description": "Makes a plant the main plant of its zone: its settings go onto the zone and the old main plant stays as a record.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Add Plant Note",
+      "description": "Adds a note to a plant's history.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "text": {
+          "name": "Note",
+          "description": "What to write down."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Save Preset",
+      "description": "Saves a zone's watering settings (not its valve, sensors, flow rate, planting date or notes) under a name, to start other zones from. The same name replaces the preset.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "What to call the preset."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Copy Settings",
+      "description": "Gives a zone another zone's watering settings, or a saved preset's. Not the valve, sensors, flow rate, planting date or notes.",
+      "fields": {
+        "source_device_id": {
+          "name": "Copy From Zone",
+          "description": "The zone to copy the settings from (or choose a preset)."
+        },
+        "preset": {
+          "name": "Preset",
+          "description": "The name of a saved preset (or choose a zone to copy from)."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone that gets the settings."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Delete Preset",
+      "description": "Deletes a saved preset.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "The preset's name."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Water Now",
+      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. Counts in the water record (litres), but does not move the routine or deep soak schedule.",
+      "fields": {
+        "minutes": {
+          "name": "Minutes",
+          "description": "How long to water."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Calibrate Flow Rate",
+      "description": "Sets the flow rate from a measured run: the water that came out (collected in a bucket or read from a water meter), the area it fell on, and how long the valve was open. Also sets Zone Flow, for litres.",
+      "fields": {
+        "volume": {
+          "name": "Water",
+          "description": "How much water came out (litres, or gallons on an imperial zone)."
+        },
+        "area": {
+          "name": "Area",
+          "description": "The area that water fell on (m2, or ft2 on an imperial zone)."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "How long the valve was open."
+        },
+        "device_id": {
+          "name": "Zone Device",
+          "description": "The zone. Only needed with 2+ zones configured."
+        },
+        "entity_id": {
+          "name": "Zone Entity",
+          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Nothing is on hold: every device is already under ZoneFlow's control."
+    },
+    "location_not_available": {
+      "message": "That place is not available any more."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
+    },
+    "area_name_required": {
+      "message": "Give the area a name."
+    },
+    "area_name_exists": {
+      "message": "An area with this name already exists."
+    },
+    "plant_zone_not_available": {
+      "message": "That zone is not available."
+    },
+    "plant_name_required": {
+      "message": "Give the plant a name."
+    },
+    "plant_not_found": {
+      "message": "That plant does not exist."
+    },
+    "plant_same_zone": {
+      "message": "The plant is already in that zone."
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} already has a main plant. Say what becomes of it (Old Main Plant)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Only a zone with a valve can have a main plant."
+    },
+    "plant_note_required": {
+      "message": "Write the note first."
+    },
+    "preset_name_required": {
+      "message": "Give the preset a name."
+    },
+    "preset_not_found": {
+      "message": "There is no preset with that name."
+    },
+    "copy_same_zone": {
+      "message": "Choose a different zone to copy from."
+    },
+    "copy_source_required": {
+      "message": "Choose a zone or a preset to copy from."
+    },
+    "water_now_out_of_range": {
+      "message": "Water for at least 1 minute and at most {max} minutes (this zone's safety cap)."
+    },
+    "calibration_out_of_range": {
+      "message": "Those numbers give a flow rate this zone cannot have. Check the water, the area and the minutes."
+    },
+    "calibration_unavailable": {
+      "message": "This zone has no flow rate setting to calibrate."
     }
   },
   "issues": {
@@ -1335,15 +1678,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline for {days} days",
-      "description": "{entity}, which zone {zone} uses, has been offline for {days} days. The zone carries on without it (see what that means in the README), but check the device -- or remove it from the zone under Configure. This clears by itself once the sensor reports again."
+      "description": "{entity}, which zone {zone} uses, has been offline for {days} days. The zone carries on without it (see what that means in the README), but check the device -- or remove it from the zone under Configure. This clears by itself once the sensor reports again.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: phone notify target missing",
-      "description": "Zone {zone} sends its phone notifications to {entity}, which no longer exists in Home Assistant, so no notifications arrive. Pick the current notify target under the zone's Configure. This clears by itself once it exists again."
+      "description": "Zone {zone} sends its phone notifications to {entity}, which no longer exists in Home Assistant, so no notifications arrive. Pick the current notify target under the zone's Configure. This clears by itself once it exists again.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: calibrate the emitter flow rate",
-      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this."
+      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "greenhouse_sensor": {
       "title": "{zone}: inside temperature sensor not working",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: its greenhouse was removed",
       "description": "Greenhouse {greenhouse} was deleted, so {zone} is now a zone on its own. It keeps watering and keeps the greenhouse's inside sensors. To put it in another greenhouse, use the zone's Configure -> Greenhouse."
+    },
+    "area_removed": {
+      "title": "{zone}: its area was removed",
+      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
     }
   }
 }

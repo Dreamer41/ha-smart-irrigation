@@ -4,6 +4,10 @@ Ideas queued for upcoming releases.
 
 ## Next update
 
+- A shorter first setup (name, place, how it is watered, which valve; the
+  rest as defaults you can change later).
+- Plant readiness for nursery plants (a growth stage that says "ready to
+  move"), and a plant inventory across all zones.
 - The Status sentence with the expected amount ("Next watering Mon 05:30,
   about 12 mm").
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
@@ -13,6 +17,18 @@ Ideas queued for upcoming releases.
   machine translated).
 
 ## Shipped
+
+### 1.7.0 — areas, plants and easier setup
+
+- Areas that share a rain gauge, thermometer, weather and phone, with their
+  own Pause and Snooze Today; a Where is this? dropdown on every zone card.
+- Plants with a history (add, move, make main, remove, notes); copy settings
+  and presets; Start from when adding a zone.
+- Check my setup, guided Calibrate, Water now for N minutes, Why?, a Simple
+  view, My Garden summary, one-click dashboard, Fix buttons in Repairs,
+  likely entities in setup, buttons on phone messages.
+- A greenhouse and its crops are a group of their own, with Pause and Snooze
+  Today for the whole greenhouse; a deep soak waits for the next routine slot.
 
 ### 1.6.5 — water use in litres, rain from weather stations
 

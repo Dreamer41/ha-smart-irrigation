@@ -175,8 +175,13 @@ async def test_days_until_next_run_counts_a_sooner_deep_soak(hass, fake_valve_se
     soak -- the sensor used to look at routine only."""
     controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
     _history(controller, last_routine_days_ago=1, last_deep_days_ago=13, peaks=(30.5, 30.5, 30.5))
-    # Routine next in 3 days, deep soak next in 1 day.
-    assert _sensor_value(hass, "days_until_next_run") == pytest.approx(1.0, abs=0.1)
+    # Deep soak is due in 1 day but waits for the routine slot (a routine ran
+    # yesterday), so the next run is the routine's, in under 3 days.
+    assert _sensor_value(hass, "days_until_next_run") == pytest.approx(2.8, abs=0.1)
+    # Once it has waited as long as it may, it no longer holds off.
+    _history(controller, last_routine_days_ago=1, last_deep_days_ago=17, peaks=(30.5, 30.5, 30.5))
+    # (due now, so it is the next deep soak slot, under a day away)
+    assert _sensor_value(hass, "days_until_next_run") < 1.0
 
 
 @pytest.mark.asyncio

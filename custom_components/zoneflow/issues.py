@@ -81,12 +81,19 @@ def _offline_for(controller: ZoneFlowController, entity_id: str, *, missing_only
     return now - since_map[entity_id]
 
 
-def _set(hass: HomeAssistant, controller: ZoneFlowController, key: str, raised: bool, **kwargs) -> None:
+def _set(
+    hass: HomeAssistant, controller: ZoneFlowController, key: str, raised: bool, *, fix: dict[str, str] | None = None, **kwargs
+) -> None:
+    """Raise or clear an issue. `fix` makes it fixable: it is handed to the
+    fix flow in repairs.py (which zone, what to fix)."""
     issue_id = _issue_id(controller.entry.entry_id, key)
     if not raised:
         ir.async_delete_issue(hass, DOMAIN, issue_id)
         return
-    ir.async_create_issue(hass, DOMAIN, issue_id, is_fixable=False, **kwargs)
+    ir.async_create_issue(
+        hass, DOMAIN, issue_id, is_fixable=fix is not None,
+        data={"entry_id": controller.entry.entry_id, **fix} if fix is not None else None, **kwargs,
+    )
 
 
 def _sensors(controller: ZoneFlowController) -> dict[str, str | None]:
@@ -131,6 +138,7 @@ def async_check(controller: ZoneFlowController) -> None:
             translation_key="sensor_offline",
             translation_placeholders={"zone": zone, "entity": entity_id or "", "days": f"{(offline or 0) / 86400:.0f}"},
             learn_more_url=LEARN_MORE,
+            fix={"kind": "sensor", "role": role, "entity": entity_id or ""},
         )
 
     notify = controller.notify_entity
@@ -144,6 +152,7 @@ def async_check(controller: ZoneFlowController) -> None:
         severity=ir.IssueSeverity.WARNING,
         translation_key="notify_missing",
         translation_placeholders={"zone": zone, "entity": notify or ""},
+        fix={"kind": "notify", "entity": notify or ""},
     )
 
     # Config-flow validation blocks this for zones set up (or reconfigured)
@@ -180,6 +189,7 @@ def async_check(controller: ZoneFlowController) -> None:
         translation_key="flow_rate_default",
         translation_placeholders={"zone": zone},
         learn_more_url="https://github.com/Dreamer41/ha-smart-irrigation#installation",
+        fix={"kind": "flow_rate"},
     )
 
 

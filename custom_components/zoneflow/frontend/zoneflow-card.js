@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.6.5";
+const CARD_VERSION = "1.7.0";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -50,10 +50,13 @@ const I18N = {
       "notifications": "Notifications",
       "more": "More",
       "climate": "Climate control",
-      "misting": "Misting"
+      "misting": "Misting",
+      "garden": "Where is this?"
     },
     "overview": {
       "title": "Garden",
+      "pause_area": "Pause the whole area",
+      "snooze_area": "Skip today's watering in the whole area",
       "zone": "Zone",
       "status": "Status",
       "next": "Next",
@@ -86,9 +89,20 @@ const I18N = {
         "deep_soak_first": "Deep soak first"
       },
       "add_zone": "Add zone",
+      "add_area": "Add area",
       "show_add": "Show the Add zone button",
       "next_feed": "Next fertilizing",
-      "feed_due": "Fertilize now"
+      "feed_due": "Fertilize now",
+      "other_area": "Other",
+      "create_dashboard": "Create a ZoneFlow dashboard",
+      "creating_dashboard": "Creating…",
+      "watering_now": "Watering now",
+      "next_watering": "Next",
+      "rain_today": "Rain today",
+      "needs_a_look": "Needs a look",
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "tips": {
       "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
@@ -133,7 +147,95 @@ const I18N = {
     "add_rain": "Add rain",
     "resume_automatic": "Resume automatic",
     "crops": "Crops",
-    "in_greenhouse": "In greenhouse"
+    "in_greenhouse": "In greenhouse",
+    "garden": {
+      "none": "No area",
+      "new": "New area…",
+      "name": "Area name"
+    },
+    "location": {
+      "new_area": "New area…",
+      "new_greenhouse": "New greenhouse…",
+      "area_name": "Area name (Enter to save)"
+    },
+    "plants": {
+      "title": "Plants",
+      "loading": "Loading…",
+      "main": "Main plant",
+      "record": "Record only",
+      "make_main": "Make main plant",
+      "move": "Move…",
+      "remove": "Remove",
+      "confirm_remove": "Remove this plant from the zone? It stays on record with its history.",
+      "history": "History",
+      "no_history": "Nothing yet.",
+      "rename": "Rename",
+      "rename_prompt": "New name",
+      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)",
+      "note_placeholder": "Write a note…",
+      "add_note": "Add note",
+      "add": "Add a plant",
+      "name": "Name",
+      "type": "Type",
+      "as_record": "Record only (the zone keeps watering as it is)",
+      "take_over_keep": "Takes over the zone; the old plant stays as a record",
+      "take_over_archive": "Takes over the zone; the old plant is archived",
+      "move_to": "Move to",
+      "old_main_question": "That zone already has a main plant. What happens to it?",
+      "old_main_extra": "It stays there as a record; this plant takes over",
+      "old_main_archive": "It is archived; this plant takes over",
+      "old_main_swap": "It swaps places with this plant",
+      "old_main_keep": "It stays the main plant; this plant joins as a record",
+      "move_button": "Move",
+      "no_other_zones": "There is no other zone to move it to.",
+      "this_zone_title": "Plants in this zone",
+      "copy_title": "Copy settings from another zone",
+      "copy_button": "Copy",
+      "confirm_copy": "Replace this zone's watering settings with those of {name}? The valve, sensors, flow rate and plant notes stay as they are.",
+      "preset_title": "Saved presets",
+      "preset_apply": "Use preset",
+      "preset_delete": "Delete preset",
+      "confirm_preset": "Replace this zone's watering settings with the preset {name}?",
+      "confirm_delete": "Delete the preset {name}?",
+      "preset_name": "Preset name",
+      "preset_save": "Save this zone's settings as a preset",
+      "no_presets": "No saved presets yet."
+    },
+    "check": {
+      "title": "Check my setup",
+      "loading": "Checking…",
+      "all_good": "Everything looks fine.",
+      "needs_fixing": "Something needs fixing.",
+      "needs_a_look": "A few things to look at.",
+      "calibrate": "Calibrate",
+      "again": "Check again"
+    },
+    "calibrate": {
+      "title": "Calibrate the flow rate",
+      "intro": "ZoneFlow needs to know how much water this zone gives per minute, so that every watering runs for the right time. Measure it once:",
+      "step1": "1. Put a bucket (or several) under the emitters, or read your water meter, then run the valve.",
+      "run": "Run 15 minutes",
+      "step2": "2. When it has finished, enter how much water came out and how big the watered area is.",
+      "water": "Water that came out",
+      "area": "Watered area",
+      "minutes": "Minutes the valve was open",
+      "set": "Set the flow rate",
+      "done": "Done. The flow rate is set."
+    },
+    "waternow": {
+      "label": "Water now for",
+      "start": "Start",
+      "min": "min"
+    },
+    "advanced": "Advanced settings",
+    "hide_advanced": "Hide advanced settings",
+    "simple": "Simple view",
+    "help": "Help",
+    "why": {
+      "button": "Why?",
+      "hide": "Hide",
+      "loading": "Looking…"
+    }
   },
   "de": {
     "now": "Jetzt",
@@ -168,7 +270,8 @@ const I18N = {
       "notifications": "Benachrichtigungen",
       "more": "Mehr",
       "climate": "Klimasteuerung",
-      "misting": "Vernebelung"
+      "misting": "Vernebelung",
+      "garden": "Wo befindet sich dies?"
     },
     "overview": {
       "title": "Garten",
@@ -206,7 +309,20 @@ const I18N = {
       "add_zone": "Zone hinzufügen",
       "show_add": "Schaltfläche „Zone hinzufügen“ anzeigen",
       "next_feed": "Nächste Düngung",
-      "feed_due": "Jetzt düngen"
+      "feed_due": "Jetzt düngen",
+      "other_area": "Sonstiges",
+      "pause_area": "Gesamten Bereich pausieren",
+      "snooze_area": "Heutige Bewässerung im gesamten Bereich aussetzen",
+      "create_dashboard": "ZoneFlow-Dashboard erstellen",
+      "creating_dashboard": "Wird erstellt…",
+      "watering_now": "Bewässert jetzt",
+      "next_watering": "Nächste",
+      "rain_today": "Regen heute",
+      "needs_a_look": "Prüfung erforderlich",
+      "water_30d": "Verbrauchtes Wasser, 30 Tage",
+      "pause_house": "Gewächshaus pausieren (stoppt die Bewässerung seiner Kulturen)",
+      "snooze_house": "Heutige Bewässerung der Gewächshauskulturen aussetzen",
+      "add_area": "Bereich hinzufügen"
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -251,6 +367,94 @@ const I18N = {
       "ventilation_failsafe": "Was Lüftungen und Lüfter tun, wenn kein Innen-Temperatursensor funktioniert. Vernebler schalten sich immer aus.",
       "heater_failsafe": "Was die Heizung tut, wenn kein Innen-Temperatursensor funktioniert. Ohne Sensor läuft sie niemals ununterbrochen.",
       "misting_trigger": "Was die Vernebelung startet: jeder beliebige Auslöser oder nur Temperatur, Feuchtigkeit oder Licht."
+    },
+    "garden": {
+      "none": "Kein Bereich",
+      "new": "Neuer Bereich…",
+      "name": "Bereichsname"
+    },
+    "location": {
+      "new_area": "Neuer Bereich…",
+      "new_greenhouse": "Neues Gewächshaus…",
+      "area_name": "Bereichsname (Eingabe zum Speichern)"
+    },
+    "plants": {
+      "title": "Pflanzen",
+      "loading": "Wird geladen…",
+      "main": "Hauptpflanze",
+      "record": "Nur Aufzeichnung",
+      "make_main": "Zur Hauptpflanze machen",
+      "move": "Verschieben…",
+      "remove": "Entfernen",
+      "confirm_remove": "Pflanze aus der Zone entfernen? Sie bleibt mit ihrer Historie in der Aufzeichnung.",
+      "history": "Historie",
+      "no_history": "Noch nichts.",
+      "note_placeholder": "Notiz schreiben…",
+      "add_note": "Notiz hinzufügen",
+      "add": "Pflanze hinzufügen",
+      "name": "Name",
+      "type": "Typ",
+      "as_record": "Nur Aufzeichnung (die Zone bewässert weiterhin wie gehabt)",
+      "take_over_keep": "Übernimmt die Zone; die alte Pflanze bleibt als Aufzeichnung bestehen",
+      "take_over_archive": "Übernimmt die Zone; die alte Pflanze wird archiviert",
+      "move_to": "Verschieben nach",
+      "old_main_question": "Diese Zone hat bereits eine Hauptpflanze. Was passiert mit ihr?",
+      "old_main_extra": "Sie bleibt dort als Aufzeichnung; diese Pflanze übernimmt",
+      "old_main_archive": "Sie ist archiviert; diese Pflanze übernimmt",
+      "old_main_swap": "Sie tauscht den Platz mit dieser Pflanze",
+      "old_main_keep": "Sie bleibt die Hauptpflanze; diese Pflanze wird als Aufzeichnung hinzugefügt",
+      "move_button": "Verschieben",
+      "no_other_zones": "Es gibt keine andere Zone, in die sie verschoben werden kann.",
+      "this_zone_title": "Pflanzen in dieser Zone",
+      "copy_title": "Einstellungen von einer anderen Zone kopieren",
+      "copy_button": "Kopieren",
+      "confirm_copy": "Bewässerungseinstellungen dieser Zone durch die von {name} ersetzen? Ventil, Sensoren, Durchflussrate und Pflanzennotizen bleiben unverändert.",
+      "preset_title": "Gespeicherte Voreinstellungen",
+      "preset_apply": "Voreinstellung verwenden",
+      "preset_delete": "Voreinstellung löschen",
+      "confirm_preset": "Bewässerungseinstellungen dieser Zone durch die Voreinstellung {name} ersetzen?",
+      "confirm_delete": "Voreinstellung {name} löschen?",
+      "preset_name": "Name der Voreinstellung",
+      "preset_save": "Einstellungen dieser Zone als Voreinstellung speichern",
+      "no_presets": "Noch keine gespeicherten Voreinstellungen.",
+      "rename": "Umbenennen",
+      "rename_prompt": "Neuer Name",
+      "use_settings": "Auch die Bewässerungseinstellungen dieser Pflanze für die neue Zone übernehmen (sonst behält die Zone ihre bisherige Bewässerung)"
+    },
+    "check": {
+      "title": "Meine Einrichtung prüfen",
+      "loading": "Wird geprüft…",
+      "all_good": "Alles sieht gut aus.",
+      "needs_fixing": "Etwas muss korrigiert werden.",
+      "needs_a_look": "Ein paar Dinge, die Sie sich ansehen sollten.",
+      "calibrate": "Kalibrieren",
+      "again": "Erneut prüfen"
+    },
+    "calibrate": {
+      "title": "Durchflussrate kalibrieren",
+      "intro": "ZoneFlow muss wissen, wie viel Wasser diese Zone pro Minute liefert, damit jede Bewässerung zur richtigen Zeit läuft. Messen Sie es einmal:",
+      "step1": "1. Stellen Sie einen Eimer (oder mehrere) unter die Tropfer oder lesen Sie Ihren Wasserzähler ab und öffnen Sie dann das Ventil.",
+      "run": "15 Minuten laufen lassen",
+      "step2": "2. Wenn er fertig ist, geben Sie ein, wie viel Wasser ausgetreten ist und wie groß die bewässerte Fläche ist.",
+      "water": "Ausgetretenes Wasser",
+      "area": "Bewässerte Fläche",
+      "minutes": "Minuten, die das Ventil geöffnet war",
+      "set": "Durchflussrate einstellen",
+      "done": "Fertig. Die Durchflussrate ist eingestellt."
+    },
+    "waternow": {
+      "label": "Jetzt bewässern für",
+      "start": "Start",
+      "min": "Min."
+    },
+    "advanced": "Erweiterte Einstellungen",
+    "hide_advanced": "Erweiterte Einstellungen ausblenden",
+    "simple": "Einfache Ansicht",
+    "help": "Hilfe",
+    "why": {
+      "button": "Warum?",
+      "hide": "Ausblenden",
+      "loading": "Wird gesucht…"
     }
   },
   "es": {
@@ -286,7 +490,8 @@ const I18N = {
       "notifications": "Notificaciones",
       "more": "Más",
       "climate": "Control de clima",
-      "misting": "Nebulización"
+      "misting": "Nebulización",
+      "garden": "¿Dónde está esto?"
     },
     "overview": {
       "title": "Jardín",
@@ -324,7 +529,20 @@ const I18N = {
       "add_zone": "Añadir zona",
       "show_add": "Mostrar el botón Añadir zona",
       "next_feed": "Próximo abonado",
-      "feed_due": "Abonar ya"
+      "feed_due": "Abonar ya",
+      "other_area": "Otros",
+      "pause_area": "Pausar toda el área",
+      "snooze_area": "Omitir el riego de hoy en toda el área",
+      "create_dashboard": "Crear un panel de ZoneFlow",
+      "creating_dashboard": "Creando…",
+      "watering_now": "Regando ahora",
+      "next_watering": "Siguiente",
+      "rain_today": "Lluvia hoy",
+      "needs_a_look": "Requiere revisión",
+      "water_30d": "Agua usada, 30 días",
+      "pause_house": "Pausar el invernadero (detiene el riego de sus cultivos)",
+      "snooze_house": "Omitir el riego de hoy de los cultivos del invernadero",
+      "add_area": "Añadir área"
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -369,6 +587,94 @@ const I18N = {
       "ventilation_failsafe": "Qué hacen las rejillas y ventiladores cuando no funciona ningún sensor de temperatura interior. Los nebulizadores siempre se apagan.",
       "heater_failsafe": "Qué hace el calefactor cuando no funciona ningún sensor de temperatura interior. Nunca funciona de forma continua sin un sensor.",
       "misting_trigger": "Qué inicia la nebulización: cualquiera de los activadores, o solo la temperatura, humedad o luz."
+    },
+    "garden": {
+      "none": "Sin área",
+      "new": "Nueva área…",
+      "name": "Nombre del área"
+    },
+    "location": {
+      "new_area": "Nueva área…",
+      "new_greenhouse": "Nuevo invernadero…",
+      "area_name": "Nombre del área (Intro para guardar)"
+    },
+    "plants": {
+      "title": "Plantas",
+      "loading": "Cargando…",
+      "main": "Planta principal",
+      "record": "Solo registro",
+      "make_main": "Convertir en planta principal",
+      "move": "Mover…",
+      "remove": "Quitar",
+      "confirm_remove": "¿Quitar esta planta de la zona? Permanecerá en el registro con su historial.",
+      "history": "Historial",
+      "no_history": "Nada todavía.",
+      "note_placeholder": "Escribir una nota…",
+      "add_note": "Añadir nota",
+      "add": "Añadir una planta",
+      "name": "Nombre",
+      "type": "Tipo",
+      "as_record": "Solo registro (la zona sigue regando tal como está)",
+      "take_over_keep": "Toma el control de la zona; la planta anterior permanece como registro",
+      "take_over_archive": "Toma el control de la zona; la planta anterior se archiva",
+      "move_to": "Mover a",
+      "old_main_question": "Esta zona ya tiene una planta principal. ¿Qué pasa con ella?",
+      "old_main_extra": "Permanece allí como registro; esta planta toma el relevo",
+      "old_main_archive": "Está archivada; esta planta toma el relevo",
+      "old_main_swap": "Intercambia el lugar con esta planta",
+      "old_main_keep": "Sigue siendo la planta principal; esta planta se añade como registro",
+      "move_button": "Mover",
+      "no_other_zones": "No hay otra zona a la que moverla.",
+      "this_zone_title": "Plantas en esta zona",
+      "copy_title": "Copiar ajustes de otra zona",
+      "copy_button": "Copiar",
+      "confirm_copy": "¿Reemplazar los ajustes de riego de esta zona con los de {name}? La válvula, los sensores, el caudal y las notas de las plantas se mantendrán como están.",
+      "preset_title": "Ajustes preestablecidos guardados",
+      "preset_apply": "Usar ajuste preestablecido",
+      "preset_delete": "Eliminar ajuste preestablecido",
+      "confirm_preset": "¿Reemplazar los ajustes de riego de esta zona con el ajuste preestablecido {name}?",
+      "confirm_delete": "¿Eliminar el ajuste preestablecido {name}?",
+      "preset_name": "Nombre del ajuste preestablecido",
+      "preset_save": "Guardar los ajustes de esta zona como ajuste preestablecido",
+      "no_presets": "Aún no hay ajustes preestablecidos guardados.",
+      "rename": "Renombrar",
+      "rename_prompt": "Nuevo nombre",
+      "use_settings": "Usar también los ajustes de riego de esta planta en la nueva zona (si no, la zona conserva su riego actual)"
+    },
+    "check": {
+      "title": "Comprobar mi configuración",
+      "loading": "Comprobando…",
+      "all_good": "Todo parece correcto.",
+      "needs_fixing": "Algo necesita corrección.",
+      "needs_a_look": "Algunas cosas que revisar.",
+      "calibrate": "Calibrar",
+      "again": "Comprobar de nuevo"
+    },
+    "calibrate": {
+      "title": "Calibrar el caudal",
+      "intro": "ZoneFlow necesita saber cuánta agua proporciona esta zona por minuto para que cada riego dure el tiempo correcto. Mídelo una vez:",
+      "step1": "1. Pon un cubo (o varios) debajo de los emisores, o lee tu contador de agua, y luego activa la válvula.",
+      "run": "Ejecutar 15 minutos",
+      "step2": "2. Cuando termine, introduce cuánta agua ha salido y qué tamaño tiene la zona regada.",
+      "water": "Agua que salió",
+      "area": "Superficie regada",
+      "minutes": "Minutos que estuvo abierta la válvula",
+      "set": "Ajustar el caudal",
+      "done": "Hecho. El caudal está configurado."
+    },
+    "waternow": {
+      "label": "Regar ahora durante",
+      "start": "Iniciar",
+      "min": "min"
+    },
+    "advanced": "Ajustes avanzados",
+    "hide_advanced": "Ocultar ajustes avanzados",
+    "simple": "Vista simple",
+    "help": "Ayuda",
+    "why": {
+      "button": "¿Por qué?",
+      "hide": "Ocultar",
+      "loading": "Buscando…"
     }
   },
   "fi": {
@@ -404,7 +710,8 @@ const I18N = {
       "notifications": "Ilmoitukset",
       "more": "Lisää",
       "climate": "Ilmastonsäätö",
-      "misting": "Sumutus"
+      "misting": "Sumutus",
+      "garden": "Missä tämä sijaitsee?"
     },
     "overview": {
       "title": "Puutarha",
@@ -442,7 +749,20 @@ const I18N = {
       "add_zone": "Lisää vyöhyke",
       "show_add": "Näytä Lisää vyöhyke -painike",
       "next_feed": "Seuraava lannoitus",
-      "feed_due": "Lannoita nyt"
+      "feed_due": "Lannoita nyt",
+      "other_area": "Muut",
+      "pause_area": "Aseta koko alue tauolle",
+      "snooze_area": "Ohita tämän päivän kastelu koko alueella",
+      "create_dashboard": "Luo ZoneFlow-työpöytä",
+      "creating_dashboard": "Luodaan…",
+      "watering_now": "Kastelee nyt",
+      "next_watering": "Seuraava",
+      "rain_today": "Sade tänään",
+      "needs_a_look": "Vaatii tarkistuksen",
+      "water_30d": "Veden käyttö, 30 päivää",
+      "pause_house": "Aseta kasvihuone tauolle (pysäyttää sen kasvien kastelun)",
+      "snooze_house": "Ohita kasvihuoneen kasvien tämän päivän kastelu",
+      "add_area": "Lisää alue"
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -487,6 +807,94 @@ const I18N = {
       "ventilation_failsafe": "Mitä tuuletusluukut ja tuulettimet tekevät, kun mikään sisälämpötila-anturi ei toimi. Sumuttimet sammuvat aina.",
       "heater_failsafe": "Mitä lämmitin tekee, kun mikään sisälämpötila-anturi ei toimi. Se ei koskaan pyöri taukoamatta ilman anturia.",
       "misting_trigger": "Mikä käynnistää sumutuksen: mikä tahansa käynnistimistä tai vain lämpötila, kosteus tai valoisuus."
+    },
+    "garden": {
+      "none": "Ei aluetta",
+      "new": "Uusi alue…",
+      "name": "Alueen nimi"
+    },
+    "location": {
+      "new_area": "Uusi alue…",
+      "new_greenhouse": "Uusi kasvihuone…",
+      "area_name": "Alueen nimi (Enter tallentaa)"
+    },
+    "plants": {
+      "title": "Kasvit",
+      "loading": "Ladataan…",
+      "main": "Pääkasvi",
+      "record": "Vain kirjaus",
+      "make_main": "Tee pääkasviksi",
+      "move": "Siirrä…",
+      "remove": "Poista",
+      "confirm_remove": "Poistetaanko tämä kasvi vyöhykkeeltä? Se säilyy kirjanpidossa historietietoineen.",
+      "history": "Historia",
+      "no_history": "Ei vielä mitään.",
+      "note_placeholder": "Kirjoita muistiinpano…",
+      "add_note": "Lisää muistiinpano",
+      "add": "Lisää kasvi",
+      "name": "Nimi",
+      "type": "Tyyppi",
+      "as_record": "Vain kirjaus (vyöhyke jatkaa kastelua entisellään)",
+      "take_over_keep": "Ottaa vyöhykkeen haltuun; vanha kasvi säilyy kirjanpidossa",
+      "take_over_archive": "Ottaa vyöhykkeen haltuun; vanha kasvi arkistoidaan",
+      "move_to": "Siirrä kohteeseen",
+      "old_main_question": "Tällä vyöhykkeellä on jo pääkasvi. Mitä sille tapahtuu?",
+      "old_main_extra": "Se säilyy kirjanpidossa; tämä kasvi ottaa ohjat",
+      "old_main_archive": "Se on arkistoitu; tämä kasvi ottaa ohjat",
+      "old_main_swap": "Se vaihtaa paikkaa tämän kasvin kanssa",
+      "old_main_keep": "Se säilyy pääkasvina; tämä kasvi liittyy kirjanpitoon",
+      "move_button": "Siirrä",
+      "no_other_zones": "Ei ole toista vyöhykettä, johon sen voisi siirtää.",
+      "this_zone_title": "Vyöhykkeen kasvit",
+      "copy_title": "Kopioi asetukset toiselta vyöhykkeeltä",
+      "copy_button": "Kopioi",
+      "confirm_copy": "Korvataanko tämän vyöhykkeen kasteluasetukset vyöhykkeen {name} asetuksilla? Venttiili, anturit, virtausnopeus ja kasvimuistiinpanot säilyvät ennallaan.",
+      "preset_title": "Tallennetut esiasetukset",
+      "preset_apply": "Käytä esiasetusta",
+      "preset_delete": "Poista esiasetus",
+      "confirm_preset": "Korvataanko tämän vyöhykkeen kasteluasetukset esiasetuksella {name}?",
+      "confirm_delete": "Poistetaanko esiasetus {name}?",
+      "preset_name": "Esiasetuksen nimi",
+      "preset_save": "Tallenna tämän vyöhykkeen asetukset esiasetukseksi",
+      "no_presets": "Ei vielä tallennettuja esiasetuksia.",
+      "rename": "Nimeä uudelleen",
+      "rename_prompt": "Uusi nimi",
+      "use_settings": "Käytä myös tämän kasvin kastelun asetuksia uudella vyöhykkeellä (muuten vyöhyke säilyttää nykyisen kastelutapansa)"
+    },
+    "check": {
+      "title": "Tarkista asennukseni",
+      "loading": "Tarkistetaan…",
+      "all_good": "Kaikki näyttää hyvältä.",
+      "needs_fixing": "Jotain täytyy korjata.",
+      "needs_a_look": "Muutama tarkistettava asia.",
+      "calibrate": "Kalibroi",
+      "again": "Tarkista uudelleen"
+    },
+    "calibrate": {
+      "title": "Kalibroi virtausnopeus",
+      "intro": "ZoneFlow'n täytyy tietää, kuinka paljon vettä tämä vyöhyke antaa minuutissa, jotta jokainen kastelu kestää oikean ajan. Mittaa se kerran:",
+      "step1": "1. Laita ämpäri (tai useampi) suuttimien alle tai lue vesimittari, ja käynnistä sitten venttiili.",
+      "run": "Aja 15 minuuttia",
+      "step2": "2. Kun se on päättynyt, syötä ulos tulleen veden määrä ja kastellun alan koko.",
+      "water": "Ulos tullut vesi",
+      "area": "Kasteltu alue",
+      "minutes": "Minuutit, jolloin venttiili oli auki",
+      "set": "Aseta virtausnopeus",
+      "done": "Valmis. Virtausnopeus on asetettu."
+    },
+    "waternow": {
+      "label": "Kastele nyt",
+      "start": "Käynnistä",
+      "min": "min"
+    },
+    "advanced": "Lisäasetukset",
+    "hide_advanced": "Piilota lisäasetukset",
+    "simple": "Yksinkertainen näkymä",
+    "help": "Ohje",
+    "why": {
+      "button": "Miksi?",
+      "hide": "Piilota",
+      "loading": "Hetaan…"
     }
   },
   "fr": {
@@ -522,7 +930,8 @@ const I18N = {
       "notifications": "Notifications",
       "more": "Plus",
       "climate": "Contrôle du climat",
-      "misting": "Brumisation"
+      "misting": "Brumisation",
+      "garden": "Où est-ce situé ?"
     },
     "overview": {
       "title": "Jardin",
@@ -560,7 +969,20 @@ const I18N = {
       "add_zone": "Ajouter une zone",
       "show_add": "Afficher le bouton Ajouter une zone",
       "next_feed": "Prochain apport d'engrais",
-      "feed_due": "Engrais à apporter"
+      "feed_due": "Engrais à apporter",
+      "other_area": "Autre",
+      "pause_area": "Mettre toute la zone en pause",
+      "snooze_area": "Sauter l'arrosage d'aujourd'hui dans toute la zone",
+      "create_dashboard": "Créer un tableau de bord ZoneFlow",
+      "creating_dashboard": "Création…",
+      "watering_now": "Arrosage en cours",
+      "next_watering": "Suivant",
+      "rain_today": "Pluie aujourd'hui",
+      "needs_a_look": "À vérifier",
+      "water_30d": "Eau utilisée, 30 jours",
+      "pause_house": "Mettre la serre en pause (arrête l'arrosage de ses cultures)",
+      "snooze_house": "Sauter l'arrosage d'aujourd'hui pour les cultures de la serre",
+      "add_area": "Ajouter un secteur"
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -605,6 +1027,94 @@ const I18N = {
       "ventilation_failsafe": "Comportement des ouvrants et ventilateurs en cas de panne du capteur de température intérieure. Les brumisateurs s'éteignent toujours.",
       "heater_failsafe": "Comportement du chauffage en cas de panne du capteur de température intérieure. Il ne fonctionne jamais en continu sans capteur.",
       "misting_trigger": "Conditions de démarrage de la brumisation : n'importe quel déclencheur, ou exclusivement température, humidité ou luminosité."
+    },
+    "garden": {
+      "none": "Aucune zone",
+      "new": "Nouvelle zone…",
+      "name": "Nom de la zone"
+    },
+    "location": {
+      "new_area": "Nouvelle zone…",
+      "new_greenhouse": "Nouvelle serre…",
+      "area_name": "Nom de la zone (Entrée pour enregistrer)"
+    },
+    "plants": {
+      "title": "Plantes",
+      "loading": "Chargement…",
+      "main": "Plante principale",
+      "record": "Enregistrement seul",
+      "make_main": "Définir comme plante principale",
+      "move": "Déplacer…",
+      "remove": "Retirer",
+      "confirm_remove": "Retirer cette plante de la zone ? Elle reste enregistrée avec son historique.",
+      "history": "Historique",
+      "no_history": "Rien pour l'instant.",
+      "note_placeholder": "Rédiger une note…",
+      "add_note": "Ajouter une note",
+      "add": "Ajouter une plante",
+      "name": "Nom",
+      "type": "Type",
+      "as_record": "Enregistrement seul (la zone continue d'arroser telle quelle)",
+      "take_over_keep": "Prend le relais sur la zone ; l'ancienne plante reste comme enregistrement",
+      "take_over_archive": "Prend le relais sur la zone ; l'ancienne plante est archivée",
+      "move_to": "Déplacer vers",
+      "old_main_question": "Cette zone a déjà une plante principale. Que devient-elle ?",
+      "old_main_extra": "Elle reste enregistrée ; cette plante prend le relais",
+      "old_main_archive": "Elle est archivée ; cette plante prend le relais",
+      "old_main_swap": "Elle échange sa place avec cette plante",
+      "old_main_keep": "Elle reste la plante principale ; cette plante s'ajoute comme enregistrement",
+      "move_button": "Déplacer",
+      "no_other_zones": "Il n'y a pas d'autre zone vers laquelle la déplacer.",
+      "this_zone_title": "Plantes dans cette zone",
+      "copy_title": "Copier les paramètres d'une autre zone",
+      "copy_button": "Copier",
+      "confirm_copy": "Remplacer les paramètres d'arrosage de cette zone par ceux de {name} ? La vanne, les capteurs, le débit et les notes sur les plantes resteront inchangés.",
+      "preset_title": "Préréglages enregistrés",
+      "preset_apply": "Utiliser le préréglage",
+      "preset_delete": "Supprimer le préréglage",
+      "confirm_preset": "Remplacer les paramètres d'arrosage de cette zone par le préréglage {name} ?",
+      "confirm_delete": "Supprimer le préréglage {name} ?",
+      "preset_name": "Nom du préréglage",
+      "preset_save": "Enregistrer les paramètres de cette zone comme préréglage",
+      "no_presets": "Aucun préréglage enregistré pour l'instant.",
+      "rename": "Renommer",
+      "rename_prompt": "Nouveau nom",
+      "use_settings": "Utiliser aussi les réglages d'arrosage de cette plante sur la nouvelle zone (sinon la zone garde son arrosage actuel)"
+    },
+    "check": {
+      "title": "Vérifier ma configuration",
+      "loading": "Vérification…",
+      "all_good": "Tout semble correct.",
+      "needs_fixing": "Quelque chose doit être corrigé.",
+      "needs_a_look": "Quelques points à vérifier.",
+      "calibrate": "Étalonner",
+      "again": "Vérifier à nouveau"
+    },
+    "calibrate": {
+      "title": "Étalonner le débit",
+      "intro": "ZoneFlow a besoin de savoir combien d'eau cette zone fournit par minute afin que chaque arrosage dure le temps nécessaire. Mesurez-le une fois :",
+      "step1": "1. Placez un seau (ou plusieurs) sous les goutteurs, ou lisez votre compteur d'eau, puis ouvrez la vanne.",
+      "run": "Lancer 15 minutes",
+      "step2": "2. Une fois terminé, saisissez la quantité d'eau écoulée et la taille de la surface arrosée.",
+      "water": "Eau écoulée",
+      "area": "Surface arrosée",
+      "minutes": "Minutes d'ouverture de la vanne",
+      "set": "Régler le débit",
+      "done": "Terminé. Le débit est réglé."
+    },
+    "waternow": {
+      "label": "Arroser maintenant pendant",
+      "start": "Démarrer",
+      "min": "min"
+    },
+    "advanced": "Paramètres avancés",
+    "hide_advanced": "Masquer les paramètres avancés",
+    "simple": "Vue simple",
+    "help": "Aide",
+    "why": {
+      "button": "Pourquoi ?",
+      "hide": "Masquer",
+      "loading": "Recherche…"
     }
   },
   "it": {
@@ -640,7 +1150,8 @@ const I18N = {
       "notifications": "Notifiche",
       "more": "Altro",
       "climate": "Controllo climatico",
-      "misting": "Nebulizzazione"
+      "misting": "Nebulizzazione",
+      "garden": "Dove si trova?"
     },
     "overview": {
       "title": "Giardino",
@@ -678,7 +1189,20 @@ const I18N = {
       "add_zone": "Aggiungi zona",
       "show_add": "Mostra il pulsante Aggiungi zona",
       "next_feed": "Prossima concimazione",
-      "feed_due": "Concima ora"
+      "feed_due": "Concima ora",
+      "other_area": "Altro",
+      "pause_area": "Metti in pausa l'intera area",
+      "snooze_area": "Salta l'irrigazione di oggi nell'intera area",
+      "create_dashboard": "Crea una dashboard ZoneFlow",
+      "creating_dashboard": "Creazione in corso…",
+      "watering_now": "In irrigazione",
+      "next_watering": "Prossimo",
+      "rain_today": "Pioggia oggi",
+      "needs_a_look": "Richiede un controllo",
+      "water_30d": "Acqua utilizzata, 30 giorni",
+      "pause_house": "Metti in pausa la serra (interrompe l'irrigazione delle sue colture)",
+      "snooze_house": "Salta l'irrigazione di oggi delle colture della serra",
+      "add_area": "Aggiungi area"
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -723,6 +1247,94 @@ const I18N = {
       "ventilation_failsafe": "Comportamento di aperture e ventole quando nessun sensore di temperatura interna funziona. I nebulizzatori si spengono sempre.",
       "heater_failsafe": "Comportamento del riscaldatore quando nessun sensore di temperatura interna funziona. Non rimane mai in funzione continua senza sensore.",
       "misting_trigger": "Cosa avvia la nebulizzazione: qualsiasi condizione, oppure solo temperatura, umidità o luminosità."
+    },
+    "garden": {
+      "none": "Nessuna area",
+      "new": "Nuova area…",
+      "name": "Nome area"
+    },
+    "location": {
+      "new_area": "Nuova area…",
+      "new_greenhouse": "Nuova serra…",
+      "area_name": "Nome area (Invio per salvare)"
+    },
+    "plants": {
+      "title": "Piante",
+      "loading": "Caricamento in corso…",
+      "main": "Pianta principale",
+      "record": "Solo registrazione",
+      "make_main": "Rendi pianta principale",
+      "move": "Sposta…",
+      "remove": "Rimuovi",
+      "confirm_remove": "Rimuovere questa pianta dalla zona? Rimarrà registrata con la sua cronologia.",
+      "history": "Cronologia",
+      "no_history": "Ancora niente.",
+      "note_placeholder": "Scrivi una nota…",
+      "add_note": "Aggiungi nota",
+      "add": "Aggiungi una pianta",
+      "name": "Nome",
+      "type": "Tipo",
+      "as_record": "Solo registrazione (la zona continua ad irrigare così com'è)",
+      "take_over_keep": "Subentra nella zona; la vecchia pianta rimane come registrazione",
+      "take_over_archive": "Subentra nella zona; la vecchia pianta viene archiviata",
+      "move_to": "Sposta in",
+      "old_main_question": "Quella zona ha già una pianta principale. Cosa le succede?",
+      "old_main_extra": "Rimani lì come registrazione; questa pianta subentra",
+      "old_main_archive": "È archiviata; questa pianta subentra",
+      "old_main_swap": "Scambia posto con questa pianta",
+      "old_main_keep": "Rimani la pianta principale; questa pianta si aggiunge come registrazione",
+      "move_button": "Sposta",
+      "no_other_zones": "Non c'è un'altra zona in cui spostarla.",
+      "this_zone_title": "Piante in questa zona",
+      "copy_title": "Copia impostazioni da un'altra zona",
+      "copy_button": "Copia",
+      "confirm_copy": "Sostituire le impostazioni di irrigazione di questa zona con quelle di {name}? La valvola, i sensori, la portata e le note sulle piante rimarranno invariati.",
+      "preset_title": "Preimpostazioni salvate",
+      "preset_apply": "Usa preimpostazione",
+      "preset_delete": "Elimina preimpostazione",
+      "confirm_preset": "Sostituire le impostazioni di irrigazione di questa zona con la preimpostazione {name}?",
+      "confirm_delete": "Eliminare il preimpostazione {name}?",
+      "preset_name": "Nome preimpostazione",
+      "preset_save": "Salva le impostazioni di questa zona come preimpostazione",
+      "no_presets": "Ancora nessuna preimpostazione salvata.",
+      "rename": "Rinomina",
+      "rename_prompt": "Nuovo nome",
+      "use_settings": "Usa anche le impostazioni di irrigazione di questa pianta nella nuova zona (altrimenti la zona mantiene l'irrigazione attuale)"
+    },
+    "check": {
+      "title": "Controlla la mia configurazione",
+      "loading": "Controllo in corso…",
+      "all_good": "Sembra tutto a posto.",
+      "needs_fixing": "Qualcosa richiede una correzione.",
+      "needs_a_look": "Alcune cose da controllare.",
+      "calibrate": "Tarare",
+      "again": "Ricontrolla"
+    },
+    "calibrate": {
+      "title": "Tarare la portata",
+      "intro": "ZoneFlow deve sapere quanta acqua eroga questa zona al minuto, in modo que ogni irrigazione duri il tempo corretto. Misurala una volta:",
+      "step1": "1. Metti un secchio (o più di uno) sotto gli erogatori, o leggi il contatore dell'acqua, quindi aziona la valvola.",
+      "run": "Avvia per 15 minuti",
+      "step2": "2. Al termine, inserisci quanta acqua è uscita e quanto è grande l'area irrigata.",
+      "water": "Acqua fuoriuscita",
+      "area": "Area irrigata",
+      "minutes": "Minuti di apertura della valvola",
+      "set": "Imposta la portata",
+      "done": "Fatto. La portata è impostata."
+    },
+    "waternow": {
+      "label": "Irriga ora per",
+      "start": "Avvia",
+      "min": "min"
+    },
+    "advanced": "Impostazioni avanzate",
+    "hide_advanced": "Nascondi impostazioni avanzate",
+    "simple": "Vista semplice",
+    "help": "Guida",
+    "why": {
+      "button": "Perché?",
+      "hide": "Nascondi",
+      "loading": "Ricerca in corso…"
     }
   },
   "nl": {
@@ -758,7 +1370,8 @@ const I18N = {
       "notifications": "Meldingen",
       "more": "Meer",
       "climate": "Klimaatbeheersing",
-      "misting": "Nevelen"
+      "misting": "Nevelen",
+      "garden": "Waar bevindt dit zich?"
     },
     "overview": {
       "title": "Tuin",
@@ -796,7 +1409,20 @@ const I18N = {
       "add_zone": "Zone toevoegen",
       "show_add": "Knop Zone toevoegen tonen",
       "next_feed": "Volgende bemesting",
-      "feed_due": "Nu bemesten"
+      "feed_due": "Nu bemesten",
+      "other_area": "Overig",
+      "pause_area": "Het gehele gebied pauzeren",
+      "snooze_area": "Sproeibeurt van vandaag in het gehele gebied overslaan",
+      "create_dashboard": "ZoneFlow-dashboard maken",
+      "creating_dashboard": "Maken…",
+      "watering_now": "Nu aan het sproeien",
+      "next_watering": "Volgende",
+      "rain_today": "Regen vandaag",
+      "needs_a_look": "Aandacht nodig",
+      "water_30d": "Gebruikt water, 30 dagen",
+      "pause_house": "Pauzeer de kas (stopt de watergift van de gewassen)",
+      "snooze_house": "Sproeibeurt van vandaag voor kasteelten overslaan",
+      "add_area": "Gebied toevoegen"
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -841,6 +1467,94 @@ const I18N = {
       "ventilation_failsafe": "Wat ventilatie en ventilatoren doen als er geen binnentemperatuursensor werkt. Nevelaars gaan altijd uit.",
       "heater_failsafe": "Wat de verwarming doet als er geen binnentemperatuursensor werkt. Deze draait nooit ononderbroken zonder sensor.",
       "misting_trigger": "Wat het nevelen start: elke willekeurige trigger, of alleen temperatuur, luchtvochtigheid of licht."
+    },
+    "garden": {
+      "none": "Geen gebied",
+      "new": "Nieuw gebied…",
+      "name": "Gebiedsnaam"
+    },
+    "location": {
+      "new_area": "Nieuw gebied…",
+      "new_greenhouse": "Nieuwe kas…",
+      "area_name": "Gebiedsnaam (Enter om op te slaan)"
+    },
+    "plants": {
+      "title": "Planten",
+      "loading": "Laden…",
+      "main": "Hoofdplant",
+      "record": "Alleen vastleggen",
+      "make_main": "Instellen als hoofdplant",
+      "move": "Verplaatsen…",
+      "remove": "Verwijderen",
+      "confirm_remove": "Deze plant uit de zone verwijderen? Hij blijft vastgelegd met zijn geschiedenis.",
+      "history": "Geschiedenis",
+      "no_history": "Nog niets.",
+      "note_placeholder": "Notitie schrijven…",
+      "add_note": "Notitie toevoegen",
+      "add": "Plant toevoegen",
+      "name": "Naam",
+      "type": "Type",
+      "as_record": "Alleen vastleggen (de zone blijft sproeien zoals het is)",
+      "take_over_keep": "Neemt de zone over; de oude plant blijft als vastlegging",
+      "take_over_archive": "Neemt de zone over; de oude plant wordt gearchiveerd",
+      "move_to": "Verplaatsen naar",
+      "old_main_question": "Die zone heeft al een hoofdplant. Wat gebeurt er mee?",
+      "old_main_extra": "Hij blijft daar als vastlegging; deze plant neemt het over",
+      "old_main_archive": "Hij is gearchiveerd; deze plant neemt het over",
+      "old_main_swap": "Ruilt van plaats met deze plant",
+      "old_main_keep": "Blijft de hoofdplant; deze plant wordt toegevoegd als vastlegging",
+      "move_button": "Verplaatsen",
+      "no_other_zones": "Er is geen andere zone om naartoe te verplaatsen.",
+      "this_zone_title": "Planten in deze zone",
+      "copy_title": "Instellingen kopiëren van een andere zone",
+      "copy_button": "Kopiëren",
+      "confirm_copy": "De sproei-instellingen van deze zone vervangen door die van {name}? De klep, sensoren, het debiet en de plantnotities blijven zoals ze zijn.",
+      "preset_title": "Opgeslagen voorinstellingen",
+      "preset_apply": "Voorinstelling gebruiken",
+      "preset_delete": "Voorinstelling verwijderen",
+      "confirm_preset": "De sproei-instellingen van deze zone vervangen door de voorinstelling {name}?",
+      "confirm_delete": "Voorinstelling {name} verwijderen?",
+      "preset_name": "Naam voorinstelling",
+      "preset_save": "Sla de instellingen van deze zone op als voorinstelling",
+      "no_presets": "Nog geen opgeslagen voorinstellingen.",
+      "rename": "Hernoemen",
+      "rename_prompt": "Nieuwe naam",
+      "use_settings": "Ook de bewateringsinstellingen van deze plant op de nieuwe zone gebruiken (anders houdt de zone haar huidige bewatering)"
+    },
+    "check": {
+      "title": "Mijn instellingen controleren",
+      "loading": "Controleren…",
+      "all_good": "Alles ziet er goed uit.",
+      "needs_fixing": "Er moet iets worden hersteld.",
+      "needs_a_look": "Enkele dingen om naar te kijken.",
+      "calibrate": "Kalibreren",
+      "again": "Opnieuw controleren"
+    },
+    "calibrate": {
+      "title": "Debiet kalibreren",
+      "intro": "ZoneFlow moet weten hoeveel water deze zone per minuut geeft, zodat elke sproeibeurt de juiste tijd duurt. Meet het eenmalig:",
+      "step1": "1. Plaats een emmer (of meerdere) onder de druppelaars, of lees de watermeter af, en laat de klep vervolgens draaien.",
+      "run": "15 minuten draaien",
+      "step2": "2. Voer wanneer deze klaar is in hoeveel water eruit is gekomen en hoe groot het besproeide oppervlak is.",
+      "water": "Uitgestroomd water",
+      "area": "Besproeid oppervlak",
+      "minutes": "Minuten dat de klep openstond",
+      "set": "Debiet instellen",
+      "done": "Klaar. Het debiet is ingesteld."
+    },
+    "waternow": {
+      "label": "Nu sproeien gedurende",
+      "start": "Starten",
+      "min": "min"
+    },
+    "advanced": "Geavanceerde instellingen",
+    "hide_advanced": "Geavanceerde instellingen verbergen",
+    "simple": "Eenvoudige weergave",
+    "help": "Help",
+    "why": {
+      "button": "Waarom?",
+      "hide": "Verbergen",
+      "loading": "Zoeken…"
     }
   },
   "pl": {
@@ -876,7 +1590,8 @@ const I18N = {
       "notifications": "Powiadomienia",
       "more": "Więcej",
       "climate": "Sterowanie klimatem",
-      "misting": "Zamgławianie"
+      "misting": "Zamgławianie",
+      "garden": "Gdzie to jest?"
     },
     "overview": {
       "title": "Ogród",
@@ -914,7 +1629,20 @@ const I18N = {
       "add_zone": "Dodaj strefę",
       "show_add": "Pokaż przycisk Dodaj strefę",
       "next_feed": "Następne nawożenie",
-      "feed_due": "Nawieź teraz"
+      "feed_due": "Nawieź teraz",
+      "other_area": "Inne",
+      "pause_area": "Wstrzymaj cały obszar",
+      "snooze_area": "Pomiń dzisiejsze podlewanie w całym obszarze",
+      "create_dashboard": "Utwórz pulpit ZoneFlow",
+      "creating_dashboard": "Tworzenie…",
+      "watering_now": "Podlewanie w toku",
+      "next_watering": "Następne",
+      "rain_today": "Deszcz dzisiaj",
+      "needs_a_look": "Wymaga sprawdzenia",
+      "water_30d": "Zużyta woda, 30 dni",
+      "pause_house": "Wstrzymaj szklarnię (zatrzymuje podlewanie jej upraw)",
+      "snooze_house": "Pomiń dzisiejsze podlewanie upraw w szklarni",
+      "add_area": "Dodaj obszar"
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -959,6 +1687,94 @@ const I18N = {
       "ventilation_failsafe": "Co robią wietrzniki i wentylatory, gdy żaden czujnik temperatury wewnętrznej nie działa. Zamgławiacze zawsze się wyłączają.",
       "heater_failsafe": "Co robi grzejnik, gdy żaden czujnik temperatury wewnętrznej nie działa. Nigdy nie działa bez przerwy bez czujnika.",
       "misting_trigger": "Co uruchamia zamgławianie: dowolny z wyzwalaczy lub tylko temperatura, wilgotność bądź światło."
+    },
+    "garden": {
+      "none": "Brak obszaru",
+      "new": "Nowy obszar…",
+      "name": "Nazwa obszaru"
+    },
+    "location": {
+      "new_area": "Nowy obszar…",
+      "new_greenhouse": "Nowa szklarnia…",
+      "area_name": "Nazwa obszaru (Enter, aby zapisać)"
+    },
+    "plants": {
+      "title": "Rośliny",
+      "loading": "Ładowanie…",
+      "main": "Główna roślina",
+      "record": "Tylko wpis",
+      "make_main": "Ustaw jako główną roślinę",
+      "move": "Przenieś…",
+      "remove": "Usuń",
+      "confirm_remove": "Usunąć tę roślinę ze strefy? Pozostanie w rejestrze wraz ze swoją historią.",
+      "history": "Historia",
+      "no_history": "Jeszcze nic.",
+      "note_placeholder": "Napisz notatkę…",
+      "add_note": "Dodaj notatkę",
+      "add": "Dodaj roślinę",
+      "name": "Nazwa",
+      "type": "Typ",
+      "as_record": "Tylko wpis (strefa kontynuuje podlewanie tak jak jest)",
+      "take_over_keep": "Przejmuje strefę; stara roślina pozostaje jako wpis",
+      "take_over_archive": "Przejmuje strefę; stara roślina zostaje zarchiwizowana",
+      "move_to": "Przenieś do",
+      "old_main_question": "Ta strefa ma już główną roślinę. Co się z nią stanie?",
+      "old_main_extra": "Pozostaje tam jako wpis; ta roślina przejmuje kontrolę",
+      "old_main_archive": "Jest zarchiwizowana; ta roślina przejmuje kontrolę",
+      "old_main_swap": "Zamienia się miejscem z tą rośliną",
+      "old_main_keep": "Pozostaje główną rośliną; ta roślina dołącza jako wpis",
+      "move_button": "Przenieś",
+      "no_other_zones": "Nie ma innej strefy, do której można ją przenieść.",
+      "this_zone_title": "Rośliny w tej strefie",
+      "copy_title": "Kopiuj ustawienia z innej strefy",
+      "copy_button": "Kopiuj",
+      "confirm_copy": "Zastąpić ustawienia podlewania tej strefy ustawieniami z {name}? Zawór, czujniki, wydajność i notatki o roślinach pozostaną bez zmian.",
+      "preset_title": "Zapisane szablony",
+      "preset_apply": "Użyj szablonu",
+      "preset_delete": "Usuń szablon",
+      "confirm_preset": "Zastąpić ustawienia podlewania tej strefy szablonem {name}?",
+      "confirm_delete": "Usunąć szablon {name}?",
+      "preset_name": "Nazwa szablonu",
+      "preset_save": "Zapisz ustawienia tej strefy jako szablon",
+      "no_presets": "Brak zapisanych szablonów.",
+      "rename": "Zmień nazwę",
+      "rename_prompt": "Nowa nazwa",
+      "use_settings": "Użyj też ustawień podlewania tej rośliny w nowej strefie (w przeciwnym razie strefa zachowa obecny sposób podlewania)"
+    },
+    "check": {
+      "title": "Sprawdź moją konfigurację",
+      "loading": "Sprawdzanie…",
+      "all_good": "Wszystko wygląda w порядке.",
+      "needs_fixing": "Coś wymaga naprawy.",
+      "needs_a_look": "Kilka rzeczy do sprawdzenia.",
+      "calibrate": "Skalibruj",
+      "again": "Sprawdź ponowanie"
+    },
+    "calibrate": {
+      "title": "Skalibruj wydajność",
+      "intro": "ZoneFlow musi wiedzieć, ile vody ta strefa podaje na minutę, aby każde podlewanie trwało odpowiednio długo. Zmierz to raz:",
+      "step1": "1. Postaw wiadro (lub kilka) pod emiterami albo odczytaj wodomierz, a następnie uruchom zawór.",
+      "run": "Uruchom na 15 minut",
+      "step2": "2. Po zakończeniu wprowadź ilość wypłyniętej vody oraz wielkość nawadnianej powierzchni.",
+      "water": "Woda, która wypłynęła",
+      "area": "Nawadniana powierzchnia",
+      "minutes": "Minuty otwarcia zaworu",
+      "set": "Ustaw wydajność",
+      "done": "Gotowe. Wydajność została ustawiona."
+    },
+    "waternow": {
+      "label": "Podlewaj teraz przez",
+      "start": "Start",
+      "min": "min"
+    },
+    "advanced": "Zaawansowane ustawienia",
+    "hide_advanced": "Ukryj zaawansowane ustawienia",
+    "simple": "Widok простой",
+    "help": "Pomoc",
+    "why": {
+      "button": "Dlaczego?",
+      "hide": "Ukryj",
+      "loading": "Szukanie…"
     }
   },
   "pt": {
@@ -994,7 +1810,8 @@ const I18N = {
       "notifications": "Notificações",
       "more": "Mais",
       "climate": "Controlo de clima",
-      "misting": "Nebulização"
+      "misting": "Nebulização",
+      "garden": "Onde fica isto?"
     },
     "overview": {
       "title": "Jardim",
@@ -1032,7 +1849,20 @@ const I18N = {
       "add_zone": "Adicionar zona",
       "show_add": "Mostrar o botão Adicionar zona",
       "next_feed": "Próxima adubação",
-      "feed_due": "Adubar agora"
+      "feed_due": "Adubar agora",
+      "other_area": "Outros",
+      "pause_area": "Pausar toda a área",
+      "snooze_area": "Não regar hoje em toda a área",
+      "create_dashboard": "Criar um painel do ZoneFlow",
+      "creating_dashboard": "A criar…",
+      "watering_now": "A regar agora",
+      "next_watering": "Seguinte",
+      "rain_today": "Chuva hoje",
+      "needs_a_look": "Precisa de atenção",
+      "water_30d": "Água utilizada, 30 dias",
+      "pause_house": "Pausar a estufa (pára a rega das suas culturas)",
+      "snooze_house": "Não regar hoje as culturas da estufa",
+      "add_area": "Adicionar área"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1077,6 +1907,94 @@ const I18N = {
       "ventilation_failsafe": "O que as aberturas e ventiladores fazem quando nenhum sensor de temperatura interior está a funcionar. Os nebulizadores desligam-se sempre.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interior está a funcionar. Nunca funciona ininterruptamente sem um sensor.",
       "misting_trigger": "O que inicia a nebulização: qualquer um dos gatilhos ou apenas temperatura, humidade ou luz."
+    },
+    "garden": {
+      "none": "Sem área",
+      "new": "Nova área…",
+      "name": "Nome da área"
+    },
+    "location": {
+      "new_area": "Nova área…",
+      "new_greenhouse": "Nova estufa…",
+      "area_name": "Nome da área (Enter para guardar)"
+    },
+    "plants": {
+      "title": "Plantas",
+      "loading": "A carregar…",
+      "main": "Planta principal",
+      "record": "Apenas registo",
+      "make_main": "Tornar planta principal",
+      "move": "Mover…",
+      "remove": "Remover",
+      "confirm_remove": "Remover esta planta da zona? Permanece no registo com o seu histórico.",
+      "history": "Histórico",
+      "no_history": "Ainda nada.",
+      "note_placeholder": "Escrever uma nota…",
+      "add_note": "Adicionar nota",
+      "add": "Adicionar uma planta",
+      "name": "Nome",
+      "type": "Tipo",
+      "as_record": "Apenas registo (a zona continua a regar como está)",
+      "take_over_keep": "Assume a zona; a planta antiga permanece como registo",
+      "take_over_archive": "Assume a zona; a planta antiga é arquivada",
+      "move_to": "Mover para",
+      "old_main_question": "Essa zona já tem uma planta principal. O que acontece com ela?",
+      "old_main_extra": "Permanece lá como registo; esta planta assume o controlo",
+      "old_main_archive": "Está arquivada; esta planta assume o controlo",
+      "old_main_swap": "Troca de lugar com esta planta",
+      "old_main_keep": "Permanece como planta principal; esta planta junta-se como registo",
+      "move_button": "Mover",
+      "no_other_zones": "Não há outra zona para a qual a mover.",
+      "this_zone_title": "Plantas nesta zona",
+      "copy_title": "Copiar definições de outra zona",
+      "copy_button": "Copiar",
+      "confirm_copy": "Substituir as definições de rega desta zona pelas de {name}? A válvula, os sensores, o fluxo e as notas das plantas permanecem como estão.",
+      "preset_title": "Pré-definições guardadas",
+      "preset_apply": "Usar pré-definição",
+      "preset_delete": "Eliminar pré-definição",
+      "confirm_preset": "Substituir as definições de rega desta zona pela pré-definição {name}?",
+      "confirm_delete": "Eliminar a pré-definição {name}?",
+      "preset_name": "Nome da pré-definição",
+      "preset_save": "Guardar as definições desta zona como pré-definição",
+      "no_presets": "Ainda não há pré-definições guardadas.",
+      "rename": "Mudar o nome",
+      "rename_prompt": "Novo nome",
+      "use_settings": "Usar também as definições de rega desta planta na nova zona (caso contrário, a zona mantém a rega atual)"
+    },
+    "check": {
+      "title": "Verificar a minha configuração",
+      "loading": "A verificar…",
+      "all_good": "Tudo parece bem.",
+      "needs_fixing": "Algo precisa de ser corrigido.",
+      "needs_a_look": "Algumas coisas a verificar.",
+      "calibrate": "Calibrar",
+      "again": "Verificar novamente"
+    },
+    "calibrate": {
+      "title": "Calibrar o fluxo",
+      "intro": "O ZoneFlow precisa de saber quanta água esta zona fornece por minuto, para que cada rega corra durante o tempo certo. Meça uma vez:",
+      "step1": "1. Coloque um balde (ou vários) debaixo dos emissores, ou leia o seu contador de água, e abra a válvula.",
+      "run": "Executar 15 minutos",
+      "step2": "2. Quando terminar, introduza quanta água saiu e qual a área regada.",
+      "water": "Água que saiu",
+      "area": "Área regada",
+      "minutes": "Minutos em que a válvula esteve aberta",
+      "set": "Definir o fluxo",
+      "done": "Concluído. O fluxo está definido."
+    },
+    "waternow": {
+      "label": "Regar agora durante",
+      "start": "Iniciar",
+      "min": "min"
+    },
+    "advanced": "Definições avançadas",
+    "hide_advanced": "Ocultar definições avançadas",
+    "simple": "Vista simples",
+    "help": "Ajuda",
+    "why": {
+      "button": "Porquê?",
+      "hide": "Ocultar",
+      "loading": "A procurar…"
     }
   },
   "sv": {
@@ -1112,7 +2030,8 @@ const I18N = {
       "notifications": "Aviseringar",
       "more": "Mer",
       "climate": "Klimatstyrning",
-      "misting": "Dimmning"
+      "misting": "Dimmning",
+      "garden": "Var finns detta?"
     },
     "overview": {
       "title": "Trädgård",
@@ -1150,7 +2069,20 @@ const I18N = {
       "add_zone": "Lägg till zon",
       "show_add": "Visa knappen Lägg till zon",
       "next_feed": "Nästa gödsling",
-      "feed_due": "Gödsla nu"
+      "feed_due": "Gödsla nu",
+      "other_area": "Övrigt",
+      "pause_area": "Pausa hela området",
+      "snooze_area": "Hoppa över dagens vattning i hela området",
+      "create_dashboard": "Skapa en ZoneFlow-instrumentpanel",
+      "creating_dashboard": "Skapar…",
+      "watering_now": "Vattnar nu",
+      "next_watering": "Nästa",
+      "rain_today": "Regn idag",
+      "needs_a_look": "Behöver en titt",
+      "water_30d": "Använt vatten, 30 dagar",
+      "pause_house": "Pausa växthuset (stoppar vattning av dess grödor)",
+      "snooze_house": "Hoppa över dagens vattning av växthusgrödorna",
+      "add_area": "Lägg till område"
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -1195,6 +2127,94 @@ const I18N = {
       "ventilation_failsafe": "Vad vädring och fläktar gör när ingen innetemperaturgivare fungerar. Dimmare stängs alltid av.",
       "heater_failsafe": "Vad värmaren gör när ingen innetemperaturgivare fungerar. Den körs aldrig oavbrutet utan en givare.",
       "misting_trigger": "Vad som startar dimmning: någon av utlösarna, eller enbart temperatur, fuktighet eller ljus."
+    },
+    "garden": {
+      "none": "Inget område",
+      "new": "Nytt område…",
+      "name": "Områdesnamn"
+    },
+    "location": {
+      "new_area": "Nytt område…",
+      "new_greenhouse": "Nytt växthus…",
+      "area_name": "Områdesnamn (Enter för att spara)"
+    },
+    "plants": {
+      "title": "Växter",
+      "loading": "Laddar…",
+      "main": "Huvudväxt",
+      "record": "Endast registrering",
+      "make_main": "Gör till huvudväxt",
+      "move": "Flytta…",
+      "remove": "Ta bort",
+      "confirm_remove": "Ta bort den här växten från zonen? Den står kvar i registret med sin historik.",
+      "history": "Historik",
+      "no_history": "Inget ännu.",
+      "note_placeholder": "Skriv en anteckning…",
+      "add_note": "Lägg till anteckning",
+      "add": "Lägg till en växt",
+      "name": "Namn",
+      "type": "Typ",
+      "as_record": "Endast registrering (zonen fortsätter vattna som den är)",
+      "take_over_keep": "Tar över zonen; den gamla växten står kvar som en registrering",
+      "take_over_archive": "Tar över zonen; den gamla växten arkiveras",
+      "move_to": "Flytta till",
+      "old_main_question": "Den zonen har redan en huvudväxt. Hva händer med den?",
+      "old_main_extra": "Den står kvar som en registrering; den här växten tar över",
+      "old_main_archive": "Den är arkiverad; den här växten tar över",
+      "old_main_swap": "Byter plats med den här växten",
+      "old_main_keep": "Står kvar som huvudväxt; den här växten läggs till som registrering",
+      "move_button": "Flytta",
+      "no_other_zones": "Det finns ingen annan zon att flytta den till.",
+      "this_zone_title": "Växter i den här zonen",
+      "copy_title": "Kopiera inställningar från en annan zon",
+      "copy_button": "Kopiera",
+      "confirm_copy": "Ersätta den här zonens bevattningsinställningar med de från {name}? Ventil, sensorer, flöde och växtanteckningar står kvar som de är.",
+      "preset_title": "Sparade förinställningar",
+      "preset_apply": "Använd förinställning",
+      "preset_delete": "Ta bort förinställning",
+      "confirm_preset": "Ersätta den här zonens bevattningsinställningar med förinställningen {name}?",
+      "confirm_delete": "Ta bort förinställningen {name}?",
+      "preset_name": "Namn på förinställning",
+      "preset_save": "Spara den här zonens inställningar som en förinställning",
+      "no_presets": "Inga sparade förinställningar ännu.",
+      "rename": "Byt namn",
+      "rename_prompt": "Nytt namn",
+      "use_settings": "Använd även den här växtens bevattningsinställningar i den nya zonen (annars behåller zonen sin nuvarande bevattning)"
+    },
+    "check": {
+      "title": "Kontrollera min installation",
+      "loading": "Kontrollerar…",
+      "all_good": "Allt ser bra ut.",
+      "needs_fixing": "Något behöver åtgärdas.",
+      "needs_a_look": "Ett par saker att titta på.",
+      "calibrate": "Kalibrera",
+      "again": "Kontrollera igen"
+    },
+    "calibrate": {
+      "title": "Kalibrera flödet",
+      "intro": "ZoneFlow behöver veta hur mycket vatten den här zonen ger per minut, så att varje vattning körs under rätt tid. Mät det en gång:",
+      "step1": "1. Ställ en hink (eller flera) under dropparna, eller läs av din vattenmätare, och kör sedan ventilen.",
+      "run": "Kör 15 minuter",
+      "step2": "2. När den är klar anger du hur mycket vatten som kom ut och hur stor den vattnade ytan är.",
+      "water": "Vatten som kom ut",
+      "area": "Bevattnad yta",
+      "minutes": "Minuter ventilen var öppen",
+      "set": "Ställ in flödet",
+      "done": "Klar. Flödet är inställt."
+    },
+    "waternow": {
+      "label": "Vattna nu i",
+      "start": "Starta",
+      "min": "min"
+    },
+    "advanced": "Avancerade inställningar",
+    "hide_advanced": "Dölj avancerade inställningar",
+    "simple": "Enkel vy",
+    "help": "Hjälp",
+    "why": {
+      "button": "Varför?",
+      "hide": "Dölj",
+      "loading": "Söker…"
     }
   },
   "cs": {
@@ -1230,7 +2250,8 @@ const I18N = {
       "notifications": "Oznámení",
       "more": "Další",
       "climate": "Řízení klimatu",
-      "misting": "Mlžení"
+      "misting": "Mlžení",
+      "garden": "Kde se nachází?"
     },
     "overview": {
       "title": "Zahrada",
@@ -1268,7 +2289,20 @@ const I18N = {
       "add_zone": "Přidat zónu",
       "show_add": "Zobrazit tlačítko Přidat zónu",
       "next_feed": "Další hnojení",
-      "feed_due": "Pohnojit teď"
+      "feed_due": "Pohnojit teď",
+      "other_area": "Ostatní",
+      "pause_area": "Pozastavit celou oblast",
+      "snooze_area": "Vynechat dnešní zálivku v celé oblasti",
+      "create_dashboard": "Vytvořit ZoneFlow řídicí panel",
+      "creating_dashboard": "Vytváří se…",
+      "watering_now": "Právě zalévá",
+      "next_watering": "Další",
+      "rain_today": "Déšť dnes",
+      "needs_a_look": "Vyžaduje kontrolu",
+      "water_30d": "Spotřebovaná voda za 30 dní",
+      "pause_house": "Pozastavit skleník (zastaví zalévání jeho plodin)",
+      "snooze_house": "Vynechat dnešní zálivku plodin ve skleníku",
+      "add_area": "Přidat oblast"
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -1313,6 +2347,94 @@ const I18N = {
       "ventilation_failsafe": "Co dělají větrací otvory a ventilátory, když nefunguje žádný snímač vnitřní teploty. Mlžovače se vždy vypnou.",
       "heater_failsafe": "Co dělá topení, když nefunguje žádný snímač vnitřní teploty. Bez snímače nikdy neběží nepřetržitě.",
       "misting_trigger": "Co spouští mlžení: jakýkoli ze spouštěčů, nebo pouze teplota, vlhkost či světlo."
+    },
+    "garden": {
+      "none": "Bez oblasti",
+      "new": "Nová oblast…",
+      "name": "Název oblasti"
+    },
+    "location": {
+      "new_area": "Nová oblast…",
+      "new_greenhouse": "Nový skleník…",
+      "area_name": "Název oblasti (Enter pro uložení)"
+    },
+    "plants": {
+      "title": "Rostliny",
+      "loading": "Načítá se…",
+      "main": "Hlavní rostlina",
+      "record": "Pouze záznam",
+      "make_main": "Nastavit jako hlavním rostlinu",
+      "move": "Přesunout…",
+      "remove": "Odebrat",
+      "confirm_remove": "Odebrat tuto rostlinu ze zóny? Zůstane v záznamu se svou historií.",
+      "history": "Historie",
+      "no_history": "Zatím nic.",
+      "note_placeholder": "Napsat poznámku…",
+      "add_note": "Přidat poznámku",
+      "add": "Přidat rostlinu",
+      "name": "Název",
+      "type": "Typ",
+      "as_record": "Pouze záznam (zóna pokračuje v zalévání tak, jak je)",
+      "take_over_keep": "Přebírá zónu; stará rostlina zůstává jako záznam",
+      "take_over_archive": "Přebírá zónu; stará rostlina se archivuje",
+      "move_to": "Přesunout do",
+      "old_main_question": "Tato zóna již má hlavní rostlinu. Co se s ní stane?",
+      "old_main_extra": "Zůstane tam jako záznam; tato rostlina přebírá vedení",
+      "old_main_archive": "Je archivována; tato rostlina přebírá vedení",
+      "old_main_swap": "Prohodí si místo s touto rostlinou",
+      "old_main_keep": "Zůstává hlavní rostlinou; tato rostlina se přidává jako záznam",
+      "move_button": "Přesunout",
+      "no_other_zones": "Neexistuje žádná jiná zóna, do které by bylo možné položku přesunout.",
+      "this_zone_title": "Rostliny v této zóně",
+      "copy_title": "Kopírovat nastavení z jiné zóny",
+      "copy_button": "Kopírovat",
+      "confirm_copy": "Nahradit nastavení zalévání této zóny nastaveními z {name}? Ventil, snímače, průtok a poznámky k rostlinám zůstanou tak, jak jsou.",
+      "preset_title": "Uložené předvolby",
+      "preset_apply": "Použít předvolbu",
+      "preset_delete": "Smazat předvolbu",
+      "confirm_preset": "Nahradit nastavení zalévání této zóny předvolbou {name}?",
+      "confirm_delete": "Smazat předvolbu {name}?",
+      "preset_name": "Název předvolby",
+      "preset_save": "Uložit nastavení této zóny jako předvolbu",
+      "no_presets": "Zatím žádné uložené předvolby.",
+      "rename": "Přejmenovat",
+      "rename_prompt": "Nový název",
+      "use_settings": "Použít také nastavení zálivky této rostliny v nové zóně (jinak zóna zachová dosavadní zálivku)"
+    },
+    "check": {
+      "title": "Zkontrolovat mé nastavení",
+      "loading": "Kontroluje se…",
+      "all_good": "Vše vypadá v pořádku.",
+      "needs_fixing": "Něco vyžaduje opravu.",
+      "needs_a_look": "Několik věcí ke kontrole.",
+      "calibrate": "Kalibrovat",
+      "again": "Zkontrolovat znovu"
+    },
+    "calibrate": {
+      "title": "Kalibrovat průtok",
+      "intro": "ZoneFlow potřebuje vědět, kolik vody tato zóna poskytuje za minutu, aby každé zavlažování běželo po správnou dobu. Změřte to jednou:",
+      "step1": "1. Umístěte kbelík (nebo několik) pod emitory, nebo odečtěte vodoměr, a poté spusťte ventil.",
+      "run": "Spustit na 15 minut",
+      "step2": "2. Po dokončení zadejte, kolik vody vyteklo a jak velká je zavlažovaná plocha.",
+      "water": "Voda, která vytekla",
+      "area": "Zalévaná plocha",
+      "minutes": "Minuty, po které byl ventil otevřený",
+      "set": "Nastavit průtok",
+      "done": "Hotovo. Průtok je nastaven."
+    },
+    "waternow": {
+      "label": "Zalévat nyní po dobu",
+      "start": "Spustit",
+      "min": "min"
+    },
+    "advanced": "Pokročilá nastavení",
+    "hide_advanced": "Skrýt pokročilá nastavení",
+    "simple": "Jednoduché zobrazení",
+    "help": "Nápověda",
+    "why": {
+      "button": "Proč?",
+      "hide": "Skrýt",
+      "loading": "Hledá se…"
     }
   },
   "da": {
@@ -1348,7 +2470,8 @@ const I18N = {
       "notifications": "Notifikationer",
       "more": "Mere",
       "climate": "Klimastyring",
-      "misting": "Forstøvning"
+      "misting": "Forstøvning",
+      "garden": "Hvor er dette?"
     },
     "overview": {
       "title": "Have",
@@ -1386,7 +2509,20 @@ const I18N = {
       "add_zone": "Tilføj zone",
       "show_add": "Vis knappen Tilføj zone",
       "next_feed": "Næste gødskning",
-      "feed_due": "Gød nu"
+      "feed_due": "Gød nu",
+      "other_area": "Andet",
+      "pause_area": "Sæt hele området på pause",
+      "snooze_area": "Spring dagens vanding over i hele området",
+      "create_dashboard": "Opret et ZoneFlow-dashboard",
+      "creating_dashboard": "Opretter…",
+      "watering_now": "Vander nu",
+      "next_watering": "Næste",
+      "rain_today": "Regn i dag",
+      "needs_a_look": "Kræver et kig",
+      "water_30d": "Brugt vand, 30 dage",
+      "pause_house": "Sæt drivhuset på pause (stopper vanding af dets afgrøder)",
+      "snooze_house": "Spring dagens vanding af drivhusafgrøderne over",
+      "add_area": "Tilføj område"
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -1431,6 +2567,94 @@ const I18N = {
       "ventilation_failsafe": "Hvad udluftning og ventilatorer gør, når ingen indendørs temperatursensor virker. Forstøvere slukker altid.",
       "heater_failsafe": "Hvad varmelegemet gør, når ingen indendørs temperatursensor virker. Det kører aldrig uafbrudt uden en sensor.",
       "misting_trigger": "Hvad der starter forstøvningen: enhver af udløserne, eller kun temperatur, fugtighed eller lys."
+    },
+    "garden": {
+      "none": "Intet område",
+      "new": "Nyt område…",
+      "name": "Områdenavn"
+    },
+    "location": {
+      "new_area": "Nyt område…",
+      "new_greenhouse": "Nyt drivhus…",
+      "area_name": "Områdenavn (Enter for at gemme)"
+    },
+    "plants": {
+      "title": "Planter",
+      "loading": "Indlæser…",
+      "main": "Hovedplante",
+      "record": "Kun registrering",
+      "make_main": "Gør til hovedplante",
+      "move": "Flyt…",
+      "remove": "Fjern",
+      "confirm_remove": "Fjern denne plante fra zonen? Den forbliver registreret med sin historik.",
+      "history": "Historik",
+      "no_history": "Intet endnu.",
+      "note_placeholder": "Skriv en note…",
+      "add_note": "Tilføj note",
+      "add": "Tilføj en plante",
+      "name": "Navn",
+      "type": "Type",
+      "as_record": "Kun registrering (zonen fortsætter med at vande som den er)",
+      "take_over_keep": "Overtager zonen; den gamle plante forbliver registreret",
+      "take_over_archive": "Overtager zonen; den gamle plante arkiveres",
+      "move_to": "Flyt til",
+      "old_main_question": "Den zone har allerede en hovedplante. Hvad skal der ske med den?",
+      "old_main_extra": "Den forbliver der som registrering; denne plante tager over",
+      "old_main_archive": "Den er arkiveret; denne plante tager over",
+      "old_main_swap": "Den bytter plads med denne plante",
+      "old_main_keep": "Den forbliver hovedplante; denne plante tilføjes som registrering",
+      "move_button": "Flyt",
+      "no_other_zones": "Der er ingen anden zone at flytte den til.",
+      "this_zone_title": "Planter i denne zone",
+      "copy_title": "Kopier indstillinger fra en anden zone",
+      "copy_button": "Kopier",
+      "confirm_copy": "Erstat denne zones vandingsindstillinger med dem fra {name}? Ventil, sensorer, flow og plantenoter forbliver som de er.",
+      "preset_title": "Gemte forudindstillinger",
+      "preset_apply": "Brug forudindstilling",
+      "preset_delete": "Slet forudindstilling",
+      "confirm_preset": "Erstat denne zones vandingsindstillinger med forudindstillingen {name}?",
+      "confirm_delete": "Slet forudindstillingen {name}?",
+      "preset_name": "Navn på forudindstilling",
+      "preset_save": "Gem denne zones indstillinger som en forudindstilling",
+      "no_presets": "Ingen gemte forudindstillinger endnu.",
+      "rename": "Omdøb",
+      "rename_prompt": "Nyt navn",
+      "use_settings": "Brug også denne plantes vandingsindstillinger i den nye zone (ellers beholder zonen sin nuværende vanding)"
+    },
+    "check": {
+      "title": "Tjek min opsætning",
+      "loading": "Tjekker…",
+      "all_good": "Alt ser fint ud.",
+      "needs_fixing": "Noget skal rettes.",
+      "needs_a_look": "Et par ting at se på.",
+      "calibrate": "Kalibrer",
+      "again": "Tjek igen"
+    },
+    "calibrate": {
+      "title": "Kalibrer flowet",
+      "intro": "ZoneFlow skal vide, hvor meget vand denne zone giver pr. minut, så enhver vanding kører i den rigtige tid. Mål det én gang:",
+      "step1": "1. Sæt en spand (eller flere) under drypperne, eller aflæs din vandmåler, og kør derefter ventilen.",
+      "run": "Kør 15 minutter",
+      "step2": "2. Når den er færdig, indtaster du, hvor meget vand der kom ud, og hvor stort det vandede område er.",
+      "water": "Vand der kom ud",
+      "area": "Vandet areal",
+      "minutes": "Minutter ventilen var åben",
+      "set": "Indstil flowet",
+      "done": "Udført. Flowet er indstillet."
+    },
+    "waternow": {
+      "label": "Vand nu i",
+      "start": "Start",
+      "min": "min"
+    },
+    "advanced": "Avancerede indstillinger",
+    "hide_advanced": "Skjul avancerede indstillinger",
+    "simple": "Enkel visning",
+    "help": "Hjælp",
+    "why": {
+      "button": "Hvorfor?",
+      "hide": "Skjul",
+      "loading": "Kigger…"
     }
   },
   "hu": {
@@ -1466,7 +2690,8 @@ const I18N = {
       "notifications": "Értesítések",
       "more": "Egyéb",
       "climate": "Klímaszabályozás",
-      "misting": "Párásítás"
+      "misting": "Párásítás",
+      "garden": "Hol található ez?"
     },
     "overview": {
       "title": "Kert",
@@ -1504,7 +2729,20 @@ const I18N = {
       "add_zone": "Zóna hozzáadása",
       "show_add": "A Zóna hozzáadása gomb megjelenítése",
       "next_feed": "Következő tápanyag-utánpótlás",
-      "feed_due": "Tápanyag most"
+      "feed_due": "Tápanyag most",
+      "other_area": "Egyéb",
+      "pause_area": "Teljes terület szüneteltetése",
+      "snooze_area": "Mai öntözés kihagyása a teljes területen",
+      "create_dashboard": "ZoneFlow műszerfal létrehozása",
+      "creating_dashboard": "Létrehozás…",
+      "watering_now": "Öntözés folyamatban",
+      "next_watering": "Következő",
+      "rain_today": "Mai eső",
+      "needs_a_look": "Ellenőrzést igényel",
+      "water_30d": "Felhasznált víz, 30 nap",
+      "pause_house": "Üvegház szüneteltetése (leállítja a növények öntözését)",
+      "snooze_house": "Kasvihuoneen növényeinek mai öntözésének kihagyása",
+      "add_area": "Terület hozzáadása"
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -1549,6 +2787,94 @@ const I18N = {
       "ventilation_failsafe": "Mit tegyenek a szellőzők és ventilátorok, ha nem működik belső hőmérséklet-érzékelő. A párásítók mindig kikapcsolnak.",
       "heater_failsafe": "Mit tegyen a fűtés, ha nem működik belső hőmérséklet-érzékelő. Érzékelő nélkül soha nem működik folyamatosan.",
       "misting_trigger": "Mi indítja el a párásítást: az indítók bármelyike, vagy csak a hőmérséklet, a páratartalom vagy a fény."
+    },
+    "garden": {
+      "none": "Nincs terület",
+      "new": "Új terület…",
+      "name": "Terület neve"
+    },
+    "location": {
+      "new_area": "Új terület…",
+      "new_greenhouse": "Új üvegház…",
+      "area_name": "Terület neve (Enter a mentéshez)"
+    },
+    "plants": {
+      "title": "Növények",
+      "loading": "Betöltés…",
+      "main": "Fő növény",
+      "record": "Csak rögzítés",
+      "make_main": "Beállítás fő növényként",
+      "move": "Áthelyezés…",
+      "remove": "Eltávolítás",
+      "confirm_remove": "Eltávolítja ezt a növényt a zónából? A történetével együtt a nyilvántartásban marad.",
+      "history": "Történet",
+      "no_history": "Még semmi.",
+      "note_placeholder": "Jegyzet írása…",
+      "add_note": "Jegyzet hozzáadása",
+      "add": "Növény hozzáadása",
+      "name": "Név",
+      "type": "Típus",
+      "as_record": "Csak rögzítés (a zóna a jelenlegi módon öntöz tovább)",
+      "take_over_keep": "Átveszi a zónát; a régi növény nyilvántartásban marad",
+      "take_over_archive": "Átveszi a zónát; a régi növény archiválásra kerül",
+      "move_to": "Áthelyezés ide:",
+      "old_main_question": "Ennek a zónának már van fő növénye. Mi történjen vele?",
+      "old_main_extra": "Nyilvántartásban marad; ez a növény veszi át a helyét",
+      "old_main_archive": "Archiválva van; ez a növény veszi át a helyét",
+      "old_main_swap": "Helyet cserél ezzel a növénnyel",
+      "old_main_keep": "Fő növény marad; ez a növény rögzítésként csatlakozik",
+      "move_button": "Áthelyezés",
+      "no_other_zones": "Nincs másik zóna, ahová át lehetne helyezni.",
+      "this_zone_title": "Növények ebben a zónában",
+      "copy_title": "Beállítások másolása másik zónából",
+      "copy_button": "Másolás",
+      "confirm_copy": "Lecseréli ennek a zónának az öntözési beállításait {name} beállításaira? A szelep, érzékelők, vízhozam és növényi jegyzetek változatlanok maradnak.",
+      "preset_title": "Mentett előbeállítások",
+      "preset_apply": "Előbeállítás használata",
+      "preset_delete": "Előbeállítás törlése",
+      "confirm_preset": "Lecseréli ennek a zónának az öntözési beállításait a(z) {name} előbeállításra?",
+      "confirm_delete": "Törli a(z) {name} előbeállítást?",
+      "preset_name": "Előbeállítás neve",
+      "preset_save": "Zóna beállításainak mentése előbeállításként",
+      "no_presets": "Még nincsenek elmentett előbeállítások.",
+      "rename": "Átnevezés",
+      "rename_prompt": "Új név",
+      "use_settings": "A növény öntözési beállításait is használja az új zónában (egyébként a zóna megtartja a jelenlegi öntözést)"
+    },
+    "check": {
+      "title": "Beállítások ellenőrzése",
+      "loading": "Ellenőrzés…",
+      "all_good": "Minden rendben lévőnek tűnik.",
+      "needs_fixing": "Valamit javítani kell.",
+      "needs_a_look": "Néhány átvizsgálandó dolog.",
+      "calibrate": "Kalibrálás",
+      "again": "Ellenőrzés ismét"
+    },
+    "calibrate": {
+      "title": "Vízhozam kalibrálása",
+      "intro": "A ZoneFlow-nak tudnia kell, mennyi vizet ad ez a zóna percenként, hogy minden öntözés a megfelelő ideig tartson. Mérje meg egyszer:",
+      "step1": "1. Tegyem egy vödröt (vagy többet) a csepegtetők alá, vagy olvassa le a vízmérőt, majd indítsa el a szelepet.",
+      "run": "Futtatás 15 percig",
+      "step2": "2. Ha végzett, adja meg, mennyi víz folyt ki, és mekkora az öntözött terület.",
+      "water": "Kifolyt víz",
+      "area": "Öntözött terület",
+      "minutes": "Percek, amíg a szelep nyitva volt",
+      "set": "Vízhozam beállítása",
+      "done": "Kész. A vízhozam beállítva."
+    },
+    "waternow": {
+      "label": "Öntözés most:",
+      "start": "Indítás",
+      "min": "perc"
+    },
+    "advanced": "Fejlett beállítások",
+    "hide_advanced": "Fejlett beállítások elrejtése",
+    "simple": "Egyszerű nézet",
+    "help": "Súgó",
+    "why": {
+      "button": "Miért?",
+      "hide": "Elrejtés",
+      "loading": "Keresés…"
     }
   },
   "nb": {
@@ -1584,7 +2910,8 @@ const I18N = {
       "notifications": "Varsler",
       "more": "Mer",
       "climate": "Klimastyring",
-      "misting": "Tåkelegging"
+      "misting": "Tåkelegging",
+      "garden": "Hvor er dette?"
     },
     "overview": {
       "title": "Hage",
@@ -1622,7 +2949,20 @@ const I18N = {
       "add_zone": "Legg til sone",
       "show_add": "Vis knappen Legg til sone",
       "next_feed": "Neste gjødsling",
-      "feed_due": "Gjødsle nå"
+      "feed_due": "Gjødsle nå",
+      "other_area": "Annet",
+      "pause_area": "Sett hele området på pause",
+      "snooze_area": "Hopp over dagens vanning i hele området",
+      "create_dashboard": "Opprett et ZoneFlow-dashbord",
+      "creating_dashboard": "Oppretter…",
+      "watering_now": "Vanner nå",
+      "next_watering": "Neste",
+      "rain_today": "Regn i dag",
+      "needs_a_look": "Krever en sjekk",
+      "water_30d": "Brukt vann, 30 dager",
+      "pause_house": "Sett drivhuset på pause (stopper vanning av kulturene)",
+      "snooze_house": "Hopp over dagens vanning av drivhuskulturene",
+      "add_area": "Legg til område"
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -1667,6 +3007,94 @@ const I18N = {
       "ventilation_failsafe": "Hva lufting og vifter gjør når ingen innvendig temperatursensor fungerer. Tåkeleggere slås alltid av.",
       "heater_failsafe": "Hva varmeovnen gjør når ingen innvendig temperatursensor fungerer. Den kjører aldri uavbrutt uten sensor.",
       "misting_trigger": "Hva som starter tåkelegging: enhver utløser, eller bare temperatur, fuktighet eller lys."
+    },
+    "garden": {
+      "none": "Ingen område",
+      "new": "Nytt område…",
+      "name": "Områdenavn"
+    },
+    "location": {
+      "new_area": "Nytt område…",
+      "new_greenhouse": "Nytt drivhus…",
+      "area_name": "Områdenavn (Enter for å lagre)"
+    },
+    "plants": {
+      "title": "Planter",
+      "loading": "Laster…",
+      "main": "Hovedplante",
+      "record": "Kun registrering",
+      "make_main": "Gjør til hovedplante",
+      "move": "Flytt…",
+      "remove": "Fjern",
+      "confirm_remove": "Fjerne denne planten fra sonen? Den forblir i arkivet med sin historikk.",
+      "history": "Historikk",
+      "no_history": "Ingenting ennå.",
+      "note_placeholder": "Skriv et notat…",
+      "add_note": "Legg til notat",
+      "add": "Legg til en plante",
+      "name": "Navn",
+      "type": "Type",
+      "as_record": "Kun registrering (sonen fortsetter å vanne som den er)",
+      "take_over_keep": "Tar over sonen; den gamle planten forblir som en registrering",
+      "take_over_archive": "Tar over sonen; den gamle planten arkiveres",
+      "move_to": "Flytt til",
+      "old_main_question": "Den sonen har allerede en hovedplante. Hva skjer med den?",
+      "old_main_extra": "Den forblir der som en registrering; denne planten tar over",
+      "old_main_archive": "Den er arkivert; denne planten tar over",
+      "old_main_swap": "Den bytter plass med denne planten",
+      "old_main_keep": "Den forblir hovedplante; denne planten legges til som en registrering",
+      "move_button": "Flytt",
+      "no_other_zones": "Det er ingen annen sone å flytte den til.",
+      "this_zone_title": "Planter i denne sonen",
+      "copy_title": "Kopier innstillinger fra en annen sone",
+      "copy_button": "Kopier",
+      "confirm_copy": "Erstatte denne sonens vanningsinnstillinger med de fra {name}? Ventil, sensorer, vannmengde og plantenotater forblir som de er.",
+      "preset_title": "Lagrede forhåndsinnstillinger",
+      "preset_apply": "Bruk forhåndsinnstilling",
+      "preset_delete": "Slett forhåndsinnstilling",
+      "confirm_preset": "Erstatte denne sonens vanningsinnstillinger med forhåndsinnstillingen {name}?",
+      "confirm_delete": "Slette forhåndsinnstillingen {name}?",
+      "preset_name": "Navn på forhåndsinnstilling",
+      "preset_save": "Lagre denne sonens innstillinger som en forhåndsinnstilling",
+      "no_presets": "Ingen lagrede forhåndsinnstillinger ennå.",
+      "rename": "Gi nytt navn",
+      "rename_prompt": "Nytt navn",
+      "use_settings": "Bruk også denne plantens vanningsinnstillinger i den nye sonen (ellers beholder sonen sin nåværende vanning)"
+    },
+    "check": {
+      "title": "Sjekk mitt oppsett",
+      "loading": "Sjekker…",
+      "all_good": "Alt ser bra ut.",
+      "needs_fixing": "Noe må rettes.",
+      "needs_a_look": "Et par ting å se på.",
+      "calibrate": "Kalibrer",
+      "again": "Sjekk igjen"
+    },
+    "calibrate": {
+      "title": "Kalibrer vannmengde",
+      "intro": "ZoneFlow må vite hvor mye vann denne sonen gir per minutt, slik at hver vanning kjører i riktig tid. Mål det én gang:",
+      "step1": "1. Sett en bøtte (eller flere) under utløpene, eller les av vannmåleren din, og kjør deretter ventilen.",
+      "run": "Kjør 15 minutter",
+      "step2": "2. Når den er ferdig, oppgir du hvor mye vann som kom ut, og hvor stort det vannet området er.",
+      "water": "Vann som kom ut",
+      "area": "Vannet areal",
+      "minutes": "Minutter ventilen var åpen",
+      "set": "Angi vannmengde",
+      "done": "Ferdig. Vannmengden er angitt."
+    },
+    "waternow": {
+      "label": "Vann nå i",
+      "start": "Start",
+      "min": "min"
+    },
+    "advanced": "Avanserte innstillinger",
+    "hide_advanced": "Skjul avanserte innstillinger",
+    "simple": "Enkel visning",
+    "help": "Hjelp",
+    "why": {
+      "button": "Hvorfor?",
+      "hide": "Skjul",
+      "loading": "Ser etter…"
     }
   },
   "pt-BR": {
@@ -1702,7 +3130,8 @@ const I18N = {
       "notifications": "Notificações",
       "more": "Mais",
       "climate": "Controle de clima",
-      "misting": "Nebulização"
+      "misting": "Nebulização",
+      "garden": "Onde fica isso?"
     },
     "overview": {
       "title": "Jardim",
@@ -1740,7 +3169,20 @@ const I18N = {
       "add_zone": "Adicionar zona",
       "show_add": "Mostrar o botão Adicionar zona",
       "next_feed": "Próxima adubação",
-      "feed_due": "Adubar agora"
+      "feed_due": "Adubar agora",
+      "other_area": "Outro",
+      "pause_area": "Pausar toda a área",
+      "snooze_area": "Não irrigar hoje em toda a área",
+      "create_dashboard": "Criar um painel do ZoneFlow",
+      "creating_dashboard": "Criando…",
+      "watering_now": "Irrigando agora",
+      "next_watering": "Próximo",
+      "rain_today": "Chuva hoje",
+      "needs_a_look": "Precisa de atenção",
+      "water_30d": "Água utilizada, 30 dias",
+      "pause_house": "Pausar a estufa (para a irrigação de suas culturas)",
+      "snooze_house": "Não irrigar hoje as culturas da estufa",
+      "add_area": "Adicionar área"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1785,6 +3227,94 @@ const I18N = {
       "ventilation_failsafe": "O que aberturas e ventiladores fazem quando nenhum sensor de temperatura interna funciona. Nebulizadores sempre desligam.",
       "heater_failsafe": "O que o aquecedor faz quando nenhum sensor de temperatura interna funciona. Ele nunca roda continuamente sem um sensor.",
       "misting_trigger": "O que inicia a nebulização: qualquer um dos gatilhos ou apenas temperatura, umidade ou luminosidade."
+    },
+    "garden": {
+      "none": "Sem área",
+      "new": "Nova área…",
+      "name": "Nome da área"
+    },
+    "location": {
+      "new_area": "Nova área…",
+      "new_greenhouse": "Nova estufa…",
+      "area_name": "Nome da área (Enter para salvar)"
+    },
+    "plants": {
+      "title": "Plantas",
+      "loading": "Carregando…",
+      "main": "Planta principal",
+      "record": "Apenas registro",
+      "make_main": "Tornar planta principal",
+      "move": "Mover…",
+      "remove": "Remover",
+      "confirm_remove": "Remover esta planta da zona? Ela permanece no registro com seu histórico.",
+      "history": "Histórico",
+      "no_history": "Ainda nada.",
+      "note_placeholder": "Escrever uma nota…",
+      "add_note": "Adicionar nota",
+      "add": "Adicionar uma planta",
+      "name": "Nome",
+      "type": "Tipo",
+      "as_record": "Apenas registro (a zona continua irrigando como está)",
+      "take_over_keep": "Assume a zona; a planta antiga permanece como registro",
+      "take_over_archive": "Assume a zona; a planta antiga é arquivada",
+      "move_to": "Mover para",
+      "old_main_question": "Essa zona já tem uma planta principal. O que acontece com ela?",
+      "old_main_extra": "Ela permanece lá como registro; esta planta assume o controle",
+      "old_main_archive": "Ela está arquivada; esta planta assume o controle",
+      "old_main_swap": "Troca de lugar com esta planta",
+      "old_main_keep": "Permanece como planta principal; esta planta junta-se como registro",
+      "move_button": "Mover",
+      "no_other_zones": "Não há outra zona para a qual movê-la.",
+      "this_zone_title": "Plantas nesta zona",
+      "copy_title": "Copiar configurações de outra zona",
+      "copy_button": "Copiar",
+      "confirm_copy": "Substituir as configurações de irrigação desta zona pelas de {name}? A válvula, os sensores, a vazão e as notas das plantas permanecem como estão.",
+      "preset_title": "Predefinições salvas",
+      "preset_apply": "Usar predefinição",
+      "preset_delete": "Excluir predefinição",
+      "confirm_preset": "Substituir as configurações de irrigação desta zona pela predefinição {name}?",
+      "confirm_delete": "Excluir a predefinição {name}?",
+      "preset_name": "Nome da predefinição",
+      "preset_save": "Salvar as configurações desta zona como predefinição",
+      "no_presets": "Nenhuma predefinição salva ainda.",
+      "rename": "Renomear",
+      "rename_prompt": "Novo nome",
+      "use_settings": "Usar também as configurações de irrigação desta planta na nova zona (caso contrário, a zona mantém a irrigação atual)"
+    },
+    "check": {
+      "title": "Verificar minha configuração",
+      "loading": "Verificando…",
+      "all_good": "Tudo parece bem.",
+      "needs_fixing": "Algo precisa ser corrigido.",
+      "needs_a_look": "Algumas coisas para verificar.",
+      "calibrate": "Calibrar",
+      "again": "Verificar novamente"
+    },
+    "calibrate": {
+      "title": "Calibrar a vazão",
+      "intro": "O ZoneFlow precisa saber quanta água esta zona fornece por minuto, para que cada irrigação rode pelo tempo certo. Meça uma vez:",
+      "step1": "1. Coloque um balde (ou vários) embaixo dos emissores, ou leia o seu hidrômetro, e abra a válvula.",
+      "run": "Executar 15 minutos",
+      "step2": "2. Quando terminar, informe quanta água saiu e qual o tamanho da área irrigada.",
+      "water": "Água que saiu",
+      "area": "Área irrigada",
+      "minutes": "Minutos em que a válvula ficou aberta",
+      "set": "Definir a vazão",
+      "done": "Concluído. A vazão está definida."
+    },
+    "waternow": {
+      "label": "Irrigar agora por",
+      "start": "Iniciar",
+      "min": "min"
+    },
+    "advanced": "Configurações avançadas",
+    "hide_advanced": "Ocultar configurações avançadas",
+    "simple": "Visualização simples",
+    "help": "Ajuda",
+    "why": {
+      "button": "Por quê?",
+      "hide": "Ocultar",
+      "loading": "Buscando…"
     }
   },
   "ru": {
@@ -1820,7 +3350,8 @@ const I18N = {
       "notifications": "Уведомления",
       "more": "Ещё",
       "climate": "Управление климатом",
-      "misting": "Туманообразование"
+      "misting": "Туманообразование",
+      "garden": "Где это находится?"
     },
     "overview": {
       "title": "Сад",
@@ -1858,7 +3389,20 @@ const I18N = {
       "add_zone": "Добавить зону",
       "show_add": "Показывать кнопку «Добавить зону»",
       "next_feed": "Следующая подкормка",
-      "feed_due": "Подкормить сейчас"
+      "feed_due": "Подкормить сейчас",
+      "other_area": "Прочее",
+      "pause_area": "Поставить всю область на паузу",
+      "snooze_area": "Пропустить сегодняшнее поливание во всей области",
+      "create_dashboard": "Создать дашборд ZoneFlow",
+      "creating_dashboard": "Создание…",
+      "watering_now": "Полив сейчас",
+      "next_watering": "Далее",
+      "rain_today": "Дождь сегодня",
+      "needs_a_look": "Требует внимания",
+      "water_30d": "Расход воды, 30 дней",
+      "pause_house": "Поставить теплицу на паузу (останавливает полив культур)",
+      "snooze_house": "Пропустить сегодняшнее поливание культур в теплице",
+      "add_area": "Добавить область"
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -1903,6 +3447,94 @@ const I18N = {
       "ventilation_failsafe": "Поведение форточек и вентиляторов при отказе датчика температуры внутри. Туманообразование всегда отключается.",
       "heater_failsafe": "Поведение обогревателя при отказе датчика температуры внутри. Без датчика непрерывная работа запрещена.",
       "misting_trigger": "Условие запуска тумана: любое из условий либо только температура, влажность или освещенность."
+    },
+    "garden": {
+      "none": "Без области",
+      "new": "Новая область…",
+      "name": "Название области"
+    },
+    "location": {
+      "new_area": "Новая область…",
+      "new_greenhouse": "Новая теплица…",
+      "area_name": "Название области (Enter для сохранения)"
+    },
+    "plants": {
+      "title": "Растения",
+      "loading": "Загрузка…",
+      "main": "Основное растение",
+      "record": "Только запись",
+      "make_main": "Сделать основным растением",
+      "move": "Переместить…",
+      "remove": "Удалить",
+      "confirm_remove": "Удалить это растение из зоны? Оно останется в записях вместе со своей историей.",
+      "history": "История",
+      "no_history": "Пока ничего.",
+      "note_placeholder": "Написать заметку…",
+      "add_note": "Добавить заметку",
+      "add": "Добавить растение",
+      "name": "Название",
+      "type": "Тип",
+      "as_record": "Только запись (зона продолжает полив как есть)",
+      "take_over_keep": "Перенимает зону; старое растение остаётся как запись",
+      "take_over_archive": "Перенимает зону; старое растение архивируется",
+      "move_to": "Переместить в",
+      "old_main_question": "В этой зоне уже есть основное растение. Что с ним сделать?",
+      "old_main_extra": "Остаётся как запись; это растение перенимает настройки",
+      "old_main_archive": "Заархивировано; это растение перенимает настройки",
+      "old_main_swap": "Меняется местами с этим растением",
+      "old_main_keep": "Остаётся основным растением; это растение добавляется как запись",
+      "move_button": "Переместить",
+      "no_other_zones": "Нет другой зоны для перемещения.",
+      "this_zone_title": "Растения в этой зоне",
+      "copy_title": "Копировать настройки из другой зоны",
+      "copy_button": "Копировать",
+      "confirm_copy": "Заменить настройки полива этой зоны настройками {name}? Клапан, датчики, расход и заметки о растениях останутся без изменений.",
+      "preset_title": "Сохранённые пресеты",
+      "preset_apply": "Использовать пресет",
+      "preset_delete": "Удалить пресет",
+      "confirm_preset": "Заменить настройки полива этой зоны пресетом {name}?",
+      "confirm_delete": "Удалить пресет {name}?",
+      "preset_name": "Название пресета",
+      "preset_save": "Сохранить настройки этой зоны как пресет",
+      "no_presets": "Сохранённых пресетов пока нет.",
+      "rename": "Переименовать",
+      "rename_prompt": "Новое имя",
+      "use_settings": "Также использовать настройки полива этого растения в новой зоне (иначе зона сохранит нынешний полив)"
+    },
+    "check": {
+      "title": "Проверить настройки",
+      "loading": "Проверка…",
+      "all_good": "Всё выглядит отлично.",
+      "needs_fixing": "Что-то требует исправления.",
+      "needs_a_look": "Несколько моментов для проверки.",
+      "calibrate": "Калибровать",
+      "again": "Проверить снова"
+    },
+    "calibrate": {
+      "title": "Калибровать расход",
+      "intro": "ZoneFlow необходимо знать, сколько воды эта зона подаёт в минуту, чтобы каждый полив длился правильное время. Измерьте это один раз:",
+      "step1": "1. Подставьте ведро (или несколько) под капельницы или считайте показания водомера, затем откройте клапан.",
+      "run": "Запуск на 15 минут",
+      "step2": "2. По окончании введите объем вытекшей воды и площадь поливаемого участка.",
+      "water": "Вытекшая вода",
+      "area": "Поливаемая площадь",
+      "minutes": "Минуты открытия клапана",
+      "set": "Установить расход",
+      "done": "Готово. Расход установлен."
+    },
+    "waternow": {
+      "label": "Полить сейчас на",
+      "start": "Запуск",
+      "min": "мин"
+    },
+    "advanced": "Расширенные настройки",
+    "hide_advanced": "Скрыть расширенные настройки",
+    "simple": "Простой вид",
+    "help": "Справка",
+    "why": {
+      "button": "Почему?",
+      "hide": "Скрыть",
+      "loading": "Поиск…"
     }
   },
   "sk": {
@@ -1938,7 +3570,8 @@ const I18N = {
       "notifications": "Oznámenia",
       "more": "Viac",
       "climate": "Riadenie klímy",
-      "misting": "Zahmlievanie"
+      "misting": "Zahmlievanie",
+      "garden": "Kde sa nachádza?"
     },
     "overview": {
       "title": "Záhrada",
@@ -1976,7 +3609,20 @@ const I18N = {
       "add_zone": "Pridať zónu",
       "show_add": "Zobraziť tlačidlo Pridať zónu",
       "next_feed": "Ďalšie hnojenie",
-      "feed_due": "Pohnojiť teraz"
+      "feed_due": "Pohnojiť teraz",
+      "other_area": "Ostatné",
+      "pause_area": "Pozastaviť celú oblasť",
+      "snooze_area": "Vynechať dnešnú zálievku v celej oblasti",
+      "create_dashboard": "Vytvoriť ovládací panel ZoneFlow",
+      "creating_dashboard": "Vytvára sa…",
+      "watering_now": "Práve zalieva",
+      "next_watering": "Ďalšie",
+      "rain_today": "Dážď dnes",
+      "needs_a_look": "Vyžaduje kontrolu",
+      "water_30d": "Spotrebovaná voda, 30 dní",
+      "pause_house": "Pozastaviť skleník (zastaví zalievanie jeho plodín)",
+      "snooze_house": "Vynechať dnešnú zálievku plodín v skleníku",
+      "add_area": "Pridať oblasť"
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -2021,6 +3667,94 @@ const I18N = {
       "ventilation_failsafe": "Čo robia vetranie a ventilátory, keď nefunguje žiaden senzor vnútornej teploty. Zahmlievače sa vždy vypnú.",
       "heater_failsafe": "Čo robí ohrievač, keď nefunguje žiaden senzor vnútornej teploty. Bez senzora nikdy nebeží nepretržite.",
       "misting_trigger": "Čo spúšťa zahmlievanie: akýkoľvek zo spúšťačov, alebo iba teplota, vlhkosť či svetlo."
+    },
+    "garden": {
+      "none": "Bez oblasti",
+      "new": "Nová oblasť…",
+      "name": "Názov oblasti"
+    },
+    "location": {
+      "new_area": "Nová oblasť…",
+      "new_greenhouse": "Nový skleník…",
+      "area_name": "Názov oblasti (Enter pre uloženie)"
+    },
+    "plants": {
+      "title": "Rastliny",
+      "loading": "Načítava sa…",
+      "main": "Hlavná rastlina",
+      "record": "Iba záznam",
+      "make_main": "Nastaviť ako hlavnú rastlinu",
+      "move": "Presunúť…",
+      "remove": "Odstrániť",
+      "confirm_remove": "Odstrániť túto rastlinu zo zóny? Zostane v záznamoch so svojou históriou.",
+      "history": "História",
+      "no_history": "Zatiaľ nič.",
+      "note_placeholder": "Napísať poznámku…",
+      "add_note": "Pridať poznámku",
+      "add": "Pridať rastlinu",
+      "name": "Názov",
+      "type": "Typ",
+      "as_record": "Iba záznam (zóna pokračuje v zalievaní tak, ako je)",
+      "take_over_keep": "Preberá zónu; stará rastlina zostáva ako záznam",
+      "take_over_archive": "Preberá zónu; stará rastlina sa archivuje",
+      "move_to": "Presunúť do",
+      "old_main_question": "Táto zóna už má hlavnú rastlinu. Čo sa s ňou stane?",
+      "old_main_extra": "Zostane tam ako záznam; táto rastlina preberá vedenie",
+      "old_main_archive": "Je archivovaná; táto rastlina preberá vedenie",
+      "old_main_swap": "Vymení si miesto s touto rastlinou",
+      "old_main_keep": "Zostáva hlavnou rastlinou; táto rastlina sa pridáva ako záznam",
+      "move_button": "Presunúť",
+      "no_other_zones": "Neexistuje žiadna iná zóna, do ktorej by bolo možné položku presunúť.",
+      "this_zone_title": "Rastliny v tejto zóne",
+      "copy_title": "Kopírovať nastavenia z inej zóny",
+      "copy_button": "Kopírovať",
+      "confirm_copy": "Nahradiť nastavenia zalievania tejto zóny nastaveniami z {name}? Ventil, snímače, prietok a poznámky k rastlinám zostanú tak, ako sú.",
+      "preset_title": "Uložené predvoľby",
+      "preset_apply": "Použiť predvoľbu",
+      "preset_delete": "Odstrániť predvoľbu",
+      "confirm_preset": "Nahradiť nastavenia zalievania tejto zóny predvoľbou {name}?",
+      "confirm_delete": "Odstrániť predvoľbu {name}?",
+      "preset_name": "Názov predvoľby",
+      "preset_save": "Uložiť nastavenia tejto zóny ako predvoľbu",
+      "no_presets": "Zatiaľ žiadne uložené predvoľby.",
+      "rename": "Premenovať",
+      "rename_prompt": "Nový názov",
+      "use_settings": "Použiť aj nastavenia polievania tejto rastliny v novej zóne (inak zóna zachová doterajšie polievanie)"
+    },
+    "check": {
+      "title": "Skontrolovať moje nastavenie",
+      "loading": "Kontroluje sa…",
+      "all_good": "Všetko vyzerá v poriadku.",
+      "needs_fixing": "Niečo vyžaduje opravu.",
+      "needs_a_look": "Nezopár vecí na kontrolu.",
+      "calibrate": "Kalibrovať",
+      "again": "Skontrolovať znova"
+    },
+    "calibrate": {
+      "title": "Kalibrovať prietok",
+      "intro": "ZoneFlow potrebuje vedieť, koľko vody táto zóna poskytuje za minútu, aby každá zálievka trvala správny čas. Odmerajte to raz:",
+      "step1": "1. Položte vedro (alebo viacero) pod emitory, alebo odčítajte vodomer, a potom spusťte ventil.",
+      "run": "Spustiť na 15 minút",
+      "step2": "2. Po dokončení zadajte, koľko vody vytieklo a aká veľká je zavlažovaná plocha.",
+      "water": "Voda, ktorá vytiekla",
+      "area": "Zolievaná plocha",
+      "minutes": "Minúty, po ktoré bol ventil otvorený",
+      "set": "Nastaviť prietok",
+      "done": "Hotovo. Prietok je nastavený."
+    },
+    "waternow": {
+      "label": "Zalievať teraz po dobu",
+      "start": "Spustiť",
+      "min": "min"
+    },
+    "advanced": "Pokročilé nastavenia",
+    "hide_advanced": "Skryť pokročilé nastavenia",
+    "simple": "Jednoduché zobrazenie",
+    "help": "Pomocník",
+    "why": {
+      "button": "Prečo?",
+      "hide": "Skryť",
+      "loading": "Hľadá sa…"
     }
   },
   "uk": {
@@ -2056,7 +3790,8 @@ const I18N = {
       "notifications": "Сповіщення",
       "more": "Більше",
       "climate": "Клімат-контроль",
-      "misting": "Туманоутворення"
+      "misting": "Туманоутворення",
+      "garden": "Де це розташовано?"
     },
     "overview": {
       "title": "Сад",
@@ -2094,7 +3829,20 @@ const I18N = {
       "add_zone": "Додати зону",
       "show_add": "Показувати кнопку «Додати зону»",
       "next_feed": "Наступне підживлення",
-      "feed_due": "Підживити зараз"
+      "feed_due": "Підживити зараз",
+      "other_area": "Інше",
+      "pause_area": "Поставити всю область на паузу",
+      "snooze_area": "Пропустити сьогоднішній полив у всій області",
+      "create_dashboard": "Створити панель ZoneFlow",
+      "creating_dashboard": "Створення…",
+      "watering_now": "Полив зараз",
+      "next_watering": "Далі",
+      "rain_today": "Дощ сьогодні",
+      "needs_a_look": "Потребує уваги",
+      "water_30d": "Використана вода, 30 днів",
+      "pause_house": "Поставити теплицю на паузу (зупиняє полив культур)",
+      "snooze_house": "Пропустити сьогоднішній полив культур у теплиці",
+      "add_area": "Додати область"
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -2139,6 +3887,94 @@ const I18N = {
       "ventilation_failsafe": "Дія кватирок і вентиляторів при несправності всіх внутрішніх датчиків температури. Туманоутворювачі завжди вимикаються.",
       "heater_failsafe": "Дія обігрівача при несправності всіх внутрішніх датчиків температури. Він ніколи не працює безперервно без датчика.",
       "misting_trigger": "Що саме запускає туманоутворення: будь-який із тригерів або лише температура, вологість чи освітленість."
+    },
+    "garden": {
+      "none": "Без області",
+      "new": "Нова область…",
+      "name": "Назва області"
+    },
+    "location": {
+      "new_area": "Нова область…",
+      "new_greenhouse": "Нова теплиця…",
+      "area_name": "Назва області (Enter для збереження)"
+    },
+    "plants": {
+      "title": "Рослини",
+      "loading": "Завантаження…",
+      "main": "Основна рослина",
+      "record": "Лише запис",
+      "make_main": "Зробити основною рослиною",
+      "move": "Перемістити…",
+      "remove": "Вилучити",
+      "confirm_remove": "Вилучити цю рослину з зони? Вона залишиться в записах зі своєю історією.",
+      "history": "Історія",
+      "no_history": "Поки нічого.",
+      "note_placeholder": "Написати нотатку…",
+      "add_note": "Додати нотатку",
+      "add": "Додати рослину",
+      "name": "Назва",
+      "type": "Тип",
+      "as_record": "Лише запис (зона продовжує полив як є)",
+      "take_over_keep": "Перебирає зону; стара рослина залишається як запис",
+      "take_over_archive": "Перебирає зону; стара рослина архівується",
+      "move_to": "Перемістити до",
+      "old_main_question": "Ця зона вже має основну рослину. Що з нею станеться?",
+      "old_main_extra": "Залишається як запис; ця рослина перебирає керування",
+      "old_main_archive": "Заархівовано; ця рослина перебирає керування",
+      "old_main_swap": "Міняється місцями з цією рослиною",
+      "old_main_keep": "Залишається основною рослиною; ця рослина додається як запис",
+      "move_button": "Перемістити",
+      "no_other_zones": "Немає іншої зони для переміщення.",
+      "this_zone_title": "Рослини в цій зоні",
+      "copy_title": "Копіювати налаштування з іншої зони",
+      "copy_button": "Копіювати",
+      "confirm_copy": "Замінити налаштування поливу цієї зони налаштуваннями з {name}? Клапан, датчики, інтенсивність та нотатки про рослини залишаться без змін.",
+      "preset_title": "Збережені пресети",
+      "preset_apply": "Використовувати пресет",
+      "preset_delete": "Видалити пресет",
+      "confirm_preset": "Замінити налаштування поливу цієї зони пресетом {name}?",
+      "confirm_delete": "Видалити пресет {name}?",
+      "preset_name": "Назва пресету",
+      "preset_save": "Зберегти налаштування цієї зони як пресет",
+      "no_presets": "Поки немає збережених пресетів.",
+      "rename": "Перейменувати",
+      "rename_prompt": "Нова назва",
+      "use_settings": "Також використати налаштування поливу цієї рослини в новій зоні (інакше зона зберігає нинішній полив)"
+    },
+    "check": {
+      "title": "Перевірити мої налаштування",
+      "loading": "Перевірка…",
+      "all_good": "Усе виглядає добре.",
+      "needs_fixing": "Щось потребує виправлення.",
+      "needs_a_look": "Кілька моментів для перевірки.",
+      "calibrate": "Калібрувати",
+      "again": "Перевірити знову"
+    },
+    "calibrate": {
+      "title": "Калібрувати інтенсивність поливу",
+      "intro": "ZoneFlow потрібно знати, скільки води ця зона дає за хвилину, щоб кожен полив тривав належний час. Виміряйте це один раз:",
+      "step1": "1. Поставте відро (або декілька) під крапельниці або зчитайте показання водоміра, потім відкрийте клапан.",
+      "run": "Запустити на 15 хвилин",
+      "step2": "2. Після завершення введіть об'єм витеклої води та розмір политої площі.",
+      "water": "Витекша вода",
+      "area": "Поливальна площа",
+      "minutes": "Хвилини відкриття клапана",
+      "set": "Встановити інтенсивність поливу",
+      "done": "Готово. Інтенсивність поливу встановлено."
+    },
+    "waternow": {
+      "label": "Полити зараз на",
+      "start": "Запуск",
+      "min": "хв"
+    },
+    "advanced": "Розширені налаштування",
+    "hide_advanced": "Сховати розширені налаштування",
+    "simple": "Простий вигляд",
+    "help": "Довідка",
+    "why": {
+      "button": "Чому?",
+      "hide": "Сховати",
+      "loading": "Пошук…"
     }
   },
   "zh-Hans": {
@@ -2174,7 +4010,8 @@ const I18N = {
       "notifications": "通知",
       "more": "更多",
       "climate": "环境控制",
-      "misting": "喷雾"
+      "misting": "喷雾",
+      "garden": "位置在哪里？"
     },
     "overview": {
       "title": "花园",
@@ -2212,7 +4049,20 @@ const I18N = {
       "add_zone": "添加区域",
       "show_add": "显示“添加区域”按钮",
       "next_feed": "下次施肥",
-      "feed_due": "立即施肥"
+      "feed_due": "立即施肥",
+      "other_area": "其他",
+      "pause_area": "暂停整个区域",
+      "snooze_area": "跳过整个区域今天的浇水",
+      "create_dashboard": "创建 ZoneFlow 仪表盘",
+      "creating_dashboard": "正在创建…",
+      "watering_now": "正在浇水",
+      "next_watering": "下一步",
+      "rain_today": "今日降雨",
+      "needs_a_look": "需要检查",
+      "water_30d": "30 天用水量",
+      "pause_house": "暂停温室（停止为其作物浇水）",
+      "snooze_house": "跳过温室作物今天的浇水",
+      "add_area": "添加区域"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -2257,6 +4107,94 @@ const I18N = {
       "ventilation_failsafe": "当没有可用的室内温度传感器时通风口和风扇的动作。喷雾器将始终关闭。",
       "heater_failsafe": "当没有可用的室内温度传感器时加热器的动作。在没有传感器的情况下，它绝不会不间断连续运行。",
       "misting_trigger": "触发喷雾的条件：满足任意触发条件，或仅限温度、湿度或光照。"
+    },
+    "garden": {
+      "none": "无区域",
+      "new": "新区域…",
+      "name": "区域名称"
+    },
+    "location": {
+      "new_area": "新区域…",
+      "new_greenhouse": "新温室…",
+      "area_name": "区域名称（按 Enter 保存）"
+    },
+    "plants": {
+      "title": "植物",
+      "loading": "正在加载…",
+      "main": "主要植物",
+      "record": "仅作记录",
+      "make_main": "设为主要植物",
+      "move": "移动…",
+      "remove": "移除",
+      "confirm_remove": "是否将该植物从区域中移除？它将保留在记录中并保留其历史数据。",
+      "history": "历史",
+      "no_history": "暂无内容。",
+      "note_placeholder": "撰写备注…",
+      "add_note": "添加备注",
+      "add": "添加植物",
+      "name": "名称",
+      "type": "类型",
+      "as_record": "仅作记录（区域保持现有方式继续浇水）",
+      "take_over_keep": "接管该区域；原植物保留作为记录",
+      "take_over_archive": "接管该区域；原植物被归档",
+      "move_to": "移动到",
+      "old_main_question": "该区域已有主要植物。它会怎样？",
+      "old_main_extra": "它保留作为记录；由此植物接管",
+      "old_main_archive": "已归档；由此植物接管",
+      "old_main_swap": "它与此植物交换位置",
+      "old_main_keep": "它保持为主要植物；此植物作为记录加入",
+      "move_button": "移动",
+      "no_other_zones": "没有其他区域可供移动。",
+      "this_zone_title": "此区域中的植物",
+      "copy_title": "从其他区域复制设置",
+      "copy_button": "复制",
+      "confirm_copy": "是否用 {name} 的浇水设置替换此区域的设置？阀门、传感器、流量和植物备注将保持不变。",
+      "preset_title": "已保存的预设",
+      "preset_apply": "使用预设",
+      "preset_delete": "删除预设",
+      "confirm_preset": "是否用预设 {name} 替换此区域的浇水设置？",
+      "confirm_delete": "是否删除预设 {name}？",
+      "preset_name": "预设名称",
+      "preset_save": "将此区域的设置保存为预设",
+      "no_presets": "暂无已保存的预设。",
+      "rename": "重命名",
+      "rename_prompt": "新名称",
+      "use_settings": "同时在新区域使用这株植物的浇水设置（否则该区域保持目前的浇水方式）"
+    },
+    "check": {
+      "title": "检查我的设置",
+      "loading": "正在检查…",
+      "all_good": "一切正常。",
+      "needs_fixing": "需要进行修复。",
+      "needs_a_look": "有事项需要留意。",
+      "calibrate": "校准",
+      "again": "再次检查"
+    },
+    "calibrate": {
+      "title": "校准流量",
+      "intro": "ZoneFlow 需要了解此区域每分钟的出水量，以便每次浇水都能维持正确的时间。请测量一次：",
+      "step1": "1. 在灌水器下方放置一个（或多个）水桶，或读取水表数，然后运行阀门。",
+      "run": "运行 15 分钟",
+      "step2": "2. 完成后，输入出水量以及浇灌区域的面积。",
+      "water": "出水量",
+      "area": "浇灌面积",
+      "minutes": "阀门开启的分钟数",
+      "set": "设置流量",
+      "done": "完成。流量已设置。"
+    },
+    "waternow": {
+      "label": "立即浇水",
+      "start": "开始",
+      "min": "分钟"
+    },
+    "advanced": "高级设置",
+    "hide_advanced": "隐藏高级设置",
+    "simple": "简单视图",
+    "help": "帮助",
+    "why": {
+      "button": "原因？",
+      "hide": "隐藏",
+      "loading": "正在查找…"
     }
   }
 };
@@ -2298,7 +4236,19 @@ const ONLY_WHEN = {
 };
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
+const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
+// "?" beside a settings group: the guide that explains it. The watering-method
+// choice (temperature tiers, ET, soil probe) has a blog post of its own: the
+// second "?" next to How much water links to it.
+const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";
+const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";
+const HELP_LINKS = {
+  amounts: [METHOD_HELP_URL], // the flow rate's own help is in the Calibrate popup
+  water_use: [`${GUIDE}CALIBRATION.md`],
+  rain: [`${GUIDE}RAIN-GAUGES.md`],
+};
 const SETTINGS_GROUPS = [
+  ["garden", ["select.location"]],
   ["climate", [
     "number.heat_temp", "number.vent_temp", "number.fan_temp", "number.climate_hysteresis",
     "number.outside_margin", "number.max_humidity", "number.vent_open_pct", "switch.auto_resume", "number.auto_resume_hours",
@@ -2404,12 +4354,12 @@ class ZoneFlowCard extends HTMLElement {
   }
 
   static getStubConfig(hass) {
-    return { device_id: firstZoneDevice(hass) || "" };
+    return { device_id: firstZoneDevice(hass) || "", simple: true };
   }
 
   setConfig(config) {
     if (!config) throw new Error("Pick a ZoneFlow zone (device_id).");
-    this._config = { show_journal: true, show_settings: true, show_diagnostics: false, ...config };
+    this._config = { show_journal: true, show_settings: true, show_diagnostics: false, simple: false, ...config };
     this._signature = undefined;
     if (this._hass) this._render();
   }
@@ -2461,6 +4411,8 @@ class ZoneFlowCard extends HTMLElement {
       device?.name_by_user || device?.name,
       statusAttrs.greenhouse || null,
       statusAttrs.crops || null,
+      !!this._config.simple,
+      !!this._showAdvanced,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
@@ -2494,6 +4446,7 @@ class ZoneFlowCard extends HTMLElement {
       .header ha-icon { color: var(--state-icon-color, var(--primary-color)); }
       .title { font-size: 1.25em; font-weight: 500; line-height: 1.2; }
       .status { padding: 4px 16px 12px; font-size: 1.05em; color: var(--primary-text-color); }
+      .area-note { padding: 0 16px 8px; font-size: 0.85em; color: var(--secondary-text-color); }
       .status.warn { color: var(--warning-color, #db4437); }
       .status .code { display: block; font-size: 0.75em; color: var(--secondary-text-color); margin-top: 2px; }
       .in-greenhouse { display: flex; align-items: center; gap: 6px; padding: 0 16px 8px; margin-top: -6px;
@@ -2524,6 +4477,41 @@ class ZoneFlowCard extends HTMLElement {
       dialog .dlg-body { overflow-y: auto; padding: 4px 20px 16px; }
       dialog footer { padding: 8px 20px 14px; border-top: 1px solid var(--divider-color); text-align: right; }
       dialog footer a { color: var(--primary-color); text-decoration: none; font-weight: 500; cursor: pointer; }
+      .area-row { display: flex; align-items: center; gap: 8px; padding: 6px 16px; min-height: 40px; }
+      .area-label { flex: 1; min-width: 0; }
+      .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
+        border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
+      .advanced-toggle { display: block; margin: 4px 16px 14px; padding: 6px 12px; font: inherit; color: var(--primary-color);
+        background: none; border: none; cursor: pointer; }
+      .help-link { display: inline-block; margin-left: 8px; width: 18px; height: 18px; line-height: 18px; text-align: center;
+        border: 1px solid var(--secondary-text-color); border-radius: 50%; font-size: 0.8em; text-decoration: none;
+        color: var(--secondary-text-color); text-transform: none; }
+      .why { padding: 0 16px 8px; }
+      .why-toggle { font: inherit; font-size: 0.85em; color: var(--primary-color); background: none; border: none; padding: 0; cursor: pointer; }
+      .why-panel { margin-top: 4px; font-size: 0.9em; color: var(--secondary-text-color); line-height: 1.5; }
+      .why-panel div { padding: 2px 0; }
+      .check-headline { font-weight: 500; margin: 4px 0 8px; }
+      .check-headline.warn, .check-item.warn ha-icon { color: var(--warning-color, #ff9800); }
+      .check-headline.fail, .check-item.fail ha-icon { color: var(--error-color, #db4437); }
+      .check-item.ok ha-icon { color: var(--success-color, #43a047); }
+      .check-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; flex-wrap: wrap; }
+      .check-text { flex: 1; min-width: 180px; }
+      .waternow-minutes { min-width: 56px; text-align: center; }
+      .plant { border: 1px solid var(--divider-color); border-radius: 12px; padding: 10px 12px; margin: 8px 0; }
+      .plant-head { display: flex; align-items: center; gap: 8px; }
+      .plant-name { flex: 1; font-weight: 500; }
+      .plant-badge { font-size: 0.75em; color: var(--secondary-text-color); }
+      .plant-badge.main { color: var(--primary-color); font-weight: 500; }
+      .plant-actions, .plant-form, .plant-noterow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+      .plant-button { font: inherit; color: var(--primary-color); background: none; border: 1px solid var(--divider-color);
+        border-radius: 16px; padding: 4px 12px; cursor: pointer; }
+      .plant-button:hover { background: var(--secondary-background-color); }
+      .plant-panel { margin-top: 8px; }
+      .plant-choice { display: block; padding: 3px 0; }
+      .plant-history { margin-top: 8px; max-height: 240px; overflow-y: auto; }
+      .plant-event { display: flex; gap: 10px; padding: 3px 0; font-size: 0.9em; }
+      .plant-when { color: var(--secondary-text-color); white-space: nowrap; }
+      .plant-form .area-input { flex: 1; min-width: 120px; }
       .group-note { color: var(--secondary-text-color); font-size: 0.85em; margin: -4px 0 8px; line-height: 1.35; }
       .group-title { color: var(--secondary-text-color); font-size: 0.85em; font-weight: 500; text-transform: uppercase;
         letter-spacing: 0.04em; margin: 16px 0 2px; }
@@ -2545,6 +4533,9 @@ class ZoneFlowCard extends HTMLElement {
       missing.textContent = t(hass, this._config.device_id ? "not_found" : "pick_zone");
       card.appendChild(missing);
       this._statusEl = undefined;
+      this._noteEl = undefined;
+      this._plantsEl = undefined;
+      this._methodEl = undefined;
       return;
     }
 
@@ -2564,6 +4555,54 @@ class ZoneFlowCard extends HTMLElement {
     this._statusEl = document.createElement("div");
     this._statusEl.className = "status";
     card.appendChild(this._statusEl);
+    this._noteEl = document.createElement("div");
+    this._noteEl.className = "area-note";
+    this._noteEl.hidden = true;
+    card.appendChild(this._noteEl);
+    // A zone with more than one plant (a mixed bed) lists them under the status.
+    this._plantsEl = document.createElement("div");
+    this._plantsEl.className = "area-note";
+    this._plantsEl.hidden = true;
+    card.appendChild(this._plantsEl);
+    // How the zone is watered (temperature tiers, ET...), as the zone's own select shows it.
+    this._methodEl = document.createElement("div");
+    this._methodEl.className = "area-note";
+    this._methodEl.hidden = true;
+    card.appendChild(this._methodEl);
+    // Why? -- the numbers behind the next watering, on request.
+    if (valve) {
+      const why = document.createElement("div");
+      why.className = "why";
+      const toggle = document.createElement("button");
+      toggle.className = "why-toggle";
+      toggle.textContent = t(hass, "why.button");
+      const panel = document.createElement("div");
+      panel.className = "why-panel";
+      panel.hidden = true;
+      toggle.addEventListener("click", async () => {
+        if (!panel.hidden) {
+          panel.hidden = true;
+          toggle.textContent = t(this._hass, "why.button");
+          return;
+        }
+        panel.hidden = false;
+        toggle.textContent = t(this._hass, "why.hide");
+        panel.textContent = t(this._hass, "why.loading");
+        try {
+          const data = await this._hass.callWS({ type: "zoneflow/why", device_id: this._config.device_id });
+          panel.textContent = "";
+          for (const item of data.items) {
+            const line = document.createElement("div");
+            line.textContent = item.text;
+            panel.appendChild(line);
+          }
+        } catch (err) {
+          panel.textContent = String(err?.message || err);
+        }
+      });
+      why.append(toggle, panel);
+      card.appendChild(why);
+    }
     // A crop: which greenhouse it is in.
     if (statusAttrs.greenhouse?.name) {
       const where = document.createElement("div");
@@ -2608,6 +4647,8 @@ class ZoneFlowCard extends HTMLElement {
       ]),
       ...rows(CONTROLS),
       ...buttons([["button.resume_automatic", t(hass, "resume_automatic"), "mdi:play-circle-outline"]]),
+      // Water by hand for a number of minutes.
+      ...(valve ? [{ custom: "water_now" }] : []),
       // Manual rain (outdoor zones without a rain gauge): the amount, then
       // the button that records it.
       ...rows(["number.manual_rain_mm"]),
@@ -2656,18 +4697,33 @@ class ZoneFlowCard extends HTMLElement {
     this._popups = {};
     if (this._config.show_journal) this._popups.journal = { icon: "mdi:notebook-outline", parts: [[null, journal]] };
     if (this._config.show_settings) this._popups.settings = { icon: "mdi:cog-outline", parts: groups };
+    // Check my setup and the guided calibration (a zone that waters).
+    if (valve) {
+      this._popups.check = { icon: "mdi:clipboard-check-outline", custom: "check", parts: [], label: t(hass, "check.title") };
+      this._popups.calibrate = {
+        icon: "mdi:ruler", custom: "calibrate", parts: [], label: t(hass, "calibrate.title"),
+        runEntity: visible["button.service_run_15_min"]?.entity_id,
+      };
+    }
+    // The plants in this zone (a zone that waters has at least its main plant).
+    if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
+      this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
+    }
     if (this._config.show_diagnostics) {
       this._popups.diagnostics = { icon: "mdi:chart-box-outline", parts: [[null, diagnostics]] };
     }
     for (const [key, popup] of Object.entries(this._popups)) {
       popup.parts = popup.parts.filter(([, confs]) => confs.length);
-      if (!popup.parts.length) delete this._popups[key];
+      if (!popup.parts.length && !popup.custom) delete this._popups[key];
     }
-    section("now", now);
+    // Simple view: status and the few controls; the rest behind "Advanced settings".
+    const simple = !!this._config.simple;
+    const showAll = !simple || !!this._showAdvanced;
+    if (showAll) section("now", now);
     // A greenhouse: its crops, as in the overview card (status, next and
     // last watering, Water now; tap one for its full card).
     const crops = (statusAttrs.crops || []).map((c) => c.device_id).filter(Boolean);
-    if (crops.length && this._config.show_crops !== false) {
+    if (crops.length && this._config.show_crops !== false && showAll) {
       const el = document.createElement("div");
       el.className = "section crops";
       const heading = document.createElement("div");
@@ -2682,20 +4738,42 @@ class ZoneFlowCard extends HTMLElement {
     } else {
       this._cropList = undefined;
     }
-    section("controls", controls);
-    section("service", service);
-    if (Object.keys(this._popups).length) {
+    if (showAll) {
+      section("controls", controls);
+      section("service", service);
+    } else {
+      section("controls", [
+        ...buttons([
+          ["button.run_routine", t(hass, "water_now"), "mdi:watering-can"],
+          ["button.snooze_today", t(hass, "snooze"), "mdi:sleep"],
+        ]),
+        ...rows(["switch.pause"]),
+        ...buttons([["button.resume_automatic", t(hass, "resume_automatic"), "mdi:play-circle-outline"]]),
+      ]);
+    }
+    if (showAll && Object.keys(this._popups).length) {
       const bar = document.createElement("div");
       bar.className = "more";
       for (const [key, popup] of Object.entries(this._popups)) {
         const button = document.createElement("button");
         const icon = document.createElement("ha-icon");
         icon.setAttribute("icon", popup.icon);
-        button.append(icon, document.createTextNode(t(hass, key)));
+        button.append(icon, document.createTextNode(popup.label || t(hass, key)));
         button.addEventListener("click", () => this._openPopup(key));
         bar.appendChild(button);
       }
       card.appendChild(bar);
+    }
+    if (simple) {
+      const toggle = document.createElement("button");
+      toggle.className = "advanced-toggle";
+      toggle.textContent = t(hass, this._showAdvanced ? "hide_advanced" : "advanced");
+      toggle.addEventListener("click", () => {
+        this._showAdvanced = !this._showAdvanced;
+        this._signature = undefined;
+        this._render();
+      });
+      card.appendChild(toggle);
     }
     // Rebuilt while a popup was open (e.g. a setting appeared): open again.
     if (this._popupKey && this._popups[this._popupKey]) this._openPopup(this._popupKey);
@@ -2708,13 +4786,13 @@ class ZoneFlowCard extends HTMLElement {
     this.shadowRoot.querySelector("dialog")?.remove();
     this._popupKey = key;
     const dialog = document.createElement("dialog");
-    dialog.setAttribute("aria-label", t(hass, key));
+    dialog.setAttribute("aria-label", popup.label || t(hass, key));
     const box = document.createElement("div");
     box.className = "dlg";
     const header = document.createElement("header");
     const title = document.createElement("div");
     title.className = "dlg-title";
-    title.textContent = t(hass, key);
+    title.textContent = popup.label || t(hass, key);
     const device = hass.devices?.[this._config.device_id];
     const sub = document.createElement("span");
     sub.className = "dlg-sub";
@@ -2729,11 +4807,24 @@ class ZoneFlowCard extends HTMLElement {
     header.append(title, close);
     const body = document.createElement("div");
     body.className = "dlg-body";
+    if (popup.custom === "plants") this._plantsBody(body);
+    if (popup.custom === "check") this._checkBody(body);
+    if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       if (groupKey) {
         const heading = document.createElement("div");
         heading.className = "group-title";
         heading.textContent = t(hass, `groups.${groupKey}`);
+        for (const url of (HELP_LINKS[groupKey] || []).filter(Boolean)) {
+          const help = document.createElement("a");
+          help.className = "help-link";
+          help.href = url;
+          help.target = "_blank";
+          help.rel = "noopener";
+          help.title = t(hass, "help");
+          help.textContent = "?";
+          heading.appendChild(help);
+        }
         body.appendChild(heading);
         // Some groups say in plain words what their settings are for.
         const noteText = t(hass, `groups.${groupKey}_note`);
@@ -2788,6 +4879,329 @@ class ZoneFlowCard extends HTMLElement {
     dialog.showModal();
   }
 
+  async _checkBody(body) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "check.loading")));
+    let data;
+    try {
+      data = await hass.callWS({ type: "zoneflow/check", device_id: this._config.device_id });
+    } catch (err) {
+      body.textContent = String(err?.message || err);
+      return;
+    }
+    body.textContent = "";
+    const headline = { ok: "check.all_good", info: "check.all_good", warn: "check.needs_a_look", fail: "check.needs_fixing" }[data.level];
+    body.appendChild(make("div", `check-headline ${data.level}`, t(hass, headline)));
+    const ICONS = { ok: "mdi:check-circle-outline", info: "mdi:information-outline", warn: "mdi:alert-outline", fail: "mdi:close-circle-outline" };
+    for (const item of data.items) {
+      const row = make("div", `check-item ${item.level}`);
+      const icon = document.createElement("ha-icon");
+      icon.setAttribute("icon", ICONS[item.level] || ICONS.info);
+      row.append(icon, make("span", "check-text", item.text));
+      if (item.action === "calibrate" && this._popups?.calibrate) {
+        const button = make("button", "plant-button", t(hass, "check.calibrate"));
+        button.addEventListener("click", () => this._openPopup("calibrate"));
+        row.appendChild(button);
+      }
+      body.appendChild(row);
+    }
+    const again = make("button", "plant-button", t(hass, "check.again"));
+    again.addEventListener("click", () => this._checkBody(body));
+    body.appendChild(again);
+  }
+
+  _calibrateBody(body, popup) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const attrs = hass.states?.[Object.values(hass.entities || {}).find(
+      (e) => e.device_id === this._config.device_id && e.translation_key === "status")?.entity_id]?.attributes || {};
+    body.textContent = "";
+    const intro = make("div", "group-note", t(hass, "calibrate.intro"));
+    const helpLink = make("a", "help-link", "?");
+    helpLink.href = `${GUIDE}CALIBRATION.md`;
+    helpLink.target = "_blank";
+    helpLink.rel = "noopener";
+    helpLink.title = t(hass, "help");
+    intro.appendChild(helpLink);
+    body.appendChild(intro);
+    body.appendChild(make("div", "", t(hass, "calibrate.step1")));
+    const run = make("button", "plant-button", t(hass, "calibrate.run"));
+    run.disabled = !popup.runEntity;
+    run.addEventListener("click", () => hass.callService("button", "press", { entity_id: popup.runEntity }));
+    body.appendChild(run);
+    body.appendChild(make("div", "", t(hass, "calibrate.step2")));
+    const field = (labelKey, unit, value) => {
+      const row = make("label", "plant-choice");
+      const input = make("input", "area-input");
+      input.type = "number";
+      input.value = value;
+      input.min = "0";
+      row.append(document.createTextNode(`${t(hass, labelKey)} (${unit}) `), input);
+      body.appendChild(row);
+      return input;
+    };
+    const water = field("calibrate.water", attrs.volume_unit || "L", "");
+    const area = field("calibrate.area", attrs.area_unit || "m²", "");
+    const minutes = field("calibrate.minutes", t(hass, "waternow.min"), "15");
+    const done = make("div", "group-note");
+    const set = make("button", "plant-button", t(hass, "calibrate.set"));
+    set.addEventListener("click", async () => {
+      done.textContent = "";
+      try {
+        await hass.callService("zoneflow", "calibrate_flow", {
+          volume: Number(water.value), area: Number(area.value), minutes: Number(minutes.value),
+          device_id: this._config.device_id,
+        });
+        done.textContent = t(hass, "calibrate.done");
+      } catch (err) {
+        done.textContent = err?.message || String(err);
+      }
+    });
+    body.append(set, done);
+  }
+
+  async _plantsBody(body) {
+    const hass = this._hass;
+    const tp = (key) => t(hass, `plants.${key}`);
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", tp("loading")));
+    let data;
+    try {
+      data = await hass.callWS({ type: "zoneflow/plants", device_id: this._config.device_id });
+    } catch (err) {
+      body.textContent = String(err?.message || err);
+      return;
+    }
+    body.textContent = "";
+    const rerender = () => this._plantsBody(body);
+    const act = async (service, payload) => {
+      try {
+        await hass.callService("zoneflow", service, payload);
+      } catch (err) {
+        window.alert?.(err?.message || String(err));
+      }
+      rerender();
+    };
+    const hasMain = data.plants.some((p) => p.main);
+    const others = allZones(hass).filter((z) => z.device_id !== this._config.device_id);
+    // Copying settings needs a zone that waters: a greenhouse with no valve has none to give.
+    const watering = others.filter((z) => hass.states?.[z.status]?.attributes?.valve);
+    const zoneHasMain = (zone) => (hass.states?.[zone.status]?.attributes?.plants || []).some((p) => p.main);
+
+    for (const plant of data.plants) {
+      const box = make("div", "plant");
+      const head = make("div", "plant-head");
+      head.append(make("span", "plant-name", plant.name), make("span", `plant-badge${plant.main ? " main" : ""}`, plant.main ? tp("main") : tp("record")));
+      box.appendChild(head);
+      const actions = make("div", "plant-actions");
+      const button = (label, fn) => {
+        const el = make("button", "plant-button", label);
+        el.addEventListener("click", fn);
+        actions.appendChild(el);
+        return el;
+      };
+      if (!plant.main) button(tp("make_main"), () => act("set_main_plant", { plant_id: plant.id }));
+      const movePanel = make("div", "plant-panel");
+      movePanel.hidden = true;
+      button(tp("move"), () => { movePanel.hidden = !movePanel.hidden; });
+      button(tp("rename"), () => {
+        const next = window.prompt?.(tp("rename_prompt"), plant.name);
+        if (next && next.trim() && next.trim() !== plant.name) act("rename_plant", { plant_id: plant.id, name: next.trim() });
+      });
+      button(tp("remove"), () => {
+        if (window.confirm?.(tp("confirm_remove")) ?? true) act("remove_plant", { plant_id: plant.id });
+      });
+      const historyPanel = make("div", "plant-panel");
+      historyPanel.hidden = true;
+      button(tp("history"), () => { historyPanel.hidden = !historyPanel.hidden; });
+      box.appendChild(actions);
+
+      // Move: where to, and what becomes of the main plant already there.
+      if (!others.length) {
+        movePanel.appendChild(make("div", "group-note", tp("no_other_zones")));
+      } else {
+        const target = make("select", "area-select");
+        for (const zone of others) {
+          const option = make("option", "", zone.name);
+          option.value = zone.device_id;
+          target.appendChild(option);
+        }
+        const choices = make("div", "plant-choices");
+        const radios = [];
+        const drawChoices = () => {
+          choices.textContent = "";
+          radios.length = 0;
+          const zone = others.find((z) => z.device_id === target.value);
+          if (!zone || !zoneHasMain(zone)) return;
+          choices.appendChild(make("div", "group-note", tp("old_main_question")));
+          for (const key of plant.main ? ["extra", "archive", "swap", "keep"] : ["extra", "archive", "keep"]) {
+            const row = make("label", "plant-choice");
+            const radio = make("input");
+            radio.type = "radio";
+            radio.name = `old-main-${plant.id}`;
+            radio.value = key;
+            radio.checked = radios.length === 0;
+            radios.push(radio);
+            row.append(radio, document.createTextNode(` ${tp(`old_main_${key}`)}`));
+            choices.appendChild(row);
+          }
+        };
+        target.addEventListener("change", drawChoices);
+        const settingsRow = make("label", "plant-choice");
+        const useSettings = make("input");
+        useSettings.type = "checkbox";
+        settingsRow.append(useSettings, document.createTextNode(` ${tp("use_settings")}`));
+        const go = make("button", "plant-button", tp("move_button"));
+        go.addEventListener("click", () => {
+          const payload = { plant_id: plant.id, device_id: target.value, use_plant_settings: useSettings.checked };
+          const chosen = radios.find((r) => r.checked);
+          if (chosen) payload.old_main = chosen.value;
+          act("move_plant", payload);
+        });
+        movePanel.append(make("div", "group-note", tp("move_to")), target, choices, settingsRow, go);
+        drawChoices();
+      }
+      box.appendChild(movePanel);
+
+      // History, newest first, and a note.
+      const list = make("div", "plant-history");
+      if (!plant.history.length) list.appendChild(make("div", "group-note", tp("no_history")));
+      for (const event of plant.history) {
+        const row = make("div", "plant-event");
+        const when = new Date(event.ts);
+        const stamp = Number.isNaN(when.getTime()) ? "" : when.toLocaleString(hass.locale?.language || undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+        row.append(make("span", "plant-when", stamp), make("span", "plant-what", event.text));
+        list.appendChild(row);
+      }
+      const note = make("input", "area-input");
+      note.type = "text";
+      note.maxLength = 255;
+      note.placeholder = tp("note_placeholder");
+      const addNote = make("button", "plant-button", tp("add_note"));
+      const send = () => {
+        const text = note.value.trim();
+        if (text) act("add_plant_note", { plant_id: plant.id, text });
+      };
+      addNote.addEventListener("click", send);
+      note.addEventListener("keydown", (ev) => { if (ev.key === "Enter") send(); });
+      const noteRow = make("div", "plant-noterow");
+      noteRow.append(note, addNote);
+      historyPanel.append(noteRow, list);
+      box.appendChild(historyPanel);
+      body.appendChild(box);
+    }
+
+    // Add a plant.
+    body.appendChild(make("div", "group-title", tp("add")));
+    const form = make("div", "plant-form");
+    const name = make("input", "area-input");
+    name.type = "text";
+    name.maxLength = 40;
+    name.placeholder = tp("name");
+    const type = make("select", "area-select");
+    for (const key of PLANT_TYPES) {
+      const option = make("option", "", key.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()));
+      option.value = key;
+      type.appendChild(option);
+    }
+    const mode = make("select", "area-select");
+    for (const [value, key] of hasMain
+      ? [["", "as_record"], ["extra", "take_over_keep"], ["archive", "take_over_archive"]]
+      : [["", "as_record"]]) {
+      const option = make("option", "", tp(key));
+      option.value = value;
+      mode.appendChild(option);
+    }
+    mode.hidden = !hasMain;
+    const add = make("button", "plant-button", tp("add"));
+    add.addEventListener("click", () => {
+      const value = name.value.trim();
+      if (!value) return;
+      const payload = { name: value, plant_type: type.value, device_id: this._config.device_id };
+      if (mode.value) payload.old_main = mode.value;
+      act("add_plant", payload);
+    });
+    form.append(name, type, mode, add);
+    body.appendChild(form);
+
+    // Copy this zone's settings from another zone, or use / save a preset.
+    body.appendChild(make("div", "group-title", tp("copy_title")));
+    const copyRow = make("div", "plant-form");
+    const sources = make("select", "area-select");
+    for (const zone of watering) {
+      const option = make("option", "", zone.name);
+      option.value = zone.device_id;
+      sources.appendChild(option);
+    }
+    const copyButton = make("button", "plant-button", tp("copy_button"));
+    copyButton.addEventListener("click", () => {
+      const zone = watering.find((z) => z.device_id === sources.value);
+      if (zone && (window.confirm?.(tp("confirm_copy").replace("{name}", zone.name)) ?? true)) {
+        act("copy_settings", { source_device_id: zone.device_id, device_id: this._config.device_id });
+      }
+    });
+    if (watering.length) {
+      copyRow.append(sources, copyButton);
+      body.appendChild(copyRow);
+    }
+    body.appendChild(make("div", "group-title", tp("preset_title")));
+    const presetRow = make("div", "plant-form");
+    if (data.presets?.length) {
+      const chosen = make("select", "area-select");
+      for (const preset of data.presets) {
+        const option = make("option", "", preset.name);
+        option.value = preset.name;
+        chosen.appendChild(option);
+      }
+      const use = make("button", "plant-button", tp("preset_apply"));
+      use.addEventListener("click", () => {
+        if (window.confirm?.(tp("confirm_preset").replace("{name}", chosen.value)) ?? true) {
+          act("copy_settings", { preset: chosen.value, device_id: this._config.device_id });
+        }
+      });
+      const drop = make("button", "plant-button", tp("preset_delete"));
+      drop.addEventListener("click", () => {
+        if (window.confirm?.(tp("confirm_delete").replace("{name}", chosen.value)) ?? true) {
+          act("delete_preset", { name: chosen.value });
+        }
+      });
+      presetRow.append(chosen, use, drop);
+    } else {
+      presetRow.appendChild(make("div", "group-note", tp("no_presets")));
+    }
+    body.appendChild(presetRow);
+    const saveRow = make("div", "plant-form");
+    const presetName = make("input", "area-input");
+    presetName.type = "text";
+    presetName.maxLength = 40;
+    presetName.placeholder = tp("preset_name");
+    const save = make("button", "plant-button", tp("preset_save"));
+    save.addEventListener("click", () => {
+      const name = presetName.value.trim();
+      if (name) act("save_preset", { name, device_id: this._config.device_id });
+    });
+    saveRow.append(presetName, save);
+    body.appendChild(saveRow);
+  }
+
   _shortName(conf) {
     // "Chilis Soil Moisture" -> "Soil Moisture": the card already says which zone.
     if (conf.name || !conf.entity) return conf;
@@ -2798,6 +5212,112 @@ class ZoneFlowCard extends HTMLElement {
     return conf;
   }
 
+  _waterNowRow() {
+    const wrap = document.createElement("div");
+    wrap.className = "area-row waternow";
+    const label = document.createElement("span");
+    label.className = "area-label";
+    let minutes = this._waterNowMinutes || 10;
+    const shown = document.createElement("span");
+    shown.className = "waternow-minutes";
+    const draw = () => { shown.textContent = `${minutes} ${t(this._hass, "waternow.min")}`; };
+    const step = (delta) => {
+      minutes = Math.min(Math.max(minutes + delta, 1), 120);
+      this._waterNowMinutes = minutes;
+      draw();
+    };
+    const mk = (text, fn) => {
+      const el = document.createElement("button");
+      el.className = "plant-button";
+      el.textContent = text;
+      el.addEventListener("click", fn);
+      return el;
+    };
+    const start = mk(t(this._hass, "waternow.start"), async () => {
+      try {
+        await this._hass.callService("zoneflow", "water_now", { minutes, device_id: this._config.device_id });
+      } catch (err) {
+        window.alert?.(err?.message || String(err));
+      }
+    });
+    label.textContent = t(this._hass, "waternow.label");
+    draw();
+    wrap.append(label, mk("−", () => step(-5)), shown, mk("+", () => step(5)), start);
+    Object.defineProperty(wrap, "hass", { set: () => {} });
+    return wrap;
+  }
+
+  _locationRow(conf) {
+    // "Where is this?": the select entity's places, plus "New area..." (a name
+    // typed here makes the area and puts this zone in it) and "New greenhouse..."
+    // (opens the add-zone dialog; a greenhouse needs its devices).
+    const wrap = document.createElement("div");
+    wrap.className = "area-row";
+    const label = document.createElement("span");
+    label.className = "area-label";
+    const select = document.createElement("select");
+    select.className = "area-select";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "area-input";
+    input.maxLength = 40;
+    input.hidden = true;
+    wrap.append(label, select, input);
+    const NEW_AREA = "__new_area__";
+    const NEW_GREENHOUSE = "__new_greenhouse__";
+    let shown = null;
+    let current = "";
+    select.addEventListener("change", () => {
+      if (select.value === NEW_AREA) {
+        input.hidden = false;
+        input.placeholder = t(this._hass, "location.area_name");
+        input.focus();
+        return;
+      }
+      input.hidden = true;
+      if (select.value === NEW_GREENHOUSE) {
+        select.value = current;
+        history.pushState(null, "", "/config/integrations/dashboard/add?domain=zoneflow");
+        window.dispatchEvent(new CustomEvent("location-changed"));
+        return;
+      }
+      this._hass.callService("select", "select_option", { entity_id: conf.entity, option: select.value });
+    });
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Enter") return;
+      const name = input.value.trim();
+      if (!name) return;
+      input.hidden = true;
+      input.value = "";
+      this._hass.callService("zoneflow", "create_area", { name, device_id: this._config.device_id });
+    });
+    Object.defineProperty(wrap, "hass", {
+      set: (hass) => {
+        const state = hass.states?.[conf.entity];
+        const options = state?.attributes?.options || [];
+        current = state && !["unknown", "unavailable"].includes(state.state) ? state.state : "";
+        const signature = JSON.stringify([options, current, hass.locale?.language, conf.name]);
+        if (signature === shown) return;
+        shown = signature;
+        label.hidden = true; // the group heading already says "Where is this?"
+        select.title = conf.name || t(hass, "groups.garden");
+        select.textContent = "";
+        const option = (value, text) => {
+          const el = document.createElement("option");
+          el.value = value;
+          el.textContent = text;
+          select.appendChild(el);
+        };
+        for (const name of options) option(name, name);
+        option(NEW_AREA, t(hass, "location.new_area"));
+        if (hass.user?.is_admin) option(NEW_GREENHOUSE, t(hass, "location.new_greenhouse"));
+        select.value = current;
+        input.hidden = true;
+      },
+    });
+    return wrap;
+  }
+
   _addRows(list, confs) {
     const build = this._buildId;
     this._helpers().then(
@@ -2806,7 +5326,9 @@ class ZoneFlowCard extends HTMLElement {
         for (const raw of confs) {
           const conf = this._shortName(raw);
           const add = (before) => {
-            const row = helpers.createRowElement(conf);
+            const isLocation = this._hass.entities?.[conf.entity]?.translation_key === "location";
+            const row = conf.custom === "water_now" ? this._waterNowRow()
+              : isLocation ? this._locationRow(conf) : helpers.createRowElement(conf);
             row.hass = this._hass;
             if (conf._tip) row.title = conf._tip;
             // A row that has to be recreated replaces just itself.
@@ -2838,6 +5360,21 @@ class ZoneFlowCard extends HTMLElement {
     const status = hass.states[(visible["sensor.status"] || visible["sensor.greenhouse_status"])?.entity_id];
     const code = status?.attributes?.code;
     this._statusEl.textContent = status ? status.state : "";
+    const note = status?.attributes?.area_note || "";
+    this._noteEl.textContent = note;
+    this._noteEl.hidden = !note;
+    const plants = Array.isArray(status?.attributes?.plants) ? status.attributes.plants : [];
+    const mixed = plants.length > 1;
+    this._plantsEl.textContent = mixed ? `${t(hass, "plants.title")}: ${plants.map((p) => p.name).join(", ")}` : "";
+    this._plantsEl.hidden = !mixed;
+    const methodId = status?.attributes?.valve ? visible["select.demand_model"]?.entity_id : undefined;
+    const method = methodId ? hass.states[methodId] : undefined;
+    if (method) {
+      const label = hass.entities?.[methodId]?.name || method.attributes.friendly_name || "";
+      const shown = hass.formatEntityState ? hass.formatEntityState(method) : method.state;
+      this._methodEl.textContent = `${label}: ${shown}`;
+    }
+    this._methodEl.hidden = !method;
     this._statusEl.classList.toggle("warn", ["lock_held", "refused_daily_cap", "refused_runtime_cap",
       "refused_deep_soak_cap", "interrupted", "failsafe", "mist_halted"].includes(code));
   }
@@ -2861,6 +5398,7 @@ class ZoneFlowCardEditor extends HTMLElement {
       this._form.computeLabel = (schema) => t(this._hass, schema.name === "device_id" ? "zone" : schema.name);
       this._form.schema = [
         { name: "device_id", required: true, selector: { device: { filter: { integration: "zoneflow" } } } },
+        { name: "simple", selector: { boolean: {} } },
         { name: "show_journal", selector: { boolean: {} } },
         { name: "show_settings", selector: { boolean: {} } },
         { name: "show_diagnostics", selector: { boolean: {} } },
@@ -2872,7 +5410,7 @@ class ZoneFlowCardEditor extends HTMLElement {
       this.appendChild(this._form);
     }
     this._form.hass = this._hass;
-    this._form.data = { show_journal: true, show_settings: true, show_diagnostics: false, ...this._config };
+    this._form.data = { show_journal: true, show_settings: true, show_diagnostics: false, simple: false, ...this._config };
   }
 }
 
@@ -2962,6 +5500,16 @@ function allZones(hass) {
   return zones;
 }
 
+function gardenAreas(hass) {
+  // The garden areas in use by any zone, each name once (letter case aside), by name.
+  const names = new Map();
+  for (const zone of allZones(hass)) {
+    const area = hass.states?.[zone.status]?.attributes?.garden_area;
+    if (area && !names.has(area.toLowerCase())) names.set(area.toLowerCase(), area);
+  }
+  return [...names.values()].sort((a, b) => a.localeCompare(b, hass.locale?.language || undefined));
+}
+
 function formatNext(hass, iso) {
   if (!iso) return "—";
   const when = new Date(iso);
@@ -3039,8 +5587,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const estimate = keyed["sensor.last_water_delivered"];
       // The meter's litres once it has counted something; else the estimate.
       const metered = Boolean(measured && !measured.hidden && Number(hass.states[measured.entity_id]?.state) > 0);
-      const last = metered ? measured.entity_id : estimate?.entity_id;
-      const lastVolume = keyed["sensor.last_water_volume"];
+      const last = estimate?.entity_id; // mm, then the litres: the meter's when it counted, else the estimate
+      const lastVolume = metered ? measured : keyed["sensor.last_water_volume"];
       const button = keyed["button.run_routine"]?.entity_id;
       const plant = status?.attributes?.plant;
       // A zone with no valve to water has no irrigation status: it shows
@@ -3062,6 +5610,13 @@ class ZoneFlowOverviewCard extends HTMLElement {
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
         parent: status?.attributes?.greenhouse?.device_id || null,
+        // A greenhouse or indoor zone (not a crop of one) is a group of its own.
+        house: Boolean(status?.attributes?.zone_type && status.attributes.zone_type !== "outdoor" && !status?.attributes?.greenhouse?.device_id),
+        area: status?.attributes?.garden_area || null,
+        areaPause: status?.attributes?.area_pause || null,
+        areaSnooze: status?.attributes?.area_snooze || null,
+        ownPause: status?.attributes?.pause_entity || null,
+        ownSnooze: status?.attributes?.snooze_entity || null,
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -3081,6 +5636,23 @@ class ZoneFlowOverviewCard extends HTMLElement {
       ordered.push(zone);
       ordered.push(...shown.filter((z) => z.parent === zone.device_id).map((z) => ({ ...z, crop: true })));
     }
+    // Garden areas: the zones under their area's heading (areas by name, then
+    // each greenhouse with its crops as a group of its own, the zones with no
+    // area last). Without any area or greenhouse nothing changes.
+    const houseIds = new Set(ordered.filter((z) => z.house).map((z) => z.device_id));
+    if (ordered.some((z) => z.area) || houseIds.size) {
+      const groups = new Map();
+      for (const z of ordered) {
+        const houseOf = z.house ? z.device_id : houseIds.has(z.parent) ? z.parent : null;
+        const house = houseOf ? ordered.find((x) => x.device_id === houseOf) : null;
+        const key = house ? `house:${house.device_id}` : z.area ? `area:${z.area}` : "";
+        if (!groups.has(key)) groups.set(key, { kind: house ? "house" : z.area ? "area" : "other", name: house ? house.name : z.area || "", zones: [] });
+        groups.get(key).zones.push(z);
+      }
+      const rank = { area: 0, house: 1, other: 2 };
+      const list = [...groups.values()].sort((a, b) => rank[a.kind] - rank[b.kind] || a.name.localeCompare(b.name, hass.locale?.language));
+      return list.flatMap((g) => g.zones.map((z, i) => ({ ...z, areaStart: i === 0, areaName: g.name, areaKind: g.kind })));
+    }
     return ordered;
   }
 
@@ -3088,7 +5660,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null, z.areaKind || null, z.ownPause || null, z.ownSnooze || null]),
       this._config.device_ids || null,
       this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
@@ -3096,12 +5668,41 @@ class ZoneFlowOverviewCard extends HTMLElement {
       this._config.title,
       this._config.show_add,
       !!this._hass.user?.is_admin,
+      this._dashboardState || null,
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
       this._build(zones);
     }
     this._update(zones);
+    this._checkDashboard();
+  }
+
+  async _checkDashboard() {
+    // Does a "zoneflow" dashboard exist? Asked once, for admins.
+    if (this._dashboardState || this._dashboardAsked || !this._hass?.user?.is_admin || this._config.show_add === false) return;
+    this._dashboardAsked = true;
+    try {
+      const list = await this._hass.callWS({ type: "lovelace/dashboards/list" });
+      this._dashboardState = list.some((d) => String(d.url_path).includes("zoneflow")) ? "exists" : "missing";
+    } catch (err) {
+      this._dashboardState = "exists"; // cannot tell: offer nothing
+    }
+    this._render();
+  }
+
+  async _createDashboard() {
+    // One click: a sidebar dashboard that uses the ZoneFlow strategy.
+    const hass = this._hass;
+    await hass.callWS({
+      type: "lovelace/dashboards/create",
+      url_path: "zoneflow-garden", mode: "storage", title: "ZoneFlow", icon: "mdi:sprinkler-variant", // a dashboard's path needs a hyphen
+      show_in_sidebar: true, require_admin: false,
+    });
+    await hass.callWS({ type: "lovelace/config/save", url_path: "zoneflow-garden", config: { strategy: { type: "custom:zoneflow" } } });
+    this._dashboardState = "exists";
+    history.pushState(null, "", "/zoneflow-garden");
+    window.dispatchEvent(new CustomEvent("location-changed"));
   }
 
   _build(zones) {
@@ -3109,6 +5710,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this.shadowRoot) this.attachShadow({ mode: "open" });
     const root = this.shadowRoot;
     root.innerHTML = "";
+    this._areaButtons = [];
     const style = document.createElement("style");
     style.textContent = `
       ha-card { display: block; container-type: inline-size; }
@@ -3144,6 +5746,17 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .details { padding: 0 8px 8px; }
       .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
       .zone.crop { margin-left: 36px; }
+      .garden-summary { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 0 16px 6px; color: var(--secondary-text-color);
+        font-size: 0.9em; }
+      .garden-summary:empty { display: none; }
+      .chip { display: inline-flex; align-items: center; gap: 4px; }
+      .chip ha-icon { --mdc-icon-size: 16px; }
+      .area-title { margin: 14px 12px 6px; font-size: 0.85em; font-weight: 500; letter-spacing: 0.04em;
+        text-transform: uppercase; color: var(--secondary-text-color); display: flex; align-items: center; gap: 4px; }
+      .area-title span { flex: 1; }
+      .area-title > ha-icon { --mdc-icon-size: 18px; color: var(--state-icon-color, var(--primary-color)); }
+      .area-title ha-icon-button { --mdc-icon-button-size: 32px; --mdc-icon-size: 18px; color: var(--secondary-text-color); }
+      .area-title ha-icon-button.on { color: var(--warning-color, #ff9800); }
       ${this._config.embedded ? `
       ha-card { box-shadow: none; border: none; background: none; }
       .title { display: none; }` : ""}
@@ -3167,6 +5780,11 @@ class ZoneFlowOverviewCard extends HTMLElement {
     title.className = "title";
     title.textContent = this._config.title || tr("title");
     card.appendChild(title);
+    // My Garden: today at a glance (filled in by _update).
+    this._summaryEl = document.createElement("div");
+    this._summaryEl.className = "garden-summary";
+    this._summarySignature = undefined; // a new, empty strip: fill it again
+    if (!this._config.embedded && zones.length) card.appendChild(this._summaryEl);
     this._rows = {};
     const addButton = () => {
       // Adding a zone is ZoneFlow's normal setup (admins only, like any
@@ -3177,11 +5795,40 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const icon = document.createElement("ha-icon");
       icon.setAttribute("icon", "mdi:plus");
       add.append(icon, document.createTextNode(tr("add_zone")));
-      add.addEventListener("click", () => {
+      const openSetup = () => {
         history.pushState(null, "", "/config/integrations/dashboard/add?domain=zoneflow");
         window.dispatchEvent(new CustomEvent("location-changed"));
-      });
+      };
+      add.addEventListener("click", openSetup);
       card.appendChild(add);
+      if (zones.length && !this._config.embedded) {
+        // Areas are made in the same setup (its menu offers "Add an area" once a zone exists).
+        const area = document.createElement("button");
+        area.className = "add";
+        const areaIcon = document.createElement("ha-icon");
+        areaIcon.setAttribute("icon", "mdi:map-marker-plus-outline");
+        area.append(areaIcon, document.createTextNode(tr("add_area")));
+        area.addEventListener("click", openSetup);
+        card.appendChild(area);
+      }
+      if (this._dashboardState === "missing" && !this._config.embedded) {
+        const make = document.createElement("button");
+        make.className = "add";
+        const makeIcon = document.createElement("ha-icon");
+        makeIcon.setAttribute("icon", "mdi:view-dashboard-outline");
+        make.append(makeIcon, document.createTextNode(tr("create_dashboard")));
+        make.addEventListener("click", async () => {
+          make.disabled = true;
+          make.lastChild.textContent = tr("creating_dashboard");
+          try {
+            await this._createDashboard();
+          } catch (err) {
+            make.disabled = false;
+            make.lastChild.textContent = String(err?.message || err);
+          }
+        });
+        card.appendChild(make);
+      }
     };
     if (!zones.length) {
       const empty = document.createElement("div");
@@ -3202,6 +5849,38 @@ class ZoneFlowOverviewCard extends HTMLElement {
     card.appendChild(head);
 
     for (const zone of zones) {
+      if (zone.areaStart) {
+        const heading = document.createElement("div");
+        heading.className = "area-title";
+        if (zone.areaKind === "house") {
+          const houseIcon = document.createElement("ha-icon");
+          houseIcon.setAttribute("icon", "mdi:greenhouse");
+          heading.appendChild(houseIcon);
+        }
+        const headingText = document.createElement("span");
+        headingText.textContent = zone.areaName || tr("other_area");
+        heading.appendChild(headingText);
+        // The area's own Pause and Snooze Today.
+        // A greenhouse group's buttons are the greenhouse zone's own (its Pause is its crops' too).
+        const house = zone.areaKind === "house";
+        for (const [entity, icon, key, domain, service] of [
+          [house ? zone.ownPause : zone.areaPause, "mdi:pause-circle-outline", house ? "pause_house" : "pause_area", "switch", "toggle"],
+          [house ? zone.ownSnooze : zone.areaSnooze, "mdi:sleep", house ? "snooze_house" : "snooze_area", "button", "press"],
+        ]) {
+          if (!zone.areaName || !entity) continue;
+          const button = document.createElement("ha-icon-button");
+          button.label = t(hass, `overview.${key}`);
+          button.title = t(hass, `overview.${key}`);
+          const buttonIcon = document.createElement("ha-icon");
+          buttonIcon.setAttribute("icon", icon);
+          button.appendChild(buttonIcon);
+          button.addEventListener("click", () => hass.callService(domain, service, { entity_id: entity }));
+          button.dataset.entity = entity;
+          (this._areaButtons ||= []).push(button);
+          heading.appendChild(button);
+        }
+        card.appendChild(heading);
+      }
       const wrap = document.createElement("div");
       wrap.className = zone.crop ? "zone crop" : "zone";
       const row = document.createElement("div");
@@ -3291,8 +5970,67 @@ class ZoneFlowOverviewCard extends HTMLElement {
     details.append(inner);
   }
 
+  _summary(zones) {
+    // [icon, text] chips: what is watering, what is next, rain, warnings, water used.
+    const hass = this._hass;
+    const tr = (key) => t(hass, `overview.${key}`);
+    const chips = [];
+    const watering = zones.filter((z) => z.code === "watering" || z.code === "service_run");
+    if (watering.length) chips.push(["mdi:water", `${tr("watering_now")}: ${watering.map((z) => z.name).join(", ")}`]);
+    const upcoming = zones
+      .filter((z) => z.next && z.code !== "paused")
+      .map((z) => ({ z, when: new Date(z.next) }))
+      .filter((x) => !Number.isNaN(x.when.getTime()))
+      .sort((a, b) => a.when - b.when)[0];
+    if (upcoming) chips.push(["mdi:calendar-clock", `${tr("next_watering")}: ${upcoming.z.name}, ${formatNext(hass, upcoming.z.next)}`]);
+    let rain = null;
+    let used = 0;
+    let unit = "";
+    let sameUnit = true;
+    for (const zone of zones) {
+      const entities = zoneEntities(hass, zone.device_id);
+      const rainEntry = entities["sensor.rain_today"];
+      const r = rainEntry && !rainEntry.hidden ? hass.states?.[rainEntry.entity_id] : undefined; // a roof has no rain
+      if (r && !["unknown", "unavailable"].includes(r.state) && Number.isFinite(Number(r.state))) {
+        rain = Math.max(rain ?? 0, Number(r.state));
+        unit = r.attributes?.unit_of_measurement || unit;
+      }
+      const w = hass.states?.[entities["sensor.water_used_30d"]?.entity_id];
+      if (w && Number.isFinite(Number(w.state)) && !["unknown", "unavailable"].includes(w.state)) {
+        const wu = w.attributes?.unit_of_measurement || "";
+        if (used && wu !== this._waterUnit) sameUnit = false;
+        this._waterUnit = wu;
+        used += Number(w.state);
+      }
+    }
+    if (rain !== null) chips.push(["mdi:weather-rainy", `${tr("rain_today")}: ${rain.toFixed(1)} ${unit}`.trim()]);
+    const warnings = zones.filter((z) => (CLIMATE_STATUS[z.code] ? CLIMATE_STATUS[z.code][1] : STATUS_LABELS[z.code]?.[2]));
+    if (warnings.length) chips.push(["mdi:alert-outline", `${tr("needs_a_look")}: ${warnings.map((z) => z.name).join(", ")}`]);
+    if (used > 0 && sameUnit) chips.push(["mdi:water-sync", `${tr("water_30d")}: ${Math.round(used)} ${this._waterUnit || ""}`.trim()]);
+    return chips;
+  }
+
   _update(zones) {
     const hass = this._hass;
+    if (this._summaryEl) {
+      const chips = this._summary(zones);
+      const signature = JSON.stringify(chips);
+      if (signature !== this._summarySignature) {
+        this._summarySignature = signature;
+        this._summaryEl.textContent = "";
+        for (const [icon, text] of chips) {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          const chipIcon = document.createElement("ha-icon");
+          chipIcon.setAttribute("icon", icon);
+          chip.append(chipIcon, document.createTextNode(text));
+          this._summaryEl.appendChild(chip);
+        }
+      }
+    }
+    for (const button of this._areaButtons || []) {
+      button.classList.toggle("on", hass.states?.[button.dataset.entity]?.state === "on");
+    }
     for (const zone of zones) {
       const row = this._rows?.[zone.device_id];
       if (!row) continue;
@@ -3307,7 +6045,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       row.next.textContent = zone.code === "paused" ? "—" : formatNext(hass, zone.next);
       row.last.textContent = zone.last ? formatState(hass, hass.states[zone.last]) : "—";
       const volume = zone.lastVolume ? hass.states[zone.lastVolume] : null;
-      if (zone.last && volume && !["unknown", "unavailable"].includes(volume.state) && zone.lastIsEstimate) {
+      if (zone.last && volume && !["unknown", "unavailable"].includes(volume.state)) {
         row.last.textContent += ` · ${formatState(hass, volume)}`;
       }
       row.water.disabled = !zone.button || zone.code === "paused";
@@ -3477,24 +6215,64 @@ function buildDashboard(hass) {
     cards: [{ type: "custom:zoneflow-overview-card" }],
   });
   const used = new Set(["overview"]);
-  const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
-  const ids = new Set(zones.map((z) => z.device_id));
-  for (const zone of zones) {
-    if (ids.has(parentOf(zone))) continue; // a crop: on its greenhouse's tab
-    let path = slug(zone.name);
-    for (let n = 2; used.has(path); n += 1) path = `${slug(zone.name)}-${n}`;
+  const unique = (name) => {
+    let path = slug(name);
+    for (let n = 2; used.has(path); n += 1) path = `${slug(name)}-${n}`;
     used.add(path);
+    return path;
+  };
+  const parentOf = (zone) => hass.states?.[zone.status]?.attributes?.greenhouse?.device_id || null;
+  const typeOf = (zone) => hass.states?.[zone.status]?.attributes?.zone_type || "outdoor";
+  // A greenhouse or indoor zone with its crops has a tab of its own, not its area's.
+  const isHouse = (zone) => typeOf(zone) !== "outdoor" && !parentOf(zone);
+  const areaOf = (zone) => (isHouse(zone) ? null : hass.states?.[zone.status]?.attributes?.garden_area || null);
+  const ids = new Set(zones.map((z) => z.device_id));
+  const cardsFor = (zone) => {
+    // A greenhouse's crops have their own cards beside it: not listed again.
     const crops = zones.filter((z) => parentOf(z) === zone.device_id);
+    return [
+      { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },
+      ...crops.map((c) => ({ type: "custom:zoneflow-card", device_id: c.device_id })),
+    ];
+  };
+  const tops = zones.filter((z) => !ids.has(parentOf(z))); // not a crop
+  // Garden areas: one tab per area, its zones side by side.
+  const areas = new Map();
+  for (const zone of tops) {
+    const area = areaOf(zone);
+    if (!area) continue;
+    if (!areas.has(area)) areas.set(area, []);
+    areas.get(area).push(zone);
+  }
+  const areaNames = [...areas.keys()].sort((a, b) => a.localeCompare(b, hass.locale?.language || undefined));
+  for (const area of areaNames) {
+    const cards = areas.get(area).flatMap(cardsFor);
+    // The area's own Pause and Snooze Today, first on its tab.
+    const attrs = hass.states?.[areas.get(area)[0].status]?.attributes || {};
+    const controls = [attrs.area_pause, attrs.area_snooze].filter(Boolean);
+    if (controls.length) cards.unshift({ type: "entities", entities: controls, show_header_toggle: false });
+    views.push({
+      title: area,
+      path: unique(area),
+      icon: "mdi:flower-outline",
+      ...(cards.length === 1 ? { type: "panel" } : {}),
+      cards,
+    });
+  }
+  for (const zone of tops) {
+    if (areaOf(zone)) continue; // on its area's tab
+    const cards = cardsFor(zone);
+    if (isHouse(zone)) {
+      const attrs = hass.states?.[zone.status]?.attributes || {};
+      const controls = [attrs.pause_entity, attrs.snooze_entity].filter(Boolean);
+      if (controls.length) cards.unshift({ type: "entities", entities: controls, show_header_toggle: false });
+    }
     views.push({
       title: zone.name,
-      path,
-      icon: crops.length ? "mdi:greenhouse" : zoneIcon(hass, zone),
-      ...(crops.length ? {} : { type: "panel" }),
-      cards: [
-        // The crops have their own cards on this tab: not listed again.
-        { type: "custom:zoneflow-card", device_id: zone.device_id, ...(crops.length ? { show_crops: false } : {}) },
-        ...crops.map((c) => ({ type: "custom:zoneflow-card", device_id: c.device_id })),
-      ],
+      path: unique(zone.name),
+      icon: cards.length > 1 ? "mdi:greenhouse" : zoneIcon(hass, zone),
+      ...(cards.length > 1 ? {} : { type: "panel" }),
+      cards,
     });
   }
   return { title: "ZoneFlow", views };

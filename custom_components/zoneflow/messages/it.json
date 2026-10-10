@@ -11,7 +11,8 @@
     "deep_soak": "Irrigazione profonda",
     "routine": "Irrigazione ordinaria",
     "service_run": "Ciclo di manutenzione",
-    "test_pulse": "Impulso di prova"
+    "test_pulse": "Impulso di prova",
+    "manual_water": "Irrigazione manuale"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: uso del sensore di temperatura di riserva",
       "message": "Il sensore di temperatura interna principale ({entity}) ha smesso di funzionare. Il controllo climatico prosegue con quello di riserva."
+    },
+    "action": {
+      "water": "Irriga {minutes} min",
+      "snooze": "Salta oggi",
+      "fertilized": "Concimato"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle} saltata alle {time}: {temp}, sotto la soglia antigelo ({limit})",
     "waiting_frost": "{cycle} in attesa dalle {time}: {temp}, sotto la soglia antigelo ({limit}); nuovo controllo ogni ora",
     "waiting_deep_soak": "{cycle} in attesa dalle {time}: prima tocca all'irrigazione profonda, appena fa abbastanza caldo",
-    "paused_until": "In pausa fino a {until}"
+    "paused_until": "In pausa fino a {until}",
+    "paused_area": "In pausa: nessuna irrigazione mentre {area} è in pausa",
+    "paused_house": "In pausa: nessuna irrigazione mentre la serra {house} è in pausa"
   },
   "summary": {
     "title": "💧 ZoneFlow: la tua settimana",
@@ -238,5 +246,148 @@
       "limited": "acceso parte del tempo",
       "outside": "acceso parte del tempo se freddo fuori"
     }
+  },
+  "location": {
+    "none": "Nessuna",
+    "greenhouse": "serra",
+    "new_area": "Nuova area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Utilizza il proprio pluviometro, non quello di {area}.",
+      "outdoor_temp_entity": "Utilizza il proprio sensore di temperatura esterna, non quello di {area}.",
+      "weather_entity": "Utilizza la propria entità meteo, non quella di {area}.",
+      "notify_entity": "Invia al proprio telefono, non a quello di {area}."
+    }
+  },
+  "plants": {
+    "on": "attivato",
+    "off": "disattivato",
+    "history": {
+      "created": "Aggiunto a ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Spostato da {from_zone} a {to_zone}",
+      "promoted": "È diventata la pianta principale di {zone}",
+      "demoted": "Ora solo registrazione in {zone}",
+      "archived": "Archiviato da {zone}",
+      "removed": "Rimosso da {zone}",
+      "note": "{text}",
+      "copied": "Impostazioni copiate da {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Modalità fase di crescita",
+      "demand_model": "Metodo di irrigazione",
+      "deficit_enabled": "Modalità deficit",
+      "deficit_until_ts": "Modalità deficit fino a",
+      "planting_date_ts": "Data di piantumazione",
+      "health_status": "Salute",
+      "health_notes": "Note sulla salute",
+      "fertilizing_interval_months": "Intervallo concimazione",
+      "last_fertilizing_ts": "Ultima concimazione",
+      "growth_ramp_profile": "Rampa di crescita",
+      "deep_soak_enabled": "Irrigazione profonda"
+    }
+  },
+  "start_from": {
+    "none": "Impostazioni usuali del tipo di pianta",
+    "zone": "Una copia di {zone}",
+    "preset": "Preimpostazione: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "La valvola {entity} risponde.",
+      "fail": "La valvola {entity} non è disponibile. Controlla il dispositivo e la sua connessione in Home Assistant: nulla potrà irrigare finché non risponde."
+    },
+    "rain": {
+      "ok": "Il pluviometro {entity} invia dati.",
+      "fail": "Il pluviometro {entity} non è disponibile. Finché non torna attivo, ZoneFlow presuppone che non piova.",
+      "wu": "I dati sulla pioggia provengono da Weather Underground.",
+      "manual": "La pioggia viene aggiunta manualmente.",
+      "none": "Nessun pluviometro. ZoneFlow presuppone che non piova mai, a meno che tu non aggiunga la pioggia manualmente o usi Weather Underground."
+    },
+    "temperature": {
+      "ok": "La temperatura esterna è {value} {unit}.",
+      "none": "Nessun sensore di temperatura esterna. L'impostazione Temperatura di riserva stabilisce quanto caldo presuppone ZoneFlow.",
+      "fail": "Il sensore di temperatura {entity} non è disponibile. Nel frattempo viene usata la temperatura di riserva."
+    },
+    "weather": {
+      "ok": "La previsione meteo {entity} è disponibile.",
+      "none": "Nessuna entità meteo, quindi una previsione di pioggia non può saltare un'irrigazione.",
+      "fail": "L'entità meteo {entity} non è disponibile, quindi la previsione viene ignorata per ora."
+    },
+    "flow": {
+      "ok": "La portata è impostata ({value} mm/min).",
+      "default": "La portata è ancora il valore di esempio. Tarala in modo che ogni irrigazione duri il tempo corretto."
+    },
+    "volume": {
+      "ok": "Il consumo d'acqua è mostrato in litri.",
+      "none": "Il consumo d'acqua è mostrato solo in mm. Imposta il Flusso di zona per vedere i litri."
+    },
+    "soil": {
+      "ok": "Il sensore di umidità del terreno indica {value} %.",
+      "fail": "Il sensore di umidità del terreno {entity} non è disponibile. La zona irriga in base al calendario finché non torna attivo."
+    },
+    "pump": {
+      "ok": "Il sensore di potenza della pompa {entity} invia dati.",
+      "fail": "Il sensore di potenza della pompa {entity} non è disponibile, quindi il controllo della pompa viene saltato."
+    },
+    "paused": {
+      "zone": "Questa zona è in pausa: nessuna irrigazione finché non disattivi Pausa.",
+      "area": "L'area {area} è in pausa: nessuna irrigazione finché non disattivi la sua Pausa.",
+      "house": "La serra {house} è in pausa: nessuna irrigazione finché non disattivi la sua Pausa."
+    },
+    "last": {
+      "ok": "Ultima irrigazione: {when}.",
+      "never": "ZoneFlow non ha ancora irrigato questa zona.",
+      "overdue": "L'ultima irrigazione è stata {days} giorni fa, più tempo del previsto. Controlla la valvola e lo stato."
+    },
+    "notify": {
+      "ok": "I messaggi telefonici vanno a {entity}.",
+      "none": "Nessun telefono da notificare. Non riceverai messaggi sull'irrigazione.",
+      "fail": "Il telefono {entity} non esiste più, quindi non riceverai messaggi."
+    }
+  },
+  "why": {
+    "method": "Metodo di irrigazione: {method}.",
+    "method_temperature": "fasce di temperatura (una settimana più calda riceve più acqua)",
+    "method_et": "evapotraspirazione (l'acqua usata dalla pianta, calcolata in base alla temperatura)",
+    "temperature": "Temperatura usata: {value} ({source}), quindi una settimana {tier}.",
+    "source": {
+      "sensor": "la media delle massime degli ultimi giorni",
+      "last_known": "degli ultimi giorni, il sensore è offline ora",
+      "fallback": "Temperatura di riserva, nessuna giornata intera ancora registrata",
+      "manual": "l'impostazione Temperatura di riserva / manuale"
+    },
+    "tier": {
+      "hot": "calda",
+      "normal": "normale",
+      "cool": "fresca"
+    },
+    "target": "Obiettivo settimanale: {target}.",
+    "scale": "L'obiettivo è scalato al {pct} % in base a fase di crescita, modalità deficit e pacciamatura.",
+    "rain": "Credito pioggia dall'ultima irrigazione: {credit} (pioggia negli ultimi 7 giorni: {rain}).",
+    "needed": "Se si irrigasse ora: {needed} da aggiungere, circa {minutes} min.",
+    "forecast": "Era prevista pioggia, quindi le ultime {n} irrigazioni di fila sono state saltate.",
+    "soil": "Umidità del terreno {pct} % ({status}).",
+    "soil_dry": "secco",
+    "soil_wet": "umido",
+    "soil_ok": "intermedio"
+  },
+  "suggest": {
+    "heading": "Elementi probabili trovati nel tuo Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Valvola",
+      "rain": "Pluviometro",
+      "temperature": "Temperatura esterna",
+      "weather": "Meteo",
+      "soil": "Umidità del terreno",
+      "flow": "Flussometro",
+      "pump": "Potenza della pompa",
+      "notify": "Telefono"
+    }
+  },
+  "setup": {
+    "progress": "Passaggio {n} di {total}"
   }
 }

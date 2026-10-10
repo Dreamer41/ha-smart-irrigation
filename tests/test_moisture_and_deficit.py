@@ -240,7 +240,7 @@ async def test_deficit_mode_also_trims_the_et_curve(hass, fake_valve_services, m
 @pytest.mark.asyncio
 async def test_deficit_mode_never_touches_deep_soak(hass, fake_valve_services, monkeypatch, tmp_path):
     controller, clock, _, _ = await _deficit_zone(hass, monkeypatch, tmp_path, pct=50)
-    _history(controller, last_routine_days_ago=1, last_deep_days_ago=14)
+    _history(controller, last_routine_days_ago=5, last_deep_days_ago=14)
     await _set(controller, deep_soak_max_runtime_minutes=150)
     await controller.run_deep_soak()
     await hass.async_block_till_done()

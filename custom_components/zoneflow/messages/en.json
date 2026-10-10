@@ -11,7 +11,8 @@
     "deep_soak": "Deep soak",
     "routine": "Routine watering",
     "service_run": "Service run",
-    "test_pulse": "Test pulse"
+    "test_pulse": "Test pulse",
+    "manual_water": "Manual watering"
   },
   "notify": {
     "heavy_rain": {
@@ -160,6 +161,11 @@
     "greenhouse_backup_sensor": {
       "title": "⚠️ {zone}: using the backup temperature sensor",
       "message": "The main inside temperature sensor ({entity}) stopped working. Climate control carries on with the backup."
+    },
+    "action": {
+      "water": "Water {minutes} min",
+      "snooze": "Snooze today",
+      "fertilized": "Fertilized"
     }
   },
   "notes": {
@@ -201,7 +207,9 @@
     "skipped_frost": "{cycle} skipped at {time}: {temp}, below the frost guard ({limit})",
     "waiting_frost": "{cycle} on hold at {time}: {temp}, below the frost guard ({limit}); checking again hourly",
     "waiting_deep_soak": "{cycle} waiting since {time}: the deep soak goes first once it's warm enough",
-    "paused_until": "Paused until {until}"
+    "paused_until": "Paused until {until}",
+    "paused_area": "Paused: no watering while {area} is paused",
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: your week",
@@ -238,5 +246,148 @@
       "limited": "on part of the time",
       "outside": "on part of the time while cold outside"
     }
+  },
+  "location": {
+    "none": "None",
+    "greenhouse": "greenhouse",
+    "new_area": "New area..."
+  },
+  "area": {
+    "override": {
+      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
+      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
+      "weather_entity": "Uses its own weather entity, not {area}'s.",
+      "notify_entity": "Sends to its own phone, not {area}'s."
+    }
+  },
+  "plants": {
+    "on": "on",
+    "off": "off",
+    "history": {
+      "created": "Added to ZoneFlow",
+      "setting": "{setting}: {old} -> {new}",
+      "moved": "Moved from {from_zone} to {to_zone}",
+      "promoted": "Became the main plant of {zone}",
+      "demoted": "Now a record only in {zone}",
+      "archived": "Archived from {zone}",
+      "removed": "Removed from {zone}",
+      "note": "{text}",
+      "copied": "Settings copied from {source}"
+    },
+    "setting": {
+      "growth_stage_mode": "Growth stage mode",
+      "demand_model": "Watering method",
+      "deficit_enabled": "Deficit mode",
+      "deficit_until_ts": "Deficit mode until",
+      "planting_date_ts": "Planting date",
+      "health_status": "Health",
+      "health_notes": "Health notes",
+      "fertilizing_interval_months": "Fertilizing interval",
+      "last_fertilizing_ts": "Last fertilized",
+      "growth_ramp_profile": "Growth ramp",
+      "deep_soak_enabled": "Deep soak"
+    }
+  },
+  "start_from": {
+    "none": "The plant type's usual settings",
+    "zone": "A copy of {zone}",
+    "preset": "Preset: {name}"
+  },
+  "check": {
+    "valve": {
+      "ok": "The valve {entity} answers.",
+      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+    },
+    "rain": {
+      "ok": "The rain gauge {entity} reports.",
+      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
+      "wu": "Rain comes from Weather Underground.",
+      "manual": "Rain is added by hand.",
+      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+    },
+    "temperature": {
+      "ok": "Outdoor temperature is {value} {unit}.",
+      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
+      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+    },
+    "weather": {
+      "ok": "The weather forecast {entity} is available.",
+      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
+      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+    },
+    "flow": {
+      "ok": "The flow rate is set ({value} mm/min).",
+      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+    },
+    "volume": {
+      "ok": "Water use is shown in litres.",
+      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+    },
+    "soil": {
+      "ok": "The soil moisture probe reports {value} %.",
+      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+    },
+    "pump": {
+      "ok": "The pump power sensor {entity} reports.",
+      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+    },
+    "paused": {
+      "zone": "This zone is paused: no watering until you switch Pause off.",
+      "area": "The area {area} is paused: no watering until you switch its Pause off.",
+      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+    },
+    "last": {
+      "ok": "Last watering: {when}.",
+      "never": "ZoneFlow has not watered this zone yet.",
+      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+    },
+    "notify": {
+      "ok": "Phone messages go to {entity}.",
+      "none": "No phone to notify. You will not get messages about watering.",
+      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+    }
+  },
+  "why": {
+    "method": "Watering method: {method}.",
+    "method_temperature": "temperature tiers (a hotter week gets more water)",
+    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
+    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "source": {
+      "sensor": "the average of the last days' highs",
+      "last_known": "from the last days, the sensor is offline now",
+      "fallback": "the Fallback Temperature, no full day recorded yet",
+      "manual": "the Fallback / Manual Temperature setting"
+    },
+    "tier": {
+      "hot": "hot",
+      "normal": "normal",
+      "cool": "cool"
+    },
+    "target": "Weekly target: {target}.",
+    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
+    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
+    "needed": "If it watered now: {needed} to add, about {minutes} min.",
+    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
+    "soil": "Soil moisture {pct} % ({status}).",
+    "soil_dry": "dry",
+    "soil_wet": "wet",
+    "soil_ok": "in between"
+  },
+  "suggest": {
+    "heading": "Likely ones found in your Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Valve",
+      "rain": "Rain gauge",
+      "temperature": "Outdoor temperature",
+      "weather": "Weather",
+      "soil": "Soil moisture",
+      "flow": "Flow meter",
+      "pump": "Pump power",
+      "notify": "Phone"
+    }
+  },
+  "setup": {
+    "progress": "Step {n} of {total}"
   }
 }

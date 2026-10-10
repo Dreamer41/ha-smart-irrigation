@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "区域名称",
           "plant": "种植的作物",
-          "zone_type": "种植环境"
+          "zone_type": "种植环境",
+          "start_from": "起点",
+          "location": "位置在哪里？"
         },
         "data_description": {
           "zone_name": "将作为该区域的设备名称和实体名称的开头，也会出现在手机消息中。例如“番茄畦”“前院草坪”。",
           "plant": "为这种作物填入合适的初始值：每周水量目标、作物系数、深层浇灌和生长期递增。“其他”则从通用值开始。所有值以后都可以在该区域的设备页面上修改。",
-          "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。"
+          "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。",
+          "start_from": "选择从其他区域的浇水设置副本或已保存的预设开始，而非使用该植物类型的默认设置。阀门、传感器和流量数据绝不会被复制。",
+          "location": "这个区域所在的上级区域（如果有）。除非你为它指定自己的传感器，否则它会使用上级区域的雨量计、温度传感器、天气和手机。"
         }
       },
       "entities": {
         "title": "ZoneFlow 灌溉",
-        "description": "请选择您现有的实体。ZoneFlow 自己不会创建任何新的物理实体。只有阀门开关是必需的——下面其他各项不设置也能正常工作，只是功能相应减少。",
+        "description": "{progress}\n\n请将其指向您真实的物理实体。ZoneFlow 绝不会自动创建新的物理实体。只有阀门开关是必填项 —— 如果未配置下方的其他项，系统亦能正常运行。如果您没有对应的实体，请留空。\n\n{suggestions}",
         "data": {
           "valve_entity": "阀门开关",
           "pump_power_entity": "水泵功率传感器（可选）",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "土壤湿度传感器（可选）",
           "notify_entity": "手机通知目标（可选）",
           "weather_entity": "天气预报来源（可选）",
-          "soil_type": "土壤类型",
-          "drainage": "排水",
-          "slope": "坡度",
-          "irrigation_method": "灌溉方式",
-          "growth_ramp_profile": "按生长阶段自动递增",
+          "soil_type": "您是否了解土壤类型？（如果不了解请跳过）",
+          "drainage": "排水速度是否较慢？（如果不确定请跳过）",
+          "slope": "地面是否有坡度？（如果平坦或不确定请跳过）",
+          "irrigation_method": "水分如何输送给植物？",
+          "growth_ramp_profile": "是否为初期需水量较少幼苗？（如果不是请跳过）",
           "csv_path": "CSV 日志文件路径",
           "deep_soak_enabled": "启用深层浇灌",
           "deep_soak_time": "深层浇灌时间",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "气候",
-        "description": "这个区域所在地的生长季气候如何？这只会预填下一页的温度滑块——那里的每个值都可以修改，以后也可以在该区域的设备页面上修改。",
+        "description": "{progress}\n\n该区域所在的生长期气候如何？这仅用于预填下一页的温度滑块 —— 您可以在那里修改每个数值，以后也可以在区域的设备页面中进行调整。",
         "data": {
           "climate": "气候"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "温度阈值",
-        "description": "ZoneFlow 会计算最近 3 天每日最高气温的平均值。达到或高于“炎热”阈值时，它会按炎热每周目标更频繁地浇水（每 3 天一次）；低于“凉爽”阈值时，使用凉爽每周目标；两者之间为正常。\n\n没有实际读数可用时使用备用温度：没有温度传感器时，它就是您的手动控制（热浪时调高，寒潮时调低）；有传感器时，只在传感器记录满第一天之前，以及连续 3 天没有任何读数后使用。",
+        "description": "{progress}\n\nZoneFlow 会计算过去 3 天每日最高温度的平均值。当温度达到或高于“偏热”标准时，浇水频率会增加（每 3 天一次），并使用偏热每周目标；低于“偏凉”标准时，使用偏凉每周目标；介于两者之间则为正常状态。\n\n后备温度仅在缺乏真实读数时使用：若未配置温度传感器，该数值将作为手动控制参数（高温酷暑时调高，寒潮降温时调低）；若配置了传感器，则仅在传感器记录满第一个完整全天之前，以及连续 3 天没有任何读数时生效。",
         "data": {
           "hot_temp_threshold": "炎热天气阈值",
           "cool_temp_threshold": "凉爽天气阈值",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "添加区域",
           "weather_underground": "设置 Weather Underground 降雨",
-          "crop": "向温室添加作物"
+          "crop": "向温室添加作物",
+          "area": "添加区域（花园的一部分）"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "用于开启此作物水源的开关。每种作物都需要独立的阀门。"
         }
+      },
+      "area": {
+        "title": "新区域",
+        "description": "花园的一部分，例如“后院”或“前院”。其内部区域将使用此处设置的传感器，除非特定区域配置了独立传感器。",
+        "data": {
+          "area_name": "名称",
+          "rain_counter_entity": "雨量计",
+          "rain_source_type": "雨量计传感器类型",
+          "area_rain_mm_per_tip": "雨量计每斗毫米数",
+          "outdoor_temp_entity": "室外温度传感器",
+          "weather_entity": "天气实体（预报）",
+          "notify_entity": "接收通知的手机"
+        },
+        "data_description": {
+          "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
+          "area_rain_mm_per_tip": "仅用于雨量斗计数器：一次翻斗代表多少毫米降雨。",
+          "outdoor_temp_entity": "选填。设置该区域内各区域的偏热/偏凉浇水阶梯。",
+          "weather_entity": "选填。允许该区域内的各区域在预报有雨时跳过浇水。",
+          "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
+          "area_name": "该区域的名称，例如“后院”或“前院”。",
+          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground 拒绝了该 API 密钥。",
       "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
       "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
-      "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。"
+      "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
+      "area_name_required": "为区域命名。",
+      "area_name_exists": "已存在同名区域。"
     },
     "abort": {
       "already_configured": "Weather Underground 降雨功能已设置。"
@@ -264,7 +293,7 @@
           "zone_type": "分区类型",
           "weather_underground": "Weather Underground 降雨",
           "crop_valve": "作物阀门",
-          "greenhouse_link": "温室"
+          "location": "位置在哪里？（区域或温室）"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "用于开启此作物水源的开关。每种作物都需要独立的阀门。"
         }
       },
-      "greenhouse_link": {
-        "title": "温室",
-        "description": "将此区域设为温室内的作物：它将使用该温室的内部传感器并与其一同显示。选择 “-” 可将其重新设为独立区域（它会保留温室传感器的副本）。",
-        "data": {
-          "greenhouse_entry_id": "所属温室"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "带有气候调节设备的温室或室内区域，或选择 “-” 表示无。"
-        }
-      },
       "flow_volume": {
         "title": "按体积测量流量",
         "description": "按下区域的其中一个维护运行按钮（较长的运行时间，如 15 min，更准确），并收集或读取水量：在灌水器处使用水桶或水箱，或者读取水表上的差值。然后输入阀门打开的分钟数、升数以及灌水器湿润的面积。\n\n结果是区域的平均值：升数除以面积和分钟数，并将替换区域的灌水器流量校准。ZoneFlow 每个区域仅使用一个流量，因此无法区分不同的灌水器。为了获得精确的结果，区域阀门上的每个灌水器都应具有相同的类型和流量；请将不同的灌水器安装在单独的阀门上（单独的区域）。在混合区域中，使用较小流量灌水器的植物获得的灌水量将低于显示的平均值。它还会设置区域流量，即用于用水量估算的每分钟升数。",
@@ -506,6 +525,76 @@
           "head_flow": "单个灌水器的出水量，得自其包装或喷头图表。",
           "head_flow_unit": "给出单个灌水器流量的单位。"
         }
+      },
+      "location": {
+        "title": "位置在哪里？",
+        "description": "该区域所在的“大区域”或“温室”。除非特定区域配置了自有的传感器，否则默认使用所属区域的传感器。在温室中，该区域作为其中的某项作物。选择“新区域”可以基于当前区域的独立传感器创建一个新区域。",
+        "data": {
+          "location": "位置"
+        },
+        "data_description": {
+          "location": "选择区域、温室或留空。移动区域后，该区域将重启以读取新位置的传感器。"
+        }
+      },
+      "location_sensors": {
+        "title": "是否使用区域的传感器？",
+        "description": "在所属区域已配置其他传感器的情况下，当前区域配有独立传感器。勾选将改用所属区域的传感器；取消勾选将保留当前区域独立的传感器。",
+        "data": {
+          "rain_counter_entity": "使用区域的雨量计",
+          "outdoor_temp_entity": "使用区域的室外温度",
+          "weather_entity": "使用区域的天气实体",
+          "notify_entity": "使用区域的手机"
+        },
+        "data_description": {
+          "rain_counter_entity": "勾选此项以使用区域的雨量计，而非当前区域独立的雨量计。",
+          "outdoor_temp_entity": "勾选此项以使用区域的室外温度传感器，而非当前区域独立的传感器。",
+          "weather_entity": "勾选此项以使用区域的天气实体，而非当前区域独立的天气实体。",
+          "notify_entity": "勾选此项以将消息发送至区域的手机，而非当前区域独立的手机。"
+        }
+      },
+      "new_area": {
+        "title": "新区域",
+        "description": "基于该区域的传感器创建的新区域。当前区域将移动至其中，后续其他区域也可以加入。",
+        "data": {
+          "area_name": "名称",
+          "rain_counter_entity": "雨量计",
+          "rain_source_type": "雨量计传感器类型",
+          "area_rain_mm_per_tip": "雨量计每斗毫米数",
+          "outdoor_temp_entity": "室外温度传感器",
+          "weather_entity": "天气实体（预报）",
+          "notify_entity": "接收通知的手机"
+        },
+        "data_description": {
+          "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
+          "area_rain_mm_per_tip": "仅用于雨量斗计数器：一次翻斗代表多少毫米降雨。",
+          "outdoor_temp_entity": "选填。设置该区域内各区域的偏热/偏凉浇水阶梯。",
+          "weather_entity": "选填。允许该区域内的各区域在预报有雨时跳过浇水。",
+          "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
+          "area_name": "该区域的名称，例如“后院”或“前院”。",
+          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+        }
+      },
+      "area_settings": {
+        "title": "区域",
+        "description": "区域的名称及其下方各区域共享的传感器。配 ro 独立传感器的区域将继续使用其自有的传感器。",
+        "data": {
+          "area_name": "名称",
+          "rain_counter_entity": "雨量计",
+          "rain_source_type": "雨量计传感器类型",
+          "area_rain_mm_per_tip": "雨量计每斗毫米数",
+          "outdoor_temp_entity": "室外温度传感器",
+          "weather_entity": "天气实体（预报）",
+          "notify_entity": "接收通知的手机"
+        },
+        "data_description": {
+          "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
+          "area_rain_mm_per_tip": "仅用于雨量斗计数器：一次翻斗代表多少毫米降雨。",
+          "outdoor_temp_entity": "选填。设置该区域内各区域的偏热/偏凉浇水阶梯。",
+          "weather_entity": "选填。允许该区域内的各区域在预报有雨时跳过浇水。",
+          "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
+          "area_name": "该区域的名称，例如“后院”或“前院”。",
+          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "该区域（或其水泵）正忙，或今天的运行时长安全上限已用完。请稍后再试。",
       "flow_rate_disabled": "该区域的“灌水器流量校准”实体已被禁用。请启用它（该区域的设备页面 → 其实体）后重试。",
       "zone_flow_set": "区域流量已设置为 {flow}。仅用于用水量估算。",
-      "zone_flow_out_of_range": "计算出的区域流量超出了设置允许的范围（0 至 2000 L/min）。请检查数字。"
+      "zone_flow_out_of_range": "计算出的区域流量超出了设置允许的范围（0 至 2000 L/min）。请检查数字。",
+      "location_not_available": "该位置不可用。"
     },
     "error": {
       "valve_already_used": "另一个 ZoneFlow 区域已在使用此阀门。",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "无法连接到 Weather Underground。请稍后再试。",
       "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
       "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
-      "greenhouse_has_crops": "此温室中有作物。请先将它们移动到另一个温室或进行移除（每种作物的 配置 -> 温室）。"
+      "greenhouse_has_crops": "此温室中有作物。请先将它们移动到另一个温室或进行移除（每种作物的 配置 -> 温室）。",
+      "area_name_required": "为区域命名。",
+      "area_name_exists": "已存在同名区域。"
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "部分时间开启",
           "outside": "仅室外寒冷时部分时间开启"
         }
+      },
+      "location": {
+        "name": "位置在哪里？"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "属于该区域设备的任一实体（可替代“区域设备”）。"
         }
       }
+    },
+    "create_area": {
+      "name": "创建区域",
+      "description": "创建一个新区域（花园的一部分，例如“后院”）。选择一个现有区域后，它将移动到新区域中，且新区域将继承该区域的雨量计、室外温度、天气和手机设置。",
+      "fields": {
+        "name": {
+          "name": "名称",
+          "description": "该区域的名称，例如“后院”或“前院”。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "放入新区域中的区域（选填）。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
+    },
+    "add_plant": {
+      "name": "添加植物",
+      "description": "将植物添加到区域。在没有主植物的区域中，它会成为主植物，且其类型的设置将应用于该区域；否则仅作为记录（历史、备注），除非“原主植物”指定由其接管。",
+      "fields": {
+        "name": {
+          "name": "名称",
+          "description": "植物的名称。"
+        },
+        "plant_type": {
+          "name": "植物类型",
+          "description": "此类植物的初始设置（若留空则为自定义）。"
+        },
+        "old_main": {
+          "name": "原主植物",
+          "description": "仅当区域已有主植物时适用。其处理方式：保留为记录或归档。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "区域。仅在配置了 2 个及以上区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
+    },
+    "move_plant": {
+      "name": "移动植物",
+      "description": "将植物及其历史记录移动到另一个区域。其设置将应用于新的目标区域。",
+      "fields": {
+        "plant_id": {
+          "name": "植物",
+          "description": "植物的 ID（显示在区域的状态属性中）。"
+        },
+        "old_main": {
+          "name": "原主植物",
+          "description": "仅当目标区域已有主植物时适用。其处理方式：保留为记录、归档、将其对调到当前植物离开的区域，或者仅将当前植物保留为记录。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "要去往的目标区域。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "移除植物",
+      "description": "将植物从其区域中移除。它连同历史记录将保留在系统中。该区域中的下一株植物将成为主植物。",
+      "fields": {
+        "plant_id": {
+          "name": "植物",
+          "description": "植物的 ID。"
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "设置主植物",
+      "description": "将某一植物设置为所在区域的主植物：其设置将应用于该区域，原主植物将保留为记录。",
+      "fields": {
+        "plant_id": {
+          "name": "植物",
+          "description": "植物的 ID。"
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "添加植物备注",
+      "description": "向植物的历史记录添加备注。",
+      "fields": {
+        "plant_id": {
+          "name": "植物",
+          "description": "植物的 ID。"
+        },
+        "text": {
+          "name": "备注",
+          "description": "需要记录的内容。"
+        }
+      }
+    },
+    "save_preset": {
+      "name": "保存预设",
+      "description": "将某一区域的浇水设置（不包括阀门、传感器、流量、种植日期或备注）以自定义名称保存，以便作为其他区域的起点。相同的名称将覆盖既有预设。",
+      "fields": {
+        "name": {
+          "name": "名称",
+          "description": "预设的名称。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "区域。仅在配置了 2 个及以上区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "复制设置",
+      "description": "将另一区域的浇水设置或已保存预设赋予指定区域。不包括阀门、传感器、流量、种植日期或备注。",
+      "fields": {
+        "source_device_id": {
+          "name": "从区域复制",
+          "description": "要从中复制设置的源区域（或选择一个预设）。"
+        },
+        "preset": {
+          "name": "预设",
+          "description": "已保存预设的名称（或选择要复制的源区域）。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "接收设置的目标区域。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "删除预设",
+      "description": "删除已保存的预设。",
+      "fields": {
+        "name": {
+          "name": "名称",
+          "description": "预设的名称。"
+        }
+      }
+    },
+    "water_now": {
+      "name": "立即浇水",
+      "description": "手动为区域浇水指定的分钟数。区域处于暂停状态时无法执行，单次时长绝不会超过该区域的“常规最大安全运行时间上限”，且受当日运行时间上限约束。此操作会计入用水记录（升），但不会推迟常规浇水或深层浇灌的计划日程。",
+      "fields": {
+        "minutes": {
+          "name": "分钟",
+          "description": "浇水持续的时长。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "区域。仅在配置了 2 个及以上区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "校准流量",
+      "description": "通过实测运行设置流量：流出的水量（用桶收集或从水表中读取）、铺洒面积以及阀门开启的时长。同时会以升为单位设置“区域流量”。",
+      "fields": {
+        "volume": {
+          "name": "水",
+          "description": "流出的水总量（升，英制区域下为加仑）。"
+        },
+        "area": {
+          "name": "区域",
+          "description": "浇灌覆盖的面积（平方米，英制区域下为平方英尺）。"
+        },
+        "minutes": {
+          "name": "分钟",
+          "description": "阀门开启的具体时长。"
+        },
+        "device_id": {
+          "name": "区域设备",
+          "description": "区域。仅在配置了 2 个及以上区域时需要。"
+        },
+        "entity_id": {
+          "name": "区域实体",
+          "description": "属于该区域设备的任何实体（“区域设备”的替代项）。"
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "没有暂停事项：所有设备均已处于 ZoneFlow 的控制之下。"
+    },
+    "location_not_available": {
+      "message": "该位置不再可用。"
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "包含气候设备的温室不能作为另一个温室的作物。"
+    },
+    "area_name_required": {
+      "message": "为区域命名。"
+    },
+    "area_name_exists": {
+      "message": "已存在同名区域。"
+    },
+    "plant_zone_not_available": {
+      "message": "该区域不可用。"
+    },
+    "plant_name_required": {
+      "message": "请输入植物名称。"
+    },
+    "plant_not_found": {
+      "message": "该植物不存在。"
+    },
+    "plant_same_zone": {
+      "message": "该植物已在该区域中。"
+    },
+    "plant_old_main_choice": {
+      "message": "{zone} 已有主植物。请指定其处理方式（原主植物）。"
+    },
+    "plant_zone_has_no_valve": {
+      "message": "只有配置了阀门的区域才能指定主植物。"
+    },
+    "plant_note_required": {
+      "message": "请先填写备注。"
+    },
+    "preset_name_required": {
+      "message": "请输入预设名称。"
+    },
+    "preset_not_found": {
+      "message": "不存在该名称的预设。"
+    },
+    "copy_same_zone": {
+      "message": "请选择其他区域进行复制。"
+    },
+    "copy_source_required": {
+      "message": "请选择区域或预设进行复制。"
+    },
+    "water_now_out_of_range": {
+      "message": "浇水时长需至少 1 分钟且不超过 {max} 分钟（该区域的安全上限）。"
+    },
+    "calibration_out_of_range": {
+      "message": "这些数值计算出的流量超出了该区域的合理范围。请检查水量、浇灌面积和时长。"
+    },
+    "calibration_unavailable": {
+      "message": "该区域没有可供校准的流量设置。"
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}：传感器已离线 {days} 天",
-      "description": "区域 {zone} 使用的 {entity} 已离线 {days} 天。该区域会在没有它的情况下继续运行（具体影响请参阅 README），但请检查该设备——或在“配置”中将其从该区域移除。传感器重新上报后，此问题会自动消除。"
+      "description": "区域 {zone} 使用的 {entity} 已离线 {days} 天。该区域会在没有它的情况下继续运行（具体影响请参阅 README），但请检查该设备——或在“配置”中将其从该区域移除。传感器重新上报后，此问题会自动消除。",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "替换传感器",
+            "description": "{zone} 所使用的传感器 {entity} 已离线数天。请选择替代传感器，或留空以停止使用（届时该区域将在无传感器状态下运行）。",
+            "data": {
+              "replacement": "替代传感器"
+            },
+            "data_description": {
+              "replacement": "留空可从该区域中移除传感器。"
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "该区域已不存在。"
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}：缺少手机通知目标",
-      "description": "区域 {zone} 将手机通知发送到 {entity}，但它在 Home Assistant 中已不存在，因此收不到任何通知。请在该区域的“配置”中选择当前的通知目标。它重新存在后，此问题会自动消除。"
+      "description": "区域 {zone} 将手机通知发送到 {entity}，但它在 Home Assistant 中已不存在，因此收不到任何通知。请在该区域的“配置”中选择当前的通知目标。它重新存在后，此问题会自动消除。",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "选择其他手机",
+            "description": "手机 {entity} 已不存在，因此 {zone} 无法向您发送通知。请选择其他手机，或留空表示不接收。",
+            "data": {
+              "notify_entity": "接收通知的手机"
+            },
+            "data_description": {
+              "notify_entity": "留空可停止接收来自该区域的手机通知。"
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "该区域已不存在。"
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}：请校准灌水器流量",
-      "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。"
+      "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "通过测量设置流量",
+            "description": "{zone} 仍在使用示例流量，因此其浇水时长仅为预测值。请在灌水器下方放置水桶（或记录水表读数），然后开启阀门运行 15 分钟。是否立即运行？",
+            "data": {
+              "run": "立即开启阀门运行 15 分钟"
+            },
+            "data_description": {
+              "run": "如果您之前已经运行过，请取消勾选。"
+            }
+          },
+          "measure": {
+            "title": "流出了多少水？",
+            "description": "请输入 {zone} 在本次运行中的出水量、浇灌面积以及阀门开启的分钟数。",
+            "data": {
+              "volume": "出水量",
+              "area": "浇灌面积",
+              "minutes": "阀门开启的分钟数"
+            },
+            "data_description": {
+              "volume": "升（英制区域下为加仑）。",
+              "area": "平方米（英制区域下为平方英尺）。",
+              "minutes": "通常为 15。"
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "这些数值计算出的流量超出了该区域的合理范围。请进行检查。"
+        },
+        "abort": {
+          "zone_gone": "该区域已不存在。",
+          "zone_busy": "该区域忙碌中。请稍后再试。"
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}：阀门与另一个区域共用",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}：其温室已被移除",
       "description": "温室 {greenhouse} 已被删除，因此 {zone} 现在是一个独立区域。它将继续进行浇水并保留温室的内部传感器。如需将其放入另一个温室，请使用该区域的 配置 -> 温室。"
+    },
+    "area_removed": {
+      "title": "{zone}：所属区域已被移除",
+      "description": "区域 {area} 已被删除，因此 {zone} 目前使用的是继承自该区域的传感器副本。若要将其放入其他区域，请使用该区域的“配置 -> 这在哪里？”。"
     }
   }
 }

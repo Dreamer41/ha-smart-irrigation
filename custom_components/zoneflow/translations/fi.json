@@ -7,17 +7,21 @@
         "data": {
           "zone_name": "Vyöhykkeen nimi",
           "plant": "Mitä on istutettu",
-          "zone_type": "Kasvupaikka"
+          "zone_type": "Kasvupaikka",
+          "start_from": "Aloituskohta",
+          "location": "Missä tämä sijaitsee?"
         },
         "data_description": {
           "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
           "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla.",
-          "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi."
+          "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi.",
+          "start_from": "Aloita toisen vyöhykkeen kasteluasetusten kopiolla tai tallennetulla esiasetuksella kasvityypin asetusten sijaan. Venttiiliä, antureita ja virtaamaa ei koskaan kopioida.",
+          "location": "Alue, jossa tämä vyöhyke on, jos jokin. Vyöhyke käyttää silloin alueen sademittaria, lämpötila-anturia, säätä ja puhelinta, ellet anna sille omia."
         }
       },
       "entities": {
         "title": "ZoneFlow-kastelu",
-        "description": "Valitse tähän olemassa olevat entiteettisi. Integraatio ei luo omia fyysisiä entiteettejä. Vain venttiilin kytkin on pakollinen -- vyöhyke toimii myös ilman muita alla olevia, jos jätät ne tyhjiksi.",
+        "description": "{progress}\n\nMääritä tämä todellisiin entiteetteihisi. Se ei koskaan luo omia fyysisiä entiteettejään. Vain venttiilikytkin on pakollinen – kaikki muu alla toimii ilman asetustakin. Jätä kenttä tyhjäksi, jos sinulla ei ole sellaista.\n\n{suggestions}",
         "data": {
           "valve_entity": "Venttiilin kytkin",
           "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
@@ -29,11 +33,11 @@
           "soil_moisture_entity": "Maan kosteusanturi (valinnainen)",
           "notify_entity": "Puhelimen ilmoituskohde (valinnainen)",
           "weather_entity": "Sääennusteen lähde (valinnainen)",
-          "soil_type": "Maalaji",
-          "drainage": "Vedenläpäisy",
-          "slope": "Kaltevuus",
-          "irrigation_method": "Kastelutapa",
-          "growth_ramp_profile": "Automaattinen kasvukäyrä",
+          "soil_type": "Tiedätkö maaperätyypin? (ohita, jos et)",
+          "drainage": "Poistuuko vesi hitaasti? (ohita, jos et tiedä)",
+          "slope": "Onko maasto rinteessä? (ohita, jos se on tasainen tai et ole varma)",
+          "irrigation_method": "Miten vesi pääsee kasveille?",
+          "growth_ramp_profile": "Onko kyseessä nuori kasvi, joka tarvitsee aluksi vähemmän vettä? (ohita, jos ei)",
           "csv_path": "CSV-lokitiedoston polku",
           "deep_soak_enabled": "Ota syväkastelu käyttöön",
           "deep_soak_time": "Syväkastelun kellonaika",
@@ -73,7 +77,7 @@
       },
       "climate": {
         "title": "Ilmasto",
-        "description": "Millainen kasvukausi on siellä, missä tämä vyöhyke on? Tämä vain esitäyttää seuraavan sivun lämpötilasäätimet -- voit muuttaa jokaista arvoa siellä ja myöhemmin vyöhykkeen laitesivulla.",
+        "description": "{progress}\n\nMillainen kasvukausi alueella on, jossa tämä vyöhyke sijaitsee? Tämä vain esitäyttää seuraavan sivun lämpötilaliukusäätimet – voit muuttaa kaikkia arvoja siellä ja myöhemmin vyöhykkeen laitesivulla.",
         "data": {
           "climate": "Ilmasto"
         },
@@ -83,7 +87,7 @@
       },
       "temperatures": {
         "title": "Lämpötilarajat",
-        "description": "ZoneFlow laskee kolmen viime päivän YLIMPIEN lämpötilojen keskiarvon. Kun se on kuuman sään rajalla tai yli, kastellaan useammin (3 päivän välein) kuuman sään viikkotavoitteella; viileän sään rajan alla käytetään viileän sään viikkotavoitetta; niiden välissä normaalia.\n\nVaralämpötilaa käytetään, kun todellista lukemaa ei ole: ilman lämpötila-anturia se on käsisäätösi (nosta helleaallon ajaksi, laske kylmän jakson ajaksi); anturin kanssa sitä käytetään vain, kunnes anturi on kirjannut ensimmäisen kokonaisen päivän, sekä jos lukemia ei ole tullut 3 päivään.",
+        "description": "{progress}\n\nZoneFlow laskee keskiarvon viimeisen 3 päivän ylimmille päivälämpötiloille. Kuumalla tasolla tai sen yli se kastelee useammin (joka 3. päivä) kuumalla viikkotavoitteella; Viileän alapuolella se käyttää viileää viikkotavoitetta; siltä väliltä on normaali.\n\nVaralämpötilaa käytetään, kun todellista lukemaa ei ole saatavilla: ilman lämpötila-anturia se toimii manuaalisena säätönä (nosta helleaallon aikana, laske kylmän jakson aikana); anturin kanssa sitä käytetään vain siihen asti, kunnes anturi on kirjannut ensimmäisen täyden päivänsä, sekä 3 päivän jälkeen ilman yhtään lukemaa.",
         "data": {
           "hot_temp_threshold": "Kuuman sään raja",
           "cool_temp_threshold": "Viileän sään raja",
@@ -180,7 +184,8 @@
         "menu_options": {
           "zone": "Lisää vyöhyke",
           "weather_underground": "Ota käyttöön Weather Underground -sade",
-          "crop": "Lisää kasvi kasvihuoneeseen"
+          "crop": "Lisää kasvi kasvihuoneeseen",
+          "area": "Lisää alue (puutarhan osa)"
         }
       },
       "weather_underground": {
@@ -228,6 +233,28 @@
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
         }
+      },
+      "area": {
+        "title": "Uusi alue",
+        "description": "Puutarhan osa, esimerkiksi Takapiha tai Etupiha. Sen vyöhykkeet käyttävät tähän asetettuja antureita, ellei vyöhykkeellä ole omia.",
+        "data": {
+          "area_name": "Nimi",
+          "rain_counter_entity": "Sademittari",
+          "rain_source_type": "Sademittarianturin tyyppi",
+          "area_rain_mm_per_tip": "Sademittarin mm/kippaus",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi",
+          "weather_entity": "Sääentiteetti (ennuste)",
+          "notify_entity": "Ilmoituspuhelin"
+        },
+        "data_description": {
+          "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
+          "area_rain_mm_per_tip": "Vain kippaussensorille: kuinka monta mm sadetta yksi kippaus on.",
+          "outdoor_temp_entity": "Valinnainen. Asettaa kuuman / viileän kastelutason tämän alueen vyöhykkeille.",
+          "weather_entity": "Valinnainen. Sallii tämän alueen vyöhykkeiden ohittaa kastelun, kun sadetta on ennustettu.",
+          "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
+          "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
+          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+        }
       }
     },
     "error": {
@@ -243,7 +270,9 @@
       "wu_invalid_key": "Weather Underground hylkäsi API-avaimen.",
       "wu_cannot_connect": "Weather Undergroundiin ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
       "wu_no_stations": "Säteen sisällä ei ole asemia. Ilman lähellä olevaa asemaa tästä ominaisuudesta ei ole hyötyä.",
-      "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa."
+      "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
+      "area_name_required": "Anna alueelle nimi.",
+      "area_name_exists": "Alue tällä nimellä on jo olemassa."
     },
     "abort": {
       "already_configured": "Weather Underground -sade on jo otettu käyttöön."
@@ -264,7 +293,7 @@
           "zone_type": "Vyöhyketyyppi",
           "weather_underground": "Weather Underground -sade",
           "crop_valve": "Kasvin venttiili",
-          "greenhouse_link": "Kasvihuone"
+          "location": "Missä tämä sijaitsee? (alue tai kasvihuone)"
         }
       },
       "settings": {
@@ -469,16 +498,6 @@
           "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
         }
       },
-      "greenhouse_link": {
-        "title": "Kasvihuone",
-        "description": "Tee tästä vyöhykkeestä kasvihuoneen kasvi: se käyttää silloin kasvihuoneen sisäantureita ja näkyy sen yhteydessä. Valitse \"-\", niin siitä tulee taas oma vyöhykkeensä (se säilyttää kopion kasvihuoneen antureista).",
-        "data": {
-          "greenhouse_entry_id": "Kuuluu kasvihuoneeseen"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet, tai \"-\", jos ei mikään."
-        }
-      },
       "flow_volume": {
         "title": "Mittaa virtausnopeus litroilla",
         "description": "Paina yhtä vyöhykkeen Huoltoajo-painikkeista (pidempi ajo, esim. 15 min, on tarkempi) ja ota vesi talteen tai lue se: ämpäri tai tynnyri suuttimien alla tai vesimittarin erotus. Syötä sitten minuutit, jotka venttiili oli auki, litrat ja ala, jonka suuttimet kastelevat.\n\nTulos on vyöhykkeen KESKIARVO: litrat jaettuna alalla ja minuuteilla, ja se korvaa vyöhykkeen Suuttimien virtaama (kalibrointi) -asetuksen. ZoneFlow käyttää yhtä virtausnopeutta vyöhykettä kohti, joten se ei erota suuttimia toisistaan. Tarkan tuloksen saamiseksi kaikkien vyöhykkeen venttiilin suuttimien pitää olla samaa tyyppiä ja samaa virtausta; laita erilaiset suuttimet eri venttiileille (eri vyöhykkeiksi). Sekavyöhykkeellä heikommilla suuttimilla olevat kasvit saavat vähemmän kuin näytetty keskiarvo. Se asettaa myös Vyöhykkeen virtaaman, jota käytetään veden käytön arviossa.",
@@ -506,6 +525,76 @@
           "head_flow": "Mitä yksi suutin antaa, pakkauksesta tai suutintaulukosta.",
           "head_flow_unit": "Yksikkö, jossa yhden suuttimen virtaama on annettu."
         }
+      },
+      "location": {
+        "title": "Missä tämä sijaitsee?",
+        "description": "Alue tai kasvihuone, jossa tämä vyöhyke sijaitsee. Vyöhyke käyttää alueensa antureita, ellei sillä ole omia. Kasvihuoneessa se on sen kasvi. Valitse Uusi alue luodaksesi alueen tämän vyöhykkeen omista antureista.",
+        "data": {
+          "location": "Paikka"
+        },
+        "data_description": {
+          "location": "Alue, kasvihuone tai ei mitään. Vyöhykkeen siirtäminen käynnistää sen uudelleen, jotta se lukee uuden paikan anturit."
+        }
+      },
+      "location_sensors": {
+        "title": "Käytetäänkö alueen antureita?",
+        "description": "Tällä vyöhykkeellä on oma anturi paikassa, jossa alueella on toinen. Rastita käyttääksesi alueen anturia; poista rasti säilyttääksesi vyöhykkeen oman.",
+        "data": {
+          "rain_counter_entity": "Käytä alueen sademittaria",
+          "outdoor_temp_entity": "Käytä alueen ulkolämpötilaa",
+          "weather_entity": "Käytä alueen sääentiteettiä",
+          "notify_entity": "Käytä alueen puhelinta"
+        },
+        "data_description": {
+          "rain_counter_entity": "Rastita käyttääksesi alueen sademittaria tämän vyöhykkeen oman sijaan.",
+          "outdoor_temp_entity": "Rastita käyttääksesi alueen ulkolämpötila-anturia tämän vyöhykkeen oman sijaan.",
+          "weather_entity": "Rastita käyttääksesi alueen sääentiteettiä tämän vyöhykkeen oman sijaan.",
+          "notify_entity": "Rastita lähettääksesi alueen puhelimeen tämän vyöhykkeen oman sijaan."
+        }
+      },
+      "new_area": {
+        "title": "Uusi alue",
+        "description": "Alue, joka on luotu tämän vyöhykkeen antureista. Vyöhyke siirtyy siihen, ja muut vyöhykkeet voivat liittyä myöhemmin.",
+        "data": {
+          "area_name": "Nimi",
+          "rain_counter_entity": "Sademittari",
+          "rain_source_type": "Sademittarianturin tyyppi",
+          "area_rain_mm_per_tip": "Sademittarin mm/kippaus",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi",
+          "weather_entity": "Sääentiteetti (ennuste)",
+          "notify_entity": "Ilmoituspuhelin"
+        },
+        "data_description": {
+          "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
+          "area_rain_mm_per_tip": "Vain kippaussensorille: kuinka monta mm sadetta yksi kippaus on.",
+          "outdoor_temp_entity": "Valinnainen. Asettaa kuuman / viileän kastelutason tämän alueen vyöhykkeille.",
+          "weather_entity": "Valinnainen. Sallii tämän alueen vyöhykkeiden ohittaa kastelun, kun sadetta on ennustettu.",
+          "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
+          "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
+          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+        }
+      },
+      "area_settings": {
+        "title": "Alue",
+        "description": "Alueen nimi ja sen vyöhykkeiden jakamat anturit. Vyöhyke, jolla on oma anturi, käyttää sitä edelleen.",
+        "data": {
+          "area_name": "Nimi",
+          "rain_counter_entity": "Sademittari",
+          "rain_source_type": "Sademittarianturin tyyppi",
+          "area_rain_mm_per_tip": "Sademittarin mm/kippaus",
+          "outdoor_temp_entity": "Ulkolämpötila-anturi",
+          "weather_entity": "Sääentiteetti (ennuste)",
+          "notify_entity": "Ilmoituspuhelin"
+        },
+        "data_description": {
+          "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
+          "area_rain_mm_per_tip": "Vain kippaussensorille: kuinka monta mm sadetta yksi kippaus on.",
+          "outdoor_temp_entity": "Valinnainen. Asettaa kuuman / viileän kastelutason tämän alueen vyöhykkeille.",
+          "weather_entity": "Valinnainen. Sallii tämän alueen vyöhykkeiden ohittaa kastelun, kun sadetta on ennustettu.",
+          "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
+          "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
+          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+        }
       }
     },
     "abort": {
@@ -516,7 +605,8 @@
       "zone_busy": "Vyöhyke (tai sen pumppu) on varattu, tai päivän käyntiajan turvaraja on käytetty. Yritä myöhemmin uudelleen.",
       "flow_rate_disabled": "Vyöhykkeen entiteetti Suuttimien virtaama (kalibrointi) on poistettu käytöstä. Ota se käyttöön (vyöhykkeen laitesivu → sen entiteetit) ja yritä uudelleen.",
       "zone_flow_set": "Vyöhykkeen virtaamaksi asetettu {flow}. Sitä käytetään vain veden käytön arvioon.",
-      "zone_flow_out_of_range": "Tästä tulee vyöhykkeen virtaama, joka on asetuksen sallimien rajojen (0-2000 L/min) ulkopuolella. Tarkista luvut."
+      "zone_flow_out_of_range": "Tästä tulee vyöhykkeen virtaama, joka on asetuksen sallimien rajojen (0-2000 L/min) ulkopuolella. Tarkista luvut.",
+      "location_not_available": "Tämä paikka ei ole käytettävissä."
     },
     "error": {
       "valve_already_used": "Toinen ZoneFlow-vyöhyke käyttää jo tätä venttiiliä.",
@@ -531,7 +621,9 @@
       "wu_cannot_connect": "Weather Undergroundiin ei saatu yhteyttä. Yritä myöhemmin uudelleen.",
       "wu_no_stations": "Säteen sisällä ei ole asemia. Ilman lähellä olevaa asemaa tästä ominaisuudesta ei ole hyötyä.",
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
-      "greenhouse_has_crops": "Tässä kasvihuoneessa on kasveja. Siirrä ne toiseen kasvihuoneeseen tai poista ne ensin (kunkin kasvin Määritä -> Kasvihuone)."
+      "greenhouse_has_crops": "Tässä kasvihuoneessa on kasveja. Siirrä ne toiseen kasvihuoneeseen tai poista ne ensin (kunkin kasvin Määritä -> Kasvihuone).",
+      "area_name_required": "Anna alueelle nimi.",
+      "area_name_exists": "Alue tällä nimellä on jo olemassa."
     }
   },
   "selector": {
@@ -1167,6 +1259,9 @@
           "limited": "Päällä osan ajasta",
           "outside": "Päällä osan ajasta, kun ulkona on kylmä"
         }
+      },
+      "location": {
+        "name": "Missä tämä sijaitsee?"
       }
     },
     "text": {
@@ -1275,6 +1370,200 @@
           "description": "Mikä tahansa vyöhykkeen laitteeseen kuuluva entiteetti (vaihtoehto vyöhykkeen laitteelle)."
         }
       }
+    },
+    "create_area": {
+      "name": "Luo alue",
+      "description": "Luo uuden alueen (puutarhan osan, kuten Takapiha). Kohdista vyöhykkeeseen ja se siirtyy uuteen alueeseen, joka alkaa kyseisen vyöhykkeen sademittarin, ulkolämpötilan, sään ja puhelimen asetuksilla.",
+      "fields": {
+        "name": {
+          "name": "Nimi",
+          "description": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke, joka sijoitetaan uuteen alueeseen (valinnainen)."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa kyseisen vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
+    },
+    "add_plant": {
+      "name": "Lisää kasvi",
+      "description": "Lisää kasvin vyöhykkeelle. Vyöhykkeellä, jolla ei ole pääkasvia, siitä tulee pääkasvi ja sen tyypin asetukset tulevat vyöhykkeelle; muutoin se on vain merkintä (historia, muistiinpanot), ellei Vanha pääkasvi määritä sen ottavan paikkaa.",
+      "fields": {
+        "name": {
+          "name": "Nimi",
+          "description": "Mitä kasvia kutsutaan."
+        },
+        "plant_type": {
+          "name": "Kasvityyppi",
+          "description": "Aloitusasetukset tälle kasvilajille (mukautettu, jos jätetään pois)."
+        },
+        "old_main": {
+          "name": "Vanha pääkasvi",
+          "description": "Vain kun vyöhykkeellä on jo pääkasvi. Mitä sille tapahtuu: säilytä se merkintänä tai arkistoi."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke. Tarvitaan vain, jos määritettynä on vähintään 2 vyöhykettä."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
+    },
+    "move_plant": {
+      "name": "Siirrä kasvi",
+      "description": "Siirtää kasvin historioineen toiselle vyöhykkeelle. Sen asetukset siirtyvät saapumisvyöhykkeelle.",
+      "fields": {
+        "plant_id": {
+          "name": "Kasvi",
+          "description": "Kasvin id (näkyy vyöhykkeen tila-attribuuteissa)."
+        },
+        "old_main": {
+          "name": "Vanha pääkasvi",
+          "description": "Vain kun vyöhykkeellä on jo pääkasvi. Mitä sille tapahtuu: säilytä se merkintänä, arkistoi, vaihda se vyöhykkeelle josta tämä kasvi poistuu, tai säilytä tämä kasvi vain merkintänä."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke, johon se menee."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
+    },
+    "remove_plant": {
+      "name": "Poista kasvi",
+      "description": "Poistaa kasvin vyöhykkeeltään. Se säilyy merkintänä historioineen. Vyöhykkeen seuraavasta kasvista tulee pääkasvi.",
+      "fields": {
+        "plant_id": {
+          "name": "Kasvi",
+          "description": "Kasvin id."
+        }
+      }
+    },
+    "set_main_plant": {
+      "name": "Aseta pääkasvi",
+      "description": "Määrittää kasvin vyöhykkeensä pääkasviksi: sen asetukset siirtyvät vyöhykkeelle ja vanha pääkasvi säilyy merkintänä.",
+      "fields": {
+        "plant_id": {
+          "name": "Kasvi",
+          "description": "Kasvin id."
+        }
+      }
+    },
+    "add_plant_note": {
+      "name": "Lisää kasvimuistiinpano",
+      "description": "Lisää muistiinpanon kasvin historiaan.",
+      "fields": {
+        "plant_id": {
+          "name": "Kasvi",
+          "description": "Kasvin id."
+        },
+        "text": {
+          "name": "Muistiinpano",
+          "description": "Mitä kirjoitetaan muistiin."
+        }
+      }
+    },
+    "save_preset": {
+      "name": "Tallenna esiasetus",
+      "description": "Tallentaa vyöhykkeen kasteluasetukset (ei venttiiliä, antureita, virtaamaa, istutuspäivää eikä muistiinpanoja) nimellä, josta muut vyöhykkeet voidaan aloittaa. Sama nimi korvaa esiasetuksen.",
+      "fields": {
+        "name": {
+          "name": "Nimi",
+          "description": "Mitä esiasetusta kutsutaan."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke. Tarvitaan vain, jos määritettynä on vähintään 2 vyöhykettä."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
+    },
+    "copy_settings": {
+      "name": "Kopioi asetukset",
+      "description": "Kopioi vyöhykkeelle toisen vyöhykkeen kasteluasetukset tai tallennetun esiasetuksen. Ei venttiiliä, antureita, virtaamaa, istutuspäivää eikä muistiinpanoja.",
+      "fields": {
+        "source_device_id": {
+          "name": "Kopioi vyöhykkeeltä",
+          "description": "Vyöhyke, jolta asetukset kopioidaan (tai valitse esiasetus)."
+        },
+        "preset": {
+          "name": "Esiasetus",
+          "description": "Tallennetun esiasetuksen nimi (tai valitse vyöhyke, jolta kopioidaan)."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke, joka saa asetukset."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
+    },
+    "delete_preset": {
+      "name": "Poista esiasetus",
+      "description": "Poistaa tallennetun esiasetuksen.",
+      "fields": {
+        "name": {
+          "name": "Nimi",
+          "description": "Esiasetuksen nimi."
+        }
+      }
+    },
+    "water_now": {
+      "name": "Kastele nyt",
+      "description": "Kastelee vyöhykettä käsin tietyn minuuttimäärän. Ei vyöhykkeen ollessa tauolla, ei koskaan pidempään kuin vyöhykkeen Peruskastelun turvaraja mahdollistaa, ja päivittäisen enimmäisajan puitteissa. Lasketaan mukaan vesikirjanpitoon (litroina), mutta ei siirrä perus- tai syväkastelun aikataulua.",
+      "fields": {
+        "minutes": {
+          "name": "Minuutit",
+          "description": "Kuinka kauan kastellaan."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke. Tarvitaan vain, jos määritettynä on vähintään 2 vyöhykettä."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
+    },
+    "calibrate_flow": {
+      "name": "Kalibroi virtaama",
+      "description": "Asettaa virtaaman mitatun ajon perusteella: ulos tullut vesi (kerätty ämpäriin tai luettu vesimittarista), alue jolle se osui, ja kuinka kauan venttiili oli auki. Asettaa myös Vyöhykkeen virtaaman litroina.",
+      "fields": {
+        "volume": {
+          "name": "Vesi",
+          "description": "Kuinka paljon vettä tuli ulos (litraa, tai gallonaa imperiaalisella vyöhykkeellä)."
+        },
+        "area": {
+          "name": "Alue",
+          "description": "Pinta-ala, johon vesi osui (m2, tai ft2 imperiaalisella vyöhykkeellä)."
+        },
+        "minutes": {
+          "name": "Minuutit",
+          "description": "Kuinka kauan venttiili oli auki."
+        },
+        "device_id": {
+          "name": "Vyöhykelaite",
+          "description": "Vyöhyke. Tarvitaan vain, jos määritettynä on vähintään 2 vyöhykettä."
+        },
+        "entity_id": {
+          "name": "Vyöhyke-entiteetti",
+          "description": "Mikä tahansa vyöhykkeen laitteelle kuuluva entiteetti (vaihtoehto Vyöhykelaitteelle)."
+        }
+      }
     }
   },
   "exceptions": {
@@ -1322,6 +1611,60 @@
     },
     "nothing_on_hold": {
       "message": "Mikään ei ole pidossa: kaikki laitteet ovat jo ZoneFlown ohjauksessa."
+    },
+    "location_not_available": {
+      "message": "Tämä paikka ei ole enää käytettävissä."
+    },
+    "greenhouse_cannot_be_crop": {
+      "message": "Ilmastointilaitteilla varustettu kasvihuone ei voi olla toisen kasvihuoneen kasvi."
+    },
+    "area_name_required": {
+      "message": "Anna alueelle nimi."
+    },
+    "area_name_exists": {
+      "message": "Alue tällä nimellä on jo olemassa."
+    },
+    "plant_zone_not_available": {
+      "message": "Kyseinen vyöhyke ei ole käytettävissä."
+    },
+    "plant_name_required": {
+      "message": "Anna kasville nimi."
+    },
+    "plant_not_found": {
+      "message": "Sitä kasvia ei ole olemassa."
+    },
+    "plant_same_zone": {
+      "message": "Kasvi on jo kyseisellä vyöhykkeellä."
+    },
+    "plant_old_main_choice": {
+      "message": "Vyöhykkeellä {zone} on jo pääkasvi. Määritä mitä sille tapahtuu (Vanha pääkasvi)."
+    },
+    "plant_zone_has_no_valve": {
+      "message": "Vain venttiilillä varustetulla vyöhykkeellä voi olla pääkasvi."
+    },
+    "plant_note_required": {
+      "message": "Kirjoita muistiinpano ensin."
+    },
+    "preset_name_required": {
+      "message": "Anna esiasetukselle nimi."
+    },
+    "preset_not_found": {
+      "message": "Sillä nimellä ei ole esiasetusta."
+    },
+    "copy_same_zone": {
+      "message": "Valitse toinen vyöhyke, jolta kopioidaan."
+    },
+    "copy_source_required": {
+      "message": "Valitse vyöhyke tai esiasetus, jolta kopioidaan."
+    },
+    "water_now_out_of_range": {
+      "message": "Kastele vähintään 1 minuutti ja enintään {max} minuuttia (tämän vyöhykkeen turvaraja)."
+    },
+    "calibration_out_of_range": {
+      "message": "Nämä luvut antavat virtaaman, joka ei ole mahdollinen tälle vyöhykkeelle. Tarkista vesi, pinta-ala ja minuutit."
+    },
+    "calibration_unavailable": {
+      "message": "Tällä vyöhykkeellä ei ole kalibroitavaa virtaama-asetusta."
     }
   },
   "issues": {
@@ -1331,15 +1674,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: anturi ei ole raportoinut {days} päivään",
-      "description": "Vyöhyke {zone}: sen käyttämä {entity} ei ole raportoinut {days} päivään. Vyöhyke jatkaa ilman sitä (katso README:stä, mitä se tarkoittaa), mutta tarkista laite -- tai poista se vyöhykkeeltä kohdassa Määritä. Tämä poistuu itsestään, kun anturi raportoi taas."
+      "description": "Vyöhyke {zone}: sen käyttämä {entity} ei ole raportoinut {days} päivään. Vyöhyke jatkaa ilman sitä (katso README:stä, mitä se tarkoittaa), mutta tarkista laite -- tai poista se vyöhykkeeltä kohdassa Määritä. Tämä poistuu itsestään, kun anturi raportoi taas.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Korvaa anturi",
+            "description": "Vyöhykkeen {zone} käyttämä anturi {entity} on ollut poissa verkosta päiviä. Valitse korvaava anturi tai jätä tyhjäksi (vyöhyke toimii sen jälkeen ilman sitä).",
+            "data": {
+              "replacement": "Korvaava anturi"
+            },
+            "data_description": {
+              "replacement": "Jätä tyhjäksi, jos haluat poistaa anturin tältä vyöhykkeeltä."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: puhelimen ilmoituskohde puuttuu",
-      "description": "Vyöhyke {zone}: puhelinilmoitusten kohde {entity} ei ole enää olemassa Home Assistantissa, joten ilmoituksia ei tule. Valitse nykyinen ilmoituskohde vyöhykkeen kohdasta Määritä. Tämä poistuu itsestään, kun kohde on taas olemassa."
+      "description": "Vyöhyke {zone}: puhelinilmoitusten kohde {entity} ei ole enää olemassa Home Assistantissa, joten ilmoituksia ei tule. Valitse nykyinen ilmoituskohde vyöhykkeen kohdasta Määritä. Tämä poistuu itsestään, kun kohde on taas olemassa.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Valitse toinen puhelin",
+            "description": "Puhelinta {entity} ei ole enää olemassa, joten {zone} ei voi lähettää viestejä. Valitse toinen puhelin tai jätä tyhjäksi.",
+            "data": {
+              "notify_entity": "Ilmoituspuhelin"
+            },
+            "data_description": {
+              "notify_entity": "Jätä tyhjäksi, jos haluat lopettaa puhelinilmoitukset tältä vyöhykkeeltä."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibroi suuttimien virtaama",
-      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä."
+      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Aseta virtaama mittaamalla",
+            "description": "Vyöhykkeellä {zone} on edelleen esimerkkivirtaama, joten sen kasteluajat ovat arvioita. Aseta ämpäri suuttimien alle (tai katso vesimittari) ja käytä venttiiliä 15 minuuttia. Käynnistetäänkö nyt?",
+            "data": {
+              "run": "Käytä venttiiliä 15 minuuttia nyt"
+            },
+            "data_description": {
+              "run": "Poista valinta, jos olet jo suorittanut sen."
+            }
+          },
+          "measure": {
+            "title": "Kuinka paljon vettä tuli ulos?",
+            "description": "Syötä kuinka paljon {zone} antoi kyseisellä ajolla, sen kastelema alue ja kuinka monta minuuttia venttiili oli auki.",
+            "data": {
+              "volume": "Ulos tullut vesi",
+              "area": "Kasteltu alue",
+              "minutes": "Minuutit, jolloin venttiili oli auki"
+            },
+            "data_description": {
+              "volume": "Litraa (gallonaa imperiaalisella vyöhykkeellä).",
+              "area": "Neliömetriä (neliöjalkaa imperiaalisella vyöhykkeellä).",
+              "minutes": "Tavallisesti 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Nämä luvut antavat virtaaman, joka ei ole mahdollinen tälle vyöhykkeelle. Tarkista ne."
+        },
+        "abort": {
+          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa.",
+          "zone_busy": "Vyöhyke on varattu. Yritä hetken kuluttua uudelleen."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: venttiili jaettu toisen vyöhykkeen kanssa",
@@ -1376,6 +1788,10 @@
     "greenhouse_removed": {
       "title": "{zone}: sen kasvihuone poistettiin",
       "description": "Kasvihuone {greenhouse} poistettiin, joten {zone} on nyt oma vyöhykkeensä. Se kastelee edelleen ja säilyttää kasvihuoneen sisäanturit. Voit siirtää sen toiseen kasvihuoneeseen vyöhykkeen kohdasta Määritä -> Kasvihuone."
+    },
+    "area_removed": {
+      "title": "{zone}: sen alue poistettiin",
+      "description": "Alue {area} poistettiin, joten {zone} käyttää nyt sen antureiden kopiota. Voit sijoittaa sen toiselle alueelle valitsemalla vyöhykkeen Määritä -> Missä tämä on?"
     }
   }
 }

@@ -21,12 +21,17 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import visibility
-from .const import CONF_DEEP_SOAK_ENABLED, DOMAIN
+from .const import CONF_DEEP_SOAK_ENABLED, CONF_ENTRY_TYPE, DOMAIN, ENTRY_TYPE_AREA
 from .controller import ZoneFlowController
 from .entity_cleanup import remove_entities
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
+    if entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_AREA:
+        from .area_entities import async_setup_area_switches
+
+        async_setup_area_switches(hass, entry, async_add_entities)
+        return
     controller: ZoneFlowController = hass.data[DOMAIN][entry.entry_id]
     entities = [
         ZoneFlowDeepSoakEnabledSwitch(entry, controller),
@@ -170,7 +175,7 @@ class ZoneFlowPauseSwitch(SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        return self._controller.paused
+        return self._controller.own_paused
 
     @property
     def extra_state_attributes(self) -> dict:

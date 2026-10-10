@@ -533,6 +533,24 @@ def deep_soak_due(elapsed_seconds: float, interval_days: float, buffer_seconds: 
     return elapsed_seconds >= (interval_days * 86400 - buffer_seconds)
 
 
+def deep_soak_waits_for_routine(
+    routine_elapsed: float,
+    deep_elapsed: float,
+    deep_interval_days: float,
+    routine_interval_days: int,
+    routine_buffer_seconds: int,
+    deep_buffer_seconds: int,
+) -> bool:
+    """A deep soak that has come due the day after a routine would be a
+    second full watering on top of it. It waits for the next routine slot
+    instead (and replaces that routine), but never longer than one routine
+    interval past its own due date."""
+    if routine_due(routine_elapsed, routine_interval_days, routine_buffer_seconds):
+        return False
+    latest = deep_interval_days * 86400 - deep_buffer_seconds + routine_interval_days * 86400
+    return deep_elapsed < latest
+
+
 def drydown_satisfied(elapsed_seconds_since_rain: float, drydown_days: float) -> bool:
     """Port of the dry-down check shared by both deep soak and routine."""
     return elapsed_seconds_since_rain >= (drydown_days * 86400)

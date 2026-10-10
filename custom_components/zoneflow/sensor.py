@@ -13,7 +13,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .devices import zone_device
 from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -32,6 +33,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         from .wu_sensor import async_setup_wu_sensors
 
         async_setup_wu_sensors(hass, entry, async_add_entities)
+        return
+    if entry.data.get(CONF_ENTRY_TYPE) == ENTRY_TYPE_AREA:
+        from .area_entities import async_setup_area_sensors
+
+        async_setup_area_sensors(hass, entry, async_add_entities)
         return
     controller = hass.data[DOMAIN][entry.entry_id]
     entities: list[SensorEntity] = [
@@ -637,6 +643,7 @@ class ZoneFlowLastCycleWaterSensor(_Base):
 
     _attr_native_unit_of_measurement = "L"
     _attr_icon = "mdi:water"
+    _attr_suggested_display_precision = 0  # whole litres, like Last Water Volume
 
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)
@@ -776,11 +783,32 @@ class ZoneFlowStatusSensor(_Base):
         attributes["valve"] = self._controller.valve_entity
         # For the overview card's default icon (the plant preset at setup).
         attributes["plant"] = self._controller.entry.data.get(CONF_PLANT)
+        # For the cards: the garden area the zone is shown under (or None).
+        attributes["garden_area"] = self._controller.garden_area
+        # outdoor / greenhouse / indoor: the cards keep a greenhouse and its crops apart.
+        attributes["zone_type"] = self._controller.zone_type
+        # A sensor this zone has of its own where its area has another: the
+        # card says so ("uses its own rain gauge, not Backyard's").
+        attributes["area_overrides"] = self._controller.area_overrides()
+        # The plants in this zone (the main one first), for the cards.
+        attributes["plants"] = self._controller.plants.summary() if self._controller.plants else []
+        attributes["area_note"] = self._controller.area_note()
+        # Units this zone shows, for the calibration form on the card.
+        attributes["volume_unit"] = "gal" if self._controller.imperial else "L"
+        attributes["area_unit"] = "ft²" if self._controller.imperial else "m²"
+        # The area's own Pause switch and Snooze button, for its heading on the cards.
+        area_entities = self._controller.area_entities()
+        attributes["area_pause"] = area_entities.get("pause")
+        attributes["area_snooze"] = area_entities.get("snooze")
+        # This zone's own Pause and Snooze (a greenhouse's heading shows them).
+        own = self._controller.own_controls()
+        attributes["pause_entity"] = own.get("pause")
+        attributes["snooze_entity"] = own.get("snooze")
         # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
         registry = dr.async_get(self.hass)
 
         def device_of(entry_id: str) -> str | None:
-            device = registry.async_get_device(identifiers={(DOMAIN, entry_id)})
+            device = zone_device(registry, entry_id)
             return device.id if device is not None else None
 
         parent = self._controller.parent_entry

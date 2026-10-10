@@ -69,7 +69,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import greenhouse_logic, visibility
+from . import greenhouse_logic, location, visibility
 from .entity_cleanup import remove_entities
 from .const import (
     DEMAND_MODEL_OPTIONS,
@@ -104,6 +104,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     async_add_entities(
         [
             *climate,
+            ZoneFlowLocationSelect(entry, controller),
             ZoneFlowSoilTypeSelect(entry, controller),
             ZoneFlowDrainageSelect(entry, controller),
             ZoneFlowSlopeSelect(entry, controller),
@@ -129,6 +130,45 @@ class _Base(SelectEntity):
             name=entry.title,
             manufacturer="ZoneFlow",
         )
+
+
+class ZoneFlowLocationSelect(_Base):
+    """"Where is this?": the area or greenhouse the zone is in (location.py).
+    The options are the areas and greenhouses that exist right now, so they
+    are worked out when asked. Moving a zone starts it again (its sensors
+    change); an area or greenhouse is made in Configure."""
+
+    _attr_icon = "mdi:map-marker-outline"
+    _attr_translation_key = "location"
+    _attr_entity_category = EntityCategory.CONFIG
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._entry = entry
+        self._attr_unique_id = f"{entry.entry_id}_location_select"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # The Status sensor's refresh also fires when an area appears or is renamed.
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
+    def _choices(self) -> list[tuple[str, str]]:
+        return location.choices(self.hass, self._entry)
+
+    @property
+    def options(self) -> list[str]:
+        return [label for _, label in self._choices()]
+
+    @property
+    def current_option(self) -> str | None:
+        token = location.current_token(self._entry)
+        return next((label for t, label in self._choices() if t == token), None)
+
+    async def async_select_option(self, option: str) -> None:
+        token = next((t for t, label in self._choices() if label == option), None)
+        if token is None:
+            return
+        await location.async_set(self.hass, self._entry, token)
 
 
 class ZoneFlowSoilTypeSelect(_Base):
