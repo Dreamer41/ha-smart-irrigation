@@ -4458,6 +4458,7 @@ class ZoneFlowCard extends HTMLElement {
       card.appendChild(missing);
       this._statusEl = undefined;
       this._noteEl = undefined;
+      this._plantsEl = undefined;
       return;
     }
 
@@ -4481,6 +4482,11 @@ class ZoneFlowCard extends HTMLElement {
     this._noteEl.className = "area-note";
     this._noteEl.hidden = true;
     card.appendChild(this._noteEl);
+    // A zone with more than one plant (a mixed bed) lists them under the status.
+    this._plantsEl = document.createElement("div");
+    this._plantsEl.className = "area-note";
+    this._plantsEl.hidden = true;
+    card.appendChild(this._plantsEl);
     // Why? -- the numbers behind the next watering, on request.
     if (valve) {
       const why = document.createElement("div");
@@ -5264,6 +5270,10 @@ class ZoneFlowCard extends HTMLElement {
     const note = status?.attributes?.area_note || "";
     this._noteEl.textContent = note;
     this._noteEl.hidden = !note;
+    const plants = Array.isArray(status?.attributes?.plants) ? status.attributes.plants : [];
+    const mixed = plants.length > 1;
+    this._plantsEl.textContent = mixed ? `${t(hass, "plants.title")}: ${plants.map((p) => p.name).join(", ")}` : "";
+    this._plantsEl.hidden = !mixed;
     this._statusEl.classList.toggle("warn", ["lock_held", "refused_daily_cap", "refused_runtime_cap",
       "refused_deep_soak_cap", "interrupted", "failsafe", "mist_halted"].includes(code));
   }

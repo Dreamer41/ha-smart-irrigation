@@ -809,3 +809,41 @@ def test_the_watering_method_help_link_points_at_the_blog_post():
     text = CARD.read_text(encoding="utf-8")
     assert 'const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";' in text
     assert "amounts: [`${GUIDE}CALIBRATION.md`, METHOD_HELP_URL]" in text  # shown beside How much water
+
+
+PLANTS_LINE_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async")] + r"""
+const run = async () => {
+  const card = await buildCard(false, false);
+  card.ctx._statusEl.classList = { toggle() {} };
+  const visible = { "sensor.status": { entity_id: "sensor.tomatoes_status" } };
+  const show = (plants) => {
+    hass.states["sensor.tomatoes_status"].attributes.plants = plants;
+    proto2._update.call(card.ctx, visible);
+    return [card.ctx._plantsEl.textContent, card.ctx._plantsEl.hidden];
+  };
+  console.log(JSON.stringify({
+    one: show([{ id: "a", name: "Tomatoes", main: true }]),
+    mixed: show([{ id: "a", name: "Eggplant", main: true }, { id: "b", name: "Basil", main: false }, { id: "c", name: "Marigold", main: false }]),
+    none: show([]),
+  }));
+};
+run();
+"""
+
+
+def test_a_mixed_zone_lists_its_plants_under_the_status(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "d1", "Tomatoes", "tomatoes")
+    devices["d1"] = {"name": "Tomatoes"}
+    harness = tmp_path / "plants_line.js"
+    harness.write_text(PLANTS_LINE_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": {}, "keys": ["sensor.status"]})],
+                          capture_output=True, encoding="utf-8", timeout=60, check=False)
+    assert done.returncode == 0, done.stderr[-1000:]
+    out = json.loads(done.stdout)
+    assert out["one"][1] is True and out["none"][1] is True  # one plant needs no list
+    assert out["mixed"] == ["Plants: Eggplant, Basil, Marigold", False]
+
