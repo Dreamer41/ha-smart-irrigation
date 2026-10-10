@@ -1,8 +1,6 @@
 """The zone card asks for a zone's plants and their histories here."""
 from __future__ import annotations
 
-from datetime import datetime
-
 import homeassistant.util.dt as dt_util
 import voluptuous as vol
 from homeassistant.components import websocket_api
@@ -52,7 +50,7 @@ def _ready_fields(plant: dict, controller) -> dict:
     stage = stage_of(plant, planted)
     out = {
         "ready_days_default": default_ready_days(plant.get("type")),
-        "planted": datetime.fromtimestamp(planted, tz=dt_util.UTC).date().isoformat() if planted else None,
+        "planted": dt_util.as_local(dt_util.utc_from_timestamp(planted)).date().isoformat() if planted else None,
     }
     if stage is not None:
         out.update(ready_days=stage["ready_days"], stage=stage["stage"], days_left=stage["days_left"])

@@ -158,3 +158,14 @@ async def test_the_phone_message_names_the_plant(hass, fake_valve_services, monk
     monkeypatch.setattr(c, "_log_event", log_event)
     await c.notify_plant_ready("Basil")
     assert sent[0]["message"] == "plant_ready" and sent[0]["params"]["plant"] == "Basil" and sent[0]["notify_phone"]
+
+
+@pytest.mark.asyncio
+async def test_the_planting_date_the_card_gets_is_the_local_day(hass, fake_valve_services):
+    await hass.config.async_set_time_zone("Asia/Bangkok")  # local midnight is the day before in UTC
+    zone = _zone(hass)
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    main = _book(hass).main(zone.entry_id)
+    await _call(hass, "set_plant_ready", plant_id=main["id"], ready_days=10, planted="2026-09-20")
+    assert plant_api._ready_fields(main, c)["planted"] == "2026-09-20"
