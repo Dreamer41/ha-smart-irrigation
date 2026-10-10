@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Fixed
+
+- **Water now / Run routine now waters even when the routine is not due.** The button used to do nothing, silently, before the next watering was due. It now runs the routine watering at once and counts it as done. Pause, snooze, frost, rain falling now and the runtime caps still apply.
+
 ## [1.7.0] — Areas, plants and easier setup
 
 - **Changed (docs)**: the README is now a short introduction that points to the website and to the guides in `docs/`. The long README moved, unchanged, to [docs/GUIDE.md](docs/GUIDE.md). New [docs/CALIBRATION.md](docs/CALIBRATION.md): how to set the flow rate, Zone Flow (litres) and the rain gauge
