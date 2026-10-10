@@ -54,6 +54,9 @@ PLANT_NUMBER_KEYS = (
     "growth_ramp_custom_point2_pct",
     "growth_ramp_custom_full_day",
 )
+# What is about the watering rather than the plant itself: a plant that moves
+# into a bed leaves these as the bed has them unless asked to bring them.
+WATERING_STATE_KEYS = ("demand_model", "deficit_enabled", "deficit_until_ts")
 # Plant settings kept in the zone's saved state (state_store.IrrigationState).
 PLANT_STATE_KEYS = (
     "growth_stage_mode",
@@ -246,22 +249,25 @@ class ZonePlants:
             plant["snapshot"] = now
         self._last = now
 
-    async def async_apply(self, snapshot: dict[str, Any]) -> None:
+    async def async_apply(self, snapshot: dict[str, Any], watering: bool = True) -> None:
         """Put a plant's settings on the zone (a plant arriving, or becoming
-        the main one). Not logged as edits of the plant."""
+        the main one). Not logged as edits of the plant. With `watering` False
+        only what is about the plant itself (planting date, health, fertilizing)
+        goes on; the zone keeps its way of watering."""
         c = self.controller
-        for key in PLANT_NUMBER_KEYS:
-            if snapshot.get(key) is not None and key in c.numbers:
-                await c.numbers[key].async_set_metric_value(float(snapshot[key]))
+        if watering:
+            for key in PLANT_NUMBER_KEYS:
+                if snapshot.get(key) is not None and key in c.numbers:
+                    await c.numbers[key].async_set_metric_value(float(snapshot[key]))
         state = c.store.state
         for key in PLANT_STATE_KEYS:
-            if key in snapshot:
+            if key in snapshot and (watering or key not in WATERING_STATE_KEYS):
                 setattr(state, key, snapshot[key])
-        if snapshot.get("growth_ramp_profile") is not None:
+        if watering and snapshot.get("growth_ramp_profile") is not None:
             state.growth_ramp_profile_override = snapshot["growth_ramp_profile"]
         await c.store.async_save()
         self._last = self.values()
-        wanted = snapshot.get("deep_soak_enabled")
+        wanted = snapshot.get("deep_soak_enabled") if watering else None
         if wanted is not None and bool(wanted) != c.deep_soak_enabled:
             # Deep soak on/off is kept in the zone's settings: changing it restarts the zone.
             c.hass.config_entries.async_update_entry(

@@ -53,6 +53,7 @@ SERVICE_ADD_PLANT = "add_plant"
 SERVICE_MOVE_PLANT = "move_plant"
 SERVICE_REMOVE_PLANT = "remove_plant"
 SERVICE_SET_MAIN_PLANT = "set_main_plant"
+SERVICE_RENAME_PLANT = "rename_plant"
 SERVICE_ADD_PLANT_NOTE = "add_plant_note"
 SERVICE_SAVE_PRESET = "save_preset"
 SERVICE_WATER_NOW = "water_now"
@@ -125,8 +126,14 @@ ADD_PLANT_SCHEMA = vol.Schema(
     }
 )
 MOVE_PLANT_SCHEMA = vol.Schema(
-    {vol.Required("plant_id"): cv.string, vol.Optional("old_main"): _OLD_MAIN, **_ZONE_TARGET_FIELDS}
+    {
+        vol.Required("plant_id"): cv.string,
+        vol.Optional("old_main"): _OLD_MAIN,
+        vol.Optional("use_plant_settings", default=False): cv.boolean,
+        **_ZONE_TARGET_FIELDS,
+    }
 )
+RENAME_PLANT_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Required("name"): cv.string})
 WATER_NOW_SCHEMA = vol.Schema(
     {vol.Optional("minutes", default=10): vol.All(vol.Coerce(float), vol.Range(min=1, max=900)), **_ZONE_TARGET_FIELDS}
 )
@@ -413,7 +420,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         async def _handle_move_plant(call: ServiceCall) -> None:
             zone = _resolve_controller(hass, call)  # the zone it goes to
-            await plant_actions.move_plant(hass, call.data["plant_id"], zone.entry.entry_id, call.data.get("old_main"))
+            await plant_actions.move_plant(
+                hass, call.data["plant_id"], zone.entry.entry_id, call.data.get("old_main"), call.data["use_plant_settings"]
+            )
+
+        async def _handle_rename_plant(call: ServiceCall) -> None:
+            await plant_actions.rename_plant(hass, call.data["plant_id"], call.data["name"])
 
         async def _handle_remove_plant(call: ServiceCall) -> None:
             await plant_actions.remove_plant(hass, call.data["plant_id"])
@@ -453,6 +465,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT, _handle_add_plant, schema=ADD_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_MOVE_PLANT, _handle_move_plant, schema=MOVE_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_REMOVE_PLANT, _handle_remove_plant, schema=PLANT_ID_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_RENAME_PLANT, _handle_rename_plant, schema=RENAME_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_SET_MAIN_PLANT, _handle_set_main_plant, schema=PLANT_ID_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT_NOTE, _handle_add_plant_note, schema=PLANT_NOTE_SCHEMA)
 
@@ -541,6 +554,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_MOVE_PLANT,
                 SERVICE_REMOVE_PLANT,
                 SERVICE_SET_MAIN_PLANT,
+                SERVICE_RENAME_PLANT,
                 SERVICE_ADD_PLANT_NOTE,
                 SERVICE_SAVE_PRESET,
                 SERVICE_WATER_NOW,

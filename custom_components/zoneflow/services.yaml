@@ -237,8 +237,9 @@ add_plant:
 move_plant:
   name: Move Plant
   description: >-
-    Moves a plant, with its history, to another zone. Its settings go onto the
-    zone it arrives in.
+    Moves a plant, with its history, to another zone. The zone keeps the way it
+    is watered; the plant brings its own details (planting date, health,
+    fertilizing). Turn on Use The Plant's Watering Settings to bring those too.
   fields:
     plant_id:
       name: Plant
@@ -259,6 +260,16 @@ move_plant:
             - archive
             - swap
             - keep
+    use_plant_settings:
+      name: Use The Plant's Watering Settings
+      description: >-
+        Off (the default): the zone keeps the way it is watered and the plant
+        only brings its own details (planting date, health, fertilizing). On:
+        the plant's watering settings (targets, method, deficit mode, growth
+        ramp, deep soak) go onto the zone too.
+      default: false
+      selector:
+        boolean:
     device_id:
       name: Zone Device
       description: The zone it goes to. Only needed with 2+ zones configured.
@@ -281,6 +292,23 @@ remove_plant:
     plant_id:
       name: Plant
       description: The plant's id.
+      required: true
+      selector:
+        text:
+
+rename_plant:
+  name: Rename Plant
+  description: Gives a plant another name (its history stays).
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+    name:
+      name: Name
+      description: The new name.
       required: true
       selector:
         text:

@@ -83,9 +83,10 @@ async def _refresh_zone_entities(hass: HomeAssistant, zone) -> None:
     del results
 
 
-async def _apply(hass: HomeAssistant, zone, snapshot: dict[str, Any]) -> None:
-    """Put a plant's settings on the zone, without logging them as edits."""
-    await zone.plants.async_apply(snapshot)
+async def _apply(hass: HomeAssistant, zone, snapshot: dict[str, Any], watering: bool = True) -> None:
+    """Put a plant's settings on the zone, without logging them as edits.
+    `watering` False leaves the zone's way of watering as it is."""
+    await zone.plants.async_apply(snapshot, watering)
     await _refresh_zone_entities(hass, zone)
 
 
@@ -139,7 +140,9 @@ async def _promote_next(hass, book, zone) -> None:
     nxt = left[0]
     nxt["main"] = True
     book.add_history(nxt["id"], "promoted", zone=zone.entry.title)
-    await _apply(hass, zone, nxt["snapshot"] or starting_snapshot(nxt.get("type") or PLANT_CUSTOM))
+    # The bed keeps the way it is watered: a plant stepping up is not asked to change it.
+    await _apply(hass, zone, nxt["snapshot"] or starting_snapshot(nxt.get("type") or PLANT_CUSTOM), watering=False)
+    nxt["snapshot"] = _live(zone)
 
 
 async def set_main(hass: HomeAssistant, plant_id: str) -> None:
@@ -161,11 +164,17 @@ async def set_main(hass: HomeAssistant, plant_id: str) -> None:
     zone._notify_status()
 
 
-async def move_plant(hass: HomeAssistant, plant_id: str, target_id: str, old_main: str | None) -> None:
+async def move_plant(
+    hass: HomeAssistant, plant_id: str, target_id: str, old_main: str | None, use_plant_settings: bool = False
+) -> None:
     """Move a plant to another zone, with its history. If the zone it arrives
     in already has a main plant, `old_main` says what becomes of that one:
     "extra" (stays as a record), "archive", "swap" (goes to the zone this
-    plant leaves), or "keep" (this plant joins as a record only)."""
+    plant leaves), or "keep" (this plant joins as a record only).
+
+    The plant brings what is about itself (planting date, health, fertilizing);
+    the bed keeps its way of watering unless `use_plant_settings` says to take
+    the plant's too."""
     book = await async_get_book(hass)
     plant = _plant(book, plant_id)
     source_id = plant.get("zone_id")
@@ -204,14 +213,23 @@ async def move_plant(hass: HomeAssistant, plant_id: str, target_id: str, old_mai
     if becomes_main:
         plant["main"] = True
         book.add_history(plant["id"], "promoted", zone=target.entry.title)
-        await _apply(hass, target, plant["snapshot"] or starting_snapshot(plant.get("type") or PLANT_CUSTOM))
+        await _apply(
+            hass, target, plant["snapshot"] or starting_snapshot(plant.get("type") or PLANT_CUSTOM), watering=use_plant_settings
+        )
+        if not use_plant_settings:
+            plant["snapshot"] = _live(target)  # the plant is now watered the way the bed is
 
     # The zone the plant left: a swapped-in plant takes over if it was the main one, else the next record.
     if source is not None and was_main:
         if swapped_in is not None:
             swapped_in["main"] = True
             book.add_history(swapped_in["id"], "promoted", zone=source.entry.title)
-            await _apply(hass, source, swapped_in["snapshot"] or starting_snapshot(swapped_in.get("type") or PLANT_CUSTOM))
+            await _apply(
+                hass, source, swapped_in["snapshot"] or starting_snapshot(swapped_in.get("type") or PLANT_CUSTOM),
+                watering=use_plant_settings,
+            )
+            if not use_plant_settings:
+                swapped_in["snapshot"] = _live(source)
         else:
             await _promote_next(hass, book, source)
     for zone in (source, target):
@@ -237,6 +255,19 @@ async def remove_plant(hass: HomeAssistant, plant_id: str) -> None:
         if was_main:
             await _promote_next(hass, book, zone)
         zone._notify_status()
+
+
+async def rename_plant(hass: HomeAssistant, plant_id: str, name: str) -> None:
+    book = await async_get_book(hass)
+    plant = _plant(book, plant_id)
+    name = _clean(name, NAME_MAX_LENGTH)
+    if not name:
+        raise _error("plant_name_required")
+    plant["name"] = name
+    book._save()
+    zone = hass.data.get(DOMAIN, {}).get(plant.get("zone_id") or "")
+    if zone is not None:
+        zone._notify_status()  # the Status sensor lists the plants
 
 
 async def add_note(hass: HomeAssistant, plant_id: str, text: str) -> None:
@@ -283,7 +314,8 @@ def _value_text(hass: HomeAssistant, key: str, value: Any) -> str:
         return dt_util.as_local(dt_util.utc_from_timestamp(value)).strftime("%Y-%m-%d")
     if isinstance(value, float):
         return f"{value:g}"
-    return str(value)
+    text = str(value).replace("_", " ")  # an option such as temperature_tiers, in words
+    return {"et curve": "ET curve"}.get(text, text[:1].upper() + text[1:])
 
 
 def history_text(hass: HomeAssistant, entry: dict[str, Any], zone_id: str | None = None) -> str:

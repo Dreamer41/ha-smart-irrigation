@@ -423,7 +423,7 @@ const run = async () => {
   const buttons = (label) => all().filter((e) => e.tag === "button" && e._text === label);
   const result = {};
   result.names = all().filter((e) => e.className === "plant-name").map((e) => e._text);
-  result.badges = all().filter((e) => e.className.startsWith("plant-badge")).map((e) => e._text);
+  result.badges = all().filter((e) => (e.className || "").startsWith("plant-badge")).map((e) => e._text);
   result.makeMainButtons = buttons("Make main plant").length;
   // Every click re-draws the popup: take hold of the controls first.
   const copyBtn = buttons("Copy")[0];
@@ -440,7 +440,9 @@ const run = async () => {
   const selects = all().filter((e) => e.tag === "select" && e.className === "area-select" && e.children.length && e.children[0].value === "d2");
   result.targets = selects[0].children.map((o) => [o.value, o._text]);
   selects[0].value = "d2"; selects[0].listeners.change();
-  result.choices = all().filter((e) => e.className === "plant-choice").map((e) => e.children[0].value);
+  result.choices = all().filter((e) => e.className === "plant-choice" && e.children[0].type === "radio").map((e) => e.children[0].value);
+  result.hasSettingsBox = all().some((e) => e.tag === "input" && e.type === "checkbox");
+  result.hasRename = buttons("Rename").length;
   buttons("Move")[0].listeners.click();
   await Promise.resolve();
   // Add a plant.
@@ -489,12 +491,13 @@ def test_the_plants_popup_lists_the_plants_and_calls_the_services(tmp_path):
     out = json.loads(done.stdout)
     assert out["names"] == ["Tomatoes", "Basil"] and out["badges"] == ["Main plant", "Record only"]
     assert out["makeMainButtons"] == 1
+    assert out["hasSettingsBox"] is True and out["hasRename"] == 2  # a rename button per plant; the move panel asks about watering settings
     assert out["targets"] == [["d2", "Chilis"]]
     assert out["choices"] == ["extra", "archive", "swap", "keep"]  # Chilis already has a main plant
     assert out["modeOptions"] == ["", "extra", "archive"]
     assert out["calls"] == [
         ["zoneflow", "set_main_plant", {"plant_id": "b"}],
-        ["zoneflow", "move_plant", {"plant_id": "t", "device_id": "d2", "old_main": "extra"}],
+        ["zoneflow", "move_plant", {"plant_id": "t", "device_id": "d2", "use_plant_settings": False, "old_main": "extra"}],
         ["zoneflow", "add_plant", {"name": "Basil", "plant_type": "herbs", "device_id": "d1", "old_main": "archive"}],
         ["zoneflow", "copy_settings", {"source_device_id": "d2", "device_id": "d1"}],
         ["zoneflow", "copy_settings", {"preset": "Hot bed", "device_id": "d1"}],
@@ -815,11 +818,13 @@ PLANTS_LINE_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async"
 const run = async () => {
   const card = await buildCard(false, false);
   card.ctx._statusEl.classList = { toggle() {} };
-  const visible = { "sensor.status": { entity_id: "sensor.tomatoes_status" } };
+  const visible = { "sensor.status": { entity_id: "sensor.tomatoes_status" }, "select.demand_model": { entity_id: "select.tomatoes_demand_model" } };
+  hass.states["select.tomatoes_demand_model"] = { state: "et_curve", attributes: { friendly_name: "Tomatoes Water Demand Model" } };
+  hass.states["sensor.tomatoes_status"].attributes.valve = "switch.valve";
   const show = (plants) => {
     hass.states["sensor.tomatoes_status"].attributes.plants = plants;
     proto2._update.call(card.ctx, visible);
-    return [card.ctx._plantsEl.textContent, card.ctx._plantsEl.hidden];
+    return [card.ctx._plantsEl.textContent, card.ctx._plantsEl.hidden, card.ctx._methodEl.textContent, card.ctx._methodEl.hidden];
   };
   console.log(JSON.stringify({
     one: show([{ id: "a", name: "Tomatoes", main: true }]),
@@ -845,5 +850,6 @@ def test_a_mixed_zone_lists_its_plants_under_the_status(tmp_path):
     assert done.returncode == 0, done.stderr[-1000:]
     out = json.loads(done.stdout)
     assert out["one"][1] is True and out["none"][1] is True  # one plant needs no list
-    assert out["mixed"] == ["Plants: Eggplant, Basil, Marigold", False]
+    assert out["mixed"][:2] == ["Plants: Eggplant, Basil, Marigold", False]
+    assert out["mixed"][2:] == ["Tomatoes Water Demand Model: et_curve", False]  # how the zone is watered, always shown
 

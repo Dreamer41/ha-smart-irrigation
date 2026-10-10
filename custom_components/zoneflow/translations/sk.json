@@ -8,13 +8,15 @@
           "zone_name": "Názov zóny",
           "plant": "Čo je zasadené",
           "zone_type": "Kde rastie",
-          "start_from": "Začať z"
+          "start_from": "Začať z",
+          "location": "Kde sa nachádza?"
         },
         "data_description": {
           "zone_name": "Stane sa názvom zariadenia zóny a začiatkom názvov jej entít a zobrazuje sa v správach v telefóne. Napr. „Záhon paradajok“, „Predný trávnik“.",
           "plant": "Vyplní rozumné počiatočné hodnoty pre túto plodinu: týždenné ciele vody, koeficient plodiny, hĺbkovú zálievku a rastovú krivku. „Niečo iné“ začína so všeobecnými hodnotami. Všetko môžete neskôr zmeniť na stránke zariadenia zóny.",
           "zone_type": "Vonku je spôsob, akým ZoneFlow fungoval vždy. Skleníkové a vnútorné zóny pridávajú riadenie klímy (ventilátory, vetranie, hmloviny, ohrievač), môžu fungovať bez ventilu a kvôli streche nemajú zrážkomer ani predpoveď.",
-          "start_from": "Začnite kópiou nastavení zalievania inej zóny alebo uloženej predvoľby namiesto nastavení typu rastliny. Ventil, snímače a prietok sa nikdy nekopírujú."
+          "start_from": "Začnite kópiou nastavení zalievania inej zóny alebo uloženej predvoľby namiesto nastavení typu rastliny. Ventil, snímače a prietok sa nikdy nekopírujú.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

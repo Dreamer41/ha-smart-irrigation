@@ -557,3 +557,33 @@ async def test_an_area_made_from_a_zone_keeps_the_sensors_the_zone_gets_from_its
     )
     assert (c.rain_counter_entity, c.outdoor_temp_entity, c.weather_entity) == (AREA_RAIN, AREA_TEMP, AREA_WEATHER)
     assert c.rain_mm_per_tip == pytest.approx(0.3)
+
+
+@pytest.mark.asyncio
+async def test_a_new_zone_can_be_placed_in_an_area_while_it_is_set_up(hass, fake_valve_services):
+    from .test_config_flow import _minimal_entities_input, _through_climate
+
+    area = _area(hass)
+    zone = _zone(hass, "Existing")
+    await _boot(hass, area, zone)
+    hass.states.async_set("switch.valve_new", "off")
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "zone"})
+    assert result["step_id"] == "user" and "location" in {k.schema for k in result["data_schema"].schema}
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_ZONE_NAME: "New bed", "plant": "custom", CONF_ZONE_TYPE: "outdoor", "location": area.entry_id}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], _minimal_entities_input(**{CONF_VALVE_ENTITY: "switch.valve_new"})
+    )
+    result = await _through_climate(hass, result)
+    assert result["type"] is FlowResultType.CREATE_ENTRY and result["data"][CONF_AREA_ID] == area.entry_id
+    await hass.async_block_till_done()
+    assert _ctl(hass, result["result"]).area is _area_ctl(hass, area)
+
+
+@pytest.mark.asyncio
+async def test_the_setup_form_does_not_ask_for_an_area_when_there_is_none(hass, fake_valve_services):
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    assert "location" not in {k.schema for k in result["data_schema"].schema}
+

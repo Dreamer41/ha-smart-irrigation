@@ -72,10 +72,10 @@ async def test_move_swap_exchanges_the_two_main_plants_and_their_settings(hass, 
     await _ctl(hass, b).numbers["target_weekly_mm"].async_set_metric_value(22.0)
     await _ctl(hass, b).numbers["crop_coefficient"].async_set_metric_value(0.95)
 
-    await _call(hass, "move_plant", plant_id=tomato["id"], device_id=_device(hass, b), old_main="swap")
+    await _call(hass, "move_plant", plant_id=tomato["id"], device_id=_device(hass, b), old_main="swap", use_plant_settings=True)
     assert _book(hass).main(b.entry_id)["id"] == tomato["id"] and _book(hass).main(a.entry_id)["id"] == chili["id"]
     ca, cb = _ctl(hass, a), _ctl(hass, b)  # a zone may restart for its deep soak switch
-    assert cb.number("target_weekly_mm") == 33.0  # the tuned tomato settings followed the plant
+    assert cb.number("target_weekly_mm") == 33.0  # the tuned tomato settings followed the plant, as asked
     assert ca.number("target_weekly_mm") == 22.0 and ca.number("crop_coefficient") == 0.95  # the chili settings went back
     moved = [h for h in tomato["history"] if h["kind"] == "moved"]
     assert moved[0]["data"] == {"from": "Tomatoes", "to": "Chilis"}
@@ -181,3 +181,36 @@ async def test_the_card_can_ask_for_a_zones_plants(hass, fake_valve_services):
     plant_api.ws_plants(hass, missing, {"id": 2, "type": "zoneflow/plants", "device_id": "nope"})
     await hass.async_block_till_done()
     assert missing.error == "not_found"
+
+
+@pytest.mark.asyncio
+async def test_a_moved_plant_leaves_the_beds_way_of_watering_unless_asked(hass, fake_valve_services):
+    a, b = _zone(hass, **{CONF_PLANT: "tomatoes"}), _zone(hass, "Chilis", VALVE_B, **{CONF_PLANT: "chilis"})
+    await _boot(hass, a, b)
+    ca, cb = _ctl(hass, a), _ctl(hass, b)
+    await ca.numbers["target_weekly_mm"].async_set_metric_value(33.0)
+    await cb.numbers["target_weekly_mm"].async_set_metric_value(22.0)
+    ca.store.state.planting_date_ts = 1_700_000_000.0
+    cb.store.state.demand_model = "et_curve"
+    ca.store.state.demand_model = "temperature_tiers"
+    tomato = _book(hass).main(a.entry_id)
+
+    await _call(hass, "move_plant", plant_id=tomato["id"], device_id=_device(hass, b), old_main="extra")
+    cb = _ctl(hass, b)
+    assert _book(hass).main(b.entry_id)["id"] == tomato["id"]
+    assert cb.number("target_weekly_mm") == 22.0 and cb.store.state.demand_model == "et_curve"  # the bed keeps its watering
+    assert cb.store.state.planting_date_ts == 1_700_000_000.0  # the plant brings its own age
+    assert tomato["snapshot"]["target_weekly_mm"] == 22.0  # and is now watered the bed's way
+
+
+@pytest.mark.asyncio
+async def test_a_plant_is_renamed_and_the_status_lists_the_new_name(hass, fake_valve_services):
+    a = _zone(hass)
+    await _boot(hass, a)
+    plant = _book(hass).main(a.entry_id)
+    await _call(hass, "rename_plant", plant_id=plant["id"], name="  Early   tomatoes ")
+    assert plant["name"] == "Early tomatoes"
+    assert hass.states.get("sensor.tomatoes_status").attributes["plants"][0]["name"] == "Early tomatoes"
+    with pytest.raises(ServiceValidationError):
+        await _call(hass, "rename_plant", plant_id=plant["id"], name="   ")
+

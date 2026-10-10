@@ -8,13 +8,15 @@
           "zone_name": "Nome da zona",
           "plant": "O que está plantado",
           "zone_type": "Onde ela cultiva",
-          "start_from": "Iniciar a partir de"
+          "start_from": "Iniciar a partir de",
+          "location": "Onde fica isso?"
         },
         "data_description": {
           "zone_name": "Vira o nome do dispositivo da zona e o início dos nomes das entidades, e aparece nas mensagens no celular. Ex.: \"Canteiro de tomates\", \"Gramado da frente\".",
           "plant": "Preenche valores iniciais adequados para esta cultura: metas semanais de água, coeficiente de cultura, irrigação profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Você pode alterar tudo depois na página do dispositivo da zona.",
           "zone_type": "Ao ar livre é como o ZoneFlow sempre funcionou. Zonas de estufa e internas adicionam controle de clima (ventiladores, aberturas de ventilação, nebulização, aquecedor), podem funcionar sem válvula e não possuem medidor de chuva ou previsão do tempo devido ao teto.",
-          "start_from": "Inicie a partir de uma cópia das configurações de irrigação de outra zona ou de uma predefinição salva em vez das do tipo de planta. A válvula, os sensores e a vazão nunca são copiados."
+          "start_from": "Inicie a partir de uma cópia das configurações de irrigação de outra zona ou de uma predefinição salva em vez das do tipo de planta. A válvula, os sensores e a vazão nunca são copiados.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

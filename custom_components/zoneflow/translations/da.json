@@ -8,13 +8,15 @@
           "zone_name": "Zonenavn",
           "plant": "Hvad vokser der",
           "zone_type": "Hvor det gror",
-          "start_from": "Start fra"
+          "start_from": "Start fra",
+          "location": "Hvor er dette?"
         },
         "data_description": {
           "zone_name": "Bliver zonens enhedsnavn og starten på dens entitetsnavne og vises i beskederne på telefonen. F.eks. \"Tomatbed\", \"Plæne foran\".",
           "plant": "Udfylder fornuftige startværdier for afgrøden: ugemål for vand, afgrødefaktor, dybdevanding og vækstoptrapning. \"Noget andet\" starter fra generelle værdier. Du kan ændre dem alle senere på zonens enhedsside.",
           "zone_type": "Udendørs er sådan ZoneFlow altid har fungeret. Drivhus- og indendørszoner tilføjer klimastyring (ventilatorer, udluftning, forstøvning, varmelegeme), kan fungere uden ventil og har hverken regnmåler eller vejrudsigt på grund af taget.",
-          "start_from": "Start fra en kopi af en anden zones vandingsindstillinger eller en gemt forudindstilling i stedet for plantetypens. Ventil, sensorer og flow kopieres aldrig."
+          "start_from": "Start fra en kopi af en anden zones vandingsindstillinger eller en gemt forudindstilling i stedet for plantetypens. Ventil, sensorer og flow kopieres aldrig.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

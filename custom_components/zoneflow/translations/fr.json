@@ -8,13 +8,15 @@
           "zone_name": "Nom de la zone",
           "plant": "Ce qui est planté",
           "zone_type": "Lieu de culture",
-          "start_from": "Partir de"
+          "start_from": "Partir de",
+          "location": "Où est-ce situé ?"
         },
         "data_description": {
           "zone_name": "Devient le nom de l'appareil de la zone et le début des noms de ses entités, et apparaît dans les messages sur le téléphone. Ex. « Carré de tomates », « Pelouse avant ».",
           "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone.",
           "zone_type": "Extérieur correspond au fonctionnement historique de ZoneFlow. Les zones Serre et Intérieur ajoutent le contrôle du climat (ventilateurs, ouvrants, brumisation, chauffage), peuvent fonctionner sans vanne et ne disposent ni de pluviomètre ni de prévisions météo en raison du toit.",
-          "start_from": "Partez d'une copie des paramètres d'arrosage d'une autre zone ou d'un préréglage enregistré au lieu du type de plante. La vanne, les capteurs et le débit ne sont jamais copiés."
+          "start_from": "Partez d'une copie des paramètres d'arrosage d'une autre zone ou d'un préréglage enregistré au lieu du type de plante. La vanne, les capteurs et le débit ne sont jamais copiés.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

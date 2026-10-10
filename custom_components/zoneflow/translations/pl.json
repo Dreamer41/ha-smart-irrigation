@@ -8,13 +8,15 @@
           "zone_name": "Nazwa strefy",
           "plant": "Co tu rośnie",
           "zone_type": "Miejsce uprawy",
-          "start_from": "Rozpocznij od"
+          "start_from": "Rozpocznij od",
+          "location": "Gdzie to jest?"
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
           "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy.",
           "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody.",
-          "start_from": "Rozpocznij od kopii ustawień podlewania innej strefy lub zapisanego szablonu zamiast ustawień typu rośliny. Zawór, czujniki i przepływ nigdy nie są kopiowane."
+          "start_from": "Rozpocznij od kopii ustawień podlewania innej strefy lub zapisanego szablonu zamiast ustawień typu rośliny. Zawór, czujniki i przepływ nigdy nie są kopiowane.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

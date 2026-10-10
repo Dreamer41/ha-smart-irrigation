@@ -8,13 +8,15 @@
           "zone_name": "Zone name",
           "plant": "What's planted",
           "zone_type": "Where it grows",
-          "start_from": "Start from"
+          "start_from": "Start from",
+          "location": "Where is this?"
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
           "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof.",
-          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied."
+          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

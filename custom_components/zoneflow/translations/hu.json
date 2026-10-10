@@ -8,13 +8,15 @@
           "zone_name": "Zóna neve",
           "plant": "Mi van ültetve",
           "zone_type": "A növények helye",
-          "start_from": "Kezdés innen"
+          "start_from": "Kezdés innen",
+          "location": "Hol található ez?"
         },
         "data_description": {
           "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
           "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán.",
           "zone_type": "A kültéri mód a ZoneFlow eredeti működése. Az üvegházi és beltéri zónák klímaszabályozást is biztosítanak (ventilátorok, szellőzők, párásítás, fűtés), szelep nélkül is működhetnek, valamint a tető miatt nincs esőmérőjük sem időjárás-előrejelzésük.",
-          "start_from": "Kezdje egy másik zóna öntözési beállításainak másolatával vagy egy mentett előbeállítással a növénytípusé helyett. A szelep, az érzékelők és a vízhozam soha nem másolódnak."
+          "start_from": "Kezdje egy másik zóna öntözési beállításainak másolatával vagy egy mentett előbeállítással a növénytípusé helyett. A szelep, az érzékelők és a vízhozam soha nem másolódnak.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {

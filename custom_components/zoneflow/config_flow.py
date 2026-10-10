@@ -23,7 +23,7 @@ from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
 from . import calculations as calc, greenhouse_logic, location, messages, presets, suggest, units, wu_logic
-from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP
+from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
     CONF_PARENT_ZONE,
@@ -575,6 +575,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._wu: dict[str, Any] = {}
         self._wu_candidates: list[dict[str, Any]] = []
         self._bundle: dict[str, Any] = {}
+        self._area_id: str | None = None  # the area the new zone is placed in
 
     def _offer_wu(self) -> bool:
         """Weather Underground rain is offered once a zone exists, and only
@@ -756,11 +757,22 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._plant = user_input.get(CONF_PLANT, PLANT_CUSTOM)
                 self._zone_type = user_input.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
                 self._bundle = await self._start_bundle(user_input.get(CONF_START_FROM, ""))
+                self._area_id = user_input.get("location") or None
                 if self._zone_type != ZONE_TYPE_OUTDOOR:
                     return await self.async_step_greenhouse_devices()
                 return await self.async_step_entities()
         choices = await self._start_choices()
         start_field: dict[Any, Any] = {}
+        known_areas = areas(self.hass)
+        if known_areas:
+            # Which area the zone goes in; it then uses the area's rain gauge, temperature and weather.
+            start_field[vol.Optional("location", default=self._area_id or "")] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[selector.SelectOptionDict(value="", label=messages.text(self.hass, "location.none"))]
+                    + [selector.SelectOptionDict(value=a.entry.entry_id, label=a.name) for a in known_areas],
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            )
         if len(choices) > 1:
             start_field[vol.Optional(CONF_START_FROM, default="")] = selector.SelectSelector(
                 selector.SelectSelectorConfig(
@@ -817,6 +829,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if (value := _merged_entry(entry).get(key))
         }
         for key, entity_id in suggest.defaults_from(found, used).items():
+            if self._area_id and key in AREA_SHARED_KEYS:
+                continue  # the zone's area provides it
             defaults.setdefault(key, entity_id)
         return self.async_show_form(
             step_id="entities",
@@ -883,6 +897,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_ZONE_TYPE: self._zone_type,
             CONF_CLIMATE: self._climate,
             CONF_CSV_PATH: f"/config/zoneflow_{slugify(self._zone_name)}.csv",
+            **({CONF_AREA_ID: self._area_id} if self._area_id else {}),
             CONF_DEEP_SOAK_ENABLED: False,
             CONF_DEEP_SOAK_TIME: DEFAULT_DEEP_SOAK_TIME,
             CONF_ROUTINE_TIME: DEFAULT_ROUTINE_TIME,
@@ -963,6 +978,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 plant_numbers = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
                 data = {
                     **self._data,
+                    **({CONF_AREA_ID: self._area_id} if self._area_id else {}),
                     CONF_PLANT: self._plant,
                     CONF_CLIMATE: self._climate,
                     CONF_INITIAL_NUMBERS: {

@@ -8,13 +8,15 @@
           "zone_name": "Vyöhykkeen nimi",
           "plant": "Mitä on istutettu",
           "zone_type": "Kasvupaikka",
-          "start_from": "Aloituskohta"
+          "start_from": "Aloituskohta",
+          "location": "Missä tämä sijaitsee?"
         },
         "data_description": {
           "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
           "plant": "Täyttää tälle kasville järkevät lähtöarvot: viikoittaiset vesitavoitteet, kasvikertoimen, syväkastelun ja kasvukäyrän. \"Jotain muuta\" aloittaa yleisillä arvoilla. Voit muuttaa niitä kaikkia myöhemmin vyöhykkeen laitesivulla.",
           "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi.",
-          "start_from": "Aloita toisen vyöhykkeen kasteluasetusten kopiolla tai tallennetulla esiasetuksella kasvityypin asetusten sijaan. Venttiiliä, antureita ja virtaamaa ei koskaan kopioida."
+          "start_from": "Aloita toisen vyöhykkeen kasteluasetusten kopiolla tai tallennetulla esiasetuksella kasvityypin asetusten sijaan. Venttiiliä, antureita ja virtaamaa ei koskaan kopioida.",
+          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
         }
       },
       "entities": {
