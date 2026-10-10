@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow — полив",
-        "description": "Укажите свои настоящие объекты. Интеграция никогда не создаёт собственных физических объектов. Обязателен только выключатель клапана — без всего остального ниже она тоже справится.",
+        "description": "{progress}\n\nУкажите свои настоящие объекты. Интеграция никогда не создаёт собственных физических объектов. Обязателен только выключатель клапана — без всего остального ниже она тоже справится.\n\n{suggestions}",
         "data": {
           "valve_entity": "Выключатель клапана",
           "pump_power_entity": "Датчик мощности насоса (необязательно)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Климат",
-        "description": "Какой сезон роста там, где находится эта зона? Это лишь заполняет ползунки температур на следующей странице — там можно изменить любое значение, а позже и на странице устройства зоны.",
+        "description": "{progress}\n\nКакой сезон роста там, где находится эта зона? Это лишь заполняет ползунки температур на следующей странице — там можно изменить любое значение, а позже и на странице устройства зоны.",
         "data": {
           "climate": "Климат"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Пороги температуры",
-        "description": "ZoneFlow усредняет дневные МАКСИМУМЫ температуры за последние 3 дня. Если среднее не ниже порога жары, поливает чаще (раз в 3 дня) по жаркой недельной норме; ниже порога прохлады — по прохладной норме; между ними — обычная погода.\n\nРезервная температура используется, когда нет реальных данных: без датчика температуры это ваше ручное управление (поднимите её в жару, опустите в похолодание); с датчиком она используется только до первого полного дня его данных и после 3 дней без единого показания.",
+        "description": "{progress}\n\nZoneFlow усредняет дневные МАКСИМУМЫ температуры за последние 3 дня. Если среднее не ниже порога жары, поливает чаще (раз в 3 дня) по жаркой недельной норме; ниже порога прохлады — по прохладной норме; между ними — обычная погода.\n\nРезервная температура используется, когда нет реальных данных: без датчика температуры это ваше ручное управление (поднимите её в жару, опустите в похолодание); с датчиком она используется только до первого полного дня его данных и после 3 дней без единого показания.",
         "data": {
           "hot_temp_threshold": "Порог жаркой погоды",
           "cool_temp_threshold": "Порог прохладной погоды",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: датчик не в сети (дней: {days})",
-      "description": "{entity}, который использует зона {zone}, не в сети уже столько дней: {days}. Зона работает без него (что это значит, см. в README), но проверьте устройство — или уберите его из зоны через «Настроить». Сообщение исчезнет само, когда датчик снова начнёт передавать данные."
+      "description": "{entity}, который использует зона {zone}, не в сети уже столько дней: {days}. Зона работает без него (что это значит, см. в README), но проверьте устройство — или уберите его из зоны через «Настроить». Сообщение исчезнет само, когда датчик снова начнёт передавать данные.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: нет цели уведомлений на телефон",
-      "description": "Зона {zone} отправляет уведомления на {entity}, но этого объекта больше нет в Home Assistant, поэтому уведомления не приходят. Выберите актуальную цель в «Настроить» для этой зоны. Сообщение исчезнет само, когда цель снова появится."
+      "description": "Зона {zone} отправляет уведомления на {entity}, но этого объекта больше нет в Home Assistant, поэтому уведомления не приходят. Выберите актуальную цель в «Настроить» для этой зоны. Сообщение исчезнет само, когда цель снова появится.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: откалибруйте расход капельниц",
-      "description": "Зона {zone} всё ещё использует стандартную «Калибровку расхода капельниц» (0.24 mm/min). Именно это число определяет, сколько воды даёт каждый полив, поэтому измерьте его для своих капельниц: в «Настроить» → «Расход» зоны его можно рассчитать по капельницам или измерить расходомером. Если 0.24 mm/min для этой зоны действительно верно, не обращайте внимания."
+      "description": "Зона {zone} всё ещё использует стандартную «Калибровку расхода капельниц» (0.24 mm/min). Именно это число определяет, сколько воды даёт каждый полив, поэтому измерьте его для своих капельниц: в «Настроить» → «Расход» зоны его можно рассчитать по капельницам или измерить расходомером. Если 0.24 mm/min для этой зоны действительно верно, не обращайте внимания.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: клапан используется совместно с другой зоной",

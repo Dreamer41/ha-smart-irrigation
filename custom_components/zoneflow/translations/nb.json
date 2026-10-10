@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow vanning",
-        "description": "Pek på entitetene du faktisk har. Integrasjonen lager aldri egne fysiske entiteter. Bare ventilbryteren er påkrevd -- alt annet nedenfor fungerer greit også når det står tomt.",
+        "description": "{progress}\n\nPek på entitetene du faktisk har. Integrasjonen lager aldri egne fysiske entiteter. Bare ventilbryteren er påkrevd -- alt annet nedenfor fungerer greit også når det står tomt.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilbryter",
           "pump_power_entity": "Effektsensor for pumpe (valgfritt)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Klima",
-        "description": "Hvordan er vekstsesongen der sonen ligger? Dette fyller bare inn temperaturglidebryterne på neste side -- du kan endre alle verdiene der, og senere på sonens enhetsside.",
+        "description": "{progress}\n\nHvordan er vekstsesongen der sonen ligger? Dette fyller bare inn temperaturglidebryterne på neste side -- du kan endre alle verdiene der, og senere på sonens enhetsside.",
         "data": {
           "climate": "Klima"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Temperaturgrenser",
-        "description": "ZoneFlow regner ut snittet av dagens HØYESTE temperatur de siste 3 dagene. Ved Varm eller over vanner den oftere (hver 3. dag) med det varme ukemålet; under Kjølig bruker den det kjølige ukemålet; midt imellom er normalt.\n\nReservetemperaturen brukes når det ikke finnes noen ekte måling: uten temperatursensor er den din manuelle styring (skru den opp i en hetebølge, ned i en kuldeperiode); med sensor brukes den bare til sensoren har registrert sitt første hele døgn, og etter 3 dager uten én eneste måling.",
+        "description": "{progress}\n\nZoneFlow regner ut snittet av dagens HØYESTE temperatur de siste 3 dagene. Ved Varm eller over vanner den oftere (hver 3. dag) med det varme ukemålet; under Kjølig bruker den det kjølige ukemålet; midt imellom er normalt.\n\nReservetemperaturen brukes når det ikke finnes noen ekte måling: uten temperatursensor er den din manuelle styring (skru den opp i en hetebølge, ned i en kuldeperiode); med sensor brukes den bare til sensoren har registrert sitt første hele døgn, og etter 3 dager uten én eneste måling.",
         "data": {
           "hot_temp_threshold": "Grense for varmt vær",
           "cool_temp_threshold": "Grense for kjølig vær",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor frakoblet i {days} dager",
-      "description": "{entity}, som sonen {zone} bruker, har vært frakoblet i {days} dager. Sonen fortsetter uten den (hva det betyr, står i README), men sjekk enheten -- eller fjern den fra sonen under Konfigurer. Dette forsvinner av seg selv når sensoren melder igjen."
+      "description": "{entity}, som sonen {zone} bruker, har vært frakoblet i {days} dager. Sonen fortsetter uten den (hva det betyr, står i README), men sjekk enheten -- eller fjern den fra sonen under Konfigurer. Dette forsvinner av seg selv når sensoren melder igjen.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: telefon for varsler mangler",
-      "description": "Sonen {zone} sender telefonvarsler til {entity}, som ikke lenger finnes i Home Assistant, så ingen varsler kommer frem. Velg riktig varslingsmål under sonens Konfigurer. Dette forsvinner av seg selv når den finnes igjen."
+      "description": "Sonen {zone} sender telefonvarsler til {entity}, som ikke lenger finnes i Home Assistant, så ingen varsler kommer frem. Velg riktig varslingsmål under sonens Konfigurer. Dette forsvinner av seg selv når den finnes igjen.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibrer vannmengden fra utløpene",
-      "description": "Sonen {zone} bruker fortsatt standardverdien for Kalibrering av vannmengde (0.24 mm/min). Det er det ene tallet som avgjør hvor mye vann hver kjøring gir, så mål det for dine utløp: sonens Konfigurer → Vannmengde regner det ut fra utløpene, eller måler det med en vannmåler. Hvis 0.24 mm/min virkelig stemmer for denne sonen, kan du se bort fra dette."
+      "description": "Sonen {zone} bruker fortsatt standardverdien for Kalibrering av vannmengde (0.24 mm/min). Det er det ene tallet som avgjør hvor mye vann hver kjøring gir, så mål det for dine utløp: sonens Konfigurer → Vannmengde regner det ut fra utløpene, eller måler det med en vannmåler. Hvis 0.24 mm/min virkelig stemmer for denne sonen, kan du se bort fra dette.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: ventil delt med en annen sone",

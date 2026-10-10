@@ -370,5 +370,22 @@
     "soil_dry": "dry",
     "soil_wet": "wet",
     "soil_ok": "in between"
+  },
+  "suggest": {
+    "heading": "Likely ones found in your Home Assistant:",
+    "line": "{role}: {names}",
+    "role": {
+      "valve": "Valve",
+      "rain": "Rain gauge",
+      "temperature": "Outdoor temperature",
+      "weather": "Weather",
+      "soil": "Soil moisture",
+      "flow": "Flow meter",
+      "pump": "Pump power",
+      "notify": "Phone"
+    }
+  },
+  "setup": {
+    "progress": "Step {n} of {total}"
   }
 }

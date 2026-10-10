@@ -22,7 +22,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, location, messages, presets, units, wu_logic
+from . import calculations as calc, greenhouse_logic, location, messages, presets, suggest, units, wu_logic
 from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP
 
 from .const import (
@@ -714,6 +714,13 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="wu_stations", data_schema=_wu_station_schema(self._wu_candidates, nearest), errors=errors
         )
 
+    def _progress(self, n: int) -> str:
+        """"Step 2 of 4" on the steps every outdoor zone goes through (a
+        greenhouse zone's steps differ, so it gets no counter)."""
+        if self._zone_type != ZONE_TYPE_OUTDOOR:
+            return ""
+        return messages.text(self.hass, "setup.progress", n=n, total=4)
+
     async def _start_choices(self) -> list[tuple[str, str]]:
         """(value, label): start from the plant type, a copy of a zone, or a saved preset."""
         out = [("", messages.text(self.hass, "start_from.none"))]
@@ -801,10 +808,24 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             defaults[CONF_DEEP_SOAK_ENABLED] = preset["deep_soak"]
             defaults[CONF_GROWTH_RAMP_PROFILE] = preset["ramp"]
         defaults.update((self._bundle.get("options") or {}))  # a copy of another zone: its way of watering
+        # Likely entities, listed under the form; a clear single match is filled in.
+        found = suggest.find(self.hass)
+        used = {
+            value
+            for entry in self.hass.config_entries.async_entries(DOMAIN)
+            for key in (CONF_VALVE_ENTITY, CONF_SOIL_MOISTURE_ENTITY, CONF_FLOW_METER_ENTITY, CONF_PUMP_POWER_ENTITY)
+            if (value := _merged_entry(entry).get(key))
+        }
+        for key, entity_id in suggest.defaults_from(found, used).items():
+            defaults.setdefault(key, entity_id)
         return self.async_show_form(
             step_id="entities",
             data_schema=_schema(defaults),
             errors=errors,
+            description_placeholders={
+                "progress": self._progress(2),
+                "suggestions": suggest.describe(self.hass, found),
+            },
         )
 
     async def async_step_greenhouse_devices(self, user_input: dict[str, Any] | None = None):
@@ -926,6 +947,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 }
             ),
+            description_placeholders={"progress": self._progress(3)},
         )
 
     async def async_step_temperatures(self, user_input: dict[str, Any] | None = None):
@@ -977,7 +999,10 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     mode=selector.NumberSelectorMode.SLIDER,
                 )
             )
-        return self.async_show_form(step_id="temperatures", data_schema=vol.Schema(schema), errors=errors)
+        return self.async_show_form(
+            step_id="temperatures", data_schema=vol.Schema(schema), errors=errors,
+            description_placeholders={"progress": self._progress(4)},
+        )
 
     @staticmethod
     @callback

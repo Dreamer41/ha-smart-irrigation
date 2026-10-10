@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow-bewatering",
-        "description": "Koppel hier je bestaande entiteiten. Er worden nooit eigen fysieke entiteiten aangemaakt. Alleen de klepschakelaar is verplicht -- al het andere hieronder mag leeg blijven; de zone werkt dan met wat er is.",
+        "description": "{progress}\n\nKoppel hier je bestaande entiteiten. Er worden nooit eigen fysieke entiteiten aangemaakt. Alleen de klepschakelaar is verplicht -- al het andere hieronder mag leeg blijven; de zone werkt dan met wat er is.\n\n{suggestions}",
         "data": {
           "valve_entity": "Klepschakelaar",
           "pump_power_entity": "Vermogenssensor pomp (optioneel)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Klimaat",
-        "description": "Hoe is het groeiseizoen waar deze zone ligt? Dit vult alleen de temperatuurschuiven op de volgende pagina alvast in -- je kunt daar elke waarde aanpassen, en later ook op de apparaatpagina van de zone.",
+        "description": "{progress}\n\nHoe is het groeiseizoen waar deze zone ligt? Dit vult alleen de temperatuurschuiven op de volgende pagina alvast in -- je kunt daar elke waarde aanpassen, en later ook op de apparaatpagina van de zone.",
         "data": {
           "climate": "Klimaat"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Temperatuurgrenzen",
-        "description": "ZoneFlow neemt het gemiddelde van de dagelijkse MAXIMUMtemperatuur over de laatste 3 dagen. Vanaf Warm geeft het vaker water (elke 3 dagen) met het warme weekdoel; onder Koel gebruikt het het koele weekdoel; daartussen is normaal.\n\nDe reservetemperatuur wordt gebruikt als er geen echte meting is: zonder temperatuursensor is het je handmatige knop (hoger bij een hittegolf, lager bij een koude periode); met sensor geldt hij alleen tot de sensor zijn eerste volle dag heeft gemeten, en na 3 dagen zonder één meting.",
+        "description": "{progress}\n\nZoneFlow neemt het gemiddelde van de dagelijkse MAXIMUMtemperatuur over de laatste 3 dagen. Vanaf Warm geeft het vaker water (elke 3 dagen) met het warme weekdoel; onder Koel gebruikt het het koele weekdoel; daartussen is normaal.\n\nDe reservetemperatuur wordt gebruikt als er geen echte meting is: zonder temperatuursensor is het je handmatige knop (hoger bij een hittegolf, lager bij een koude periode); met sensor geldt hij alleen tot de sensor zijn eerste volle dag heeft gemeten, en na 3 dagen zonder één meting.",
         "data": {
           "hot_temp_threshold": "Grens warm weer",
           "cool_temp_threshold": "Grens koel weer",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor al {days} dagen offline",
-      "description": "{entity}, gebruikt door zone {zone}, is al {days} dagen offline. De zone werkt zonder verder (wat dat betekent staat in de README), maar controleer het apparaat -- of haal het uit de zone via Configureren. Dit verdwijnt vanzelf zodra de sensor weer meldt."
+      "description": "{entity}, gebruikt door zone {zone}, is al {days} dagen offline. De zone werkt zonder verder (wat dat betekent staat in de README), maar controleer het apparaat -- of haal het uit de zone via Configureren. Dit verdwijnt vanzelf zodra de sensor weer meldt.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: telefoon voor meldingen ontbreekt",
-      "description": "Zone {zone} stuurt zijn telefoonmeldingen naar {entity}, maar die bestaat niet meer in Home Assistant, dus er komen geen meldingen aan. Kies de huidige telefoon via Configureren bij de zone. Dit verdwijnt vanzelf zodra die weer bestaat."
+      "description": "Zone {zone} stuurt zijn telefoonmeldingen naar {entity}, maar die bestaat niet meer in Home Assistant, dus er komen geen meldingen aan. Kies de huidige telefoon via Configureren bij de zone. Dit verdwijnt vanzelf zodra die weer bestaat.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibreer het debiet van de druppelaars",
-      "description": "Zone {zone} gebruikt nog de standaardwaarde van Kalibratie debiet druppelaars (0,24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0,24 mm/min echt voor deze zone, negeer dit dan."
+      "description": "Zone {zone} gebruikt nog de standaardwaarde van Kalibratie debiet druppelaars (0,24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0,24 mm/min echt voor deze zone, negeer dit dan.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: klep gedeeld met een andere zone",

@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow öntözés",
-        "description": "Add meg a valódi entitásaidat. A ZoneFlow soha nem hoz létre saját fizikai entitásokat. Csak a szelepkapcsoló kötelező – minden más lent kihagyható, és nélküle is működik, csak kevesebbet tud.",
+        "description": "{progress}\n\nAdd meg a valódi entitásaidat. A ZoneFlow soha nem hoz létre saját fizikai entitásokat. Csak a szelepkapcsoló kötelező – minden más lent kihagyható, és nélküle is működik, csak kevesebbet tud.\n\n{suggestions}",
         "data": {
           "valve_entity": "Szelepkapcsoló",
           "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Éghajlat",
-        "description": "Milyen a tenyészidőszak ott, ahol ez a zóna van? Ez csak a következő oldal hőmérséklet-csúszkáit tölti ki előre – ott minden értéket módosíthatsz, később pedig a zóna eszközoldalán is.",
+        "description": "{progress}\n\nMilyen a tenyészidőszak ott, ahol ez a zóna van? Ez csak a következő oldal hőmérséklet-csúszkáit tölti ki előre – ott minden értéket módosíthatsz, később pedig a zóna eszközoldalán is.",
         "data": {
           "climate": "Éghajlat"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Hőmérsékleti küszöbök",
-        "description": "A ZoneFlow az elmúlt 3 nap napi CSÚCShőmérsékletét átlagolja. A meleg küszöbön vagy felette gyakrabban öntöz (3 naponta), a meleg időre szóló heti céllal; a hűvös küszöb alatt a hűvös időre szóló heti célt használja; a kettő között normál.\n\nA tartalék hőmérséklet akkor számít, ha nincs valódi mérés: hőmérséklet-érzékelő nélkül ez a kézi szabályozód (hőségben emeld, hidegben csökkentsd); érzékelővel csak addig használja, amíg az érzékelő fel nem vett egy teljes napot, illetve ha 3 napig egyetlen mérés sem érkezik.",
+        "description": "{progress}\n\nA ZoneFlow az elmúlt 3 nap napi CSÚCShőmérsékletét átlagolja. A meleg küszöbön vagy felette gyakrabban öntöz (3 naponta), a meleg időre szóló heti céllal; a hűvös küszöb alatt a hűvös időre szóló heti célt használja; a kettő között normál.\n\nA tartalék hőmérséklet akkor számít, ha nincs valódi mérés: hőmérséklet-érzékelő nélkül ez a kézi szabályozód (hőségben emeld, hidegben csökkentsd); érzékelővel csak addig használja, amíg az érzékelő fel nem vett egy teljes napot, illetve ha 3 napig egyetlen mérés sem érkezik.",
         "data": {
           "hot_temp_threshold": "Meleg idő küszöbe",
           "cool_temp_threshold": "Hűvös idő küszöbe",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: érzékelő nem elérhető (napok: {days})",
-      "description": "A(z) {zone} zóna által használt {entity} már {days} napja nem elérhető. A zóna nélküle is működik (hogy ez mit jelent, lásd a README-ben), de ellenőrizd az eszközt – vagy távolítsd el a zónából a Konfigurálás alatt. Ez magától megszűnik, amint az érzékelő újra jelent."
+      "description": "A(z) {zone} zóna által használt {entity} már {days} napja nem elérhető. A zóna nélküle is működik (hogy ez mit jelent, lásd a README-ben), de ellenőrizd az eszközt – vagy távolítsd el a zónából a Konfigurálás alatt. Ez magától megszűnik, amint az érzékelő újra jelent.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: hiányzik a telefonos értesítési cél",
-      "description": "A(z) {zone} zóna a telefonos értesítéseit ide küldi: {entity}, de ez már nem létezik a Home Assistantban, így nem érkeznek értesítések. Válaszd ki az aktuális értesítési célt a zóna Konfigurálás menüjében. Ez magától megszűnik, amint a cél újra létezik."
+      "description": "A(z) {zone} zóna a telefonos értesítéseit ide küldi: {entity}, de ez már nem létezik a Home Assistantban, így nem érkeznek értesítések. Válaszd ki az aktuális értesítési célt a zóna Konfigurálás menüjében. Ez magától megszűnik, amint a cél újra létezik.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibráld a csepegtetők vízhozamát",
-      "description": "A(z) {zone} zóna még az alapértelmezett Csepegtetők vízhozama (kalibrálás) értéket használja (0.24 mm/min). Ez az az egy szám, amely eldönti, mennyi vizet ad minden öntözés, ezért mérd meg a saját csepegtetőidre: a zóna Konfigurálás → Vízhozam menüje kiszámítja a csepegtetőkből, vagy megméri átfolyásmérővel. Ha ennél a zónánál tényleg a 0.24 mm/min a helyes, hagyd figyelmen kívül."
+      "description": "A(z) {zone} zóna még az alapértelmezett Csepegtetők vízhozama (kalibrálás) értéket használja (0.24 mm/min). Ez az az egy szám, amely eldönti, mennyi vizet ad minden öntözés, ezért mérd meg a saját csepegtetőidre: a zóna Konfigurálás → Vízhozam menüje kiszámítja a csepegtetőkből, vagy megméri átfolyásmérővel. Ha ennél a zónánál tényleg a 0.24 mm/min a helyes, hagyd figyelmen kívül.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: szelep megosztva egy másik zónával",

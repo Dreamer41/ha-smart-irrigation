@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "Zavlažování ZoneFlow",
-        "description": "Vyberte své skutečné entity. ZoneFlow nikdy nevytváří vlastní fyzické entity. Povinný je jen spínač ventilu -- vše ostatní níže se bez nastavení rozumně obejde.",
+        "description": "{progress}\n\nVyberte své skutečné entity. ZoneFlow nikdy nevytváří vlastní fyzické entity. Povinný je jen spínač ventilu -- vše ostatní níže se bez nastavení rozumně obejde.\n\n{suggestions}",
         "data": {
           "valve_entity": "Spínač ventilu",
           "pump_power_entity": "Senzor příkonu čerpadla (volitelné)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Podnebí",
-        "description": "Jaké je vegetační období tam, kde je tato zóna? Tím se jen předvyplní posuvníky teplot na další stránce -- každou hodnotu tam můžete změnit, a později i na stránce zařízení zóny.",
+        "description": "{progress}\n\nJaké je vegetační období tam, kde je tato zóna? Tím se jen předvyplní posuvníky teplot na další stránce -- každou hodnotu tam můžete změnit, a později i na stránce zařízení zóny.",
         "data": {
           "climate": "Podnebí"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Teplotní prahy",
-        "description": "ZoneFlow průměruje denní MAXIMÁLNÍ teplotu za poslední 3 dny. Při hodnotě Horko nebo vyšší zalévá častěji (každé 3 dny) s týdenním cílem pro horko; pod hodnotou Chladno použije týdenní cíl pro chladno; mezi tím je normál.\n\nZáložní teplota se použije, když není k dispozici skutečné měření: bez senzoru teploty je to vaše ruční ovládání (při vlně veder ji zvyšte, při ochlazení snižte); se senzorem se použije jen do doby, než senzor zaznamená první celý den, a po 3 dnech bez jediného měření.",
+        "description": "{progress}\n\nZoneFlow průměruje denní MAXIMÁLNÍ teplotu za poslední 3 dny. Při hodnotě Horko nebo vyšší zalévá častěji (každé 3 dny) s týdenním cílem pro horko; pod hodnotou Chladno použije týdenní cíl pro chladno; mezi tím je normál.\n\nZáložní teplota se použije, když není k dispozici skutečné měření: bez senzoru teploty je to vaše ruční ovládání (při vlně veder ji zvyšte, při ochlazení snižte); se senzorem se použije jen do doby, než senzor zaznamená první celý den, a po 3 dnech bez jediného měření.",
         "data": {
           "hot_temp_threshold": "Práh horkého počasí",
           "cool_temp_threshold": "Práh chladného počasí",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: senzor offline (dní: {days})",
-      "description": "Entita {entity}, kterou používá zóna {zone}, je offline (počet dní: {days}). Zóna pokračuje bez ní (co to znamená, najdete v README), ale zkontrolujte zařízení -- nebo ho ze zóny odeberte v části Nastavit. Hlášení zmizí samo, jakmile senzor znovu začne hlásit."
+      "description": "Entita {entity}, kterou používá zóna {zone}, je offline (počet dní: {days}). Zóna pokračuje bez ní (co to znamená, najdete v README), ale zkontrolujte zařízení -- nebo ho ze zóny odeberte v části Nastavit. Hlášení zmizí samo, jakmile senzor znovu začne hlásit.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: chybí cíl oznámení na telefon",
-      "description": "Zóna {zone} posílá oznámení na telefon do {entity}, které už v Home Assistant neexistuje, takže žádná oznámení nepřicházejí. Vyberte aktuální cíl oznámení v části Nastavit u zóny. Hlášení zmizí samo, jakmile cíl opět existuje."
+      "description": "Zóna {zone} posílá oznámení na telefon do {entity}, které už v Home Assistant neexistuje, takže žádná oznámení nepřicházejí. Vyberte aktuální cíl oznámení v části Nastavit u zóny. Hlášení zmizí samo, jakmile cíl opět existuje.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: zkalibrujte průtok emitorů",
-      "description": "Zóna {zone} stále používá výchozí Kalibraci průtoku emitorů (0.24 mm/min). Právě toto číslo rozhoduje, kolik vody každá zálivka dá, takže ho pro své emitory změřte: v zóně Nastavit → Průtok ho vypočítá z vašich emitorů, nebo ho změří průtokoměrem. Pokud je 0.24 mm/min pro tuto zónu opravdu správně, toto hlášení ignorujte."
+      "description": "Zóna {zone} stále používá výchozí Kalibraci průtoku emitorů (0.24 mm/min). Právě toto číslo rozhoduje, kolik vody každá zálivka dá, takže ho pro své emitory změřte: v zóně Nastavit → Průtok ho vypočítá z vašich emitorů, nebo ho změří průtokoměrem. Pokud je 0.24 mm/min pro tuto zónu opravdu správně, toto hlášení ignorujte.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: ventil sdílený s jinou zónou",

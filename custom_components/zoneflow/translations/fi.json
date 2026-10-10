@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow-kastelu",
-        "description": "Valitse tähän olemassa olevat entiteettisi. Integraatio ei luo omia fyysisiä entiteettejä. Vain venttiilin kytkin on pakollinen -- vyöhyke toimii myös ilman muita alla olevia, jos jätät ne tyhjiksi.",
+        "description": "{progress}\n\nValitse tähän olemassa olevat entiteettisi. Integraatio ei luo omia fyysisiä entiteettejä. Vain venttiilin kytkin on pakollinen -- vyöhyke toimii myös ilman muita alla olevia, jos jätät ne tyhjiksi.\n\n{suggestions}",
         "data": {
           "valve_entity": "Venttiilin kytkin",
           "pump_power_entity": "Pumpun tehoanturi (valinnainen)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Ilmasto",
-        "description": "Millainen kasvukausi on siellä, missä tämä vyöhyke on? Tämä vain esitäyttää seuraavan sivun lämpötilasäätimet -- voit muuttaa jokaista arvoa siellä ja myöhemmin vyöhykkeen laitesivulla.",
+        "description": "{progress}\n\nMillainen kasvukausi on siellä, missä tämä vyöhyke on? Tämä vain esitäyttää seuraavan sivun lämpötilasäätimet -- voit muuttaa jokaista arvoa siellä ja myöhemmin vyöhykkeen laitesivulla.",
         "data": {
           "climate": "Ilmasto"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Lämpötilarajat",
-        "description": "ZoneFlow laskee kolmen viime päivän YLIMPIEN lämpötilojen keskiarvon. Kun se on kuuman sään rajalla tai yli, kastellaan useammin (3 päivän välein) kuuman sään viikkotavoitteella; viileän sään rajan alla käytetään viileän sään viikkotavoitetta; niiden välissä normaalia.\n\nVaralämpötilaa käytetään, kun todellista lukemaa ei ole: ilman lämpötila-anturia se on käsisäätösi (nosta helleaallon ajaksi, laske kylmän jakson ajaksi); anturin kanssa sitä käytetään vain, kunnes anturi on kirjannut ensimmäisen kokonaisen päivän, sekä jos lukemia ei ole tullut 3 päivään.",
+        "description": "{progress}\n\nZoneFlow laskee kolmen viime päivän YLIMPIEN lämpötilojen keskiarvon. Kun se on kuuman sään rajalla tai yli, kastellaan useammin (3 päivän välein) kuuman sään viikkotavoitteella; viileän sään rajan alla käytetään viileän sään viikkotavoitetta; niiden välissä normaalia.\n\nVaralämpötilaa käytetään, kun todellista lukemaa ei ole: ilman lämpötila-anturia se on käsisäätösi (nosta helleaallon ajaksi, laske kylmän jakson ajaksi); anturin kanssa sitä käytetään vain, kunnes anturi on kirjannut ensimmäisen kokonaisen päivän, sekä jos lukemia ei ole tullut 3 päivään.",
         "data": {
           "hot_temp_threshold": "Kuuman sään raja",
           "cool_temp_threshold": "Viileän sään raja",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: anturi ei ole raportoinut {days} päivään",
-      "description": "Vyöhyke {zone}: sen käyttämä {entity} ei ole raportoinut {days} päivään. Vyöhyke jatkaa ilman sitä (katso README:stä, mitä se tarkoittaa), mutta tarkista laite -- tai poista se vyöhykkeeltä kohdassa Määritä. Tämä poistuu itsestään, kun anturi raportoi taas."
+      "description": "Vyöhyke {zone}: sen käyttämä {entity} ei ole raportoinut {days} päivään. Vyöhyke jatkaa ilman sitä (katso README:stä, mitä se tarkoittaa), mutta tarkista laite -- tai poista se vyöhykkeeltä kohdassa Määritä. Tämä poistuu itsestään, kun anturi raportoi taas.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: puhelimen ilmoituskohde puuttuu",
-      "description": "Vyöhyke {zone}: puhelinilmoitusten kohde {entity} ei ole enää olemassa Home Assistantissa, joten ilmoituksia ei tule. Valitse nykyinen ilmoituskohde vyöhykkeen kohdasta Määritä. Tämä poistuu itsestään, kun kohde on taas olemassa."
+      "description": "Vyöhyke {zone}: puhelinilmoitusten kohde {entity} ei ole enää olemassa Home Assistantissa, joten ilmoituksia ei tule. Valitse nykyinen ilmoituskohde vyöhykkeen kohdasta Määritä. Tämä poistuu itsestään, kun kohde on taas olemassa.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: kalibroi suuttimien virtaama",
-      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä."
+      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: venttiili jaettu toisen vyöhykkeen kanssa",

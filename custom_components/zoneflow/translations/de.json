@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow Bewässerung",
-        "description": "Wähle hier deine echten Entitäten. Es werden keine eigenen physischen Entitäten angelegt. Nur der Ventilschalter ist Pflicht – alles andere darf leer bleiben, die Zone kommt dann auch ohne aus.",
+        "description": "{progress}\n\nWähle hier deine echten Entitäten. Es werden keine eigenen physischen Entitäten angelegt. Nur der Ventilschalter ist Pflicht – alles andere darf leer bleiben, die Zone kommt dann auch ohne aus.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilschalter",
           "pump_power_entity": "Pumpen-Leistungssensor (optional)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Klima",
-        "description": "Wie ist die Wachstumszeit dort, wo diese Zone liegt? Das füllt nur die Temperaturregler auf der nächsten Seite vor – du kannst dort jeden Wert ändern, und später auch auf der Geräteseite der Zone.",
+        "description": "{progress}\n\nWie ist die Wachstumszeit dort, wo diese Zone liegt? Das füllt nur die Temperaturregler auf der nächsten Seite vor – du kannst dort jeden Wert ändern, und später auch auf der Geräteseite der Zone.",
         "data": {
           "climate": "Klima"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Temperaturschwellen",
-        "description": "ZoneFlow mittelt die tägliche HÖCHSTtemperatur der letzten 3 Tage. Ab der Heiß-Schwelle wird öfter gegossen (alle 3 Tage), mit dem Wochenziel für heißes Wetter; unter der Kühl-Schwelle gilt das Wochenziel für kühles Wetter; dazwischen das normale.\n\nDie Ersatztemperatur gilt, wenn es keinen echten Messwert gibt: Ohne Temperatursensor ist sie deine manuelle Steuerung (bei Hitzewelle erhöhen, bei Kälteeinbruch senken); mit Sensor gilt sie nur, bis der Sensor seinen ersten vollen Tag aufgezeichnet hat, und nach 3 Tagen ganz ohne Messwert.",
+        "description": "{progress}\n\nZoneFlow mittelt die tägliche HÖCHSTtemperatur der letzten 3 Tage. Ab der Heiß-Schwelle wird öfter gegossen (alle 3 Tage), mit dem Wochenziel für heißes Wetter; unter der Kühl-Schwelle gilt das Wochenziel für kühles Wetter; dazwischen das normale.\n\nDie Ersatztemperatur gilt, wenn es keinen echten Messwert gibt: Ohne Temperatursensor ist sie deine manuelle Steuerung (bei Hitzewelle erhöhen, bei Kälteeinbruch senken); mit Sensor gilt sie nur, bis der Sensor seinen ersten vollen Tag aufgezeichnet hat, und nach 3 Tagen ganz ohne Messwert.",
         "data": {
           "hot_temp_threshold": "Schwelle für heißes Wetter",
           "cool_temp_threshold": "Schwelle für kühles Wetter",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: Sensor seit {days} Tagen offline",
-      "description": "{entity}, genutzt von Zone {zone}, ist seit {days} Tagen offline. Die Zone arbeitet ohne ihn weiter (was das bedeutet, steht in der README), aber prüfe das Gerät – oder entferne ihn unter „Konfigurieren“ aus der Zone. Dieser Hinweis verschwindet von selbst, sobald der Sensor wieder meldet."
+      "description": "{entity}, genutzt von Zone {zone}, ist seit {days} Tagen offline. Die Zone arbeitet ohne ihn weiter (was das bedeutet, steht in der README), aber prüfe das Gerät – oder entferne ihn unter „Konfigurieren“ aus der Zone. Dieser Hinweis verschwindet von selbst, sobald der Sensor wieder meldet.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: Handy-Benachrichtigungsziel fehlt",
-      "description": "Zone {zone} sendet ihre Handy-Benachrichtigungen an {entity}, das es in Home Assistant nicht mehr gibt, daher kommen keine Benachrichtigungen an. Wähle unter „Konfigurieren“ der Zone das aktuelle Benachrichtigungsziel. Dieser Hinweis verschwindet von selbst, sobald es wieder existiert."
+      "description": "Zone {zone} sendet ihre Handy-Benachrichtigungen an {entity}, das es in Home Assistant nicht mehr gibt, daher kommen keine Benachrichtigungen an. Wähle unter „Konfigurieren“ der Zone das aktuelle Benachrichtigungsziel. Dieser Hinweis verschwindet von selbst, sobald es wieder existiert.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: Tropfer-Durchflussrate kalibrieren",
-      "description": "Zone {zone} nutzt noch den Standardwert der Tropfer-Durchflussrate (Kalibrierung) (0,24 mm/min). Genau diese Zahl bestimmt, wie viel Wasser jeder Lauf gibt – miss sie also für deine Tropfer: „Konfigurieren → Durchflussrate“ der Zone berechnet sie aus deinen Tropfern oder misst sie mit einem Durchflussmesser. Wenn 0,24 mm/min für diese Zone wirklich stimmt, ignoriere diesen Hinweis."
+      "description": "Zone {zone} nutzt noch den Standardwert der Tropfer-Durchflussrate (Kalibrierung) (0,24 mm/min). Genau diese Zahl bestimmt, wie viel Wasser jeder Lauf gibt – miss sie also für deine Tropfer: „Konfigurieren → Durchflussrate“ der Zone berechnet sie aus deinen Tropfern oder misst sie mit einem Durchflussmesser. Wenn 0,24 mm/min für diese Zone wirklich stimmt, ignoriere diesen Hinweis.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: Ventil wird mit einer anderen Zone geteilt",

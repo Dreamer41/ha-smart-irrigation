@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "Riego ZoneFlow",
-        "description": "Elige tus entidades reales. ZoneFlow nunca crea entidades físicas propias. Solo el interruptor de la válvula es obligatorio; todo lo demás sigue funcionando, con menos funciones, si se deja vacío.",
+        "description": "{progress}\n\nElige tus entidades reales. ZoneFlow nunca crea entidades físicas propias. Solo el interruptor de la válvula es obligatorio; todo lo demás sigue funcionando, con menos funciones, si se deja vacío.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interruptor de la válvula",
           "pump_power_entity": "Sensor de potencia de la bomba (opcional)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Clima",
-        "description": "¿Cómo es la temporada de cultivo donde está esta zona? Esto solo rellena los controles de temperatura de la página siguiente; puedes cambiar cada valor allí y, más adelante, en la página del dispositivo de la zona.",
+        "description": "{progress}\n\n¿Cómo es la temporada de cultivo donde está esta zona? Esto solo rellena los controles de temperatura de la página siguiente; puedes cambiar cada valor allí y, más adelante, en la página del dispositivo de la zona.",
         "data": {
           "climate": "Clima"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Umbrales de temperatura",
-        "description": "ZoneFlow promedia la temperatura MÁXIMA diaria de los últimos 3 días. Si está en el umbral de calor o por encima, riega más a menudo (cada 3 días) con el objetivo semanal de calor; por debajo del umbral de fresco usa el objetivo semanal de fresco; entre ambos, el normal.\n\nLa temperatura de respaldo se usa cuando no hay una lectura real: sin sensor de temperatura es tu control manual (súbela en una ola de calor, bájala en una racha de frío); con sensor solo se usa hasta que el sensor haya registrado su primer día completo, y tras 3 días sin ninguna lectura.",
+        "description": "{progress}\n\nZoneFlow promedia la temperatura MÁXIMA diaria de los últimos 3 días. Si está en el umbral de calor o por encima, riega más a menudo (cada 3 días) con el objetivo semanal de calor; por debajo del umbral de fresco usa el objetivo semanal de fresco; entre ambos, el normal.\n\nLa temperatura de respaldo se usa cuando no hay una lectura real: sin sensor de temperatura es tu control manual (súbela en una ola de calor, bájala en una racha de frío); con sensor solo se usa hasta que el sensor haya registrado su primer día completo, y tras 3 días sin ninguna lectura.",
         "data": {
           "hot_temp_threshold": "Umbral de tiempo caluroso",
           "cool_temp_threshold": "Umbral de tiempo fresco",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor desconectado desde hace {days} días",
-      "description": "{entity}, que usa la zona {zone}, lleva {days} días desconectado. La zona sigue funcionando sin él (en el README se explica qué implica), pero revisa el dispositivo, o quítalo de la zona en Configurar. Esto se resuelve solo cuando el sensor vuelva a informar."
+      "description": "{entity}, que usa la zona {zone}, lleva {days} días desconectado. La zona sigue funcionando sin él (en el README se explica qué implica), pero revisa el dispositivo, o quítalo de la zona en Configurar. Esto se resuelve solo cuando el sensor vuelva a informar.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: falta el destino de notificaciones",
-      "description": "La zona {zone} envía sus notificaciones al teléfono a {entity}, que ya no existe en Home Assistant, así que no llega ninguna notificación. Elige el destino actual en Configurar de la zona. Esto se resuelve solo cuando vuelva a existir."
+      "description": "La zona {zone} envía sus notificaciones al teléfono a {entity}, que ya no existe en Home Assistant, así que no llega ninguna notificación. Elige el destino actual en Configurar de la zona. Esto se resuelve solo cuando vuelva a existir.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: calibra el caudal de los emisores",
-      "description": "La zona {zone} sigue usando la Calibración del caudal de emisores predeterminada (0.24 mm/min). Es el número que decide cuánta agua da cada riego, así que mídelo para tus emisores: Configurar → Caudal de la zona lo calcula a partir de tus emisores o lo mide con un caudalímetro. Si 0.24 mm/min es realmente correcto para esta zona, ignora este aviso."
+      "description": "La zona {zone} sigue usando la Calibración del caudal de emisores predeterminada (0.24 mm/min). Es el número que decide cuánta agua da cada riego, así que mídelo para tus emisores: Configurar → Caudal de la zona lo calcula a partir de tus emisores o lo mide con un caudalímetro. Si 0.24 mm/min es realmente correcto para esta zona, ignora este aviso.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: válvula compartida con otra zona",

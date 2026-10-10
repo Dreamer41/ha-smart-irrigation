@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "Irrigazione ZoneFlow",
-        "description": "Collega le tue entità reali. Non crea mai nuove entità fisiche proprie. Serve solo l'interruttore della valvola -- tutto il resto qui sotto è facoltativo e la zona funziona anche senza.",
+        "description": "{progress}\n\nCollega le tue entità reali. Non crea mai nuove entità fisiche proprie. Serve solo l'interruttore della valvola -- tutto il resto qui sotto è facoltativo e la zona funziona anche senza.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interruttore della valvola",
           "pump_power_entity": "Sensore di potenza della pompa (facoltativo)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Clima",
-        "description": "Com'è la stagione di crescita dove si trova questa zona? Serve solo a precompilare i cursori della temperatura nella pagina successiva -- lì puoi cambiare ogni valore, e anche in seguito nella pagina del dispositivo della zona.",
+        "description": "{progress}\n\nCom'è la stagione di crescita dove si trova questa zona? Serve solo a precompilare i cursori della temperatura nella pagina successiva -- lì puoi cambiare ogni valore, e anche in seguito nella pagina del dispositivo della zona.",
         "data": {
           "climate": "Clima"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Soglie di temperatura",
-        "description": "ZoneFlow fa la media della temperatura MASSIMA giornaliera degli ultimi 3 giorni. Dalla soglia del caldo in su irriga più spesso (ogni 3 giorni) con l'obiettivo settimanale per il caldo; sotto la soglia del fresco usa l'obiettivo settimanale per il fresco; nel mezzo è normale.\n\nLa temperatura di riserva si usa quando non c'è una lettura reale: senza sensore di temperatura è il tuo comando manuale (alzala per un'ondata di caldo, abbassala per un'ondata di freddo); con un sensore si usa solo finché il sensore non ha registrato il primo giorno completo, e dopo 3 giorni senza nessuna lettura.",
+        "description": "{progress}\n\nZoneFlow fa la media della temperatura MASSIMA giornaliera degli ultimi 3 giorni. Dalla soglia del caldo in su irriga più spesso (ogni 3 giorni) con l'obiettivo settimanale per il caldo; sotto la soglia del fresco usa l'obiettivo settimanale per il fresco; nel mezzo è normale.\n\nLa temperatura di riserva si usa quando non c'è una lettura reale: senza sensore di temperatura è il tuo comando manuale (alzala per un'ondata di caldo, abbassala per un'ondata di freddo); con un sensore si usa solo finché il sensore non ha registrato il primo giorno completo, e dopo 3 giorni senza nessuna lettura.",
         "data": {
           "hot_temp_threshold": "Soglia del caldo",
           "cool_temp_threshold": "Soglia del fresco",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensore offline da {days} giorni",
-      "description": "{entity}, usato dalla zona {zone}, è offline da {days} giorni. La zona continua senza (cosa comporta è spiegato nel README), ma controlla il dispositivo -- oppure rimuovilo dalla zona in Configura. Il problema si risolve da solo quando il sensore torna a inviare dati."
+      "description": "{entity}, usato dalla zona {zone}, è offline da {days} giorni. La zona continua senza (cosa comporta è spiegato nel README), ma controlla il dispositivo -- oppure rimuovilo dalla zona in Configura. Il problema si risolve da solo quando il sensore torna a inviare dati.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: destinazione notifiche mancante",
-      "description": "La zona {zone} invia le notifiche sul telefono a {entity}, che non esiste più in Home Assistant, quindi non arriva nessuna notifica. Scegli la destinazione notifiche attuale in Configura della zona. Il problema si risolve da solo quando torna a esistere."
+      "description": "La zona {zone} invia le notifiche sul telefono a {entity}, che non esiste più in Home Assistant, quindi non arriva nessuna notifica. Scegli la destinazione notifiche attuale in Configura della zona. Il problema si risolve da solo quando torna a esistere.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: tara la portata degli erogatori",
-      "description": "La zona {zone} usa ancora la Taratura portata erogatori predefinita (0,24 mm/min). È l'unico numero che decide quanta acqua dà ogni ciclo, quindi misurala per i tuoi erogatori: Configura → Portata della zona la calcola dai tuoi erogatori o la misura con il flussometro. Se 0,24 mm/min è davvero giusto per questa zona, ignora questo avviso."
+      "description": "La zona {zone} usa ancora la Taratura portata erogatori predefinita (0,24 mm/min). È l'unico numero che decide quanta acqua dà ogni ciclo, quindi misurala per i tuoi erogatori: Configura → Portata della zona la calcola dai tuoi erogatori o la misura con il flussometro. Se 0,24 mm/min è davvero giusto per questa zona, ignora questo avviso.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: valvola condivisa con un'altra zona",

@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow Irrigation",
-        "description": "Point this at your real entities. It never creates new physical entities of its own. Only the valve switch is required -- everything else below degrades gracefully when left unset.",
+        "description": "{progress}\n\nPoint this at your real entities. It never creates new physical entities of its own. Only the valve switch is required -- everything else below degrades gracefully when left unset. Leave a field empty if you do not have one.\n\n{suggestions}",
         "data": {
           "valve_entity": "Valve switch",
           "pump_power_entity": "Pump power sensor (optional)",
@@ -31,11 +31,11 @@
           "soil_moisture_entity": "Soil moisture sensor (optional)",
           "notify_entity": "Phone notify target (optional)",
           "weather_entity": "Weather forecast source (optional)",
-          "soil_type": "Soil type",
-          "drainage": "Drainage",
-          "slope": "Slope",
-          "irrigation_method": "Irrigation method",
-          "growth_ramp_profile": "Growth-stage auto-ramp",
+          "soil_type": "Do you know your soil type? (skip if not)",
+          "drainage": "Does water drain away slowly? (skip if you do not know)",
+          "slope": "Is the ground sloped? (skip if it is flat or you are not sure)",
+          "irrigation_method": "How does the water get to the plants?",
+          "growth_ramp_profile": "Is it a young plant that needs less water at first? (skip if not)",
           "csv_path": "CSV log file path",
           "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Climate",
-        "description": "What is the growing season like where this zone is? This only pre-fills the temperature sliders on the next page -- you can change every value there, and later on the zone's device page.",
+        "description": "{progress}\n\nWhat is the growing season like where this zone is? This only pre-fills the temperature sliders on the next page -- you can change every value there, and later on the zone's device page.",
         "data": {
           "climate": "Climate"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Temperature thresholds",
-        "description": "ZoneFlow averages the daily HIGH temperature over the last 3 days. At or above Hot it waters more often (every 3 days) with the hot weekly target; below Cool it uses the cool weekly target; in between is normal.\n\nThe fallback temperature is used when there is no real reading to go on: with no temperature sensor it is your manual control (raise it for a heat wave, lower it for a cold spell); with a sensor it is used only until the sensor has recorded its first full day, and after 3 days without a single reading.",
+        "description": "{progress}\n\nZoneFlow averages the daily HIGH temperature over the last 3 days. At or above Hot it waters more often (every 3 days) with the hot weekly target; below Cool it uses the cool weekly target; in between is normal.\n\nThe fallback temperature is used when there is no real reading to go on: with no temperature sensor it is your manual control (raise it for a heat wave, lower it for a cold spell); with a sensor it is used only until the sensor has recorded its first full day, and after 3 days without a single reading.",
         "data": {
           "hot_temp_threshold": "Hot weather threshold",
           "cool_temp_threshold": "Cool weather threshold",
@@ -1687,15 +1687,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline for {days} days",
-      "description": "{entity}, which zone {zone} uses, has been offline for {days} days. The zone carries on without it (see what that means in the README), but check the device -- or remove it from the zone under Configure. This clears by itself once the sensor reports again."
+      "description": "{entity}, which zone {zone} uses, has been offline for {days} days. The zone carries on without it (see what that means in the README), but check the device -- or remove it from the zone under Configure. This clears by itself once the sensor reports again.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: phone notify target missing",
-      "description": "Zone {zone} sends its phone notifications to {entity}, which no longer exists in Home Assistant, so no notifications arrive. Pick the current notify target under the zone's Configure. This clears by itself once it exists again."
+      "description": "Zone {zone} sends its phone notifications to {entity}, which no longer exists in Home Assistant, so no notifications arrive. Pick the current notify target under the zone's Configure. This clears by itself once it exists again.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: calibrate the emitter flow rate",
-      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this."
+      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "greenhouse_sensor": {
       "title": "{zone}: inside temperature sensor not working",

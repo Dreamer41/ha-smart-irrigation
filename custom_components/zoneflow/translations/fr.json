@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "Irrigation ZoneFlow",
-        "description": "Indiquez vos vraies entités. ZoneFlow ne crée jamais d'entités physiques. Seul l'interrupteur de la vanne est obligatoire — pour tout le reste, l'intégration s'adapte si vous le laissez vide.",
+        "description": "{progress}\n\nIndiquez vos vraies entités. ZoneFlow ne crée jamais d'entités physiques. Seul l'interrupteur de la vanne est obligatoire — pour tout le reste, l'intégration s'adapte si vous le laissez vide.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interrupteur de la vanne",
           "pump_power_entity": "Capteur de puissance de la pompe (facultatif)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Climat",
-        "description": "Comment est la saison de culture là où se trouve cette zone ? Cela préremplit seulement les curseurs de température de la page suivante — vous pourrez y modifier chaque valeur, et plus tard sur la page de l'appareil de la zone.",
+        "description": "{progress}\n\nComment est la saison de culture là où se trouve cette zone ? Cela préremplit seulement les curseurs de température de la page suivante — vous pourrez y modifier chaque valeur, et plus tard sur la page de l'appareil de la zone.",
         "data": {
           "climate": "Climat"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Seuils de température",
-        "description": "ZoneFlow fait la moyenne de la température MAXIMALE du jour sur les 3 derniers jours. Au seuil chaud ou au-dessus, il arrose plus souvent (tous les 3 jours) avec l'objectif hebdo chaud ; sous le seuil frais, il utilise l'objectif hebdo frais ; entre les deux, c'est l'objectif normal.\n\nLa température de secours sert quand il n'y a pas de vraie mesure : sans capteur de température, c'est votre réglage manuel (montez-la pendant une canicule, baissez-la pendant un coup de froid) ; avec un capteur, elle ne sert que jusqu'à sa première journée complète de mesures, puis après 3 jours sans aucune mesure.",
+        "description": "{progress}\n\nZoneFlow fait la moyenne de la température MAXIMALE du jour sur les 3 derniers jours. Au seuil chaud ou au-dessus, il arrose plus souvent (tous les 3 jours) avec l'objectif hebdo chaud ; sous le seuil frais, il utilise l'objectif hebdo frais ; entre les deux, c'est l'objectif normal.\n\nLa température de secours sert quand il n'y a pas de vraie mesure : sans capteur de température, c'est votre réglage manuel (montez-la pendant une canicule, baissez-la pendant un coup de froid) ; avec un capteur, elle ne sert que jusqu'à sa première journée complète de mesures, puis après 3 jours sans aucune mesure.",
         "data": {
           "hot_temp_threshold": "Seuil temps chaud",
           "cool_temp_threshold": "Seuil temps frais",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone} : capteur hors ligne depuis {days} jours",
-      "description": "{entity}, utilisé par la zone {zone}, est hors ligne depuis {days} jours. La zone continue sans lui (voir ce que cela implique dans le README), mais vérifiez l'appareil — ou retirez-le de la zone dans Configurer. Ce problème disparaît tout seul quand le capteur répond à nouveau."
+      "description": "{entity}, utilisé par la zone {zone}, est hors ligne depuis {days} jours. La zone continue sans lui (voir ce que cela implique dans le README), mais vérifiez l'appareil — ou retirez-le de la zone dans Configurer. Ce problème disparaît tout seul quand le capteur répond à nouveau.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone} : cible de notification téléphone introuvable",
-      "description": "La zone {zone} envoie ses notifications à {entity}, qui n'existe plus dans Home Assistant : aucune notification n'arrive. Choisissez la cible actuelle dans Configurer de la zone. Ce problème disparaît tout seul dès qu'elle existe à nouveau."
+      "description": "La zone {zone} envoie ses notifications à {entity}, qui n'existe plus dans Home Assistant : aucune notification n'arrive. Choisissez la cible actuelle dans Configurer de la zone. Ce problème disparaît tout seul dès qu'elle existe à nouveau.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone} : étalonnez le débit des goutteurs",
-      "description": "La zone {zone} utilise toujours l'Étalonnage du débit des goutteurs par défaut (0,24 mm/min). C'est le chiffre qui décide de la quantité d'eau donnée à chaque arrosage : mesurez-le pour vos goutteurs. Configurer → Débit de la zone le calcule à partir de vos goutteurs, ou le mesure avec un débitmètre. Si 0,24 mm/min est vraiment correct pour cette zone, ignorez ce message."
+      "description": "La zone {zone} utilise toujours l'Étalonnage du débit des goutteurs par défaut (0,24 mm/min). C'est le chiffre qui décide de la quantité d'eau donnée à chaque arrosage : mesurez-le pour vos goutteurs. Configurer → Débit de la zone le calcule à partir de vos goutteurs, ou le mesure avec un débitmètre. Si 0,24 mm/min est vraiment correct pour cette zone, ignorez ce message.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone} : vanne partagée avec une autre zone",

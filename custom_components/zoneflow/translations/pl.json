@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "Nawadnianie ZoneFlow",
-        "description": "Wskaż swoje istniejące encje. Integracja nigdy nie tworzy własnych encji fizycznych. Wymagany jest tylko przełącznik zaworu – wszystko inne poniżej można pominąć, strefa poradzi sobie bez tego.",
+        "description": "{progress}\n\nWskaż swoje istniejące encje. Integracja nigdy nie tworzy własnych encji fizycznych. Wymagany jest tylko przełącznik zaworu – wszystko inne poniżej można pominąć, strefa poradzi sobie bez tego.\n\n{suggestions}",
         "data": {
           "valve_entity": "Przełącznik zaworu",
           "pump_power_entity": "Czujnik mocy pompy (opcjonalnie)",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Klimat",
-        "description": "Jak wygląda sezon wegetacyjny tam, gdzie jest ta strefa? To tylko wstępnie ustawia suwaki temperatur na następnej stronie – każdą wartość możesz tam zmienić, a później także na stronie urządzenia strefy.",
+        "description": "{progress}\n\nJak wygląda sezon wegetacyjny tam, gdzie jest ta strefa? To tylko wstępnie ustawia suwaki temperatur na następnej stronie – każdą wartość możesz tam zmienić, a później także na stronie urządzenia strefy.",
         "data": {
           "climate": "Klimat"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Progi temperatury",
-        "description": "ZoneFlow uśrednia NAJWYŻSZĄ dzienną temperaturę z ostatnich 3 dni. Gdy średnia osiąga próg upału lub go przekracza, podlewa częściej (co 3 dni) z tygodniową dawką na upał; poniżej progu chłodu stosuje tygodniową dawkę na chłód; pomiędzy – normalną.\n\nTemperatura zastępcza jest używana, gdy brak prawdziwego odczytu: bez czujnika temperatury to Twoje ręczne sterowanie (podnieś ją na czas upałów, obniż na czas chłodów); z czujnikiem jest używana tylko do czasu, aż czujnik zapisze pierwszy pełny dzień, oraz po 3 dniach bez żadnego odczytu.",
+        "description": "{progress}\n\nZoneFlow uśrednia NAJWYŻSZĄ dzienną temperaturę z ostatnich 3 dni. Gdy średnia osiąga próg upału lub go przekracza, podlewa częściej (co 3 dni) z tygodniową dawką na upał; poniżej progu chłodu stosuje tygodniową dawkę na chłód; pomiędzy – normalną.\n\nTemperatura zastępcza jest używana, gdy brak prawdziwego odczytu: bez czujnika temperatury to Twoje ręczne sterowanie (podnieś ją na czas upałów, obniż na czas chłodów); z czujnikiem jest używana tylko do czasu, aż czujnik zapisze pierwszy pełny dzień, oraz po 3 dniach bez żadnego odczytu.",
         "data": {
           "hot_temp_threshold": "Próg upału",
           "cool_temp_threshold": "Próg chłodu",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}: czujnik offline (dni: {days})",
-      "description": "Encja {entity}, używana przez strefę {zone}, jest offline (dni: {days}). Strefa działa dalej bez niej (co to oznacza – zob. README), ale sprawdź urządzenie – albo usuń je ze strefy w „Konfiguruj”. To zgłoszenie zniknie samo, gdy czujnik znów zacznie raportować."
+      "description": "Encja {entity}, używana przez strefę {zone}, jest offline (dni: {days}). Strefa działa dalej bez niej (co to oznacza – zob. README), ale sprawdź urządzenie – albo usuń je ze strefy w „Konfiguruj”. To zgłoszenie zniknie samo, gdy czujnik znów zacznie raportować.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}: brak celu powiadomień na telefon",
-      "description": "Strefa {zone} wysyła powiadomienia na telefon do celu {entity}, który już nie istnieje w Home Assistant, więc powiadomienia nie docierają. Wybierz aktualny cel powiadomień w „Konfiguruj” strefy. To zgłoszenie zniknie samo, gdy cel znów będzie istniał."
+      "description": "Strefa {zone} wysyła powiadomienia na telefon do celu {entity}, który już nie istnieje w Home Assistant, więc powiadomienia nie docierają. Wybierz aktualny cel powiadomień w „Konfiguruj” strefy. To zgłoszenie zniknie samo, gdy cel znów będzie istniał.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}: skalibruj wydajność emiterów",
-      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to."
+      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to.",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}: zawór współdzielony z inną strefą",

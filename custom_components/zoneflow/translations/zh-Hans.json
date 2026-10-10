@@ -19,7 +19,7 @@
       },
       "entities": {
         "title": "ZoneFlow 灌溉",
-        "description": "请选择您现有的实体。ZoneFlow 自己不会创建任何新的物理实体。只有阀门开关是必需的——下面其他各项不设置也能正常工作，只是功能相应减少。",
+        "description": "{progress}\n\n请选择您现有的实体。ZoneFlow 自己不会创建任何新的物理实体。只有阀门开关是必需的——下面其他各项不设置也能正常工作，只是功能相应减少。\n\n{suggestions}",
         "data": {
           "valve_entity": "阀门开关",
           "pump_power_entity": "水泵功率传感器（可选）",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "气候",
-        "description": "这个区域所在地的生长季气候如何？这只会预填下一页的温度滑块——那里的每个值都可以修改，以后也可以在该区域的设备页面上修改。",
+        "description": "{progress}\n\n这个区域所在地的生长季气候如何？这只会预填下一页的温度滑块——那里的每个值都可以修改，以后也可以在该区域的设备页面上修改。",
         "data": {
           "climate": "气候"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "温度阈值",
-        "description": "ZoneFlow 会计算最近 3 天每日最高气温的平均值。达到或高于“炎热”阈值时，它会按炎热每周目标更频繁地浇水（每 3 天一次）；低于“凉爽”阈值时，使用凉爽每周目标；两者之间为正常。\n\n没有实际读数可用时使用备用温度：没有温度传感器时，它就是您的手动控制（热浪时调高，寒潮时调低）；有传感器时，只在传感器记录满第一天之前，以及连续 3 天没有任何读数后使用。",
+        "description": "{progress}\n\nZoneFlow 会计算最近 3 天每日最高气温的平均值。达到或高于“炎热”阈值时，它会按炎热每周目标更频繁地浇水（每 3 天一次）；低于“凉爽”阈值时，使用凉爽每周目标；两者之间为正常。\n\n没有实际读数可用时使用备用温度：没有温度传感器时，它就是您的手动控制（热浪时调高，寒潮时调低）；有传感器时，只在传感器记录满第一天之前，以及连续 3 天没有任何读数后使用。",
         "data": {
           "hot_temp_threshold": "炎热天气阈值",
           "cool_temp_threshold": "凉爽天气阈值",
@@ -1683,15 +1683,84 @@
     },
     "sensor_offline": {
       "title": "{zone}：传感器已离线 {days} 天",
-      "description": "区域 {zone} 使用的 {entity} 已离线 {days} 天。该区域会在没有它的情况下继续运行（具体影响请参阅 README），但请检查该设备——或在“配置”中将其从该区域移除。传感器重新上报后，此问题会自动消除。"
+      "description": "区域 {zone} 使用的 {entity} 已离线 {days} 天。该区域会在没有它的情况下继续运行（具体影响请参阅 README），但请检查该设备——或在“配置”中将其从该区域移除。传感器重新上报后，此问题会自动消除。",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Replace the sensor",
+            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "data": {
+              "replacement": "Replacement sensor"
+            },
+            "data_description": {
+              "replacement": "Leave empty to remove the sensor from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "notify_missing": {
       "title": "{zone}：缺少手机通知目标",
-      "description": "区域 {zone} 将手机通知发送到 {entity}，但它在 Home Assistant 中已不存在，因此收不到任何通知。请在该区域的“配置”中选择当前的通知目标。它重新存在后，此问题会自动消除。"
+      "description": "区域 {zone} 将手机通知发送到 {entity}，但它在 Home Assistant 中已不存在，因此收不到任何通知。请在该区域的“配置”中选择当前的通知目标。它重新存在后，此问题会自动消除。",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Choose another phone",
+            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "data": {
+              "notify_entity": "Phone to notify"
+            },
+            "data_description": {
+              "notify_entity": "Leave empty to stop phone messages from this zone."
+            }
+          }
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists."
+        }
+      }
     },
     "flow_rate_default": {
       "title": "{zone}：请校准灌水器流量",
-      "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。"
+      "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Set the flow rate by measuring",
+            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "data": {
+              "run": "Run the valve for 15 minutes now"
+            },
+            "data_description": {
+              "run": "Untick if you have already run it."
+            }
+          },
+          "measure": {
+            "title": "How much water came out?",
+            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "data": {
+              "volume": "Water that came out",
+              "area": "Watered area",
+              "minutes": "Minutes the valve was open"
+            },
+            "data_description": {
+              "volume": "Litres (gallons on an imperial zone).",
+              "area": "Square metres (square feet on an imperial zone).",
+              "minutes": "Normally 15."
+            }
+          }
+        },
+        "error": {
+          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+        },
+        "abort": {
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
+        }
+      }
     },
     "shared_valve": {
       "title": "{zone}：阀门与另一个区域共用",
