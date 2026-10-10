@@ -354,6 +354,29 @@ climate, temperature thresholds):
    shape). Neither counts as watering. Then read back the valve (and
    pump-power/flow-meter states, if configured) to confirm it actually ran.
 
+**Since 1.7, the first response can be a menu.** Once the garden has a zone,
+step 1 returns a **menu** (`"type": "menu"`, `step_id` `start`) instead of the
+zone-name form. Choose with `{"next_step_id": "<option>"}`: `zone` (the form
+above), `crop` (a crop in a greenhouse), `area` (an area, §7.5a) or
+`weather_underground`. Read `menu_options` in the response: `crop` only
+appears when a greenhouse exists. With no zone yet, step 1 is the zone-name
+form straight away, as before.
+
+The zone-name form also has two optional fields: **`location`** (the entry id
+of an area the zone is in; leave it out for none; the field is absent when
+there are no areas) and **`start_from`** (empty for the plant type's usual
+settings, `zone:<entry id>` for a copy of another zone's watering settings, or
+`preset:<id>` for a saved preset). A zone placed in an area takes the area's
+rain gauge, outdoor temperature, weather entity and phone: **do not ask for
+those again, leave them out of the entities step**, unless the person wants a
+sensor of their own for this zone.
+
+An **area** is made with the `area` menu choice: `area_name`, then the shared
+sensors `rain_counter_entity`, `rain_source_type` (`tips`, `total_mm`,
+`rate_mm_h` or `amount_mm`), `area_rain_mm_per_tip`, `outdoor_temp_entity`,
+`weather_entity`, `notify_entity` (all optional). `zoneflow.create_area` does
+the same from a service call.
+
 **Greenhouse and indoor zones** (`zone_type` is `greenhouse` or `indoor`)
 take a different path after step 2. Read each response's `data_schema`, as
 always; the steps are:
@@ -1422,6 +1445,28 @@ outdoor temperature, weather entity and phone; a zone that has its own keeps
 it. For a new bed like an existing one, use **Start from** in the add-zone
 form, or `zoneflow.copy_settings`, or save a preset with
 `zoneflow.save_preset`. These never copy the valve, sensors or flow rate.
+
+**Plants.** Each zone with a valve has a *main plant* (it drives the watering)
+and can have more plants as records (history and notes only). The services:
+`zoneflow.add_plant` (`name`, `plant_type`, optional `old_main`: `extra` or
+`archive`, only when the zone already has a main plant), `move_plant`
+(`plant_id`, target zone, `old_main` of `extra`, `archive`, `swap` or `keep`
+when the target already has a main plant, `use_plant_settings`), `set_main_plant`
+(`plant_id`, `use_plant_settings`), `remove_plant`, `rename_plant` and
+`add_plant_note`. A plant that moves, or becomes the main plant, brings its own
+planting date, health and fertilizing; **the bed keeps the way it is watered**
+unless `use_plant_settings` is true. Plant ids are in the zone's Status sensor
+attribute `plants`. The history and notes are shown on the card's **Plants**
+button; reading them over the websocket is `zoneflow/plants` with a `device_id`.
+
+**Everyday helpers worth offering once the zone works:** `zoneflow.water_now`
+(`minutes`; refused while paused, never longer than the zone's runtime cap, and
+counted in the water record), `zoneflow.calibrate_flow` (`volume`, `area`,
+`minutes`: the same sum as the flow-rate setup, from a measured run), the card's
+**Check my setup** (`zoneflow/check`) and **Why?** (`zoneflow/why`), which read
+back the same checks and numbers in words. Pausing or snoozing an area, or a
+greenhouse, covers all its zones (for a greenhouse, its crops' watering: the
+climate control carries on).
 
 ### 7.6 A sensor drops out later (already configured, now unavailable)
 Worth mentioning proactively once, rather than waiting for the person to
