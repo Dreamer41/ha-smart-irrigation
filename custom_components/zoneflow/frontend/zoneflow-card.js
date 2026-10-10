@@ -4162,10 +4162,10 @@ const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
 // "?" beside a settings group: the guide that explains it. The watering-method
-// choice (temperature tiers, ET, soil probe) has a blog post of its own: put
-// its address in METHOD_HELP_URL and the "?" appears next to How much water.
+// choice (temperature tiers, ET, soil probe) has a blog post of its own: the
+// second "?" next to How much water links to it.
 const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";
-const METHOD_HELP_URL = "";
+const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";
 const HELP_LINKS = {
   amounts: [`${GUIDE}CALIBRATION.md`, METHOD_HELP_URL],
   water_use: [`${GUIDE}CALIBRATION.md`],

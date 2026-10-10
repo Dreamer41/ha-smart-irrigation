@@ -803,3 +803,9 @@ def test_the_overview_keeps_each_greenhouse_and_its_crops_in_a_group_of_its_own(
         ["Basil", "Tunnel", False, "house"], ["Peppers", "Tunnel", False, "house"],
         ["Beds", "", True, "other"],                  # no area: last
     ]
+
+
+def test_the_watering_method_help_link_points_at_the_blog_post():
+    text = CARD.read_text(encoding="utf-8")
+    assert 'const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";' in text
+    assert "amounts: [`${GUIDE}CALIBRATION.md`, METHOD_HELP_URL]" in text  # shown beside How much water
