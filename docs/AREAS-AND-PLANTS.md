@@ -59,7 +59,7 @@ Starting a new bed from an existing one is quick:
 
 - **Copy settings** (Plants popup, or `zoneflow.copy_settings`) gives a zone another zone's watering settings: targets, thresholds, pulses, soak times, deep soak, schedule times, soil, method and so on. It never copies the valve, sensors, flow rate, rain gauge tip size, planting date or notes.
 - **Presets** are such a set of settings saved under a name (*Save this zone's settings as a preset*, or `zoneflow.save_preset`). Use one on any zone later with **Use preset**.
-- When you add a new zone, the first screen has **Quick setup** (ticked): ZoneFlow then asks only for the valve and how the water is delivered, uses the sensors it clearly found, and takes the rest from the plant type and the default climate. Everything can be changed later in Configure; untick it for the full set of questions (1.7.1).
+- When you add a new zone, the first screen has **Quick setup** (ticked): ZoneFlow then asks only for the valve, how the water is delivered and how much it gives (emitters, flow of one, area wet; no default, because drip and sprinklers differ a lot), uses the sensors it clearly found, and takes the rest from the plant type and the default climate. Everything can be changed later in Configure; untick it for the full set of questions (1.7.1).
 - When you add a new zone, the first screen has **Start from**: a copy of another zone or a saved preset, instead of the plant type's usual settings.
 
 ## Easy setup

@@ -836,9 +836,28 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         give the rest; everything can be changed later in Configure."""
         defaults, found = await self._entity_defaults()
         errors: dict[str, str] = {}
+        imperial = self._imperial()
         if user_input is not None:
             errors = _duplicate_errors(self.hass, user_input)
+            flow_numbers: dict[str, float] = {}
             if not errors:
+                # How much water the zone gives: emitters x one emitter's flow, over the area they wet
+                # (1 litre on 1 m2 is 1 mm). There is no default: drip and sprinklers differ a lot.
+                l_per_h = round(float(user_input["emitters"])) * float(user_input["emitter_flow"]) * (
+                    units.LITERS_PER_GALLON if imperial else 1.0
+                )
+                area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
+                mm_per_min = l_per_h / area_m2 / 60
+                _name, lo, hi, _step, _unit = NUMBER_DEFS["flow_rate_mm_per_min"]
+                if not lo <= mm_per_min <= hi:
+                    errors["base"] = "flow_rate_out_of_range"
+                else:
+                    flow_numbers["flow_rate_mm_per_min"] = round(mm_per_min, 3)
+                    _zname, zlo, zhi, _zstep, _zunit = NUMBER_DEFS["zone_flow_l_min"]
+                    if zlo < l_per_h / 60 <= zhi:
+                        flow_numbers["zone_flow_l_min"] = round(l_per_h / 60, 2)
+            if not errors:
+                user_input = {k: v for k, v in user_input.items() if k not in ("emitters", "emitter_flow", "area")}
                 data = _schema(defaults)({**defaults, **user_input})
                 for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
                     if len(data[key].split(":")) == 2:
@@ -849,7 +868,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     **CLIMATE_PRESETS[self._climate],
                     **{k: v for k, v in (self._bundle.get("numbers") or {}).items() if k in CLIMATE_NUMBER_KEYS},
                 }
-                return self._create_outdoor_entry({key: preset[key] for key in CLIMATE_NUMBER_KEYS})
+                return self._create_outdoor_entry({key: preset[key] for key in CLIMATE_NUMBER_KEYS}, flow_numbers)
         valve_default = defaults.get(CONF_VALVE_ENTITY)
         return self.async_show_form(
             step_id="quick",
@@ -863,15 +882,31 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=IRRIGATION_METHOD_OPTIONS, translation_key="irrigation_method")
                     ),
+                    vol.Required("emitters"): selector.NumberSelector(
+                        selector.NumberSelectorConfig(min=1, max=2000, step=1, mode=selector.NumberSelectorMode.BOX)
+                    ),
+                    vol.Required("emitter_flow"): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.05, max=2000, step=0.05, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="gal/h" if imperial else "L/h",
+                        )
+                    ),
+                    vol.Required("area"): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1, max=100000, step=0.1, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="ft²" if imperial else "m²",
+                        )
+                    ),
                 }
             ),
             errors=errors,
             description_placeholders={"suggestions": suggest.describe(self.hass, found) or messages.text(self.hass, "setup.nothing_found")},
         )
 
-    def _create_outdoor_entry(self, metric: dict[str, float]):
+    def _create_outdoor_entry(self, metric: dict[str, float], extra_numbers: dict[str, float] | None = None):
         """The zone, once its settings are known (`metric`: the hot / cool /
-        fallback temperatures in degC)."""
+        fallback temperatures in degC; `extra_numbers`: more starting values,
+        such as the flow rate asked for in quick setup)."""
         plant_numbers = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
         data = {
             **self._data,
@@ -879,7 +914,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_PLANT: self._plant,
             CONF_CLIMATE: self._climate,
             CONF_INITIAL_NUMBERS: {
-                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric
+                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric,
+                **(extra_numbers or {}),
             },
         }
         if self._bundle.get("state"):

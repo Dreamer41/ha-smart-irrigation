@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow-kastelu",
-        "description": "Mikä venttiili kastelee tämän vyöhykkeen, ja miten?\n\nZoneFlow käyttää alla löytämiään antureita. Muuta niitä myöhemmin kohdassa Määritä tai palaa takaisin ja poista Pika-asennus.\n\n{suggestions}",
+        "description": "Mikä venttiili kastelee tämän vyöhykkeen, ja miten?\n\nZoneFlow käyttää alla löytämiään antureita. Muuta niitä myöhemmin kohdassa Määritä tai palaa takaisin ja poista Pika-asennus.\n\nKerro, kuinka paljon vettä se antaa: tippukastelu ja sadettimet eroavat paljon. Likiarvo riittää; vyöhykekortin ”Kalibroi virtaama” mittaa sen tarkasti.\n\n{suggestions}",
         "data": {
           "valve_entity": "Venttiilin kytkin",
-          "irrigation_method": "Miten vesi pääsee kasveille?"
+          "irrigation_method": "Miten vesi pääsee kasveille?",
+          "emitters": "Suuttimien (tippusuuttimet, sumuttimet) määrä vyöhykkeellä",
+          "emitter_flow": "Yhden suuttimen virtaama",
+          "area": "Kasteltava ala"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
-          "irrigation_method": "Miten vesi jaetaan. Tippukastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke aloittaa vähintään kahdella jaksolla, jotta vesi pysyy juuristoalueella. Vesimäärän ratkaisee virtaama (Määritä → Virtaama)."
+          "irrigation_method": "Miten vesi jaetaan. Tippukastelulla tai tihkuletkulla hiekkamaalla uusi vyöhyke aloittaa vähintään kahdella jaksolla, jotta vesi pysyy juuristoalueella. Vesimäärän ratkaisee virtaama (Määritä → Virtaama).",
+          "emitters": "Laske kaikki tippusuuttimet tai sumuttimet, joille tämän vyöhykkeen venttiili syöttää vettä.",
+          "emitter_flow": "Paljonko yksi suutin antaa tunnissa: se on painettu suuttimeen tai sen pakkaukseen (esim. 2 L/h, 0,5 gal/h).",
+          "area": "Ala, joka oikeasti kastuu. Jos tippusuuttimet ovat yksittäisten kasvien juurella, laske yhteen kasvien ympärille kastuvat alueet, älä koko penkkiä."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Säteen sisällä ei ole asemia. Ilman lähellä olevaa asemaa tästä ominaisuudesta ei ole hyötyä.",
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
       "area_name_required": "Anna alueelle nimi.",
-      "area_name_exists": "Alue tällä nimellä on jo olemassa."
+      "area_name_exists": "Alue tällä nimellä on jo olemassa.",
+      "flow_rate_out_of_range": "Näillä luvuilla virtaama on sellainen, jota tällä vyöhykkeellä ei voi olla. Tarkista suuttimien määrä, yhden suuttimen virtaama ja ala."
     },
     "abort": {
       "already_configured": "Weather Underground -sade on jo otettu käyttöön."

@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow 灌溉",
-        "description": "哪个阀门为这个区域浇水,方式如何?\n\nZoneFlow 会使用下面找到的传感器。之后可在“配置”中更改,或返回并取消勾选“快速设置”。\n\n{suggestions}",
+        "description": "哪个阀门为这个区域浇水,方式如何?\n\nZoneFlow 会使用下面找到的传感器。之后可在“配置”中更改,或返回并取消勾选“快速设置”。\n\n请填写它的出水量:滴灌和喷头差别很大。大致数值即可;区域卡片上的“校准流量”会精确测量。\n\n{suggestions}",
         "data": {
           "valve_entity": "阀门开关",
-          "irrigation_method": "水分如何输送给植物？"
+          "irrigation_method": "水分如何输送给植物？",
+          "emitters": "区域内灌水器（滴头、喷头）的数量",
+          "emitter_flow": "单个灌水器的流量",
+          "area": "浇水面积"
         },
         "data_description": {
           "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
-          "irrigation_method": "水是如何输送的。在沙土上使用滴灌或渗灌管时，新区域至少从 2 段开始，让水留在根区。实际浇多少水由流量决定（配置 → 流量）。"
+          "irrigation_method": "水是如何输送的。在沙土上使用滴灌或渗灌管时，新区域至少从 2 段开始，让水留在根区。实际浇多少水由流量决定（配置 → 流量）。",
+          "emitters": "数一数该区域阀门供水的所有滴头或喷头。",
+          "emitter_flow": "单个灌水器每小时的出水量：印在灌水器或其包装上（例如 2 L/h、0.5 gal/h）。",
+          "area": "实际被浇湿的面积。对于单株植物旁的滴头，请把它们周围的湿润区域加起来，而不是整个苗床。"
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "搜索半径内没有气象站。附近没有气象站，此功能将无法发挥作用。",
       "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
       "area_name_required": "为区域命名。",
-      "area_name_exists": "已存在同名区域。"
+      "area_name_exists": "已存在同名区域。",
+      "flow_rate_out_of_range": "这些数字得出的流量是该区域不可能有的。请检查出水器数量、单个出水器的流量和面积。"
     },
     "abort": {
       "already_configured": "Weather Underground 降雨功能已设置。"

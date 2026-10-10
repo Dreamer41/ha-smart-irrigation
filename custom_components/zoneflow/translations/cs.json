@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "Zavlažování ZoneFlow",
-        "description": "Který ventil zavlažuje tuto zónu a jak?\n\nZoneFlow použije senzory, které našel níže. Změníte je později v Konfiguraci, nebo se vraťte a zrušte Rychlé nastavení.\n\n{suggestions}",
+        "description": "Který ventil zavlažuje tuto zónu a jak?\n\nZoneFlow použije senzory, které našel níže. Změníte je později v Konfiguraci, nebo se vraťte a zrušte Rychlé nastavení.\n\nUveďte, kolik vody dává: kapkové zavlažování a postřikovače se hodně liší. Stačí přibližná hodnota; „Kalibrovat průtok“ na kartě zóny ji změří přesně.\n\n{suggestions}",
         "data": {
           "valve_entity": "Spínač ventilu",
-          "irrigation_method": "Jak se voda dostává k rostlinám?"
+          "irrigation_method": "Jak se voda dostává k rostlinám?",
+          "emitters": "Počet emitorů (kapkovačů, rozstřikovačů) v zóně",
+          "emitter_flow": "Průtok jednoho emitoru",
+          "area": "Zavlažovaná plocha"
         },
         "data_description": {
           "valve_entity": "Spínač, který otevírá ventil této zóny (nebo spouští její čerpadlo). Jediné, bez čeho ZoneFlow nefunguje: zapíná ho a vypíná a vždy hlídá, aby nakonec zůstal vypnutý.",
-          "irrigation_method": "Jak se voda přivádí. S kapkovou nebo průsakovou hadicí na písčité půdě začne nová zóna nejméně se dvěma pulzy, aby voda zůstala v kořenové zóně. Kolik vody dává, určuje průtok (Nastavit → Průtok)."
+          "irrigation_method": "Jak se voda přivádí. S kapkovou nebo průsakovou hadicí na písčité půdě začne nová zóna nejméně se dvěma pulzy, aby voda zůstala v kořenové zóně. Kolik vody dává, určuje průtok (Nastavit → Průtok).",
+          "emitters": "Spočítejte všechny kapkovače nebo rozstřikovače, které ventil této zóny zásobuje.",
+          "emitter_flow": "Kolik dá jeden emitor za hodinu: je to uvedeno na emitoru nebo na obalu (např. 2 L/h, 0.5 gal/h).",
+          "area": "Plocha, která opravdu zvlhne. U kapkovačů u jednotlivých rostlin sečtěte mokré plochy kolem nich, ne celý záhon."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Žádné stanice v okruhu. Bez stanice v blízkosti vám tato funkce nepomůže.",
       "wu_pick_1_to_3": "Vyberte 1, 2 nebo 3 stanice.",
       "area_name_required": "Pojmenujte oblast.",
-      "area_name_exists": "Oblast s tímto názvem již existuje."
+      "area_name_exists": "Oblast s tímto názvem již existuje.",
+      "flow_rate_out_of_range": "Z těchto čísel vychází průtok, který zóna mít nemůže. Zkontrolujte počet výtoků, průtok jednoho výtoku a plochu."
     },
     "abort": {
       "already_configured": "Srážky Weather Underground jsou již nastaveny."

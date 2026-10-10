@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow-bewatering",
-        "description": "Welke klep bewatert deze zone, en hoe?\n\nZoneFlow gebruikt de hieronder gevonden sensoren. Wijzig ze later bij Configureren, of ga terug en haal het vinkje bij Snelle installatie weg.\n\n{suggestions}",
+        "description": "Welke klep bewatert deze zone, en hoe?\n\nZoneFlow gebruikt de hieronder gevonden sensoren. Wijzig ze later bij Configureren, of ga terug en haal het vinkje bij Snelle installatie weg.\n\nGeef aan hoeveel water het geeft: druppelaars en sproeiers verschillen sterk. Een ruwe schatting is prima; „Debiet kalibreren” op de zonekaart meet het exact.\n\n{suggestions}",
         "data": {
           "valve_entity": "Klepschakelaar",
-          "irrigation_method": "Hoe komt het water bij de planten?"
+          "irrigation_method": "Hoe komt het water bij de planten?",
+          "emitters": "Aantal druppelaars (of sproeiers) in de zone",
+          "emitter_flow": "Debiet van één druppelaar",
+          "area": "Oppervlakte die ze bewateren"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
-          "irrigation_method": "Hoe het water wordt gegeven. Met druppelslang of zweetslang op zand begint een nieuwe zone met minstens twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er komt, bepaalt het debiet (Configureren → Debiet)."
+          "irrigation_method": "Hoe het water wordt gegeven. Met druppelslang of zweetslang op zand begint een nieuwe zone met minstens twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er komt, bepaalt het debiet (Configureren → Debiet).",
+          "emitters": "Tel elke druppelaar of sproeier die de klep van deze zone voedt.",
+          "emitter_flow": "Wat één druppelaar per uur geeft: dat staat op de druppelaar of de verpakking (bv. 2 L/h, 0,5 gal/h).",
+          "area": "De oppervlakte die echt nat wordt. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
       "area_name_required": "Geef het gebied een naam.",
-      "area_name_exists": "Er bestaat al een gebied met deze naam."
+      "area_name_exists": "Er bestaat al een gebied met deze naam.",
+      "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte."
     },
     "abort": {
       "already_configured": "Weather Underground-regen is al ingesteld."

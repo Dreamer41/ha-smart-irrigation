@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "Irrigação ZoneFlow",
-        "description": "Qual válvula irriga esta zona, e como?\n\nO ZoneFlow usa os sensores que encontrou abaixo. Mude-os depois em Configurar, ou volte e desmarque Configuração rápida.\n\n{suggestions}",
+        "description": "Qual válvula irriga esta zona, e como?\n\nO ZoneFlow usa os sensores que encontrou abaixo. Mude-os depois em Configurar, ou volte e desmarque Configuração rápida.\n\nInforme quanta água ela dá: gotejamento e aspersores diferem muito. Um valor aproximado serve; «Calibrar a vazão» no cartão da zona mede com exatidão.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interruptor da válvula",
-          "irrigation_method": "Como a água chega até as plantas?"
+          "irrigation_method": "Como a água chega até as plantas?",
+          "emitters": "Número de emissores (gotejadores, aspersores) na zona",
+          "emitter_flow": "Vazão de um emissor",
+          "area": "Área que eles irrigam"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: ele liga e desliga o interruptor e sempre garante que ele fique desligado no final.",
-          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pela vazão (Configurar → Vazão)."
+          "irrigation_method": "Como a água é aplicada. Com gotejamento ou mangueira porosa em solo arenoso, uma zona nova começa com pelo menos dois pulsos, para que a água fique na zona das raízes. A quantidade de água é definida pela vazão (Configurar → Vazão).",
+          "emitters": "Conte todos os gotejadores ou aspersores que a válvula desta zona alimenta.",
+          "emitter_flow": "Quanto um emissor fornece por hora: vem impresso no emissor ou na embalagem (ex.: 2 L/h, 0,5 gal/h).",
+          "area": "A área que realmente fica molhada. Para gotejadores em plantas isoladas, some as manchas molhadas ao redor delas, não o canteiro inteiro."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Nenhuma estação dentro do raio. Sem uma estação próxima, este recurso não ajudará.",
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
       "area_name_required": "Dê um nome à área.",
-      "area_name_exists": "Já existe uma área com este nome."
+      "area_name_exists": "Já existe uma área com este nome.",
+      "flow_rate_out_of_range": "Esses números dão uma vazão que esta zona não pode ter. Confira o número de emissores, a vazão de um emissor e a área."
     },
     "abort": {
       "already_configured": "A chuva do Weather Underground já está configurada."

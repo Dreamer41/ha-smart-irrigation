@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow Irrigation",
-        "description": "Which valve waters this zone, and how?\n\nZoneFlow uses the sensors it found below. Change them later in Configure, or go back and untick Quick setup.\n\n{suggestions}",
+        "description": "Which valve waters this zone, and how?\n\nZoneFlow uses the sensors it found below. Change them later in Configure, or go back and untick Quick setup.\n\nSay how much water it gives: drip and sprinklers differ a lot. A rough figure is fine; \"Calibrate the flow rate\" on the zone card measures it exactly.\n\n{suggestions}",
         "data": {
           "valve_entity": "Valve switch",
-          "irrigation_method": "How does the water get to the plants?"
+          "irrigation_method": "How does the water get to the plants?",
+          "emitters": "Number of emitters (drippers, sprayers) in the zone",
+          "emitter_flow": "Flow of one emitter",
+          "area": "Area they water"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
-          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate)."
+          "irrigation_method": "How the water is delivered. With drip or a soaker hose on sandy soil a new zone starts with at least two pulses, so the water stays in the root zone. How much water it gives is set by the flow rate (Configure → Flow rate).",
+          "emitters": "Count every dripper or sprayer this zone's valve feeds.",
+          "emitter_flow": "What one emitter gives per hour: it's printed on the emitter or its packaging (e.g. 2 L/h, 0.5 gal/h).",
+          "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "No stations within the radius. Without a nearby station this feature won't help.",
       "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
       "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_exists": "An area with this name already exists.",
+      "flow_rate_out_of_range": "Those numbers give a flow rate this zone cannot have. Check the number of emitters, the flow of one emitter and the area."
     },
     "abort": {
       "already_configured": "Weather Underground rain is already set up."

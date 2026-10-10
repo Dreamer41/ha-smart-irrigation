@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow vanning",
-        "description": "Hvilken ventil vanner denne sonen, og hvordan?\n\nZoneFlow bruker sensorene det fant under. Endre dem senere under Konfigurer, eller gå tilbake og fjern Hurtigoppsett.\n\n{suggestions}",
+        "description": "Hvilken ventil vanner denne sonen, og hvordan?\n\nZoneFlow bruker sensorene det fant under. Endre dem senere under Konfigurer, eller gå tilbake og fjern Hurtigoppsett.\n\nOppgi hvor mye vann den gir: dryppvanning og spredere er svært forskjellige. Et grovt tall går fint; «Kalibrer vannmengden» på sonekortet måler den nøyaktig.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilbryter",
-          "irrigation_method": "Hvordan kommer vannet til plantene?"
+          "irrigation_method": "Hvordan kommer vannet til plantene?",
+          "emitters": "Antall utløp (dryppere, spredere) i sonen",
+          "emitter_flow": "Vannmengde per utløp",
+          "area": "Arealet de vanner"
         },
         "data_description": {
           "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
-          "irrigation_method": "Hvordan vannet kommer ut. Med dryppslange eller sildreslange på sand starter en ny sone med minst to pulser, så vannet blir i rotsonen. Hvor mye vann den gir, bestemmes av vannmengden (Konfigurer → Vannmengde)."
+          "irrigation_method": "Hvordan vannet kommer ut. Med dryppslange eller sildreslange på sand starter en ny sone med minst to pulser, så vannet blir i rotsonen. Hvor mye vann den gir, bestemmes av vannmengden (Konfigurer → Vannmengde).",
+          "emitters": "Tell alle dryppere og spredere som sonens ventil forsyner.",
+          "emitter_flow": "Hva ett utløp gir per time: det står på utløpet eller pakningen (f.eks. 2 L/h, 0.5 gal/h).",
+          "area": "Arealet som faktisk blir vått. For dryppere ved enkeltplanter legger du sammen de våte flekkene rundt dem, ikke hele bedet."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
       "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner.",
       "area_name_required": "Gi området et navn.",
-      "area_name_exists": "Et område med dette navnet finnes allerede."
+      "area_name_exists": "Et område med dette navnet finnes allerede.",
+      "flow_rate_out_of_range": "Disse tallene gir en vannmengde sonen ikke kan ha. Sjekk antall dryppere, vannmengden fra én dypper og arealet."
     },
     "abort": {
       "already_configured": "Weather Underground-regn er allerede satt opp."

@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow bevattning",
-        "description": "Vilken ventil bevattnar den här zonen, och hur?\n\nZoneFlow använder sensorerna det hittade nedan. Ändra dem senare under Konfigurera, eller gå tillbaka och avmarkera Snabbinställning.\n\n{suggestions}",
+        "description": "Vilken ventil bevattnar den här zonen, och hur?\n\nZoneFlow använder sensorerna det hittade nedan. Ändra dem senare under Konfigurera, eller gå tillbaka och avmarkera Snabbinställning.\n\nAnge hur mycket vatten den ger: droppbevattning och sprinklers skiljer sig mycket. Ett ungefärligt värde duger; ”Kalibrera flödet” på zonkortet mäter det exakt.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilbrytare",
-          "irrigation_method": "Hur når vattnet växterna?"
+          "irrigation_method": "Hur når vattnet växterna?",
+          "emitters": "Antal droppare (eller spridare) i zonen",
+          "emitter_flow": "Flöde per droppare",
+          "area": "Yta som vattnas"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
-          "irrigation_method": "Hur vattnet kommer ut. Med droppslang eller svettslang på sandjord börjar en ny zon med minst två pulser, så att vattnet stannar i rotzonen. Hur mycket vatten det ger styrs av flödet (Konfigurera → Flöde)."
+          "irrigation_method": "Hur vattnet kommer ut. Med droppslang eller svettslang på sandjord börjar en ny zon med minst två pulser, så att vattnet stannar i rotzonen. Hur mycket vatten det ger styrs av flödet (Konfigurera → Flöde).",
+          "emitters": "Räkna alla droppare eller spridare som zonens ventil försörjer.",
+          "emitter_flow": "Vad en droppare ger per timme: det står på dropparen eller på förpackningen (t.ex. 2 L/h, 0,5 gal/h).",
+          "area": "Ytan som faktiskt blir blöt. För droppare vid enskilda plantor räknar du ihop de blöta fläckarna runt dem, inte hela bädden."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Inga stationer inom radien. Utan en station i närheten hjälper inte denna funktion.",
       "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
       "area_name_required": "Ge området ett namn.",
-      "area_name_exists": "Ett område med detta namn finns redan."
+      "area_name_exists": "Ett område med detta namn finns redan.",
+      "flow_rate_out_of_range": "De siffrorna ger ett flöde som zonen inte kan ha. Kontrollera antalet droppare, flödet från en droppare och ytan."
     },
     "abort": {
       "already_configured": "Weather Underground-regn är redan inställt."

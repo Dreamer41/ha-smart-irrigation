@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "Irrigazione ZoneFlow",
-        "description": "Quale valvola irriga questa zona, e come?\n\nZoneFlow usa i sensori trovati qui sotto. Li cambi più tardi in Configura, oppure torni indietro e tolga la spunta a Configurazione rapida.\n\n{suggestions}",
+        "description": "Quale valvola irriga questa zona, e come?\n\nZoneFlow usa i sensori trovati qui sotto. Li cambi più tardi in Configura, oppure torni indietro e tolga la spunta a Configurazione rapida.\n\nIndichi quanta acqua eroga: goccia a goccia e irrigatori differiscono molto. Basta un valore approssimativo; «Calibra la portata» sulla scheda della zona la misura con precisione.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interruttore della valvola",
-          "irrigation_method": "Come arriva l'acqua alle piante?"
+          "irrigation_method": "Come arriva l'acqua alle piante?",
+          "emitters": "Numero di erogatori (gocciolatori, spruzzatori) nella zona",
+          "emitter_flow": "Portata di un erogatore",
+          "area": "Area che bagnano"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
-          "irrigation_method": "Come arriva l'acqua. Con ala gocciolante o tubo poroso su terreno sabbioso, una nuova zona parte con almeno due impulsi, così l'acqua resta nella zona delle radici. Quanta acqua dà lo decide la portata (Configura → Portata)."
+          "irrigation_method": "Come arriva l'acqua. Con ala gocciolante o tubo poroso su terreno sabbioso, una nuova zona parte con almeno due impulsi, così l'acqua resta nella zona delle radici. Quanta acqua dà lo decide la portata (Configura → Portata).",
+          "emitters": "Conta tutti i gocciolatori o spruzzatori alimentati dalla valvola di questa zona.",
+          "emitter_flow": "Quanto dà un erogatore in un'ora: è stampato sull'erogatore o sulla confezione (es. 2 L/h, 0,5 gal/h).",
+          "area": "L'area che si bagna davvero. Per i gocciolatori su singole piante, somma le chiazze bagnate intorno a loro, non l'intera aiuola."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Nessuna stazione all'interno del raggio. Senza una stazione vicina questa funzione non sarà utile.",
       "wu_pick_1_to_3": "Scegli 1, 2 o 3 stazioni.",
       "area_name_required": "Assegna un nome all'area.",
-      "area_name_exists": "Un'area con questo nome esiste già."
+      "area_name_exists": "Un'area con questo nome esiste già.",
+      "flow_rate_out_of_range": "Quei numeri danno una portata che questa zona non può avere. Controlli il numero di erogatori, la portata di uno e l'area."
     },
     "abort": {
       "already_configured": "La pioggia di Weather Underground è già configurata."

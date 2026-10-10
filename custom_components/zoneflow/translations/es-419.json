@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "Riego ZoneFlow",
-        "description": "¿Qué válvula riega esta zona y cómo?\n\nZoneFlow usa los sensores que encontró abajo. Cámbielos después en Configurar, o vuelva atrás y desmarque Configuración rápida.\n\n{suggestions}",
+        "description": "¿Qué válvula riega esta zona y cómo?\n\nZoneFlow usa los sensores que encontró abajo. Cámbielos después en Configurar, o vuelva atrás y desmarque Configuración rápida.\n\nIndique cuánta agua da: el goteo y los aspersores difieren mucho. Una cifra aproximada basta; «Calibrar el caudal» en la tarjeta de la zona lo mide con exactitud.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interruptor de la válvula",
-          "irrigation_method": "¿Cómo llega el agua a las plantas?"
+          "irrigation_method": "¿Cómo llega el agua a las plantas?",
+          "emitters": "Número de emisores (goteros, difusores) en la zona",
+          "emitter_flow": "Caudal de un emisor",
+          "area": "Superficie que riegan"
         },
         "data_description": {
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
-          "irrigation_method": "Cómo llega el agua. Con goteo o manguera exudante en suelo arenoso, una zona nueva empieza con al menos dos pulsos, para que el agua se quede en la zona de las raíces. Cuánta agua da lo determina el caudal (Configurar → Caudal)."
+          "irrigation_method": "Cómo llega el agua. Con goteo o manguera exudante en suelo arenoso, una zona nueva empieza con al menos dos pulsos, para que el agua se quede en la zona de las raíces. Cuánta agua da lo determina el caudal (Configurar → Caudal).",
+          "emitters": "Cuenta todos los goteros o difusores que alimenta la válvula de esta zona.",
+          "emitter_flow": "Lo que da un emisor por hora: viene impreso en el propio emisor o en su envase (p. ej., 2 L/h, 0.5 gal/h).",
+          "area": "La superficie que realmente se moja. Para goteros en plantas sueltas, suma la superficie mojada alrededor de cada una, no todo el bancal."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "No hay estaciones dentro del radio. Sin una estación cercana esta función no servirá de nada.",
       "wu_pick_1_to_3": "Elige 1, 2 o 3 estaciones.",
       "area_name_required": "Asigna un nombre al área.",
-      "area_name_exists": "Ya existe un área con este nombre."
+      "area_name_exists": "Ya existe un área con este nombre.",
+      "flow_rate_out_of_range": "Esos números dan un caudal que esta zona no puede tener. Compruebe el número de emisores, el caudal de uno y el área."
     },
     "abort": {
       "already_configured": "La lluvia de Weather Underground ya está configurada."

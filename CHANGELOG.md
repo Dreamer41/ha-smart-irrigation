@@ -8,7 +8,7 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ### Added
 
-- **Quick setup for a new outdoor zone.** The first form has a *Quick setup* box (ticked): after the name, plant and place it asks only for the valve and how the water is delivered, uses the sensors it clearly found, and takes the rest from the plant type and the default climate. Untick it for the full setup as before.
+- **Quick setup for a new outdoor zone.** The first form has a *Quick setup* box (ticked): after the name, plant and place it asks only for the valve, how the water is delivered and how much it gives (number of emitters, flow of one, area wet; there is no default, as drip and sprinklers differ a lot), uses the sensors it clearly found, and takes the rest from the plant type and the default climate. Untick it for the full setup as before.
 - **Nursery plants: ready to move.** Follow a plant towards the day it can go to its bed (the usual days for its type are suggested, you set the planting date). Its stage (seed, seedling, ready to move) shows in the Plants popup; a plant that is ready gets a badge on the zone card and its overview row, and one phone message. A plant you move becomes established. Services: `set_plant_ready`, and `ready_days` / `planted` on `add_plant`.
 
 ### Fixed

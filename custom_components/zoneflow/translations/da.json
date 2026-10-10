@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow-vanding",
-        "description": "Hvilken ventil vander denne zone, og hvordan?\n\nZoneFlow bruger de sensorer, det fandt herunder. Ændr dem senere under Konfigurer, eller gå tilbage og fjern Hurtig opsætning.\n\n{suggestions}",
+        "description": "Hvilken ventil vander denne zone, og hvordan?\n\nZoneFlow bruger de sensorer, det fandt herunder. Ændr dem senere under Konfigurer, eller gå tilbage og fjern Hurtig opsætning.\n\nAngiv hvor meget vand den giver: dryp og sprinklere er meget forskellige. Et groft tal er fint; \"Kalibrer flowet\" på zonekortet måler det præcist.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilkontakt",
-          "irrigation_method": "Hvordan kommer vandet til planterne?"
+          "irrigation_method": "Hvordan kommer vandet til planterne?",
+          "emitters": "Antal dryppere og dyser i zonen",
+          "emitter_flow": "Flow for én drypper",
+          "area": "Område, de vander"
         },
         "data_description": {
           "valve_entity": "Kontakten, der åbner zonens ventil (eller starter dens pumpe). Det eneste, ZoneFlow ikke kan undvære: den tænder og slukker den og sørger altid for, at den ender slukket.",
-          "irrigation_method": "Hvordan vandet gives. Med drypslange eller sivslange på sandjord starter en ny zone med mindst to pulser, så vandet bliver i rodzonen. Hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow)."
+          "irrigation_method": "Hvordan vandet gives. Med drypslange eller sivslange på sandjord starter en ny zone med mindst to pulser, så vandet bliver i rodzonen. Hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow).",
+          "emitters": "Tæl alle dryppere og dyser, som zonens ventil forsyner.",
+          "emitter_flow": "Hvad én drypper giver i timen: det står på drypperen eller emballagen (f.eks. 2 L/h, 0.5 gal/h).",
+          "area": "Det område, der faktisk bliver vådt. Ved dryppere ved enkelte planter lægger du de våde pletter omkring dem sammen, ikke hele bedet."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Ingen stationer inden for radiussen. Uden en station i nærheden hjælper denne funktion ikke.",
       "wu_pick_1_to_3": "Vælg 1, 2 eller 3 stationer.",
       "area_name_required": "Navngiv området.",
-      "area_name_exists": "Et område med dette navn findes allerede."
+      "area_name_exists": "Et område med dette navn findes allerede.",
+      "flow_rate_out_of_range": "De tal giver et flow, som zonen ikke kan have. Tjek antallet af dryppere, flowet for én dypper og arealet."
     },
     "abort": {
       "already_configured": "Weather Underground-regn er allerede konfigureret."

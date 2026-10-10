@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow Bewässerung",
-        "description": "Welches Ventil bewässert diese Zone, und wie?\n\nZoneFlow verwendet die unten gefundenen Sensoren. Ändern Sie sie später unter Konfigurieren, oder gehen Sie zurück und entfernen Sie den Haken bei Schnelleinrichtung.\n\n{suggestions}",
+        "description": "Welches Ventil bewässert diese Zone, und wie?\n\nZoneFlow verwendet die unten gefundenen Sensoren. Ändern Sie sie später unter Konfigurieren, oder gehen Sie zurück und entfernen Sie den Haken bei Schnelleinrichtung.\n\nGeben Sie an, wie viel Wasser sie abgibt: Tropfbewässerung und Regner unterscheiden sich stark. Ein grober Wert genügt; „Durchfluss kalibrieren“ auf der Zonenkarte misst ihn genau.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilschalter",
-          "irrigation_method": "Wie gelangt das Wasser zu den Pflanzen?"
+          "irrigation_method": "Wie gelangt das Wasser zu den Pflanzen?",
+          "emitters": "Anzahl Tropfer bzw. Sprüher in der Zone",
+          "emitter_flow": "Durchfluss eines Tropfers",
+          "area": "Bewässerte Fläche"
         },
         "data_description": {
           "valve_entity": "Der Schalter, der das Ventil dieser Zone öffnet (oder ihre Pumpe startet). Das Einzige, ohne das ZoneFlow nicht auskommt: ZoneFlow schaltet ihn ein und aus und sorgt immer dafür, dass er am Ende aus ist.",
-          "irrigation_method": "Wie das Wasser ausgebracht wird. Mit Tropfbewässerung oder Perlschlauch auf Sandboden startet eine neue Zone mit mindestens zwei Durchgängen, damit das Wasser im Wurzelbereich bleibt. Wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate)."
+          "irrigation_method": "Wie das Wasser ausgebracht wird. Mit Tropfbewässerung oder Perlschlauch auf Sandboden startet eine neue Zone mit mindestens zwei Durchgängen, damit das Wasser im Wurzelbereich bleibt. Wie viel Wasser ankommt, bestimmt die Durchflussrate (Konfigurieren → Durchflussrate).",
+          "emitters": "Zähle alle Tropfer oder Sprüher, die am Ventil dieser Zone hängen.",
+          "emitter_flow": "Was ein Tropfer pro Stunde abgibt: Das steht auf dem Tropfer oder seiner Verpackung (z. B. 2 L/h, 0,5 gal/h).",
+          "area": "Die Fläche, die wirklich nass wird. Bei Tropfern an Einzelpflanzen zählst du die nassen Stellen um sie herum zusammen, nicht das ganze Beet."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
       "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
       "area_name_required": "Geben Sie dem Bereich einen Namen.",
-      "area_name_exists": "Ein Bereich mit diesem Namen existiert bereits."
+      "area_name_exists": "Ein Bereich mit diesem Namen existiert bereits.",
+      "flow_rate_out_of_range": "Aus diesen Zahlen ergibt sich ein Durchfluss, den diese Zone nicht haben kann. Prüfen Sie die Anzahl der Auslässe, den Durchfluss eines Auslasses und die Fläche."
     },
     "abort": {
       "already_configured": "Weather Underground-Regen ist bereits eingerichtet."

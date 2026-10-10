@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "Irrigation ZoneFlow",
-        "description": "Quelle vanne arrose cette zone, et comment ?\n\nZoneFlow utilise les capteurs trouvés ci-dessous. Modifiez-les plus tard dans Configurer, ou revenez en arrière et décochez Configuration rapide.\n\n{suggestions}",
+        "description": "Quelle vanne arrose cette zone, et comment ?\n\nZoneFlow utilise les capteurs trouvés ci-dessous. Modifiez-les plus tard dans Configurer, ou revenez en arrière et décochez Configuration rapide.\n\nIndiquez la quantité d'eau fournie : le goutte-à-goutte et les arroseurs diffèrent beaucoup. Une valeur approximative suffit ; « Calibrer le débit » sur la carte de la zone la mesure exactement.\n\n{suggestions}",
         "data": {
           "valve_entity": "Interrupteur de la vanne",
-          "irrigation_method": "Comment l'eau parvient-elle aux plantes ?"
+          "irrigation_method": "Comment l'eau parvient-elle aux plantes ?",
+          "emitters": "Nombre de goutteurs (ou diffuseurs) dans la zone",
+          "emitter_flow": "Débit d'un goutteur",
+          "area": "Surface arrosée"
         },
         "data_description": {
           "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
-          "irrigation_method": "Comment l'eau est apportée. Avec du goutte-à-goutte ou un tuyau poreux sur sol sableux, une nouvelle zone démarre avec au moins deux passages, pour que l'eau reste dans la zone des racines. La quantité d'eau donnée dépend du débit (Configurer → Débit)."
+          "irrigation_method": "Comment l'eau est apportée. Avec du goutte-à-goutte ou un tuyau poreux sur sol sableux, une nouvelle zone démarre avec au moins deux passages, pour que l'eau reste dans la zone des racines. La quantité d'eau donnée dépend du débit (Configurer → Débit).",
+          "emitters": "Comptez tous les goutteurs ou diffuseurs alimentés par la vanne de cette zone.",
+          "emitter_flow": "Ce que donne un goutteur par heure : c'est indiqué dessus ou sur son emballage (ex. 2 L/h, 0,5 gal/h).",
+          "area": "La surface réellement mouillée. Pour des goutteurs au pied de plantes isolées, additionnez les surfaces mouillées autour d'elles, pas tout le massif."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Aucune station dans le rayon. Sans station à proximité, cette fonctionnalité ne sera d'aucune utilité.",
       "wu_pick_1_to_3": "Choisissez 1, 2 ou 3 stations.",
       "area_name_required": "Nommez la zone.",
-      "area_name_exists": "Une zone portant ce nom existe déjà."
+      "area_name_exists": "Une zone portant ce nom existe déjà.",
+      "flow_rate_out_of_range": "Ces nombres donnent un débit que cette zone ne peut pas avoir. Vérifiez le nombre d'émetteurs, le débit d'un émetteur et la surface."
     },
     "abort": {
       "already_configured": "La pluie Weather Underground est déjà configurée."

@@ -260,14 +260,20 @@
       },
       "quick": {
         "title": "ZoneFlow öntözés",
-        "description": "Melyik szelep öntözi ezt a zónát, és hogyan?\n\nA ZoneFlow az alább talált érzékelőket használja. Módosítsa őket később a Beállításokban, vagy lépjen vissza, és szüntesse meg a Gyors beállítás jelölését.\n\n{suggestions}",
+        "description": "Melyik szelep öntözi ezt a zónát, és hogyan?\n\nA ZoneFlow az alább talált érzékelőket használja. Módosítsa őket később a Beállításokban, vagy lépjen vissza, és szüntesse meg a Gyors beállítás jelölését.\n\nAdja meg, mennyi vizet ad: a csepegtetés és a szórófejek nagyon eltérnek. Egy durva érték is megfelel; a zónakártya „Térfogatáram kalibrálása” gombja pontosan megméri.\n\n{suggestions}",
         "data": {
           "valve_entity": "Szelepkapcsoló",
-          "irrigation_method": "Hogyan jut el a víz a növényekhez?"
+          "irrigation_method": "Hogyan jut el a víz a növényekhez?",
+          "emitters": "Csepegtetők, szórófejek száma a zónában",
+          "emitter_flow": "Egy csepegtető vízhozama",
+          "area": "Az öntözött terület"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
-          "irrigation_method": "Hogyan jut ki a víz. Csepegtetővel vagy szivárgócsővel homokon egy új zóna legalább két szakasszal indul, hogy a víz a gyökérzónában maradjon. Hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam)."
+          "irrigation_method": "Hogyan jut ki a víz. Csepegtetővel vagy szivárgócsővel homokon egy új zóna legalább két szakasszal indul, hogy a víz a gyökérzónában maradjon. Hogy mennyi vizet ad, azt a vízhozam határozza meg (Konfigurálás → Vízhozam).",
+          "emitters": "Számold össze az összes csepegtetőt vagy szórófejet, amelyet ennek a zónának a szelepe lát el.",
+          "emitter_flow": "Mennyit ad egy csepegtető óránként: rá van nyomtatva vagy a csomagolásán szerepel (pl. 2 L/h, 0.5 gal/h).",
+          "area": "A valóban nedvesedő terület. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük lévő nedves foltokat add össze, ne az egész ágyást."
         }
       }
     },
@@ -286,7 +292,8 @@
       "wu_no_stations": "Nincsenek állomások a sugáron belül. Közeli állomás nélkül ez a funkció nem segít.",
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
       "area_name_required": "Nevezze el a területet.",
-      "area_name_exists": "Már létezik egy terület ezzel a névvel."
+      "area_name_exists": "Már létezik egy terület ezzel a névvel.",
+      "flow_rate_out_of_range": "Ezekből a számokból olyan térfogatáram jön ki, amilyen ennek a zónának nem lehet. Ellenőrizze a kibocsátók számát, egy kibocsátó hozamát és a területet."
     },
     "abort": {
       "already_configured": "A Weather Underground eső már be van állítva."

@@ -1466,8 +1466,8 @@ date), or `ready_days` and `planted` on `zoneflow.add_plant`. The plant's `stage
 (`seed`, `seedling`, `ready`, `established`) and `days_left` are in the Status
 sensor's `plants` attribute. One phone message says when a plant is ready; a plant
 that is moved becomes established. The first add-zone form has **Quick setup**
-(ticked by default in the UI): it asks only for the valve and how the water is
-delivered and uses the clearly found sensors and the plant type's settings; the
+(ticked by default in the UI): it asks only for the valve, how the water is
+delivered and how much it gives (`emitters`, `emitter_flow`, `area`: no default) and uses the clearly found sensors and the plant type's settings; the
 full form (every sensor, soil, schedule, climate) is what an unticked box gives.
 
 **Everyday helpers worth offering once the zone works:** `zoneflow.water_now`
