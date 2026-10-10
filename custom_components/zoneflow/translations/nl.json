@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor al {days} dagen offline",
-      "description": "{entity}, gebruikt door zone {zone}, is al {days} dagen offline. De zone werkt zonder verder (wat dat betekent staat in de README), maar controleer het apparaat -- of haal het uit de zone via Configureren. Dit verdwijnt vanzelf zodra de sensor weer meldt.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: telefoon voor meldingen ontbreekt",
-      "description": "Zone {zone} stuurt zijn telefoonmeldingen naar {entity}, maar die bestaat niet meer in Home Assistant, dus er komen geen meldingen aan. Kies de huidige telefoon via Configureren bij de zone. Dit verdwijnt vanzelf zodra die weer bestaat.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibreer het debiet van de druppelaars",
-      "description": "Zone {zone} gebruikt nog de standaardwaarde van Kalibratie debiet druppelaars (0,24 mm/min). Dat ene getal bepaalt hoeveel water elke beurt geeft, dus meet het voor jouw druppelaars: Configureren → Debiet van de zone berekent het uit je druppelaars of meet het met een watermeter. Klopt 0,24 mm/min echt voor deze zone, negeer dit dan.",
       "fix_flow": {
         "step": {
           "init": {

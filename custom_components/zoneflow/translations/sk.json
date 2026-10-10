@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: snímač offline (počet dní: {days})",
-      "description": "{entity}, ktorý používa zóna {zone}, je offline (počet dní: {days}). Zóna pokračuje bez neho (čo to znamená, nájdete v README), ale skontrolujte zariadenie – alebo ho zo zóny odoberte v časti Konfigurovať. Hlásenie zmizne samo, keď snímač opäť začne posielať údaje.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: chýba cieľ oznámení v telefóne",
-      "description": "Zóna {zone} posiela oznámenia do telefónu na {entity}, ktorý už v Home Assistant neexistuje, takže žiadne oznámenia neprichádzajú. Vyberte aktuálny cieľ oznámení v časti Konfigurovať danej zóny. Hlásenie zmizne samo, keď cieľ opäť bude existovať.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: nakalibrujte prietok emitorov",
-      "description": "Zóna {zone} stále používa predvolenú Kalibráciu prietoku emitorov (0,24 mm/min). Práve toto číslo rozhoduje, koľko vody dá každá zálievka, preto ho zmerajte pre svoje emitory: v zóne cez Konfigurovať → Prietok ho vypočítate z emitorov alebo zmeriate prietokomerom. Ak je 0,24 mm/min pre túto zónu naozaj správne, toto hlásenie ignorujte.",
       "fix_flow": {
         "step": {
           "init": {

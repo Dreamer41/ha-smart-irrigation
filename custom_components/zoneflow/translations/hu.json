@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: érzékelő nem elérhető (napok: {days})",
-      "description": "A(z) {zone} zóna által használt {entity} már {days} napja nem elérhető. A zóna nélküle is működik (hogy ez mit jelent, lásd a README-ben), de ellenőrizd az eszközt – vagy távolítsd el a zónából a Konfigurálás alatt. Ez magától megszűnik, amint az érzékelő újra jelent.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: hiányzik a telefonos értesítési cél",
-      "description": "A(z) {zone} zóna a telefonos értesítéseit ide küldi: {entity}, de ez már nem létezik a Home Assistantban, így nem érkeznek értesítések. Válaszd ki az aktuális értesítési célt a zóna Konfigurálás menüjében. Ez magától megszűnik, amint a cél újra létezik.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibráld a csepegtetők vízhozamát",
-      "description": "A(z) {zone} zóna még az alapértelmezett Csepegtetők vízhozama (kalibrálás) értéket használja (0.24 mm/min). Ez az az egy szám, amely eldönti, mennyi vizet ad minden öntözés, ezért mérd meg a saját csepegtetőidre: a zóna Konfigurálás → Vízhozam menüje kiszámítja a csepegtetőkből, vagy megméri átfolyásmérővel. Ha ennél a zónánál tényleg a 0.24 mm/min a helyes, hagyd figyelmen kívül.",
       "fix_flow": {
         "step": {
           "init": {

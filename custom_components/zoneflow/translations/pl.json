@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: czujnik offline (dni: {days})",
-      "description": "Encja {entity}, używana przez strefę {zone}, jest offline (dni: {days}). Strefa działa dalej bez niej (co to oznacza – zob. README), ale sprawdź urządzenie – albo usuń je ze strefy w „Konfiguruj”. To zgłoszenie zniknie samo, gdy czujnik znów zacznie raportować.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: brak celu powiadomień na telefon",
-      "description": "Strefa {zone} wysyła powiadomienia na telefon do celu {entity}, który już nie istnieje w Home Assistant, więc powiadomienia nie docierają. Wybierz aktualny cel powiadomień w „Konfiguruj” strefy. To zgłoszenie zniknie samo, gdy cel znów będzie istniał.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: skalibruj wydajność emiterów",
-      "description": "Strefa {zone} nadal używa domyślnej „Kalibracji wydajności emiterów” (0,24 mm/min). To jedyna liczba, od której zależy, ile wody daje każde podlewanie, więc zmierz ją dla swoich emiterów: opcja strefy Konfiguruj → Wydajność oblicza ją na podstawie emiterów albo mierzy przepływomierzem. Jeśli 0,24 mm/min naprawdę pasuje do tej strefy, zignoruj to.",
       "fix_flow": {
         "step": {
           "init": {

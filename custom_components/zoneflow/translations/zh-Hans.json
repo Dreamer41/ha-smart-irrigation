@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}：传感器已离线 {days} 天",
-      "description": "区域 {zone} 使用的 {entity} 已离线 {days} 天。该区域会在没有它的情况下继续运行（具体影响请参阅 README），但请检查该设备——或在“配置”中将其从该区域移除。传感器重新上报后，此问题会自动消除。",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}：缺少手机通知目标",
-      "description": "区域 {zone} 将手机通知发送到 {entity}，但它在 Home Assistant 中已不存在，因此收不到任何通知。请在该区域的“配置”中选择当前的通知目标。它重新存在后，此问题会自动消除。",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}：请校准灌水器流量",
-      "description": "区域 {zone} 仍在使用默认的灌水器流量校准值（0.24 mm/min）。这个数值决定了每次浇水的水量，所以请为您的灌水器测量它：在该区域的“配置 → 流量”中，可以根据灌水器计算，或用水表测量。如果 0.24 mm/min 对该区域确实正确，请忽略此提示。",
       "fix_flow": {
         "step": {
           "init": {

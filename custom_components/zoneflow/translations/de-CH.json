@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: Sensor seit {days} Tagen offline",
-      "description": "{entity}, genutzt von Zone {zone}, ist seit {days} Tagen offline. Die Zone arbeitet ohne ihn weiter (was das bedeutet, steht in der README), aber prüfe das Gerät – oder entferne ihn unter „Konfigurieren“ aus der Zone. Dieser Hinweis verschwindet von selbst, sobald der Sensor wieder meldet.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: Handy-Benachrichtigungsziel fehlt",
-      "description": "Zone {zone} sendet ihre Handy-Benachrichtigungen an {entity}, das es in Home Assistant nicht mehr gibt, daher kommen keine Benachrichtigungen an. Wähle unter „Konfigurieren“ der Zone das aktuelle Benachrichtigungsziel. Dieser Hinweis verschwindet von selbst, sobald es wieder existiert.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: Tropfer-Durchflussrate kalibrieren",
-      "description": "Zone {zone} nutzt noch den Standardwert der Tropfer-Durchflussrate (Kalibrierung) (0,24 mm/min). Genau diese Zahl bestimmt, wie viel Wasser jeder Lauf gibt – miss sie also für deine Tropfer: „Konfigurieren → Durchflussrate“ der Zone berechnet sie aus deinen Tropfern oder misst sie mit einem Durchflussmesser. Wenn 0,24 mm/min für diese Zone wirklich stimmt, ignoriere diesen Hinweis.",
       "fix_flow": {
         "step": {
           "init": {

@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: anturi ei ole raportoinut {days} päivään",
-      "description": "Vyöhyke {zone}: sen käyttämä {entity} ei ole raportoinut {days} päivään. Vyöhyke jatkaa ilman sitä (katso README:stä, mitä se tarkoittaa), mutta tarkista laite -- tai poista se vyöhykkeeltä kohdassa Määritä. Tämä poistuu itsestään, kun anturi raportoi taas.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: puhelimen ilmoituskohde puuttuu",
-      "description": "Vyöhyke {zone}: puhelinilmoitusten kohde {entity} ei ole enää olemassa Home Assistantissa, joten ilmoituksia ei tule. Valitse nykyinen ilmoituskohde vyöhykkeen kohdasta Määritä. Tämä poistuu itsestään, kun kohde on taas olemassa.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibroi suuttimien virtaama",
-      "description": "Vyöhyke {zone} käyttää yhä oletusarvoa asetuksessa Suuttimien virtaama (kalibrointi) (0,24 mm/min). Juuri tämä luku ratkaisee, paljonko vettä kukin kastelu antaa, joten mittaa se omille suuttimillesi: vyöhykkeen Määritä → Virtaama laskee sen suuttimistasi tai mittaa sen virtausmittarilla. Jos 0,24 mm/min todella sopii tälle vyöhykkeelle, ohita tämä.",
       "fix_flow": {
         "step": {
           "init": {

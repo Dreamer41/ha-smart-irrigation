@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor frakoblet i {days} dager",
-      "description": "{entity}, som sonen {zone} bruker, har vært frakoblet i {days} dager. Sonen fortsetter uten den (hva det betyr, står i README), men sjekk enheten -- eller fjern den fra sonen under Konfigurer. Dette forsvinner av seg selv når sensoren melder igjen.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: telefon for varsler mangler",
-      "description": "Sonen {zone} sender telefonvarsler til {entity}, som ikke lenger finnes i Home Assistant, så ingen varsler kommer frem. Velg riktig varslingsmål under sonens Konfigurer. Dette forsvinner av seg selv når den finnes igjen.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibrer vannmengden fra utløpene",
-      "description": "Sonen {zone} bruker fortsatt standardverdien for Kalibrering av vannmengde (0.24 mm/min). Det er det ene tallet som avgjør hvor mye vann hver kjøring gir, så mål det for dine utløp: sonens Konfigurer → Vannmengde regner det ut fra utløpene, eller måler det med en vannmåler. Hvis 0.24 mm/min virkelig stemmer for denne sonen, kan du se bort fra dette.",
       "fix_flow": {
         "step": {
           "init": {

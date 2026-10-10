@@ -1678,7 +1678,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline for {days} days",
-      "description": "{entity}, which zone {zone} uses, has been offline for {days} days. The zone carries on without it (see what that means in the README), but check the device -- or remove it from the zone under Configure. This clears by itself once the sensor reports again.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1699,7 +1698,6 @@
     },
     "notify_missing": {
       "title": "{zone}: phone notify target missing",
-      "description": "Zone {zone} sends its phone notifications to {entity}, which no longer exists in Home Assistant, so no notifications arrive. Pick the current notify target under the zone's Configure. This clears by itself once it exists again.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1720,7 +1718,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: calibrate the emitter flow rate",
-      "description": "Zone {zone} still uses the default Emitter Flow Rate Calibration (0.24 mm/min). It's the one number that decides how much water each run gives, so measure it for your emitters: the zone's Configure → Flow rate works it out from your emitters, or measures it with a flow meter. If 0.24 mm/min really is right for this zone, ignore this.",
       "fix_flow": {
         "step": {
           "init": {

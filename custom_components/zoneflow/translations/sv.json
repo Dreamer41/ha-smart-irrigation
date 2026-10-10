@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline i {days} dagar",
-      "description": "{entity}, som zonen {zone} använder, har varit offline i {days} dagar. Zonen fortsätter utan den (vad det innebär står i README), men kontrollera enheten – eller ta bort den från zonen under Konfigurera. Det här försvinner av sig självt när sensorn rapporterar igen.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: mobil för aviseringar saknas",
-      "description": "Zonen {zone} skickar sina mobilaviseringar till {entity}, som inte längre finns i Home Assistant, så inga aviseringar kommer fram. Välj den aktuella mottagaren under zonens Konfigurera. Det här försvinner av sig självt när den finns igen.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibrera dropparnas flöde",
-      "description": "Zonen {zone} använder fortfarande standardvärdet för Dropparflöde (kalibrering) (0,24 mm/min). Det är den siffra som avgör hur mycket vatten varje körning ger, så mät den för dina droppare: zonens Konfigurera → Flöde räknar ut den från dina droppare eller mäter den med en flödesmätare. Om 0,24 mm/min verkligen stämmer för zonen kan du bortse från det här.",
       "fix_flow": {
         "step": {
           "init": {

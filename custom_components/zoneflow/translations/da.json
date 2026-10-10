@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor offline i {days} dage",
-      "description": "{entity}, som zonen {zone} bruger, har været offline i {days} dage. Zonen fortsætter uden den (hvad det betyder, står i README), men tjek enheden -- eller fjern den fra zonen under Konfigurer. Meddelelsen forsvinder af sig selv, når sensoren rapporterer igen.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: notifikationsmål på telefonen mangler",
-      "description": "Zonen {zone} sender sine notifikationer til {entity}, som ikke længere findes i Home Assistant, så der kommer ingen notifikationer frem. Vælg det aktuelle notifikationsmål under zonens Konfigurer. Meddelelsen forsvinder af sig selv, når det findes igen.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: kalibrér dryppernes flow",
-      "description": "Zonen {zone} bruger stadig standardværdien for Dryppernes flow (kalibrering) (0,24 mm/min). Det er det ene tal, der afgør, hvor meget vand hver kørsel giver, så mål det for dine dryppere: zonens Konfigurer → Flow beregner det ud fra drypperne eller måler det med en flowmåler. Hvis 0,24 mm/min virkelig passer til zonen, kan du se bort fra dette.",
       "fix_flow": {
         "step": {
           "init": {

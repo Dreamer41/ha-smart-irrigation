@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensore offline da {days} giorni",
-      "description": "{entity}, usato dalla zona {zone}, è offline da {days} giorni. La zona continua senza (cosa comporta è spiegato nel README), ma controlla il dispositivo -- oppure rimuovilo dalla zona in Configura. Il problema si risolve da solo quando il sensore torna a inviare dati.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: destinazione notifiche mancante",
-      "description": "La zona {zone} invia le notifiche sul telefono a {entity}, che non esiste più in Home Assistant, quindi non arriva nessuna notifica. Scegli la destinazione notifiche attuale in Configura della zona. Il problema si risolve da solo quando torna a esistere.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: tara la portata degli erogatori",
-      "description": "La zona {zone} usa ancora la Taratura portata erogatori predefinita (0,24 mm/min). È l'unico numero che decide quanta acqua dà ogni ciclo, quindi misurala per i tuoi erogatori: Configura → Portata della zona la calcola dai tuoi erogatori o la misura con il flussometro. Se 0,24 mm/min è davvero giusto per questa zona, ignora questo avviso.",
       "fix_flow": {
         "step": {
           "init": {

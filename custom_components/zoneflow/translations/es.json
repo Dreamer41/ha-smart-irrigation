@@ -1674,7 +1674,6 @@
     },
     "sensor_offline": {
       "title": "{zone}: sensor desconectado desde hace {days} días",
-      "description": "{entity}, que usa la zona {zone}, lleva {days} días desconectado. La zona sigue funcionando sin él (en el README se explica qué implica), pero revisa el dispositivo, o quítalo de la zona en Configurar. Esto se resuelve solo cuando el sensor vuelva a informar.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1695,7 +1694,6 @@
     },
     "notify_missing": {
       "title": "{zone}: falta el destino de notificaciones",
-      "description": "La zona {zone} envía sus notificaciones al teléfono a {entity}, que ya no existe en Home Assistant, así que no llega ninguna notificación. Elige el destino actual en Configurar de la zona. Esto se resuelve solo cuando vuelva a existir.",
       "fix_flow": {
         "step": {
           "init": {
@@ -1716,7 +1714,6 @@
     },
     "flow_rate_default": {
       "title": "{zone}: calibra el caudal de los emisores",
-      "description": "La zona {zone} sigue usando la Calibración del caudal de emisores predeterminada (0.24 mm/min). Es el número que decide cuánta agua da cada riego, así que mídelo para tus emisores: Configurar → Caudal de la zona lo calcula a partir de tus emisores o lo mide con un caudalímetro. Si 0.24 mm/min es realmente correcto para esta zona, ignora este aviso.",
       "fix_flow": {
         "step": {
           "init": {
