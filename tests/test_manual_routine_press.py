@@ -134,3 +134,14 @@ async def test_an_interrupted_press_is_not_marked_done(hass, fake_valve_services
     await hass.async_block_till_done()
 
     assert c.store.state.last_routine_ts == before
+
+
+@pytest.mark.asyncio
+async def test_a_refused_press_does_not_count_as_an_early_signal(hass, fake_valve_services):
+    c = await _zone(hass)
+    _just_watered(c)
+    await c.numbers["max_daily_runtime_minutes"].async_set_native_value(1.0)  # no room: refused by the daily cap
+    for _ in range(3):
+        await c.run_routine_now()
+    c._run_pulses.assert_not_called()
+    assert c.store.state.self_tune_early_streak == 0

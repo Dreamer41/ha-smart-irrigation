@@ -838,7 +838,9 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         imperial = self._imperial()
         if user_input is not None:
-            errors = _duplicate_errors(self.hass, user_input)
+            errors = _duplicate_errors(self.hass, {**user_input, CONF_CSV_PATH: defaults[CONF_CSV_PATH]})
+            if CONF_CSV_PATH in errors:  # the log file is not a field of this form
+                errors = {"base": errors[CONF_CSV_PATH]}
             flow_numbers: dict[str, float] = {}
             if not errors:
                 # How much water the zone gives: emitters x one emitter's flow, over the area they wet

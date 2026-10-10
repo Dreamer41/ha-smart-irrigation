@@ -3428,10 +3428,6 @@ class ZoneFlowController:
         # Deliberately routine-only, not deep soak (see const.py's
         # CONF_SOIL_MOISTURE_ENTITY comment).
         moisture_pct = await self._soil_moisture_pct()
-        if manual and not interval_due:
-            # Pressed before the schedule says so: the self-tune "early"
-            # signal, whatever else the press goes on to do.
-            await self._register_self_tune_signal("early")
         # A manual press is the person's own decision to water now: it skips
         # the "is it due / is the soil wet / dry-down / forecast" gates, and
         # still honours pause, the lock, snooze, frost, the runtime caps and
@@ -3615,6 +3611,10 @@ class ZoneFlowController:
         await self._set_lock(True)
         await self._set_abort(False)
         await self._end_wet_hold()  # watering is actually starting
+        if manual and not interval_due:
+            # Pressed before the schedule says so, and the run goes ahead: the
+            # self-tune "early" signal.
+            await self._register_self_tune_signal("early")
 
         completed = await self._run_pulses(
             count=plan.pulse_count,

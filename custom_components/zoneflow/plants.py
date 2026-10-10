@@ -20,7 +20,7 @@ import asyncio
 import uuid
 from typing import Any
 
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.storage import Store
 import homeassistant.util.dt as dt_util
@@ -278,10 +278,9 @@ class ZonePlants:
         self._unsub = async_track_time_interval(c.hass, self._tick, CHECK_INTERVAL)
         c._notify_status()  # the Status sensor lists the plants
 
-    @callback
-    def _tick(self, _now=None) -> None:
+    async def _tick(self, _now=None) -> None:
         self.check()
-        self.controller.hass.async_create_task(self.async_check_ready())
+        await self.async_check_ready()
 
     def check(self) -> None:
         """Log what changed in the plant's settings since last time."""
@@ -348,10 +347,13 @@ class ZonePlants:
             stage = stage_of(plant, planting_ts(plant, self.controller))
             if stage is None or stage["stage"] != STAGE_READY or plant.get("ready_notified"):
                 continue
+            try:
+                await self.controller.notify_plant_ready(plant["name"])
+            except Exception:  # noqa: BLE001 -- the message did not go: try again at the next look
+                continue
             plant["ready_notified"] = True
             changed = True
             self.book.add_history(plant["id"], "ready", days=stage["ready_days"])
-            await self.controller.notify_plant_ready(plant["name"])
         if changed:
             self.book._save()
             self.controller._notify_status()

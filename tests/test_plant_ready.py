@@ -3,6 +3,7 @@ from the planting date, one phone message when it is ready, and "established"
 once it has been moved."""
 from __future__ import annotations
 
+from datetime import timedelta
 from unittest.mock import AsyncMock
 
 import homeassistant.util.dt as dt_util
@@ -67,7 +68,7 @@ async def test_a_record_is_followed_from_its_planting_date_and_messages_once(has
     await _boot(hass, zone)
     c = _ctl(hass, zone)
     c.notify_plant_ready = AsyncMock()
-    day = (dt_util.now() - __import__("datetime").timedelta(days=50)).date()
+    day = (dt_util.now() - timedelta(days=50)).date()
     await _call(hass, "add_plant", name="Basil", plant_type="herbs", ready_days=35, planted=day.isoformat(), device_id=_device(hass, zone))
     basil = next(p for p in _book(hass).in_zone(zone.entry_id) if p["name"] == "Basil")
     assert basil["ready_days"] == 35
@@ -169,3 +170,18 @@ async def test_the_planting_date_the_card_gets_is_the_local_day(hass, fake_valve
     main = _book(hass).main(zone.entry_id)
     await _call(hass, "set_plant_ready", plant_id=main["id"], ready_days=10, planted="2026-09-20")
     assert plant_api._ready_fields(main, c)["planted"] == "2026-09-20"
+
+
+@pytest.mark.asyncio
+async def test_a_message_that_failed_is_tried_again_at_the_next_look(hass, fake_valve_services):
+    zone = _zone(hass, **{CONF_PLANT: "tomatoes"})
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    main = _book(hass).main(zone.entry_id)
+    await _call(hass, "set_plant_ready", plant_id=main["id"], ready_days=5)
+    c.store.state.planting_date_ts = dt_util.utcnow().timestamp() - 9 * DAY
+    c.notify_plant_ready = AsyncMock(side_effect=[RuntimeError("phone service down"), None])
+    await c.plants.async_check_ready()
+    assert not main.get("ready_notified")
+    await c.plants.async_check_ready()
+    assert main["ready_notified"] is True and c.notify_plant_ready.call_count == 2

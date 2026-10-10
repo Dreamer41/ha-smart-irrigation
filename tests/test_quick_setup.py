@@ -163,3 +163,19 @@ async def test_an_impossible_flow_is_refused_with_a_message(hass, fake_valve_ser
         result["flow_id"], {CONF_VALVE_ENTITY: VALVE, "emitters": 1, "emitter_flow": 0.05, "area": 500.0}
     )
     assert result["type"] == FlowResultType.FORM and result["errors"] == {"base": "flow_rate_out_of_range"}
+
+
+@pytest.mark.asyncio
+async def test_quick_setup_refuses_a_log_file_another_zone_already_uses(hass, fake_valve_services):
+    hass.states.async_set(VALVE, "off")
+    hass.states.async_set("switch.second_valve", "off")
+    first = await _first_form(hass, **{CONF_QUICK_SETUP: True})
+    await hass.config_entries.flow.async_configure(first["flow_id"], {CONF_VALVE_ENTITY: VALVE, **FLOW})
+    await hass.async_block_till_done()
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "zone"})
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_ZONE_NAME: "Tomato bed", "plant": "tomatoes", CONF_ZONE_TYPE: "outdoor", CONF_QUICK_SETUP: True}
+    )  # the same name, so the same log file
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_VALVE_ENTITY: "switch.second_valve", **FLOW})
+    assert result["type"] == FlowResultType.FORM and result["errors"] == {"base": "csv_path_already_used"}

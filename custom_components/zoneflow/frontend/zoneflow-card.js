@@ -5624,7 +5624,7 @@ class ZoneFlowCard extends HTMLElement {
     const mixed = plants.length > 1;
     const ready = plants.filter((p) => p.stage === "ready");
     const names = mixed ? `${t(hass, "plants.title")}: ${plants.map((p) => p.name).join(", ")}` : "";
-    const badge = ready.length ? t(hass, "plants.ready_badge").replace("{names}", ready.map((p) => p.name).join(", ")) : "";
+    const badge = ready.length ? t(hass, "plants.ready_badge").replace("{names}", () => ready.map((p) => p.name).join(", ")) : "";
     this._plantsEl.textContent = [names, badge].filter(Boolean).join(" · ");
     this._plantsEl.classList.toggle("ready", ready.length > 0);
     this._plantsEl.hidden = !(mixed || ready.length);
@@ -6327,7 +6327,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       row.feed.title = zone.feed ? `${t(hass, "overview.next_feed")}: ${formatDay(hass, zone.feed)}` : "";
       row.ready.hidden = !zone.readyPlants?.length;
       row.readyText.textContent = zone.readyPlants?.length
-        ? t(hass, "plants.ready_badge").replace("{names}", zone.readyPlants.join(", ")) : "";
+        ? t(hass, "plants.ready_badge").replace("{names}", () => zone.readyPlants.join(", ")) : "";
       if (!row.details.hidden) {
         const inner = row.details.querySelector("zoneflow-card");
         if (inner) inner.hass = hass;
