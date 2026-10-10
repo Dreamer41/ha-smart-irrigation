@@ -291,7 +291,6 @@
           "zone_type": "Zonentyp",
           "weather_underground": "Weather Underground-Regen",
           "crop_valve": "Kulturventil",
-          "greenhouse_link": "Gewächshaus",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Ein Schalter, der das Wasser für diese Kultur öffnet. Jede Kultur benötigt ein eigenes Ventil."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Gewächshaus",
-        "description": "Machen Sie diese Zone zu einer Kultur eines Gewächshauses: Sie nutzt dann die Innensensoren dieses Gewächshauses und wird mit ihm angezeigt. Wählen Sie „-“, um sie wieder zu einer eigenständigen Zone zu machen (sie behält eine Kopie der Gewächshaussensoren).",
-        "data": {
-          "greenhouse_entry_id": "Teil des Gewächshauses"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Das Gewächshaus oder die Innenzone mit den Klimageräten, oder „-“ für keine."
         }
       },
       "flow_volume": {

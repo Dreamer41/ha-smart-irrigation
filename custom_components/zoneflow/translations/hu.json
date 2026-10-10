@@ -291,7 +291,6 @@
           "zone_type": "Zónatípus",
           "weather_underground": "Weather Underground eső",
           "crop_valve": "Növény szelepe",
-          "greenhouse_link": "Üvegház",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Egy kapcsoló, amely megnyitja a vizet ehhez a növényhez. Minden növénynek saját szelepre van szüksége."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Üvegház",
-        "description": "Tegye ezt a zónát egy üvegház növényévé: ekkor az üvegház belső érzékelőit használja, és azzal együtt jelenik meg. Válassza a \"-\" lehetőséget, ha ismét önálló zónává szeretné tenni (megőrzi az üvegház érzékelőinek másolatát).",
-        "data": {
-          "greenhouse_entry_id": "Az üvegház része"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Az üvegház vagy beltéri zóna a klímaberendezésekkel, vagy \"-\" ha nincs."
         }
       },
       "flow_volume": {

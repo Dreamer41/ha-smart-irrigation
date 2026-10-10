@@ -19,6 +19,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 import homeassistant.util.dt as dt_util
 
+from .errors import service_error
 from .const import (
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
@@ -170,10 +171,7 @@ def clean_name(value: Any) -> str:
 # --- what a person can do ------------------------------------------------------
 
 
-def _error(key: str, **placeholders: Any):
-    from homeassistant.exceptions import ServiceValidationError
-
-    return ServiceValidationError(translation_domain=DOMAIN, translation_key=key, translation_placeholders=placeholders or None)
+_error = service_error
 
 
 async def save_preset(hass: HomeAssistant, controller: Any, name: str) -> dict[str, Any]:

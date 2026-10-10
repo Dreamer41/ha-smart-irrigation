@@ -291,7 +291,6 @@
           "zone_type": "Vyöhyketyyppi",
           "weather_underground": "Weather Underground -sade",
           "crop_valve": "Kasvin venttiili",
-          "greenhouse_link": "Kasvihuone",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän kasvin veden. Jokainen kasvi tarvitsee oman venttiilinsä."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Kasvihuone",
-        "description": "Tee tästä vyöhykkeestä kasvihuoneen kasvi: se käyttää silloin kasvihuoneen sisäantureita ja näkyy sen yhteydessä. Valitse \"-\", niin siitä tulee taas oma vyöhykkeensä (se säilyttää kopion kasvihuoneen antureista).",
-        "data": {
-          "greenhouse_entry_id": "Kuuluu kasvihuoneeseen"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet, tai \"-\", jos ei mikään."
         }
       },
       "flow_volume": {

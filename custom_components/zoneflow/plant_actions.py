@@ -8,6 +8,7 @@ it leaves and puts them on the zone it arrives in, so its watering follows it.
 """
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime
 from typing import Any
 
@@ -18,18 +19,19 @@ from homeassistant.helpers.entity_component import async_update_entity
 import homeassistant.util.dt as dt_util
 
 from . import messages
+from .errors import service_error
 from .const import DOMAIN, NUMBER_DEFAULTS, NUMBER_DEFS, PLANT_CUSTOM, PLANT_PRESETS
 from .plants import PLANT_NUMBER_KEYS, PLANT_STATE_KEYS, async_get_book
 from .state_store import IrrigationState
 
 NAME_MAX_LENGTH = 40
+REFRESH_DOMAINS = {"number", "select", "datetime", "switch", "text"}
 NOTE_MAX_LENGTH = 255
 # What happens to the main plant of a zone when another plant takes its place.
 OLD_MAIN_CHOICES = ("extra", "archive", "swap", "keep")
 
 
-def _error(key: str, **placeholders: Any) -> ServiceValidationError:
-    return ServiceValidationError(translation_domain=DOMAIN, translation_key=key, translation_placeholders=placeholders or None)
+_error = service_error
 
 
 def _zone(hass: HomeAssistant, zone_id: str | None):
@@ -68,11 +70,17 @@ async def _refresh_zone_entities(hass: HomeAssistant, zone) -> None:
     """After settings were put on a zone from outside, its selects, dates and
     switches show them straight away."""
     registry = er.async_get(hass)
-    for entry in er.async_entries_for_config_entry(registry, zone.entry.entry_id):
-        try:
-            await async_update_entity(hass, entry.entity_id)
-        except Exception:  # noqa: BLE001 - an entity that is not loaded just shows its value later
-            continue
+    # Together, and only the entities that can have changed (the plant's sliders,
+    # selects, dates, switches and the journal), not all hundred.
+    results = await asyncio.gather(
+        *(
+            async_update_entity(hass, entry.entity_id)
+            for entry in er.async_entries_for_config_entry(registry, zone.entry.entry_id)
+            if entry.domain in REFRESH_DOMAINS
+        ),
+        return_exceptions=True,  # an entity that is not loaded just shows its value later
+    )
+    del results
 
 
 async def _apply(hass: HomeAssistant, zone, snapshot: dict[str, Any]) -> None:

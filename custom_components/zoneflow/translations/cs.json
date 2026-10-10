@@ -291,7 +291,6 @@
           "zone_type": "Typ zóny",
           "weather_underground": "Dešťové srážky Weather Underground",
           "crop_valve": "Ventil plodiny",
-          "greenhouse_link": "Skleník",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Spínač, který otevírá vodu pro tuto plodinu. Každá plodina potřebuje vlastní ventil."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Skleník",
-        "description": "Udělejte z této zóny plodinu skleníku: bude pak využívat vnitřní snímače daného skleníku a zobrazovat se s ním. Vyberte \"-\", chcete-li z ní udělat opět samostatnou zónu (ponechá si kopii snímačů skleníku).",
-        "data": {
-          "greenhouse_entry_id": "Součást skleníku"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Skleník nebo vnitřní zóna s klimatickými zařízeními, nebo \"-\" pro žádný."
         }
       },
       "flow_volume": {

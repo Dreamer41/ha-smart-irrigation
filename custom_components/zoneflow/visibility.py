@@ -156,6 +156,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
     elif controller.rain_source_type != RAIN_SOURCE_TIPS:
         hidden.add(("number", "rain_mm_per_tip"))  # a total or rate is already in mm
+    elif controller.rain_from_area:
+        hidden.add(("number", "rain_mm_per_tip"))  # the area's gauge: the tip size is set on the area
     if not controller.manual_rain_available:
         hidden |= MANUAL_RAIN
     if not controller.pump_power_entity:

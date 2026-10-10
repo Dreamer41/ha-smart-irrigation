@@ -308,7 +308,6 @@
           "zone_type": "Zone type",
           "weather_underground": "Weather Underground rain",
           "crop_valve": "Crop valve",
-          "greenhouse_link": "Greenhouse",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -512,16 +511,6 @@
         },
         "data_description": {
           "valve_entity": "A switch that opens this crop's water. Each crop needs its own valve."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Greenhouse",
-        "description": "Make this zone a crop of a greenhouse: it then uses that greenhouse's inside sensors and is shown with it. Pick \"-\" to make it a zone on its own again (it keeps a copy of the greenhouse's sensors).",
-        "data": {
-          "greenhouse_entry_id": "Part of greenhouse"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices, or \"-\" for none."
         }
       },
       "flow_volume": {

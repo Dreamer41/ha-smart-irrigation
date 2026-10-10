@@ -291,7 +291,6 @@
           "zone_type": "Zontyp",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Grödans ventil",
-          "greenhouse_link": "Växthus",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "En brytare som öppnar vattnet för den här grödan. Varje gröda behöver sin egen ventil."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Växthus",
-        "description": "Gör den här zonen till en gröda i ett växthus: den använder då det växthusets invändiga sensorer och visas tillsammans med det. Välj \"-\" för att göra den till en egen zon igen (den behåller en kopia av växthusets sensorer).",
-        "data": {
-          "greenhouse_entry_id": "Del av växthus"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Växthuset eller inomhuszonen med klimatenheterna, eller \"-\" för ingen."
         }
       },
       "flow_volume": {

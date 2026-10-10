@@ -123,10 +123,12 @@ class AreaController:
         self.paused = on
         self.paused_since_ts = dt_util.utcnow().timestamp() if on else None
         await self._async_save()
-        if on:
-            # A cycle that is running or queued stops at once, as for a zone's own pause.
-            for zone in self.zones:
+        for zone in self.zones:
+            if on:
+                # A cycle that is running or queued stops at once, as for a zone's own pause.
                 await zone.on_area_paused()
+            else:
+                await zone.on_area_resumed()
         self.notify()
 
     @property

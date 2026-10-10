@@ -291,7 +291,6 @@
           "zone_type": "Sonetype",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Kulturventil",
-          "greenhouse_link": "Drivhus",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "En bryter som åpner vannet for denne kulturen. Hver kultur trenger sin egen ventil."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Drivhus",
-        "description": "Gjør denne sonen til en kultur i et drivhus: den bruker da det drivhusets innvendige sensorer og vises sammen med det. Velg «-» for å gjøre den til en egen sone igjen (den beholder en kopi av drivhusets sensorer).",
-        "data": {
-          "greenhouse_entry_id": "Del av drivhus"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Drivhuset eller innendørssonen med klimaerhetene, eller «-» for ingen."
         }
       },
       "flow_volume": {

@@ -291,7 +291,6 @@
           "zone_type": "Tipo de zona",
           "weather_underground": "Lluvia de Weather Underground",
           "crop_valve": "Válvula del cultivo",
-          "greenhouse_link": "Invernadero",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Un interruptor que abre el agua de este cultivo. Cada cultivo necesita su propia válvula."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Invernadero",
-        "description": "Haz que esta zona sea un cultivo de un invernadero: usará los sensores interiores de ese invernadero y se mostrará junto a él. Selecciona \"-\" para que vuelva a ser una zona independiente (conservará una copia de los sensores del invernadero).",
-        "data": {
-          "greenhouse_entry_id": "Parte del invernadero"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "El invernadero o zona interior con los dispositivos de clima, o \"-\" para ninguno."
         }
       },
       "flow_volume": {

@@ -291,7 +291,6 @@
           "zone_type": "Typ strefy",
           "weather_underground": "Deszcz Weather Underground",
           "crop_valve": "Zawór uprawy",
-          "greenhouse_link": "Szklarnia",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Przełącznik, který otwiera wodę dla tej uprawy. Każda uprawa wymaga własnego zaworu."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Szklarnia",
-        "description": "Zrób z tej strefy uprawę w szklarni: będzie wtedy korzystać z czujników wewnętrznych tej szklarni i wyświetlać się wraz z nią. Wybierz „-”, aby ponownie uczynić ją samodzielną strefą (zachowa kopię czujników szklarni).",
-        "data": {
-          "greenhouse_entry_id": "Część szklarni"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi, lub „-” dla braku."
         }
       },
       "flow_volume": {

@@ -291,7 +291,6 @@
           "zone_type": "Zonetype",
           "weather_underground": "Weather Underground-regen",
           "crop_valve": "Gewasklep",
-          "greenhouse_link": "Kas",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Een schakelaar die het water voor dit gewas opent. Elk gewas heeft een eigen klep nodig."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Kas",
-        "description": "Maak van deze zone een gewas van een kas: het maakt dan gebruik van de interne sensoren van die kas en wordt ermee weergegeven. Kies \"-\" om er weer een zelfstandige zone van te maken (het behoudt een kopie van de kassensoren).",
-        "data": {
-          "greenhouse_entry_id": "Onderdeel van kas"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten, of \"-\" voor geen."
         }
       },
       "flow_volume": {

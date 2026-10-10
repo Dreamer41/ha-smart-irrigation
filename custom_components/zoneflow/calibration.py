@@ -9,11 +9,11 @@ from typing import Any
 from homeassistant.exceptions import ServiceValidationError
 
 from . import units
+from .errors import service_error
 from .const import DOMAIN, NUMBER_DEFS
 
 
-def _error(key: str, **placeholders: Any) -> ServiceValidationError:
-    return ServiceValidationError(translation_domain=DOMAIN, translation_key=key, translation_placeholders=placeholders or None)
+_error = service_error
 
 
 async def calibrate_from_volume(controller: Any, volume: float, area: float, minutes: float) -> float:

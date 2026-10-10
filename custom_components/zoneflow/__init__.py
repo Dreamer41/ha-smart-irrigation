@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 import voluptuous as vol
+import asyncio
+import logging
+
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, callback
@@ -69,6 +72,8 @@ _ZONE_TARGET_FIELDS = {
 }
 ZONE_TARGET_SCHEMA = vol.Schema(_ZONE_TARGET_FIELDS)
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+AREA_READY_KEY = "zoneflow_area_ready"
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
@@ -206,12 +211,10 @@ def _resolve_controller(hass: HomeAssistant, call: ServiceCall) -> ZoneFlowContr
 
 
 def _controller_of_device(hass: HomeAssistant, device_id: str) -> ZoneFlowController:
-    device = dr.async_get(hass).async_get(device_id)
-    controllers = hass.data.get(DOMAIN, {})
-    for entry_id in device.config_entries if device else ():
-        if entry_id in controllers:
-            return controllers[entry_id]
-    raise ServiceValidationError("The given source doesn't match any ZoneFlow zone.")
+    controller = plant_api.controller_for_device(hass, device_id)
+    if controller is None:
+        raise ServiceValidationError("The given source doesn't match any ZoneFlow zone.")
+    return controller
 
 
 def is_wu_entry(entry: ConfigEntry) -> bool:
@@ -246,10 +249,38 @@ def _area_zone_entries(hass: HomeAssistant, area_id: str) -> list[ConfigEntry]:
     ]
 
 
+AREA_WAIT_SECONDS = 10
+
+
+def _area_ready(hass: HomeAssistant, area_id: str) -> asyncio.Event:
+    """Set once the area's controller exists (or it will never load)."""
+    return hass.data.setdefault(AREA_READY_KEY, {}).setdefault(area_id, asyncio.Event())
+
+
+async def _wait_for_area(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Config entries are set up side by side, so a zone can start before its
+    area. A zone that has an area waits for it (briefly), so it starts with the
+    area's sensors instead of being restarted when the area appears."""
+    area_id = _entry_area_id(hass, entry)
+    area_entry = hass.config_entries.async_get_entry(area_id) if area_id else None
+    if (
+        area_entry is None
+        or area_entry.disabled_by is not None
+        or area_id in hass.data.get(AREA_DATA_KEY, {})
+        or area_entry.state not in (ConfigEntryState.NOT_LOADED, ConfigEntryState.SETUP_IN_PROGRESS)
+    ):
+        return
+    try:
+        await asyncio.wait_for(_area_ready(hass, area_id).wait(), AREA_WAIT_SECONDS)
+    except asyncio.TimeoutError:
+        _LOGGER.warning("%s: its area did not load in time; the zone starts and picks it up when it does", entry.title)
+
+
 async def _async_setup_area(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     area = AreaController(hass, entry)
     await area.async_setup()
     hass.data.setdefault(AREA_DATA_KEY, {})[entry.entry_id] = area
+    _area_ready(hass, entry.entry_id).set()
     await hass.config_entries.async_forward_entry_setups(entry, AREA_PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     # Zones that loaded before their area read none of its sensors: start them
@@ -288,6 +319,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         return await _async_setup_area(hass, entry)
     hass.data.setdefault(DOMAIN, {})
     notification_actions.async_register(hass)
+    await _wait_for_area(hass, entry)
     controller = ZoneFlowController(hass, entry)
     hass.data[DOMAIN][entry.entry_id] = controller
     await controller.async_setup()
@@ -479,6 +511,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         unloaded = await hass.config_entries.async_unload_platforms(entry, AREA_PLATFORMS)
         if unloaded:
             hass.data.get(AREA_DATA_KEY, {}).pop(entry.entry_id, None)
+            hass.data.get(AREA_READY_KEY, {}).pop(entry.entry_id, None)
         return unloaded
     if is_wu_entry(entry):
         unloaded = await hass.config_entries.async_unload_platforms(entry, WU_PLATFORMS)

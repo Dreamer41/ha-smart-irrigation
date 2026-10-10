@@ -282,7 +282,8 @@ async def test_changing_the_area_sensors_reloads_its_zones(hass, fake_valve_serv
 
 
 @pytest.mark.asyncio
-async def test_a_zone_loaded_before_its_area_picks_it_up(hass, fake_valve_services):
+async def test_a_zone_loaded_before_its_area_picks_it_up(hass, fake_valve_services, monkeypatch):
+    monkeypatch.setattr("custom_components.zoneflow.AREA_WAIT_SECONDS", 0.05)  # the area never shows up in time
     zone = _zone(hass)
     await _boot(hass, zone)
     first = _ctl(hass, zone)
@@ -418,3 +419,63 @@ async def test_create_area_service_makes_an_area_from_a_zone_and_moves_it_in(has
         await hass.services.async_call(DOMAIN, "create_area", {"name": "front YARD"}, blocking=True)
     with pytest.raises(ServiceValidationError):
         await hass.services.async_call(DOMAIN, "create_area", {"name": "   "}, blocking=True)
+
+
+@pytest.mark.asyncio
+async def test_a_zone_waters_again_after_its_area_was_paused_and_resumed(hass, fake_valve_services, monkeypatch, tmp_path):
+    """The area's pause stops a cycle; switching it off must leave the zone free to water."""
+    from .test_scenarios_cycles import _history, _zone as scenario_zone
+
+    controller, clock, _ = await scenario_zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=1, last_deep_days_ago=3)
+    area = _area(hass)
+    hass.config_entries.async_update_entry(controller.entry, options={**controller.entry.options, CONF_AREA_ID: area.entry_id})
+    hass.states.async_set(AREA_RAIN, "0")
+    assert await hass.config_entries.async_setup(area.entry_id)
+    await hass.async_block_till_done()
+    controller = hass.data[DOMAIN][controller.entry.entry_id]
+    a = _area_ctl(hass, area)
+    await a.set_paused(True)
+    assert controller._paused_event.is_set()
+    await a.set_paused(False)
+    assert not controller._paused_event.is_set()
+    # And its own pause is still honoured when the area resumes.
+    await controller.set_paused(True)
+    await a.set_paused(True)
+    await a.set_paused(False)
+    assert controller._paused_event.is_set()
+    await controller.set_paused(False)
+    assert not controller._paused_event.is_set()
+    await controller.start_service_run(2)
+    await hass.async_block_till_done()
+    assert clock.pulses_for("switch.test_valve") == [2] or clock.pulses
+
+
+@pytest.mark.asyncio
+async def test_the_status_during_water_now_says_manual_watering(hass, fake_valve_services):
+    zone = _zone(hass)
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    c._service_active = True
+    c._service_counted = True
+    status = c.status()
+    assert status["code"] == "watering" and status["cycle"] == "manual_water" and "Manual watering" in status["text"]
+    c._service_counted = False
+    assert c.status()["code"] == "service_run"
+    c._service_active = False
+
+
+@pytest.mark.asyncio
+async def test_a_zone_set_up_before_its_area_waits_for_it(hass, fake_valve_services):
+    """Entries load side by side: a zone that has an area starts once the area is there."""
+    area = _area(hass)
+    zone = _zone(hass, **{CONF_AREA_ID: area.entry_id})
+    # Zone first, area second, as when the zone entry is older.
+    hass.states.async_set(AREA_RAIN, "0")
+    first = None
+    await _seed_all(hass)
+    assert await hass.config_entries.async_setup(zone.entry_id)  # sets the whole domain up, area included
+    await hass.async_block_till_done()
+    c = _ctl(hass, zone)
+    assert c.area is not None and c.rain_counter_entity == AREA_RAIN and c.had_area_at_setup
+    assert first is None

@@ -291,7 +291,6 @@
           "zone_type": "Tipo di zona",
           "weather_underground": "Pioggia Weather Underground",
           "crop_valve": "Valvola della coltura",
-          "greenhouse_link": "Serra",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Un interruttore che apre l'acqua per questa coltura. Ogni coltura ha bisogno della propria valvola."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Serra",
-        "description": "Rendi questa zona una coltura di una serra: utilizzerà i sensori interni di quella serra e verrà mostrata insieme ad essa. Scegli \"-\" per farla tornare una zona autonoma (conserverà una copia dei sensori della serra).",
-        "data": {
-          "greenhouse_entry_id": "Fa parte della serra"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "La serra o la zona interna con i dispositivi per il clima, o \"-\" per nessuna."
         }
       },
       "flow_volume": {

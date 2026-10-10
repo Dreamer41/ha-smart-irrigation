@@ -291,7 +291,6 @@
           "zone_type": "Type de zone",
           "weather_underground": "Pluie Weather Underground",
           "crop_valve": "Vanne de la culture",
-          "greenhouse_link": "Serre",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Un interrupteur qui ouvre l'eau de cette culture. Chaque culture a besoin de sa propre vanne."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Serre",
-        "description": "Faites de cette zone une culture d'une serre : elle utilise alors les capteurs intérieurs de cette serre et s'affiche avec elle. Choisissez « - » pour en faire à nouveau une zone autonome (elle conserve une copie des capteurs de la serre).",
-        "data": {
-          "greenhouse_entry_id": "Fait partie de la serre"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "La serre ou la zone intérieure avec les appareils de climatisation, ou « - » pour aucune."
         }
       },
       "flow_volume": {

@@ -4627,7 +4627,8 @@ class ZoneFlowController:
                 code="watering", cycle="manual_water",
                 text=self._msg("status.watering", cycle=self._msg("cycle.manual_water")),
             )
-        elif self._service_active:
+            return result
+        if self._service_active:
             result.update(code="service_run", text=self._msg("status.service_run"))
             return result
         if self._waiting_pump_kind is not None:

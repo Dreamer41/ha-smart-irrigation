@@ -291,7 +291,6 @@
           "zone_type": "Tipo de zona",
           "weather_underground": "Chuva do Weather Underground",
           "crop_valve": "Válvula da cultura",
-          "greenhouse_link": "Estufa",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "Um interruptor que abre a água desta cultura. Cada cultura precisa da sua própria válvula."
-        }
-      },
-      "greenhouse_link": {
-        "title": "Estufa",
-        "description": "Torne esta zona uma cultura de uma estufa: ela passa a usar os sensores internos dessa estufa e é mostrada com ela. Escolha \"-\" para torná-la novamente uma zona independente (mantém uma cópia dos sensores da estufa).",
-        "data": {
-          "greenhouse_entry_id": "Parte da estufa"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "A estufa ou zona interior com os dispositivos de clima, ou \"-\" para nenhuma."
         }
       },
       "flow_volume": {

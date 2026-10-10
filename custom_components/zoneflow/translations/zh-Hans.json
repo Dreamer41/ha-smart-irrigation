@@ -291,7 +291,6 @@
           "zone_type": "分区类型",
           "weather_underground": "Weather Underground 降雨",
           "crop_valve": "作物阀门",
-          "greenhouse_link": "温室",
           "location": "Where is this? (area or greenhouse)"
         }
       },
@@ -495,16 +494,6 @@
         },
         "data_description": {
           "valve_entity": "用于开启此作物水源的开关。每种作物都需要独立的阀门。"
-        }
-      },
-      "greenhouse_link": {
-        "title": "温室",
-        "description": "将此区域设为温室内的作物：它将使用该温室的内部传感器并与其一同显示。选择 “-” 可将其重新设为独立区域（它会保留温室传感器的副本）。",
-        "data": {
-          "greenhouse_entry_id": "所属温室"
-        },
-        "data_description": {
-          "greenhouse_entry_id": "带有气候调节设备的温室或室内区域，或选择 “-” 表示无。"
         }
       },
       "flow_volume": {

@@ -1141,34 +1141,6 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             options.append("zone_type")  # a crop is whatever its greenhouse is
         return self.async_show_menu(step_id="init", menu_options=options)
 
-    async def async_step_greenhouse_link(self, user_input: dict[str, Any] | None = None):
-        """Which greenhouse this zone is a crop of, or none (on its own).
-        Leaving a greenhouse keeps a copy of its inside sensors."""
-        greenhouses = _greenhouses(self.hass, exclude_entry_id=self._config_entry.entry_id)
-        current = self._merged().get(CONF_PARENT_ZONE) or ""
-        if user_input is not None:
-            chosen = user_input.get(CONF_PARENT_ZONE) or ""
-            options = {**self._config_entry.options}
-            if chosen:
-                parent = self.hass.config_entries.async_get_entry(chosen)
-                options[CONF_PARENT_ZONE] = chosen
-                options[CONF_ZONE_TYPE] = _merged_entry(parent).get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
-            else:
-                old = self.hass.config_entries.async_get_entry(current) if current else None
-                options[CONF_PARENT_ZONE] = None
-                if old is not None:
-                    source = _merged_entry(old)
-                    for key in CROP_INHERITED_KEYS:
-                        if source.get(key):
-                            options[key] = source[key]
-            return self.async_create_entry(title="", data=options)
-        return self.async_show_form(
-            step_id="greenhouse_link",
-            data_schema=vol.Schema(
-                {vol.Optional(CONF_PARENT_ZONE, default=current): _greenhouse_selector(greenhouses, with_none=True)}
-            ),
-        )
-
     async def async_step_crop_valve(self, user_input: dict[str, Any] | None = None):
         """A crop's valve (its sensors and climate are its greenhouse's)."""
         errors: dict[str, str] = {}
