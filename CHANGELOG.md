@@ -6,6 +6,17 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.1] — Water now fix, quick setup and nursery plants
+
+### Added
+
+- **Quick setup for a new outdoor zone.** The first form has a *Quick setup* box (ticked): after the name, plant and place it asks only for the valve, how the water is delivered and how much it gives (number of emitters, flow of one, area wet; there is no default, as drip and sprinklers differ a lot), uses the sensors it clearly found, and takes the rest from the plant type and the default climate. Untick it for the full setup as before.
+- **Nursery plants: ready to move.** Follow a plant towards the day it can go to its bed (the usual days for its type are suggested, you set the planting date). Its stage (seed, seedling, ready to move) shows in the Plants popup; a plant that is ready gets a badge on the zone card and its overview row, and one phone message. A plant you move becomes established. Services: `set_plant_ready`, and `ready_days` / `planted` on `add_plant`.
+
+### Fixed
+
+- **Water now / Run routine now waters even when the routine is not due.** The button used to do nothing, silently, before the next watering was due. It now runs the routine watering at once and counts it as done. Pause, snooze, frost, rain falling now and the runtime caps still apply.
+
 ## [1.7.0] — Areas, plants and easier setup
 
 - **Changed (docs)**: the README is now a short introduction that points to the website and to the guides in `docs/`. The long README moved, unchanged, to [docs/GUIDE.md](docs/GUIDE.md). New [docs/CALIBRATION.md](docs/CALIBRATION.md): how to set the flow rate, Zone Flow (litres) and the rain gauge

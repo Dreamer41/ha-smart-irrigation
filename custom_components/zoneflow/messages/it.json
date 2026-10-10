@@ -166,6 +166,10 @@
       "water": "Irriga {minutes} min",
       "snooze": "Salta oggi",
       "fertilized": "Concimato"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} è pronta per il trapianto",
+      "message": "È cresciuta per i giorni che ha impostato. Apra la finestra Piante della zona per spostarla nell'aiuola."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archiviato da {zone}",
       "removed": "Rimosso da {zone}",
       "note": "{text}",
-      "copied": "Impostazioni copiate da {source}"
+      "copied": "Impostazioni copiate da {source}",
+      "ready": "Pronta per il trapianto ({days} giorni dopo la semina)",
+      "tracking": "Seguita fino al trapianto: {days} giorni dopo la semina",
+      "tracking_off": "Non più seguita fino al trapianto"
     },
     "setting": {
       "growth_stage_mode": "Modalità fase di crescita",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Passaggio {n} di {total}"
+    "progress": "Passaggio {n} di {total}",
+    "nothing_found": "Nessun sensore trovato. Li aggiunga più tardi in Configura."
   }
 }

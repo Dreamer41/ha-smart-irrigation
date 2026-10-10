@@ -20,8 +20,8 @@ import homeassistant.util.dt as dt_util
 
 from . import messages
 from .errors import service_error
-from .const import DOMAIN, NUMBER_DEFAULTS, NUMBER_DEFS, PLANT_CUSTOM, PLANT_PRESETS
-from .plants import PLANT_NUMBER_KEYS, PLANT_STATE_KEYS, async_get_book
+from .const import DOMAIN, NUMBER_DEFAULTS, NUMBER_DEFS, PLANT_CUSTOM, PLANT_PRESETS, READY_DAYS_MAX
+from .plants import PLANT_NUMBER_KEYS, PLANT_STATE_KEYS, async_get_book, default_ready_days
 from .state_store import IrrigationState
 
 NAME_MAX_LENGTH = 40
@@ -98,7 +98,10 @@ def _live(zone) -> dict[str, Any]:
 # --- the actions -------------------------------------------------------------
 
 
-async def add_plant(hass: HomeAssistant, zone_id: str, name: str, kind: str | None, old_main: str | None) -> dict[str, Any]:
+async def add_plant(
+    hass: HomeAssistant, zone_id: str, name: str, kind: str | None, old_main: str | None,
+    ready_days: int | None = None, planted_ts: float | None = None,
+) -> dict[str, Any]:
     """A new plant in the zone. In a zone with no main plant it becomes the
     main one (its type's settings go onto the zone); otherwise it is a record
     only, unless `old_main` says it takes over (see move_plant)."""
@@ -114,10 +117,54 @@ async def add_plant(hass: HomeAssistant, zone_id: str, name: str, kind: str | No
         await _retire_main(hass, book, zone, current, old_main, None)
     plant = book.create(name, kind, zone_id, takes_over, "user")
     plant["snapshot"] = starting_snapshot(kind)
+    if planted_ts is not None:
+        plant["snapshot"]["planting_date_ts"] = planted_ts
+    if ready_days:
+        _track(plant, ready_days)
     if takes_over:
         await _apply(hass, zone, plant["snapshot"])
     zone._notify_status()
     return plant
+
+
+def _track(plant: dict[str, Any], days: int) -> None:
+    """Start following the plant towards "ready to move" (days after planting)."""
+    plant["ready_days"] = int(days)
+    plant.pop("transplanted_ts", None)
+    plant.pop("ready_notified", None)
+
+
+async def set_plant_ready(
+    hass: HomeAssistant, plant_id: str, ready_days: int | None, planted_ts: float | None = None
+) -> None:
+    """Follow a nursery plant towards "ready to move": `ready_days` after the
+    planting date (0 or None stops following it; the type's usual number is
+    used when it is omitted for a type that has one). `planted_ts` sets the
+    planting date, on the zone for its main plant or on the record."""
+    book = await async_get_book(hass)
+    plant = _plant(book, plant_id)
+    zone = hass.data.get(DOMAIN, {}).get(plant.get("zone_id") or "")
+    if planted_ts is not None:
+        if plant.get("main") and zone is not None:
+            zone.store.state.planting_date_ts = planted_ts
+            await zone.store.async_save()
+            await _refresh_zone_entities(hass, zone)
+        else:
+            plant.setdefault("snapshot", {})["planting_date_ts"] = planted_ts
+    if ready_days is None:
+        ready_days = default_ready_days(plant.get("type")) or 0
+    if ready_days and not 1 <= int(ready_days) <= READY_DAYS_MAX:
+        raise _error("plant_ready_days_range", max=READY_DAYS_MAX)
+    if ready_days:
+        _track(plant, ready_days)
+        book.add_history(plant["id"], "tracking", days=int(ready_days))
+    else:
+        for key in ("ready_days", "transplanted_ts", "ready_notified"):
+            plant.pop(key, None)
+        book.add_history(plant["id"], "tracking_off")
+    book._save()
+    if zone is not None:
+        zone._notify_status()
 
 
 async def _retire_main(hass, book, zone, main: dict[str, Any], how: str, elsewhere: dict[str, Any] | None) -> None:
@@ -203,6 +250,8 @@ async def move_plant(
     plant["zone_id"] = target_id
     plant["main"] = False
     plant.pop("archived_ts", None)  # an archived plant brought back is on record in a zone again
+    if plant.get("ready_days"):
+        plant["transplanted_ts"] = dt_util.utcnow().timestamp()  # moved on: no longer a seedling
     book.add_history(plant["id"], "moved", **{"from": source_name, "to": target.entry.title})
 
     swapped_in: dict[str, Any] | None = None

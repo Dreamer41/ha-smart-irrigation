@@ -9,14 +9,16 @@
           "plant": "Wat staat er geplant",
           "zone_type": "Waar er gekweekt wordt",
           "start_from": "Starten vanaf",
-          "location": "Waar bevindt dit zich?"
+          "location": "Waar bevindt dit zich?",
+          "quick_setup": "Snelle installatie (aanbevolen)"
         },
         "data_description": {
           "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
           "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone.",
           "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak.",
           "start_from": "Start vanaf een kopie van de sproei-instellingen van een andere zone of een opgeslagen voorinstelling in plaats van die van het planttype. Klep, sensoren en debiet worden nooit gecopieerd.",
-          "location": "Het gebied waarin deze zone ligt, indien van toepassing. De zone gebruikt dan de regenmeter, temperatuursensor, het weer en de telefoon van het gebied, tenzij je haar eigen opgeeft."
+          "location": "Het gebied waarin deze zone ligt, indien van toepassing. De zone gebruikt dan de regenmeter, temperatuursensor, het weer en de telefoon van het gebied, tenzij je haar eigen opgeeft.",
+          "quick_setup": "Vraagt alleen naar de klep en hoe het water wordt aangevoerd, en vult de rest in op basis van het plantentype en de sensoren die ZoneFlow vond. U kunt alles later wijzigen bij Configureren. Haal het vinkje weg om nu alle instellingen te zien."
         }
       },
       "entities": {
@@ -255,6 +257,24 @@
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
         }
+      },
+      "quick": {
+        "title": "ZoneFlow-bewatering",
+        "description": "Welke klep bewatert deze zone, en hoe?\n\nZoneFlow gebruikt de hieronder gevonden sensoren. Wijzig ze later bij Configureren, of ga terug en haal het vinkje bij Snelle installatie weg.\n\nGeef aan hoeveel water het geeft: druppelaars en sproeiers verschillen sterk. Een ruwe schatting is prima; „Debiet kalibreren” op de zonekaart meet het exact.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Klepschakelaar",
+          "irrigation_method": "Hoe komt het water bij de planten?",
+          "emitters": "Aantal druppelaars (of sproeiers) in de zone",
+          "emitter_flow": "Debiet van één druppelaar",
+          "area": "Oppervlakte die ze bewateren"
+        },
+        "data_description": {
+          "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
+          "irrigation_method": "Hoe het water wordt gegeven. Met druppelslang of zweetslang op zand begint een nieuwe zone met minstens twee pulsen, zodat het water in de wortelzone blijft. Hoeveel water er komt, bepaalt het debiet (Configureren → Debiet).",
+          "emitters": "Tel elke druppelaar of sproeier die de klep van deze zone voedt.",
+          "emitter_flow": "Wat één druppelaar per uur geeft: dat staat op de druppelaar of de verpakking (bv. 2 L/h, 0,5 gal/h).",
+          "area": "De oppervlakte die echt nat wordt. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
+        }
       }
     },
     "error": {
@@ -272,7 +292,8 @@
       "wu_no_stations": "Geen stations binnen de radius. Zonder een station in de buurt heeft deze functie geen nut.",
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
       "area_name_required": "Geef het gebied een naam.",
-      "area_name_exists": "Er bestaat al een gebied met deze naam."
+      "area_name_exists": "Er bestaat al een gebied met deze naam.",
+      "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte."
     },
     "abort": {
       "already_configured": "Weather Underground-regen is al ingesteld."
@@ -1405,6 +1426,14 @@
           "name": "Oude hoofdplant",
           "description": "Alleen als de zone al een hoofdplant heeft. Wat ermee gebeurt: bewaren als vastlegging of archiveren."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Zone-apparaat",
           "description": "De zone. Alleen nodig als er 2 of meer zones zijn geconfigureerd."
@@ -1468,6 +1497,24 @@
         "text": {
           "name": "Notitie",
           "description": "Wat op te schrijven."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1712,9 @@
     },
     "calibration_unavailable": {
       "message": "Deze zone heeft geen debietinstelling om te kalibreren."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

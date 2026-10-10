@@ -3378,15 +3378,13 @@ class ZoneFlowController:
         by the manual 'Run Routine Irrigation Now' button/service.
 
         `manual=True` marks this call as a human-triggered press (button or
-        service, not the scheduled time trigger). It never bypasses any
-        gate -- a manual press is evaluated by exactly the same logic as
-        the scheduled trigger, so it can still be a no-op, same as before
-        this feature existed. Its only effect is feeding the self-tuning
-        "early" signal (see _register_self_tune_signal / const.py's
-        SELF_TUNE_* comment) at the one point where the plain time-based
-        model explicitly says "not yet due": the person pressing the
-        button there is itself the signal, whether or not soil moisture
-        (if configured) goes on to force the cycle to run anyway. A manual
+        service, not the scheduled time trigger). A manual press waters
+        even when the routine is not due (it skips the due, soil-wet,
+        dry-down and forecast gates), then counts as the routine watering
+        done. It still honours pause, snooze, the lock, frost, rain
+        falling now and the runtime caps. Pressed before the schedule says
+        so, it also feeds the self-tuning "early" signal (see
+        _register_self_tune_signal / const.py's SELF_TUNE_* comment); a
         press that was already due, or blocked earlier by the lock/snooze
         gate, never touches the streak."""
         if not self.has_valve:
@@ -3430,7 +3428,11 @@ class ZoneFlowController:
         # Deliberately routine-only, not deep soak (see const.py's
         # CONF_SOIL_MOISTURE_ENTITY comment).
         moisture_pct = await self._soil_moisture_pct()
-        if not calc.routine_due_with_soil_moisture(
+        # A manual press is the person's own decision to water now: it skips
+        # the "is it due / is the soil wet / dry-down / forecast" gates, and
+        # still honours pause, the lock, snooze, frost, the runtime caps and
+        # rain falling right now.
+        if not manual and not calc.routine_due_with_soil_moisture(
             interval_due,
             moisture_pct,
             self.number("soil_moisture_dry_pct"),
@@ -3440,8 +3442,6 @@ class ZoneFlowController:
             # (soil moisture, if configured, didn't override it to True) --
             # a manual press landing here, itself, is the self-tune "early"
             # signal, independent of whether anything actually gets watered.
-            if manual and not interval_due:
-                await self._register_self_tune_signal("early")
             if interval_due:
                 # Due by the schedule, but the soil is wet: say so, instead
                 # of skipping silently.
@@ -3464,7 +3464,7 @@ class ZoneFlowController:
         await self._end_wet_hold_if_not_wet(moisture_pct)
         await self._note_frozen_wet_probe()
         await self._refresh_wu_rain()
-        if not calc.drydown_satisfied(
+        if not manual and not calc.drydown_satisfied(
             now_ts - (state.last_significant_rain_ts or 0.0), self.number("routine_drydown_days")
         ):
             await self._decide(
@@ -3475,7 +3475,7 @@ class ZoneFlowController:
             return
         if await self._frost_blocks("routine"):
             return
-        if not await self._forecast_gate_allows_run("routine"):
+        if not manual and not await self._forecast_gate_allows_run("routine"):
             return
 
         # Growth-stage auto-ramp (optional, off by default -- see
@@ -3611,6 +3611,10 @@ class ZoneFlowController:
         await self._set_lock(True)
         await self._set_abort(False)
         await self._end_wet_hold()  # watering is actually starting
+        if manual and not interval_due:
+            # Pressed before the schedule says so, and the run goes ahead: the
+            # self-tune "early" signal.
+            await self._register_self_tune_signal("early")
 
         completed = await self._run_pulses(
             count=plan.pulse_count,
@@ -3635,13 +3639,6 @@ class ZoneFlowController:
         )
         await self.store.async_save()
         await self._set_lock(False)
-        # Reaching completion with interval_due False only happens when a
-        # configured soil-moisture sensor forced the run through despite the
-        # plain time model saying "not yet" -- if this was also a manual
-        # press, it's a second, rarer flavor of the same "early" signal as
-        # the no-op case above (that one already returned before here).
-        if manual and not interval_due:
-            await self._register_self_tune_signal("early")
         await self._log_event(
             event_type="Routine Irrigation Completed",
             status="Completed",
@@ -4197,6 +4194,20 @@ class ZoneFlowController:
         self._notify_status()
         await self._log_event(
             event_type="Fertilized", status="INFO", target_mm=0.0, deducted_mm=0.0, runtime=0
+        )
+
+    async def notify_plant_ready(self, plant_name: str) -> None:
+        """A nursery plant has reached its "ready to move" day: one phone
+        message (and a line in the log)."""
+        await self._log_event(
+            event_type="Plant Ready To Move",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="plant_ready",
+            params={"zone": self.entry.title, "plant": plant_name},
         )
 
     async def _on_fertilize_check(self, now=None) -> None:

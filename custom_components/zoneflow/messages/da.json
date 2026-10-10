@@ -166,6 +166,10 @@
       "water": "Vand {minutes} min",
       "snooze": "Spring over i dag",
       "fertilized": "Gødet"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} er klar til flytning",
+      "message": "Den har vokset det antal dage, du har valgt. Åbn zonens Planter-dialog for at flytte den til dens bed."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Arkiveret fra {zone}",
       "removed": "Fjernet fra {zone}",
       "note": "{text}",
-      "copied": "Indstillinger kopieret fra {source}"
+      "copied": "Indstillinger kopieret fra {source}",
+      "ready": "Klar til flytning ({days} dage efter plantning)",
+      "tracking": "Følges mod klar til flytning: {days} dage efter plantning",
+      "tracking_off": "Følges ikke længere mod klar til flytning"
     },
     "setting": {
       "growth_stage_mode": "Vækststadie-tilstand",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Trin {n} af {total}"
+    "progress": "Trin {n} af {total}",
+    "nothing_found": "Ingen sensorer blev fundet. Tilføj dem senere under Konfigurer."
   }
 }

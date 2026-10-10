@@ -312,7 +312,7 @@ async def test_held_back_counts_days_not_attempts(hass, fake_valve_services, mon
     await zone.run_deep_soak()  # dry-down: held back
     await zone.run_routine_irrigation()  # dry-down: held back (same day)
     assert len(zone.store.state.summary_skip_days) == 1
-    # "Run now" presses aren't counted at all.
+    # "Run now" presses aren't held back: they water, and are no skipped day.
     zone.store.state.summary_skip_days = []
     await zone.run_routine_now()
     assert zone.store.state.summary_skip_days == []
@@ -322,7 +322,7 @@ async def test_held_back_counts_days_not_attempts(hass, fake_valve_services, mon
     _history(zone, last_routine_days_ago=5, last_deep_days_ago=1)
     await zone.run_routine_irrigation()
     await hass.async_block_till_done()
-    assert zone.store.state.summary_runs == 1 and zone.store.state.summary_skip_days == []
+    assert zone.store.state.summary_runs == 2 and zone.store.state.summary_skip_days == []
 
 
 @pytest.mark.asyncio

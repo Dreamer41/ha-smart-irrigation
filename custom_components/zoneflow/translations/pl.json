@@ -9,14 +9,16 @@
           "plant": "Co tu rośnie",
           "zone_type": "Miejsce uprawy",
           "start_from": "Rozpocznij od",
-          "location": "Gdzie to jest?"
+          "location": "Gdzie to jest?",
+          "quick_setup": "Szybka konfiguracja (zalecana)"
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
           "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy.",
           "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody.",
           "start_from": "Rozpocznij od kopii ustawień podlewania innej strefy lub zapisanego szablonu zamiast ustawień typu rośliny. Zawór, czujniki i przepływ nigdy nie są kopiowane.",
-          "location": "Obszar, w którym znajduje się ta strefa, jeśli jakiś jest. Strefa używa wtedy deszczomierza, czujnika temperatury, pogody i telefonu obszaru, chyba że nadasz jej własne."
+          "location": "Obszar, w którym znajduje się ta strefa, jeśli jakiś jest. Strefa używa wtedy deszczomierza, czujnika temperatury, pogody i telefonu obszaru, chyba że nadasz jej własne.",
+          "quick_setup": "Pyta tylko o zawór i sposób podawania wody, a resztę uzupełnia na podstawie rodzaju rośliny i czujników znalezionych przez ZoneFlow. Wszystko można później zmienić w Konfiguracji. Odznacz, aby zobaczyć wszystkie ustawienia teraz."
         }
       },
       "entities": {
@@ -255,6 +257,24 @@
           "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
           "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
         }
+      },
+      "quick": {
+        "title": "Nawadnianie ZoneFlow",
+        "description": "Który zawór nawadnia tę strefę i jak?\n\nZoneFlow używa czujników znalezionych poniżej. Zmienisz je później w Konfiguracji albo wróć i odznacz Szybką konfigurację.\n\nPodaj, ile wody daje: kroplowniki i zraszacze bardzo się różnią. Wystarczy przybliżona wartość; „Skalibruj przepływ” na karcie strefy zmierzy ją dokładnie.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Przełącznik zaworu",
+          "irrigation_method": "Jak woda dociera do roślin?",
+          "emitters": "Liczba emiterów (kroplowników, zraszaczy) w strefie",
+          "emitter_flow": "Wydajność jednego emitera",
+          "area": "Powierzchnia, którą podlewają"
+        },
+        "data_description": {
+          "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
+          "irrigation_method": "Jak woda trafia do roślin. Przy linii kroplującej lub wężu pocącym na glebie piaszczystej nowa strefa zaczyna od co najmniej dwóch porcji, żeby woda została w strefie korzeni. Ile wody daje, zależy od wydajności (Konfiguruj → Wydajność).",
+          "emitters": "Policz wszystkie kroplowniki lub zraszacze zasilane przez zawór tej strefy.",
+          "emitter_flow": "Ile wody daje jeden emiter na godzinę: jest to podane na emiterze lub opakowaniu (np. 2 L/h, 0,5 gal/h).",
+          "area": "Powierzchnia, która faktycznie jest mokra. Przy kroplownikach pod pojedynczymi roślinami zsumuj mokre plamy wokół nich, a nie całą grządkę."
+        }
       }
     },
     "error": {
@@ -272,7 +292,8 @@
       "wu_no_stations": "Brak stacji w promieniu. Bez stacji w pobliżu ta funkcja nie pomoże.",
       "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
       "area_name_required": "Nadaj nazwę obszarowi.",
-      "area_name_exists": "Obszar o tej nazwie již istnieje."
+      "area_name_exists": "Obszar o tej nazwie již istnieje.",
+      "flow_rate_out_of_range": "Z tych liczb wychodzi przepływ, jakiego ta strefa mieć nie może. Sprawdź liczbę emiterów, przepływ jednego emitera i powierzchnię."
     },
     "abort": {
       "already_configured": "Deszcz Weather Underground jest już skonfigurowany."
@@ -1405,6 +1426,14 @@
           "name": "Stara główna roślina",
           "description": "Tylko gdy strefa ma już główną roślinę. Co się z nią stanie: zachowaj jako wpis lub zarchiwizuj."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Urządzenie strefy",
           "description": "Strefa. Wymagane tylko przy skonfigurowanych co najmniej 2 strefach."
@@ -1468,6 +1497,24 @@
         "text": {
           "name": "Notatka",
           "description": "Co zapisać."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1712,9 @@
     },
     "calibration_unavailable": {
       "message": "Ta strefa nie ma ustawienia przepływu do kalibracji."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

@@ -221,6 +221,21 @@ add_plant:
           options:
             - extra
             - archive
+    ready_days:
+      name: Ready After Days
+      description: >-
+        Follow this plant as a nursery plant: it is ready to move this many
+        days after planting (0 = do not follow). Leave out to not follow it.
+      selector:
+        number:
+          min: 0
+          max: 365
+          mode: box
+    planted:
+      name: Planted
+      description: The day it was planted (for the ready-to-move count).
+      selector:
+        date:
     device_id:
       name: Zone Device
       description: The zone. Only needed with 2+ zones configured.
@@ -352,6 +367,33 @@ add_plant_note:
       required: true
       selector:
         text:
+
+set_plant_ready:
+  name: Set Plant Ready To Move
+  description: >-
+    Follows a nursery plant towards "ready to move": ready this many days
+    after it was planted. A phone message says when it is. 0 stops following
+    it; leaving the days out uses the usual number for its type.
+  fields:
+    plant_id:
+      name: Plant
+      description: The plant's id.
+      required: true
+      selector:
+        text:
+    ready_days:
+      name: Ready After Days
+      description: Days after planting (0 = stop following it).
+      selector:
+        number:
+          min: 0
+          max: 365
+          mode: box
+    planted:
+      name: Planted
+      description: The day it was planted.
+      selector:
+        date:
 
 save_preset:
   name: Save Preset

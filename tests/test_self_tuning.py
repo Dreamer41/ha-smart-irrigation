@@ -50,9 +50,8 @@ def _make_due(controller):
 
 @pytest.mark.asyncio
 async def test_three_early_manual_presses_shrink_drydown_and_reset_streak(hass, fake_valve_services):
-    """Each press is a no-op (nothing was due), but three of them in a row
-    is still the "early" signal -- the person pressing the button when the
-    model says "not yet" is the signal, whether or not anything waters."""
+    """Pressing the button when the model says "not yet" waters anyway, and
+    three such presses in a row are the "early" signal."""
     await _seed(hass)
     controller = await _setup(hass)
     spy = AsyncMock(return_value=True)
@@ -64,7 +63,7 @@ async def test_three_early_manual_presses_shrink_drydown_and_reset_streak(hass, 
         await controller.run_routine_irrigation(manual=True)
         await hass.async_block_till_done()
 
-    spy.assert_not_called()
+    assert spy.call_count == 3
     assert controller.number("routine_drydown_days") == starting - 0.5
     assert controller.store.state.self_tune_early_streak == 0
 

@@ -4,10 +4,7 @@ Ideas queued for upcoming releases.
 
 ## Next update
 
-- A shorter first setup (name, place, how it is watered, which valve; the
-  rest as defaults you can change later).
-- Plant readiness for nursery plants (a growth stage that says "ready to
-  move"), and a plant inventory across all zones.
+- A plant inventory across all zones.
 - The Status sentence with the expected amount ("Next watering Mon 05:30,
   about 12 mm").
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
@@ -17,6 +14,13 @@ Ideas queued for upcoming releases.
   machine translated).
 
 ## Shipped
+
+### 1.7.1 — Water now fix, quick setup and nursery plants
+
+- Water now / Run routine now waters at once, even when the routine is not due.
+- Quick setup for a new outdoor zone: the valve, how the water is delivered and
+  how much it gives; the rest from the plant type and what was found.
+- Nursery plants followed to "ready to move": stage, badge and a phone message.
 
 ### 1.7.0 — areas, plants and easier setup
 

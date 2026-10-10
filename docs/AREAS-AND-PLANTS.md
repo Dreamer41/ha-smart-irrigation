@@ -43,12 +43,23 @@ Open a zone card's **Plants** button to:
 
 The same actions are services: `zoneflow.add_plant`, `move_plant`, `set_main_plant`, `remove_plant`, `rename_plant`, `add_plant_note`.
 
+### Nursery plants: ready to move (1.7.1)
+
+Seedlings in a nursery tray are followed towards the day they can go to their bed. In the Plants popup, a plant of a type that is raised from seed (tomatoes, chilis, leafy vegetables, herbs, strawberries, flowers) shows *Ready to move after (days)*, pre-filled with the usual number for the type (tomatoes 42, chilis 56, leafy vegetables 28, herbs 35, strawberries 42, flowers 42). Press **Follow** and give the planting date; change the number to what suits your seeds. A plant that is not followed shows nothing.
+
+- The stage comes from the days since planting: **Seed**, **Seedling**, then **Ready to move**. The popup says how many days are left.
+- A plant that is ready is shown on the zone card and on its row in the overview (*Ready to move: Basil*).
+- One phone message says when a plant becomes ready. Open the zone's Plants popup and move it.
+- A plant you move becomes **Established**; ZoneFlow never moves anything by itself.
+- Services: `zoneflow.set_plant_ready` (`plant_id`, `ready_days`, `planted`; 0 stops following it; leaving the days out uses the usual number for the type), and `ready_days` / `planted` on `zoneflow.add_plant`.
+
 ## Copy settings and presets
 
 Starting a new bed from an existing one is quick:
 
 - **Copy settings** (Plants popup, or `zoneflow.copy_settings`) gives a zone another zone's watering settings: targets, thresholds, pulses, soak times, deep soak, schedule times, soil, method and so on. It never copies the valve, sensors, flow rate, rain gauge tip size, planting date or notes.
 - **Presets** are such a set of settings saved under a name (*Save this zone's settings as a preset*, or `zoneflow.save_preset`). Use one on any zone later with **Use preset**.
+- When you add a new zone, the first screen has **Quick setup** (ticked): ZoneFlow then asks only for the valve, how the water is delivered and how much it gives (emitters, flow of one, area wet; no default, because drip and sprinklers differ a lot), uses the sensors it clearly found, and takes the rest from the plant type and the default climate. Everything can be changed later in Configure; untick it for the full set of questions (1.7.1).
 - When you add a new zone, the first screen has **Start from**: a copy of another zone or a saved preset, instead of the plant type's usual settings.
 
 ## Easy setup

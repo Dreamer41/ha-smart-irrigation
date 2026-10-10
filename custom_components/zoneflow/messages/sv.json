@@ -166,6 +166,10 @@
       "water": "Vattna {minutes} min",
       "snooze": "Hoppa över idag",
       "fertilized": "Gödslat"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} är redo att flyttas",
+      "message": "Den har vuxit så många dagar som du ställt in. Öppna zonens Växter-dialog för att flytta den till sin bädd."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Arkiverad från {zone}",
       "removed": "Borttagen från {zone}",
       "note": "{text}",
-      "copied": "Inställningar kopierade från {source}"
+      "copied": "Inställningar kopierade från {source}",
+      "ready": "Redo att flyttas ({days} dagar efter plantering)",
+      "tracking": "Följs mot redo att flyttas: {days} dagar efter plantering",
+      "tracking_off": "Följs inte längre mot redo att flyttas"
     },
     "setting": {
       "growth_stage_mode": "Tillväxtstadium",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Steg {n} av {total}"
+    "progress": "Steg {n} av {total}",
+    "nothing_found": "Inga sensorer hittades. Lägg till dem senare under Konfigurera."
   }
 }

@@ -821,6 +821,7 @@ PLANTS_LINE_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async"
 const run = async () => {
   const card = await buildCard(false, false);
   card.ctx._statusEl.classList = { toggle() {} };
+  card.ctx._plantsEl.classList = { toggle() {} };
   const visible = { "sensor.status": { entity_id: "sensor.tomatoes_status" }, "select.demand_model": { entity_id: "select.tomatoes_demand_model" } };
   hass.states["select.tomatoes_demand_model"] = { state: "et_curve", attributes: { friendly_name: "Tomatoes Water Demand Model" } };
   hass.states["sensor.tomatoes_status"].attributes.valve = "switch.valve";
@@ -833,6 +834,8 @@ const run = async () => {
     one: show([{ id: "a", name: "Tomatoes", main: true }]),
     mixed: show([{ id: "a", name: "Eggplant", main: true }, { id: "b", name: "Basil", main: false }, { id: "c", name: "Marigold", main: false }]),
     none: show([]),
+    ready: show([{ id: "a", name: "Eggplant", main: true }, { id: "b", name: "Basil", main: false, stage: "ready" }]),
+    soon: show([{ id: "a", name: "Eggplant", main: true, stage: "seedling", days_left: 9 }]),
   }));
 };
 run();
@@ -855,4 +858,6 @@ def test_a_mixed_zone_lists_its_plants_under_the_status(tmp_path):
     assert out["one"][1] is True and out["none"][1] is True  # one plant needs no list
     assert out["mixed"][:2] == ["Plants: Eggplant, Basil, Marigold", False]
     assert out["mixed"][2:] == ["Tomatoes Water Demand Model: et_curve", False]  # how the zone is watered, always shown
+    assert out["ready"][:2] == ["Plants: Eggplant, Basil · Ready to move: Basil", False]
+    assert out["soon"][1] is True  # a seedling that is not ready yet adds nothing here
 

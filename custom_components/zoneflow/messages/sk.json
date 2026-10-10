@@ -166,6 +166,10 @@
       "water": "Zalievať {minutes} min",
       "snooze": "Dnes vynechať",
       "fertilized": "Hnojené"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} je pripravená na presadenie",
+      "message": "Rástla toľko dní, koľko ste nastavili. Otvorte dialóg Rastliny zóny a presuňte ju na záhon."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archivované z {zone}",
       "removed": "Odstránené z {zone}",
       "note": "{text}",
-      "copied": "Nastavenia skopírované z {source}"
+      "copied": "Nastavenia skopírované z {source}",
+      "ready": "Pripravená na presadenie ({days} dní po výsadbe)",
+      "tracking": "Sleduje sa do presadenia: {days} dní po výsadbe",
+      "tracking_off": "Už sa nesleduje do presadenia"
     },
     "setting": {
       "growth_stage_mode": "Režim fázy rastu",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Krok {n} z {total}"
+    "progress": "Krok {n} z {total}",
+    "nothing_found": "Nenašli sa žiadne senzory. Pridajte ich neskôr v Konfigurácii."
   }
 }

@@ -9,14 +9,16 @@
           "plant": "Cosa è piantato",
           "zone_type": "Dove cresce",
           "start_from": "Inizia da",
-          "location": "Dove si trova?"
+          "location": "Dove si trova?",
+          "quick_setup": "Configurazione rapida (consigliata)"
         },
         "data_description": {
           "zone_name": "Diventa il nome del dispositivo della zona e l'inizio dei nomi delle sue entità, e compare nei messaggi sul telefono. Es. \"Aiuola pomodori\", \"Prato davanti\".",
           "plant": "Precompila valori di partenza adatti a questa coltura: obiettivi settimanali d'acqua, coefficiente colturale, irrigazione profonda e aumento graduale secondo la crescita. \"Altro\" parte da valori generici. Puoi cambiarli tutti in seguito nella pagina del dispositivo della zona.",
           "zone_type": "All’aperto è il funzionamento classico di ZoneFlow. Le zone in serra e al chiuso aggiungono il controllo climatico (ventole, aperture, nebulizzazione, riscaldamento), possono funzionare senza valvola e non hanno pluviometro o previsioni a causa del tetto.",
           "start_from": "Inizia da una copia delle impostazioni di irrigazione di un'altra zona o da una preimpostazione salvata invece che da quelle del tipo di pianta. Valvola, sensori e portata non vengono mai copiati.",
-          "location": "L'area in cui si trova questa zona, se presente. Usa poi il pluviometro, il sensore di temperatura, il meteo e il telefono dell'area, a meno che tu non ne indichi di propri."
+          "location": "L'area in cui si trova questa zona, se presente. Usa poi il pluviometro, il sensore di temperatura, il meteo e il telefono dell'area, a meno che tu non ne indichi di propri.",
+          "quick_setup": "Chiede solo la valvola e come arriva l'acqua, e completa il resto in base al tipo di pianta e ai sensori trovati da ZoneFlow. Può cambiare tutto più tardi in Configura. Tolga la spunta per vedere subito tutte le impostazioni."
         }
       },
       "entities": {
@@ -255,6 +257,24 @@
           "area_name": "Come viene chiamata l'area, ad esempio Giardino retro o Giardino fronte.",
           "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura."
         }
+      },
+      "quick": {
+        "title": "Irrigazione ZoneFlow",
+        "description": "Quale valvola irriga questa zona, e come?\n\nZoneFlow usa i sensori trovati qui sotto. Li cambi più tardi in Configura, oppure torni indietro e tolga la spunta a Configurazione rapida.\n\nIndichi quanta acqua eroga: goccia a goccia e irrigatori differiscono molto. Basta un valore approssimativo; «Calibra la portata» sulla scheda della zona la misura con precisione.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Interruttore della valvola",
+          "irrigation_method": "Come arriva l'acqua alle piante?",
+          "emitters": "Numero di erogatori (gocciolatori, spruzzatori) nella zona",
+          "emitter_flow": "Portata di un erogatore",
+          "area": "Area che bagnano"
+        },
+        "data_description": {
+          "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
+          "irrigation_method": "Come arriva l'acqua. Con ala gocciolante o tubo poroso su terreno sabbioso, una nuova zona parte con almeno due impulsi, così l'acqua resta nella zona delle radici. Quanta acqua dà lo decide la portata (Configura → Portata).",
+          "emitters": "Conta tutti i gocciolatori o spruzzatori alimentati dalla valvola di questa zona.",
+          "emitter_flow": "Quanto dà un erogatore in un'ora: è stampato sull'erogatore o sulla confezione (es. 2 L/h, 0,5 gal/h).",
+          "area": "L'area che si bagna davvero. Per i gocciolatori su singole piante, somma le chiazze bagnate intorno a loro, non l'intera aiuola."
+        }
       }
     },
     "error": {
@@ -272,7 +292,8 @@
       "wu_no_stations": "Nessuna stazione all'interno del raggio. Senza una stazione vicina questa funzione non sarà utile.",
       "wu_pick_1_to_3": "Scegli 1, 2 o 3 stazioni.",
       "area_name_required": "Assegna un nome all'area.",
-      "area_name_exists": "Un'area con questo nome esiste già."
+      "area_name_exists": "Un'area con questo nome esiste già.",
+      "flow_rate_out_of_range": "Quei numeri danno una portata che questa zona non può avere. Controlli il numero di erogatori, la portata di uno e l'area."
     },
     "abort": {
       "already_configured": "La pioggia di Weather Underground è già configurata."
@@ -1405,6 +1426,14 @@
           "name": "Vecchia pianta principale",
           "description": "Solo quando la zona ha già una pianta principale. Cosa ne sarà: mantenerla come registro o archiviarla."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Dispositivo zona",
           "description": "La zona. Necessario solo con 2+ zone configurate."
@@ -1468,6 +1497,24 @@
         "text": {
           "name": "Nota",
           "description": "Cosa annotare."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1712,9 @@
     },
     "calibration_unavailable": {
       "message": "Questa zona non ha un'impostazione di portata da tarare."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

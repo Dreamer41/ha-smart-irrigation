@@ -166,6 +166,10 @@
       "water": "Vann {minutes} min",
       "snooze": "Hopp over i dag",
       "fertilized": "Gjødslet"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} er klar til å flyttes",
+      "message": "Den har vokst så mange dager som du har satt. Åpne sonens Planter-dialog for å flytte den til bedet."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Arkivert fra {zone}",
       "removed": "Fjernet fra {zone}",
       "note": "{text}",
-      "copied": "Innstillinger kopiert fra {source}"
+      "copied": "Innstillinger kopiert fra {source}",
+      "ready": "Klar til å flyttes ({days} dager etter planting)",
+      "tracking": "Følges mot klar til å flyttes: {days} dager etter planting",
+      "tracking_off": "Følges ikke lenger mot klar til å flyttes"
     },
     "setting": {
       "growth_stage_mode": "Vekststadium-modus",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Trinn {n} av {total}"
+    "progress": "Trinn {n} av {total}",
+    "nothing_found": "Ingen sensorer ble funnet. Legg dem til senere under Konfigurer."
   }
 }

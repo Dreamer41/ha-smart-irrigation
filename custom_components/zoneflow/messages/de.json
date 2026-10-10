@@ -166,6 +166,10 @@
       "water": "Wasser {minutes} Min",
       "snooze": "Heute aussetzen",
       "fertilized": "Gedüngt"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}: {plant} ist bereit zum Umsetzen",
+      "message": "Sie ist so viele Tage gewachsen, wie Sie eingestellt haben. Öffnen Sie den Pflanzen-Dialog der Zone, um sie ins Beet zu setzen."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archiviert aus {zone}",
       "removed": "Entfernt aus {zone}",
       "note": "{text}",
-      "copied": "Einstellungen kopiert von {source}"
+      "copied": "Einstellungen kopiert von {source}",
+      "ready": "Bereit zum Umsetzen ({days} Tage nach dem Pflanzen)",
+      "tracking": "Wird bis zum Umsetzen verfolgt: {days} Tage nach dem Pflanzen",
+      "tracking_off": "Wird nicht mehr bis zum Umsetzen verfolgt"
     },
     "setting": {
       "growth_stage_mode": "Wachstumsphasenmodus",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Schritt {n} von {total}"
+    "progress": "Schritt {n} von {total}",
+    "nothing_found": "Es wurden keine Sensoren gefunden. Fügen Sie sie später unter Konfigurieren hinzu."
   }
 }

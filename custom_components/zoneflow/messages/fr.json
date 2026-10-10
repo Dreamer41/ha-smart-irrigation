@@ -166,6 +166,10 @@
       "water": "Arroser {minutes} min",
       "snooze": "Sauter aujourd'hui",
       "fertilized": "Fertilisé"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone} : {plant} est prête à être repiquée",
+      "message": "Elle a poussé le nombre de jours que vous avez réglé. Ouvrez la boîte Plantes de la zone pour la déplacer dans sa planche."
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "Archivé depuis {zone}",
       "removed": "Retiré de {zone}",
       "note": "{text}",
-      "copied": "Paramètres copiés depuis {source}"
+      "copied": "Paramètres copiés depuis {source}",
+      "ready": "Prête à être repiquée ({days} jours après la plantation)",
+      "tracking": "Suivie jusqu'au repiquage : {days} jours après la plantation",
+      "tracking_off": "N'est plus suivie jusqu'au repiquage"
     },
     "setting": {
       "growth_stage_mode": "Mode stade de croissance",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "Étape {n} sur {total}"
+    "progress": "Étape {n} sur {total}",
+    "nothing_found": "Aucun capteur n'a été trouvé. Ajoutez-les plus tard dans Configurer."
   }
 }

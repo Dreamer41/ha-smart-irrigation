@@ -9,14 +9,16 @@
           "plant": "Hvad vokser der",
           "zone_type": "Hvor det gror",
           "start_from": "Start fra",
-          "location": "Hvor er dette?"
+          "location": "Hvor er dette?",
+          "quick_setup": "Hurtig opsætning (anbefalet)"
         },
         "data_description": {
           "zone_name": "Bliver zonens enhedsnavn og starten på dens entitetsnavne og vises i beskederne på telefonen. F.eks. \"Tomatbed\", \"Plæne foran\".",
           "plant": "Udfylder fornuftige startværdier for afgrøden: ugemål for vand, afgrødefaktor, dybdevanding og vækstoptrapning. \"Noget andet\" starter fra generelle værdier. Du kan ændre dem alle senere på zonens enhedsside.",
           "zone_type": "Udendørs er sådan ZoneFlow altid har fungeret. Drivhus- og indendørszoner tilføjer klimastyring (ventilatorer, udluftning, forstøvning, varmelegeme), kan fungere uden ventil og har hverken regnmåler eller vejrudsigt på grund af taget.",
           "start_from": "Start fra en kopi af en anden zones vandingsindstillinger eller en gemt forudindstilling i stedet for plantetypens. Ventil, sensorer og flow kopieres aldrig.",
-          "location": "Området, som denne zone er i, hvis nogen. Den bruger så områdets regnmåler, temperatursensor, vejr og telefon, medmindre du giver den sine egne."
+          "location": "Området, som denne zone er i, hvis nogen. Den bruger så områdets regnmåler, temperatursensor, vejr og telefon, medmindre du giver den sine egne.",
+          "quick_setup": "Spørger kun om ventilen og hvordan vandet leveres, og udfylder resten ud fra plantetypen og de sensorer, ZoneFlow fandt. Du kan ændre alt senere under Konfigurer. Fjern fluebenet for at se alle indstillinger nu."
         }
       },
       "entities": {
@@ -255,6 +257,24 @@
           "area_name": "Hvad området kaldes, for eksempel Baghave eller Forhave.",
           "rain_source_type": "Hvad regnmålersensoren rapporterer: en vip-tæller, en regntotal, en regnrate eller regn siden sidste aflæsning."
         }
+      },
+      "quick": {
+        "title": "ZoneFlow-vanding",
+        "description": "Hvilken ventil vander denne zone, og hvordan?\n\nZoneFlow bruger de sensorer, det fandt herunder. Ændr dem senere under Konfigurer, eller gå tilbage og fjern Hurtig opsætning.\n\nAngiv hvor meget vand den giver: dryp og sprinklere er meget forskellige. Et groft tal er fint; \"Kalibrer flowet\" på zonekortet måler det præcist.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Ventilkontakt",
+          "irrigation_method": "Hvordan kommer vandet til planterne?",
+          "emitters": "Antal dryppere og dyser i zonen",
+          "emitter_flow": "Flow for én drypper",
+          "area": "Område, de vander"
+        },
+        "data_description": {
+          "valve_entity": "Kontakten, der åbner zonens ventil (eller starter dens pumpe). Det eneste, ZoneFlow ikke kan undvære: den tænder og slukker den og sørger altid for, at den ender slukket.",
+          "irrigation_method": "Hvordan vandet gives. Med drypslange eller sivslange på sandjord starter en ny zone med mindst to pulser, så vandet bliver i rodzonen. Hvor meget vand der gives, bestemmes af flowet (Konfigurer → Flow).",
+          "emitters": "Tæl alle dryppere og dyser, som zonens ventil forsyner.",
+          "emitter_flow": "Hvad én drypper giver i timen: det står på drypperen eller emballagen (f.eks. 2 L/h, 0.5 gal/h).",
+          "area": "Det område, der faktisk bliver vådt. Ved dryppere ved enkelte planter lægger du de våde pletter omkring dem sammen, ikke hele bedet."
+        }
       }
     },
     "error": {
@@ -272,7 +292,8 @@
       "wu_no_stations": "Ingen stationer inden for radiussen. Uden en station i nærheden hjælper denne funktion ikke.",
       "wu_pick_1_to_3": "Vælg 1, 2 eller 3 stationer.",
       "area_name_required": "Navngiv området.",
-      "area_name_exists": "Et område med dette navn findes allerede."
+      "area_name_exists": "Et område med dette navn findes allerede.",
+      "flow_rate_out_of_range": "De tal giver et flow, som zonen ikke kan have. Tjek antallet af dryppere, flowet for én dypper og arealet."
     },
     "abort": {
       "already_configured": "Weather Underground-regn er allerede konfigureret."
@@ -1405,6 +1426,14 @@
           "name": "Gammel hovedplante",
           "description": "Kun når zonen allerede har en hovedplante. Hvad der sker med den: behold den som registrering eller arkiver den."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Zonenhed",
           "description": "Zonen. Kun nødvendig ved 2+ konfigurerede zoner."
@@ -1468,6 +1497,24 @@
         "text": {
           "name": "Note",
           "description": "Hvad der skal skrives ned."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1712,9 @@
     },
     "calibration_unavailable": {
       "message": "Denne zone har ingen indstilling for gennemstrømning, der skal kalibreres."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {

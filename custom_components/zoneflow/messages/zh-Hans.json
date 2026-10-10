@@ -166,6 +166,10 @@
       "water": "浇水 {minutes} 分钟",
       "snooze": "今天跳过",
       "fertilized": "已施肥"
+    },
+    "plant_ready": {
+      "title": "🌱 {zone}:{plant} 可以移栽了",
+      "message": "它已生长了您设定的天数。打开该区域的“植物”对话框,把它移到种植床。"
     }
   },
   "notes": {
@@ -272,7 +276,10 @@
       "archived": "已从 {zone} 归档",
       "removed": "已从 {zone} 移除",
       "note": "{text}",
-      "copied": "设置已复制自 {source}"
+      "copied": "设置已复制自 {source}",
+      "ready": "可以移栽(种植后 {days} 天)",
+      "tracking": "正在跟踪移栽时间:种植后 {days} 天",
+      "tracking_off": "不再跟踪移栽时间"
     },
     "setting": {
       "growth_stage_mode": "生长阶段模式",
@@ -388,6 +395,7 @@
     }
   },
   "setup": {
-    "progress": "步骤 {n} / {total}"
+    "progress": "步骤 {n} / {total}",
+    "nothing_found": "未找到传感器。之后可在“配置”中添加。"
   }
 }

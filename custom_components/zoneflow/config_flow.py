@@ -60,6 +60,7 @@ from .const import (
     CONF_PUMP_ID,
     CONF_PUMP_POWER_ENTITY,
     CONF_AREA_ID,
+    CONF_QUICK_SETUP,
     CONF_START_FROM,
     CONF_START_STATE,
     CONF_AREA_MM_PER_TIP,
@@ -759,6 +760,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._area_id = user_input.get("location") or None
                 if self._zone_type != ZONE_TYPE_OUTDOOR:
                     return await self.async_step_greenhouse_devices()
+                if user_input.get(CONF_QUICK_SETUP):
+                    return await self.async_step_quick()
                 return await self.async_step_entities()
         choices = await self._start_choices()
         start_field: dict[Any, Any] = {}
@@ -795,22 +798,16 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),
                     **start_field,
+                    # Ticked in the form (a suggested value, so a call that leaves it out
+                    # gets the full setup as before).
+                    vol.Optional(CONF_QUICK_SETUP, description={"suggested_value": True}): selector.BooleanSelector(),
                 }
             ),
             errors=errors,
         )
 
-    async def async_step_entities(self, user_input: dict[str, Any] | None = None):
-        errors: dict[str, str] = {}
-        if user_input is not None:
-            errors = _duplicate_errors(self.hass, user_input)
-            if not errors:
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(user_input[key].split(":")) == 2:
-                        user_input[key] = f"{user_input[key]}:00"
-                user_input[CONF_ZONE_NAME] = self._zone_name
-                self._data = user_input
-                return await self.async_step_climate()
+    async def _entity_defaults(self) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
+        """What the full setup form starts with, and the sensors found."""
         # Default CSV path is zone-specific so two zones never silently
         # write into the same log file if the user just accepts defaults.
         default_csv = f"/config/zoneflow_{slugify(self._zone_name)}.csv"
@@ -831,6 +828,117 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if self._area_id and key in AREA_SHARED_KEYS:
                 continue  # the zone's area provides it
             defaults.setdefault(key, entity_id)
+        return defaults, found
+
+    async def async_step_quick(self, user_input: dict[str, Any] | None = None):
+        """Quick setup (outdoor zones): the valve and how it is watered. The
+        sensors that were clearly found are used, the plant type and climate
+        give the rest; everything can be changed later in Configure."""
+        defaults, found = await self._entity_defaults()
+        errors: dict[str, str] = {}
+        imperial = self._imperial()
+        if user_input is not None:
+            errors = _duplicate_errors(self.hass, {**user_input, CONF_CSV_PATH: defaults[CONF_CSV_PATH]})
+            if CONF_CSV_PATH in errors:  # the log file is not a field of this form
+                errors = {"base": errors[CONF_CSV_PATH]}
+            flow_numbers: dict[str, float] = {}
+            if not errors:
+                # How much water the zone gives: emitters x one emitter's flow, over the area they wet
+                # (1 litre on 1 m2 is 1 mm). There is no default: drip and sprinklers differ a lot.
+                l_per_h = round(float(user_input["emitters"])) * float(user_input["emitter_flow"]) * (
+                    units.LITERS_PER_GALLON if imperial else 1.0
+                )
+                area_m2 = float(user_input["area"]) * (units.M2_PER_FT2 if imperial else 1.0)
+                mm_per_min = l_per_h / area_m2 / 60
+                _name, lo, hi, _step, _unit = NUMBER_DEFS["flow_rate_mm_per_min"]
+                if not lo <= mm_per_min <= hi:
+                    errors["base"] = "flow_rate_out_of_range"
+                else:
+                    flow_numbers["flow_rate_mm_per_min"] = round(mm_per_min, 3)
+                    _zname, zlo, zhi, _zstep, _zunit = NUMBER_DEFS["zone_flow_l_min"]
+                    if zlo < l_per_h / 60 <= zhi:
+                        flow_numbers["zone_flow_l_min"] = round(l_per_h / 60, 2)
+            if not errors:
+                user_input = {k: v for k, v in user_input.items() if k not in ("emitters", "emitter_flow", "area")}
+                data = _schema(defaults)({**defaults, **user_input})
+                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
+                    if len(data[key].split(":")) == 2:
+                        data[key] = f"{data[key]}:00"
+                data[CONF_ZONE_NAME] = self._zone_name
+                self._data = data
+                preset = {
+                    **CLIMATE_PRESETS[self._climate],
+                    **{k: v for k, v in (self._bundle.get("numbers") or {}).items() if k in CLIMATE_NUMBER_KEYS},
+                }
+                return self._create_outdoor_entry({key: preset[key] for key in CLIMATE_NUMBER_KEYS}, flow_numbers)
+        valve_default = defaults.get(CONF_VALVE_ENTITY)
+        return self.async_show_form(
+            step_id="quick",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_VALVE_ENTITY, description={"suggested_value": valve_default}): selector.EntitySelector(
+                        selector.EntitySelectorConfig(domain="switch")
+                    ),
+                    vol.Required(
+                        CONF_IRRIGATION_METHOD, default=defaults.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
+                    ): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=IRRIGATION_METHOD_OPTIONS, translation_key="irrigation_method")
+                    ),
+                    vol.Required("emitters"): selector.NumberSelector(
+                        selector.NumberSelectorConfig(min=1, max=2000, step=1, mode=selector.NumberSelectorMode.BOX)
+                    ),
+                    vol.Required("emitter_flow"): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.05, max=2000, step=0.05, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="gal/h" if imperial else "L/h",
+                        )
+                    ),
+                    vol.Required("area"): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0.1, max=100000, step=0.1, mode=selector.NumberSelectorMode.BOX,
+                            unit_of_measurement="ft²" if imperial else "m²",
+                        )
+                    ),
+                }
+            ),
+            errors=errors,
+            description_placeholders={"suggestions": suggest.describe(self.hass, found) or messages.text(self.hass, "setup.nothing_found")},
+        )
+
+    def _create_outdoor_entry(self, metric: dict[str, float], extra_numbers: dict[str, float] | None = None):
+        """The zone, once its settings are known (`metric`: the hot / cool /
+        fallback temperatures in degC; `extra_numbers`: more starting values,
+        such as the flow rate asked for in quick setup)."""
+        plant_numbers = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
+        data = {
+            **self._data,
+            **({CONF_AREA_ID: self._area_id} if self._area_id else {}),
+            CONF_PLANT: self._plant,
+            CONF_CLIMATE: self._climate,
+            CONF_INITIAL_NUMBERS: {
+                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric,
+                **(extra_numbers or {}),
+            },
+        }
+        if self._bundle.get("state"):
+            data[CONF_START_STATE] = dict(self._bundle["state"])
+        if self._zone_type != ZONE_TYPE_OUTDOOR:
+            data[CONF_ZONE_TYPE] = self._zone_type
+            data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
+        return self.async_create_entry(title=self._zone_name, data=data)
+
+    async def async_step_entities(self, user_input: dict[str, Any] | None = None):
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = _duplicate_errors(self.hass, user_input)
+            if not errors:
+                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
+                    if len(user_input[key].split(":")) == 2:
+                        user_input[key] = f"{user_input[key]}:00"
+                user_input[CONF_ZONE_NAME] = self._zone_name
+                self._data = user_input
+                return await self.async_step_climate()
+        defaults, found = await self._entity_defaults()
         return self.async_show_form(
             step_id="entities",
             data_schema=_schema(defaults),
@@ -974,22 +1082,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if metric["cool_temp_threshold"] >= metric["hot_temp_threshold"] - 0.01:
                 errors["base"] = "cool_not_below_hot"
             else:
-                plant_numbers = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
-                data = {
-                    **self._data,
-                    **({CONF_AREA_ID: self._area_id} if self._area_id else {}),
-                    CONF_PLANT: self._plant,
-                    CONF_CLIMATE: self._climate,
-                    CONF_INITIAL_NUMBERS: {
-                        **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric
-                    },
-                }
-                if self._bundle.get("state"):
-                    data[CONF_START_STATE] = dict(self._bundle["state"])
-                if self._zone_type != ZONE_TYPE_OUTDOOR:
-                    data[CONF_ZONE_TYPE] = self._zone_type
-                    data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
-                return self.async_create_entry(title=self._zone_name, data=data)
+                return self._create_outdoor_entry(metric)
         preset = {
             **CLIMATE_PRESETS[self._climate],
             **{k: v for k, v in (self._bundle.get("numbers") or {}).items() if k in CLIMATE_NUMBER_KEYS},

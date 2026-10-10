@@ -9,14 +9,16 @@
           "plant": "Ce qui est planté",
           "zone_type": "Lieu de culture",
           "start_from": "Partir de",
-          "location": "Où est-ce situé ?"
+          "location": "Où est-ce situé ?",
+          "quick_setup": "Configuration rapide (recommandée)"
         },
         "data_description": {
           "zone_name": "Devient le nom de l'appareil de la zone et le début des noms de ses entités, et apparaît dans les messages sur le téléphone. Ex. « Carré de tomates », « Pelouse avant ».",
           "plant": "Préremplit des valeurs de départ adaptées à cette culture : objectifs d'eau hebdo, coefficient cultural, arrosage profond et progression selon la croissance. « Autre chose » part de valeurs générales. Vous pourrez tout modifier plus tard sur la page de l'appareil de la zone.",
           "zone_type": "Extérieur correspond au fonctionnement historique de ZoneFlow. Les zones Serre et Intérieur ajoutent le contrôle du climat (ventilateurs, ouvrants, brumisation, chauffage), peuvent fonctionner sans vanne et ne disposent ni de pluviomètre ni de prévisions météo en raison du toit.",
           "start_from": "Partez d'une copie des paramètres d'arrosage d'une autre zone ou d'un préréglage enregistré au lieu du type de plante. La vanne, les capteurs et le débit ne sont jamais copiés.",
-          "location": "Le secteur où se trouve cette zone, le cas échéant. Elle utilise alors le pluviomètre, le capteur de température, la météo et le téléphone du secteur, sauf si vous lui en donnez de propres."
+          "location": "Le secteur où se trouve cette zone, le cas échéant. Elle utilise alors le pluviomètre, le capteur de température, la météo et le téléphone du secteur, sauf si vous lui en donnez de propres.",
+          "quick_setup": "Ne demande que la vanne et la façon d'amener l'eau, et complète le reste d'après le type de plante et les capteurs trouvés par ZoneFlow. Tout se modifie plus tard dans Configurer. Décochez pour voir tous les réglages maintenant."
         }
       },
       "entities": {
@@ -255,6 +257,24 @@
           "area_name": "Le nom de la zone, par exemple Jardin arrière ou Cour avant.",
           "rain_source_type": "Ce que rapporte le capteur du pluviomètre : un compteur à basculement, un total de pluie, un débit de pluie ou la pluie depuis la dernière lecture."
         }
+      },
+      "quick": {
+        "title": "Irrigation ZoneFlow",
+        "description": "Quelle vanne arrose cette zone, et comment ?\n\nZoneFlow utilise les capteurs trouvés ci-dessous. Modifiez-les plus tard dans Configurer, ou revenez en arrière et décochez Configuration rapide.\n\nIndiquez la quantité d'eau fournie : le goutte-à-goutte et les arroseurs diffèrent beaucoup. Une valeur approximative suffit ; « Calibrer le débit » sur la carte de la zone la mesure exactement.\n\n{suggestions}",
+        "data": {
+          "valve_entity": "Interrupteur de la vanne",
+          "irrigation_method": "Comment l'eau parvient-elle aux plantes ?",
+          "emitters": "Nombre de goutteurs (ou diffuseurs) dans la zone",
+          "emitter_flow": "Débit d'un goutteur",
+          "area": "Surface arrosée"
+        },
+        "data_description": {
+          "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
+          "irrigation_method": "Comment l'eau est apportée. Avec du goutte-à-goutte ou un tuyau poreux sur sol sableux, une nouvelle zone démarre avec au moins deux passages, pour que l'eau reste dans la zone des racines. La quantité d'eau donnée dépend du débit (Configurer → Débit).",
+          "emitters": "Comptez tous les goutteurs ou diffuseurs alimentés par la vanne de cette zone.",
+          "emitter_flow": "Ce que donne un goutteur par heure : c'est indiqué dessus ou sur son emballage (ex. 2 L/h, 0,5 gal/h).",
+          "area": "La surface réellement mouillée. Pour des goutteurs au pied de plantes isolées, additionnez les surfaces mouillées autour d'elles, pas tout le massif."
+        }
       }
     },
     "error": {
@@ -272,7 +292,8 @@
       "wu_no_stations": "Aucune station dans le rayon. Sans station à proximité, cette fonctionnalité ne sera d'aucune utilité.",
       "wu_pick_1_to_3": "Choisissez 1, 2 ou 3 stations.",
       "area_name_required": "Nommez la zone.",
-      "area_name_exists": "Une zone portant ce nom existe déjà."
+      "area_name_exists": "Une zone portant ce nom existe déjà.",
+      "flow_rate_out_of_range": "Ces nombres donnent un débit que cette zone ne peut pas avoir. Vérifiez le nombre d'émetteurs, le débit d'un émetteur et la surface."
     },
     "abort": {
       "already_configured": "La pluie Weather Underground est déjà configurée."
@@ -1405,6 +1426,14 @@
           "name": "Ancienne plante principale",
           "description": "Uniquement lorsque la zone a déjà une plante principale. Ce qu'elle devient : la conserver en tant qu'enregistrement ou l'archiver."
         },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Follow this plant as a nursery plant: it is ready to move this many days after planting (0 = do not follow). Leave out to not follow it."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted (for the ready-to-move count)."
+        },
         "device_id": {
           "name": "Appareil de zone",
           "description": "La zone. Requis uniquement si 2 zones ou plus sont configurées."
@@ -1468,6 +1497,24 @@
         "text": {
           "name": "Note",
           "description": "Ce qu'il faut noter."
+        }
+      }
+    },
+    "set_plant_ready": {
+      "name": "Set Plant Ready To Move",
+      "description": "Follows a nursery plant towards \"ready to move\": ready this many days after it was planted. A phone message says when it is. 0 stops following it; leaving the days out uses the usual number for its type.",
+      "fields": {
+        "plant_id": {
+          "name": "Plant",
+          "description": "The plant's id."
+        },
+        "ready_days": {
+          "name": "Ready After Days",
+          "description": "Days after planting (0 = stop following it)."
+        },
+        "planted": {
+          "name": "Planted",
+          "description": "The day it was planted."
         }
       }
     },
@@ -1665,6 +1712,9 @@
     },
     "calibration_unavailable": {
       "message": "Cette zone n'a pas de paramètre de débit à étalonner."
+    },
+    "plant_ready_days_range": {
+      "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     }
   },
   "issues": {
