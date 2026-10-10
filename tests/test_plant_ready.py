@@ -162,7 +162,7 @@ async def test_the_phone_message_names_the_plant(hass, fake_valve_services, monk
 
 @pytest.mark.asyncio
 async def test_the_planting_date_the_card_gets_is_the_local_day(hass, fake_valve_services):
-    await hass.config.async_set_time_zone("Asia/Bangkok")  # local midnight is the day before in UTC
+    await hass.config.async_update(time_zone="Asia/Bangkok")  # local midnight is the day before in UTC
     zone = _zone(hass)
     await _boot(hass, zone)
     c = _ctl(hass, zone)
