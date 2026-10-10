@@ -8,8 +8,21 @@ from homeassistant.helpers import device_registry as dr
 
 from . import plant_actions
 from .const import DOMAIN
-from . import presets, setup_check
+from . import presets, setup_check, why
 from .plants import async_get_book
+
+
+@websocket_api.websocket_command({vol.Required("type"): "zoneflow/why", vol.Required("device_id"): str})
+@websocket_api.async_response
+async def ws_why(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
+    """The numbers behind the zone's next watering."""
+    device = dr.async_get(hass).async_get(msg["device_id"])
+    controllers = hass.data.get(DOMAIN, {})
+    zone_id = next((e for e in (device.config_entries if device else ()) if e in controllers), None)
+    if zone_id is None:
+        connection.send_error(msg["id"], "not_found", "No such ZoneFlow zone")
+        return
+    connection.send_result(msg["id"], {"items": why.explain(controllers[zone_id])})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "zoneflow/check", vol.Required("device_id"): str})

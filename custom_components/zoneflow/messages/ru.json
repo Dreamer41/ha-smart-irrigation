@@ -344,5 +344,31 @@
       "none": "No phone to notify. You will not get messages about watering.",
       "fail": "The phone {entity} does not exist any more, so no messages reach you."
     }
+  },
+  "why": {
+    "method": "Watering method: {method}.",
+    "method_temperature": "temperature tiers (a hotter week gets more water)",
+    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
+    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "source": {
+      "sensor": "the average of the last days' highs",
+      "last_known": "from the last days, the sensor is offline now",
+      "fallback": "the Fallback Temperature, no full day recorded yet",
+      "manual": "the Fallback / Manual Temperature setting"
+    },
+    "tier": {
+      "hot": "hot",
+      "normal": "normal",
+      "cool": "cool"
+    },
+    "target": "Weekly target: {target}.",
+    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
+    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
+    "needed": "If it watered now: {needed} to add, about {minutes} min.",
+    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
+    "soil": "Soil moisture {pct} % ({status}).",
+    "soil_dry": "dry",
+    "soil_wet": "wet",
+    "soil_ok": "in between"
   }
 }

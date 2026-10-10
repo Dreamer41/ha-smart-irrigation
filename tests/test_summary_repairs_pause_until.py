@@ -249,6 +249,9 @@ async def test_issues_are_checked_hourly(hass, fake_valve_services, tmp_path):
 async def test_paused_until_resumes_by_itself(hass, fake_valve_services, tmp_path):
     await _seed(hass)
     zone = await _zone(hass, tmp_path, "Chilis")
+    # Firing three days of timers at once runs them in no fixed order; a zone that
+    # has just watered has nothing due when its daily slots fire, whatever the order.
+    zone.store.state.last_routine_ts = zone.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp()
     until_id = next(s.entity_id for s in hass.states.async_all("datetime") if s.entity_id.endswith("paused_until"))
     pause_id = next(s.entity_id for s in hass.states.async_all("switch") if s.entity_id.endswith("_pause"))
     with pytest.raises(ServiceValidationError):

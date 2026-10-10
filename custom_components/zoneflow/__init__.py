@@ -79,6 +79,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     await frontend.async_register(hass)
     websocket_api.async_register_command(hass, plant_api.ws_plants)
     websocket_api.async_register_command(hass, plant_api.ws_check)
+    websocket_api.async_register_command(hass, plant_api.ws_why)
     return True
 
 

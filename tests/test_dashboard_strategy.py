@@ -686,3 +686,85 @@ def test_the_help_links_point_at_guides_that_exist():
     assert base, "the guide base address changed"
     for name in set(re.findall(r"\$\{GUIDE\}([A-Z-]+\.md)", text)):
         assert (CARD.parents[3] / "docs" / name).is_file(), name
+
+
+WHY_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async")] + r"""
+const run = async () => {
+  const card = await buildCard(false, false);
+  const toggle = card.all.filter((e) => e.className === "why-toggle")[0];
+  const panel = card.all.filter((e) => e.className === "why-panel")[0];
+  const result = { before: [toggle._text, panel.hidden] };
+  toggle.listeners.click();
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+  result.open = [toggle._text, panel.hidden, panel.children.map((c) => c._text)];
+  toggle.listeners.click();
+  result.closed = [toggle._text, panel.hidden];
+  result.calls = calls;
+  console.log(JSON.stringify(result));
+};
+run();
+"""
+
+
+def test_the_why_panel_opens_with_the_numbers_and_closes_again(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    entities, states, devices = {}, {}, {}
+    _zone(entities, states, "d1", "Tomatoes", "tomatoes")
+    devices["d1"] = {"name": "Tomatoes"}
+    ws = {"items": [{"id": "target", "text": "Weekly target: 35 mm."}, {"id": "last", "text": "Next watering Mon 05:30"}]}
+    keys = ["sensor.status", "button.run_routine", "switch.pause"]
+    harness = tmp_path / "why.js"
+    harness.write_text(WHY_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": devices, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": ws, "keys": keys})],
+                          capture_output=True, encoding="utf-8", timeout=60, check=False)
+    assert done.returncode == 0, done.stderr[-1000:]
+    out = json.loads(done.stdout)
+    assert out["before"] == ["Why?", True]
+    assert out["open"] == ["Hide", False, ["Weekly target: 35 mm.", "Next watering Mon 05:30"]]
+    assert out["closed"] == ["Why?", True]
+
+
+GARDEN_HARNESS = _PREAMBLE + r"""
+const over = registry["zoneflow-overview-card"].prototype;
+const zones = input.zones;
+const out = over._summary.call({ _hass: hass }, zones);
+console.log(JSON.stringify(out));
+"""
+
+
+def test_my_garden_summary_chips(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+
+    def sensor(device, key, entity, state, unit):
+        return (
+            {"entity_id": entity, "device_id": device, "platform": "zoneflow", "translation_key": key},
+            {"entity_id": entity, "state": state, "attributes": {"unit_of_measurement": unit}},
+        )
+
+    entities, states = {}, {}
+    for device, rain, water in (("d1", "4.2", "100"), ("d2", "6.0", "50"), ("d3", "unknown", "unavailable")):
+        for key, entity, state, unit in (
+            ("rain_today", f"sensor.{device}_rain_today", rain, "mm"),
+            ("water_used_30d", f"sensor.{device}_water_30d", water, "L"),
+        ):
+            reg, st = sensor(device, key, entity, state, unit)
+            entities[entity], states[entity] = reg, st
+    zones = [
+        {"device_id": "d1", "name": "Tomatoes", "code": "watering", "next": None},
+        {"device_id": "d2", "name": "Chilis", "code": "next", "next": "2099-01-02T05:30:00+00:00"},
+        {"device_id": "d3", "name": "Lawn", "code": "lock_held", "next": "2099-01-01T05:30:00+00:00"},
+    ]
+    harness = tmp_path / "garden.js"
+    harness.write_text(GARDEN_HARNESS, encoding="utf-8")
+    hass = {"entities": entities, "states": states, "devices": {}, "locale": {"language": "en"}, "user": {"is_admin": True}}
+    done = subprocess.run(["node", str(harness), str(CARD), json.dumps({"hass": hass, "ws": {}, "zones": zones})],
+                          capture_output=True, encoding="utf-8", timeout=60, check=False)
+    assert done.returncode == 0, done.stderr[-1000:]
+    chips = json.loads(done.stdout)
+    texts = [c[1] for c in chips]
+    assert texts[0] == "Watering now: Tomatoes"
+    assert texts[1].startswith("Next: Lawn")  # the soonest of the zones that have a next watering
+    assert "Rain today: 6.0 mm" in texts and "Needs a look: Lawn" in texts and "Water used, 30 days: 150 L" in texts
