@@ -322,7 +322,7 @@ const I18N = {
       "water_30d": "Verbrauchtes Wasser, 30 Tage",
       "pause_house": "Gewächshaus pausieren (stoppt die Bewässerung seiner Kulturen)",
       "snooze_house": "Heutige Bewässerung der Gewächshauskulturen aussetzen",
-      "add_area": "Add area"
+      "add_area": "Bereich hinzufügen"
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -417,9 +417,9 @@ const I18N = {
       "preset_name": "Name der Voreinstellung",
       "preset_save": "Einstellungen dieser Zone als Voreinstellung speichern",
       "no_presets": "Noch keine gespeicherten Voreinstellungen.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Umbenennen",
+      "rename_prompt": "Neuer Name",
+      "use_settings": "Auch die Bewässerungseinstellungen dieser Pflanze für die neue Zone übernehmen (sonst behält die Zone ihre bisherige Bewässerung)"
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -542,7 +542,7 @@ const I18N = {
       "water_30d": "Agua usada, 30 días",
       "pause_house": "Pausar el invernadero (detiene el riego de sus cultivos)",
       "snooze_house": "Omitir el riego de hoy de los cultivos del invernadero",
-      "add_area": "Add area"
+      "add_area": "Añadir área"
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -637,9 +637,9 @@ const I18N = {
       "preset_name": "Nombre del ajuste preestablecido",
       "preset_save": "Guardar los ajustes de esta zona como ajuste preestablecido",
       "no_presets": "Aún no hay ajustes preestablecidos guardados.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Renombrar",
+      "rename_prompt": "Nuevo nombre",
+      "use_settings": "Usar también los ajustes de riego de esta planta en la nueva zona (si no, la zona conserva su riego actual)"
     },
     "check": {
       "title": "Comprobar mi configuración",
@@ -762,7 +762,7 @@ const I18N = {
       "water_30d": "Veden käyttö, 30 päivää",
       "pause_house": "Aseta kasvihuone tauolle (pysäyttää sen kasvien kastelun)",
       "snooze_house": "Ohita kasvihuoneen kasvien tämän päivän kastelu",
-      "add_area": "Add area"
+      "add_area": "Lisää alue"
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -857,9 +857,9 @@ const I18N = {
       "preset_name": "Esiasetuksen nimi",
       "preset_save": "Tallenna tämän vyöhykkeen asetukset esiasetukseksi",
       "no_presets": "Ei vielä tallennettuja esiasetuksia.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Nimeä uudelleen",
+      "rename_prompt": "Uusi nimi",
+      "use_settings": "Käytä myös tämän kasvin kastelun asetuksia uudella vyöhykkeellä (muuten vyöhyke säilyttää nykyisen kastelutapansa)"
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -982,7 +982,7 @@ const I18N = {
       "water_30d": "Eau utilisée, 30 jours",
       "pause_house": "Mettre la serre en pause (arrête l'arrosage de ses cultures)",
       "snooze_house": "Sauter l'arrosage d'aujourd'hui pour les cultures de la serre",
-      "add_area": "Add area"
+      "add_area": "Ajouter un secteur"
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -1077,9 +1077,9 @@ const I18N = {
       "preset_name": "Nom du préréglage",
       "preset_save": "Enregistrer les paramètres de cette zone comme préréglage",
       "no_presets": "Aucun préréglage enregistré pour l'instant.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Renommer",
+      "rename_prompt": "Nouveau nom",
+      "use_settings": "Utiliser aussi les réglages d'arrosage de cette plante sur la nouvelle zone (sinon la zone garde son arrosage actuel)"
     },
     "check": {
       "title": "Vérifier ma configuration",
@@ -1202,7 +1202,7 @@ const I18N = {
       "water_30d": "Acqua utilizzata, 30 giorni",
       "pause_house": "Metti in pausa la serra (interrompe l'irrigazione delle sue colture)",
       "snooze_house": "Salta l'irrigazione di oggi delle colture della serra",
-      "add_area": "Add area"
+      "add_area": "Aggiungi area"
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -1297,9 +1297,9 @@ const I18N = {
       "preset_name": "Nome preimpostazione",
       "preset_save": "Salva le impostazioni di questa zona come preimpostazione",
       "no_presets": "Ancora nessuna preimpostazione salvata.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Rinomina",
+      "rename_prompt": "Nuovo nome",
+      "use_settings": "Usa anche le impostazioni di irrigazione di questa pianta nella nuova zona (altrimenti la zona mantiene l'irrigazione attuale)"
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1422,7 +1422,7 @@ const I18N = {
       "water_30d": "Gebruikt water, 30 dagen",
       "pause_house": "Pauzeer de kas (stopt de watergift van de gewassen)",
       "snooze_house": "Sproeibeurt van vandaag voor kasteelten overslaan",
-      "add_area": "Add area"
+      "add_area": "Gebied toevoegen"
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -1517,9 +1517,9 @@ const I18N = {
       "preset_name": "Naam voorinstelling",
       "preset_save": "Sla de instellingen van deze zone op als voorinstelling",
       "no_presets": "Nog geen opgeslagen voorinstellingen.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Hernoemen",
+      "rename_prompt": "Nieuwe naam",
+      "use_settings": "Ook de bewateringsinstellingen van deze plant op de nieuwe zone gebruiken (anders houdt de zone haar huidige bewatering)"
     },
     "check": {
       "title": "Mijn instellingen controleren",
@@ -1642,7 +1642,7 @@ const I18N = {
       "water_30d": "Zużyta woda, 30 dni",
       "pause_house": "Wstrzymaj szklarnię (zatrzymuje podlewanie jej upraw)",
       "snooze_house": "Pomiń dzisiejsze podlewanie upraw w szklarni",
-      "add_area": "Add area"
+      "add_area": "Dodaj obszar"
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -1737,9 +1737,9 @@ const I18N = {
       "preset_name": "Nazwa szablonu",
       "preset_save": "Zapisz ustawienia tej strefy jako szablon",
       "no_presets": "Brak zapisanych szablonów.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Zmień nazwę",
+      "rename_prompt": "Nowa nazwa",
+      "use_settings": "Użyj też ustawień podlewania tej rośliny w nowej strefie (w przeciwnym razie strefa zachowa obecny sposób podlewania)"
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -1862,7 +1862,7 @@ const I18N = {
       "water_30d": "Água utilizada, 30 dias",
       "pause_house": "Pausar a estufa (pára a rega das suas culturas)",
       "snooze_house": "Não regar hoje as culturas da estufa",
-      "add_area": "Add area"
+      "add_area": "Adicionar área"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -1957,9 +1957,9 @@ const I18N = {
       "preset_name": "Nome da pré-definição",
       "preset_save": "Guardar as definições desta zona como pré-definição",
       "no_presets": "Ainda não há pré-definições guardadas.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Mudar o nome",
+      "rename_prompt": "Novo nome",
+      "use_settings": "Usar também as definições de rega desta planta na nova zona (caso contrário, a zona mantém a rega atual)"
     },
     "check": {
       "title": "Verificar a minha configuração",
@@ -2082,7 +2082,7 @@ const I18N = {
       "water_30d": "Använt vatten, 30 dagar",
       "pause_house": "Pausa växthuset (stoppar vattning av dess grödor)",
       "snooze_house": "Hoppa över dagens vattning av växthusgrödorna",
-      "add_area": "Add area"
+      "add_area": "Lägg till område"
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -2177,9 +2177,9 @@ const I18N = {
       "preset_name": "Namn på förinställning",
       "preset_save": "Spara den här zonens inställningar som en förinställning",
       "no_presets": "Inga sparade förinställningar ännu.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Byt namn",
+      "rename_prompt": "Nytt namn",
+      "use_settings": "Använd även den här växtens bevattningsinställningar i den nya zonen (annars behåller zonen sin nuvarande bevattning)"
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -2302,7 +2302,7 @@ const I18N = {
       "water_30d": "Spotřebovaná voda za 30 dní",
       "pause_house": "Pozastavit skleník (zastaví zalévání jeho plodin)",
       "snooze_house": "Vynechat dnešní zálivku plodin ve skleníku",
-      "add_area": "Add area"
+      "add_area": "Přidat oblast"
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -2397,9 +2397,9 @@ const I18N = {
       "preset_name": "Název předvolby",
       "preset_save": "Uložit nastavení této zóny jako předvolbu",
       "no_presets": "Zatím žádné uložené předvolby.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Přejmenovat",
+      "rename_prompt": "Nový název",
+      "use_settings": "Použít také nastavení zálivky této rostliny v nové zóně (jinak zóna zachová dosavadní zálivku)"
     },
     "check": {
       "title": "Zkontrolovat mé nastavení",
@@ -2522,7 +2522,7 @@ const I18N = {
       "water_30d": "Brugt vand, 30 dage",
       "pause_house": "Sæt drivhuset på pause (stopper vanding af dets afgrøder)",
       "snooze_house": "Spring dagens vanding af drivhusafgrøderne over",
-      "add_area": "Add area"
+      "add_area": "Tilføj område"
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -2617,9 +2617,9 @@ const I18N = {
       "preset_name": "Navn på forudindstilling",
       "preset_save": "Gem denne zones indstillinger som en forudindstilling",
       "no_presets": "Ingen gemte forudindstillinger endnu.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Omdøb",
+      "rename_prompt": "Nyt navn",
+      "use_settings": "Brug også denne plantes vandingsindstillinger i den nye zone (ellers beholder zonen sin nuværende vanding)"
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -2742,7 +2742,7 @@ const I18N = {
       "water_30d": "Felhasznált víz, 30 nap",
       "pause_house": "Üvegház szüneteltetése (leállítja a növények öntözését)",
       "snooze_house": "Kasvihuoneen növényeinek mai öntözésének kihagyása",
-      "add_area": "Add area"
+      "add_area": "Terület hozzáadása"
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -2837,9 +2837,9 @@ const I18N = {
       "preset_name": "Előbeállítás neve",
       "preset_save": "Zóna beállításainak mentése előbeállításként",
       "no_presets": "Még nincsenek elmentett előbeállítások.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Átnevezés",
+      "rename_prompt": "Új név",
+      "use_settings": "A növény öntözési beállításait is használja az új zónában (egyébként a zóna megtartja a jelenlegi öntözést)"
     },
     "check": {
       "title": "Beállítások ellenőrzése",
@@ -2962,7 +2962,7 @@ const I18N = {
       "water_30d": "Brukt vann, 30 dager",
       "pause_house": "Sett drivhuset på pause (stopper vanning av kulturene)",
       "snooze_house": "Hopp over dagens vanning av drivhuskulturene",
-      "add_area": "Add area"
+      "add_area": "Legg til område"
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -3057,9 +3057,9 @@ const I18N = {
       "preset_name": "Navn på forhåndsinnstilling",
       "preset_save": "Lagre denne sonens innstillinger som en forhåndsinnstilling",
       "no_presets": "Ingen lagrede forhåndsinnstillinger ennå.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Gi nytt navn",
+      "rename_prompt": "Nytt navn",
+      "use_settings": "Bruk også denne plantens vanningsinnstillinger i den nye sonen (ellers beholder sonen sin nåværende vanning)"
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -3182,7 +3182,7 @@ const I18N = {
       "water_30d": "Água utilizada, 30 dias",
       "pause_house": "Pausar a estufa (para a irrigação de suas culturas)",
       "snooze_house": "Não irrigar hoje as culturas da estufa",
-      "add_area": "Add area"
+      "add_area": "Adicionar área"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -3277,9 +3277,9 @@ const I18N = {
       "preset_name": "Nome da predefinição",
       "preset_save": "Salvar as configurações desta zona como predefinição",
       "no_presets": "Nenhuma predefinição salva ainda.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Renomear",
+      "rename_prompt": "Novo nome",
+      "use_settings": "Usar também as configurações de irrigação desta planta na nova zona (caso contrário, a zona mantém a irrigação atual)"
     },
     "check": {
       "title": "Verificar minha configuração",
@@ -3402,7 +3402,7 @@ const I18N = {
       "water_30d": "Расход воды, 30 дней",
       "pause_house": "Поставить теплицу на паузу (останавливает полив культур)",
       "snooze_house": "Пропустить сегодняшнее поливание культур в теплице",
-      "add_area": "Add area"
+      "add_area": "Добавить область"
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -3497,9 +3497,9 @@ const I18N = {
       "preset_name": "Название пресета",
       "preset_save": "Сохранить настройки этой зоны как пресет",
       "no_presets": "Сохранённых пресетов пока нет.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Переименовать",
+      "rename_prompt": "Новое имя",
+      "use_settings": "Также использовать настройки полива этого растения в новой зоне (иначе зона сохранит нынешний полив)"
     },
     "check": {
       "title": "Проверить настройки",
@@ -3622,7 +3622,7 @@ const I18N = {
       "water_30d": "Spotrebovaná voda, 30 dní",
       "pause_house": "Pozastaviť skleník (zastaví zalievanie jeho plodín)",
       "snooze_house": "Vynechať dnešnú zálievku plodín v skleníku",
-      "add_area": "Add area"
+      "add_area": "Pridať oblasť"
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -3717,9 +3717,9 @@ const I18N = {
       "preset_name": "Názov predvoľby",
       "preset_save": "Uložiť nastavenia tejto zóny ako predvoľbu",
       "no_presets": "Zatiaľ žiadne uložené predvoľby.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Premenovať",
+      "rename_prompt": "Nový názov",
+      "use_settings": "Použiť aj nastavenia polievania tejto rastliny v novej zóne (inak zóna zachová doterajšie polievanie)"
     },
     "check": {
       "title": "Skontrolovať moje nastavenie",
@@ -3842,7 +3842,7 @@ const I18N = {
       "water_30d": "Використана вода, 30 днів",
       "pause_house": "Поставити теплицю на паузу (зупиняє полив культур)",
       "snooze_house": "Пропустити сьогоднішній полив культур у теплиці",
-      "add_area": "Add area"
+      "add_area": "Додати область"
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -3937,9 +3937,9 @@ const I18N = {
       "preset_name": "Назва пресету",
       "preset_save": "Зберегти налаштування цієї зони як пресет",
       "no_presets": "Поки немає збережених пресетів.",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "Перейменувати",
+      "rename_prompt": "Нова назва",
+      "use_settings": "Також використати налаштування поливу цієї рослини в новій зоні (інакше зона зберігає нинішній полив)"
     },
     "check": {
       "title": "Перевірити мої налаштування",
@@ -4062,7 +4062,7 @@ const I18N = {
       "water_30d": "30 天用水量",
       "pause_house": "暂停温室（停止为其作物浇水）",
       "snooze_house": "跳过温室作物今天的浇水",
-      "add_area": "Add area"
+      "add_area": "添加区域"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -4157,9 +4157,9 @@ const I18N = {
       "preset_name": "预设名称",
       "preset_save": "将此区域的设置保存为预设",
       "no_presets": "暂无已保存的预设。",
-      "rename": "Rename",
-      "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)"
+      "rename": "重命名",
+      "rename_prompt": "新名称",
+      "use_settings": "同时在新区域使用这株植物的浇水设置（否则该区域保持目前的浇水方式）"
     },
     "check": {
       "title": "检查我的设置",

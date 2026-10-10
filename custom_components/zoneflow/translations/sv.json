@@ -16,7 +16,7 @@
           "plant": "Fyller i rimliga startvärden för den här växten: veckomål för vatten, växtfaktor, djupvattning och upptrappning. ”Något annat” utgår från allmänna värden. Allt kan ändras senare på zonens enhetssida.",
           "zone_type": "Utomhus är hur ZoneFlow alltid har fungerat. Växthus och inomhuszoner lägger till klimatstyrning (fläktar, vädring, dimmning, värmare), kan fungera utan ventil och har ingen regnmätare eller prognos på grund av taket.",
           "start_from": "Starta från en kopia av en annan zons bevattningsinställningar eller en sparad förinställning istället för växttypens. Ventil, sensorer och flöde kopieras aldrig.",
-          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
+          "location": "Området som den här zonen finns i, om något. Den använder då områdets regnmätare, temperatursensor, väder och telefon, om du inte ger den egna."
         }
       },
       "entities": {

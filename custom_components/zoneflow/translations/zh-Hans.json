@@ -16,7 +16,7 @@
           "plant": "为这种作物填入合适的初始值：每周水量目标、作物系数、深层浇灌和生长期递增。“其他”则从通用值开始。所有值以后都可以在该区域的设备页面上修改。",
           "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。",
           "start_from": "选择从其他区域的浇水设置副本或已保存的预设开始，而非使用该植物类型的默认设置。阀门、传感器和流量数据绝不会被复制。",
-          "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own."
+          "location": "这个区域所在的上级区域（如果有）。除非你为它指定自己的传感器，否则它会使用上级区域的雨量计、温度传感器、天气和手机。"
         }
       },
       "entities": {
