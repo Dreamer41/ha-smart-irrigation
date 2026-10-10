@@ -118,9 +118,9 @@ async def test_set_main_remove_and_note(hass, fake_valve_services):
     tomato = book.main(zone.entry_id)
     await _call(hass, "add_plant", name="Chilis", plant_type="chilis", device_id=_device(hass, zone))
     chili = next(p for p in book.in_zone(zone.entry_id) if p["name"] == "Chilis")
-    await _call(hass, "set_main_plant", plant_id=chili["id"])
+    await _call(hass, "set_main_plant", plant_id=chili["id"], use_plant_settings=True)
     assert book.main(zone.entry_id)["id"] == chili["id"] and not tomato["main"]
-    assert _ctl(hass, zone).number("crop_coefficient") == 0.95
+    assert _ctl(hass, zone).number("crop_coefficient") == 0.95  # asked for: the chili's settings
 
     await _call(hass, "add_plant_note", plant_id=chili["id"], text="  first flowers ")
     assert chili["history"][-1]["kind"] == "note" and chili["history"][-1]["data"] == {"text": "first flowers"}
@@ -213,4 +213,32 @@ async def test_a_plant_is_renamed_and_the_status_lists_the_new_name(hass, fake_v
     assert hass.states.get("sensor.tomatoes_status").attributes["plants"][0]["name"] == "Early tomatoes"
     with pytest.raises(ServiceValidationError):
         await _call(hass, "rename_plant", plant_id=plant["id"], name="   ")
+
+
+@pytest.mark.asyncio
+async def test_making_a_record_the_main_plant_keeps_the_beds_watering_unless_asked(hass, fake_valve_services):
+    a = _zone(hass, **{CONF_PLANT: "tomatoes"})
+    await _boot(hass, a)
+    c = _ctl(hass, a)
+    await c.numbers["target_weekly_mm"].async_set_metric_value(33.0)
+    await _call(hass, "add_plant", name="Basil", plant_type="herbs", device_id=_device(hass, a))
+    basil = next(p for p in _book(hass).in_zone(a.entry_id) if p["name"] == "Basil")
+    await _call(hass, "set_main_plant", plant_id=basil["id"])
+    c = _ctl(hass, a)
+    assert _book(hass).main(a.entry_id)["id"] == basil["id"]
+    assert c.number("target_weekly_mm") == 33.0  # the bed keeps its watering
+    tomato = next(p for p in _book(hass).in_zone(a.entry_id) if p["id"] != basil["id"])
+    await _call(hass, "set_main_plant", plant_id=tomato["id"], use_plant_settings=True)
+    assert _ctl(hass, a).number("target_weekly_mm") == 33.0  # its own snapshot: the bed's numbers when it stepped aside
+
+
+@pytest.mark.asyncio
+async def test_an_archived_plant_brought_back_is_no_longer_archived(hass, fake_valve_services):
+    a, b = _zone(hass), _zone(hass, "Chilis", VALVE_B)
+    await _boot(hass, a, b)
+    plant = _book(hass).main(a.entry_id)
+    await _call(hass, "remove_plant", plant_id=plant["id"])
+    assert "archived_ts" in plant and plant["zone_id"] is None
+    await _call(hass, "move_plant", plant_id=plant["id"], device_id=_device(hass, b), old_main="extra")
+    assert plant["zone_id"] == b.entry_id and "archived_ts" not in plant
 

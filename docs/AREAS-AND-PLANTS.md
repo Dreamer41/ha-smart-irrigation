@@ -35,7 +35,7 @@ Open a zone card's **Plants** button to:
 - **add a plant** (a record only, or one that takes over the zone),
 - **move** a plant to another zone, with its history. If that zone already has a main plant, you choose what becomes of it: it stays as a record, it is archived, it swaps places with the moved plant, or the moved plant joins as a record only. The bed keeps the way it is watered (method, targets, deep soak); the plant brings its own planting date, health and fertilizing. Tick *Also use this plant's watering settings* to bring those across too (`use_plant_settings`),
 - **rename** a plant,
-- **make** a record the main plant, **remove** a plant (it stays on record, archived), and write a **note**.
+- **make** a record the main plant (the bed again keeps its watering unless you ask for the plant's settings, `use_plant_settings`), **remove** a plant (it stays on record, archived), and write a **note**.
 
 The same actions are services: `zoneflow.add_plant`, `move_plant`, `set_main_plant`, `remove_plant`, `rename_plant`, `add_plant_note`.
 

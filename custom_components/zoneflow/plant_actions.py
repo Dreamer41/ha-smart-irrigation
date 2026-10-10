@@ -3,8 +3,9 @@ zone, make an extra the main plant, remove one, add a note -- and read a
 plant's history in words.
 
 The plant in a zone keeps its live settings in the zone's own entities
-(plants.py). Moving a plant takes a snapshot of those settings from the zone
-it leaves and puts them on the zone it arrives in, so its watering follows it.
+(plants.py). A plant that moves, or becomes a zone's main plant, brings what
+is about itself (planting date, health, fertilizing); the zone keeps its way of
+watering unless the person asks for the plant's settings too.
 """
 from __future__ import annotations
 
@@ -13,7 +14,6 @@ from datetime import datetime
 from typing import Any
 
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_component import async_update_entity
 import homeassistant.util.dt as dt_util
@@ -145,9 +145,10 @@ async def _promote_next(hass, book, zone) -> None:
     nxt["snapshot"] = _live(zone)
 
 
-async def set_main(hass: HomeAssistant, plant_id: str) -> None:
-    """Make a record in a zone the zone's main plant: its settings go onto the
-    zone, the old main plant stays as a record."""
+async def set_main(hass: HomeAssistant, plant_id: str, use_plant_settings: bool = False) -> None:
+    """Make a record in a zone the zone's main plant; the old main plant stays
+    as a record. The zone keeps its way of watering unless `use_plant_settings`
+    says to take the plant's."""
     book = await async_get_book(hass)
     plant = _plant(book, plant_id)
     zone = _zone(hass, plant.get("zone_id"))
@@ -160,7 +161,11 @@ async def set_main(hass: HomeAssistant, plant_id: str) -> None:
         await _retire_main(hass, book, zone, current, "extra", None)
     plant["main"] = True
     book.add_history(plant["id"], "promoted", zone=zone.entry.title)
-    await _apply(hass, zone, plant["snapshot"] or starting_snapshot(plant.get("type") or PLANT_CUSTOM))
+    await _apply(
+        hass, zone, plant["snapshot"] or starting_snapshot(plant.get("type") or PLANT_CUSTOM), watering=use_plant_settings
+    )
+    if not use_plant_settings:
+        plant["snapshot"] = _live(zone)
     zone._notify_status()
 
 
@@ -197,6 +202,7 @@ async def move_plant(
 
     plant["zone_id"] = target_id
     plant["main"] = False
+    plant.pop("archived_ts", None)  # an archived plant brought back is on record in a zone again
     book.add_history(plant["id"], "moved", **{"from": source_name, "to": target.entry.title})
 
     swapped_in: dict[str, Any] | None = None

@@ -133,6 +133,9 @@ MOVE_PLANT_SCHEMA = vol.Schema(
         **_ZONE_TARGET_FIELDS,
     }
 )
+SET_MAIN_PLANT_SCHEMA = vol.Schema(
+    {vol.Required("plant_id"): cv.string, vol.Optional("use_plant_settings", default=False): cv.boolean}
+)
 RENAME_PLANT_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Required("name"): cv.string})
 WATER_NOW_SCHEMA = vol.Schema(
     {vol.Optional("minutes", default=10): vol.All(vol.Coerce(float), vol.Range(min=1, max=900)), **_ZONE_TARGET_FIELDS}
@@ -431,7 +434,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             await plant_actions.remove_plant(hass, call.data["plant_id"])
 
         async def _handle_set_main_plant(call: ServiceCall) -> None:
-            await plant_actions.set_main(hass, call.data["plant_id"])
+            await plant_actions.set_main(hass, call.data["plant_id"], call.data["use_plant_settings"])
 
         async def _handle_add_plant_note(call: ServiceCall) -> None:
             await plant_actions.add_note(hass, call.data["plant_id"], call.data["text"])
@@ -466,7 +469,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.services.async_register(DOMAIN, SERVICE_MOVE_PLANT, _handle_move_plant, schema=MOVE_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_REMOVE_PLANT, _handle_remove_plant, schema=PLANT_ID_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_RENAME_PLANT, _handle_rename_plant, schema=RENAME_PLANT_SCHEMA)
-        hass.services.async_register(DOMAIN, SERVICE_SET_MAIN_PLANT, _handle_set_main_plant, schema=PLANT_ID_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_SET_MAIN_PLANT, _handle_set_main_plant, schema=SET_MAIN_PLANT_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_ADD_PLANT_NOTE, _handle_add_plant_note, schema=PLANT_NOTE_SCHEMA)
 
         async def _handle_send_weekly_summary(call: ServiceCall) -> None:
@@ -633,6 +636,9 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     the dashboard card's loader away (frontend.py)."""
     if is_area_entry(entry):
         await _release_area_zones(hass, entry)
+        from homeassistant.helpers.storage import Store
+
+        await Store(hass, 1, f"{DOMAIN}_area_{entry.entry_id}").async_remove()  # its Pause and Snooze record
         return
     if is_wu_entry(entry):
         from .wu import ISSUE_NO_DATA

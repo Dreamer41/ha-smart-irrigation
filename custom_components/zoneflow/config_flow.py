@@ -27,7 +27,6 @@ from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
     CONF_PARENT_ZONE,
-    CROP_INHERITED_KEYS,
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,

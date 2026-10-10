@@ -316,8 +316,9 @@ rename_plant:
 set_main_plant:
   name: Set Main Plant
   description: >-
-    Makes a plant the main plant of its zone: its settings go onto the zone and
-    the old main plant stays as a record.
+    Makes a plant the main plant of its zone; the old main plant stays as a
+    record. The zone keeps the way it is watered unless Use The Plant's
+    Watering Settings is on.
   fields:
     plant_id:
       name: Plant
@@ -325,6 +326,15 @@ set_main_plant:
       required: true
       selector:
         text:
+    use_plant_settings:
+      name: Use The Plant's Watering Settings
+      description: >-
+        Off (the default): the zone keeps the way it is watered and the plant
+        only brings its own details. On: the plant's watering settings go onto
+        the zone too.
+      default: false
+      selector:
+        boolean:
 
 add_plant_note:
   name: Add Plant Note

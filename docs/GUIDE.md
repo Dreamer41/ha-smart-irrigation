@@ -557,7 +557,7 @@ The zone services target a zone (any of its entities or its device).
   measured run.
 - `zoneflow.create_area` (name; optionally a zone to put in it) — make an area.
 - `zoneflow.add_plant`, `move_plant`, `set_main_plant`, `remove_plant`,
-  `add_plant_note` — plants (see [docs/AREAS-AND-PLANTS.md](AREAS-AND-PLANTS.md)).
+  `rename_plant`, `add_plant_note` — plants (see [docs/AREAS-AND-PLANTS.md](AREAS-AND-PLANTS.md)).
 - `zoneflow.save_preset`, `copy_settings`, `delete_preset` — settings presets.
 
 ## Testing

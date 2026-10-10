@@ -19,6 +19,7 @@ from homeassistant.helpers import selector
 from . import calibration
 from .const import (
     CONF_FLOW_METER_ENTITY,
+    CONF_INSIDE_TEMP_ENTITY,
     CONF_NOTIFY_ENTITY,
     CONF_OUTDOOR_TEMP_ENTITY,
     CONF_PUMP_POWER_ENTITY,
@@ -55,6 +56,15 @@ class _Fix(RepairsFlow):
     def _gone(self):
         return self.async_abort(reason="zone_gone")
 
+    def _owner_of(self, entry, key):
+        """The entry the setting lives in: the zone's own, or -- when the zone
+        takes it from its area -- the area's."""
+        merged = {**entry.data, **entry.options}
+        if merged.get(key):
+            return entry
+        area = getattr(self._controller, "area", None)
+        return area.entry if area is not None else entry
+
 
 class NotifyFix(_Fix):
     """The phone no longer exists: pick another, or none."""
@@ -64,8 +74,9 @@ class NotifyFix(_Fix):
         if entry is None:
             return self._gone()
         if user_input is not None:
+            target = self._owner_of(entry, CONF_NOTIFY_ENTITY)  # an area's phone is fixed on the area
             self.hass.config_entries.async_update_entry(
-                entry, options={**entry.options, CONF_NOTIFY_ENTITY: user_input.get(CONF_NOTIFY_ENTITY) or None}
+                target, options={**target.options, CONF_NOTIFY_ENTITY: user_input.get(CONF_NOTIFY_ENTITY) or None}
             )
             return self.async_create_entry(data={})
         return self.async_show_form(
@@ -86,6 +97,9 @@ class SensorFix(_Fix):
         if entry is None or role not in SENSOR_SETTINGS:
             return self._gone()
         key, config = SENSOR_SETTINGS[role]
+        controller = self._controller
+        if role == "temperature" and controller is not None and not controller.is_outdoor:
+            key = CONF_INSIDE_TEMP_ENTITY  # a greenhouse waters by its inside sensor: that is the one that went
         if user_input is not None:
             target = self._owner_of(entry, key)
             replacement = user_input.get("replacement") or None
@@ -96,16 +110,6 @@ class SensorFix(_Fix):
             data_schema=vol.Schema({vol.Optional("replacement"): selector.EntitySelector(config)}),
             description_placeholders={"zone": entry.title, "entity": str(self._data.get("entity", ""))},
         )
-
-    def _owner_of(self, entry, key):
-        """The entry the setting lives in: the zone's own, or -- when the zone
-        takes it from its area -- the area's."""
-        merged = {**entry.data, **entry.options}
-        if merged.get(key):
-            return entry
-        controller = self._controller
-        area = getattr(controller, "area", None)
-        return area.entry if area is not None else entry
 
 
 class FlowRateFix(_Fix):

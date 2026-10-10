@@ -6,11 +6,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from homeassistant.exceptions import ServiceValidationError
-
 from . import units
 from .errors import service_error
-from .const import DOMAIN, NUMBER_DEFS
+from .const import NUMBER_DEFS
 
 
 _error = service_error

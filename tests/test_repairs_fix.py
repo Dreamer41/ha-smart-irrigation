@@ -121,3 +121,40 @@ async def test_the_flow_rate_fix_runs_the_valve_then_takes_the_measurement(hass,
     done = await flow.async_step_measure({"volume": 30, "area": 10, "minutes": 15})
     assert done["type"] is FlowResultType.CREATE_ENTRY
     assert controller.number("flow_rate_mm_per_min") == pytest.approx(0.2, abs=0.001)
+
+
+@pytest.mark.asyncio
+async def test_a_phone_the_zone_gets_from_its_area_is_fixed_on_the_area(hass, fake_valve_services):
+    area = _area(hass, **{CONF_NOTIFY_ENTITY: "notify.gone"})
+    zone = _zone(hass, "Chilis", "switch.valve_peppers", **{CONF_AREA_ID: area.entry_id, CONF_NOTIFY_ENTITY: None})
+    hass.states.async_set("switch.valve_peppers", "off")
+    await _boot(hass, area)
+    c = _ctl(hass, zone)
+    assert c.notify_entity == "notify.gone"
+    c.store.state.offline_since["notify.gone"] = 0.0
+    issues.async_check(c)
+    flow = await _flow(hass, f"{zone.entry_id}_notify_missing")
+    hass.states.async_set("notify.mobile_app_pixel", "unknown")
+    await flow.async_step_init({CONF_NOTIFY_ENTITY: "notify.mobile_app_pixel"})
+    assert area.options[CONF_NOTIFY_ENTITY] == "notify.mobile_app_pixel"
+    assert not zone.options.get(CONF_NOTIFY_ENTITY)  # the zone keeps taking its area's phone
+
+
+@pytest.mark.asyncio
+async def test_a_greenhouse_thermometer_is_replaced_as_the_inside_sensor(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_INSIDE_TEMP_ENTITY
+
+    from .test_zone_types import INSIDE_TEMP, _climate_only_entry
+
+    house = _climate_only_entry(hass)
+    await _boot(hass, house)
+    c = _ctl(hass, house)
+    hass.states.async_set(INSIDE_TEMP, "unavailable")
+    c.store.state.offline_since[INSIDE_TEMP] = 0.0
+    issues.async_check(c)
+    flow = await _flow(hass, f"{house.entry_id}_sensor_offline_temperature")
+    hass.states.async_set("sensor.gh_new", "27", {"device_class": "temperature"})
+    await flow.async_step_init({"replacement": "sensor.gh_new"})
+    assert house.options[CONF_INSIDE_TEMP_ENTITY] == "sensor.gh_new"
+    assert not house.options.get("outdoor_temp_entity")  # not put where it does nothing
+
