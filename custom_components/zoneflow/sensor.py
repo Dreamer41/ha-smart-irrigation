@@ -643,6 +643,7 @@ class ZoneFlowLastCycleWaterSensor(_Base):
 
     _attr_native_unit_of_measurement = "L"
     _attr_icon = "mdi:water"
+    _attr_suggested_display_precision = 0  # whole litres, like Last Water Volume
 
     def __init__(self, entry: ConfigEntry, controller) -> None:
         super().__init__(entry, controller)

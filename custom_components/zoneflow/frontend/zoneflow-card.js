@@ -5584,8 +5584,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
       const estimate = keyed["sensor.last_water_delivered"];
       // The meter's litres once it has counted something; else the estimate.
       const metered = Boolean(measured && !measured.hidden && Number(hass.states[measured.entity_id]?.state) > 0);
-      const last = metered ? measured.entity_id : estimate?.entity_id;
-      const lastVolume = keyed["sensor.last_water_volume"];
+      const last = estimate?.entity_id; // mm, then the litres: the meter's when it counted, else the estimate
+      const lastVolume = metered ? measured : keyed["sensor.last_water_volume"];
       const button = keyed["button.run_routine"]?.entity_id;
       const plant = status?.attributes?.plant;
       // A zone with no valve to water has no irrigation status: it shows
@@ -5780,6 +5780,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     // My Garden: today at a glance (filled in by _update).
     this._summaryEl = document.createElement("div");
     this._summaryEl.className = "garden-summary";
+    this._summarySignature = undefined; // a new, empty strip: fill it again
     if (!this._config.embedded && zones.length) card.appendChild(this._summaryEl);
     this._rows = {};
     const addButton = () => {
@@ -5985,7 +5986,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
     let sameUnit = true;
     for (const zone of zones) {
       const entities = zoneEntities(hass, zone.device_id);
-      const r = hass.states?.[entities["sensor.rain_today"]?.entity_id];
+      const rainEntry = entities["sensor.rain_today"];
+      const r = rainEntry && !rainEntry.hidden ? hass.states?.[rainEntry.entity_id] : undefined; // a roof has no rain
       if (r && !["unknown", "unavailable"].includes(r.state) && Number.isFinite(Number(r.state))) {
         rain = Math.max(rain ?? 0, Number(r.state));
         unit = r.attributes?.unit_of_measurement || unit;
@@ -6040,7 +6042,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
       row.next.textContent = zone.code === "paused" ? "—" : formatNext(hass, zone.next);
       row.last.textContent = zone.last ? formatState(hass, hass.states[zone.last]) : "—";
       const volume = zone.lastVolume ? hass.states[zone.lastVolume] : null;
-      if (zone.last && volume && !["unknown", "unavailable"].includes(volume.state) && zone.lastIsEstimate) {
+      if (zone.last && volume && !["unknown", "unavailable"].includes(volume.state)) {
         row.last.textContent += ` · ${formatState(hass, volume)}`;
       }
       row.water.disabled = !zone.button || zone.code === "paused";
