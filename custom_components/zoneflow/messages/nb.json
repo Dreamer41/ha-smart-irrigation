@@ -12,7 +12,7 @@
     "routine": "Rutinevanning",
     "service_run": "Servicekjøring",
     "test_pulse": "Testpuls",
-    "manual_water": "Manual watering"
+    "manual_water": "Manuell vanning"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "Hovedsensoren for innvendig temperatur ({entity}) sluttet å fungere. Klimastyringen fortsetter med reservesensoren."
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "Vann {minutes} min",
+      "snooze": "Hopp over i dag",
+      "fertilized": "Gjødslet"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle} på vent {time}: {temp}, under frostvakten ({limit}); sjekker igjen hver time",
     "waiting_deep_soak": "{cycle} venter siden {time}: dypvanningen går først når det er varmt nok",
     "paused_until": "På pause til {until}",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "På pause: ingen vanning mens {area} er på pause",
+    "paused_house": "På pause: ingen vanning mens drivhuset {house} er på pause"
   },
   "summary": {
     "title": "💧 ZoneFlow: uka di",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "Ingen",
+    "greenhouse": "drivhus",
+    "new_area": "Nytt område..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "Bruker sin egen regnmåler, ikke {area} sin.",
+      "outdoor_temp_entity": "Bruker sin egen utendørs temperatursensor, ikke {area} sin.",
+      "weather_entity": "Bruker sin egen værentitet, ikke {area} sin.",
+      "notify_entity": "Sender til sin egen telefon, ikke til {area} sin."
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "på",
+    "off": "av",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "Lagt til i ZoneFlow",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "Flyttet fra {from_zone} til {to_zone}",
+      "promoted": "Ble hovedplante i {zone}",
+      "demoted": "Nå kun registrering i {zone}",
+      "archived": "Arkivert fra {zone}",
+      "removed": "Fjernet fra {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Innstillinger kopiert fra {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "Vekststadium-modus",
+      "demand_model": "Vanningsmetode",
+      "deficit_enabled": "Underskuddsmodus",
+      "deficit_until_ts": "Underskuddsmodus inntil",
+      "planting_date_ts": "Plantedato",
+      "health_status": "Helse",
+      "health_notes": "Helsenotater",
+      "fertilizing_interval_months": "Gjødslingsintervall",
+      "last_fertilizing_ts": "Sist gjødslet",
+      "growth_ramp_profile": "Vekstkurve",
+      "deep_soak_enabled": "Dypvanning"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "Plantetypens vanlige innstillinger",
+    "zone": "En kopi av {zone}",
+    "preset": "Forhåndsinnstilling: {name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "Ventilen {entity} svarer.",
+      "fail": "Ventilen {entity} er ikke tilgjengelig. Sjekk enheten og tilkoblingen i Home Assistant: ingenting kan vannes før den svarer."
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "Regnmåleren {entity} rapporterer.",
+      "fail": "Regnmåleren {entity} er ikke tilgjengelig. Inntil den er tilbake, antar ZoneFlow at det ikke regner.",
+      "wu": "Regn kommer fra Weather Underground.",
+      "manual": "Regn legges til manuelt.",
+      "none": "Ingen regnmåler. ZoneFlow antar at det aldri regner, med mindre du legger til regn manuelt eller bruker Weather Underground."
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "Utendørstemperaturen er {value} {unit}.",
+      "none": "Ingen utendørs temperatursensor. Innstillingen for reservetemperatur avgjør hvor varmt ZoneFlow tror det er.",
+      "fail": "Temperatursensoren {entity} er ikke tilgjengelig. Reservetemperaturen brukes i mellomtiden."
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "Værmeldingen {entity} er tilgjengelig.",
+      "none": "Ingen værentitet, så en regnmelding kan ikke hoppe over en vanning.",
+      "fail": "Værentiteten {entity} er ikke tilgjengelig, så værmeldingen ignoreres inntil videre."
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "Vannmengden er angitt ({value} mm/min).",
+      "default": "Vannmengden er fortsatt eksempelverdien. Kalibrer den slik at hver vanning kjører i riktig tid."
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "Vannforbruket vises i liter.",
+      "none": "Vannforbruket vises kun i mm. Angi Sonegjennomstrømning for å se liter."
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "Jordfuktighetssensoren rapporterer {value} %.",
+      "fail": "Jordfuktighetssensoren {entity} er ikke tilgjengelig. Sonen vanner etter kalenderen inntil den er tilbake."
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "Pumpens effektsensor {entity} rapporterer.",
+      "fail": "Pumpens effektsensor {entity} er ikke tilgjengelig, så pumpekontrollen hoppes over."
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "Denne sonen er på pause: ingen vanning før du slår av Pause.",
+      "area": "Området {area} er på pause: ingen vanning før du slår av Pause.",
+      "house": "Drivhuset {house} er på pause: ingen vanning før du slår av Pause."
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "Siste vanning: {when}.",
+      "never": "ZoneFlow har ikke vannet denne sonen ennå.",
+      "overdue": "Siste vanning var for {days} dager siden, lenger enn forventet. Sjekk ventilen og statusen."
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "Telefonmeldinger går til {entity}.",
+      "none": "Ingen telefon å varsle. Du vil ikke få meldinger om vanning.",
+      "fail": "Telefonen {entity} finnes ikke lenger, så ingen meldinger når deg."
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "Vanningsmetode: {method}.",
+    "method_temperature": "temperaturtrinn (en varmere uke får mer vann)",
+    "method_et": "evapotranspirasjon (vannforbruket beregnet ut fra temperaturen)",
+    "temperature": "Brukt temperatur: {value} ({source}), så en {tier} uke.",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "gjennomsnittet av de siste dagenes maksimumstemperaturer",
+      "last_known": "fra de siste dager, sensoren er frakoblet nå",
+      "fallback": "Reservetemperatur, ingen hel dag registrert ennå",
+      "manual": "innstillingen for Reserve- / Manuell temperatur"
     },
     "tier": {
-      "hot": "hot",
+      "hot": "varm",
       "normal": "normal",
-      "cool": "cool"
+      "cool": "kjølig"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "Ukemål: {target}.",
+    "scale": "Målet skalerers til {pct} % av vekststadium, underskuddsmodus og dekke.",
+    "rain": "Regnkreditt siden siste vanning: {credit} (regn de siste 7 dager: {rain}).",
+    "needed": "Hvis det vannet nå: {needed} må tilføres, ca. {minutes} min.",
+    "forecast": "Det var meldt regn, så de siste {n} vanningene på rad ble hoppet over.",
+    "soil": "Jordfuktighet {pct} % ({status}).",
+    "soil_dry": "tørt",
+    "soil_wet": "vått",
+    "soil_ok": "middels"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
+    "heading": "Sannsynlige funnet i din Home Assistant:",
     "line": "{role}: {names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "Ventil",
+      "rain": "Regnmåler",
+      "temperature": "Utendørstemperatur",
+      "weather": "Vær",
+      "soil": "Jordfuktighet",
+      "flow": "Vannmengdemåler",
+      "pump": "Pumpeeffekt",
+      "notify": "Telefon"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "Trinn {n} av {total}"
   }
 }

@@ -12,7 +12,7 @@
     "routine": "常规浇水",
     "service_run": "维护运行",
     "test_pulse": "测试脉冲",
-    "manual_water": "Manual watering"
+    "manual_water": "手动浇水"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "主室内温度传感器（{entity}）已停止工作。环境控制已切换至备用传感器继续运行。"
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "浇水 {minutes} 分钟",
+      "snooze": "今天跳过",
+      "fertilized": "已施肥"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle}于 {time} 起暂缓：{temp}，低于防霜保护温度（{limit}）；每小时重新检查",
     "waiting_deep_soak": "{cycle}自 {time} 起等待：天气够暖后先进行深层浇灌",
     "paused_until": "暂停至 {until}",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "已暂停：{area} 处于暂停状态时不会浇水",
+    "paused_house": "已暂停：温室 {house} 处于暂停状态时不会浇水"
   },
   "summary": {
     "title": "💧 ZoneFlow：本周概况",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "无",
+    "greenhouse": "温室",
+    "new_area": "新区域..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "使用自己的雨量计，而非{area}的。",
+      "outdoor_temp_entity": "使用自己的室外温度传感器，而非{area}的。",
+      "weather_entity": "使用自己的天气实体，而非{area}的。",
+      "notify_entity": "发送至自己的手机，而非{area}的手机。"
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "开启",
+    "off": "关闭",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "已添加到 ZoneFlow",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "已从 {from_zone} 移动到 {to_zone}",
+      "promoted": "已成为 {zone} 的主要植物",
+      "demoted": "现在在 {zone} 中仅作记录",
+      "archived": "已从 {zone} 归档",
+      "removed": "已从 {zone} 移除",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "设置已复制自 {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "生长阶段模式",
+      "demand_model": "浇水方式",
+      "deficit_enabled": "赤字模式",
+      "deficit_until_ts": "赤字模式持续至",
+      "planting_date_ts": "种植日期",
+      "health_status": "健康状况",
+      "health_notes": "健康备注",
+      "fertilizing_interval_months": "施肥间隔",
+      "last_fertilizing_ts": "上次施肥",
+      "growth_ramp_profile": "生长坡度",
+      "deep_soak_enabled": "深层浇灌"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "该植物类型的常用设置",
+    "zone": "{zone} 的副本",
+    "preset": "预设：{name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "阀门 {entity} 响应正常。",
+      "fail": "阀门 {entity} 不可用。请在 Home Assistant 中检查设备及其连接：在获得响应之前将无法浇水。"
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "雨量计 {entity} 正常报告。",
+      "fail": "雨量计 {entity} 不可用。在恢复之前，ZoneFlow 假定未下雨。",
+      "wu": "降雨数据来自 Weather Underground。",
+      "manual": "手动添加降雨。",
+      "none": "未配置雨量计。ZoneFlow 假定从不下雨，除非您手动添加降雨或使用 Weather Underground。"
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "室外温度为 {value} {unit}。",
+      "none": "未配置室外温度传感器。后备温度设置将决定 ZoneFlow 预估的温度。",
+      "fail": "温度传感器 {entity} 不可用。期间将使用后备温度设置。"
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "天气预报 {entity} 正常可用。",
+      "none": "未配置天气实体，因此降雨预报无法跳过浇水。",
+      "fail": "天气实体 {entity} 不可用，因此暂时忽略预报。"
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "流量已设置（{value} mm/min）。",
+      "default": "流量仍为示例值。请进行校准，以便每次浇水都能维持正确的时间。"
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "用水量以升表示。",
+      "none": "用水量仅以毫米显示。设置区域流量即可查看升数。"
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "土壤湿度传感器报告 {value} %。",
+      "fail": "土壤湿度传感器 {entity} 不可用。在恢复之前，该区域将按日历浇水。"
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "水泵功率传感器 {entity} 正常报告。",
+      "fail": "水泵功率传感器 {entity} 不可用，因此跳过水泵检查。"
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "此区域已暂停：关闭“暂停”之前不会浇水。",
+      "area": "区域 {area} 已暂停：关闭其“暂停”之前不会浇水。",
+      "house": "温室 {house} 已暂停：关闭其“暂停”之前不会浇水。"
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "上次浇水：{when}。",
+      "never": "ZoneFlow 尚未为此区域浇水。",
+      "overdue": "上次浇水在 {days} 天前，间隔长于预期。请检查阀门和状态。"
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "手机消息将发送至 {entity}。",
+      "none": "未配置通知手机。您将不会收到有关浇水的消息。",
+      "fail": "手机 {entity} 已不存在，因此您将无法收到消息。"
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "浇水方式：{method}。",
+    "method_temperature": "温度阶梯（较热的一周使用更多水）",
+    "method_et": "蒸腾蒸发量（根据温度计算出的植物用水量）",
+    "temperature": "使用的温度：{value}（{source}），因此属于{tier}周。",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "最近几天最高温度的平均值",
+      "last_known": "来自最近几天，传感器目前处于离线状态",
+      "fallback": "后备温度，尚未记录到完整的一天",
+      "manual": "后备/手动温度设置"
     },
     "tier": {
-      "hot": "hot",
-      "normal": "normal",
-      "cool": "cool"
+      "hot": "偏热",
+      "normal": "正常",
+      "cool": "偏凉"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "每周目标：{target}。",
+    "scale": "该目标已根据生长阶段、赤字模式和覆盖物按比例缩放至 {pct} %。",
+    "rain": "自上次浇水以来的降雨抵扣：{credit}（过去 7 天降雨：{rain}）。",
+    "needed": "如果现在浇水：需补充 {needed}，约 {minutes} 分钟。",
+    "forecast": "预报有雨，因此连续跳过了最近 {n} 次浇水。",
+    "soil": "土壤湿度 {pct} %（{status}）。",
+    "soil_dry": "干燥",
+    "soil_wet": "潮湿",
+    "soil_ok": "居中"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
-    "line": "{role}: {names}",
+    "heading": "在您的 Home Assistant 中找到的匹配项：",
+    "line": "{role}：{names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "阀门",
+      "rain": "雨量计",
+      "temperature": "室外温度",
+      "weather": "天气",
+      "soil": "土壤湿度",
+      "flow": "流量计",
+      "pump": "水泵功率",
+      "notify": "手机"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "步骤 {n} / {total}"
   }
 }

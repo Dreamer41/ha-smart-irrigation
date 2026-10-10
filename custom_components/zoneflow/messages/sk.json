@@ -12,7 +12,7 @@
     "routine": "Bežná zálievka",
     "service_run": "Servisný chod",
     "test_pulse": "Testovací pulz",
-    "manual_water": "Manual watering"
+    "manual_water": "Ručná zálievka"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "Hlavný senzor vnútornej teploty ({entity}) prestal fungovať. Riadenie klímy pokračuje so záložným."
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "Zalievať {minutes} min",
+      "snooze": "Dnes vynechať",
+      "fertilized": "Hnojené"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle}: pozdržané o {time}, {temp} je pod ochranou pred mrazom ({limit}); kontroluje sa každú hodinu",
     "waiting_deep_soak": "{cycle}: čaká od {time}, keď sa oteplí, má prednosť hĺbková zálievka",
     "paused_until": "Pozastavené do {until}",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "Pozastavené: nepolieva sa, kým je oblasť {area} pozastavená",
+    "paused_house": "Pozastavené: nepolieva sa, kým je skleník {house} pozastavený"
   },
   "summary": {
     "title": "💧 ZoneFlow: váš týždeň",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "Žiadna",
+    "greenhouse": "skleník",
+    "new_area": "Nová oblasť..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "Používa vlastný zrážkomer, nie zrážkomer oblasti {area}.",
+      "outdoor_temp_entity": "Používa vlastný snímač vonkajšej teploty, nie snímač oblasti {area}.",
+      "weather_entity": "Používa vlastnú entitu počasia, nie entitu oblasti {area}.",
+      "notify_entity": "Odosiela na vlastný telefón, nie na telefón oblasti {area}."
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "zapnutá",
+    "off": "vypnutá",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "Pridané do ZoneFlow",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "Presunuté z {from_zone} do {to_zone}",
+      "promoted": "Stala sa hlavnou rastlinou v {zone}",
+      "demoted": "Teraz iba ako záznam v {zone}",
+      "archived": "Archivované z {zone}",
+      "removed": "Odstránené z {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Nastavenia skopírované z {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "Režim fázy rastu",
+      "demand_model": "Spôsob zalievania",
+      "deficit_enabled": "Režim deficitu",
+      "deficit_until_ts": "Režim deficitu do",
+      "planting_date_ts": "Dátum výsadby",
+      "health_status": "Zdravie",
+      "health_notes": "Poznámky o zdraví",
+      "fertilizing_interval_months": "Interval hnojenia",
+      "last_fertilizing_ts": "Naposledy hnojené",
+      "growth_ramp_profile": "Rastová krivka",
+      "deep_soak_enabled": "Hĺbková zálievka"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "Bežné nastavenia pre tento typ rastliny",
+    "zone": "Kópia zóny {zone}",
+    "preset": "Predvoľba: {name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "Ventil {entity} odpovedá.",
+      "fail": "Ventil {entity} nie je k dispozícii. Skontrolujte zariadenie a jeho pripojenie v Home Assistant: kým neodpovie, nič nemôže zalievať."
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "Zrážkomer {entity} hlási stav.",
+      "fail": "Zrážkomer {entity} nie je k dispozícii. Kým sa nevráti, ZoneFlow predpokladá, že neprší.",
+      "wu": "Údaje o daždi pochádzajú zo služby Weather Underground.",
+      "manual": "Dážď sa pridáva ručne.",
+      "none": "Bez zrážkomera. ZoneFlow predpokladá, že nikdy neprší, kým nepridáte dážď ručne alebo nepoužijete Weather Underground."
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "Vonkajšia teplota je {value} {unit}.",
+      "none": "Bez snímača vonkajšej teploty. Nastavenie záložnej teploty určuje, aké teplé prostredie ZoneFlow predpokladá.",
+      "fail": "Snímač teploty {entity} nie je k dispozícii. Medzitým sa používa záložná teplota."
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "Predpoveď počasia {entity} je k dispozícii.",
+      "none": "Bez entity počasia nemôže predpoveď mưa přeskočiť zálievku.",
+      "fail": "Entita počasia {entity} nie je k dispozícii, preto sa predpoveď nateraz ignoruje."
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "Prietok je nastavený ({value} mm/min).",
+      "default": "Prietok je stále na ukážkovej hodnote. Skalibrujte ho, aby každá zálievka trvala správny čas."
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "Spotreba vody sa zobrazuje v litroch.",
+      "none": "Spotreba vody sa zobrazuje iba v mm. Nastavte Prietok zóny, aby ste videli litre."
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "Snímač vlhkosti pôdy hlási {value} %.",
+      "fail": "Snímač vlhkosti pôdy {entity} nie je k dispozícii. Kým sa nevráti, zóna zalieva podľa kalendára."
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "Snímač výkonu čerpadla {entity} hlási stav.",
+      "fail": "Snímač výkonu čerpadla {entity} nie je k dispozícii, preto sa kontrola čerpadla preskakuje."
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "Táto zóna je pozastavená: nepolieva sa, kým nevypnete Pozastavenie.",
+      "area": "Oblasť {area} je pozastavená: nepolieva sa, kým nevypnete jej Pozastavenie.",
+      "house": "Skleník {house} je pozastavený: nepolieva sa, kým nevypnete jeho Pozastavenie."
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "Posledná zálievka: {when}.",
+      "never": "ZoneFlow túto zónu ešte nepolieval.",
+      "overdue": "Posledná zálievka bola pred {days} dňami, čo je dlhšie, než sa očakávalo. Skontrolujte ventil a stav."
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "Správy na telefón sa odosielajú na {entity}.",
+      "none": "Žiadny telefón na upozornenie. Nebudete dostávať správy o zalievaní.",
+      "fail": "Telefón {entity} už neexistuje, takže vám neprídu žiadne správy."
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "Spôsob zalievania: {method}.",
+    "method_temperature": "teplotné úrovne (teplejší týždeň dostane viac vody)",
+    "method_et": "evapotranspirácia (spotreba vody rastlinou vypočítaná z teploty)",
+    "temperature": "Použitá teplota: {value} ({source}), takže {tier} týždeň.",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "priemer maximálnych teplôt za posledné dni",
+      "last_known": "z posledných dní, snímač je teraz offline",
+      "fallback": "Záložná teplota, dosiaľ nebol zaznamenaný celý deň",
+      "manual": "nastavenie Záložná / Ručná teplota"
     },
     "tier": {
-      "hot": "hot",
-      "normal": "normal",
-      "cool": "cool"
+      "hot": "horúci",
+      "normal": "bežný",
+      "cool": "chladný"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "Týždenný cieľ: {target}.",
+    "scale": "Tento cieľ je upravený na {pct} % podľa fázy rastu, režimu deficitu a mulču.",
+    "rain": "Započítaný dážď od poslednej zálievky: {credit} (dážď za posledných 7 dní: {rain}).",
+    "needed": "Pri zalievaní teraz: potreba pridať {needed}, cca {minutes} min.",
+    "forecast": "Bol predpovedaný dážď, preto bolo preskočených posledných {n} zálievok v rade.",
+    "soil": "Vlhkosť pôdy {pct} % ({status}).",
+    "soil_dry": "sucho",
+    "soil_wet": "mokro",
+    "soil_ok": "stredná"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
+    "heading": "Pravdepodobné položky nájdené vo vašom Home Assistant:",
     "line": "{role}: {names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "Ventil",
+      "rain": "Zrážkomer",
+      "temperature": "Vonkajšia teplota",
+      "weather": "Počasie",
+      "soil": "Vlhkosť pôdy",
+      "flow": "Prietokomer",
+      "pump": "Výkon čerpadla",
+      "notify": "Telefón"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "Krok {n} z {total}"
   }
 }

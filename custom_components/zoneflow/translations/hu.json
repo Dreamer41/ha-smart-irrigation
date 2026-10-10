@@ -8,18 +8,18 @@
           "zone_name": "Zóna neve",
           "plant": "Mi van ültetve",
           "zone_type": "A növények helye",
-          "start_from": "Start from"
+          "start_from": "Kezdés innen"
         },
         "data_description": {
           "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
           "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán.",
           "zone_type": "A kültéri mód a ZoneFlow eredeti működése. Az üvegházi és beltéri zónák klímaszabályozást is biztosítanak (ventilátorok, szellőzők, párásítás, fűtés), szelep nélkül is működhetnek, valamint a tető miatt nincs esőmérőjük sem időjárás-előrejelzésük.",
-          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied."
+          "start_from": "Kezdje egy másik zóna öntözési beállításainak másolatával vagy egy mentett előbeállítással a növénytípusé helyett. A szelep, az érzékelők és a vízhozam soha nem másolódnak."
         }
       },
       "entities": {
         "title": "ZoneFlow öntözés",
-        "description": "{progress}\n\nAdd meg a valódi entitásaidat. A ZoneFlow soha nem hoz létre saját fizikai entitásokat. Csak a szelepkapcsoló kötelező – minden más lent kihagyható, és nélküle is működik, csak kevesebbet tud.\n\n{suggestions}",
+        "description": "{progress}\n\nIrányítsa ezt a valódi entitásaira. Soha nem hoz létre saját fizikai entitásokat. Csak a szelepkapcsoló kötelező – minden más alább megfelelően működik beállítás nélkül is. Hagyja üresen a mezőt, ha nincs olyanja.\n\n{suggestions}",
         "data": {
           "valve_entity": "Szelepkapcsoló",
           "pump_power_entity": "Szivattyú teljesítményérzékelője (opcionális)",
@@ -31,11 +31,11 @@
           "soil_moisture_entity": "Talajnedvesség-érzékelő (opcionális)",
           "notify_entity": "Telefonos értesítési cél (opcionális)",
           "weather_entity": "Időjárás-előrejelzés forrása (opcionális)",
-          "soil_type": "Talajtípus",
-          "drainage": "Vízelvezetés",
-          "slope": "Lejtés",
-          "irrigation_method": "Öntözési mód",
-          "growth_ramp_profile": "Automatikus növekedési görbe",
+          "soil_type": "Ismeri a talajtípust? (hagyja ki, ha nem)",
+          "drainage": "A víz lassan szivárog el? (hagyja ki, ha nem tudja)",
+          "slope": "Lejtős a talaj? (hagyja ki, ha sík vagy nem biztos benne)",
+          "irrigation_method": "Hogyan jut el a víz a növényekhez?",
+          "growth_ramp_profile": "Fiatal növényről van szó, aminek eleinte kevesebb vízre van szüksége? (hagyja ki, ha nem)",
           "csv_path": "CSV naplófájl elérési útja",
           "deep_soak_enabled": "Mélyöntözés bekapcsolása",
           "deep_soak_time": "Mélyöntözés időpontja",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Éghajlat",
-        "description": "{progress}\n\nMilyen a tenyészidőszak ott, ahol ez a zóna van? Ez csak a következő oldal hőmérséklet-csúszkáit tölti ki előre – ott minden értéket módosíthatsz, később pedig a zóna eszközoldalán is.",
+        "description": "{progress}\n\nMilyen a növekedési időszak ott, ahol ez a zóna található? Ez csak előre kitölti a következő oldalon lévő hőmérséklet-csúszkákat – ott minden értéket módosíthat, és később a zóna eszközoldalán is megváltoztathatja.",
         "data": {
           "climate": "Éghajlat"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Hőmérsékleti küszöbök",
-        "description": "{progress}\n\nA ZoneFlow az elmúlt 3 nap napi CSÚCShőmérsékletét átlagolja. A meleg küszöbön vagy felette gyakrabban öntöz (3 naponta), a meleg időre szóló heti céllal; a hűvös küszöb alatt a hűvös időre szóló heti célt használja; a kettő között normál.\n\nA tartalék hőmérséklet akkor számít, ha nincs valódi mérés: hőmérséklet-érzékelő nélkül ez a kézi szabályozód (hőségben emeld, hidegben csökkentsd); érzékelővel csak addig használja, amíg az érzékelő fel nem vett egy teljes napot, illetve ha 3 napig egyetlen mérés sem érkezik.",
+        "description": "{progress}\n\nA ZoneFlow kiszámítja az elmúlt 3 nap napi MAXIMÁLIS hőmérsékletének átlagát. Meleg értéken vagy afelett gyakrabban öntöz (3 naponta) a meleg heti céllal; Hűvös alatt a hűvös heti célt használja; a kettő között normál az érték.\n\nA tartalék hőmérséklet akkor használatos, ha nincs valós mérés: hőmérséklet-érzékelő nélkül ez az Ön kézi vezérlése (növelje kánikula idején, csökkentse hidegbetöréskor); érzékelővel csak addig van használatban, amíg az érzékelő rögzíti az első teljes napját, illetve ha 3 napig egyetlen mérés sem érkezik.",
         "data": {
           "hot_temp_threshold": "Meleg idő küszöbe",
           "cool_temp_threshold": "Hűvös idő küszöbe",
@@ -183,7 +183,7 @@
           "zone": "Zóna hozzáadása",
           "weather_underground": "Weather Underground eső beállítása",
           "crop": "Növény hozzáadása az üvegházhoz",
-          "area": "Add an area (a part of the garden)"
+          "area": "Terület hozzáadása (a kert egy része)"
         }
       },
       "weather_underground": {
@@ -233,25 +233,25 @@
         }
       },
       "area": {
-        "title": "New area",
-        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "title": "Új terület",
+        "description": "A kert egy része, például Hátsó kert vagy Első kert. Zónái az itt beállított érzékelőket használják, hacsak egy zónának nincs sajátja.",
         "data": {
-          "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "area_name": "Név",
+          "rain_counter_entity": "Esőmérő",
+          "rain_source_type": "Esőmérő-érzékelő týpusa",
+          "area_rain_mm_per_tip": "Esőmérő mm/billenés",
+          "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
+          "weather_entity": "Időjárás-entitás (előrejelzés)",
+          "notify_entity": "Értesítendő telefon"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
+          "area_rain_mm_per_tip": "Csak billenésszámlálóhoz: hány mm esőnek felel meg egy billenés.",
+          "outdoor_temp_entity": "Opcionális. Beállítja a meleg / hűvös öntözési szintet a terület zónáihoz.",
+          "weather_entity": "Opcionális. Lehetővé teszi a terület zónái számára az öntözés kihagyását eső-előrejelzés esetén.",
+          "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
+          "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
+          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt."
         }
       }
     },
@@ -269,8 +269,8 @@
       "wu_cannot_connect": "Nem sikerült csatlakozni a Weather Underground szolgáltatáshoz. Próbálja újra később.",
       "wu_no_stations": "Nincsenek állomások a sugáron belül. Közeli állomás nélkül ez a funkció nem segít.",
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
-      "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_required": "Nevezze el a területet.",
+      "area_name_exists": "Már létezik egy terület ezzel a névvel."
     },
     "abort": {
       "already_configured": "A Weather Underground eső már be van állítva."
@@ -291,7 +291,7 @@
           "zone_type": "Zónatípus",
           "weather_underground": "Weather Underground eső",
           "crop_valve": "Növény szelepe",
-          "location": "Where is this? (area or greenhouse)"
+          "location": "Hol található ez? (terület vagy üvegház)"
         }
       },
       "settings": {
@@ -525,73 +525,73 @@
         }
       },
       "location": {
-        "title": "Where is this?",
-        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
+        "title": "Hol található ez?",
+        "description": "A terület vagy üvegház, ahol ez a zóna található. A zóna a területe érzékelőit használja, hacsak nincs sajátja. Üvegházban annak egy növényét képezi. Válassza az Új terület lehetőséget, ha e zóna saját érzékelőiből hozna létre területet.",
         "data": {
-          "location": "Place"
+          "location": "Hely"
         },
         "data_description": {
-          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+          "location": "Egy terület, egy üvegház vagy egy sem. A zóna áthelyezése újraindítja azt, hogy beolvassa az új hely érzékelőit."
         }
       },
       "location_sensors": {
-        "title": "Use the area's sensors?",
-        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "title": "Használja a terület érzékelőit?",
+        "description": "Ennek a zónának saját érzékelője van ott, ahol a területé eltér. Jelölje be a területének használatához; törölje a jelölést a zóna sajátjának megtartásához.",
         "data": {
-          "rain_counter_entity": "Use the area's rain gauge",
-          "outdoor_temp_entity": "Use the area's outdoor temperature",
-          "weather_entity": "Use the area's weather entity",
-          "notify_entity": "Use the area's phone"
+          "rain_counter_entity": "A terület esőmérőjének használata",
+          "outdoor_temp_entity": "A terület külső hőmérsékletének használata",
+          "weather_entity": "A terület időjárás-entitásának használata",
+          "notify_entity": "A terület telefonjának használata"
         },
         "data_description": {
-          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
-          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
-          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
-          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+          "rain_counter_entity": "Jelölje be, ha a terület esőmérőjét szeretné használni a zóna sajátja helyett.",
+          "outdoor_temp_entity": "Jelölje be, ha a terület külső hőmérséklet-érzékelőjét szeretné használni a zóna sajátja helyett.",
+          "weather_entity": "Jelölje be, ha a terület időjárás-entitását szeretné használni a zóna sajátja helyett.",
+          "notify_entity": "Jelölje be, ha a terület telefonjára szeretne küldeni a zóna sajátja helyett."
         }
       },
       "new_area": {
-        "title": "New area",
-        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "title": "Új terület",
+        "description": "E zóna érzékelőiből létrehozott terület. A zóna ide költözik, és más zónák is csatlakozhatnak később.",
         "data": {
-          "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "area_name": "Név",
+          "rain_counter_entity": "Esőmérő",
+          "rain_source_type": "Esőmérő-érzékelő týpusa",
+          "area_rain_mm_per_tip": "Esőmérő mm/billenés",
+          "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
+          "weather_entity": "Időjárás-entitás (előrejelzés)",
+          "notify_entity": "Értesítendő telefon"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
+          "area_rain_mm_per_tip": "Csak billenésszámlálóhoz: hány mm esőnek felel meg egy billenés.",
+          "outdoor_temp_entity": "Opcionális. Beállítja a meleg / hűvös öntözési szintet a terület zónáihoz.",
+          "weather_entity": "Opcionális. Lehetővé teszi a terület zónái számára az öntözés kihagyását eső-előrejelzés esetén.",
+          "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
+          "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
+          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt."
         }
       },
       "area_settings": {
-        "title": "Area",
-        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "title": "Terület",
+        "description": "A terület neve és a zónái által megosztott érzékelők. A saját érzékelővel rendelkező zóna továbbra is azt használja.",
         "data": {
-          "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "area_name": "Név",
+          "rain_counter_entity": "Esőmérő",
+          "rain_source_type": "Esőmérő-érzékelő týpusa",
+          "area_rain_mm_per_tip": "Esőmérő mm/billenés",
+          "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
+          "weather_entity": "Időjárás-entitás (előrejelzés)",
+          "notify_entity": "Értesítendő telefon"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
+          "area_rain_mm_per_tip": "Csak billenésszámlálóhoz: hány mm esőnek felel meg egy billenés.",
+          "outdoor_temp_entity": "Opcionális. Beállítja a meleg / hűvös öntözési szintet a terület zónáihoz.",
+          "weather_entity": "Opcionális. Lehetővé teszi a terület zónái számára az öntözés kihagyását eső-előrejelzés esetén.",
+          "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
+          "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
+          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt."
         }
       }
     },
@@ -604,7 +604,7 @@
       "flow_rate_disabled": "A zóna Csepegtetők vízhozama (kalibrálás) entitása le van tiltva. Engedélyezd (a zóna eszközoldala → entitások), és próbáld újra.",
       "zone_flow_set": "Zóna vízhozama beállítva: {flow}. Csak a vízhasználat becslésére szolgál.",
       "zone_flow_out_of_range": "Ez a beállítás által megengedett tartományon kívüli zóna vízhozamot eredményez (0-2000 L/min). Ellenőrizze a számokat.",
-      "location_not_available": "That place is not available."
+      "location_not_available": "Ez a hely nem érhető el."
     },
     "error": {
       "valve_already_used": "Egy másik ZoneFlow zóna már használja ezt a szelepet.",
@@ -620,8 +620,8 @@
       "wu_no_stations": "Nincsenek állomások a sugáron belül. Közeli állomás nélkül ez a funkció nem segít.",
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
       "greenhouse_has_crops": "Ez az üvegház növényeket tartalmaz. Először helyezze át őket egy másik üvegházba, vagy távolítsa el őket (minden növény Beállítás -> Üvegház menüpontjában).",
-      "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_required": "Nevezze el a területet.",
+      "area_name_exists": "Már létezik egy terület ezzel a névvel."
     }
   },
   "selector": {
@@ -1259,7 +1259,7 @@
         }
       },
       "location": {
-        "name": "Where is this?"
+        "name": "Hol található ez?"
       }
     },
     "text": {
@@ -1370,196 +1370,196 @@
       }
     },
     "create_area": {
-      "name": "Create Area",
-      "description": "Makes a new area (a part of the garden such as Backyard). Target a zone and it moves into the new area, which starts with that zone's rain gauge, outdoor temperature, weather and phone settings.",
+      "name": "Terület létrehozása",
+      "description": "Új területet hoz létre (a kert egy részét, például Hátsó kert). Válasszon ki egy zónát, és az átköltözik az új területre, amely az adott zóna esőmérő-, külső hőmérséklet-, időjárás- és telefonbeállításaival indul.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "What the area is called, for example Backyard or Front yard."
+          "name": "Név",
+          "description": "A terület neve, például Hátsó kert vagy Első kert."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone to put in the new area (optional)."
+          "name": "Zónaeszköz",
+          "description": "Az új területre helyezendő zóna (opcionális)."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to that zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "Adott zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     },
     "add_plant": {
-      "name": "Add Plant",
-      "description": "Adds a plant to a zone. In a zone with no main plant it becomes the main plant and its type's settings go onto the zone; otherwise it is a record only (history, notes), unless Old Main Plant says it takes over.",
+      "name": "Növény hozzáadása",
+      "description": "Hozzáad egy növényt egy zónához. Fő növény nélküli zónában ez válik fő növénnyé, és típusának beállításai a zónára kerülnek; egyébként csak nyilvántartás (előzmények, megjegyzések), hacsak a Régi fő növény nem jelöli ki az átvételt.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "What the plant is called."
+          "name": "Név",
+          "description": "A növény neve."
         },
         "plant_type": {
-          "name": "Plant Type",
-          "description": "Starting settings for this kind of plant (custom if left out)."
+          "name": "Növénytípus",
+          "description": "Kezdő beállítások ehhez a növényfajtához (egyéni, ha kimarad)."
         },
         "old_main": {
-          "name": "Old Main Plant",
-          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record or archive it."
+          "name": "Régi fő növény",
+          "description": "Csak ha a zónának már van fő növénye. Mi történjen vele: maradjon nyilvántartásban vagy kerüljön archiválásra."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zónaeszköz",
+          "description": "A zóna. Csak 2 vagy több konfigurált zóna esetén szükséges."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     },
     "move_plant": {
-      "name": "Move Plant",
-      "description": "Moves a plant, with its history, to another zone. Its settings go onto the zone it arrives in.",
+      "name": "Növény áthelyezése",
+      "description": "Áthelyez egy növényt az előzményeivel együtt egy másik zónába. Beállításai átkerülnek az érkezési zónára.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id (shown in the zone's Status attributes)."
+          "name": "Növény",
+          "description": "A növény azonosítója (a zóna állapotattribútumaiban látható)."
         },
         "old_main": {
-          "name": "Old Main Plant",
-          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record, archive it, swap it to the zone this plant leaves, or keep this plant as a record only."
+          "name": "Régi fő növény",
+          "description": "Csak ha a zónának már van fő növénye. Mi történjen vele: maradjon nyilvántartásban, kerüljön archiválásra, cserélődjön át a növény által elhagyott zónába, vagy ez a növény maradjon csak nyilvántartásban."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone it goes to."
+          "name": "Zónaeszköz",
+          "description": "A célzóna."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     },
     "remove_plant": {
-      "name": "Remove Plant",
-      "description": "Takes a plant out of its zone. It stays on record with its history. The next plant in the zone becomes the main plant.",
+      "name": "Növény eltávolítása",
+      "description": "Eltávolítja a növényt a zónájából. Nyilvántartásban marad az előzményeivel. A zónában lévő következő növény válik fő növénnyé.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Növény",
+          "description": "A növény azonosítója."
         }
       }
     },
     "set_main_plant": {
-      "name": "Set Main Plant",
-      "description": "Makes a plant the main plant of its zone: its settings go onto the zone and the old main plant stays as a record.",
+      "name": "Fő növény beállítása",
+      "description": "Egy növényt tesz a zónája fő növényévé: beállításai átkerülnek a zónára, a régi fő növény pedig nyilvántartásban marad.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Növény",
+          "description": "A növény azonosítója."
         }
       }
     },
     "add_plant_note": {
-      "name": "Add Plant Note",
-      "description": "Adds a note to a plant's history.",
+      "name": "Növényi megjegyzés hozzáadása",
+      "description": "Megjegyzést ad a növény előzményeihez.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Növény",
+          "description": "A növény azonosítója."
         },
         "text": {
-          "name": "Note",
-          "description": "What to write down."
+          "name": "Megjegyzés",
+          "description": "Mit írjon fel."
         }
       }
     },
     "save_preset": {
-      "name": "Save Preset",
-      "description": "Saves a zone's watering settings (not its valve, sensors, flow rate, planting date or notes) under a name, to start other zones from. The same name replaces the preset.",
+      "name": "Előbeállítás mentése",
+      "description": "Elmenti a zóna öntözési beállításait (a szelepet, érzékelőket, vízhozamot, ültetési dátumot és megjegyzéseket nem) egy név alatt, hogy más zónák innen indulhassanak. Ugyanaz a név felülírja az előbeállítást.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "What to call the preset."
+          "name": "Név",
+          "description": "Mi legyen az előbeállítás neve."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zónaeszköz",
+          "description": "A zóna. Csak 2 vagy több konfigurált zóna esetén szükséges."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     },
     "copy_settings": {
-      "name": "Copy Settings",
-      "description": "Gives a zone another zone's watering settings, or a saved preset's. Not the valve, sensors, flow rate, planting date or notes.",
+      "name": "Beállítások másolása",
+      "description": "Átadja egy zónának egy másik zóna öntözési beállításait, vagy egy mentett előbeállításét. A szelepet, érzékelőket, vízhozamot, ültetési dátumot és megjegyzéseket nem.",
       "fields": {
         "source_device_id": {
-          "name": "Copy From Zone",
-          "description": "The zone to copy the settings from (or choose a preset)."
+          "name": "Másolás erről a zónáról",
+          "description": "A zóna, ahonnan a beállításokat másolni kívánja (vagy válasszon előbeállítást)."
         },
         "preset": {
-          "name": "Preset",
-          "description": "The name of a saved preset (or choose a zone to copy from)."
+          "name": "Előbeállítás",
+          "description": "A mentett előbeállítás neve (vagy válasszon egy zónát a másoláshoz)."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone that gets the settings."
+          "name": "Zónaeszköz",
+          "description": "A beállításokat fogadó zóna."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     },
     "delete_preset": {
-      "name": "Delete Preset",
-      "description": "Deletes a saved preset.",
+      "name": "Előbeállítás törlése",
+      "description": "Töröl egy mentett előbeállítást.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "The preset's name."
+          "name": "Név",
+          "description": "Az előbeállítás neve."
         }
       }
     },
     "water_now": {
-      "name": "Water Now",
-      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. Counts in the water record (litres), but does not move the routine or deep soak schedule.",
+      "name": "Öntözés most",
+      "description": "Kézzel öntözi a zónát megadott percig. Szüneteltetés alatt nem, soha nem hosszabban a zóna Rendszeres öntözés maximális biztonsági futásidejénél, és a napi futásidő-korláton belül. Beleszámít a vízadatokba (liter), de nem tolja el a rendszeres vagy mélyöntözés ütemezését.",
       "fields": {
         "minutes": {
-          "name": "Minutes",
-          "description": "How long to water."
+          "name": "Perc",
+          "description": "Milyen hosszan öntözzön."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zónaeszköz",
+          "description": "A zóna. Csak 2 vagy több konfigurált zóna esetén szükséges."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     },
     "calibrate_flow": {
-      "name": "Calibrate Flow Rate",
-      "description": "Sets the flow rate from a measured run: the water that came out (collected in a bucket or read from a water meter), the area it fell on, and how long the valve was open. Also sets Zone Flow, for litres.",
+      "name": "Vízhozam kalibrálása",
+      "description": "Beállítja a vízhozamot egy mért futtatás alapján: a kifolyt víz (vödörben összegyűjtve vagy vízórából leolvasva), a lefedett terület és a szelep nyitvatartási ideje alapján. Beállítja a Zóna vízhozamát is literekre.",
       "fields": {
         "volume": {
-          "name": "Water",
-          "description": "How much water came out (litres, or gallons on an imperial zone)."
+          "name": "Víz",
+          "description": "Mennyi víz folyt ki (liter, vagy gallon az imperiális zónában)."
         },
         "area": {
-          "name": "Area",
-          "description": "The area that water fell on (m2, or ft2 on an imperial zone)."
+          "name": "Terület",
+          "description": "A terület, ahová a víz hullott (m2, vagy ft2 az imperiális zónában)."
         },
         "minutes": {
-          "name": "Minutes",
-          "description": "How long the valve was open."
+          "name": "Perc",
+          "description": "Milyen hosszan volt nyitva a szelep."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zónaeszköz",
+          "description": "A zóna. Csak 2 vagy több konfigurált zóna esetén szükséges."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zónaentitás",
+          "description": "A zóna eszközéhez tartozó bármely entitás (a Zónaeszköz alternatívája)."
         }
       }
     }
@@ -1611,58 +1611,58 @@
       "message": "Semmi sincs szüneteltetve: minden eszköz már a ZoneFlow vezérlése alatt áll."
     },
     "location_not_available": {
-      "message": "That place is not available any more."
+      "message": "Ez a hely már nem érhető el."
     },
     "greenhouse_cannot_be_crop": {
-      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
+      "message": "Klímaberendezésekkel rendelkező üvegház nem lehet egy másik üvegház növénye."
     },
     "area_name_required": {
-      "message": "Give the area a name."
+      "message": "Nevezze el a területet."
     },
     "area_name_exists": {
-      "message": "An area with this name already exists."
+      "message": "Már létezik egy terület ezzel a névvel."
     },
     "plant_zone_not_available": {
-      "message": "That zone is not available."
+      "message": "Ez a zóna nem érhető el."
     },
     "plant_name_required": {
-      "message": "Give the plant a name."
+      "message": "Nevezze el a növényt."
     },
     "plant_not_found": {
-      "message": "That plant does not exist."
+      "message": "Ez a növény nem létezik."
     },
     "plant_same_zone": {
-      "message": "The plant is already in that zone."
+      "message": "A növény már abban a zónában van."
     },
     "plant_old_main_choice": {
-      "message": "{zone} already has a main plant. Say what becomes of it (Old Main Plant)."
+      "message": "A(z) {zone} zónának már van fő növénye. Adja meg, mi történjen vele (Régi fő növény)."
     },
     "plant_zone_has_no_valve": {
-      "message": "Only a zone with a valve can have a main plant."
+      "message": "Csak szeleppel rendelkező zónának lehet fő növénye."
     },
     "plant_note_required": {
-      "message": "Write the note first."
+      "message": "Először írja meg a megjegyzést."
     },
     "preset_name_required": {
-      "message": "Give the preset a name."
+      "message": "Nevezze el az előbeállítást."
     },
     "preset_not_found": {
-      "message": "There is no preset with that name."
+      "message": "Ezen a néven nem létezik előbeállítás."
     },
     "copy_same_zone": {
-      "message": "Choose a different zone to copy from."
+      "message": "Válasszon egy másik zónát a másoláshoz."
     },
     "copy_source_required": {
-      "message": "Choose a zone or a preset to copy from."
+      "message": "Válasszon egy zónát vagy előbeállítást a másoláshoz."
     },
     "water_now_out_of_range": {
-      "message": "Water for at least 1 minute and at most {max} minutes (this zone's safety cap)."
+      "message": "Öntözzzön legalább 1 percig és legfeljebb {max} percig (a zóna biztonsági korlátja)."
     },
     "calibration_out_of_range": {
-      "message": "Those numbers give a flow rate this zone cannot have. Check the water, the area and the minutes."
+      "message": "Ezek a számok olyan vízhozamot adnak, amilyen ebben a zónában nem lehetséges. Ellenőrizze a vizet, a területet és a perceket."
     },
     "calibration_unavailable": {
-      "message": "This zone has no flow rate setting to calibrate."
+      "message": "Ennek a zónának nincs kalibrálandó vízhozam-beállítása."
     }
   },
   "issues": {
@@ -1676,18 +1676,18 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Replace the sensor",
-            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "title": "Erzékelő cseréje",
+            "description": "A(z) {zone} által használt {entity} érzékelő napok óta offline. Válasszon helyette egy érzékelőt, vagy hagyja üresen (a zóna ezután anélkül működik).",
             "data": {
-              "replacement": "Replacement sensor"
+              "replacement": "Csereszenzor"
             },
             "data_description": {
-              "replacement": "Leave empty to remove the sensor from this zone."
+              "replacement": "Hagyja üresen az érzékelő eltávolításához ebből a zónából."
             }
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "Ez a zóna már nem létezik."
         }
       }
     },
@@ -1697,18 +1697,18 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Choose another phone",
-            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "title": "Másik telefon választása",
+            "description": "A(z) {entity} telefon már nem létezik, így a(z) {zone} nem tud üzeneteket küldeni. Válasszon másik telefont, vagy hagyja üresen.",
             "data": {
-              "notify_entity": "Phone to notify"
+              "notify_entity": "Értesítendő telefon"
             },
             "data_description": {
-              "notify_entity": "Leave empty to stop phone messages from this zone."
+              "notify_entity": "Hagyja üresen, ha nem kér telefonos értesítéseket erről a zónáról."
             }
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "Ez a zóna már nem létezik."
         }
       }
     },
@@ -1718,36 +1718,36 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Set the flow rate by measuring",
-            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "title": "Vízhozam beállítása méréssel",
+            "description": "A(z) {zone} zóna még mindig a minta-vízhozamot használja, így az öntözési idők becslések. Tegyyen egy vödröt a csepegtetők alá (vagy jegyezze fel a vízóra állását), majd futtassa a szelepet 15 percig. Indítja most?",
             "data": {
-              "run": "Run the valve for 15 minutes now"
+              "run": "Szelep futtatása 15 percig most"
             },
             "data_description": {
-              "run": "Untick if you have already run it."
+              "run": "Törölje a jelölést, ha már lefuttatta."
             }
           },
           "measure": {
-            "title": "How much water came out?",
-            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "title": "Mennyi víz folyt ki?",
+            "description": "Adja meg, mennyi vizet adott a(z) {zone} abban a futtatásban, mekkora területet öntözött és hány percig volt nyitva a szelep.",
             "data": {
-              "volume": "Water that came out",
-              "area": "Watered area",
-              "minutes": "Minutes the valve was open"
+              "volume": "Kifolyt víz",
+              "area": "Öntözött terület",
+              "minutes": "Percek, amíg a szelep nyitva volt"
             },
             "data_description": {
-              "volume": "Litres (gallons on an imperial zone).",
-              "area": "Square metres (square feet on an imperial zone).",
-              "minutes": "Normally 15."
+              "volume": "Liter (gallon az imperiális zónában).",
+              "area": "Négyzetméter (négyzetláb az imperiális zónában).",
+              "minutes": "Általában 15."
             }
           }
         },
         "error": {
-          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+          "out_of_range": "Ezek a számok olyan vízhozamot adnak, amilyen ebben a zónában nem lehetséges. Ellenőrizze őket."
         },
         "abort": {
-          "zone_gone": "This zone no longer exists.",
-          "zone_busy": "The zone is busy. Try again in a moment."
+          "zone_gone": "Ez a zóna már nem létezik.",
+          "zone_busy": "A zóna elfoglalt. Próbálja újra egy pillanat múlva."
         }
       }
     },
@@ -1788,8 +1788,8 @@
       "description": "A(z) {greenhouse} üvegház törölve lett, így a(z) {zone} mostantól önálló zóna. A locsolást folytatja, és megőrzi az üvegház belső érzékelőit. Ha másik üvegházba szeretné helyezni, használja a zóna Beállítás -> Üvegház menüpontját."
     },
     "area_removed": {
-      "title": "{zone}: its area was removed",
-      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
+      "title": "{zone}: a területe el lett távolítva",
+      "description": "A(z) {area} terület törölve lett, így a(z) {zone} zóna most az onnan kapott érzékelők másolatát használja. Másik területre való áthelyezéshez használja a zóna Konfigurálás -> Hol van ez? lehetőségét."
     }
   }
 }

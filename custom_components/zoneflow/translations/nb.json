@@ -8,18 +8,18 @@
           "zone_name": "Sonenavn",
           "plant": "Hva som vokser her",
           "zone_type": "Hvor det dyrkes",
-          "start_from": "Start from"
+          "start_from": "Start fra"
         },
         "data_description": {
           "zone_name": "Blir enhetsnavnet til sonen og starten på entitetsnavnene, og vises i telefonvarsler. F.eks. \"Tomatbed\", \"Plenen foran\".",
           "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside.",
           "zone_type": "Utendørs er slik ZoneFlow alltid har fungert. Drivhus og innendørssoner legger til klimastyring (vifter, lufting, tåkelegging, varmeovn), kan fungere uten ventil, og har hverken regnmåler eller værvarsel på grunn av taket.",
-          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied."
+          "start_from": "Start fra en kopi av en annen zones vanningsinnstillinger eller en lagret forhåndsinnstilling i stedet for plantetypens. Ventil, sensorer og gjennomstrømning kopieres aldri."
         }
       },
       "entities": {
         "title": "ZoneFlow vanning",
-        "description": "{progress}\n\nPek på entitetene du faktisk har. Integrasjonen lager aldri egne fysiske entiteter. Bare ventilbryteren er påkrevd -- alt annet nedenfor fungerer greit også når det står tomt.\n\n{suggestions}",
+        "description": "{progress}\n\nPek denne til dine virkelige entiteter. Den oppretter aldri egne fysiske entiteter. Kun ventilbryteren er obligatorisk – alt annet nedenfor fungerer fint selv om det ikke er angitt. La et felt stå tomt hvis du ikke har det.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilbryter",
           "pump_power_entity": "Effektsensor for pumpe (valgfritt)",
@@ -31,11 +31,11 @@
           "soil_moisture_entity": "Jordfuktighetssensor (valgfritt)",
           "notify_entity": "Telefon for varsler (valgfritt)",
           "weather_entity": "Kilde for værmelding (valgfritt)",
-          "soil_type": "Jordtype",
-          "drainage": "Drenering",
-          "slope": "Helning",
-          "irrigation_method": "Vanningsmetode",
-          "growth_ramp_profile": "Automatisk opptrapping etter vekststadium",
+          "soil_type": "Kjenner du jordtypen din? (hopp over hvis ikke)",
+          "drainage": "Drenerer vannet langsomt? (hopp over hvis du ikke vet)",
+          "slope": "Heller terrenget? (hopp over hvis det er flatt eller du er usikker)",
+          "irrigation_method": "Hvordan kommer vannet til plantene?",
+          "growth_ramp_profile": "Er det en ung plante som trenger mindre vann i starten? (hopp over hvis ikke)",
           "csv_path": "Filbane for CSV-logg",
           "deep_soak_enabled": "Slå på dypvanning",
           "deep_soak_time": "Tidspunkt for dypvanning",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Klima",
-        "description": "{progress}\n\nHvordan er vekstsesongen der sonen ligger? Dette fyller bare inn temperaturglidebryterne på neste side -- du kan endre alle verdiene der, og senere på sonens enhetsside.",
+        "description": "{progress}\n\nHvordan er vekstsesongen der denne sonen er? Dette fyller bare ut temperaturgliderne på neste side på forhånd – du kan endre hver verdi der og senere på sonens enhetsside.",
         "data": {
           "climate": "Klima"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Temperaturgrenser",
-        "description": "{progress}\n\nZoneFlow regner ut snittet av dagens HØYESTE temperatur de siste 3 dagene. Ved Varm eller over vanner den oftere (hver 3. dag) med det varme ukemålet; under Kjølig bruker den det kjølige ukemålet; midt imellom er normalt.\n\nReservetemperaturen brukes når det ikke finnes noen ekte måling: uten temperatursensor er den din manuelle styring (skru den opp i en hetebølge, ned i en kuldeperiode); med sensor brukes den bare til sensoren har registrert sitt første hele døgn, og etter 3 dager uten én eneste måling.",
+        "description": "{progress}\n\nZoneFlow beregner gennemsnittet av den daglige MAKSIMALE temperaturen de siste 3 dagene. Ved eller over Varmt vannes det oftere (hver 3. dag) med det varme ukemålet; under Kjølig brukes det kjølige ukemålet; imellom er det normalt.\n\nReservetemperaturen brukes når det ikke finnes noen reell avlesning: uten temperatursensor er den din manuelle styring (øk ved varmebølge, senk ved kuldeperiode); med sensor brukes den kun inntil sensoren har registrert sin første hele dag, og etter 3 dager uten en eneste avlesning.",
         "data": {
           "hot_temp_threshold": "Grense for varmt vær",
           "cool_temp_threshold": "Grense for kjølig vær",
@@ -183,7 +183,7 @@
           "zone": "Legg til en sone",
           "weather_underground": "Sett opp Weather Underground-regn",
           "crop": "Legg til en kultur i et drivhus",
-          "area": "Add an area (a part of the garden)"
+          "area": "Legg til et område (en del av hagen)"
         }
       },
       "weather_underground": {
@@ -233,25 +233,25 @@
         }
       },
       "area": {
-        "title": "New area",
-        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "title": "Nytt område",
+        "description": "En del av hagen, for eksempel Bakgård eller Forhage. Sonene bruker sensorene som er angitt her, med mindre en sone har sine egne.",
         "data": {
-          "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "area_name": "Navn",
+          "rain_counter_entity": "Regnmåler",
+          "rain_source_type": "Regnmålersensortype",
+          "area_rain_mm_per_tip": "Regnmåler mm per vipp",
+          "outdoor_temp_entity": "Utendørs temperatursensor",
+          "weather_entity": "Værentitet (varsel)",
+          "notify_entity": "Telefon for varsling"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Valgfritt. Sonene i dette området leser regn herfra, med mindre en sone har sin egen måler.",
+          "area_rain_mm_per_tip": "Kun for vippteller: hvor mange mm regn én vipp tilsvarer.",
+          "outdoor_temp_entity": "Valgfritt. Angir varmt/kjølig vanningstrinn for sonene i dette området.",
+          "weather_entity": "Valgfritt. Lar sonene i dette området hoppe over vanning når det er meldt regn.",
+          "notify_entity": "Valgfritt. Hvor sonene i dette området sender sine telefonmeldinger.",
+          "area_name": "Hva området kalles, for eksempel Bakgård eller Forhage.",
+          "rain_source_type": "Hva regnmålersensoren rapporterer: en vippteller, en total regnmengde, en regnintensitet eller regn siden siste avlesning."
         }
       }
     },
@@ -269,8 +269,8 @@
       "wu_cannot_connect": "Klarte ikke å koble til Weather Underground. Prøv igjen senere.",
       "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
       "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner.",
-      "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_required": "Gi området et navn.",
+      "area_name_exists": "Et område med dette navnet finnes allerede."
     },
     "abort": {
       "already_configured": "Weather Underground-regn er allerede satt opp."
@@ -291,7 +291,7 @@
           "zone_type": "Sonetype",
           "weather_underground": "Weather Underground-regn",
           "crop_valve": "Kulturventil",
-          "location": "Where is this? (area or greenhouse)"
+          "location": "Hvor er dette? (område eller drivhus)"
         }
       },
       "settings": {
@@ -525,73 +525,73 @@
         }
       },
       "location": {
-        "title": "Where is this?",
-        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
+        "title": "Hvor er dette?",
+        "description": "Området eller drivhuset denne sonen er i. En sone bruker sensorene til sitt område med mindre den har sine egne. I et drivhus er den en kultur der. Velg Nytt område for å lage et område ut fra denne sonens egne sensorer.",
         "data": {
-          "location": "Place"
+          "location": "Sted"
         },
         "data_description": {
-          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+          "location": "Et område, et drivhus eller ingen. Flytting av sonen starter den på nytt slik at den leser sensorene på det nye stedet."
         }
       },
       "location_sensors": {
-        "title": "Use the area's sensors?",
-        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "title": "Bruk områdets sensorer?",
+        "description": "Denne sonen har sin egen sensor der området har en annen. Huk av for å bruke områdets; fjern avhukingen for å beholde sonens egen.",
         "data": {
-          "rain_counter_entity": "Use the area's rain gauge",
-          "outdoor_temp_entity": "Use the area's outdoor temperature",
-          "weather_entity": "Use the area's weather entity",
-          "notify_entity": "Use the area's phone"
+          "rain_counter_entity": "Bruk områdets regnmåler",
+          "outdoor_temp_entity": "Bruk områdets utendørstemperatur",
+          "weather_entity": "Bruk områdets værentitet",
+          "notify_entity": "Bruk områdets telefon"
         },
         "data_description": {
-          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
-          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
-          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
-          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+          "rain_counter_entity": "Huk av for å bruke områdets regnmåler i stedet for denne sonens egen.",
+          "outdoor_temp_entity": "Huk av for å bruke områdets utendørs temperatursensor i stedet for denne sonens egen.",
+          "weather_entity": "Huk av for å bruke områdets værentitet i stedet for denne sonens egen.",
+          "notify_entity": "Huk av for å sende til områdets telefon i stedet for denne sonens egen."
         }
       },
       "new_area": {
-        "title": "New area",
-        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "title": "Nytt område",
+        "description": "Et område laget ut fra denne sonens sensorer. Sonen flytter inn i det, og andre soner kan koble seg til senere.",
         "data": {
-          "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "area_name": "Navn",
+          "rain_counter_entity": "Regnmåler",
+          "rain_source_type": "Regnmålersensortype",
+          "area_rain_mm_per_tip": "Regnmåler mm per vipp",
+          "outdoor_temp_entity": "Utendørs temperatursensor",
+          "weather_entity": "Værentitet (varsel)",
+          "notify_entity": "Telefon for varsling"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Valgfritt. Sonene i dette området leser regn herfra, med mindre en sone har sin egen måler.",
+          "area_rain_mm_per_tip": "Kun for vippteller: hvor mange mm regn én vipp tilsvarer.",
+          "outdoor_temp_entity": "Valgfritt. Angir varmt/kjølig vanningstrinn for sonene i dette området.",
+          "weather_entity": "Valgfritt. Lar sonene i dette området hoppe over vanning når det er meldt regn.",
+          "notify_entity": "Valgfritt. Hvor sonene i dette området sender sine telefonmeldinger.",
+          "area_name": "Hva området kalles, for eksempel Bakgård eller Forhage.",
+          "rain_source_type": "Hva regnmålersensoren rapporterer: en vippteller, en total regnmengde, en regnintensitet eller regn siden siste avlesning."
         }
       },
       "area_settings": {
-        "title": "Area",
-        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "title": "Område",
+        "description": "Navnet på området og sensorene sonene deler. En sone med sin egen sensor fortsetter å bruke den.",
         "data": {
-          "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "area_name": "Navn",
+          "rain_counter_entity": "Regnmåler",
+          "rain_source_type": "Regnmålersensortype",
+          "area_rain_mm_per_tip": "Regnmåler mm per vipp",
+          "outdoor_temp_entity": "Utendørs temperatursensor",
+          "weather_entity": "Værentitet (varsel)",
+          "notify_entity": "Telefon for varsling"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Valgfritt. Sonene i dette området leser regn herfra, med mindre en sone har sin egen måler.",
+          "area_rain_mm_per_tip": "Kun for vippteller: hvor mange mm regn én vipp tilsvarer.",
+          "outdoor_temp_entity": "Valgfritt. Angir varmt/kjølig vanningstrinn for sonene i dette området.",
+          "weather_entity": "Valgfritt. Lar sonene i dette området hoppe over vanning når det er meldt regn.",
+          "notify_entity": "Valgfritt. Hvor sonene i dette området sender sine telefonmeldinger.",
+          "area_name": "Hva området kalles, for eksempel Bakgård eller Forhage.",
+          "rain_source_type": "Hva regnmålersensoren rapporterer: en vippteller, en total regnmengde, en regnintensitet eller regn siden siste avlesning."
         }
       }
     },
@@ -604,7 +604,7 @@
       "flow_rate_disabled": "Sonens entitet Kalibrering av vannmengde er deaktivert. Aktiver den (sonens enhetsside → entitetene) og prøv igjen.",
       "zone_flow_set": "Sonegjennomstrømning satt til {flow}. Den brukes kun til anslaget for vannforbruk.",
       "zone_flow_out_of_range": "Det gir en sonegjennomstrømning utenfor det innstillingen tillater (0 til 2000 L/min). Sjekk tallene.",
-      "location_not_available": "That place is not available."
+      "location_not_available": "Dette stedet er ikke tilgjengelig."
     },
     "error": {
       "valve_already_used": "En annen ZoneFlow-sone bruker allerede denne ventilen.",
@@ -620,8 +620,8 @@
       "wu_no_stations": "Ingen stasjoner innenfor radiusen. Uten en stasjon i nærheten hjelper ikke denne funksjonen.",
       "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner.",
       "greenhouse_has_crops": "Dette drivhuset har kulturer. Flytt dem til et annet drivhus eller fjern dem først (hver kulturs Konfigurer -> Drivhus).",
-      "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_required": "Gi området et navn.",
+      "area_name_exists": "Et område med dette navnet finnes allerede."
     }
   },
   "selector": {
@@ -1259,7 +1259,7 @@
         }
       },
       "location": {
-        "name": "Where is this?"
+        "name": "Hvor er dette?"
       }
     },
     "text": {
@@ -1370,196 +1370,196 @@
       }
     },
     "create_area": {
-      "name": "Create Area",
-      "description": "Makes a new area (a part of the garden such as Backyard). Target a zone and it moves into the new area, which starts with that zone's rain gauge, outdoor temperature, weather and phone settings.",
+      "name": "Opprett område",
+      "description": "Lager et nytt område (en del av hagen som Bakgård). Målrett en sone, og den flytter inn i det nye området, som starter med denne sonens regnmåler-, utendørstemperatur-, vær- og telefoninnstillinger.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "What the area is called, for example Backyard or Front yard."
+          "name": "Navn",
+          "description": "Hva området kalles, for eksempel Bakgård eller Forhage."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone to put in the new area (optional)."
+          "name": "Soneenhet",
+          "description": "Sonen som skal plasseres i det nye området (valgfritt)."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to that zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører den sonens enhet (alternativ til Soneenhet)."
         }
       }
     },
     "add_plant": {
-      "name": "Add Plant",
-      "description": "Adds a plant to a zone. In a zone with no main plant it becomes the main plant and its type's settings go onto the zone; otherwise it is a record only (history, notes), unless Old Main Plant says it takes over.",
+      "name": "Legg til plante",
+      "description": "Legger til en plante i en sone. I en sone uten hovedplante blir den hovedplante, og dens typeinnstillinger gjelder for sonen. Ellers er den kun en registrering (historikk, notater), med mindre Gammel hovedplante sier at den tar over.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "What the plant is called."
+          "name": "Navn",
+          "description": "Hva planten kalles."
         },
         "plant_type": {
-          "name": "Plant Type",
-          "description": "Starting settings for this kind of plant (custom if left out)."
+          "name": "Plantetype",
+          "description": "Startinnstillinger for denne typen plante (egendefinert hvis utelatt)."
         },
         "old_main": {
-          "name": "Old Main Plant",
-          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record or archive it."
+          "name": "Gammel hovedplante",
+          "description": "Kun når sonen allerede har en hovedplante. Hva som skjer med den: behold den som registrering eller arkiver den."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Soneenhet",
+          "description": "Sonen. Kun nødvendig når 2 eller flere soner er konfigurert."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører sonens enhet (alternativ til Soneenhet)."
         }
       }
     },
     "move_plant": {
-      "name": "Move Plant",
-      "description": "Moves a plant, with its history, to another zone. Its settings go onto the zone it arrives in.",
+      "name": "Flytt plante",
+      "description": "Flytter en plante, med dens historikk, til en annen sone. Innstillingene overføres til sonen den ankommer.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id (shown in the zone's Status attributes)."
+          "name": "Plante",
+          "description": "Plantens ID (vist i sonens statusattributter)."
         },
         "old_main": {
-          "name": "Old Main Plant",
-          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record, archive it, swap it to the zone this plant leaves, or keep this plant as a record only."
+          "name": "Gammel hovedplante",
+          "description": "Kun når sonen allerede har en hovedplante. Hva som skjer med den: behold den som registrering, arkiver den, bytt den til sonen denne planten forlater, eller behold denne planten kun som registrering."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone it goes to."
+          "name": "Soneenhet",
+          "description": "Sonen den går til."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører sonens enhet (alternativ til Soneenhet)."
         }
       }
     },
     "remove_plant": {
-      "name": "Remove Plant",
-      "description": "Takes a plant out of its zone. It stays on record with its history. The next plant in the zone becomes the main plant.",
+      "name": "Fjern plante",
+      "description": "Fjerner en plante fra sonen. Den blir stående i registret med sin historikk. Den neste planten i sonen blir hovedplante.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Plante",
+          "description": "Plantens ID."
         }
       }
     },
     "set_main_plant": {
-      "name": "Set Main Plant",
-      "description": "Makes a plant the main plant of its zone: its settings go onto the zone and the old main plant stays as a record.",
+      "name": "Angi hovedplante",
+      "description": "Gjør en plante til hovedplante i sonen sin: innstillingene overføres til sonen og den gamle hovedplanten blir stående som registrering.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Plante",
+          "description": "Plantens ID."
         }
       }
     },
     "add_plant_note": {
-      "name": "Add Plant Note",
-      "description": "Adds a note to a plant's history.",
+      "name": "Legg til plantenotat",
+      "description": "Legger til et notat i en plantes historikk.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Plante",
+          "description": "Plantens ID."
         },
         "text": {
-          "name": "Note",
-          "description": "What to write down."
+          "name": "Notat",
+          "description": "Hva som skal skrives ned."
         }
       }
     },
     "save_preset": {
-      "name": "Save Preset",
-      "description": "Saves a zone's watering settings (not its valve, sensors, flow rate, planting date or notes) under a name, to start other zones from. The same name replaces the preset.",
+      "name": "Lagre forhåndsinnstilling",
+      "description": "Lagrer en sones vanningsinnstillinger (ikke dens ventil, sensorer, gjennomstrømning, plantedato eller notater) under et navn, for å starte andre soner fra. Samme navn erstatter forhåndsinnstillingen.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "What to call the preset."
+          "name": "Navn",
+          "description": "Hva forhåndsinnstillingen skal kalles."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Soneenhet",
+          "description": "Sonen. Kun nødvendig når 2 eller flere soner er konfigurert."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører sonens enhet (alternativ til Soneenhet)."
         }
       }
     },
     "copy_settings": {
-      "name": "Copy Settings",
-      "description": "Gives a zone another zone's watering settings, or a saved preset's. Not the valve, sensors, flow rate, planting date or notes.",
+      "name": "Kopier innstillinger",
+      "description": "Gir en sone en annen sones vanningsinnstillinger eller en lagret forhåndsinnstilling. Ikke ventil, sensorer, gjennomstrømning, plantedato eller notater.",
       "fields": {
         "source_device_id": {
-          "name": "Copy From Zone",
-          "description": "The zone to copy the settings from (or choose a preset)."
+          "name": "Kopier fra sone",
+          "description": "Sonen det skal kopieres innstillinger fra (eller velg en forhåndsinnstilling)."
         },
         "preset": {
-          "name": "Preset",
-          "description": "The name of a saved preset (or choose a zone to copy from)."
+          "name": "Forhåndsinnstilling",
+          "description": "Navnet på en lagret forhåndsinnstilling (eller velg en sone å kopiere fra)."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone that gets the settings."
+          "name": "Soneenhet",
+          "description": "Sonen som får innstillingene."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører sonens enhet (alternativ til Soneenhet)."
         }
       }
     },
     "delete_preset": {
-      "name": "Delete Preset",
-      "description": "Deletes a saved preset.",
+      "name": "Slett forhåndsinnstilling",
+      "description": "Sletter en lagret forhåndsinnstilling.",
       "fields": {
         "name": {
-          "name": "Name",
-          "description": "The preset's name."
+          "name": "Navn",
+          "description": "Forhåndsinnstillingens navn."
         }
       }
     },
     "water_now": {
-      "name": "Water Now",
-      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. Counts in the water record (litres), but does not move the routine or deep soak schedule.",
+      "name": "Vann nå",
+      "description": "Vanner sonen manuelt i et antall minutter. Ikke mens sonen er på pause, aldri lenger enn sonens Maksimal sikkerhetskjøretid for rutine, og innenfor dagens kjøretidsgrense. Teller i vannregnskapet (liter), men flytter ikke rutine- eller dypvanningsplanen.",
       "fields": {
         "minutes": {
-          "name": "Minutes",
-          "description": "How long to water."
+          "name": "Minutter",
+          "description": "Hvor lenge det skal vannes."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Soneenhet",
+          "description": "Sonen. Kun nødvendig når 2 eller flere soner er konfigurert."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører sonens enhet (alternativ til Soneenhet)."
         }
       }
     },
     "calibrate_flow": {
-      "name": "Calibrate Flow Rate",
-      "description": "Sets the flow rate from a measured run: the water that came out (collected in a bucket or read from a water meter), the area it fell on, and how long the valve was open. Also sets Zone Flow, for litres.",
+      "name": "Kalibrer gjennomstrømning",
+      "description": "Angir gjennomstrømningen fra en målt kjøring: vannet som kom ut (samlet i en bøtte eller avlest på en vannmåler), arealet det falt på, og hvor lenge ventilen var åpen. Angir også Sonegjennomstrømning for liter.",
       "fields": {
         "volume": {
-          "name": "Water",
-          "description": "How much water came out (litres, or gallons on an imperial zone)."
+          "name": "Vann",
+          "description": "Hvor mye vann som kom ut (liter, eller gallons i en imperial sone)."
         },
         "area": {
-          "name": "Area",
-          "description": "The area that water fell on (m2, or ft2 on an imperial zone)."
+          "name": "Område",
+          "description": "Arealet som vannet falt på (m2, eller ft2 i en imperial sone)."
         },
         "minutes": {
-          "name": "Minutes",
-          "description": "How long the valve was open."
+          "name": "Minutter",
+          "description": "Hvor lenge ventilen var åpen."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Soneenhet",
+          "description": "Sonen. Kun nødvendig når 2 eller flere soner er konfigurert."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Soneentitet",
+          "description": "Enhver entitet som tilhører sonens enhet (alternativ til Soneenhet)."
         }
       }
     }
@@ -1611,58 +1611,58 @@
       "message": "Ingenting er satt på pause: Alle enheter er allerede under ZoneFlows styring."
     },
     "location_not_available": {
-      "message": "That place is not available any more."
+      "message": "Dette stedet er ikke tilgjengelig lenger."
     },
     "greenhouse_cannot_be_crop": {
-      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
+      "message": "Et drivhus med klimaenheter kan ikke være en kultur i et annet drivhus."
     },
     "area_name_required": {
-      "message": "Give the area a name."
+      "message": "Gi området et navn."
     },
     "area_name_exists": {
-      "message": "An area with this name already exists."
+      "message": "Et område med dette navnet finnes allerede."
     },
     "plant_zone_not_available": {
-      "message": "That zone is not available."
+      "message": "Den sonen er ikke tilgjengelig."
     },
     "plant_name_required": {
-      "message": "Give the plant a name."
+      "message": "Gi planten et navn."
     },
     "plant_not_found": {
-      "message": "That plant does not exist."
+      "message": "Den planten finnes ikke."
     },
     "plant_same_zone": {
-      "message": "The plant is already in that zone."
+      "message": "Planten er allerede i den sonen."
     },
     "plant_old_main_choice": {
-      "message": "{zone} already has a main plant. Say what becomes of it (Old Main Plant)."
+      "message": "{zone} har allerede en hovedplante. Angi hva som skjer med den (Gammel hovedplante)."
     },
     "plant_zone_has_no_valve": {
-      "message": "Only a zone with a valve can have a main plant."
+      "message": "Kun en sone med en ventil kan ha en hovedplante."
     },
     "plant_note_required": {
-      "message": "Write the note first."
+      "message": "Skriv notatet først."
     },
     "preset_name_required": {
-      "message": "Give the preset a name."
+      "message": "Gi forhåndsinnstillingen et navn."
     },
     "preset_not_found": {
-      "message": "There is no preset with that name."
+      "message": "Det finnes ingen forhåndsinnstilling med det navnet."
     },
     "copy_same_zone": {
-      "message": "Choose a different zone to copy from."
+      "message": "Velg en annen sone å kopiere fra."
     },
     "copy_source_required": {
-      "message": "Choose a zone or a preset to copy from."
+      "message": "Velg en sone eller forhåndsinnstilling å kopiere fra."
     },
     "water_now_out_of_range": {
-      "message": "Water for at least 1 minute and at most {max} minutes (this zone's safety cap)."
+      "message": "Vann i minst 1 minutt og maksimalt {max} minutter (denne sonens sikkerhetsgrense)."
     },
     "calibration_out_of_range": {
-      "message": "Those numbers give a flow rate this zone cannot have. Check the water, the area and the minutes."
+      "message": "Disse tallene gir en gjennomstrømning som denne sonen ikke kan ha. Sjekk vannet, arealet og minuttene."
     },
     "calibration_unavailable": {
-      "message": "This zone has no flow rate setting to calibrate."
+      "message": "Denne sonen har ingen gjennomstrømningsinnstilling å kalibrere."
     }
   },
   "issues": {
@@ -1676,18 +1676,18 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Replace the sensor",
-            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "title": "Erstat sensoren",
+            "description": "Sensoren {entity} som brukes av {zone} har vært frakoblet i dager. Velg en sensor å bruke i stedet, eller la den stå tom for å slutte å bruke en (sonen fungerer da uten den).",
             "data": {
-              "replacement": "Replacement sensor"
+              "replacement": "Erstatningssensor"
             },
             "data_description": {
-              "replacement": "Leave empty to remove the sensor from this zone."
+              "replacement": "La stå tom for å fjerne sensoren fra denne sonen."
             }
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "Denne sonen finnes ikke lenger."
         }
       }
     },
@@ -1697,18 +1697,18 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Choose another phone",
-            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "title": "Velg en annen telefon",
+            "description": "Telefonen {entity} finnes ikke lenger, så {zone} kan ikke sende deg meldinger. Velg en annen telefon, eller la den stå tom.",
             "data": {
-              "notify_entity": "Phone to notify"
+              "notify_entity": "Telefon for varsling"
             },
             "data_description": {
-              "notify_entity": "Leave empty to stop phone messages from this zone."
+              "notify_entity": "La stå tom for å stoppe telefonmeldinger fra denne sonen."
             }
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "Denne sonen finnes ikke lenger."
         }
       }
     },
@@ -1718,36 +1718,36 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Set the flow rate by measuring",
-            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "title": "Angi gjennomstrømning ved måling",
+            "description": "{zone} har fortsatt eksempel-gjennomstrømningen, så vanningstidene er anslag. Sett en bøtte under vanningspunktene (eller noter vandmåleren), og kjør deretter ventilen i 15 minutter. Kjør den nå?",
             "data": {
-              "run": "Run the valve for 15 minutes now"
+              "run": "Kjør ventilen i 15 minutter nå"
             },
             "data_description": {
-              "run": "Untick if you have already run it."
+              "run": "Fjern haken hvis du allerede har kjørt den."
             }
           },
           "measure": {
-            "title": "How much water came out?",
-            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "title": "Hvor mye vann kom ut?",
+            "description": "Skriv inn hva {zone} ga i den kjøringen, arealet den vannet og hvor mange minutter ventilen var åpen.",
             "data": {
-              "volume": "Water that came out",
-              "area": "Watered area",
-              "minutes": "Minutes the valve was open"
+              "volume": "Vann som kom ut",
+              "area": "Vannet areal",
+              "minutes": "Minutter ventilen var åpen"
             },
             "data_description": {
-              "volume": "Litres (gallons on an imperial zone).",
-              "area": "Square metres (square feet on an imperial zone).",
-              "minutes": "Normally 15."
+              "volume": "Liter (gallons i en imperial sone).",
+              "area": "Kvadratmeter (kvadratfot i en imperial sone).",
+              "minutes": "Normalt 15."
             }
           }
         },
         "error": {
-          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+          "out_of_range": "Disse tallene gir en gjennomstrømning som denne sonen ikke kan ha. Sjekk dem."
         },
         "abort": {
-          "zone_gone": "This zone no longer exists.",
-          "zone_busy": "The zone is busy. Try again in a moment."
+          "zone_gone": "Denne sonen finnes ikke lenger.",
+          "zone_busy": "Sonen er opptatt. Prøv igjen om et øyeblikk."
         }
       }
     },
@@ -1788,8 +1788,8 @@
       "description": "Drivhuset {greenhouse} ble slettet, så {zone} er nå en egen sone. Den fortsetter å vanne og beholder drivhusets innvendige sensorer. For å plassere den i et annet drivhus, bruk sonens Konfigurer -> Drivhus."
     },
     "area_removed": {
-      "title": "{zone}: its area was removed",
-      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
+      "title": "{zone}: området ble fjernet",
+      "description": "Området {area} ble slettet, så {zone} bruker nå en kopi av sensorene den fikk derfra. For å plassere den i et annet område, bruk sonens Konfigurer -> Hvor er dette?"
     }
   }
 }

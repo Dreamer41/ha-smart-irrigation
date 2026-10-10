@@ -12,7 +12,7 @@
     "routine": "Rendszeres öntözés",
     "service_run": "Szervizfuttatás",
     "test_pulse": "Tesztimpulzus",
-    "manual_water": "Manual watering"
+    "manual_water": "Kézi öntözés"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "A fő belső hőmérséklet-érzékelő ({entity}) leállt. A klímaszabályozás a tartalék érzékelővel folytatódik."
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "Öntözés {minutes} perc",
+      "snooze": "Mai öntözés kihagyása",
+      "fertilized": "Trágyázva"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle} várakozik ({time}): {temp}, a fagyvédelmi határ ({limit}) alatt; óránként újra ellenőrzi",
     "waiting_deep_soak": "{cycle} vár ({time} óta): előbb a mélyöntözés jön, amint elég meleg lesz",
     "paused_until": "Szüneteltetve, eddig: {until}",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "Szüneteltetve: nincs öntözés, amíg a(z) {area} szünetel",
+    "paused_house": "Szüneteltetve: nincs öntözés, amíg a(z) {house} üvegház szünetel"
   },
   "summary": {
     "title": "💧 ZoneFlow: a heted",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "Nincs",
+    "greenhouse": "üvegház",
+    "new_area": "Új terület..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "Saját esőmérőt használ, nem a(z) {area} esőmérőjét.",
+      "outdoor_temp_entity": "Saját külső hőmérséklet-érzékelőt használ, nem a(z) {area} érzékelőjét.",
+      "weather_entity": "Saját időjárás-entitást használ, nem a(z) {area} entitását.",
+      "notify_entity": "Saját telefonra küldi, nem a(z) {area} telefonjára."
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "be",
+    "off": "ki",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "Hozzáadva a ZoneFlow-hoz",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "Áthelyezve innen: {from_zone} ide: {to_zone}",
+      "promoted": "A(z) {zone} fő növénye lett",
+      "demoted": "Most már csak rögzítés itt: {zone}",
+      "archived": "Archiválva innen: {zone}",
+      "removed": "Eltávolítva innen: {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Beállítások másolva innen: {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "Növekedési fázis mód",
+      "demand_model": "Öntözési mód",
+      "deficit_enabled": "Hiány mód",
+      "deficit_until_ts": "Hiány mód eddig:",
+      "planting_date_ts": "Ültetés dátuma",
+      "health_status": "Egészség",
+      "health_notes": "Egészségügyi jegyzetek",
+      "fertilizing_interval_months": "Trágyázási időköz",
+      "last_fertilizing_ts": "Utoljára trágyázva",
+      "growth_ramp_profile": "Növekedési skála",
+      "deep_soak_enabled": "Mélyöntözés"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "Növénytípus szokásos beállításai",
+    "zone": "{zone} másolata",
+    "preset": "Előbeállítás: {name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "A(z) {entity} szelep válaszol.",
+      "fail": "A(z) {entity} szelep nem érhető el. Ellenőrizze az eszközt és a kapcsolatát a Home Assistantban: semmi sem tud öntözni, amíg nem válaszol."
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "A(z) {entity} esőmérő méréseket küld.",
+      "fail": "A(z) {entity} esőmérő nem érhető el. Amíg nem tér vissza, a ZoneFlow feltételezi, hogy nem esik.",
+      "wu": "Az esőadatok a Weather Undergroundból származnak.",
+      "manual": "Az eső manuálisan van megadva.",
+      "none": "Nincs esőmérő. A ZoneFlow feltételezi, hogy sosem esik, hacsak nem ad meg esőt manuálisan vagy nem használ Weather Undergroundot."
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "A külső hőmérséklet {value} {unit}.",
+      "none": "Nincs külső hőmérséklet-érzékelő. A tartalék hőmérséklet dönt arról, milyen melegnek érzékeli az időt a ZoneFlow.",
+      "fail": "A(z) {entity} hőmérséklet-érzékelő nem érhető el. Addig a tartalék hőmérséklet van használatban."
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "A(z) {entity} időjárás-előrejelzés érhető el.",
+      "none": "Nincs időjárás-entitás, így az eső-előrejelzés nem tudja kihagyni az öntözést.",
+      "fail": "A(z) {entity} időjárás-entitás nem érhető el, így az előrejelzés egyelőre figyelmen kívül van hagyva."
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "A vízhozam beállítva ({value} mm/min).",
+      "default": "A vízhozam még a mintaérték. Kalibrálja, hogy minden öntözés a megfelelő ideig tartson."
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "A vízhasználat literekben látható.",
+      "none": "A vízhasználat csak mm-ben látható. Állítsa be a Zóna vízhozamát a literek megtekintéséhez."
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "A talajnedvesség-érzékelő mérése {value} %.",
+      "fail": "A(z) {entity} talajnedvesség-érzékelő nem érhető el. A zóna naptár szerint öntöz, amíg vissza nem tér."
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "A(z) {entity} szivattyú-teljesítményérzékelő méréseket küld.",
+      "fail": "A(z) {entity} szivattyú-teljesítményérzékelő nem érhető el, így a szivattyú ellenőrzése kimarad."
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "Ez a zóna szüneteltetve van: nincs öntözés, amíg ki nem kapcsolja a Szüneteltetést.",
+      "area": "A(z) {area} terület szüneteltetve van: nincs öntözés, amíg ki nem kapcsolja a Szüneteltetést.",
+      "house": "A(z) {house} üvegház szüneteltetve van: nincs öntözés, amíg ki nem kapcsolja a Szüneteltetést."
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "Utolsó öntözés: {when}.",
+      "never": "A ZoneFlow még nem öntözte ezt a zónát.",
+      "overdue": "Az utolsó öntözés {days} napja volt, a vártnál régebben. Ellenőrizze a szelepet és az állapotot."
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "A telefonos üzenetek ide érkeznek: {entity}.",
+      "none": "Nincs értesítendő telefon. Nem fog üzeneteket kapni az öntözésről.",
+      "fail": "A(z) {entity} telefon már nem létezik, így nem kap üzeneteket."
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "Öntözési mód: {method}.",
+    "method_temperature": "hőmérsékleti szint (melegebb héten több vizet kap)",
+    "method_et": "párolgás (a növény által elhasznált víz, a hőmérsékletből kiszámítva)",
+    "temperature": "Használt hőmérséklet: {value} ({source}), így ez egy {tier} hét.",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "az elmúlt napok csúcsértékeinek átlaga",
+      "last_known": "az elmúlt napokból, az érzékelő most offline",
+      "fallback": "Tartalék hőmérséklet, még nincs teljes rögzített nap",
+      "manual": "a Tartalék / Kézi hőmérséklet beállítás"
     },
     "tier": {
-      "hot": "hot",
-      "normal": "normal",
-      "cool": "cool"
+      "hot": "forró",
+      "normal": "normál",
+      "cool": "hűvös"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "Heti cél: {target}.",
+    "scale": "A cél érték {pct} %-ra módosult a növekedési fázis, hiány mód és talajtakaró alapján.",
+    "rain": "Esőbeszámítás az utolsó öntözés óta: {credit} (eső az elmúlt 7 napban: {rain}).",
+    "needed": "Ha most öntözne: {needed} hiányzik, kb. {minutes} perc.",
+    "forecast": "Eső volt várható, így az utolsó {n} öntözés egymás után ki lett hagyva.",
+    "soil": "Talajnedvesség: {pct} % ({status}).",
+    "soil_dry": "száraz",
+    "soil_wet": "nedves",
+    "soil_ok": "közepes"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
+    "heading": "A Home Assistantban talált valószínű elemek:",
     "line": "{role}: {names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "Szelep",
+      "rain": "Esőmérő",
+      "temperature": "Külső hőmérséklet",
+      "weather": "Időjárás",
+      "soil": "Talajnedvesség",
+      "flow": "Áramlásmérő",
+      "pump": "Szivattyú-teljesítmény",
+      "notify": "Telefon"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "{n} / {total} lépés"
   }
 }

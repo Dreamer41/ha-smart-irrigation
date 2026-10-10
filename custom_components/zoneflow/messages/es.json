@@ -12,7 +12,7 @@
     "routine": "Riego habitual",
     "service_run": "Ciclo de mantenimiento",
     "test_pulse": "Pulso de prueba",
-    "manual_water": "Manual watering"
+    "manual_water": "Riego manual"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "El sensor de temperatura interior principal ({entity}) dejó de funcionar. El control de clima continúa con el respaldo."
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "Regar {minutes} min",
+      "snooze": "Omitir hoy",
+      "fertilized": "Fertilizado"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle} en espera a las {time}: {temp}, por debajo de la protección antiheladas ({limit}); se comprueba cada hora",
     "waiting_deep_soak": "{cycle} en espera desde las {time}: primero va el riego profundo, cuando haga suficiente calor",
     "paused_until": "En pausa hasta {until}",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "En pausa: no se riega mientras {area} esté en pausa",
+    "paused_house": "En pausa: no se riega mientras el invernadero {house} esté en pausa"
   },
   "summary": {
     "title": "💧 ZoneFlow: tu semana",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "Ninguna",
+    "greenhouse": "invernadero",
+    "new_area": "Nueva área..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "Usa su propio pluviómetro, no el de {area}.",
+      "outdoor_temp_entity": "Usa su propio sensor de temperatura exterior, no el de {area}.",
+      "weather_entity": "Usa su propia entidad del tiempo, no la de {area}.",
+      "notify_entity": "Envía a su propio teléfono, no al de {area}."
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "activado",
+    "off": "desactivado",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "Añadido a ZoneFlow",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "Movido de {from_zone} a {to_zone}",
+      "promoted": "Se convirtió en la planta principal de {zone}",
+      "demoted": "Ahora solo registro en {zone}",
+      "archived": "Archivado de {zone}",
+      "removed": "Quitado de {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Ajustes copiados de {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "Modo de etapa de crecimiento",
+      "demand_model": "Método de riego",
+      "deficit_enabled": "Modo déficit",
+      "deficit_until_ts": "Modo déficit hasta",
+      "planting_date_ts": "Fecha de siembra",
+      "health_status": "Salud",
+      "health_notes": "Notas de salud",
+      "fertilizing_interval_months": "Intervalo de fertilización",
+      "last_fertilizing_ts": "Último fertilizado",
+      "growth_ramp_profile": "Rampa de crecimiento",
+      "deep_soak_enabled": "Riego profundo"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "Ajustes habituales del tipo de planta",
+    "zone": "Una copia de {zone}",
+    "preset": "Ajuste preestablecido: {name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "La válvula {entity} responde.",
+      "fail": "La válvula {entity} no está disponible. Comprueba el dispositivo y su conexión en Home Assistant: nada podrá regar hasta que responda."
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "El pluviómetro {entity} responde.",
+      "fail": "El pluviómetro {entity} no está disponible. Hasta que vuelva, ZoneFlow asume que no llueve.",
+      "wu": "La lluvia procede de Weather Underground.",
+      "manual": "La lluvia se añade manualmente.",
+      "none": "Sin pluviómetro. ZoneFlow asume que nunca llueve, a menos que añadas lluvia manualmente o uses Weather Underground."
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "La temperatura exterior es de {value} {unit}.",
+      "none": "Sin sensor de temperatura exterior. El ajuste Temperatura de respaldo decide qué calor asume ZoneFlow.",
+      "fail": "El sensor de temperatura {entity} no está disponible. Mientras tanto se usa la temperatura de respaldo."
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "La predicción meteorológica {entity} está disponible.",
+      "none": "Sin entidad del tiempo, una predicción de lluvia no puede omitir un riego.",
+      "fail": "La entidad del tiempo {entity} no está disponible, por lo que la predicción se ignora por ahora."
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "El caudal está configurado ({value} mm/min).",
+      "default": "El caudal sigue siendo el valor de ejemplo. Calíbralo para que cada riego dure el tiempo correcto."
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "El uso de agua se muestra en litros.",
+      "none": "El uso de agua solo se muestra en mm. Ajusta el Caudal de la zona para ver los litros."
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "El sensor de humedad del suelo indica {value} %.",
+      "fail": "El sensor de humedad del suelo {entity} no está disponible. La zona regará por calendario hasta que vuelva."
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "El sensor de potencia de la bomba {entity} responde.",
+      "fail": "El sensor de potencia de la bomba {entity} no está disponible, por lo que se omite la comprobación."
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "Esta zona está en pausa: no se riega hasta que desactives Pausa.",
+      "area": "El área {area} está en pausa: no se riega hasta que desactives su Pausa.",
+      "house": "El invernadero {house} está en pausa: no se riega hasta que desactives su Pausa."
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "Último riego: {when}.",
+      "never": "ZoneFlow aún no ha regado esta zona.",
+      "overdue": "El último riego fue hace {days} días, más de lo esperado. Comprueba la válvula y el estado."
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "Los mensajes del teléfono van a {entity}.",
+      "none": "Sin teléfono para notificar. No recibirás mensajes sobre el riego.",
+      "fail": "El teléfono {entity} ya no existe, por lo que no te llegarán mensajes."
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "Método de riego: {method}.",
+    "method_temperature": "niveles de temperatura (una semana más calurosa recibe más agua)",
+    "method_et": "evapotranspiración (el agua usada por la planta, calculada según la temperatura)",
+    "temperature": "Temperatura usada: {value} ({source}), por tanto una semana {tier}.",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "el promedio de las máximas de los últimos días",
+      "last_known": "de los últimos días, el sensor está desconectado ahora",
+      "fallback": "Temperatura de respaldo, aún no hay un día completo registrado",
+      "manual": "el ajuste de Temperatura de respaldo / manual"
     },
     "tier": {
-      "hot": "hot",
+      "hot": "calurosa",
       "normal": "normal",
-      "cool": "cool"
+      "cool": "fresca"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "Objetivo semanal: {target}.",
+    "scale": "El objetivo se ajusta al {pct} % según la etapa de crecimiento, el modo déficit y el acolchado.",
+    "rain": "Crédito de lluvia desde el último riego: {credit} (lluvia en los últimos 7 días: {rain}).",
+    "needed": "Si se regara ahora: {needed} por añadir, aprox. {minutes} min.",
+    "forecast": "Había previsión de lluvia, por lo que se omitieron los últimos {n} riegos seguidos.",
+    "soil": "Humedad del suelo {pct} % ({status}).",
+    "soil_dry": "seco",
+    "soil_wet": "húmedo",
+    "soil_ok": "intermedio"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
+    "heading": "Sugerencias encontradas en tu Home Assistant:",
     "line": "{role}: {names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "Válvula",
+      "rain": "Pluviómetro",
+      "temperature": "Temperatura exterior",
+      "weather": "Tiempo",
+      "soil": "Humedad del suelo",
+      "flow": "Caudalímetro",
+      "pump": "Potencia de la bomba",
+      "notify": "Teléfono"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "Paso {n} de {total}"
   }
 }

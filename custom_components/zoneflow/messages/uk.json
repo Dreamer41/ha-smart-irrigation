@@ -12,7 +12,7 @@
     "routine": "Регулярний полив",
     "service_run": "Сервісний запуск",
     "test_pulse": "Тестовий імпульс",
-    "manual_water": "Manual watering"
+    "manual_water": "Ручний полив"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "Основний датчик температури всередині ({entity}) припинив працювати. Клімат-контроль продовжує роботу за резервним."
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "Полити {minutes} хв",
+      "snooze": "Пропустити сьогодні",
+      "fertilized": "Удобрено"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle} відкладено о {time}: {temp}, нижче порогу захисту від заморозків ({limit}); перевірка щогодини",
     "waiting_deep_soak": "{cycle} чекає з {time}: спершу глибокий полив, щойно достатньо потеплішає",
     "paused_until": "Пауза до {until}",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "Пауза: поливу не буде, доки область {area} на паузі",
+    "paused_house": "Пауза: поливу не буде, доки теплиця {house} на паузі"
   },
   "summary": {
     "title": "💧 ZoneFlow: ваш тиждень",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "Немає",
+    "greenhouse": "теплиця",
+    "new_area": "Нова область..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "Використовує власний дощомір, а не дощомір області {area}.",
+      "outdoor_temp_entity": "Використовує власний датчик вуличної температури, а не датчик області {area}.",
+      "weather_entity": "Використовує власну сутність погоди, а не сутність області {area}.",
+      "notify_entity": "Надсилає на власний телефон, а не на телефон області {area}."
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "увімк",
+    "off": "вимк",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "Додано до ZoneFlow",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "Переміщено з {from_zone} до {to_zone}",
+      "promoted": "Стала основною рослиною в {zone}",
+      "demoted": "Тепер лише запис у {zone}",
+      "archived": "Заархівовано з {zone}",
+      "removed": "Вилучено з {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Налаштування скопійовано з {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "Режим стадії росту",
+      "demand_model": "Спосіб поливу",
+      "deficit_enabled": "Режим дефіциту",
+      "deficit_until_ts": "Режим дефіциту до",
+      "planting_date_ts": "Дата посадки",
+      "health_status": "Здоров'я",
+      "health_notes": "Нотатки про здоров'я",
+      "fertilizing_interval_months": "Інтервал удобрення",
+      "last_fertilizing_ts": "Останнє удобрення",
+      "growth_ramp_profile": "Графік росту",
+      "deep_soak_enabled": "Глибокий полив"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "Звичайні налаштування для цього типу рослини",
+    "zone": "Копія зони {zone}",
+    "preset": "Пресет: {name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "Клапан {entity} відповідає.",
+      "fail": "Клапан {entity} недоступний. Перевірте пристрій та його підключення в Home Assistant: полив неможливий, доки він не відповість."
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "Дощомір {entity} передає дані.",
+      "fail": "Дощомір {entity} недоступний. Доки він не з'явиться, ZoneFlow вважає, що дощу немає.",
+      "wu": "Дані про дощ надходять з Weather Underground.",
+      "manual": "Дощ додається вручну.",
+      "none": "Немає дощоміра. ZoneFlow вважає, що дощу ніколи немає, якщо ви не додасте його вручну або не використаєте Weather Underground."
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "Вулична температура: {value} {unit}.",
+      "none": "Немає датчика вуличної температури. Налаштування резервної температури визначає, наскільки тепло вважає ZoneFlow.",
+      "fail": "Датчик температури {entity} недоступний. Поки використовується резервна температура."
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "Прогноз погоди {entity} доступний.",
+      "none": "Немає сутності погоди, тому прогноз дощу не може пропустити полив.",
+      "fail": "Сутність погоди {entity} недоступна, тому прогноз поки ігнорується."
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "Інтенсивність поливу встановлено ({value} mm/min).",
+      "default": "Інтенсивність поливу все ще має прикладне значення. Скалібруйте її, щоб кожен полив тривав належний час."
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "Використання води відображається в літрах.",
+      "none": "Використання води відображається лише в mm. Налаштуйте Витрату зони, щоб бачити літри."
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "Датчик вологості ґрунту показує {value} %.",
+      "fail": "Датчик вологості ґрунту {entity} недоступний. Зона поливає за календарем, доки він не з'явиться."
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "Датчик потужності насоса {entity} передає дані.",
+      "fail": "Датчик потужності насоса {entity} недоступний, тому перевірку насоса пропущено."
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "Ця зона на паузі: поливу не буде, доки ви не вимкнете «Пауза».",
+      "area": "Область {area} на паузі: поливу не буде, доки ви не вимкнете «Пауза».",
+      "house": "Теплиця {house} на паузі: поливу не буде, доки ви не вимкнете «Пауза»."
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "Останній полив: {when}.",
+      "never": "ZoneFlow ще не поливав цю зону.",
+      "overdue": "Останній полив був {days} днів тому — довше, ніж очікувалося. Перевірте клапан та стан."
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "Повідомлення на телефон надсилаються на {entity}.",
+      "none": "Немає телефону для сповіщень. Ви не отримуватимете повідомлень про полив.",
+      "fail": "Телефон {entity} більше не існує, тому повідомлення не надходять."
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "Спосіб поливу: {method}.",
+    "method_temperature": "температурні пороги (у тепліший тиждень потрібно більше води)",
+    "method_et": "евапотранспірація (використана рослиною вода, розрахована за температурою)",
+    "temperature": "Використано температуру: {value} ({source}), тому {tier} тиждень.",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "середнє максимумів за останні дні",
+      "last_known": "за останні дні, датчик зараз офлайн",
+      "fallback": "Резервна температура, повний день ще не записано",
+      "manual": "налаштування резервної / ручної температури"
     },
     "tier": {
-      "hot": "hot",
-      "normal": "normal",
-      "cool": "cool"
+      "hot": "спекотний",
+      "normal": "звичайний",
+      "cool": "прохолодний"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "Тижнева норма: {target}.",
+    "scale": "Цю норму скориговано до {pct} % з урахуванням стадії росту, режиму дефіциту та мульчі.",
+    "rain": "Зарахований дощ з останнього поливу: {credit} (дощ за останні 7 днів: {rain}).",
+    "needed": "Якщо полити зараз: додати {needed}, близько {minutes} хв.",
+    "forecast": "Було спрогнозовано дощ, тому останні {n} поливів поспіль було пропущено.",
+    "soil": "Вологість ґрунту {pct} % ({status}).",
+    "soil_dry": "сухо",
+    "soil_wet": "волого",
+    "soil_ok": "помірковано"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
+    "heading": "Відповідні об'єкти, знайдені у вашому Home Assistant:",
     "line": "{role}: {names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "Клапан",
+      "rain": "Дощомір",
+      "temperature": "Вулична температура",
+      "weather": "Погода",
+      "soil": "Вологість ґрунту",
+      "flow": "Витратомір",
+      "pump": "Потужність насоса",
+      "notify": "Телефон"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "Крок {n} з {total}"
   }
 }

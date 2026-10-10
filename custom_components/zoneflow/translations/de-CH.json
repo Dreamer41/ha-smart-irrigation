@@ -8,18 +8,18 @@
           "zone_name": "Zonenname",
           "plant": "Was hier wächst",
           "zone_type": "Anbauort",
-          "start_from": "Start from"
+          "start_from": "Starten von"
         },
         "data_description": {
           "zone_name": "Wird zum Gerätenamen der Zone und zum Anfang ihrer Entitätsnamen und erscheint in Handy-Nachrichten. Z. B. „Tomatenbeet“, „Rasen vorne“.",
           "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern.",
           "zone_type": "Außenbereich ist die bisherige Funktionsweise von ZoneFlow. Gewächshaus- und Innenraumbereiche fügen eine Klimasteuerung hinzu (Lüfter, Belüftung, Vernebelung, Heizung), können ohne Ventil arbeiten und haben aufgrund des Dachs keinen Regensensor oder Wetterbericht.",
-          "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied."
+          "start_from": "Starten Sie mit einer Kopie der Bewässerungseinstellungen einer anderen Zone oder einer gespeicherten Voreinstellung statt der des Pflanzentyps. Ventil, Sensoren und Durchflussrate werden niemals kopiert."
         }
       },
       "entities": {
         "title": "ZoneFlow Bewässerung",
-        "description": "{progress}\n\nWähle hier deine echten Entitäten. Es werden keine eigenen physischen Entitäten angelegt. Nur der Ventilschalter ist Pflicht – alles andere darf leer bleiben, die Zone kommt dann auch ohne aus.\n\n{suggestions}",
+        "description": "{progress}\n\nVerknüpfen Sie dies mit Ihren tatsächlichen Entitäten. Es werden niemals eigene physische Entitäten erstellt. Nur der Ventilschalter ist erforderlich – alles Weitere unten funktioniert auch ohne Einstellung problemlos. Lassen Sie ein Feld leer, wenn Sie keines haben.\n\n{suggestions}",
         "data": {
           "valve_entity": "Ventilschalter",
           "pump_power_entity": "Pumpen-Leistungssensor (optional)",
@@ -31,11 +31,11 @@
           "soil_moisture_entity": "Bodenfeuchtesensor (optional)",
           "notify_entity": "Handy-Benachrichtigungsziel (optional)",
           "weather_entity": "Quelle für Wettervorhersage (optional)",
-          "soil_type": "Bodenart",
-          "drainage": "Versickerung",
-          "slope": "Hangneigung",
-          "irrigation_method": "Bewässerungsart",
-          "growth_ramp_profile": "Automatische Wachstumskurve",
+          "soil_type": "Kennen Sie Ihren Bodentyp? (falls nicht, überspringen)",
+          "drainage": "Fließt Wasser nur langsam ab? (überspringen, falls unbekannt)",
+          "slope": "Ist der Boden geneigt? (überspringen, falls eben oder unsicher)",
+          "irrigation_method": "Wie gelangt das Wasser zu den Pflanzen?",
+          "growth_ramp_profile": "Handelt es sich um eine junge Pflanze, die anfangs weniger Wasser braucht? (falls nicht, überspringen)",
           "csv_path": "Pfad der CSV-Logdatei",
           "deep_soak_enabled": "Tiefenbewässerung aktivieren",
           "deep_soak_time": "Uhrzeit der Tiefenbewässerung",
@@ -75,7 +75,7 @@
       },
       "climate": {
         "title": "Klima",
-        "description": "{progress}\n\nWie ist die Wachstumszeit dort, wo diese Zone liegt? Das füllt nur die Temperaturregler auf der nächsten Seite vor – du kannst dort jeden Wert ändern, und später auch auf der Geräteseite der Zone.",
+        "description": "{progress}\n\nWie ist die Wachstumsperiode dort, wo sich diese Zone befindet? Dies füllt nur die Temperaturregler auf der nächsten Seite vor – Sie können dort jeden Wert ändern und später auf der Geräteseite der Zone anpassen.",
         "data": {
           "climate": "Klima"
         },
@@ -85,7 +85,7 @@
       },
       "temperatures": {
         "title": "Temperaturschwellen",
-        "description": "{progress}\n\nZoneFlow mittelt die tägliche HÖCHSTtemperatur der letzten 3 Tage. Ab der Heiß-Schwelle wird öfter gegossen (alle 3 Tage), mit dem Wochenziel für heißes Wetter; unter der Kühl-Schwelle gilt das Wochenziel für kühles Wetter; dazwischen das normale.\n\nDie Ersatztemperatur gilt, wenn es keinen echten Messwert gibt: Ohne Temperatursensor ist sie deine manuelle Steuerung (bei Hitzewelle erhöhen, bei Kälteeinbruch senken); mit Sensor gilt sie nur, bis der Sensor seinen ersten vollen Tag aufgezeichnet hat, und nach 3 Tagen ganz ohne Messwert.",
+        "description": "{progress}\n\nZoneFlow bildet den Durchschnitt der täglichen HÖCHSTTEMPERATUR der letzten 3 Tage. Bei oder über Heiß wird häufiger bewässert (alle 3 Tage) mit dem heißen Wochenziel; unter Kühl wird das kühle Wochenziel verwendet; dazwischen gilt normal.\n\nDie Ausweichtemperatur wird verwendet, wenn kein realer Messwert vorliegt: Ohne Temperatursensor dient sie zur manuellen Steuerung (bei Hitzewelle erhöhen, bei Kältewelle senken); mit Sensor wird sie nur verwendet, bis der Sensor seinen ersten vollen Tag aufgezeichnet hat, sowie nach 3 Tagen ohne eine einzige Messung.",
         "data": {
           "hot_temp_threshold": "Schwelle für heißes Wetter",
           "cool_temp_threshold": "Schwelle für kühles Wetter",
@@ -183,7 +183,7 @@
           "zone": "Zone hinzufügen",
           "weather_underground": "Weather Underground-Regen einrichten",
           "crop": "Kultur zu einem Gewächshaus hinzufügen",
-          "area": "Add an area (a part of the garden)"
+          "area": "Bereich hinzufügen (ein Teil des Gartens)"
         }
       },
       "weather_underground": {
@@ -233,25 +233,25 @@
         }
       },
       "area": {
-        "title": "New area",
-        "description": "A part of the garden, for example Backyard or Front yard. Its zones use the sensors set here, unless a zone has its own.",
+        "title": "Neuer Bereich",
+        "description": "Ein Teil des Gartens, zum Beispiel Hintergarten oder Vorgarten. Seine Zonen verwenden die hier eingestellten Sensoren, außer eine Zone hat eigene.",
         "data": {
           "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "rain_counter_entity": "Regenmesser",
+          "rain_source_type": "Regenmessersensortyp",
+          "area_rain_mm_per_tip": "Regenmesser mm pro Kippung",
+          "outdoor_temp_entity": "Außentemperatursensor",
+          "weather_entity": "Wetter-Entität (Vorhersage)",
+          "notify_entity": "Benachrichtigungstelefon"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Optional. Die Zonen dieses Bereichs lesen ihren Regen hier ab, außer eine Zone hat einen eigenen Messer.",
+          "area_rain_mm_per_tip": "Nur für Kippzähler: wie viel mm Regen eine Kippung entspricht.",
+          "outdoor_temp_entity": "Optional. Stellt die heiße / kühle Bewässerungsstufe für die Zonen dieses Bereichs ein.",
+          "weather_entity": "Optional. Ermöglicht den Zonen dieses Bereichs, die Bewässerung auszulassen, wenn Regen vorhergesagt ist.",
+          "notify_entity": "Optional. Wohin die Zonen dieses Bereichs ihre Telefonnachrichten senden.",
+          "area_name": "Wie der Bereich heißt, zum Beispiel Hintergarten oder Vorgarten.",
+          "rain_source_type": "Was der Regenmessersensor meldet: einen Kippzähler, eine Gesamtregenmenge, eine Regenrate oder den Regen seit der letzten Messung."
         }
       }
     },
@@ -269,8 +269,8 @@
       "wu_cannot_connect": "Weather Underground konnte nicht erreicht werden. Versuchen Sie es später erneut.",
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
       "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
-      "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_required": "Geben Sie dem Bereich einen Namen.",
+      "area_name_exists": "Ein Bereich mit diesem Namen existiert bereits."
     },
     "abort": {
       "already_configured": "Weather Underground-Regen ist bereits eingerichtet."
@@ -291,7 +291,7 @@
           "zone_type": "Zonentyp",
           "weather_underground": "Weather Underground-Regen",
           "crop_valve": "Kulturventil",
-          "location": "Where is this? (area or greenhouse)"
+          "location": "Wo befindet sich dies? (Bereich oder Gewächshaus)"
         }
       },
       "settings": {
@@ -525,73 +525,73 @@
         }
       },
       "location": {
-        "title": "Where is this?",
-        "description": "The area or greenhouse this zone is in. A zone uses the sensors of its area unless it has its own. In a greenhouse it is a crop of it. Choose New area to make an area from this zone's own sensors.",
+        "title": "Wo befindet sich dies?",
+        "description": "Der Bereich oder das Gewächshaus, in dem sich diese Zone befindet. Eine Zone nutzt die Sensoren ihres Bereichs, außer sie hat eigene. In einem Gewächshaus ist sie eine Kultur davon. Wählen Sie Neuer Bereich, um aus den eigenen Sensoren dieser Zone einen Bereich zu erstellen.",
         "data": {
-          "location": "Place"
+          "location": "Ort"
         },
         "data_description": {
-          "location": "An area, a greenhouse, or none. Moving the zone restarts it so it reads the new place's sensors."
+          "location": "Ein Bereich, ein Gewächshaus oder keines. Das Verschieben der Zone startet sie neu, damit sie die Sensoren des neuen Orts einliest."
         }
       },
       "location_sensors": {
-        "title": "Use the area's sensors?",
-        "description": "This zone has its own sensor where the area has a different one. Tick to use the area's; untick to keep the zone's own.",
+        "title": "Sensoren des Bereichs verwenden?",
+        "description": "Diese Zone hat einen eigenen Sensor, wo der Bereich einen anderen hat. Aktivieren, um den des Bereichs zu nutzen; deaktivieren, um den eigenen der Zone zu behalten.",
         "data": {
-          "rain_counter_entity": "Use the area's rain gauge",
-          "outdoor_temp_entity": "Use the area's outdoor temperature",
-          "weather_entity": "Use the area's weather entity",
-          "notify_entity": "Use the area's phone"
+          "rain_counter_entity": "Regenmesser des Bereichs verwenden",
+          "outdoor_temp_entity": "Außentemperatur des Bereichs verwenden",
+          "weather_entity": "Wetter-Entität des Bereichs verwenden",
+          "notify_entity": "Telefon des Bereichs verwenden"
         },
         "data_description": {
-          "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
-          "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
-          "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
-          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+          "rain_counter_entity": "Aktivieren, um den Regenmesser des Bereichs statt des eigenen dieser Zone zu verwenden.",
+          "outdoor_temp_entity": "Aktivieren, um den Außentemperatursensor des Bereichs statt des eigenen dieser Zone zu verwenden.",
+          "weather_entity": "Aktivieren, um die Wetter-Entität des Bereichs statt der eigenen dieser Zone zu verwenden.",
+          "notify_entity": "Aktivieren, um an das Telefon des Bereichs statt an das eigene dieser Zone zu senden."
         }
       },
       "new_area": {
-        "title": "New area",
-        "description": "An area made from this zone's sensors. The zone moves into it, and other zones can join it later.",
+        "title": "Neuer Bereich",
+        "description": "Ein Bereich, der aus den Sensoren dieser Zone erstellt wurde. Die Zone zieht darin ein, und andere Zonen können später beitreten.",
         "data": {
           "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "rain_counter_entity": "Regenmesser",
+          "rain_source_type": "Regenmessersensortyp",
+          "area_rain_mm_per_tip": "Regenmesser mm pro Kippung",
+          "outdoor_temp_entity": "Außentemperatursensor",
+          "weather_entity": "Wetter-Entität (Vorhersage)",
+          "notify_entity": "Benachrichtigungstelefon"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Optional. Die Zonen dieses Bereichs lesen ihren Regen hier ab, außer eine Zone hat einen eigenen Messer.",
+          "area_rain_mm_per_tip": "Nur für Kippzähler: wie viel mm Regen eine Kippung entspricht.",
+          "outdoor_temp_entity": "Optional. Stellt die heiße / kühle Bewässerungsstufe für die Zonen dieses Bereichs ein.",
+          "weather_entity": "Optional. Ermöglicht den Zonen dieses Bereichs, die Bewässerung auszulassen, wenn Regen vorhergesagt ist.",
+          "notify_entity": "Optional. Wohin die Zonen dieses Bereichs ihre Telefonnachrichten senden.",
+          "area_name": "Wie der Bereich heißt, zum Beispiel Hintergarten oder Vorgarten.",
+          "rain_source_type": "Was der Regenmessersensor meldet: einen Kippzähler, eine Gesamtregenmenge, eine Regenrate oder den Regen seit der letzten Messung."
         }
       },
       "area_settings": {
-        "title": "Area",
-        "description": "The name of the area and the sensors its zones share. A zone with its own sensor keeps using that.",
+        "title": "Bereich",
+        "description": "Der Name des Bereichs und die Sensoren, die seine Zonen teilen. Eine Zone mit eigenem Sensor nutzt diesen weiterhin.",
         "data": {
           "area_name": "Name",
-          "rain_counter_entity": "Rain gauge",
-          "rain_source_type": "Rain gauge sensor type",
-          "area_rain_mm_per_tip": "Rain gauge mm per tip",
-          "outdoor_temp_entity": "Outdoor temperature sensor",
-          "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "rain_counter_entity": "Regenmesser",
+          "rain_source_type": "Regenmessersensortyp",
+          "area_rain_mm_per_tip": "Regenmesser mm pro Kippung",
+          "outdoor_temp_entity": "Außentemperatursensor",
+          "weather_entity": "Wetter-Entität (Vorhersage)",
+          "notify_entity": "Benachrichtigungstelefon"
         },
         "data_description": {
-          "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
-          "area_rain_mm_per_tip": "Only for a tip counter: how many mm of rain one tip is.",
-          "outdoor_temp_entity": "Optional. Sets the hot / cool watering tier for the zones of this area.",
-          "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
-          "notify_entity": "Optional. Where the zones of this area send their phone messages.",
-          "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_counter_entity": "Optional. Die Zonen dieses Bereichs lesen ihren Regen hier ab, außer eine Zone hat einen eigenen Messer.",
+          "area_rain_mm_per_tip": "Nur für Kippzähler: wie viel mm Regen eine Kippung entspricht.",
+          "outdoor_temp_entity": "Optional. Stellt die heiße / kühle Bewässerungsstufe für die Zonen dieses Bereichs ein.",
+          "weather_entity": "Optional. Ermöglicht den Zonen dieses Bereichs, die Bewässerung auszulassen, wenn Regen vorhergesagt ist.",
+          "notify_entity": "Optional. Wohin die Zonen dieses Bereichs ihre Telefonnachrichten senden.",
+          "area_name": "Wie der Bereich heißt, zum Beispiel Hintergarten oder Vorgarten.",
+          "rain_source_type": "Was der Regenmessersensor meldet: einen Kippzähler, eine Gesamtregenmenge, eine Regenrate oder den Regen seit der letzten Messung."
         }
       }
     },
@@ -604,7 +604,7 @@
       "flow_rate_disabled": "Die Entität „Tropfer-Durchflussrate (Kalibrierung)“ der Zone ist deaktiviert. Aktiviere sie (Geräteseite der Zone → Entitäten) und versuche es erneut.",
       "zone_flow_set": "Zonendurchfluss auf {flow} eingestellt. Er wird nur für die Wasserverbrauchsschätzung verwendet.",
       "zone_flow_out_of_range": "Dies ergibt einen Zonendurchfluss außerhalb des zulässigen Bereichs (0 bis 2000 L/min). Überprüfen Sie die Zahlen.",
-      "location_not_available": "That place is not available."
+      "location_not_available": "Dieser Ort ist nicht verfügbar."
     },
     "error": {
       "valve_already_used": "Eine andere ZoneFlow-Zone verwendet dieses Ventil bereits.",
@@ -620,8 +620,8 @@
       "wu_no_stations": "Keine Stationen innerhalb des Radius. Ohne eine nahegelegene Station hilft diese Funktion nicht.",
       "wu_pick_1_to_3": "Wählen Sie 1, 2 oder 3 Stationen.",
       "greenhouse_has_crops": "Dieses Gewächshaus enthält Kulturen. Verschieben Sie diese zuerst in ein anderes Gewächshaus oder entfernen Sie sie (Konfigurieren -> Gewächshaus der jeweiligen Kultur).",
-      "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_required": "Geben Sie dem Bereich einen Namen.",
+      "area_name_exists": "Ein Bereich mit diesem Namen existiert bereits."
     }
   },
   "selector": {
@@ -1259,7 +1259,7 @@
         }
       },
       "location": {
-        "name": "Where is this?"
+        "name": "Wo befindet sich dies?"
       }
     },
     "text": {
@@ -1370,196 +1370,196 @@
       }
     },
     "create_area": {
-      "name": "Create Area",
-      "description": "Makes a new area (a part of the garden such as Backyard). Target a zone and it moves into the new area, which starts with that zone's rain gauge, outdoor temperature, weather and phone settings.",
+      "name": "Bereich erstellen",
+      "description": "Erstellt einen neuen Bereich (einen Teil des Gartens wie Hintergarten). Wählen Sie eine Zone aus, und sie zieht in den neuen Bereich um, der mit den Einstellungen für Regenmesser, Außentemperatur, Wetter und Telefon dieser Zone startet.",
       "fields": {
         "name": {
           "name": "Name",
-          "description": "What the area is called, for example Backyard or Front yard."
+          "description": "Wie der Bereich heißt, zum Beispiel Hintergarten oder Vorgarten."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone to put in the new area (optional)."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone, die dem neuen Bereich hinzugefügt werden soll (optional)."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to that zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät dieser Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     },
     "add_plant": {
-      "name": "Add Plant",
-      "description": "Adds a plant to a zone. In a zone with no main plant it becomes the main plant and its type's settings go onto the zone; otherwise it is a record only (history, notes), unless Old Main Plant says it takes over.",
+      "name": "Pflanze hinzufügen",
+      "description": "Fügt eine Pflanze zu einer Zone hinzu. In einer Zone ohne Hauptpflanze wird sie zur Hauptpflanze und die Einstellungen ihres Typs werden auf die Zone angewendet; andernfalls dient sie nur als Eintrag (Verlauf, Notizen), außer Alte Hauptpflanze legt fest, dass sie übernimmt.",
       "fields": {
         "name": {
           "name": "Name",
-          "description": "What the plant is called."
+          "description": "Wie die Pflanze heißt."
         },
         "plant_type": {
-          "name": "Plant Type",
-          "description": "Starting settings for this kind of plant (custom if left out)."
+          "name": "Pflanzentyp",
+          "description": "Start-Einstellungen für diese Art von Pflanze (benutzerdefiniert, wenn ausgelassen)."
         },
         "old_main": {
-          "name": "Old Main Plant",
-          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record or archive it."
+          "name": "Alte Hauptpflanze",
+          "description": "Nur wenn die Zone bereits eine Hauptpflanze hat. Was aus ihr wird: als Eintrag behalten oder archivieren."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone. Nur erforderlich, wenn 2 oder mehr Zonen konfiguriert sind."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät der Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     },
     "move_plant": {
-      "name": "Move Plant",
-      "description": "Moves a plant, with its history, to another zone. Its settings go onto the zone it arrives in.",
+      "name": "Pflanze verschieben",
+      "description": "Verschiebt eine Pflanze mit ihrem Verlauf in eine andere Zone. Ihre Einstellungen werden auf die Zielzone angewendet.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id (shown in the zone's Status attributes)."
+          "name": "Pflanze",
+          "description": "Die ID der Pflanze (angezeigt in den Status-Attributen der Zone)."
         },
         "old_main": {
-          "name": "Old Main Plant",
-          "description": "Only when the zone already has a main plant. What becomes of it: keep it there as a record, archive it, swap it to the zone this plant leaves, or keep this plant as a record only."
+          "name": "Alte Hauptpflanze",
+          "description": "Nur wenn die Zone bereits eine Hauptpflanze hat. Was aus ihr wird: als Eintrag behalten, archivieren, in die ursprüngliche Zone der Pflanze tauschen oder diese Pflanze nur als Eintrag behalten."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone it goes to."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone, in die sie wechselt."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät der Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     },
     "remove_plant": {
-      "name": "Remove Plant",
-      "description": "Takes a plant out of its zone. It stays on record with its history. The next plant in the zone becomes the main plant.",
+      "name": "Pflanze entfernen",
+      "description": "Entfernt eine Pflanze aus ihrer Zone. Sie bleibt mit ihrem Verlauf erfasst. Die nächste Pflanze in der Zone wird zur Hauptpflanze.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Pflanze",
+          "description": "Die ID der Pflanze."
         }
       }
     },
     "set_main_plant": {
-      "name": "Set Main Plant",
-      "description": "Makes a plant the main plant of its zone: its settings go onto the zone and the old main plant stays as a record.",
+      "name": "Hauptpflanze festlegen",
+      "description": "Macht eine Pflanze zur Hauptpflanze ihrer Zone: Ihre Einstellungen werden auf die Zone angewendet und die alte Hauptpflanze bleibt als Eintrag bestehen.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Pflanze",
+          "description": "Die ID der Pflanze."
         }
       }
     },
     "add_plant_note": {
-      "name": "Add Plant Note",
-      "description": "Adds a note to a plant's history.",
+      "name": "Pflanzennotiz hinzufügen",
+      "description": "Fügt eine Notiz zum Verlauf einer Pflanze hinzu.",
       "fields": {
         "plant_id": {
-          "name": "Plant",
-          "description": "The plant's id."
+          "name": "Pflanze",
+          "description": "Die ID der Pflanze."
         },
         "text": {
-          "name": "Note",
-          "description": "What to write down."
+          "name": "Notiz",
+          "description": "Was aufgeschrieben werden soll."
         }
       }
     },
     "save_preset": {
-      "name": "Save Preset",
-      "description": "Saves a zone's watering settings (not its valve, sensors, flow rate, planting date or notes) under a name, to start other zones from. The same name replaces the preset.",
+      "name": "Voreinstellung speichern",
+      "description": "Speichert die Bewässerungseinstellungen einer Zone (nicht Ventil, Sensoren, Durchflussrate, Pflanzdatum oder Notizen) unter einem Namen, um andere Zonen davon zu starten. Derselbe Name ersetzt die Voreinstellung.",
       "fields": {
         "name": {
           "name": "Name",
-          "description": "What to call the preset."
+          "description": "Wie die Voreinstellung genannt werden soll."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone. Nur erforderlich, wenn 2 oder mehr Zonen konfiguriert sind."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät der Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     },
     "copy_settings": {
-      "name": "Copy Settings",
-      "description": "Gives a zone another zone's watering settings, or a saved preset's. Not the valve, sensors, flow rate, planting date or notes.",
+      "name": "Einstellungen kopieren",
+      "description": "Überträgt die Bewässerungseinstellungen einer anderen Zone oder einer gespeicherten Voreinstellung auf eine Zone. Nicht Ventil, Sensoren, Durchflussrate, Pflanzdatum oder Notizen.",
       "fields": {
         "source_device_id": {
-          "name": "Copy From Zone",
-          "description": "The zone to copy the settings from (or choose a preset)."
+          "name": "Kopieren von Zone",
+          "description": "Die Zone, aus der die Einstellungen kopiert werden sollen (oder wählen Sie eine Voreinstellung)."
         },
         "preset": {
-          "name": "Preset",
-          "description": "The name of a saved preset (or choose a zone to copy from)."
+          "name": "Voreinstellung",
+          "description": "Der Name einer gespeicherten Voreinstellung (oder wählen Sie eine Zone zum Kopieren)."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone that gets the settings."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone, die die Einstellungen erhält."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät der Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     },
     "delete_preset": {
-      "name": "Delete Preset",
-      "description": "Deletes a saved preset.",
+      "name": "Voreinstellung löschen",
+      "description": "Löscht eine gespeicherte Voreinstellung.",
       "fields": {
         "name": {
           "name": "Name",
-          "description": "The preset's name."
+          "description": "Der Name der Voreinstellung."
         }
       }
     },
     "water_now": {
-      "name": "Water Now",
-      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. Counts in the water record (litres), but does not move the routine or deep soak schedule.",
+      "name": "Jetzt bewässern",
+      "description": "Bewässert die Zone manuell für eine bestimmte Anzahl von Minuten. Nicht während die Zone pausiert ist, niemals länger als die maximale Sicherheitslaufzeit der Zone für Routinebewässerung und innerhalb der Tageslaufzeitbegrenzung. Zählt im Wasserbericht (Liter), verschiebt jedoch nicht den Zeitplan für Routine- oder Tiefenbewässerung.",
       "fields": {
         "minutes": {
-          "name": "Minutes",
-          "description": "How long to water."
+          "name": "Minuten",
+          "description": "Wie lange bewässert werden soll."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone. Nur erforderlich, wenn 2 oder mehr Zonen konfiguriert sind."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät der Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     },
     "calibrate_flow": {
-      "name": "Calibrate Flow Rate",
-      "description": "Sets the flow rate from a measured run: the water that came out (collected in a bucket or read from a water meter), the area it fell on, and how long the valve was open. Also sets Zone Flow, for litres.",
+      "name": "Durchflussrate kalibrieren",
+      "description": "Stellt die Durchflussrate anhand eines gemessenen Durchlaufs ein: das ausgetretene Wasser (in einem Eimer gesammelt oder am Wasserzähler abgelesen), die getroffene Fläche und wie lange das Ventil geöffnet war. Stellt auch den Zonendurchfluss für Liter ein.",
       "fields": {
         "volume": {
-          "name": "Water",
-          "description": "How much water came out (litres, or gallons on an imperial zone)."
+          "name": "Wasser",
+          "description": "Wie viel Wasser ausgetreten ist (Liter, oder Gallonen bei einer imperialen Zone)."
         },
         "area": {
-          "name": "Area",
-          "description": "The area that water fell on (m2, or ft2 on an imperial zone)."
+          "name": "Bereich",
+          "description": "Die Fläche, auf die das Wasser fiel (m2, oder ft2 bei einer imperialen Zone)."
         },
         "minutes": {
-          "name": "Minutes",
-          "description": "How long the valve was open."
+          "name": "Minuten",
+          "description": "Wie lange das Ventil geöffnet war."
         },
         "device_id": {
-          "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "name": "Zonen-Gerät",
+          "description": "Die Zone. Nur erforderlich, wenn 2 oder mehr Zonen konfiguriert sind."
         },
         "entity_id": {
-          "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "name": "Zonen-Entität",
+          "description": "Jede Entität, die zum Gerät der Zone gehört (Alternative zu Zonen-Gerät)."
         }
       }
     }
@@ -1611,58 +1611,58 @@
       "message": "Nichts ist angehalten: Alle Geräte stehen bereits unter der Steuerung von ZoneFlow."
     },
     "location_not_available": {
-      "message": "That place is not available any more."
+      "message": "Dieser Ort ist nicht mehr verfügbar."
     },
     "greenhouse_cannot_be_crop": {
-      "message": "A greenhouse with climate devices cannot be a crop of another greenhouse."
+      "message": "Ein Gewächshaus mit Klimageräten kann keine Kultur eines anderen Gewächshauses sein."
     },
     "area_name_required": {
-      "message": "Give the area a name."
+      "message": "Geben Sie dem Bereich einen Namen."
     },
     "area_name_exists": {
-      "message": "An area with this name already exists."
+      "message": "Ein Bereich mit diesem Namen existiert bereits."
     },
     "plant_zone_not_available": {
-      "message": "That zone is not available."
+      "message": "Diese Zone ist nicht verfügbar."
     },
     "plant_name_required": {
-      "message": "Give the plant a name."
+      "message": "Geben Sie der Pflanze einen Namen."
     },
     "plant_not_found": {
-      "message": "That plant does not exist."
+      "message": "Diese Pflanze existiert nicht."
     },
     "plant_same_zone": {
-      "message": "The plant is already in that zone."
+      "message": "Die Pflanze befindet sich bereits in dieser Zone."
     },
     "plant_old_main_choice": {
-      "message": "{zone} already has a main plant. Say what becomes of it (Old Main Plant)."
+      "message": "{zone} hat bereits eine Hauptpflanze. Geben Sie an, was aus ihr wird (Alte Hauptpflanze)."
     },
     "plant_zone_has_no_valve": {
-      "message": "Only a zone with a valve can have a main plant."
+      "message": "Nur eine Zone mit einem Ventil kann eine Hauptpflanze haben."
     },
     "plant_note_required": {
-      "message": "Write the note first."
+      "message": "Schreiben Sie zuerst die Notiz."
     },
     "preset_name_required": {
-      "message": "Give the preset a name."
+      "message": "Geben Sie der Voreinstellung einen Namen."
     },
     "preset_not_found": {
-      "message": "There is no preset with that name."
+      "message": "Es gibt keine Voreinstellung mit diesem Namen."
     },
     "copy_same_zone": {
-      "message": "Choose a different zone to copy from."
+      "message": "Wählen Sie eine andere Zone zum Kopieren aus."
     },
     "copy_source_required": {
-      "message": "Choose a zone or a preset to copy from."
+      "message": "Wählen Sie eine Zone oder eine Voreinstellung zum Kopieren aus."
     },
     "water_now_out_of_range": {
-      "message": "Water for at least 1 minute and at most {max} minutes (this zone's safety cap)."
+      "message": "Bewässern Sie mindestens 1 Minute und maximal {max} Minuten (Sicherheitsgrenze dieser Zone)."
     },
     "calibration_out_of_range": {
-      "message": "Those numbers give a flow rate this zone cannot have. Check the water, the area and the minutes."
+      "message": "Diese Zahlen ergeben eine Durchflussrate, die diese Zone nicht haben kann. Überprüfen Sie Wasser, Fläche und Minuten."
     },
     "calibration_unavailable": {
-      "message": "This zone has no flow rate setting to calibrate."
+      "message": "Diese Zone hat keine Durchflussrate-Einstellung zum Kalibrieren."
     }
   },
   "issues": {
@@ -1676,18 +1676,18 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Replace the sensor",
-            "description": "The sensor {entity} used by {zone} has been offline for days. Choose a sensor to use instead, or leave it empty to stop using one (the zone then works without it).",
+            "title": "Sensor ersetzen",
+            "description": "Der von {zone} verwendete Sensor {entity} ist seit Tagen offline. Wählen Sie stattdessen einen Sensor oder lassen Sie das Feld leer (die Zone funktioniert dann ohne ihn).",
             "data": {
-              "replacement": "Replacement sensor"
+              "replacement": "Ersatzsensor"
             },
             "data_description": {
-              "replacement": "Leave empty to remove the sensor from this zone."
+              "replacement": "Lassen Sie das Feld leer, um den Sensor aus dieser Zone zu entfernen."
             }
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "Diese Zone existiert nicht mehr."
         }
       }
     },
@@ -1697,18 +1697,18 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Choose another phone",
-            "description": "The phone {entity} no longer exists, so {zone} cannot send you messages. Choose another phone to send to, or leave it empty for none.",
+            "title": "Anderes Telefon auswählen",
+            "description": "Das Telefon {entity} existiert nicht mehr, daher kann {zone} keine Nachrichten senden. Wählen Sie ein anderes Telefon oder lassen Sie das Feld leer.",
             "data": {
-              "notify_entity": "Phone to notify"
+              "notify_entity": "Benachrichtigungstelefon"
             },
             "data_description": {
-              "notify_entity": "Leave empty to stop phone messages from this zone."
+              "notify_entity": "Lassen Sie das Feld leer, um Telefonbenachrichtigungen von dieser Zone zu stoppen."
             }
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "Diese Zone existiert nicht mehr."
         }
       }
     },
@@ -1718,36 +1718,36 @@
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Set the flow rate by measuring",
-            "description": "{zone} still has the example flow rate, so its watering times are guesses. Put a bucket under the emitters (or note your water meter), then run the valve for 15 minutes. Run it now?",
+            "title": "Durchflussrate durch Messung einstellen",
+            "description": "{zone} verwendet noch die Beispiel-Durchflussrate, daher sind die Bewässerungszeiten Schätzungen. Stellen Sie einen Eimer unter die Tropfer (oder notieren Sie Ihren Wasserzähler) und lassen Sie das Ventil 15 Minuten lang laufen. Jetzt starten?",
             "data": {
-              "run": "Run the valve for 15 minutes now"
+              "run": "Ventil jetzt 15 Minuten lang laufen lassen"
             },
             "data_description": {
-              "run": "Untick if you have already run it."
+              "run": "Deaktivieren Sie das Kontrollkästchen, wenn Sie ihn bereits ausgeführt haben."
             }
           },
           "measure": {
-            "title": "How much water came out?",
-            "description": "Enter what {zone} gave in that run, the area it watered and how many minutes the valve was open.",
+            "title": "Wie viel Wasser ist ausgetreten?",
+            "description": "Geben Sie ein, was {zone} bei diesem Durchlauf geliefert hat, welche Fläche bewässert wurde und wie viele Minuten das Ventil geöffnet war.",
             "data": {
-              "volume": "Water that came out",
-              "area": "Watered area",
-              "minutes": "Minutes the valve was open"
+              "volume": "Ausgetretenes Wasser",
+              "area": "Bewässerte Fläche",
+              "minutes": "Minuten, die das Ventil geöffnet war"
             },
             "data_description": {
-              "volume": "Litres (gallons on an imperial zone).",
-              "area": "Square metres (square feet on an imperial zone).",
-              "minutes": "Normally 15."
+              "volume": "Liter (Gallonen bei einer imperialen Zone).",
+              "area": "Quadratmeter (Quadratfuß bei einer imperialen Zone).",
+              "minutes": "Normalerweise 15."
             }
           }
         },
         "error": {
-          "out_of_range": "Those numbers give a flow rate this zone cannot have. Check them."
+          "out_of_range": "Diese Zahlen ergeben eine Durchflussrate, die diese Zone nicht haben kann. Überprüfen Sie sie."
         },
         "abort": {
-          "zone_gone": "This zone no longer exists.",
-          "zone_busy": "The zone is busy. Try again in a moment."
+          "zone_gone": "Diese Zone existiert nicht mehr.",
+          "zone_busy": "Die Zone ist beschäftigt. Versuchen Sie es gleich nochmal."
         }
       }
     },
@@ -1788,8 +1788,8 @@
       "description": "Das Gewächshaus {greenhouse} wurde gelöscht, daher ist {zone} jetzt eine eigenständige Zone. Sie gießt weiterhin und behält die Innensensoren des Gewächshauses. Um sie in ein anderes Gewächshaus zu setzen, nutzen Sie Konfigurieren -> Gewächshaus der Zone."
     },
     "area_removed": {
-      "title": "{zone}: its area was removed",
-      "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
+      "title": "{zone}: Der Bereich wurde entfernt",
+      "description": "Der Bereich {area} wurde gelöscht, daher verwendet {zone} jetzt eine Kopie der Sensoren von dort. Um sie in einen anderen Bereich zu setzen, nutzen Sie Konfigurieren -> Wo ist das? der Zone."
     }
   }
 }

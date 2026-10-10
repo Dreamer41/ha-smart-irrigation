@@ -12,7 +12,7 @@
     "routine": "Peruskastelu",
     "service_run": "Huoltoajo",
     "test_pulse": "Testijakso",
-    "manual_water": "Manual watering"
+    "manual_water": "Manuaalinen kastelu"
   },
   "notify": {
     "heavy_rain": {
@@ -163,9 +163,9 @@
       "message": "Ensisijainen sisälämpötila-anturi ({entity}) lakkasi toimimasta. Ilmastonsäätö jatkuu vara-anturin avulla."
     },
     "action": {
-      "water": "Water {minutes} min",
-      "snooze": "Snooze today",
-      "fertilized": "Fertilized"
+      "water": "Kastele {minutes} min",
+      "snooze": "Ohita tänään",
+      "fertilized": "Lannoitettu"
     }
   },
   "notes": {
@@ -208,8 +208,8 @@
     "waiting_frost": "{cycle} odottaa klo {time} alkaen: {temp}, alle hallarajan ({limit}); tarkistetaan tunnin välein",
     "waiting_deep_soak": "{cycle} odottaa klo {time} alkaen: syväkastelu ajetaan ensin, kun on tarpeeksi lämmintä",
     "paused_until": "Tauolla {until} asti",
-    "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_area": "Tauolla: ei kastelua, kun alue {area} on tauolla",
+    "paused_house": "Tauolla: ei kastelua, kun kasvihuone {house} on tauolla"
   },
   "summary": {
     "title": "💧 ZoneFlow: viikkosi",
@@ -248,146 +248,146 @@
     }
   },
   "location": {
-    "none": "None",
-    "greenhouse": "greenhouse",
-    "new_area": "New area..."
+    "none": "Ei mitään",
+    "greenhouse": "kasvihuone",
+    "new_area": "Uusi alue..."
   },
   "area": {
     "override": {
-      "rain_counter_entity": "Uses its own rain gauge, not {area}'s.",
-      "outdoor_temp_entity": "Uses its own outdoor temperature sensor, not {area}'s.",
-      "weather_entity": "Uses its own weather entity, not {area}'s.",
-      "notify_entity": "Sends to its own phone, not {area}'s."
+      "rain_counter_entity": "Käyttää omaa sademittariaan, ei alueen {area} sademittaria.",
+      "outdoor_temp_entity": "Käyttää omaa ulkolämpötila-anturiaan, ei alueen {area} anturia.",
+      "weather_entity": "Käyttää omaa sääentiteettiään, ei alueen {area} entiteettiä.",
+      "notify_entity": "Lähettää omaan puhelimeen, ei alueen {area} puhelimeen."
     }
   },
   "plants": {
-    "on": "on",
-    "off": "off",
+    "on": "päällä",
+    "off": "pois",
     "history": {
-      "created": "Added to ZoneFlow",
+      "created": "Lisätty ZoneFlow'hun",
       "setting": "{setting}: {old} -> {new}",
-      "moved": "Moved from {from_zone} to {to_zone}",
-      "promoted": "Became the main plant of {zone}",
-      "demoted": "Now a record only in {zone}",
-      "archived": "Archived from {zone}",
-      "removed": "Removed from {zone}",
+      "moved": "Siirretty vyöhykkeeltä {from_zone} vyöhykkeelle {to_zone}",
+      "promoted": "Tuli vyöhykkeen {zone} pääkasviksi",
+      "demoted": "Nyt vain kirjaus vyöhykkeellä {zone}",
+      "archived": "Arkistoitu vyöhykkeeltä {zone}",
+      "removed": "Poistettu vyöhykkeeltä {zone}",
       "note": "{text}",
-      "copied": "Settings copied from {source}"
+      "copied": "Asetukset kopioitu kohteesta {source}"
     },
     "setting": {
-      "growth_stage_mode": "Growth stage mode",
-      "demand_model": "Watering method",
-      "deficit_enabled": "Deficit mode",
-      "deficit_until_ts": "Deficit mode until",
-      "planting_date_ts": "Planting date",
-      "health_status": "Health",
-      "health_notes": "Health notes",
-      "fertilizing_interval_months": "Fertilizing interval",
-      "last_fertilizing_ts": "Last fertilized",
-      "growth_ramp_profile": "Growth ramp",
-      "deep_soak_enabled": "Deep soak"
+      "growth_stage_mode": "Kasvuvaihetila",
+      "demand_model": "Kastelutapa",
+      "deficit_enabled": "Vaje-tila",
+      "deficit_until_ts": "Vaje-tila asti",
+      "planting_date_ts": "Istutuspäivä",
+      "health_status": "Kunto",
+      "health_notes": "Kuntomuistiinpanot",
+      "fertilizing_interval_months": "Lannoitusväli",
+      "last_fertilizing_ts": "Viimeksi lannoitettu",
+      "growth_ramp_profile": "Kasvukäyrä",
+      "deep_soak_enabled": "Syväkastelu"
     }
   },
   "start_from": {
-    "none": "The plant type's usual settings",
-    "zone": "A copy of {zone}",
-    "preset": "Preset: {name}"
+    "none": "Kasvityypin tavanomaiset asetukset",
+    "zone": "Kopio vyöhykkeestä {zone}",
+    "preset": "Esiasetus: {name}"
   },
   "check": {
     "valve": {
-      "ok": "The valve {entity} answers.",
-      "fail": "The valve {entity} is not available. Check the device and its connection in Home Assistant: nothing can water until it answers."
+      "ok": "Venttiili {entity} vastaa.",
+      "fail": "Venttiili {entity} ei ole käytettävissä. Tarkista laite ja sen yhteys Home Assistantissa: mikään ei voi kastella ennen kuin se vastaa."
     },
     "rain": {
-      "ok": "The rain gauge {entity} reports.",
-      "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
-      "wu": "Rain comes from Weather Underground.",
-      "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "ok": "Sademittari {entity} antaa tietoja.",
+      "fail": "Sademittari {entity} ei ole käytettävissä. Kunnes se palaa, ZoneFlow olettaa, ettei sada.",
+      "wu": "Sade saadaan Weather Underground -palvelusta.",
+      "manual": "Sade lisätään käsin.",
+      "none": "Ei sademittaria. ZoneFlow olettaa, ettei koskaan sada, ellet lisää sadetta käsin tai käytä Weather Undergroundia."
     },
     "temperature": {
-      "ok": "Outdoor temperature is {value} {unit}.",
-      "none": "No outdoor temperature sensor. The Fallback Temperature setting decides how hot ZoneFlow thinks it is.",
-      "fail": "The temperature sensor {entity} is not available. The Fallback Temperature is used meanwhile."
+      "ok": "Ulkolämpötila on {value} {unit}.",
+      "none": "Ei ulkolämpötila-anturia. Varalämpötilan asetuspiste määrää, kuinka lämmintä ZoneFlow olettaa olevan.",
+      "fail": "Lämpötila-anturi {entity} ei ole käytettävissä. Sillä välin käytetään varalämpötilaa."
     },
     "weather": {
-      "ok": "The weather forecast {entity} is available.",
-      "none": "No weather entity, so a forecast of rain cannot skip a watering.",
-      "fail": "The weather entity {entity} is not available, so the forecast is ignored for now."
+      "ok": "Sääennuste {entity} on käytettävissä.",
+      "none": "Ei sääentiteettiä, joten sade-ennuste ei voi ohittaa kastelua.",
+      "fail": "Sääentiteetti {entity} ei ole käytettävissä, joten ennuste ohitetaan toistaiseksi."
     },
     "flow": {
-      "ok": "The flow rate is set ({value} mm/min).",
-      "default": "The flow rate is still the example value. Calibrate it so each watering runs for the right time."
+      "ok": "Virtausnopeus on asetettu ({value} mm/min).",
+      "default": "Virtausnopeus on edelleen esimerkkiarvossa. Kalibroi se, jotta jokainen kastelu kestää oikean ajan."
     },
     "volume": {
-      "ok": "Water use is shown in litres.",
-      "none": "Water use is shown in mm only. Set Zone Flow to see litres."
+      "ok": "Veden käyttö näytetään litroina.",
+      "none": "Veden käyttö näytetään vain millimetreinä. Aseta Vyöhykkeen virtaama nähdäksesi litrat."
     },
     "soil": {
-      "ok": "The soil moisture probe reports {value} %.",
-      "fail": "The soil moisture probe {entity} is not available. The zone waters by the calendar until it is back."
+      "ok": "Maankosteusanturi antaa lukeman {value} %.",
+      "fail": "Maankosteusanturi {entity} ei ole käytettävissä. Vyöhyke kastelee kalenterin mukaan, kunnes se palaa."
     },
     "pump": {
-      "ok": "The pump power sensor {entity} reports.",
-      "fail": "The pump power sensor {entity} is not available, so the pump check is skipped."
+      "ok": "Pumpun tehoanturi {entity} antaa tietoja.",
+      "fail": "Pumpun tehoanturi {entity} ei ole käytettävissä, joten pumpun tarkistus ohitetaan."
     },
     "paused": {
-      "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off.",
-      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
+      "zone": "Tämä vyöhyke on tauolla: ei kastelua, ennen kuin kytket Tauon pois.",
+      "area": "Alue {area} on tauolla: ei kastelua, ennen kuin kytket sen Tauon pois.",
+      "house": "Kasvihuone {house} on tauolla: ei kastelua, ennen kuin kytket sen Tauon pois."
     },
     "last": {
-      "ok": "Last watering: {when}.",
-      "never": "ZoneFlow has not watered this zone yet.",
-      "overdue": "The last watering was {days} days ago, longer than expected. Check the valve and the status."
+      "ok": "Viimeisin kastelu: {when}.",
+      "never": "ZoneFlow ei ole vielä kastellut tätä vyöhykettä.",
+      "overdue": "Viimeisin kastelu oli {days} päivää sitten, mikä on odotettua pidempi aika. Tarkista venttiili ja tila."
     },
     "notify": {
-      "ok": "Phone messages go to {entity}.",
-      "none": "No phone to notify. You will not get messages about watering.",
-      "fail": "The phone {entity} does not exist any more, so no messages reach you."
+      "ok": "Puhelinviestit menevät kohteeseen {entity}.",
+      "none": "Ei ilmoituspuhelinta. Et saa viestejä kastelusta.",
+      "fail": "Puhelinta {entity} ei ole enää possessed, joten viestit eivät tavoita sinua."
     }
   },
   "why": {
-    "method": "Watering method: {method}.",
-    "method_temperature": "temperature tiers (a hotter week gets more water)",
-    "method_et": "evapotranspiration (the water the plant used, worked out from the temperature)",
-    "temperature": "Temperature used: {value} ({source}), so a {tier} week.",
+    "method": "Kastelutapa: {method}.",
+    "method_temperature": "lämpötilatasot (lämpimämpi viikko saa enemmän vettä)",
+    "method_et": "haihdunta (kasvin käyttämä vesi, laskettu lämpötilasta)",
+    "temperature": "Käytetty lämpötila: {value} ({source}), joten {tier} viikko.",
     "source": {
-      "sensor": "the average of the last days' highs",
-      "last_known": "from the last days, the sensor is offline now",
-      "fallback": "the Fallback Temperature, no full day recorded yet",
-      "manual": "the Fallback / Manual Temperature setting"
+      "sensor": "viime päivien maksimien keskiarvo",
+      "last_known": "viime päiviltä, anturi on nyt poissa verkosta",
+      "fallback": "Varalämpötila, täyttä päivää ei ole vielä kirjattu",
+      "manual": "Vara- / manuaalilämpötilan asetuspiste"
     },
     "tier": {
-      "hot": "hot",
-      "normal": "normal",
-      "cool": "cool"
+      "hot": "kuuma",
+      "normal": "normaali",
+      "cool": "viileä"
     },
-    "target": "Weekly target: {target}.",
-    "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
-    "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
-    "needed": "If it watered now: {needed} to add, about {minutes} min.",
-    "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
-    "soil": "Soil moisture {pct} % ({status}).",
-    "soil_dry": "dry",
-    "soil_wet": "wet",
-    "soil_ok": "in between"
+    "target": "Viikkotavoite: {target}.",
+    "scale": "Tavoite on suhteutettu tasolle {pct} % kasvuvaiheen, vaje-tilan ja katteen mukaan.",
+    "rain": "Sadehyvitys viimeisimmästä kastelusta: {credit} (sade viimeisen 7 päivän aikana: {rain}).",
+    "needed": "Jos kasteltaisiin nyt: lisättävää {needed}, noin {minutes} min.",
+    "forecast": "Sademäärä oli ennustettu, joten viimeiset {n} kastelua peräkkäin ohitettiin.",
+    "soil": "Maankosteus {pct} % ({status}).",
+    "soil_dry": "kuiva",
+    "soil_wet": "märkä",
+    "soil_ok": "siltä väliltä"
   },
   "suggest": {
-    "heading": "Likely ones found in your Home Assistant:",
+    "heading": "Todennäköisimmät löydökset Home Assistantissasi:",
     "line": "{role}: {names}",
     "role": {
-      "valve": "Valve",
-      "rain": "Rain gauge",
-      "temperature": "Outdoor temperature",
-      "weather": "Weather",
-      "soil": "Soil moisture",
-      "flow": "Flow meter",
-      "pump": "Pump power",
-      "notify": "Phone"
+      "valve": "Venttiili",
+      "rain": "Sademittari",
+      "temperature": "Ulkolämpötila",
+      "weather": "Sää",
+      "soil": "Maankosteus",
+      "flow": "Virtausmittari",
+      "pump": "Pumpun teho",
+      "notify": "Puhelin"
     }
   },
   "setup": {
-    "progress": "Step {n} of {total}"
+    "progress": "Vaihe {n} / {total}"
   }
 }
