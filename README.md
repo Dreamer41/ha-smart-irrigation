@@ -14,7 +14,8 @@ ZoneFlow works out when and how much each part of your garden needs water, from 
 - **Uses the rain.** Rain credit from a rain gauge or a weather station (Ecowitt, Ambient Weather, Tempest, Davis and others), rain you enter by hand, a pause after heavy rain, a forecast skip and a frost guard.
 - **Says why.** A plain-language status for every zone ("Skipped: the soil is wet (72%)"), phone notifications and a weekly summary.
 - **Greenhouse and indoor zones.** Fans, vents, misters and a heater from an inside sensor, with several crops under one greenhouse.
-- **Garden areas.** Group zones into the parts of your garden (Backyard, Front yard) and see them together on the cards and the dashboard.
+- **Areas and plants.** Group zones into the parts of your garden (Backyard, Front yard) that share a rain gauge, thermometer and phone, pause a whole area at once, and keep a history for each plant. Copy a bed's settings to a new one or save them as a preset.
+- **Easy setup.** A "Check my setup" checklist, a guided flow-rate calibration, likely sensors suggested in setup, a Simple view, buttons on phone messages and fix buttons in Repairs.
 - **Water use.** Litres and gallons per watering, for the last 30 days and for the year.
 - **Safe by design.** Runtime caps, a stuck-valve watchdog, pump and flow checks and power-loss handling: a cycle always ends with the valve closed.
 - **Easy to run.** Built-in dashboard cards and a ready-made dashboard, 19 languages, no YAML, and an optional AI-assisted setup.
@@ -35,6 +36,7 @@ Requires Home Assistant 2024.5 or newer. To install without HACS, copy `custom_c
 - [Full guide](docs/GUIDE.md): what ZoneFlow does, sensors, dashboard, services, FAQ and the details behind this page.
 - [Calibration](docs/CALIBRATION.md): flow rate, Zone Flow (litres) and the rain gauge.
 - [Rain gauges and weather stations](docs/RAIN-GAUGES.md)
+- [Areas, plants and easy setup](docs/AREAS-AND-PLANTS.md)
 - [Greenhouse and indoor zones](docs/GREENHOUSE.md)
 - [Weather Underground rain](docs/WEATHER-UNDERGROUND.md) (experimental)
 - [AI-assisted setup](AI_SETUP.md): a guide an AI assistant follows to set ZoneFlow up for you.
