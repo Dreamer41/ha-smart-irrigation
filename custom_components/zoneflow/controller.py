@@ -432,6 +432,16 @@ class ZoneFlowController:
                 out.append(key)
         return out
 
+    def own_controls(self) -> dict[str, str]:
+        """This zone's own Pause switch and Snooze button, for the cards."""
+        registry = er.async_get(self.hass)
+        entry_id = self.entry.entry_id
+        found = {
+            "pause": registry.async_get_entity_id("switch", DOMAIN, f"{entry_id}_pause"),
+            "snooze": registry.async_get_entity_id("button", DOMAIN, f"{entry_id}_snooze_today"),
+        }
+        return {key: value for key, value in found.items() if value}
+
     def area_entities(self) -> dict[str, str]:
         """The area's Pause switch and Snooze button, for the cards."""
         area_id = self.area_entry_id
@@ -473,7 +483,9 @@ class ZoneFlowController:
         self._cancel_frost_wait()
 
     async def on_area_resumed(self) -> None:
-        if not self.store.state.paused:
+        """An area or greenhouse stopped pausing this zone: free it unless
+        something else still does."""
+        if not self.paused:
             self._paused_event.clear()
 
     @property
@@ -1466,12 +1478,28 @@ class ZoneFlowController:
         return self.store.state.paused
 
     @property
-    def paused(self) -> bool:
-        """No watering: the zone's own Pause, or its area's."""
+    def parent_controller(self):
+        """The greenhouse this zone is a crop of (its controller), or None."""
+        parent_id = self.parent_entry_id
+        return self.hass.data.get(DOMAIN, {}).get(parent_id) if parent_id else None
+
+    def paused_by(self) -> str | None:
+        """What is pausing this zone: "own" (its Pause switch), "house" (its
+        greenhouse's Pause), "area" (its area's Pause), or None."""
         if self.store.state.paused:
-            return True
+            return "own"
+        parent = self.parent_controller
+        if parent is not None and parent is not self and parent.store.state.paused:
+            return "house"
         area = self.area
-        return area is not None and area.paused
+        if area is not None and area.paused:
+            return "area"
+        return None
+
+    @property
+    def paused(self) -> bool:
+        """No watering: the zone's own Pause, its greenhouse's, or its area's."""
+        return self.paused_by() is not None
 
     async def set_paused(self, on: bool, until_ts: float | None = None) -> None:
         """The Pause switch: no deep soak or routine watering -- scheduled
@@ -1508,6 +1536,13 @@ class ZoneFlowController:
                 self._paused_event.clear()
         await self.store.async_save()
         self._notify_status()
+        for crop in self.crops:
+            # A greenhouse's Pause is its crops' Pause too.
+            if on:
+                await crop.on_area_paused()
+            else:
+                await crop.on_area_resumed()
+            crop._notify_status()
         await self._log_event(
             event_type="Paused" if on else "Resumed",
             status="INFO",
@@ -4006,8 +4041,12 @@ class ZoneFlowController:
         moment the calendar date changes, with no separate cleanup needed,
         and it means "skip today" always means today's local calendar day
         regardless of what time the button was pressed."""
-        if self.store.state.snooze_date_iso == dt_util.now().date().isoformat():
+        today = dt_util.now().date().isoformat()
+        if self.store.state.snooze_date_iso == today:
             return True
+        parent = self.parent_controller
+        if parent is not None and parent is not self and parent.store.state.snooze_date_iso == today:
+            return True  # its greenhouse is snoozed
         area = self.area
         return area is not None and area.snoozed_today
 
@@ -4023,6 +4062,8 @@ class ZoneFlowController:
         self.store.state.snooze_date_iso = dt_util.now().date().isoformat()
         await self.store.async_save()
         self._notify_status()
+        for crop in self.crops:
+            crop._notify_status()  # a greenhouse's Snooze Today is its crops' too
         await self._register_self_tune_signal("skip")
         await self._log_event(
             event_type="Manual Snooze Today",
@@ -4659,6 +4700,8 @@ class ZoneFlowController:
                     if until is not None
                     else self._msg("status.paused")
                     if state.paused
+                    else self._msg("status.paused_house", house=self.parent_entry.title if self.parent_entry else "")
+                    if self.paused_by() == "house"
                     else self._msg("status.paused_area", area=self.garden_area or "")
                 ),
             )

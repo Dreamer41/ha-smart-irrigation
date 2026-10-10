@@ -203,6 +203,7 @@ def test_a_greenhouse_and_its_crops_have_a_tab_of_their_own_apart_from_the_area(
     states["sensor.tunnel_status"]["attributes"]["zone_type"] = "greenhouse"
     states["sensor.tomatoes_status"]["attributes"]["zone_type"] = "greenhouse"
     states["sensor.lawn_status"]["attributes"]["zone_type"] = "outdoor"
+    states["sensor.tunnel_status"]["attributes"].update(pause_entity="switch.tunnel_pause", snooze_entity="button.tunnel_snooze_today")
     for name in ("Tunnel", "Tomatoes", "Lawn"):
         _with_area(states, name, "Backyard")  # even in the area, the greenhouse stands apart
     devices.update({"gh": {"name": "Tunnel"}, "c1": {"name": "Tomatoes"}, "o1": {"name": "Lawn"}})
@@ -211,6 +212,8 @@ def test_a_greenhouse_and_its_crops_have_a_tab_of_their_own_apart_from_the_area(
     assert out["views"][1]["cards"] == [{"type": "custom:zoneflow-card", "device_id": "o1"}]  # the outdoor zones only
     assert out["views"][2]["icon"] == "mdi:greenhouse"
     assert out["views"][2]["cards"] == [
+        # the greenhouse's own Pause and Snooze Today lead its tab (they pause its crops too)
+        {"type": "entities", "entities": ["switch.tunnel_pause", "button.tunnel_snooze_today"], "show_header_toggle": False},
         {"type": "custom:zoneflow-card", "device_id": "gh", "show_crops": False},
         {"type": "custom:zoneflow-card", "device_id": "c1"},
     ]

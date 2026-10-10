@@ -114,8 +114,11 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
     # Paused?
     if controller.paused:
         area = controller.area
-        if controller.own_paused:
+        by = controller.paused_by()
+        if by == "own":
             add("paused", "warn", "paused.zone")
+        elif by == "house":
+            add("paused", "warn", "paused.house", house=controller.parent_entry.title)
         elif area is not None:
             add("paused", "warn", "paused.area", area=area.name)
 

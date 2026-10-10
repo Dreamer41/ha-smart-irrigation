@@ -208,7 +208,8 @@
     "waiting_frost": "{cycle} várakozik ({time}): {temp}, a fagyvédelmi határ ({limit}) alatt; óránként újra ellenőrzi",
     "waiting_deep_soak": "{cycle} vár ({time} óta): előbb a mélyöntözés jön, amint elég meleg lesz",
     "paused_until": "Szüneteltetve, eddig: {until}",
-    "paused_area": "Paused: no watering while {area} is paused"
+    "paused_area": "Paused: no watering while {area} is paused",
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: a heted",
@@ -332,7 +333,8 @@
     },
     "paused": {
       "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off."
+      "area": "The area {area} is paused: no watering until you switch its Pause off.",
+      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
     },
     "last": {
       "ok": "Last watering: {when}.",

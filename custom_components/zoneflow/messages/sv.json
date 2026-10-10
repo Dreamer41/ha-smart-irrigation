@@ -208,7 +208,8 @@
     "waiting_frost": "{cycle} väntar {time}: {temp}, under frostskyddet ({limit}); kollar igen varje timme",
     "waiting_deep_soak": "{cycle} väntar sedan {time}: djupvattningen går först när det är varmt nog",
     "paused_until": "Pausad till {until}",
-    "paused_area": "Paused: no watering while {area} is paused"
+    "paused_area": "Paused: no watering while {area} is paused",
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: din vecka",
@@ -332,7 +333,8 @@
     },
     "paused": {
       "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off."
+      "area": "The area {area} is paused: no watering until you switch its Pause off.",
+      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
     },
     "last": {
       "ok": "Last watering: {when}.",

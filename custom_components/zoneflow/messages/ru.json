@@ -208,7 +208,8 @@
     "waiting_frost": "{cycle} отложен в {time}: {temp}, ниже защиты от заморозков ({limit}); проверка каждый час",
     "waiting_deep_soak": "{cycle} ждёт с {time}: сначала глубокий полив, когда станет теплее",
     "paused_until": "Пауза до {until}",
-    "paused_area": "Paused: no watering while {area} is paused"
+    "paused_area": "Paused: no watering while {area} is paused",
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: ваша неделя",
@@ -332,7 +333,8 @@
     },
     "paused": {
       "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off."
+      "area": "The area {area} is paused: no watering until you switch its Pause off.",
+      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
     },
     "last": {
       "ok": "Last watering: {when}.",

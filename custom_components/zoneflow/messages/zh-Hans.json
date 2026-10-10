@@ -208,7 +208,8 @@
     "waiting_frost": "{cycle}于 {time} 起暂缓：{temp}，低于防霜保护温度（{limit}）；每小时重新检查",
     "waiting_deep_soak": "{cycle}自 {time} 起等待：天气够暖后先进行深层浇灌",
     "paused_until": "暂停至 {until}",
-    "paused_area": "Paused: no watering while {area} is paused"
+    "paused_area": "Paused: no watering while {area} is paused",
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow：本周概况",
@@ -332,7 +333,8 @@
     },
     "paused": {
       "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off."
+      "area": "The area {area} is paused: no watering until you switch its Pause off.",
+      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
     },
     "last": {
       "ok": "Last watering: {when}.",

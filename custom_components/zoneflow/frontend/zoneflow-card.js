@@ -99,7 +99,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "tips": {
       "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
@@ -313,7 +315,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -527,7 +531,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -741,7 +747,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -955,7 +963,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -1169,7 +1179,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -1383,7 +1395,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -1597,7 +1611,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -1811,7 +1827,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -2025,7 +2043,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -2239,7 +2259,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -2453,7 +2475,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -2667,7 +2691,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -2881,7 +2907,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -3095,7 +3123,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -3309,7 +3339,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -3523,7 +3555,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -3737,7 +3771,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -3951,7 +3987,9 @@ const I18N = {
       "next_watering": "Next",
       "rain_today": "Rain today",
       "needs_a_look": "Needs a look",
-      "water_30d": "Water used, 30 days"
+      "water_30d": "Water used, 30 days",
+      "pause_house": "Pause the greenhouse (stops watering its crops)",
+      "snooze_house": "Skip today's watering of the greenhouse crops"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -5466,6 +5504,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
         area: status?.attributes?.garden_area || null,
         areaPause: status?.attributes?.area_pause || null,
         areaSnooze: status?.attributes?.area_snooze || null,
+        ownPause: status?.attributes?.pause_entity || null,
+        ownSnooze: status?.attributes?.snooze_entity || null,
       };
     });
     const byName = (a, b) => a.name.localeCompare(b.name, hass.locale?.language);
@@ -5509,7 +5549,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null, z.areaKind || null]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null, z.areaKind || null, z.ownPause || null, z.ownSnooze || null]),
       this._config.device_ids || null,
       this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
@@ -5698,11 +5738,13 @@ class ZoneFlowOverviewCard extends HTMLElement {
         headingText.textContent = zone.areaName || tr("other_area");
         heading.appendChild(headingText);
         // The area's own Pause and Snooze Today.
+        // A greenhouse group's buttons are the greenhouse zone's own (its Pause is its crops' too).
+        const house = zone.areaKind === "house";
         for (const [entity, icon, key, domain, service] of [
-          [zone.areaPause, "mdi:pause-circle-outline", "pause_area", "switch", "toggle"],
-          [zone.areaSnooze, "mdi:sleep", "snooze_area", "button", "press"],
+          [house ? zone.ownPause : zone.areaPause, "mdi:pause-circle-outline", house ? "pause_house" : "pause_area", "switch", "toggle"],
+          [house ? zone.ownSnooze : zone.areaSnooze, "mdi:sleep", house ? "snooze_house" : "snooze_area", "button", "press"],
         ]) {
-          if (!zone.areaName || !entity || zone.areaKind === "house") continue;
+          if (!zone.areaName || !entity) continue;
           const button = document.createElement("ha-icon-button");
           button.label = t(hass, `overview.${key}`);
           button.title = t(hass, `overview.${key}`);
@@ -6096,6 +6138,11 @@ function buildDashboard(hass) {
   for (const zone of tops) {
     if (areaOf(zone)) continue; // on its area's tab
     const cards = cardsFor(zone);
+    if (isHouse(zone)) {
+      const attrs = hass.states?.[zone.status]?.attributes || {};
+      const controls = [attrs.pause_entity, attrs.snooze_entity].filter(Boolean);
+      if (controls.length) cards.unshift({ type: "entities", entities: controls, show_header_toggle: false });
+    }
     views.push({
       title: zone.name,
       path: unique(zone.name),

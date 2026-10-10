@@ -208,7 +208,8 @@
     "waiting_frost": "{cycle} odottaa klo {time} alkaen: {temp}, alle hallarajan ({limit}); tarkistetaan tunnin välein",
     "waiting_deep_soak": "{cycle} odottaa klo {time} alkaen: syväkastelu ajetaan ensin, kun on tarpeeksi lämmintä",
     "paused_until": "Tauolla {until} asti",
-    "paused_area": "Paused: no watering while {area} is paused"
+    "paused_area": "Paused: no watering while {area} is paused",
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
   },
   "summary": {
     "title": "💧 ZoneFlow: viikkosi",
@@ -332,7 +333,8 @@
     },
     "paused": {
       "zone": "This zone is paused: no watering until you switch Pause off.",
-      "area": "The area {area} is paused: no watering until you switch its Pause off."
+      "area": "The area {area} is paused: no watering until you switch its Pause off.",
+      "house": "The greenhouse {house} is paused: no watering until you switch its Pause off."
     },
     "last": {
       "ok": "Last watering: {when}.",

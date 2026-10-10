@@ -798,6 +798,10 @@ class ZoneFlowStatusSensor(_Base):
         area_entities = self._controller.area_entities()
         attributes["area_pause"] = area_entities.get("pause")
         attributes["area_snooze"] = area_entities.get("snooze")
+        # This zone's own Pause and Snooze (a greenhouse's heading shows them).
+        own = self._controller.own_controls()
+        attributes["pause_entity"] = own.get("pause")
+        attributes["snooze_entity"] = own.get("snooze")
         # For the cards: the greenhouse a crop belongs to, and a greenhouse's crops.
         registry = dr.async_get(self.hass)
 

@@ -492,3 +492,41 @@ async def test_the_status_says_what_kind_of_zone_it_is(hass, fake_valve_services
         for entry in (crop, outdoor)
     }
     assert kinds == {"Tomatoes": "greenhouse", "Lawn": "outdoor"}
+
+
+@pytest.mark.asyncio
+async def test_pausing_a_greenhouse_pauses_its_crops_and_snooze_skips_them(hass, fake_valve_services):
+    house = _climate_only_entry(hass)
+    crop = _crop(hass, "Tomatoes", VALVE_A, house)
+    other = _zone(hass, "Lawn", VALVE_B)
+    await _boot(hass, house, crop, other)
+    gh, c, o = _ctl(hass, house), _ctl(hass, crop), _ctl(hass, other)
+
+    await gh.set_paused(True)
+    assert c.paused and c.paused_by() == "house" and not c.own_paused and not o.paused
+    assert c._paused_event.is_set()
+    status = hass.states.get("sensor.tomatoes_status")
+    assert status.state == f"Paused: no watering while the greenhouse {house.title} is paused"
+    assert hass.states.get("switch.tomatoes_pause").state == "off"  # the crop's own Pause is separate
+    assert any(i["id"] == "paused" and "greenhouse" in i["text"] for i in __import__("custom_components.zoneflow.setup_check", fromlist=["x"]).run_checks(c))
+
+    await gh.set_paused(False)
+    assert not c.paused and not c._paused_event.is_set()
+    # The crop's own pause outlives the greenhouse's.
+    await c.set_paused(True)
+    await gh.set_paused(True)
+    await gh.set_paused(False)
+    assert c.paused and c._paused_event.is_set()
+    await c.set_paused(False)
+
+    assert not c._is_snoozed_today()
+    await gh.snooze_today()
+    assert c._is_snoozed_today() and not o._is_snoozed_today()
+
+
+@pytest.mark.asyncio
+async def test_a_zones_status_names_its_own_pause_and_snooze(hass, fake_valve_services):
+    house = _climate_only_entry(hass)
+    await _boot(hass, house)
+    attrs = hass.states.get(f"sensor.{house.title.lower().replace(' ', '_')}_status").attributes
+    assert attrs["pause_entity"].startswith("switch.") and attrs["snooze_entity"].startswith("button.")
