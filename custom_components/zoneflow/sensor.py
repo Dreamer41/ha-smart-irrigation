@@ -14,6 +14,7 @@ import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
 from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .devices import zone_device
 from .entity_cleanup import remove_entities
 
 RAIN_WINDOW_SENSORS = ["30min", "24h", "3d", "7d", "14d"]
@@ -806,7 +807,7 @@ class ZoneFlowStatusSensor(_Base):
         registry = dr.async_get(self.hass)
 
         def device_of(entry_id: str) -> str | None:
-            device = registry.async_get_device(identifiers={(DOMAIN, entry_id)})
+            device = zone_device(registry, entry_id)
             return device.id if device is not None else None
 
         parent = self._controller.parent_entry

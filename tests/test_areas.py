@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock
 import pytest
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import issue_registry as ir
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -133,6 +134,8 @@ async def test_the_area_pause_is_a_second_layer(hass, fake_valve_services):
 
     await a.set_paused(True)
     assert c.paused and o.paused
+    with pytest.raises(ServiceValidationError, match="while Backyard is paused"):
+        await c.water_now(1)
     assert not c.own_paused and hass.states.get("switch.tomatoes_pause").state == "off"
     assert hass.states.get("switch.backyard_pause").state == "on"
     await c.run_deep_soak()
@@ -505,6 +508,8 @@ async def test_pausing_a_greenhouse_pauses_its_crops_and_snooze_skips_them(hass,
     await gh.set_paused(True)
     assert c.paused and c.paused_by() == "house" and not c.own_paused and not o.paused
     assert c._paused_event.is_set()
+    with pytest.raises(ServiceValidationError, match=f"the greenhouse {house.title} is paused"):
+        await c.water_now(1)  # the refusal says which greenhouse, not just "this zone"
     status = hass.states.get("sensor.tomatoes_status")
     assert status.state == f"Paused: no watering while the greenhouse {house.title} is paused"
     assert hass.states.get("switch.tomatoes_pause").state == "off"  # the crop's own Pause is separate
@@ -530,3 +535,25 @@ async def test_a_zones_status_names_its_own_pause_and_snooze(hass, fake_valve_se
     await _boot(hass, house)
     attrs = hass.states.get(f"sensor.{house.title.lower().replace(' ', '_')}_status").attributes
     assert attrs["pause_entity"].startswith("switch.") and attrs["snooze_entity"].startswith("button.")
+
+
+@pytest.mark.asyncio
+async def test_an_area_made_from_a_zone_keeps_the_sensors_the_zone_gets_from_its_present_area(hass, fake_valve_services):
+    """The zone has none of its own: it uses the Backyard's. The new area starts with those, so nothing is lost."""
+    from homeassistant.helpers import device_registry as dr
+
+    backyard = _area(hass)
+    zone = _zone(hass, **{CONF_AREA_ID: backyard.entry_id})
+    await _boot(hass, backyard, zone)
+    assert _ctl(hass, zone).rain_counter_entity == AREA_RAIN
+    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, zone.entry_id)})
+    await hass.services.async_call(DOMAIN, "create_area", {"name": "Side yard", "device_id": device.id}, blocking=True)
+    await hass.async_block_till_done()
+    side = next(a for a in hass.data[AREA_DATA_KEY].values() if a.name == "Side yard")
+    c = _ctl(hass, zone)
+    assert c.area is side
+    assert (side.option(CONF_RAIN_COUNTER_ENTITY), side.option(CONF_OUTDOOR_TEMP_ENTITY), side.option(CONF_WEATHER_ENTITY)) == (
+        AREA_RAIN, AREA_TEMP, AREA_WEATHER
+    )
+    assert (c.rain_counter_entity, c.outdoor_temp_entity, c.weather_entity) == (AREA_RAIN, AREA_TEMP, AREA_WEATHER)
+    assert c.rain_mm_per_tip == pytest.approx(0.3)

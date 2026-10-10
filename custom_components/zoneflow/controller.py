@@ -1588,7 +1588,12 @@ class ZoneFlowController:
         )
 
     def _refuse_if_paused(self) -> None:
-        if self.paused:
+        by = self.paused_by()
+        if by == "house":  # name the greenhouse that is paused, in the words the Status uses
+            raise ServiceValidationError(self._msg("status.paused_house", house=self.parent_entry.title if self.parent_entry else ""))
+        if by == "area":
+            raise ServiceValidationError(self._msg("status.paused_area", area=self.garden_area or ""))
+        if by is not None:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_paused")
 
     async def run_deep_soak_now(self) -> None:

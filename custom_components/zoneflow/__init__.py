@@ -39,6 +39,7 @@ from .const import (
     WU_DATA_KEY,
 )
 from .controller import ZoneFlowController
+from .devices import zone_device
 
 SERVICE_RUN_DEEP_SOAK = "run_deep_soak"
 SERVICE_RUN_ROUTINE = "run_routine_irrigation"
@@ -497,10 +498,10 @@ def _link_crop_devices(hass: HomeAssistant) -> None:
     registry = dr.async_get(hass)
     for entry in hass.config_entries.async_entries(DOMAIN):
         parent_id = {**entry.data, **entry.options}.get(CONF_PARENT_ZONE)
-        device = registry.async_get_device(identifiers={(DOMAIN, entry.entry_id)})
+        device = zone_device(registry, entry.entry_id)
         if device is None:
             continue
-        parent = registry.async_get_device(identifiers={(DOMAIN, parent_id)}) if parent_id else None
+        parent = zone_device(registry, parent_id) if parent_id else None
         wanted = parent.id if parent is not None else None
         if device.via_device_id != wanted:
             registry.async_update_device(device.id, via_device_id=wanted)

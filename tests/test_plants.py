@@ -2,6 +2,8 @@
 its own; the zone's entities stay the live settings."""
 from __future__ import annotations
 
+import asyncio
+
 from dataclasses import asdict
 from datetime import timedelta
 
@@ -191,3 +193,30 @@ async def test_a_1_6_5_zone_upgrades_cleanly(hass, fake_valve_services, hass_sto
     assert plant["name"] == "Chilis" and plant["snapshot"]["planting_date_ts"] == now - 40 * 86400
     assert plant["snapshot"]["health_notes"] == "aphids on the lower leaves"
     assert [h["kind"] for h in plant["history"]] == ["created"]
+
+
+@pytest.mark.asyncio
+async def test_zones_starting_together_all_get_the_stored_plants_not_an_empty_book(hass):
+    """At a restart every zone asks for the book at once: none may see it before it is read."""
+    from homeassistant.helpers.storage import Store
+
+    stored = {"p1": {"id": "p1", "name": "Mango", "type": "fruit_tree", "zone_id": "z1", "main": True, "history": []}}
+    await Store(hass, plants_module.STORE_VERSION, "zoneflow_plants").async_save({"plants": stored})
+    books = await asyncio.gather(*(plants_module.async_get_book(hass) for _ in range(5)))
+    assert all(b is books[0] and "p1" in b.plants for b in books)
+    assert books[0].main("z1")["name"] == "Mango"
+
+
+@pytest.mark.asyncio
+async def test_a_zone_whose_plant_was_removed_stays_empty_after_a_reload(hass, fake_valve_services):
+    """Removing the last plant is a choice: a restart must not hand the zone a new one."""
+    from custom_components.zoneflow import plant_actions
+
+    zone = _zone(hass)
+    await _boot(hass, zone)
+    await plant_actions.remove_plant(hass, _book(hass).main(zone.entry_id)["id"])
+    assert _book(hass).main(zone.entry_id) is None
+    assert await hass.config_entries.async_reload(zone.entry_id)
+    await hass.async_block_till_done()
+    assert _book(hass).in_zone(zone.entry_id) == []
+    assert zone.entry_id in _book(hass).seeded

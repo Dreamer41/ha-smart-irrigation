@@ -16,6 +16,7 @@ zones and keep its history. A removed zone's plants are archived, not lost.
 """
 from __future__ import annotations
 
+import asyncio
 import uuid
 from typing import Any
 
@@ -74,17 +75,26 @@ class PlantBook:
         self.hass = hass
         self._store: Store = Store(hass, STORE_VERSION, f"{DOMAIN}_plants")
         self.plants: dict[str, dict[str, Any]] = {}
+        # Zones that have been given their first main plant. A zone whose plants
+        # were all removed on purpose stays empty (it is not given a new one at
+        # every restart).
+        self.seeded: set[str] = set()
+        self.loaded = asyncio.Event()  # set once the store has been read
 
     async def async_load(self) -> None:
         raw = await self._store.async_load()
         if isinstance(raw, dict) and isinstance(raw.get("plants"), dict):
             self.plants = raw["plants"]
+            self.seeded = set(raw.get("seeded") or ())
+
+    def _data(self) -> dict[str, Any]:
+        return {"plants": self.plants, "seeded": sorted(self.seeded)}
 
     def _save(self) -> None:
-        self._store.async_delay_save(lambda: {"plants": self.plants}, 5)
+        self._store.async_delay_save(self._data, 5)
 
     async def async_flush(self) -> None:
-        await self._store.async_save({"plants": self.plants})
+        await self._store.async_save(self._data())
 
     # --- reading --------------------------------------------------------------
     def in_zone(self, zone_id: str) -> list[dict[str, Any]]:
@@ -155,8 +165,13 @@ async def async_get_book(hass: HomeAssistant) -> PlantBook:
     book = hass.data.get(BOOK_KEY)
     if book is None:
         book = PlantBook(hass)
-        hass.data[BOOK_KEY] = book  # set first: a second zone setting up waits for nothing
-        await book.async_load()
+        hass.data[BOOK_KEY] = book  # set first so a second caller finds this one...
+        try:
+            await book.async_load()
+        finally:
+            book.loaded.set()
+    else:
+        await book.loaded.wait()  # ...and waits for the load: an empty book would give every zone a new main plant
     return book
 
 
@@ -204,10 +219,13 @@ class ZonePlants:
         plant (an updated install gets one for each existing zone), take the
         baseline for the history, and keep watching."""
         c = self.controller
-        if c.has_valve and self.main() is None:
-            kind = c.entry.options.get(CONF_PLANT, c.entry.data.get(CONF_PLANT)) or PLANT_CUSTOM
-            plant = self.book.create(self._default_name(), kind, self.zone_id, True, "update")
-            plant["snapshot"] = self.values()
+        if c.has_valve and self.zone_id not in self.book.seeded:
+            if self.main() is None:
+                kind = c.entry.options.get(CONF_PLANT, c.entry.data.get(CONF_PLANT)) or PLANT_CUSTOM
+                plant = self.book.create(self._default_name(), kind, self.zone_id, True, "update")
+                plant["snapshot"] = self.values()
+            self.book.seeded.add(self.zone_id)
+            self.book._save()
         self._last = self.values()
         self._unsub = async_track_time_interval(c.hass, self._tick, CHECK_INTERVAL)
         c._notify_status()  # the Status sensor lists the plants

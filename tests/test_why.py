@@ -40,7 +40,31 @@ async def test_growth_ramp_and_forecast_skips_and_the_probe_show_up(hass, fake_v
     c.store.state.forecast_routine_skip_count = 2
     items = {i["id"]: i["text"] for i in why.explain(c)}
     assert "scaled to" in items["scale"] and "Rain was forecast" in items["forecast"]
-    assert items["soil"].startswith("Soil moisture 15 %")
+    assert items["soil"] == "Soil moisture 15 % (dry)."
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "reading, expected",
+    [("15", "Soil moisture 15 % (dry)."), ("45", "Soil moisture 45 % (in between)."), ("95", "Soil moisture 95 % (wet).")],
+)
+async def test_the_probe_line_uses_words_never_a_message_key(hass, fake_valve_services, reading, expected):
+    zone = _zone(hass, valve=VALVE, soil_moisture_entity="sensor.probe")
+    hass.states.async_set("sensor.probe", reading)
+    await _boot(hass, zone)
+    items = {i["id"]: i["text"] for i in why.explain(_ctl(hass, zone))}
+    assert items["soil"] == expected
+    assert "why." not in " ".join(items.values())
+
+
+@pytest.mark.asyncio
+async def test_a_probe_that_cannot_be_used_leaves_the_probe_line_out(hass, fake_valve_services):
+    zone = _zone(hass, valve=VALVE, soil_moisture_entity="sensor.probe")
+    hass.states.async_set("sensor.probe", "unavailable")
+    await _boot(hass, zone)
+    items = {i["id"]: i["text"] for i in why.explain(_ctl(hass, zone))}
+    assert "soil" not in items
+    assert "why." not in " ".join(items.values())
 
 
 @pytest.mark.asyncio

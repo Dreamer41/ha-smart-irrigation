@@ -61,12 +61,16 @@ def greenhouse_entries(hass: HomeAssistant, exclude_entry_id: str | None = None)
 
 
 def area_defaults(controller: Any) -> dict[str, Any]:
-    """A new area made from a zone starts with the sensors the zone has now
-    (and, for a rain gauge, its tip size)."""
+    """A new area made from a zone starts with the sensors the zone uses now:
+    its own, or the ones it gets from its present area (and, for a rain gauge,
+    its tip size). Otherwise moving a zone out of an area would strip it."""
     merged = _merged(controller.entry)
-    defaults: dict[str, Any] = {key: merged.get(key) for key in (*AREA_SHARED_KEYS, CONF_RAIN_SOURCE)}
-    if merged.get(CONF_RAIN_COUNTER_ENTITY):
-        defaults[CONF_AREA_MM_PER_TIP] = controller.number("rain_mm_per_tip")
+    defaults: dict[str, Any] = {key: controller._area_value(key) for key in AREA_SHARED_KEYS}
+    area = controller.area
+    from_area = controller.rain_from_area and area is not None
+    defaults[CONF_RAIN_SOURCE] = (area.option(CONF_RAIN_SOURCE) if from_area else merged.get(CONF_RAIN_SOURCE))
+    if defaults.get(CONF_RAIN_COUNTER_ENTITY):
+        defaults[CONF_AREA_MM_PER_TIP] = controller.rain_mm_per_tip
     return defaults
 
 

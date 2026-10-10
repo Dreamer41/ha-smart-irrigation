@@ -89,8 +89,9 @@ def explain(controller: Any) -> list[dict[str, str]]:
         add("forecast", "forecast", n=skips)
 
     moisture = controller.soil_moisture_reading()
-    if moisture is not None:
-        add("soil", "soil", pct=f"{moisture:.0f}", status=messages.text(hass, f"why.soil_{controller.soil_moisture_status() or 'ok'}"))
+    soil = {"dry": "soil_dry", "wet": "soil_wet", "in_range": "soil_ok"}.get(controller.soil_moisture_status() or "")
+    if moisture is not None and soil is not None:  # a probe that is offline, stale or implausible is ignored: Check my setup says so
+        add("soil", "soil", pct=f"{moisture:.0f}", status=messages.text(hass, f"why.{soil}"))
 
     items.append({"id": "last", "text": controller.status()["text"]})
     return items

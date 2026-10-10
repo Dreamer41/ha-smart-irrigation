@@ -12,6 +12,7 @@ zone's config entry.
 """
 from __future__ import annotations
 
+import asyncio
 import uuid
 from typing import Any
 
@@ -122,6 +123,7 @@ class PresetBook:
         self.hass = hass
         self._store: Store = Store(hass, 1, f"{DOMAIN}_presets")
         self.presets: dict[str, dict[str, Any]] = {}
+        self.loaded = asyncio.Event()  # set once the store has been read
 
     async def async_load(self) -> None:
         raw = await self._store.async_load()
@@ -160,7 +162,12 @@ async def async_get_book(hass: HomeAssistant) -> PresetBook:
     if book is None:
         book = PresetBook(hass)
         hass.data[PRESET_BOOK_KEY] = book
-        await book.async_load()
+        try:
+            await book.async_load()
+        finally:
+            book.loaded.set()
+    else:
+        await book.loaded.wait()  # a second caller must not see the book before it is read
     return book
 
 

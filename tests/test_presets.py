@@ -166,3 +166,15 @@ async def test_the_start_settings_are_applied_once(hass, fake_valve_services, ha
     await hass.config_entries.async_reload(zone.entry_id)
     await hass.async_block_till_done()
     assert _ctl(hass, zone).store.state.mulch_status == "mulched"  # a reload does not put it back
+
+
+@pytest.mark.asyncio
+async def test_two_callers_asking_for_the_preset_book_together_both_get_the_saved_presets(hass):
+    import asyncio
+
+    from homeassistant.helpers.storage import Store
+
+    saved = {"a": {"id": "a", "name": "Tomato ET drip", "bundle": {}}}
+    await Store(hass, 1, "zoneflow_presets").async_save({"presets": saved})
+    books = await asyncio.gather(presets.async_get_book(hass), presets.async_get_book(hass))
+    assert books[0] is books[1] and books[1].named("tomato et drip") is not None
