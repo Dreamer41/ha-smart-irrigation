@@ -5681,7 +5681,7 @@ class ZoneFlowOverviewCard extends HTMLElement {
     this._dashboardAsked = true;
     try {
       const list = await this._hass.callWS({ type: "lovelace/dashboards/list" });
-      this._dashboardState = list.some((d) => d.url_path === "zoneflow") ? "exists" : "missing";
+      this._dashboardState = list.some((d) => String(d.url_path).includes("zoneflow")) ? "exists" : "missing";
     } catch (err) {
       this._dashboardState = "exists"; // cannot tell: offer nothing
     }
@@ -5693,12 +5693,12 @@ class ZoneFlowOverviewCard extends HTMLElement {
     const hass = this._hass;
     await hass.callWS({
       type: "lovelace/dashboards/create",
-      url_path: "zoneflow", mode: "storage", title: "ZoneFlow", icon: "mdi:sprinkler-variant",
+      url_path: "zoneflow-garden", mode: "storage", title: "ZoneFlow", icon: "mdi:sprinkler-variant", // a dashboard's path needs a hyphen
       show_in_sidebar: true, require_admin: false,
     });
-    await hass.callWS({ type: "lovelace/config/save", url_path: "zoneflow", config: { strategy: { type: "custom:zoneflow" } } });
+    await hass.callWS({ type: "lovelace/config/save", url_path: "zoneflow-garden", config: { strategy: { type: "custom:zoneflow" } } });
     this._dashboardState = "exists";
-    history.pushState(null, "", "/zoneflow");
+    history.pushState(null, "", "/zoneflow-garden");
     window.dispatchEvent(new CustomEvent("location-changed"));
   }
 

@@ -625,7 +625,8 @@ def test_one_click_dashboard_creation(tmp_path):
     out = json.loads(done.stdout)
     assert out["missing"] == "missing" and out["exists"] == "exists"
     assert out["unknown"] == "exists" and out["nonAdmin"] is None
-    assert out["created"] == ["lovelace/dashboards/create:zoneflow", "lovelace/config/save:zoneflow", "go:/zoneflow"]
+    # A dashboard's path must contain a hyphen, or Home Assistant refuses it.
+    assert out["created"] == ["lovelace/dashboards/create:zoneflow-garden", "lovelace/config/save:zoneflow-garden", "go:/zoneflow-garden"]
 
 
 SIMPLE_HARNESS = _PREAMBLE.replace(
