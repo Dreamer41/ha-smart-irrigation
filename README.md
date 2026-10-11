@@ -4,6 +4,8 @@
 
 Full documentation: **[zoneflowirrigation.com](https://zoneflowirrigation.com/)**
 
+**Try it first: [live demo with a guided tour](https://zoneflowirrigation.com/demo)**. A simulated garden you can click through in your browser, no install needed.
+
 ZoneFlow works out when and how much each part of your garden needs water, from the plant, the soil, the weather and the rain, then runs the valve and tells you in plain words what it did and why. It also controls the climate of a greenhouse or indoor grow space. Only a valve switch is required; every sensor is optional and each one adds a capability.
 
 <img src="docs/screenshots/hero.jpg" width="100%" alt="ZoneFlow dashboard on tablet and phone, in the garden">
@@ -33,6 +35,7 @@ Requires Home Assistant 2024.5 or newer. To install without HACS, copy `custom_c
 ## Documentation
 
 - **[zoneflowirrigation.com](https://zoneflowirrigation.com/)**: the full documentation.
+- **[Live demo](https://zoneflowirrigation.com/demo)**: try ZoneFlow in your browser, with a guided tour.
 - [Full guide](docs/GUIDE.md): what ZoneFlow does, sensors, dashboard, services, FAQ and the details behind this page.
 - [Calibration](docs/CALIBRATION.md): flow rate, Zone Flow (litres) and the rain gauge.
 - [Rain gauges and weather stations](docs/RAIN-GAUGES.md)
