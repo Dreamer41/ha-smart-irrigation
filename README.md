@@ -22,6 +22,21 @@ ZoneFlow works out when and how much each part of your garden needs water, from 
 - **Safe by design.** Runtime caps, a stuck-valve watchdog, pump and flow checks and power-loss handling: a cycle always ends with the valve closed.
 - **Easy to run.** Built-in dashboard cards and a ready-made dashboard, 19 languages, no YAML, and an optional AI-assisted setup.
 
+## See it
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/overview.png" alt="The overview card: every zone grouped by area, with status, next watering and last watering in mm and litres"><br><sub><b>Your whole garden at a glance</b>, grouped by area.</sub></td>
+<td width="50%"><img src="docs/screenshots/card.png" alt="A zone card with the next watering, the plants in the zone and the Why? explanation of the numbers behind it"><br><sub><b>Says why.</b> The numbers behind the next watering, in plain words.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/greenhouse.png" alt="A greenhouse with its crops: ventilating because it is too warm, and each crop's own watering"><br><sub><b>Greenhouses</b> with fans, vents and their own crops.</sub></td>
+<td width="50%"><img src="docs/screenshots/check-my-setup.png" alt="Check my setup: a plain checklist with the problems first"><br><sub><b>Check my setup:</b> a plain checklist, problems first.</sub></td>
+</tr>
+</table>
+
+Or try it yourself in the [live demo](https://zoneflowirrigation.com/demo).
+
 ## Install
 
 1. In HACS: ⋮ → **Custom repositories** → add `https://github.com/Dreamer41/ha-smart-irrigation` as type **Integration**.
