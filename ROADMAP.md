@@ -2,6 +2,12 @@
 
 Ideas queued for upcoming releases.
 
+## 1.7.2 (planned)
+
+- Drag and drop plants between zones on the overview card: plant chips under each
+  zone, dropped on another zone (a prompt for what becomes of its main plant when
+  it has one). Pointer events so it works by touch; the Plants popup Move stays.
+
 ## Next update
 
 - A plant inventory across all zones.
