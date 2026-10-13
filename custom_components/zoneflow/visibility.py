@@ -43,6 +43,8 @@ RAIN_GAUGE_ONLY = {
     ("number", "preirrigation_rain_threshold_mm"),
     ("sensor", "rain_past_30min"),
 }
+# Shown by another entity: Days Until Next Run says the same, and the Status sentence says when.
+DUPLICATES = {("sensor", "next_irrigation_estimate")}
 PUMP_POWER = {("number", "pump_min_watts")}
 SHARED_PUMP = {("number", "pump_preamble_seconds"), ("number", "pump_postamble_seconds")}
 TEMPERATURE = {
@@ -145,7 +147,7 @@ def _greenhouse_hidden(controller) -> set[tuple[str, str]]:
 
 def hidden_for(controller) -> set[tuple[str, str]]:
     """The entities that do nothing for this zone right now."""
-    hidden = set(ADVANCED)
+    hidden = set(ADVANCED) | DUPLICATES
     if not controller.weather_entity:
         hidden |= FORECAST
     if controller.uses_wu:

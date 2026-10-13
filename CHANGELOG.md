@@ -6,6 +6,11 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Changed
+
+- **The Status sentence says how much the next watering is expected to give**: "Next watering Mon 05:30, estimated 12 mm" (a routine watering: the dose the zone's settings call for, less the rain so far; a deep soak: its target). It is left out when there is nothing to estimate.
+- **Next Irrigation Estimate is hidden** (it keeps working, and unhides under the entity's settings): Days Until Next Run says the same, and the Status says when. Automations and cards that use it are not affected.
+
 ### Added
 
 - **Drag and drop plants between zones.** On the overview card, the **Move plants** button shows each zone's plants as chips; drag a chip onto another zone (mouse or finger) to move the plant there. Every drop asks first: where to, what becomes of a main plant already there (keep it, make it a record, archive it, or swap), and whether to use this plant's watering settings too (then every plant in that zone is watered that way). A zone with no valve takes the plant as a record only. The Move button in the Plants popup works as before.

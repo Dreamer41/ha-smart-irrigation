@@ -95,6 +95,7 @@ async def test_a_valve_only_zone_hides_everything_it_cannot_use(hass, fake_valve
         ("number", "pump_preamble_seconds"),  # no shared pump
         ("sensor", "avg_peak_temp_3d"),  # no temperature sensor
         ("select", "demand_model"),
+        ("sensor", "next_irrigation_estimate"),  # Days Until Next Run says the same
         ("sensor", "last_cycle_water_liters"),  # no flow meter
         ("number", "growth_ramp_custom_start_pct"),  # growth ramp off
         ("select", "growth_stage_mode"),
@@ -107,7 +108,7 @@ async def test_a_valve_only_zone_hides_everything_it_cannot_use(hass, fake_valve
         ("number", "fallback_temp"),  # the manual temperature for a zone without a sensor
         ("button", "run_routine"),
         ("button", "run_deep_soak"),  # deep soak is on
-        ("sensor", "next_irrigation_estimate"),
+        ("sensor", "days_until_next_run"),
     ]:
         assert _hidden(hass, entry, domain, key) is None, (domain, key)
     # Hidden still works, with its value.

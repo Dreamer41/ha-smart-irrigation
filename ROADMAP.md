@@ -11,8 +11,6 @@ Ideas queued for upcoming releases.
 ## Next update
 
 - A plant inventory across all zones.
-- The Status sentence with the expected amount ("Next watering Mon 05:30,
-  about 12 mm").
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
   inside the notifications and the status, not only the sentences around
   them.

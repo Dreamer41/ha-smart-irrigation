@@ -4815,6 +4815,11 @@ class ZoneFlowController:
             "next_cycle": next_cycle if next_ts is not None else None,
         }
 
+        def estimate(cycle: str | None) -> str | None:
+            """What the next watering is expected to give, as text (None when it can't be said)."""
+            mm = self.next_amount_mm(cycle)
+            return units.depth_text(mm, self.imperial) if mm is not None and mm >= 0.5 else None
+
         def with_next(text: str) -> str:
             if next_ts is None:
                 return text
@@ -4899,16 +4904,30 @@ class ZoneFlowController:
         if state.last_significant_rain_ts is not None and drydown_end > now_ts:
             result.update(code="waiting_drydown", text=self._msg("status.waiting_drydown", until=self._when(drydown_end)))
             return result
+        amount = estimate(next_cycle) if next_ts is not None else None
         if state.last_routine_ts is None and next_ts is not None:
             key = "first_run_deep_soak" if next_cycle == "deep_soak" else "first_run"
-            result.update(code="first_run", text=self._msg(f"status.{key}", when=self._when(next_ts)))
+            text_key = f"{key}_amount" if amount else key
+            result.update(code="first_run", text=self._msg(f"status.{text_key}", when=self._when(next_ts), amount=amount))
             return result
         if next_ts is not None:
             key = "next_deep_soak" if next_cycle == "deep_soak" else "next"
-            result.update(code=key, text=self._msg(f"status.{key}", when=self._when(next_ts)))
+            text_key = f"{key}_amount" if amount else key
+            result.update(code=key, text=self._msg(f"status.{text_key}", when=self._when(next_ts), amount=amount))
             return result
         result.update(code="idle", text=self._msg("status.idle"))
         return result
+
+    def next_amount_mm(self, cycle: str | None) -> float | None:
+        """What the next watering is expected to give (mm), as it looks now: a
+        deep soak gives its target; a routine watering gives the dose its
+        settings call for, less the rain credit so far. None for a zone with
+        nothing to water with."""
+        if not self.has_valve:
+            return None
+        if cycle == "deep_soak":
+            return self.number("deep_soak_target_mm")
+        return self._routine_plan().needed_mm
 
     def _cycle_name(self, kind: str) -> str:
         key = _CYCLE_KEYS.get(kind)
