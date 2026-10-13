@@ -221,3 +221,50 @@ async def test_the_button_is_shown_only_where_no_rain_is_measured(hass, fake_val
     assert key in visibility.hidden_for(with_gauge)  # rain is measured: it marks itself
     without = await _zone(hass, **{CONF_RAIN_COUNTER_ENTITY: None, "csv_path": "/tmp/test_no_gauge.csv", "valve_entity": "switch.other_valve"})
     assert key not in visibility.hidden_for(without)  # no rain measured: the person marks it
+
+
+def _rain_events(c, events):
+    """rain_since from (hours ago, mm) events: the rain that fell after `since`."""
+    now = dt_util.utcnow().timestamp()
+    c.rain_since = lambda since_ts: sum(mm for hours, mm in events if now - hours * 3600 >= since_ts - 0.001 and now - hours * 3600 > since_ts)
+
+
+@pytest.mark.asyncio
+async def test_rain_over_the_target_plus_5_mm_in_72_hours_counts_too(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=5.0)
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 5 * DAY
+    target = c.number("deep_soak_target_mm")
+    # Spread over three days: not enough in any one 24 h, but target + 5 mm over 72 h.
+    _rain_events(c, [(2, target * 0.4), (30, target * 0.4), (60, target * 0.4 + 6)])
+    before = c.store.state.last_deep_soak_ts
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.last_deep_soak_ts > before
+    assert c.status()["code"] == "watered_by_rain" and c.status()["cycle"] == "deep_soak"
+
+
+@pytest.mark.asyncio
+async def test_the_target_alone_is_not_enough_over_72_hours(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=5.0)
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 5 * DAY
+    target = c.number("deep_soak_target_mm")
+    _rain_events(c, [(2, target * 0.3), (30, target * 0.3), (60, target * 0.4 + 4)])  # the target + 4 mm: not yet
+    before = c.store.state.last_deep_soak_ts
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.last_deep_soak_ts == before
+
+
+@pytest.mark.asyncio
+async def test_rain_before_the_last_deep_soak_is_not_counted_again(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=5.0)
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 20 * 3600  # soaked 20 h ago
+    target = c.number("deep_soak_target_mm")
+    _rain_events(c, [(30, target + 20), (60, target + 20)])  # all of it before that deep soak
+    before = c.store.state.last_deep_soak_ts
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.last_deep_soak_ts == before

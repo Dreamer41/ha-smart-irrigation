@@ -55,6 +55,7 @@ from .const import (
     FLOW_MEASURE_MIN_MINUTES,
     FLOW_METER_SETTLE_SECONDS,
     FLOW_MEASURE_MINUTES,
+    DEEP_SOAK_RAIN_72H_EXTRA_MM,
     REPAIR_CHECK_INTERVAL_SECONDS,
     REPAIR_FIRST_CHECK_SECONDS,
     FROST_TEMP_MAX_AGE_SECONDS,
@@ -4185,18 +4186,23 @@ class ZoneFlowController:
         )
 
     async def _deep_soak_by_rain(self, now_ts: float) -> bool:
-        """The rain since the last deep soak (at most the last 24 hours) is
-        more than the deep soak target: the rain was the deep soak. Counts as
-        a completed deep soak (and as the routine watering, as a deep soak
-        does); nothing runs and no litres are counted."""
+        """The rain since the last deep soak is more than the deep soak target
+        within 24 hours, or more than the target plus 5 mm within 72 hours:
+        the rain was the deep soak. Counts as a completed deep soak (and as
+        the routine watering, as a deep soak does); nothing runs and no litres
+        are counted."""
         state = self.store.state
         if not self.deep_soak_enabled:
             return False
         target = self.number("deep_soak_target_mm")
-        since = max(state.last_deep_soak_ts or 0.0, now_ts - 86400.0)
-        rain = self.rain_since(since)
-        if target <= 0 or rain < target:
+        if target <= 0:
             return False
+        last = state.last_deep_soak_ts or 0.0
+        rain = self.rain_since(max(last, now_ts - 86400.0))
+        if rain < target:
+            rain = self.rain_since(max(last, now_ts - 3 * 86400.0))
+            if rain < target + DEEP_SOAK_RAIN_72H_EXTRA_MM:
+                return False
         state.last_deep_soak_ts = now_ts
         state.last_routine_ts = now_ts
         # The routine's rain credit used one dose of this rain: not credited a second time.
