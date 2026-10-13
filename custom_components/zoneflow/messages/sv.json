@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} överhoppad {time}: jorden torkar upp efter regn till {until}",
     "skipped_forecast": "{cycle} överhoppad {time}: {rain} regn i prognosen",
     "skipped_rain_credit": "{cycle} överhoppad {time}: senaste regnet ({rain}) täcker de {target} som behövs",
+    "watered_by_rain": "{cycle} räknades som klar kl. {time}: regnet ({rain}) var mer än de {target} den skulle ge",
     "skipped_wet_fortnight": "{cycle} väntar {time}: {rain} regn de senaste 14 dagarna",
     "skipped_service": "{cycle} överhoppad {time}: en servicekörning använde ventilen",
     "cancelled_rain": "{cycle} inställd {time}: det regnade ({rain} på 30 min)",

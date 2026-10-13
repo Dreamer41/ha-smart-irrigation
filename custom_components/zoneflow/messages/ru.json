@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} пропущен в {time}: просыхание после дождя до {until}",
     "skipped_forecast": "{cycle} пропущен в {time}: в прогнозе дождь {rain}",
     "skipped_rain_credit": "{cycle} пропущен в {time}: недавний дождь ({rain}) покрывает нужные {target}",
+    "watered_by_rain": "{cycle} засчитан как выполненный в {time}: дождь ({rain}) превысил {target}, которые он бы дал",
     "skipped_wet_fortnight": "{cycle} отложен в {time}: за последние 14 дней выпало {rain}",
     "skipped_service": "{cycle} пропущен в {time}: клапан был занят сервисным запуском",
     "cancelled_rain": "{cycle} отменён в {time}: шёл дождь ({rain} за 30 мин)",

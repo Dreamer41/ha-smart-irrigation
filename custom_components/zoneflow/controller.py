@@ -894,6 +894,8 @@ class ZoneFlowController:
             )
         )
         self._unsubs.append(async_call_later(self.hass, REPAIR_FIRST_CHECK_SECONDS, self._check_issues))
+        # Rain that already covers the next routine watering counts as the watering.
+        self._unsubs.append(async_track_time_interval(self.hass, self._on_rain_credit_check, timedelta(hours=1)))
         issues.async_prune(self)  # e.g. a sensor just removed from the zone
         self._resume_frost_wait()
 
@@ -3514,6 +3516,7 @@ class ZoneFlowController:
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
             interval_fraction=interval_fraction,
+            rain_offset_mm=self.rain_offset_mm(),
         )
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
@@ -4078,6 +4081,85 @@ class ZoneFlowController:
             phone_msg="",
         )
 
+    def rain_offset_mm(self) -> float:
+        """Rain that has already counted as a watering, still inside the rain
+        credit's window and not followed by any other watering."""
+        state = self.store.state
+        spent_ts = state.rain_credit_spent_ts
+        if not spent_ts or state.rain_credit_spent_mm <= 0:
+            return 0.0
+        if (state.last_routine_ts or 0.0) > spent_ts + 1:
+            return 0.0  # watered since: the credit window started again
+        interval_days = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        if dt_util.utcnow().timestamp() - spent_ts > (interval_days + 1) * 86400:
+            return 0.0
+        return state.rain_credit_spent_mm
+
+    def _routine_plan(self) -> calc.RoutinePlan:
+        """What a routine watering would give now, on the zone's own settings
+        (a full interval's dose, with the rain credit since the last watering)."""
+        state = self.store.state
+        scale = self.routine_target_scale()
+        et_weekly = self.et_weekly_target_mm()
+        elapsed = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
+        return calc.plan_routine_irrigation(
+            avg_peak_temp=self.effective_avg_peak_temp(),
+            hot_threshold=self.number("hot_temp_threshold"),
+            cool_threshold=self.number("cool_temp_threshold"),
+            normal_weekly_mm=self.number("target_weekly_mm") * scale,
+            hot_weekly_mm=self.number("target_weekly_hot_mm") * scale,
+            cool_weekly_mm=self.number("target_weekly_cool_mm") * scale,
+            flow_rate=self.number("flow_rate_mm_per_min"),
+            days_elapsed=int(elapsed / 86400),
+            today_rain_mm=self.today_rain_mm(),
+            rain_day_history_mm=state.rain_day_history_mm,
+            rain_eff_low=self.number("rain_eff_low"),
+            rain_eff_mid=self.number("rain_eff_mid"),
+            rain_eff_high=self.number("rain_eff_high"),
+            pulse_count=max(int(round(self.number("routine_pulse_count"))), 1),
+            min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
+            weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
+            site=self.site,
+            interval_fraction=1.0,
+            rain_offset_mm=self.rain_offset_mm(),
+        )
+
+    async def _on_rain_credit_check(self, now=None) -> None:
+        """Once an hour: if the rain since the last watering is already more
+        than the next routine watering would give, the rain was the watering:
+        the zone counts as watered now (its interval starts again, the Status
+        and Why? say so) and the next scheduled run waits for its turn.
+        Nothing runs, and no valve time or litres are counted."""
+        state = self.store.state
+        if not self.has_valve or self.paused or self._stopping or state.lock_on or self._service_active:
+            return
+        if self.today_rain_mm() <= 0 and not any(state.rain_day_history_mm):
+            return  # no rain on record
+        plan = self._routine_plan()
+        if plan.interval_target_mm <= 0 or plan.eff_rain_mm < plan.interval_target_mm:
+            return
+        offset = self.rain_offset_mm()
+        now_ts = dt_util.utcnow().timestamp()
+        interval_days = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        if offset > 0 and now_ts - (state.rain_credit_spent_ts or 0.0) < interval_days * 86400:
+            return  # already counted this interval; what is left over waits for the next one
+        state.last_routine_ts = now_ts
+        # Only one dose counts as used: what the rain gave beyond it stays credited to the next watering.
+        state.rain_credit_spent_mm = round(offset + plan.interval_target_mm, 2)
+        state.rain_credit_spent_ts = now_ts
+        await self._decide(
+            "routine", "watered_by_rain",
+            rain_mm=round(plan.eff_rain_mm + offset, 1), target_mm=round(plan.interval_target_mm, 1),
+        )
+        await self._log_event(
+            event_type="Watered By Rain",
+            status="INFO",
+            target_mm=round(plan.interval_target_mm, 1),
+            deducted_mm=round(plan.eff_rain_mm, 1),
+            runtime=0,
+            extra_log=f"Rain {plan.eff_rain_mm + offset:.1f} mm covered the {plan.interval_target_mm:.1f} mm a routine watering gives.",
+        )
+
     async def mark_watered(self) -> None:
         """The "Mark Watered" button: the person watered this zone by hand
         (hose, watering can). Counts as the latest watering so everything
@@ -4498,7 +4580,7 @@ class ZoneFlowController:
         # reload or shutdown.
         state = self.store.state
         today = dt_util.now().date().isoformat()
-        if code == "done":
+        if code in ("done", "watered_by_rain"):
             if today in state.summary_skip_days:
                 state.summary_skip_days.remove(today)
         elif not code.startswith("waiting") and not self._manual_press and not self._stopping and not self.paused:

@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} ohitettu klo {time}: maa kuivuu sateen jälkeen {until} asti",
     "skipped_forecast": "{cycle} ohitettu klo {time}: ennusteessa sadetta {rain}",
     "skipped_rain_credit": "{cycle} ohitettu klo {time}: viimeaikainen sade ({rain}) kattaa tarpeen ({target})",
+    "watered_by_rain": "{cycle} laskettiin tehdyksi klo {time}: sade ({rain}) oli enemmän kuin sen antama {target}",
     "skipped_wet_fortnight": "{cycle} lykätty klo {time}: 14 päivässä satanut {rain}",
     "skipped_service": "{cycle} ohitettu klo {time}: huoltoajo käytti venttiiliä",
     "cancelled_rain": "{cycle} peruttu klo {time}: satoi ({rain} / 30 min)",

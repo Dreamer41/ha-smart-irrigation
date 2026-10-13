@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} omitido a las {time}: secándose tras la lluvia hasta {until}",
     "skipped_forecast": "{cycle} omitido a las {time}: se prevén {rain} de lluvia",
     "skipped_rain_credit": "{cycle} omitido a las {time}: la lluvia reciente ({rain}) cubre los {target} necesarios",
+    "watered_by_rain": "{cycle} contado como hecho a las {time}: la lluvia ({rain}) superó los {target} que daría",
     "skipped_wet_fortnight": "{cycle} no iniciado a las {time}: {rain} de lluvia en los últimos 14 días",
     "skipped_service": "{cycle} omitido a las {time}: un ciclo de mantenimiento usaba la válvula",
     "cancelled_rain": "{cycle} cancelado a las {time}: estaba lloviendo ({rain} en 30 min)",

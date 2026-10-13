@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle}: pominięto o {time} – gleba przesycha po deszczu do {until}",
     "skipped_forecast": "{cycle}: pominięto o {time} – prognoza deszczu {rain}",
     "skipped_rain_credit": "{cycle}: pominięto o {time} – niedawny deszcz ({rain}) pokrywa potrzebne {target}",
+    "watered_by_rain": "{cycle} zaliczone jako wykonane o {time}: deszcz ({rain}) był większy niż {target}, które by dało",
     "skipped_wet_fortnight": "{cycle}: wstrzymano o {time} – deszcz w ostatnich 14 dniach: {rain}",
     "skipped_service": "{cycle}: pominięto o {time} – zawór był zajęty przez uruchomienie serwisowe",
     "cancelled_rain": "{cycle}: anulowano o {time} – padał deszcz ({rain} w 30 min)",

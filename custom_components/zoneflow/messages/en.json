@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} skipped at {time}: drying out after rain until {until}",
     "skipped_forecast": "{cycle} skipped at {time}: {rain} of rain forecast",
     "skipped_rain_credit": "{cycle} skipped at {time}: recent rain ({rain}) covers the {target} needed",
+    "watered_by_rain": "{cycle} counted as done at {time}: the rain ({rain}) was more than the {target} it would give",
     "skipped_wet_fortnight": "{cycle} held at {time}: {rain} of rain in the last 14 days",
     "skipped_service": "{cycle} skipped at {time}: a service run was using the valve",
     "cancelled_rain": "{cycle} cancelled at {time}: it was raining ({rain} in 30 min)",

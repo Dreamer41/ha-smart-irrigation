@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Added
+
+- **Watered by the rain.** Once an hour a zone works out what its next routine watering would give, on its own settings. When the rain since the last watering is already more than that, the zone counts as watered: its interval starts again, the Status and Why? say so ("Routine watering counted as done at 14:00: the rain (19.8 mm) was more than the 14.0 mm it would give"), and the next run waits for its turn. Nothing runs and no litres are counted. Rain beyond the one dose is still credited to the next watering, and the same rain is never counted twice. A paused or busy zone is left alone.
+
 ## [1.7.1] — Water now fix, quick setup and nursery plants
 
 ### Added

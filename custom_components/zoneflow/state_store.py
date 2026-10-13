@@ -228,6 +228,10 @@ class IrrigationState:
     # each reset by the other, so a mixed pattern of presses never quietly
     # accumulates toward a threshold on either side.
     self_tune_early_streak: int = 0
+    # 1.7.2: rain that already counted as a routine watering ("watered by the
+    # rain"), so the same rain is not credited again to the next one.
+    rain_credit_spent_mm: float = 0.0
+    rain_credit_spent_ts: float | None = None
     self_tune_skip_streak: int = 0
 
     # --- 1.6 greenhouse / indoor climate (greenhouse.py) ---

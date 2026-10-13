@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} overgeslagen om {time}: opdrogen na regen tot {until}",
     "skipped_forecast": "{cycle} overgeslagen om {time}: {rain} regen verwacht",
     "skipped_rain_credit": "{cycle} overgeslagen om {time}: recente regen ({rain}) dekt de benodigde {target}",
+    "watered_by_rain": "{cycle} om {time} als gedaan geteld: de regen ({rain}) was meer dan de {target} die het zou geven",
     "skipped_wet_fortnight": "{cycle} uitgesteld om {time}: {rain} regen in de laatste 14 dagen",
     "skipped_service": "{cycle} overgeslagen om {time}: proefdraaien gebruikte de klep",
     "cancelled_rain": "{cycle} geannuleerd om {time}: het regende ({rain} in 30 min)",

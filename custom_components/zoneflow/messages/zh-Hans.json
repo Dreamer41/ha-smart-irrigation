@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle}已于 {time} 跳过：雨后晾干至 {until}",
     "skipped_forecast": "{cycle}已于 {time} 跳过：预报降雨 {rain}",
     "skipped_rain_credit": "{cycle}已于 {time} 跳过：近期降雨（{rain}）已满足所需的 {target}",
+    "watered_by_rain": "{cycle}已于 {time} 计为完成:降雨({rain})超过了它本应给出的 {target}",
     "skipped_wet_fortnight": "{cycle}已于 {time} 暂缓：过去 14 天降雨 {rain}",
     "skipped_service": "{cycle}已于 {time} 跳过：维护运行正在使用阀门",
     "cancelled_rain": "{cycle}已于 {time} 取消：正在下雨（30 分钟内 {rain}）",

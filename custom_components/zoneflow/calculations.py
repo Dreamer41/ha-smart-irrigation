@@ -457,6 +457,7 @@ def plan_routine_irrigation(
     weekly_target_override_mm: float | None = None,
     site: tuple[str, str, str] | None = None,
     interval_fraction: float = 1.0,
+    rain_offset_mm: float = 0.0,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -488,6 +489,8 @@ def plan_routine_irrigation(
         rain_eff_high,
         max_lookback_days=interval_days,
     )
+    # Rain that already counted as a watering (a "watered by the rain" mark) is not credited twice.
+    eff_rain = max(eff_rain - rain_offset_mm, 0.0)
     needed_mm = max(interval_target_mm - eff_rain, 0.0)
     calc_runtime = int(jinja_round(needed_mm / flow_rate, 0))
     if site is not None:  # (soil, drainage, slope): cycle and soak

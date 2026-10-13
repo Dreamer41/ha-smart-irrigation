@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} пропущено о {time}: ґрунт підсихає після дощу до {until}",
     "skipped_forecast": "{cycle} пропущено о {time}: прогнозують {rain} дощу",
     "skipped_rain_credit": "{cycle} пропущено о {time}: недавній дощ ({rain}) покриває потрібні {target}",
+    "watered_by_rain": "{cycle} зараховано як виконаний о {time}: дощ ({rain}) перевищив {target}, які він дав би",
     "skipped_wet_fortnight": "{cycle} відкладено о {time}: за останні 14 днів випало {rain} дощу",
     "skipped_service": "{cycle} пропущено о {time}: клапан був зайнятий сервісним запуском",
     "cancelled_rain": "{cycle} скасовано о {time}: йшов дощ ({rain} за 30 хв)",

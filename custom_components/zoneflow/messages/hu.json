@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} kihagyva ({time}): száradás eső után, eddig: {until}",
     "skipped_forecast": "{cycle} kihagyva ({time}): {rain} eső várható",
     "skipped_rain_credit": "{cycle} kihagyva ({time}): a friss eső ({rain}) fedezi a szükséges {target} mennyiséget",
+    "watered_by_rain": "{cycle} elvégzettnek számít ekkor: {time}: az eső ({rain}) több volt, mint a {target}, amit adna",
     "skipped_wet_fortnight": "{cycle} visszatartva ({time}): {rain} eső az elmúlt 14 napban",
     "skipped_service": "{cycle} kihagyva ({time}): szervizfuttatás használta a szelepet",
     "cancelled_rain": "{cycle} elmaradt ({time}): esett az eső ({rain} 30 min alatt)",

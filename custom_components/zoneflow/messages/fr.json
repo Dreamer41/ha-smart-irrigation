@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} sauté à {time} : ressuyage après la pluie jusqu'au {until}",
     "skipped_forecast": "{cycle} sauté à {time} : {rain} de pluie prévus",
     "skipped_rain_credit": "{cycle} sauté à {time} : la pluie récente ({rain}) couvre les {target} nécessaires",
+    "watered_by_rain": "{cycle} comptabilisé comme fait à {time} : la pluie ({rain}) a dépassé les {target} qu'il aurait donnés",
     "skipped_wet_fortnight": "{cycle} non lancé à {time} : {rain} de pluie sur 14 jours",
     "skipped_service": "{cycle} sauté à {time} : un test de maintenance utilisait la vanne",
     "cancelled_rain": "{cycle} annulé à {time} : il pleuvait ({rain} en 30 min)",

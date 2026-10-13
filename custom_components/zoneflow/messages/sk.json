@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle}: vynechané o {time}, pôda po daždi vysychá do {until}",
     "skipped_forecast": "{cycle}: vynechané o {time}, predpoveď dažďa {rain}",
     "skipped_rain_credit": "{cycle}: vynechané o {time}, nedávny dážď ({rain}) pokryl potrebných {target}",
+    "watered_by_rain": "{cycle} započítané ako hotové o {time}: dážď ({rain}) bol väčší ako {target}, ktoré by dalo",
     "skipped_wet_fortnight": "{cycle}: pozdržané o {time}, za posledných 14 dní napršalo {rain}",
     "skipped_service": "{cycle}: vynechané o {time}, ventil používal servisný chod",
     "cancelled_rain": "{cycle}: zrušené o {time}, pršalo ({rain} za 30 min)",

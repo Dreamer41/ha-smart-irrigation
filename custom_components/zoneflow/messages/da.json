@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} sprunget over {time}: jorden tørrer ud efter regn indtil {until}",
     "skipped_forecast": "{cycle} sprunget over {time}: udsigt til {rain} regn",
     "skipped_rain_credit": "{cycle} sprunget over {time}: nylig regn ({rain}) dækker de {target}, der skal til",
+    "watered_by_rain": "{cycle} regnes som udført kl. {time}: regnen ({rain}) var mere end de {target}, den ville give",
     "skipped_wet_fortnight": "{cycle} holdt tilbage {time}: {rain} regn de seneste 14 dage",
     "skipped_service": "{cycle} sprunget over {time}: en servicekørsel brugte ventilen",
     "cancelled_rain": "{cycle} annulleret {time}: det regnede ({rain} på 30 min)",

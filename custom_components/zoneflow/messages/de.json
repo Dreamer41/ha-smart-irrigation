@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} um {time} übersprungen: Abtrocknen nach Regen bis {until}",
     "skipped_forecast": "{cycle} um {time} übersprungen: {rain} Regen vorhergesagt",
     "skipped_rain_credit": "{cycle} um {time} übersprungen: Der Regen der letzten Tage ({rain}) deckt die nötigen {target}",
+    "watered_by_rain": "{cycle} um {time} als erledigt gezählt: der Regen ({rain}) war mehr als die {target}, die sie gäbe",
     "skipped_wet_fortnight": "{cycle} um {time} zurückgestellt: {rain} Regen in den letzten 14 Tagen",
     "skipped_service": "{cycle} um {time} übersprungen: Ein Wartungslauf nutzte das Ventil",
     "cancelled_rain": "{cycle} um {time} abgesagt: Es regnete ({rain} in 30 min)",

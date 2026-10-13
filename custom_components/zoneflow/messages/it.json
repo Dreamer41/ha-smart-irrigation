@@ -190,6 +190,7 @@
     "skipped_drydown": "{cycle} saltata alle {time}: asciugatura dopo la pioggia fino a {until}",
     "skipped_forecast": "{cycle} saltata alle {time}: previsti {rain} di pioggia",
     "skipped_rain_credit": "{cycle} saltata alle {time}: la pioggia recente ({rain}) copre i {target} necessari",
+    "watered_by_rain": "{cycle} contato come eseguito alle {time}: la pioggia ({rain}) ha superato i {target} che avrebbe dato",
     "skipped_wet_fortnight": "{cycle} non avviata alle {time}: {rain} di pioggia negli ultimi 14 giorni",
     "skipped_service": "{cycle} saltata alle {time}: un ciclo di manutenzione usava la valvola",
     "cancelled_rain": "{cycle} annullata alle {time}: pioveva ({rain} in 30 min)",
