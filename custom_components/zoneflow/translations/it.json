@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Segna come annaffiato"
       },
+      "mark_deep_soak_done": {
+        "name": "Segna irrigazione profonda come fatta"
+      },
       "add_manual_rain": {
         "name": "Aggiungi pioggia manuale"
       },

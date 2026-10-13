@@ -4135,6 +4135,8 @@ class ZoneFlowController:
             return
         if self.today_rain_mm() <= 0 and not any(state.rain_day_history_mm):
             return  # no rain on record
+        if await self._deep_soak_by_rain(dt_util.utcnow().timestamp()):
+            return  # it counted as the routine watering too
         plan = self._routine_plan()
         if plan.interval_target_mm <= 0 or plan.eff_rain_mm < plan.interval_target_mm:
             return
@@ -4159,6 +4161,58 @@ class ZoneFlowController:
             runtime=0,
             extra_log=f"Rain {plan.eff_rain_mm + offset:.1f} mm covered the {plan.interval_target_mm:.1f} mm a routine watering gives.",
         )
+
+    async def mark_deep_soak_done(self) -> None:
+        """The "Mark Deep Soak Done" button, for a zone with no rain measuring:
+        the person saw enough rain fall (or soaked it by hand). Counts as a
+        completed deep soak: the deep soak interval starts again, and as the
+        routine watering too, like a deep soak that ran. No valve time."""
+        now_ts = dt_util.utcnow().timestamp()
+        state = self.store.state
+        state.last_deep_soak_ts = now_ts
+        state.last_routine_ts = now_ts
+        await self.store.async_save()
+        self._notify_status()
+        await self._log_event(
+            event_type="Deep Soak Marked Done",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+        )
+
+    async def _deep_soak_by_rain(self, now_ts: float) -> bool:
+        """The rain since the last deep soak (at most the last 24 hours) is
+        more than the deep soak target: the rain was the deep soak. Counts as
+        a completed deep soak (and as the routine watering, as a deep soak
+        does); nothing runs and no litres are counted."""
+        state = self.store.state
+        if not self.deep_soak_enabled:
+            return False
+        target = self.number("deep_soak_target_mm")
+        since = max(state.last_deep_soak_ts or 0.0, now_ts - 86400.0)
+        rain = self.rain_since(since)
+        if target <= 0 or rain < target:
+            return False
+        state.last_deep_soak_ts = now_ts
+        state.last_routine_ts = now_ts
+        # The routine's rain credit used one dose of this rain: not credited a second time.
+        routine = self._routine_plan()
+        state.rain_credit_spent_mm = round(self.rain_offset_mm() + routine.interval_target_mm, 2)
+        state.rain_credit_spent_ts = now_ts
+        await self._decide("deep_soak", "watered_by_rain", rain_mm=round(rain, 1), target_mm=round(target, 1))
+        await self._log_event(
+            event_type="Deep Soak By Rain",
+            status="INFO",
+            target_mm=round(target, 1),
+            deducted_mm=round(rain, 1),
+            runtime=0,
+            extra_log=f"Rain {rain:.1f} mm covered the {target:.1f} mm a deep soak gives.",
+        )
+        return True
 
     async def mark_watered(self) -> None:
         """The "Mark Watered" button: the person watered this zone by hand

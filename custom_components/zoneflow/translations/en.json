@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Mark watered"
       },
+      "mark_deep_soak_done": {
+        "name": "Mark deep soak done"
+      },
       "add_manual_rain": {
         "name": "Add Manual Rain"
       },

@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Oznacz jako podlane"
       },
+      "mark_deep_soak_done": {
+        "name": "Oznacz głębokie podlewanie jako wykonane"
+      },
       "add_manual_rain": {
         "name": "Dodaj ręczny deszcz"
       },

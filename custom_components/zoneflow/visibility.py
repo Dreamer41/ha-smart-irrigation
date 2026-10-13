@@ -178,6 +178,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= FLOW_METER
     if not controller.deep_soak_enabled:
         hidden |= DEEP_SOAK
+    if not controller.deep_soak_enabled or controller.rain_counter_entity or controller.uses_wu:
+        hidden.add(("button", "mark_deep_soak_done"))  # only where no rain is measured
     if controller.is_outdoor:
         hidden.add(("button", "resume_automatic"))
     else:

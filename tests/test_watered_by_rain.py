@@ -143,3 +143,81 @@ async def test_a_watered_by_rain_day_is_not_a_held_back_day(hass, fake_valve_ser
     c.store.state.summary_skip_days = [dt_util.now().date().isoformat()]
     await c._on_rain_credit_check()
     assert dt_util.now().date().isoformat() not in c.store.state.summary_skip_days
+
+
+# --- deep soak ---------------------------------------------------------------
+
+
+def _rain_after(c, mm):
+    """rain_since: `mm` fell in the last 24 hours, nothing before them is counted twice."""
+    start = dt_util.utcnow().timestamp() - 3600
+
+    def rain_since(since_ts):
+        return mm if since_ts < start else 0.0
+
+    c.rain_since = rain_since
+
+
+@pytest.mark.asyncio
+async def test_rain_over_the_deep_soak_target_counts_as_the_deep_soak(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=5.0)
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 3 * DAY
+    _rain_after(c, c.number("deep_soak_target_mm") + 5)
+    before = c.store.state.last_deep_soak_ts
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.last_deep_soak_ts > before  # the deep soak interval starts again
+    assert c.store.state.last_routine_ts >= c.store.state.last_deep_soak_ts  # and it is the routine watering too
+    c._run_pulses.assert_not_called()
+    assert c.status()["code"] == "watered_by_rain" and c.status()["cycle"] == "deep_soak"
+    first = c.store.state.last_deep_soak_ts
+
+    await c._on_rain_credit_check()  # an hour later: the same rain is not counted again
+    assert c.store.state.last_deep_soak_ts == first
+
+
+@pytest.mark.asyncio
+async def test_rain_under_the_deep_soak_target_does_not(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=5.0)
+    before = c.store.state.last_deep_soak_ts
+    _rain_after(c, c.number("deep_soak_target_mm") - 5)
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.last_deep_soak_ts == before
+
+
+@pytest.mark.asyncio
+async def test_a_zone_with_deep_soak_off_is_not_marked(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_DEEP_SOAK_ENABLED
+
+    c = await _zone(hass, rain_today=5.0, **{CONF_DEEP_SOAK_ENABLED: False})
+    _rain_after(c, 500.0)
+    await c._on_rain_credit_check()
+    assert c.store.state.last_deep_soak_ts is None
+
+
+@pytest.mark.asyncio
+async def test_the_mark_deep_soak_done_button_counts_as_a_deep_soak(hass, fake_valve_services):
+    c = await _zone(hass)
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 10 * DAY
+    before = c.store.state.last_deep_soak_ts
+
+    await c.mark_deep_soak_done()
+
+    assert c.store.state.last_deep_soak_ts > before
+    assert c.store.state.last_routine_ts >= c.store.state.last_deep_soak_ts
+    c._run_pulses.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_the_button_is_shown_only_where_no_rain_is_measured(hass, fake_valve_services):
+    from custom_components.zoneflow import visibility
+    from custom_components.zoneflow.const import CONF_RAIN_COUNTER_ENTITY
+
+    key = ("button", "mark_deep_soak_done")
+    with_gauge = await _zone(hass)
+    assert key in visibility.hidden_for(with_gauge)  # rain is measured: it marks itself
+    without = await _zone(hass, **{CONF_RAIN_COUNTER_ENTITY: None, "csv_path": "/tmp/test_no_gauge.csv", "valve_entity": "switch.other_valve"})
+    assert key not in visibility.hidden_for(without)  # no rain measured: the person marks it
