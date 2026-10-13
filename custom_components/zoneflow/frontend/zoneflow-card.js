@@ -172,7 +172,7 @@ const I18N = {
       "no_history": "Nothing yet.",
       "rename": "Rename",
       "rename_prompt": "New name",
-      "use_settings": "Also use this plant's watering settings on the new zone (otherwise the zone keeps the way it is watered now)",
+      "use_settings": "Also use this plant's watering settings. Every plant in that zone is then watered this way (otherwise the zone keeps the way it is watered now).",
       "note_placeholder": "Write a note…",
       "add_note": "Add note",
       "add": "Add a plant",
@@ -211,7 +211,13 @@ const I18N = {
       "follow": "Follow",
       "unfollow": "Stop following",
       "ready_badge": "Ready to move: {names}",
-      "usual_days": "Usual for this type: {n} days"
+      "usual_days": "Usual for this type: {n} days",
+      "move_mode": "Move plants",
+      "move_hint": "Drag a plant onto another zone.",
+      "drag_confirm": "Move {plant} from {from} to {to}?",
+      "move_record_only": "That zone has no valve, so the plant joins it as a record only.",
+      "cancel": "Cancel",
+      "moved": "{plant} moved to {to}"
     },
     "check": {
       "title": "Check my setup",
@@ -432,7 +438,7 @@ const I18N = {
       "no_presets": "Noch keine gespeicherten Voreinstellungen.",
       "rename": "Umbenennen",
       "rename_prompt": "Neuer Name",
-      "use_settings": "Auch die Bewässerungseinstellungen dieser Pflanze für die neue Zone übernehmen (sonst behält die Zone ihre bisherige Bewässerung)",
+      "use_settings": "Auch die Bewässerungseinstellungen dieser Pflanze verwenden. Alle Pflanzen in dieser Zone werden dann so bewässert (sonst behält die Zone ihre bisherige Bewässerung).",
       "stage_seed": "Samen",
       "stage_seedling": "Sämling",
       "stage_ready": "Bereit zum Umsetzen",
@@ -443,7 +449,13 @@ const I18N = {
       "follow": "Verfolgen",
       "unfollow": "Nicht mehr verfolgen",
       "ready_badge": "Bereit zum Umsetzen: {names}",
-      "usual_days": "Üblich für diese Art: {n} Tage"
+      "usual_days": "Üblich für diese Art: {n} Tage",
+      "move_mode": "Pflanzen verschieben",
+      "move_hint": "Ziehen Sie eine Pflanze auf eine andere Zone.",
+      "drag_confirm": "{plant} von {from} nach {to} verschieben?",
+      "move_record_only": "Diese Zone hat kein Ventil, die Pflanze kommt nur als Aufzeichnung dorthin.",
+      "cancel": "Abbrechen",
+      "moved": "{plant} nach {to} verschoben"
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -664,7 +676,7 @@ const I18N = {
       "no_presets": "Aún no hay ajustes preestablecidos guardados.",
       "rename": "Renombrar",
       "rename_prompt": "Nuevo nombre",
-      "use_settings": "Usar también los ajustes de riego de esta planta en la nueva zona (si no, la zona conserva su riego actual)",
+      "use_settings": "Usar también los ajustes de riego de esta planta. Todas las plantas de esa zona se regarán así (si no, la zona mantiene su riego actual).",
       "stage_seed": "Semilla",
       "stage_seedling": "Plántula",
       "stage_ready": "Lista para trasplantar",
@@ -675,7 +687,13 @@ const I18N = {
       "follow": "Seguir",
       "unfollow": "Dejar de seguir",
       "ready_badge": "Lista para trasplantar: {names}",
-      "usual_days": "Habitual para este tipo: {n} días"
+      "usual_days": "Habitual para este tipo: {n} días",
+      "move_mode": "Mover plantas",
+      "move_hint": "Arrastre una planta a otra zona.",
+      "drag_confirm": "¿Mover {plant} de {from} a {to}?",
+      "move_record_only": "Esa zona no tiene válvula, así que la planta se une solo como registro.",
+      "cancel": "Cancelar",
+      "moved": "{plant} movida a {to}"
     },
     "check": {
       "title": "Comprobar mi configuración",
@@ -896,7 +914,7 @@ const I18N = {
       "no_presets": "Ei vielä tallennettuja esiasetuksia.",
       "rename": "Nimeä uudelleen",
       "rename_prompt": "Uusi nimi",
-      "use_settings": "Käytä myös tämän kasvin kastelun asetuksia uudella vyöhykkeellä (muuten vyöhyke säilyttää nykyisen kastelutapansa)",
+      "use_settings": "Käytä myös tämän kasvin kastelun asetuksia. Kaikkia kyseisen vyöhykkeen kasveja kastellaan sitten tällä tavalla (muuten vyöhyke säilyttää nykyisen kastelutapansa).",
       "stage_seed": "Siemen",
       "stage_seedling": "Taimi",
       "stage_ready": "Valmis siirrettäväksi",
@@ -907,7 +925,13 @@ const I18N = {
       "follow": "Seuraa",
       "unfollow": "Lopeta seuranta",
       "ready_badge": "Valmis siirrettäväksi: {names}",
-      "usual_days": "Tyypillisesti tälle lajille: {n} päivää"
+      "usual_days": "Tyypillisesti tälle lajille: {n} päivää",
+      "move_mode": "Siirrä kasveja",
+      "move_hint": "Vedä kasvi toiselle vyöhykkeelle.",
+      "drag_confirm": "Siirretäänkö {plant} vyöhykkeeltä {from} vyöhykkeelle {to}?",
+      "move_record_only": "Siinä vyöhykkeessä ei ole venttiiliä, joten kasvi liittyy siihen vain tietueena.",
+      "cancel": "Peruuta",
+      "moved": "{plant} siirretty vyöhykkeelle {to}"
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -1128,7 +1152,7 @@ const I18N = {
       "no_presets": "Aucun préréglage enregistré pour l'instant.",
       "rename": "Renommer",
       "rename_prompt": "Nouveau nom",
-      "use_settings": "Utiliser aussi les réglages d'arrosage de cette plante sur la nouvelle zone (sinon la zone garde son arrosage actuel)",
+      "use_settings": "Utiliser aussi les réglages d'arrosage de cette plante. Toutes les plantes de cette zone seront alors arrosées ainsi (sinon la zone garde son arrosage actuel).",
       "stage_seed": "Graine",
       "stage_seedling": "Semis",
       "stage_ready": "Prête à être repiquée",
@@ -1139,7 +1163,13 @@ const I18N = {
       "follow": "Suivre",
       "unfollow": "Ne plus suivre",
       "ready_badge": "Prête à repiquer : {names}",
-      "usual_days": "Habituel pour ce type : {n} jours"
+      "usual_days": "Habituel pour ce type : {n} jours",
+      "move_mode": "Déplacer des plantes",
+      "move_hint": "Faites glisser une plante sur une autre zone.",
+      "drag_confirm": "Déplacer {plant} de {from} vers {to} ?",
+      "move_record_only": "Cette zone n'a pas de vanne : la plante la rejoint seulement comme fiche.",
+      "cancel": "Annuler",
+      "moved": "{plant} déplacée vers {to}"
     },
     "check": {
       "title": "Vérifier ma configuration",
@@ -1360,7 +1390,7 @@ const I18N = {
       "no_presets": "Ancora nessuna preimpostazione salvata.",
       "rename": "Rinomina",
       "rename_prompt": "Nuovo nome",
-      "use_settings": "Usa anche le impostazioni di irrigazione di questa pianta nella nuova zona (altrimenti la zona mantiene l'irrigazione attuale)",
+      "use_settings": "Usa anche le impostazioni di irrigazione di questa pianta. Tutte le piante di quella zona saranno poi irrigate così (altrimenti la zona mantiene l'irrigazione attuale).",
       "stage_seed": "Seme",
       "stage_seedling": "Piantina",
       "stage_ready": "Pronta per il trapianto",
@@ -1371,7 +1401,13 @@ const I18N = {
       "follow": "Segui",
       "unfollow": "Smetti di seguire",
       "ready_badge": "Pronta per il trapianto: {names}",
-      "usual_days": "Abituale per questo tipo: {n} giorni"
+      "usual_days": "Abituale per questo tipo: {n} giorni",
+      "move_mode": "Sposta piante",
+      "move_hint": "Trascini una pianta su un'altra zona.",
+      "drag_confirm": "Spostare {plant} da {from} a {to}?",
+      "move_record_only": "Quella zona non ha valvola, quindi la pianta vi entra solo come scheda.",
+      "cancel": "Annulla",
+      "moved": "{plant} spostata in {to}"
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1592,7 +1628,7 @@ const I18N = {
       "no_presets": "Nog geen opgeslagen voorinstellingen.",
       "rename": "Hernoemen",
       "rename_prompt": "Nieuwe naam",
-      "use_settings": "Ook de bewateringsinstellingen van deze plant op de nieuwe zone gebruiken (anders houdt de zone haar huidige bewatering)",
+      "use_settings": "Gebruik ook de bewateringsinstellingen van deze plant. Alle planten in die zone worden dan zo bewaterd (anders houdt de zone haar huidige bewatering).",
       "stage_seed": "Zaad",
       "stage_seedling": "Zaailing",
       "stage_ready": "Klaar om te verplaatsen",
@@ -1603,7 +1639,13 @@ const I18N = {
       "follow": "Volgen",
       "unfollow": "Niet meer volgen",
       "ready_badge": "Klaar om te verplaatsen: {names}",
-      "usual_days": "Gebruikelijk voor dit type: {n} dagen"
+      "usual_days": "Gebruikelijk voor dit type: {n} dagen",
+      "move_mode": "Planten verplaatsen",
+      "move_hint": "Sleep een plant naar een andere zone.",
+      "drag_confirm": "{plant} van {from} naar {to} verplaatsen?",
+      "move_record_only": "Die zone heeft geen klep, dus de plant komt er alleen als registratie bij.",
+      "cancel": "Annuleren",
+      "moved": "{plant} verplaatst naar {to}"
     },
     "check": {
       "title": "Mijn instellingen controleren",
@@ -1824,7 +1866,7 @@ const I18N = {
       "no_presets": "Brak zapisanych szablonów.",
       "rename": "Zmień nazwę",
       "rename_prompt": "Nowa nazwa",
-      "use_settings": "Użyj też ustawień podlewania tej rośliny w nowej strefie (w przeciwnym razie strefa zachowa obecny sposób podlewania)",
+      "use_settings": "Użyj także ustawień podlewania tej rośliny. Wszystkie rośliny w tej strefie będą wtedy podlewane w ten sposób (w przeciwnym razie strefa zachowa obecny sposób podlewania).",
       "stage_seed": "Nasiono",
       "stage_seedling": "Sadzonka",
       "stage_ready": "Gotowa do przesadzenia",
@@ -1835,7 +1877,13 @@ const I18N = {
       "follow": "Śledź",
       "unfollow": "Przestań śledzić",
       "ready_badge": "Gotowe do przesadzenia: {names}",
-      "usual_days": "Zwykle dla tego typu: {n} dni"
+      "usual_days": "Zwykle dla tego typu: {n} dni",
+      "move_mode": "Przenieś rośliny",
+      "move_hint": "Przeciągnij roślinę na inną strefę.",
+      "drag_confirm": "Przenieść {plant} z {from} do {to}?",
+      "move_record_only": "Ta strefa nie ma zaworu, więc roślina dołączy do niej tylko jako wpis.",
+      "cancel": "Anuluj",
+      "moved": "{plant} przeniesiona do {to}"
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -2056,7 +2104,7 @@ const I18N = {
       "no_presets": "Ainda não há pré-definições guardadas.",
       "rename": "Mudar o nome",
       "rename_prompt": "Novo nome",
-      "use_settings": "Usar também as definições de rega desta planta na nova zona (caso contrário, a zona mantém a rega atual)",
+      "use_settings": "Usar também as definições de rega desta planta. Todas as plantas dessa zona passam a ser regadas assim (caso contrário a zona mantém a rega atual).",
       "stage_seed": "Semente",
       "stage_seedling": "Plântula",
       "stage_ready": "Pronta para transplantar",
@@ -2067,7 +2115,13 @@ const I18N = {
       "follow": "Acompanhar",
       "unfollow": "Deixar de acompanhar",
       "ready_badge": "Pronta para transplantar: {names}",
-      "usual_days": "Habitual para este tipo: {n} dias"
+      "usual_days": "Habitual para este tipo: {n} dias",
+      "move_mode": "Mover plantas",
+      "move_hint": "Arraste uma planta para outra zona.",
+      "drag_confirm": "Mover {plant} de {from} para {to}?",
+      "move_record_only": "Essa zona não tem válvula, por isso a planta entra nela apenas como registo.",
+      "cancel": "Cancelar",
+      "moved": "{plant} movida para {to}"
     },
     "check": {
       "title": "Verificar a minha configuração",
@@ -2288,7 +2342,7 @@ const I18N = {
       "no_presets": "Inga sparade förinställningar ännu.",
       "rename": "Byt namn",
       "rename_prompt": "Nytt namn",
-      "use_settings": "Använd även den här växtens bevattningsinställningar i den nya zonen (annars behåller zonen sin nuvarande bevattning)",
+      "use_settings": "Använd också den här växtens bevattningsinställningar. Alla växter i den zonen bevattnas då så här (annars behåller zonen sin nuvarande bevattning).",
       "stage_seed": "Frö",
       "stage_seedling": "Planta",
       "stage_ready": "Redo att flyttas",
@@ -2299,7 +2353,13 @@ const I18N = {
       "follow": "Följ",
       "unfollow": "Sluta följa",
       "ready_badge": "Redo att flyttas: {names}",
-      "usual_days": "Vanligt för denna typ: {n} dagar"
+      "usual_days": "Vanligt för denna typ: {n} dagar",
+      "move_mode": "Flytta växter",
+      "move_hint": "Dra en växt till en annan zon.",
+      "drag_confirm": "Flytta {plant} från {from} till {to}?",
+      "move_record_only": "Den zonen har ingen ventil, så växten följer bara med som en post.",
+      "cancel": "Avbryt",
+      "moved": "{plant} flyttad till {to}"
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -2520,7 +2580,7 @@ const I18N = {
       "no_presets": "Zatím žádné uložené předvolby.",
       "rename": "Přejmenovat",
       "rename_prompt": "Nový název",
-      "use_settings": "Použít také nastavení zálivky této rostliny v nové zóně (jinak zóna zachová dosavadní zálivku)",
+      "use_settings": "Použít také nastavení zálivky této rostliny. Všechny rostliny v této zóně se pak zalévají tímto způsobem (jinak zóna ponechá současný způsob zálivky).",
       "stage_seed": "Semeno",
       "stage_seedling": "Sazenice",
       "stage_ready": "Připraveno k přesazení",
@@ -2531,7 +2591,13 @@ const I18N = {
       "follow": "Sledovat",
       "unfollow": "Přestat sledovat",
       "ready_badge": "K přesazení: {names}",
-      "usual_days": "Obvykle pro tento druh: {n} dní"
+      "usual_days": "Obvykle pro tento druh: {n} dní",
+      "move_mode": "Přesunout rostliny",
+      "move_hint": "Přetáhněte rostlinu na jinou zónu.",
+      "drag_confirm": "Přesunout {plant} ze zóny {from} do zóny {to}?",
+      "move_record_only": "Tato zóna nemá ventil, rostlina se do ní přidá jen jako záznam.",
+      "cancel": "Zrušit",
+      "moved": "{plant} přesunuta do {to}"
     },
     "check": {
       "title": "Zkontrolovat mé nastavení",
@@ -2752,7 +2818,7 @@ const I18N = {
       "no_presets": "Ingen gemte forudindstillinger endnu.",
       "rename": "Omdøb",
       "rename_prompt": "Nyt navn",
-      "use_settings": "Brug også denne plantes vandingsindstillinger i den nye zone (ellers beholder zonen sin nuværende vanding)",
+      "use_settings": "Brug også denne plantes vandingsindstillinger. Alle planter i den zone vandes så på denne måde (ellers beholder zonen sin nuværende vanding).",
       "stage_seed": "Frø",
       "stage_seedling": "Kimplante",
       "stage_ready": "Klar til flytning",
@@ -2763,7 +2829,13 @@ const I18N = {
       "follow": "Følg",
       "unfollow": "Stop med at følge",
       "ready_badge": "Klar til flytning: {names}",
-      "usual_days": "Normalt for denne type: {n} dage"
+      "usual_days": "Normalt for denne type: {n} dage",
+      "move_mode": "Flyt planter",
+      "move_hint": "Træk en plante hen på en anden zone.",
+      "drag_confirm": "Flyt {plant} fra {from} til {to}?",
+      "move_record_only": "Den zone har ingen ventil, så planten kommer kun med som en registrering.",
+      "cancel": "Annuller",
+      "moved": "{plant} flyttet til {to}"
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -2984,7 +3056,7 @@ const I18N = {
       "no_presets": "Még nincsenek elmentett előbeállítások.",
       "rename": "Átnevezés",
       "rename_prompt": "Új név",
-      "use_settings": "A növény öntözési beállításait is használja az új zónában (egyébként a zóna megtartja a jelenlegi öntözést)",
+      "use_settings": "A növény öntözési beállításait is használja. Ezután a zóna minden növénye így lesz öntözve (különben a zóna megtartja a jelenlegi öntözési módját).",
       "stage_seed": "Mag",
       "stage_seedling": "Palánta",
       "stage_ready": "Kész az átültetésre",
@@ -2995,7 +3067,13 @@ const I18N = {
       "follow": "Követés",
       "unfollow": "Követés leállítása",
       "ready_badge": "Kész az átültetésre: {names}",
-      "usual_days": "Ennél a típusnál szokásos: {n} nap"
+      "usual_days": "Ennél a típusnál szokásos: {n} nap",
+      "move_mode": "Növények áthelyezése",
+      "move_hint": "Húzzon egy növényt egy másik zónára.",
+      "drag_confirm": "Áthelyezi: {plant}, innen: {from}, ide: {to}?",
+      "move_record_only": "Ennek a zónának nincs szelepe, ezért a növény csak nyilvántartásként kerül oda.",
+      "cancel": "Mégse",
+      "moved": "{plant} áthelyezve ide: {to}"
     },
     "check": {
       "title": "Beállítások ellenőrzése",
@@ -3216,7 +3294,7 @@ const I18N = {
       "no_presets": "Ingen lagrede forhåndsinnstillinger ennå.",
       "rename": "Gi nytt navn",
       "rename_prompt": "Nytt navn",
-      "use_settings": "Bruk også denne plantens vanningsinnstillinger i den nye sonen (ellers beholder sonen sin nåværende vanning)",
+      "use_settings": "Bruk også denne plantens vanningsinnstillinger. Alle plantene i den sonen vannes da slik (ellers beholder sonen sin nåværende vanning).",
       "stage_seed": "Frø",
       "stage_seedling": "Småplante",
       "stage_ready": "Klar til å flyttes",
@@ -3227,7 +3305,13 @@ const I18N = {
       "follow": "Følg",
       "unfollow": "Slutt å følge",
       "ready_badge": "Klar til å flyttes: {names}",
-      "usual_days": "Vanlig for denne typen: {n} dager"
+      "usual_days": "Vanlig for denne typen: {n} dager",
+      "move_mode": "Flytt planter",
+      "move_hint": "Dra en plante til en annen sone.",
+      "drag_confirm": "Flytte {plant} fra {from} til {to}?",
+      "move_record_only": "Den sonen har ingen ventil, så planten blir med bare som en registrering.",
+      "cancel": "Avbryt",
+      "moved": "{plant} flyttet til {to}"
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -3448,7 +3532,7 @@ const I18N = {
       "no_presets": "Nenhuma predefinição salva ainda.",
       "rename": "Renomear",
       "rename_prompt": "Novo nome",
-      "use_settings": "Usar também as configurações de irrigação desta planta na nova zona (caso contrário, a zona mantém a irrigação atual)",
+      "use_settings": "Usar também as configurações de rega desta planta. Todas as plantas dessa zona passam a ser regadas assim (senão a zona mantém a rega atual).",
       "stage_seed": "Semente",
       "stage_seedling": "Muda",
       "stage_ready": "Pronta para transplantar",
@@ -3459,7 +3543,13 @@ const I18N = {
       "follow": "Acompanhar",
       "unfollow": "Parar de acompanhar",
       "ready_badge": "Pronta para transplantar: {names}",
-      "usual_days": "Usual para este tipo: {n} dias"
+      "usual_days": "Usual para este tipo: {n} dias",
+      "move_mode": "Mover plantas",
+      "move_hint": "Arraste uma planta para outra zona.",
+      "drag_confirm": "Mover {plant} de {from} para {to}?",
+      "move_record_only": "Essa zona não tem válvula, então a planta entra nela só como registro.",
+      "cancel": "Cancelar",
+      "moved": "{plant} movida para {to}"
     },
     "check": {
       "title": "Verificar minha configuração",
@@ -3680,7 +3770,7 @@ const I18N = {
       "no_presets": "Сохранённых пресетов пока нет.",
       "rename": "Переименовать",
       "rename_prompt": "Новое имя",
-      "use_settings": "Также использовать настройки полива этого растения в новой зоне (иначе зона сохранит нынешний полив)",
+      "use_settings": "Также использовать настройки полива этого растения. Все растения в этой зоне будут поливаться так (иначе зона сохранит текущий способ полива).",
       "stage_seed": "Семя",
       "stage_seedling": "Рассада",
       "stage_ready": "Готово к пересадке",
@@ -3691,7 +3781,13 @@ const I18N = {
       "follow": "Отслеживать",
       "unfollow": "Не отслеживать",
       "ready_badge": "Готово к пересадке: {names}",
-      "usual_days": "Обычно для этого типа: {n} дн."
+      "usual_days": "Обычно для этого типа: {n} дн.",
+      "move_mode": "Переместить растения",
+      "move_hint": "Перетащите растение в другую зону.",
+      "drag_confirm": "Переместить {plant} из {from} в {to}?",
+      "move_record_only": "В этой зоне нет клапана, поэтому растение попадёт туда только как запись.",
+      "cancel": "Отмена",
+      "moved": "{plant} перемещено в {to}"
     },
     "check": {
       "title": "Проверить настройки",
@@ -3912,7 +4008,7 @@ const I18N = {
       "no_presets": "Zatiaľ žiadne uložené predvoľby.",
       "rename": "Premenovať",
       "rename_prompt": "Nový názov",
-      "use_settings": "Použiť aj nastavenia polievania tejto rastliny v novej zóne (inak zóna zachová doterajšie polievanie)",
+      "use_settings": "Použiť aj nastavenia zalievania tejto rastliny. Všetky rastliny v tejto zóne sa potom zalievajú týmto spôsobom (inak zóna ponechá súčasný spôsob zalievania).",
       "stage_seed": "Semeno",
       "stage_seedling": "Sadenica",
       "stage_ready": "Pripravená na presadenie",
@@ -3923,7 +4019,13 @@ const I18N = {
       "follow": "Sledovať",
       "unfollow": "Prestať sledovať",
       "ready_badge": "Na presadenie: {names}",
-      "usual_days": "Zvyčajne pre tento druh: {n} dní"
+      "usual_days": "Zvyčajne pre tento druh: {n} dní",
+      "move_mode": "Presunúť rastliny",
+      "move_hint": "Presuňte rastlinu na inú zónu.",
+      "drag_confirm": "Presunúť {plant} zo zóny {from} do zóny {to}?",
+      "move_record_only": "Táto zóna nemá ventil, rastlina sa do nej pridá len ako záznam.",
+      "cancel": "Zrušiť",
+      "moved": "{plant} presunutá do {to}"
     },
     "check": {
       "title": "Skontrolovať moje nastavenie",
@@ -4144,7 +4246,7 @@ const I18N = {
       "no_presets": "Поки немає збережених пресетів.",
       "rename": "Перейменувати",
       "rename_prompt": "Нова назва",
-      "use_settings": "Також використати налаштування поливу цієї рослини в новій зоні (інакше зона зберігає нинішній полив)",
+      "use_settings": "Також використати налаштування поливу цієї рослини. Усі рослини в цій зоні поливатимуться так (інакше зона збереже поточний спосіб поливу).",
       "stage_seed": "Насіння",
       "stage_seedling": "Розсада",
       "stage_ready": "Готове до пересадки",
@@ -4155,7 +4257,13 @@ const I18N = {
       "follow": "Відстежувати",
       "unfollow": "Не відстежувати",
       "ready_badge": "Готове до пересадки: {names}",
-      "usual_days": "Зазвичай для цього типу: {n} дн."
+      "usual_days": "Зазвичай для цього типу: {n} дн.",
+      "move_mode": "Перемістити рослини",
+      "move_hint": "Перетягніть рослину в іншу зону.",
+      "drag_confirm": "Перемістити {plant} із {from} до {to}?",
+      "move_record_only": "У цій зоні немає клапана, тому рослина потрапить туди лише як запис.",
+      "cancel": "Скасувати",
+      "moved": "{plant} переміщено до {to}"
     },
     "check": {
       "title": "Перевірити мої налаштування",
@@ -4376,7 +4484,7 @@ const I18N = {
       "no_presets": "暂无已保存的预设。",
       "rename": "重命名",
       "rename_prompt": "新名称",
-      "use_settings": "同时在新区域使用这株植物的浇水设置（否则该区域保持目前的浇水方式）",
+      "use_settings": "同时使用这株植物的浇水设置。该区域的所有植物之后都会按此方式浇水(否则区域保持当前的浇水方式)。",
       "stage_seed": "种子",
       "stage_seedling": "幼苗",
       "stage_ready": "可以移栽",
@@ -4387,7 +4495,13 @@ const I18N = {
       "follow": "跟踪",
       "unfollow": "停止跟踪",
       "ready_badge": "可以移栽:{names}",
-      "usual_days": "此类型通常:{n} 天"
+      "usual_days": "此类型通常:{n} 天",
+      "move_mode": "移动植物",
+      "move_hint": "把植物拖到另一个区域。",
+      "drag_confirm": "把 {plant} 从 {from} 移到 {to}?",
+      "move_record_only": "该区域没有阀门,植物只会作为记录加入。",
+      "cancel": "取消",
+      "moved": "{plant} 已移到 {to}"
     },
     "check": {
       "title": "检查我的设置",
@@ -5890,6 +6004,9 @@ class ZoneFlowOverviewCard extends HTMLElement {
         button: climate ? undefined : button,
         feed: feed && !["unknown", "unavailable"].includes(feed.state) ? feed.state : null,
         feedDue: Boolean(feed?.attributes?.due),
+        plants: (Array.isArray(status?.attributes?.plants) ? status.attributes.plants : [])
+          .map((p) => ({ id: p.id, name: p.name, main: Boolean(p.main), stage: p.stage || null })),
+        hasValve: Boolean(status?.attributes?.valve),
         // Nursery plants that have reached their "ready to move" day.
         readyPlants: (Array.isArray(status?.attributes?.plants) ? status.attributes.plants : [])
           .filter((p) => p.stage === "ready").map((p) => p.name),
@@ -5944,7 +6061,9 @@ class ZoneFlowOverviewCard extends HTMLElement {
     if (!this._config || !this._hass) return;
     const zones = this._zones();
     const signature = JSON.stringify([
-      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null, z.areaKind || null, z.ownPause || null, z.ownSnooze || null]),
+      zones.map((z) => [z.device_id, z.name, z.icon, z.last, z.button, z.crop || false, z.area || null, z.areaStart || false, z.areaPause || null, z.areaSnooze || null, z.areaKind || null, z.ownPause || null, z.ownSnooze || null,
+        this._moveMode ? z.plants.map((p) => [p.id, p.name, p.main, p.stage]) : null, z.hasValve]),
+      this._moveMode || false,
       this._config.device_ids || null,
       this._config.embedded || false,
       this._config.sort === "next" ? zones.map((z) => z.device_id) : null,
@@ -6030,6 +6149,34 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .details { padding: 0 8px 8px; }
       .empty { padding: 4px 16px 12px; color: var(--secondary-text-color); }
       .zone.crop { margin-left: 36px; }
+      .move-toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0 12px 8px; padding: 6px 12px;
+        border: 1px solid var(--divider-color); border-radius: 16px; background: none; color: var(--primary-color);
+        font: inherit; cursor: pointer; }
+      .move-toggle.on { background: var(--primary-color); color: var(--text-primary-color, #fff); border-color: var(--primary-color); }
+      .move-toggle ha-icon { --mdc-icon-size: 18px; }
+      .move-hint { margin: 0 16px 8px; color: var(--secondary-text-color); font-size: 0.9em; }
+      .plant-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 8px 16px; }
+      .plant-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 14px;
+        border: 1px solid var(--divider-color); background: var(--secondary-background-color); cursor: grab;
+        touch-action: none; user-select: none; -webkit-user-select: none; font-size: 0.9em; }
+      .plant-chip.main { border-color: var(--primary-color); }
+      .plant-chip.dragging { opacity: 0.4; }
+      .plant-chip ha-icon { --mdc-icon-size: 14px; }
+      .plant-ghost { position: fixed; z-index: 9; pointer-events: none; transform: translate(-50%, -120%); padding: 4px 10px;
+        border-radius: 14px; background: var(--primary-color); color: var(--text-primary-color, #fff); font-size: 0.9em;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+      .zone.drop { outline: 2px dashed var(--primary-color); outline-offset: -2px; background: var(--secondary-background-color); }
+      .move-overlay { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.5); padding: 16px; }
+      .move-dialog { max-width: 420px; width: 100%; padding: 16px; border-radius: 12px; box-sizing: border-box;
+        background: var(--card-background-color, #fff); color: var(--primary-text-color); }
+      .move-dialog .move-title { font-weight: 500; margin-bottom: 10px; }
+      .move-dialog .group-note { color: var(--secondary-text-color); margin: 8px 0 4px; }
+      .move-dialog label { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; }
+      .move-dialog .move-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+      .move-dialog button { font: inherit; padding: 6px 14px; border-radius: 16px; border: 1px solid var(--divider-color);
+        background: none; color: var(--primary-color); cursor: pointer; }
+      .move-dialog button.primary { background: var(--primary-color); color: var(--text-primary-color, #fff); border-color: var(--primary-color); }
       .garden-summary { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 0 16px 6px; color: var(--secondary-text-color);
         font-size: 0.9em; }
       .garden-summary:empty { display: none; }
@@ -6069,7 +6216,28 @@ class ZoneFlowOverviewCard extends HTMLElement {
     this._summaryEl.className = "garden-summary";
     this._summarySignature = undefined; // a new, empty strip: fill it again
     if (!this._config.embedded && zones.length) card.appendChild(this._summaryEl);
+    this._zoneList = zones;
     this._rows = {};
+    if (!this._config.embedded && hass.user?.is_admin && zones.length > 1 && zones.some((z) => z.plants.length)) {
+      // Moving plants by dragging them from one zone to another.
+      const toggle = document.createElement("button");
+      toggle.className = `move-toggle${this._moveMode ? " on" : ""}`;
+      const toggleIcon = document.createElement("ha-icon");
+      toggleIcon.setAttribute("icon", "mdi:sprout");
+      toggle.append(toggleIcon, document.createTextNode(t(hass, "plants.move_mode")));
+      toggle.addEventListener("click", () => {
+        this._moveMode = !this._moveMode;
+        this._signature = undefined;
+        this._render();
+      });
+      card.appendChild(toggle);
+      if (this._moveMode) {
+        const hint = document.createElement("div");
+        hint.className = "move-hint";
+        hint.textContent = t(hass, "plants.move_hint");
+        card.appendChild(hint);
+      }
+    }
     const addButton = () => {
       // Adding a zone is ZoneFlow's normal setup (admins only, like any
       // integration).
@@ -6242,11 +6410,150 @@ class ZoneFlowOverviewCard extends HTMLElement {
       });
       row.setAttribute("aria-expanded", String(!details.hidden));
       if (!details.hidden) this._fillDetails(zone, details);
-      wrap.append(row, details);
+      wrap.dataset.device = zone.device_id;
+      wrap.append(row);
+      if (this._moveMode && zone.plants.length) {
+        const chips = document.createElement("div");
+        chips.className = "plant-chips";
+        for (const plant of zone.plants) {
+          const chip = document.createElement("span");
+          chip.className = `plant-chip${plant.main ? " main" : ""}`;
+          chip.textContent = plant.name;
+          chip.addEventListener("pointerdown", (ev) => this._startDrag(ev, plant, zone, chip));
+          chips.appendChild(chip);
+        }
+        wrap.append(chips);
+      }
+      wrap.append(details);
       card.appendChild(wrap);
       this._rows[zone.device_id] = { status, statusIcon, statusText, next, last, water, details, feed, feedText, ready, readyText };
     }
     addButton();
+  }
+
+  _moveOptions(plant, to) {
+    // What a move into `to` asks: what becomes of a main plant already there
+    // (the least destructive choice first), or that a zone with no valve only
+    // takes the plant as a record.
+    const occupied = Boolean(to.hasValve) && to.plants.some((p) => p.main);
+    const keys = occupied ? (plant.main ? ["keep", "extra", "archive", "swap"] : ["keep", "extra", "archive"]) : [];
+    return { occupied, keys, recordOnly: !to.hasValve, asksSettings: Boolean(to.hasValve) };
+  }
+
+  _movePayload(plant, to, choice, useSettings) {
+    const options = this._moveOptions(plant, to);
+    const payload = { plant_id: plant.id, device_id: to.device_id, use_plant_settings: Boolean(useSettings && options.asksSettings) };
+    if (options.occupied) payload.old_main = choice || options.keys[0];
+    return payload;
+  }
+
+  _startDrag(ev, plant, zone, chip) {
+    if (ev.button !== undefined && ev.button !== 0) return;
+    const root = this.shadowRoot;
+    const startX = ev.clientX;
+    const startY = ev.clientY;
+    let dragging = false;
+    let ghost = null;
+    let over = null;
+    const zoneAt = (x, y) => (root.elementsFromPoint ? root.elementsFromPoint(x, y) : [])
+      .find((el) => el.dataset?.device && el.classList?.contains("zone")) || null;
+    const move = (e) => {
+      if (!dragging) {
+        if (Math.hypot(e.clientX - startX, e.clientY - startY) < 6) return;
+        dragging = true;
+        ghost = document.createElement("div");
+        ghost.className = "plant-ghost";
+        ghost.textContent = plant.name;
+        root.appendChild(ghost);
+        chip.classList.add("dragging");
+      }
+      ghost.style.left = `${e.clientX}px`;
+      ghost.style.top = `${e.clientY}px`;
+      const hit = zoneAt(e.clientX, e.clientY);
+      if (over && over !== hit) over.classList.remove("drop");
+      over = hit && hit.dataset.device !== zone.device_id ? hit : null;
+      if (over) over.classList.add("drop");
+      if (e.cancelable) e.preventDefault();
+    };
+    const end = (e, cancelled) => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", cancel);
+      if (ghost) ghost.remove();
+      chip.classList.remove("dragging");
+      const target = over;
+      if (over) over.classList.remove("drop");
+      const to = target ? (this._zoneList || []).find((z) => z.device_id === target.dataset.device) : null;
+      if (dragging && to && !cancelled) this._confirmMove(plant, zone, to);
+    };
+    const up = (e) => end(e, false);
+    const cancel = (e) => end(e, true);
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", cancel);
+  }
+
+  _confirmMove(plant, from, to) {
+    // Every drop asks first: where to, what becomes of the plant already there, and the settings.
+    const hass = this._hass;
+    const tp = (key) => t(hass, `plants.${key}`);
+    const options = this._moveOptions(plant, to);
+    const make = (tag, className, textContent) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (textContent !== undefined) el.textContent = textContent;
+      return el;
+    };
+    const overlay = make("div", "move-overlay");
+    const dialog = make("div", "move-dialog");
+    const close = () => overlay.remove();
+    overlay.addEventListener("click", (ev) => { if (ev.target === overlay) close(); });
+    dialog.appendChild(make("div", "move-title", tp("drag_confirm")
+      .replace("{plant}", () => plant.name).replace("{from}", () => from.name).replace("{to}", () => to.name)));
+    const radios = [];
+    if (options.occupied) {
+      dialog.appendChild(make("div", "group-note", tp("old_main_question")));
+      for (const key of options.keys) {
+        const row = make("label");
+        const radio = make("input");
+        radio.type = "radio";
+        radio.name = "old-main";
+        radio.value = key;
+        radio.checked = radios.length === 0;
+        radios.push(radio);
+        row.append(radio, document.createTextNode(tp(`old_main_${key}`)));
+        dialog.appendChild(row);
+      }
+    }
+    if (options.recordOnly) dialog.appendChild(make("div", "group-note", tp("move_record_only")));
+    let useSettings = null;
+    if (options.asksSettings) {
+      const row = make("label");
+      useSettings = make("input");
+      useSettings.type = "checkbox";
+      row.append(useSettings, document.createTextNode(tp("use_settings")));
+      dialog.appendChild(row);
+    }
+    const actions = make("div", "move-actions");
+    const cancelButton = make("button", "", tp("cancel"));
+    cancelButton.addEventListener("click", close);
+    const go = make("button", "primary", tp("move_button"));
+    go.addEventListener("click", async () => {
+      const chosen = radios.find((r) => r.checked);
+      const payload = this._movePayload(plant, to, chosen?.value, useSettings?.checked);
+      go.disabled = true;
+      try {
+        await hass.callService("zoneflow", "move_plant", payload);
+        this._toast(tp("moved").replace("{plant}", () => plant.name).replace("{to}", () => to.name));
+      } catch (err) {
+        window.alert?.(err?.message || String(err));
+      }
+      close();
+    });
+    actions.append(cancelButton, go);
+    dialog.appendChild(actions);
+    overlay.appendChild(dialog);
+    this.shadowRoot.appendChild(overlay);
   }
 
   _fillDetails(zone, details) {
