@@ -226,7 +226,7 @@ async def test_the_button_is_shown_only_where_no_rain_is_measured(hass, fake_val
 def _rain_events(c, events):
     """rain_since from (hours ago, mm) events: the rain that fell after `since`."""
     now = dt_util.utcnow().timestamp()
-    c.rain_since = lambda since_ts: sum(mm for hours, mm in events if now - hours * 3600 >= since_ts - 0.001 and now - hours * 3600 > since_ts)
+    c.rain_since = lambda since_ts: sum(mm for hours, mm in events if now - hours * 3600 > since_ts)
 
 
 @pytest.mark.asyncio
@@ -268,3 +268,30 @@ async def test_rain_before_the_last_deep_soak_is_not_counted_again(hass, fake_va
     await c._on_rain_credit_check()
 
     assert c.store.state.last_deep_soak_ts == before
+
+
+@pytest.mark.asyncio
+async def test_the_hourly_check_refreshes_weather_underground_rain_first(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=0.0)
+    c._refresh_wu_rain = AsyncMock()
+    await c._on_rain_credit_check()
+    c._refresh_wu_rain.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_a_cycle_checking_its_gates_is_left_alone(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=60.0)
+    before = c.store.state.last_routine_ts
+    c._runs.add("routine") if hasattr(c._runs, "add") else c._runs.append("routine")
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.last_routine_ts == before
+
+
+@pytest.mark.asyncio
+async def test_a_failing_estimate_never_breaks_the_status(hass, fake_valve_services, monkeypatch):
+    c = await _zone(hass)
+    monkeypatch.setattr(type(c), "_routine_plan", lambda self: (_ for _ in ()).throw(ValueError("odd data")))
+    assert c.next_amount_mm("routine") is None
+    assert c.status()["code"] in ("next", "first_run", "next_deep_soak", "done", "idle")

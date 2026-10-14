@@ -4552,7 +4552,6 @@ const NOW = [
   "sensor.misting_today",
   "sensor.soil_moisture",
   "sensor.soil_moisture_status",
-  "sensor.next_irrigation_estimate",
   "sensor.days_until_next_run",
   "sensor.next_fertilizing",
   "sensor.last_cycle_water_liters",
@@ -6075,7 +6074,10 @@ class ZoneFlowOverviewCard extends HTMLElement {
     ]);
     if (signature !== this._signature) {
       this._signature = signature;
+      // A move confirmation that is open stays open through a rebuild.
+      const keep = this.shadowRoot?.querySelector?.(".move-overlay");
       this._build(zones);
+      if (keep) this.shadowRoot.appendChild(keep);
     }
     this._update(zones);
     this._checkDashboard();

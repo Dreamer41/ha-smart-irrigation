@@ -4135,8 +4135,9 @@ class ZoneFlowController:
         and Why? say so) and the next scheduled run waits for its turn.
         Nothing runs, and no valve time or litres are counted."""
         state = self.store.state
-        if not self.has_valve or self.paused or self._stopping or state.lock_on or self._service_active:
+        if not self.has_valve or self.paused or self._stopping or state.lock_on or self._runs or self._service_active:
             return
+        await self._refresh_wu_rain()  # Weather Underground: fresh data first, as a watering does
         if self.today_rain_mm() <= 0 and not any(state.rain_day_history_mm):
             return  # no rain on record
         if await self._deep_soak_by_rain(dt_util.utcnow().timestamp()):
@@ -4930,7 +4931,11 @@ class ZoneFlowController:
             return None
         if cycle == "deep_soak":
             return self.number("deep_soak_target_mm")
-        return self._routine_plan().needed_mm
+        try:
+            return self._routine_plan().needed_mm
+        except Exception:  # noqa: BLE001 -- only an estimate: never let it break the Status sentence
+            _LOGGER.debug("%s: could not estimate the next watering", self.entry.title, exc_info=True)
+            return None
 
     def _cycle_name(self, kind: str) -> str:
         key = _CYCLE_KEYS.get(kind)
