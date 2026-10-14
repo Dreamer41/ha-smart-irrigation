@@ -36,6 +36,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowButton(entry, controller, "fertilized_today", "Fertilized Today", controller.fertilized_today),
             # Watered by hand: counts as the last watering (no valve time).
             ZoneFlowButton(entry, controller, "mark_watered", "Mark Watered", controller.mark_watered),
+            # A deep soak the rain (or the person) gave: for a zone with no rain measuring.
+            ZoneFlowButton(
+                entry, controller, "mark_deep_soak_done", "Mark Deep Soak Done", controller.mark_deep_soak_done
+            ),
             # Greenhouse / indoor: end every manual hold now.
             ZoneFlowButton(
                 entry, controller, "resume_automatic", "Resume Automatic", controller.greenhouse.async_resume_automatic

@@ -61,13 +61,13 @@ async def test_a_new_zone_says_when_it_first_waters(hass, fake_valve_services, m
     assert state.attributes["code"] == "first_run"
     # Deep soak (05:00 in these tests) comes before the routine (05:30).
     assert state.state.startswith("First watering: deep soak ")
-    assert state.state.endswith(" 05:00")
+    assert " 05:00, estimated " in state.state and state.state.endswith(" mm")  # a deep soak gives its target
     assert state.attributes["friendly_name"].endswith("Status")
 
     # With deep soak off, the routine is first.
     monkeypatch.setattr(type(controller), "deep_soak_enabled", property(lambda self: False))
     state = await _refresh(hass, controller)
-    assert state.state.startswith("First watering ") and state.state.endswith(" 05:30")
+    assert state.state.startswith("First watering ") and " 05:30, estimated " in state.state
 
 
 @pytest.mark.asyncio
@@ -303,3 +303,28 @@ async def test_deep_soak_decisions(hass, fake_valve_services, monkeypatch, tmp_p
     state = await _refresh(hass, controller)
     assert state.attributes["code"] == "done"
     assert state.state.startswith("Deep soak done at ")
+
+
+@pytest.mark.asyncio
+async def test_the_next_watering_says_the_amount_it_expects_to_give(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=1)
+    state = await _refresh(hass, controller)
+    expected = controller.next_amount_mm(state.attributes["next_cycle"])
+    assert expected is not None and expected > 0.5
+    assert ", estimated " in state.state and state.state.endswith(" mm")
+
+    # Rain that already covers the dose: nothing to estimate, so the plain sentence.
+    monkeypatch.setattr(type(controller), "next_amount_mm", lambda self, cycle: 0.0)
+    state = await _refresh(hass, controller)
+    assert "estimated" not in state.state and state.attributes["code"] in ("next", "next_deep_soak")
+
+
+@pytest.mark.asyncio
+async def test_the_estimate_follows_the_zones_units(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=1)
+    monkeypatch.setattr(type(controller), "next_amount_mm", lambda self, cycle: 25.4)
+    monkeypatch.setattr(type(controller), "imperial", property(lambda self: True))
+    state = await _refresh(hass, controller)
+    assert state.state.endswith(", estimated 1.00 in") or state.state.endswith(", estimated 1.0 in")

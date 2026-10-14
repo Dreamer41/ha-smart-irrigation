@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Позначити полив"
       },
+      "mark_deep_soak_done": {
+        "name": "Позначити глибокий полив виконаним"
+      },
       "add_manual_rain": {
         "name": "Додати ручний дощ"
       },

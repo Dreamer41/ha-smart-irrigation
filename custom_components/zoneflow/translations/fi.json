@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Merkitse kastelluksi"
       },
+      "mark_deep_soak_done": {
+        "name": "Merkitse syväkastelu tehdyksi"
+      },
       "add_manual_rain": {
         "name": "Lisää käsin kirjattu sade"
       },

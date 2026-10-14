@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "标记为已浇水"
       },
+      "mark_deep_soak_done": {
+        "name": "标记深浇已完成"
+      },
       "add_manual_rain": {
         "name": "添加手动降雨"
       },

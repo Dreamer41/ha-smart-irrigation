@@ -2260,8 +2260,6 @@ views:
             name: Pump Power
           - entity: <sensor.zone_last_cycle_water_delivered_if_flow_meter_configured>
             name: Last Cycle Water Delivered
-          - entity: <sensor.zone_next_irrigation_estimate>
-            name: Next Run Estimate
           - entity: <sensor.zone_days_until_next_run>
             name: Days Until Next Run
 

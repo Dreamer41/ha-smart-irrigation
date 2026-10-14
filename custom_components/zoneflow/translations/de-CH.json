@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Als bewässert markieren"
       },
+      "mark_deep_soak_done": {
+        "name": "Tiefenbewässerung als erledigt markieren"
+      },
       "add_manual_rain": {
         "name": "Manuellen Regen hinzufügen"
       },

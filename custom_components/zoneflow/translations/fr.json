@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Marquer comme arrosé"
       },
+      "mark_deep_soak_done": {
+        "name": "Marquer l'arrosage profond comme fait"
+      },
       "add_manual_rain": {
         "name": "Ajouter de la pluie manuelle"
       },

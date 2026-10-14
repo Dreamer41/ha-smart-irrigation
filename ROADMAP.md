@@ -5,8 +5,6 @@ Ideas queued for upcoming releases.
 ## Next update
 
 - A plant inventory across all zones.
-- The Status sentence with the expected amount ("Next watering Mon 05:30,
-  about 12 mm").
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
   inside the notifications and the status, not only the sentences around
   them.
@@ -14,6 +12,12 @@ Ideas queued for upcoming releases.
   machine translated).
 
 ## Shipped
+
+### 1.7.2 — watered by the rain, drag and drop plants
+
+- Rain that covers the next routine dose (or a deep soak) counts as the watering; Mark Deep Soak Done for zones with no rain measuring.
+- Drag and drop plants between zones on the overview card, with a confirmation.
+- The Status sentence says the estimated amount of the next watering.
 
 ### 1.7.1 — Water now fix, quick setup and nursery plants
 

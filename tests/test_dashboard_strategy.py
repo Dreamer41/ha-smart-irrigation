@@ -861,3 +861,48 @@ def test_a_mixed_zone_lists_its_plants_under_the_status(tmp_path):
     assert out["ready"][:2] == ["Plants: Eggplant, Basil · Ready to move: Basil", False]
     assert out["soon"][1] is True  # a seedling that is not ready yet adds nothing here
 
+
+MOVE_HARNESS = HARNESS.replace(
+    'const strategy = registry["ll-strategy-dashboard-zoneflow"];',
+    'const card = registry["zoneflow-overview-card"];',
+).replace(
+    'strategy.generate({ type: "custom:zoneflow" }, hass).then((out) => console.log(JSON.stringify(out)));',
+    r"""
+const over = card.prototype;
+const ctx = Object.create(over);
+const main = { id: "m", name: "Main", main: true };
+const record = { id: "r", name: "Record", main: false };
+const bed = { device_id: "bed", name: "Bed", hasValve: true, plants: [{ id: "x", name: "X", main: true }] };
+const empty = { device_id: "new", name: "New bed", hasValve: true, plants: [] };
+const house = { device_id: "gh", name: "Climate house", hasValve: false, plants: [] };
+console.log(JSON.stringify({
+  occupiedMain: over._moveOptions.call(ctx, main, bed),
+  occupiedRecord: over._moveOptions.call(ctx, record, bed),
+  empty: over._moveOptions.call(ctx, record, empty),
+  noValve: over._moveOptions.call(ctx, record, house),
+  payloadOccupied: over._movePayload.call(ctx, main, bed, undefined, true),
+  payloadChoice: over._movePayload.call(ctx, main, bed, "swap", false),
+  payloadEmpty: over._movePayload.call(ctx, record, empty, "ignored", true),
+  payloadNoValve: over._movePayload.call(ctx, record, house, "ignored", true),
+}));
+""",
+)
+
+
+def test_a_drop_asks_what_the_move_needs(tmp_path):
+    if shutil.which("node") is None:
+        pytest.skip("node is not installed")
+    harness = tmp_path / "move.js"
+    harness.write_text(MOVE_HARNESS, encoding="utf-8")
+    done = subprocess.run(["node", str(harness), str(CARD), "{}"], capture_output=True, text=True, timeout=60, check=True)
+    out = json.loads(done.stdout)
+    # A main plant already there: ask what becomes of it, the least destructive choice first; swap only for a main plant.
+    assert out["occupiedMain"] == {"occupied": True, "keys": ["keep", "extra", "archive", "swap"], "recordOnly": False, "asksSettings": True}
+    assert out["occupiedRecord"]["keys"] == ["keep", "extra", "archive"]
+    assert out["empty"] == {"occupied": False, "keys": [], "recordOnly": False, "asksSettings": True}
+    # A zone with no valve takes the plant as a record only: no question about a main plant or settings.
+    assert out["noValve"] == {"occupied": False, "keys": [], "recordOnly": True, "asksSettings": False}
+    assert out["payloadOccupied"] == {"plant_id": "m", "device_id": "bed", "use_plant_settings": True, "old_main": "keep"}
+    assert out["payloadChoice"] == {"plant_id": "m", "device_id": "bed", "use_plant_settings": False, "old_main": "swap"}
+    assert out["payloadEmpty"] == {"plant_id": "r", "device_id": "new", "use_plant_settings": True}
+    assert out["payloadNoValve"] == {"plant_id": "r", "device_id": "gh", "use_plant_settings": False}

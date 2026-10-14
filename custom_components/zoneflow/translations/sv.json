@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Markera som vattnad"
       },
+      "mark_deep_soak_done": {
+        "name": "Markera djupbevattning som klar"
+      },
       "add_manual_rain": {
         "name": "Lägg till manuell regn"
       },

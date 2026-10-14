@@ -993,6 +993,9 @@
       "mark_watered": {
         "name": "Označit jako zalité"
       },
+      "mark_deep_soak_done": {
+        "name": "Označit hluboké zalití jako hotové"
+      },
       "add_manual_rain": {
         "name": "Přidat ručně zadaný déšť"
       },
