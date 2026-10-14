@@ -3484,44 +3484,13 @@ class ZoneFlowController:
         if not manual and not await self._forecast_gate_allows_run("routine"):
             return
 
-        # Growth-stage auto-ramp (optional, off by default -- see
-        # growth_ramp_fraction) scales only the routine weekly targets, not
-        # the deep-soak depth target: it models "a young plant needs less
-        # water overall right now", which is the routine cycle's job, while
-        # deep soak's job (root-zone penetration depth) doesn't scale the
-        # same way with plant age.
-        deficit_share, deficit_reason = self.deficit()
-        # The routine dose scales with the growth ramp, deficit mode, and
-        # mulch adjustment alike -- see routine_target_scale().
-        scale = self.routine_target_scale()
-        et_weekly = self.et_weekly_target_mm()
-        routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
-        days_elapsed = int(elapsed_seconds / 86400)
+        deficit_share, deficit_reason = self.deficit()  # for the log's notes; the dose scales in _routine_plan
         # Brought forward by a dry probe (the schedule says not yet): only the
         # elapsed days' share of the dose, so a probe stuck on "dry" can't
         # flood the zone with a full dose every morning.
         interval_fraction = 1.0 if interval_due else calc.early_run_fraction(elapsed_seconds, interval_days)
-        plan = calc.plan_routine_irrigation(
-            avg_peak_temp=avg_peak_temp,
-            hot_threshold=hot_threshold,
-            cool_threshold=self.number("cool_temp_threshold"),
-            normal_weekly_mm=self.number("target_weekly_mm") * scale,
-            hot_weekly_mm=self.number("target_weekly_hot_mm") * scale,
-            cool_weekly_mm=self.number("target_weekly_cool_mm") * scale,
-            flow_rate=self.number("flow_rate_mm_per_min"),
-            days_elapsed=days_elapsed,
-            today_rain_mm=self.today_rain_mm(),
-            rain_day_history_mm=state.rain_day_history_mm,
-            rain_eff_low=self.number("rain_eff_low"),
-            rain_eff_mid=self.number("rain_eff_mid"),
-            rain_eff_high=self.number("rain_eff_high"),
-            pulse_count=routine_pulse_count,
-            min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
-            weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
-            site=self.site,
-            interval_fraction=interval_fraction,
-            rain_offset_mm=self.rain_offset_mm(),
-        )
+        # The same plan the rain check and the Status estimate use (_routine_plan).
+        plan = self._routine_plan(interval_fraction=interval_fraction, elapsed_seconds=elapsed_seconds)
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
         # one would otherwise measure its gap from 1970 (~20,000 days).
@@ -4099,13 +4068,26 @@ class ZoneFlowController:
             return 0.0
         return state.rain_credit_spent_mm
 
-    def _routine_plan(self) -> calc.RoutinePlan:
-        """What a routine watering would give now, on the zone's own settings
-        (a full interval's dose, with the rain credit since the last watering)."""
+    def _routine_plan(
+        self, *, interval_fraction: float = 1.0, elapsed_seconds: float | None = None
+    ) -> calc.RoutinePlan:
+        """What a routine watering gives, on the zone's own settings: the dose
+        for the interval (all of it, or `interval_fraction` of it for a run a
+        dry probe brought forward), less the rain credit since the last
+        watering. The one place the dose is worked out: the routine watering
+        itself, the hourly "watered by the rain" check and the Status estimate
+        all use it, so they can never disagree.
+
+        Growth-stage auto-ramp (optional, off by default -- see
+        growth_ramp_fraction), deficit mode and the mulch adjustment scale only
+        the routine weekly targets (routine_target_scale), not the deep-soak
+        depth target: they model "this plant needs less water overall right
+        now", which is the routine cycle's job."""
         state = self.store.state
         scale = self.routine_target_scale()
         et_weekly = self.et_weekly_target_mm()
-        elapsed = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
+        if elapsed_seconds is None:
+            elapsed_seconds = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
         return calc.plan_routine_irrigation(
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
@@ -4114,7 +4096,7 @@ class ZoneFlowController:
             hot_weekly_mm=self.number("target_weekly_hot_mm") * scale,
             cool_weekly_mm=self.number("target_weekly_cool_mm") * scale,
             flow_rate=self.number("flow_rate_mm_per_min"),
-            days_elapsed=int(elapsed / 86400),
+            days_elapsed=int(elapsed_seconds / 86400),
             today_rain_mm=self.today_rain_mm(),
             rain_day_history_mm=state.rain_day_history_mm,
             rain_eff_low=self.number("rain_eff_low"),
@@ -4124,7 +4106,7 @@ class ZoneFlowController:
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
-            interval_fraction=1.0,
+            interval_fraction=interval_fraction,
             rain_offset_mm=self.rain_offset_mm(),
         )
 

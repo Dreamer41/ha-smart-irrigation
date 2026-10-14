@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Changed
+
+- **One place works out the routine dose.** The routine watering, the hourly "watered by the rain" check and the Status estimate now share the same calculation, so they can never disagree about how much a routine watering gives. No change in behaviour.
+
 ## [1.7.2] — Watered by the rain, drag and drop plants
 
 ### Changed
