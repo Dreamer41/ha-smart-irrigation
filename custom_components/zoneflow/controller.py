@@ -56,6 +56,7 @@ from .const import (
     FLOW_METER_SETTLE_SECONDS,
     FLOW_MEASURE_MINUTES,
     DEEP_SOAK_RAIN_72H_EXTRA_MM,
+    RAIN_CREDIT_FIRST_CHECK_SECONDS,
     REPAIR_CHECK_INTERVAL_SECONDS,
     REPAIR_FIRST_CHECK_SECONDS,
     FROST_TEMP_MAX_AGE_SECONDS,
@@ -897,6 +898,8 @@ class ZoneFlowController:
         self._unsubs.append(async_call_later(self.hass, REPAIR_FIRST_CHECK_SECONDS, self._check_issues))
         # Rain that already covers the next routine watering counts as the watering.
         self._unsubs.append(async_track_time_interval(self.hass, self._on_rain_credit_check, timedelta(hours=1)))
+        # ...and once a few minutes after a start, so a restart does not leave rain that fell meanwhile waiting an hour.
+        self._unsubs.append(async_call_later(self.hass, RAIN_CREDIT_FIRST_CHECK_SECONDS, self._on_rain_credit_check))
         issues.async_prune(self)  # e.g. a sensor just removed from the zone
         self._resume_frost_wait()
 

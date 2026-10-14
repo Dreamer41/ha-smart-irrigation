@@ -681,6 +681,8 @@ REPAIR_CHECK_INTERVAL_SECONDS = 3600
 # Rain that counts as a deep soak (1.7.2): the deep soak target within 24 hours,
 # or the target plus this many mm within 72 hours.
 DEEP_SOAK_RAIN_72H_EXTRA_MM = 5.0
+# The first "did the rain water it" check after a start, in seconds.
+RAIN_CREDIT_FIRST_CHECK_SECONDS = 180
 REPAIR_FIRST_CHECK_SECONDS = 300
 
 # Plant presets at setup (config flow's first step): starting values for a
