@@ -6,6 +6,8 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.2] — Watered by the rain, drag and drop plants
+
 ### Changed
 
 - **The Status sentence says how much the next watering is expected to give**: "Next watering Mon 05:30, estimated 12 mm" (a routine watering: the dose the zone's settings call for, less the rain so far; a deep soak: its target). It is left out when there is nothing to estimate.
