@@ -4,10 +4,6 @@ Ideas queued for upcoming releases.
 
 ## Next update
 
-- A Delete zone button in the zone's settings area (today: Devices & services
-  → ZoneFlow → the zone → Delete).
-- The watering start time (routine and deep soak, fixed or sunrise/sunset) easy
-  to reach from the zone's settings area (today: Configure → Settings).
 - A plant inventory across all zones.
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
   inside the notifications and the status, not only the sentences around
