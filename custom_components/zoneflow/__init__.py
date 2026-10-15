@@ -28,7 +28,13 @@ from .const import (
     CONF_AREA_MM_PER_TIP,
     CONF_ENTRY_TYPE,
     CONF_PARENT_ZONE,
+    CONF_DEEP_SOAK_SUN_MODE,
+    CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
+    CONF_DEEP_SOAK_TIME,
     CONF_RAIN_SOURCE,
+    CONF_ROUTINE_SUN_MODE,
+    CONF_ROUTINE_SUN_OFFSET_MINUTES,
+    CONF_ROUTINE_TIME,
     CONF_USE_WU,
     CONF_ZONE_TYPE,
     CROP_INHERITED_KEYS,
@@ -37,6 +43,7 @@ from .const import (
     ENTRY_TYPE_WU,
     PLATFORMS,
     READY_DAYS_MAX,
+    SUN_MODE_OPTIONS,
     WU_DATA_KEY,
 )
 from .controller import ZoneFlowController
@@ -62,6 +69,8 @@ SERVICE_WATER_NOW = "water_now"
 SERVICE_CALIBRATE_FLOW = "calibrate_flow"
 SERVICE_COPY_SETTINGS = "copy_settings"
 SERVICE_DELETE_PRESET = "delete_preset"
+SERVICE_SET_SCHEDULE = "set_schedule"
+SERVICE_DELETE_ZONE = "delete_zone"
 
 # These five are domain-level services, not entity-platform services, so
 # Home Assistant's automatic area/device -> entity expansion (the thing
@@ -148,6 +157,17 @@ SET_MAIN_PLANT_SCHEMA = vol.Schema(
     {vol.Required("plant_id"): cv.string, vol.Optional("use_plant_settings", default=False): cv.boolean}
 )
 RENAME_PLANT_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Required("name"): cv.string})
+SET_SCHEDULE_SCHEMA = vol.Schema(
+    {
+        vol.Optional("routine_time"): cv.time,
+        vol.Optional("deep_soak_time"): cv.time,
+        vol.Optional("routine_sun_mode"): vol.In(SUN_MODE_OPTIONS),
+        vol.Optional("routine_sun_offset_minutes"): vol.All(vol.Coerce(float), vol.Range(min=0, max=180)),
+        vol.Optional("deep_soak_sun_mode"): vol.In(SUN_MODE_OPTIONS),
+        vol.Optional("deep_soak_sun_offset_minutes"): vol.All(vol.Coerce(float), vol.Range(min=0, max=180)),
+        **_ZONE_TARGET_FIELDS,
+    }
+)
 WATER_NOW_SCHEMA = vol.Schema(
     {vol.Optional("minutes", default=10): vol.All(vol.Coerce(float), vol.Range(min=1, max=900)), **_ZONE_TARGET_FIELDS}
 )
@@ -470,6 +490,52 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             )
 
         hass.services.async_register(DOMAIN, SERVICE_WATER_NOW, _handle_water_now, schema=WATER_NOW_SCHEMA)
+
+        async def _handle_set_schedule(call: ServiceCall) -> None:
+            """When the zone's routine watering and deep soak start: a clock
+            time, or sunrise/sunset with an offset. The same settings as
+            Configure > Settings; the zone reloads to use them."""
+            controller = _resolve_controller(hass, call)
+            fields = {
+                "routine_time": CONF_ROUTINE_TIME,
+                "deep_soak_time": CONF_DEEP_SOAK_TIME,
+                "routine_sun_mode": CONF_ROUTINE_SUN_MODE,
+                "routine_sun_offset_minutes": CONF_ROUTINE_SUN_OFFSET_MINUTES,
+                "deep_soak_sun_mode": CONF_DEEP_SOAK_SUN_MODE,
+                "deep_soak_sun_offset_minutes": CONF_DEEP_SOAK_SUN_OFFSET_MINUTES,
+            }
+            changes = {}
+            for field, key in fields.items():
+                if field not in call.data:
+                    continue
+                value = call.data[field]
+                changes[key] = value.strftime("%H:%M:%S") if field.endswith("_time") else value
+            if not changes:
+                return
+            entry = controller.entry
+            current = {
+                CONF_ROUTINE_SUN_MODE: controller.routine_sun_mode,
+                CONF_ROUTINE_SUN_OFFSET_MINUTES: controller.routine_sun_offset_minutes,
+                CONF_DEEP_SOAK_SUN_MODE: controller.deep_soak_sun_mode,
+                CONF_DEEP_SOAK_SUN_OFFSET_MINUTES: controller.deep_soak_sun_offset_minutes,
+                CONF_ROUTINE_TIME: controller.routine_time.strftime("%H:%M:%S"),
+                CONF_DEEP_SOAK_TIME: controller.deep_soak_time.strftime("%H:%M:%S"),
+            }
+            if all(current[key] == value for key, value in changes.items()):
+                return  # nothing changed: no reload
+            hass.config_entries.async_update_entry(entry, options={**entry.options, **changes})
+
+        async def _handle_delete_zone(call: ServiceCall) -> None:
+            """Deletes a zone, with its history and plants, as Delete does on
+            its device page. Needs the zone named (never guessed), even when
+            it is the only one."""
+            if not (call.data.get(ATTR_DEVICE_ID) or call.data.get(ATTR_ENTITY_ID)):
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="delete_zone_needs_target")
+            controller = _resolve_controller(hass, call)
+            await hass.config_entries.async_remove(controller.entry.entry_id)
+
+        hass.services.async_register(DOMAIN, SERVICE_SET_SCHEDULE, _handle_set_schedule, schema=SET_SCHEDULE_SCHEMA)
+        hass.services.async_register(DOMAIN, SERVICE_DELETE_ZONE, _handle_delete_zone, schema=ZONE_TARGET_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_CALIBRATE_FLOW, _handle_calibrate_flow, schema=CALIBRATE_FLOW_SCHEMA)
 
         async def _handle_save_preset(call: ServiceCall) -> None:
@@ -585,6 +651,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 SERVICE_SET_PLANT_READY,
                 SERVICE_SAVE_PRESET,
                 SERVICE_WATER_NOW,
+                SERVICE_SET_SCHEDULE,
+                SERVICE_DELETE_ZONE,
                 SERVICE_CALIBRATE_FLOW,
                 SERVICE_COPY_SETTINGS,
                 SERVICE_DELETE_PRESET,

@@ -540,3 +540,96 @@ calibrate_flow:
       selector:
         entity:
           integration: zoneflow
+
+set_schedule:
+  name: Set Watering Time
+  description: >-
+    Sets when the zone's routine watering and deep soak start: at a clock time,
+    or before or after sunrise or sunset with an offset. The same settings as
+    Configure > Settings. The zone reloads to use them. Leave out what should
+    stay as it is.
+  fields:
+    routine_time:
+      name: Routine Time
+      description: The clock time of the routine watering (used when its mode is a set time).
+      selector:
+        time:
+    routine_sun_mode:
+      name: Routine Mode
+      description: At the set time, or relative to sunrise or sunset.
+      selector:
+        select:
+          translation_key: sun_mode
+          options:
+            - fixed
+            - before_sunrise
+            - after_sunrise
+            - before_sunset
+            - after_sunset
+    routine_sun_offset_minutes:
+      name: Routine Offset
+      description: Minutes before or after sunrise or sunset.
+      selector:
+        number:
+          min: 0
+          max: 180
+          step: 5
+          unit_of_measurement: min
+    deep_soak_time:
+      name: Deep Soak Time
+      description: The clock time of the deep soak (used when its mode is a set time).
+      selector:
+        time:
+    deep_soak_sun_mode:
+      name: Deep Soak Mode
+      description: At the set time, or relative to sunrise or sunset.
+      selector:
+        select:
+          translation_key: sun_mode
+          options:
+            - fixed
+            - before_sunrise
+            - after_sunrise
+            - before_sunset
+            - after_sunset
+    deep_soak_sun_offset_minutes:
+      name: Deep Soak Offset
+      description: Minutes before or after sunrise or sunset.
+      selector:
+        number:
+          min: 0
+          max: 180
+          step: 5
+          unit_of_measurement: min
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow
+
+delete_zone:
+  name: Delete Zone
+  description: >-
+    Deletes the zone with its watering history and plants, as Delete does on
+    its device page. This cannot be undone. The zone must be named, even when
+    it is the only one.
+  fields:
+    device_id:
+      name: Zone Device
+      description: The zone. Only needed with 2+ zones configured.
+      selector:
+        device:
+          integration: zoneflow
+    entity_id:
+      name: Zone Entity
+      description: Any entity belonging to the zone's device (alternative to Zone Device).
+      selector:
+        entity:
+          integration: zoneflow

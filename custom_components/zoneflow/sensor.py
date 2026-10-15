@@ -793,6 +793,8 @@ class ZoneFlowStatusSensor(_Base):
         # The plants in this zone (the main one first), for the cards.
         attributes["plants"] = self._controller.plants.summary() if self._controller.plants else []
         attributes["area_note"] = self._controller.area_note()
+        # When the routine watering and deep soak start, for the card's Watering time popup.
+        attributes["schedule"] = self._controller.schedule_summary()
         # Units this zone shows, for the calibration form on the card.
         attributes["volume_unit"] = "gal" if self._controller.imperial else "L"
         attributes["area_unit"] = "ft²" if self._controller.imperial else "m²"

@@ -777,6 +777,19 @@ class ZoneFlowController:
     def routine_time(self) -> dt_time:
         return _parse_hms(self.entry.options.get(CONF_ROUTINE_TIME, self.entry.data.get(CONF_ROUTINE_TIME)))
 
+    def schedule_summary(self) -> dict[str, Any]:
+        """When the routine watering and the deep soak start (a clock time, or
+        sunrise/sunset plus an offset), for the card's Watering time popup."""
+        return {
+            "routine_time": self.routine_time.strftime("%H:%M"),
+            "routine_sun_mode": self.routine_sun_mode,
+            "routine_sun_offset_minutes": self.routine_sun_offset_minutes,
+            "deep_soak_enabled": bool(self.deep_soak_enabled),
+            "deep_soak_time": self.deep_soak_time.strftime("%H:%M"),
+            "deep_soak_sun_mode": self.deep_soak_sun_mode,
+            "deep_soak_sun_offset_minutes": self.deep_soak_sun_offset_minutes,
+        }
+
     @property
     def deep_soak_sun_mode(self) -> str:
         return self.entry.options.get(
