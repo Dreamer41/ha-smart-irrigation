@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Regngrænse for annullering (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Regngrænse for udtørring (24 t)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Regngrænse for udtørring (4 dage)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Regngrænse for udtørring (7 dage)"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpe: forløb (opstartsforsinkelse)"
       },

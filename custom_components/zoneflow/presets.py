@@ -48,6 +48,7 @@ COPY_NUMBER_KEYS = (
     "deep_soak_interval_days", "deep_soak_rain_threshold",
     "max_runtime_minutes", "max_daily_runtime_minutes", "routine_drydown_days",
     "preirrigation_rain_threshold_mm",
+    "drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm",
     "forecast_rain_threshold_mm", "forecast_probability_threshold_pct", "forecast_dry_override_days",
     "deficit_water_pct", "mulch_et_adjustment_pct",
     "routine_pulse_count", "routine_pulse_rest_minutes", "deep_soak_pulse_count", "deep_soak_pulse_rest_minutes",

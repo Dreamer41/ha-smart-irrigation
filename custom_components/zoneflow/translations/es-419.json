@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Lluvia que cancela el riego (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Umbral de lluvia para secado (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Umbral de lluvia para secado (4 días)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Umbral de lluvia para secado (7 días)"
+      },
       "pump_preamble_seconds": {
         "name": "Bomba: espera previa (arranque)"
       },

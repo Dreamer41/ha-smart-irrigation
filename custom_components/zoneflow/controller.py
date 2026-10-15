@@ -139,9 +139,6 @@ from .const import (
     ROUTINE_MIN_PULSE_MINUTES,
     SELF_TUNE_ADJUST_STEP_DAYS,
     SELF_TUNE_STREAK_THRESHOLD,
-    SIGNIFICANT_RAIN_24H_MM,
-    SIGNIFICANT_RAIN_4D_MM,
-    SIGNIFICANT_RAIN_7D_MM,
     STALE_LOCK_MINUTES,
     STARTUP_GRACE_SECONDS,
     SUN_MODE_AFTER_SUNRISE,
@@ -1238,9 +1235,9 @@ class ZoneFlowController:
         now_ts = dt_util.utcnow().timestamp()
         windows = self.rain_windows()
         checks = {
-            "24h": (windows["24h"], SIGNIFICANT_RAIN_24H_MM),
-            "4d": (windows["4d"], SIGNIFICANT_RAIN_4D_MM),
-            "7d": (windows["7d"], SIGNIFICANT_RAIN_7D_MM),
+            "24h": (windows["24h"], self.number("drydown_rain_24h_mm")),
+            "4d": (windows["4d"], self.number("drydown_rain_4d_mm")),
+            "7d": (windows["7d"], self.number("drydown_rain_7d_mm")),
         }
         state = self.store.state
         fired = False

@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Regen-Abbruchschwelle vorab (30 min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Regenschwelle für Abtrocknung (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Regenschwelle für Abtrocknung (4 Tage)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Regenschwelle für Abtrocknung (7 Tage)"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpen-Vorlauf (Anlaufzeit)"
       },

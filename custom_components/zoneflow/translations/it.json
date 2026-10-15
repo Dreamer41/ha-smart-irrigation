@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Pioggia che annulla l'avvio (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Soglia di pioggia per asciugatura (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Soglia di pioggia per asciugatura (4 giorni)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Soglia di pioggia per asciugatura (7 giorni)"
+      },
       "pump_preamble_seconds": {
         "name": "Pompa: attesa iniziale (avviamento)"
       },

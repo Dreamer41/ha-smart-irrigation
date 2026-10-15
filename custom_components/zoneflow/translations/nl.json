@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Annuleergrens regen vooraf (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Regendrempel voor opdrogen (24 u)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Regendrempel voor opdrogen (4 dagen)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Regendrempel voor opdrogen (7 dagen)"
+      },
       "pump_preamble_seconds": {
         "name": "Pomp-voorloop (opstartvertraging)"
       },

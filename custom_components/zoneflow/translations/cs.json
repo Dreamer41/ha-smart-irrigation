@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Práh zrušení zálivky deštěm (30 min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Práh deště pro vysychání (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Práh deště pro vysychání (4 dny)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Práh deště pro vysychání (7 dní)"
+      },
       "pump_preamble_seconds": {
         "name": "Náběh čerpadla (zpoždění před zálivkou)"
       },

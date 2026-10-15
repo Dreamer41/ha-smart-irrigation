@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Порог отмены перед поливом (30 мин)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Порог дождя для просыхания (24 ч)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Порог дождя для просыхания (4 дня)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Порог дождя для просыхания (7 дней)"
+      },
       "pump_preamble_seconds": {
         "name": "Разгон насоса (задержка перед поливом)"
       },

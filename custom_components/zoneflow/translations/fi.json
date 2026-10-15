@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Sateen peruutusraja ennen kastelua (30 min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Kuivumistauon sadeaste (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Kuivumistauon sadeaste (4 vrk)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Kuivumistauon sadeaste (7 vrk)"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpun esikäynti (lämmittelyviive)"
       },

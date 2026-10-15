@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Próg odwołania przez deszcz (30 min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Próg deszczu dla przesychania (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Próg deszczu dla przesychania (4 dni)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Próg deszczu dla przesychania (7 dni)"
+      },
       "pump_preamble_seconds": {
         "name": "Pompa: opóźnienie przed startem"
       },

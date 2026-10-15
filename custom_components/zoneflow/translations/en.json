@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Pre-Irrigation Cancel Threshold (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Dry-Down Rain Threshold (24h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Dry-Down Rain Threshold (4 days)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Dry-Down Rain Threshold (7 days)"
+      },
       "pump_preamble_seconds": {
         "name": "Pump Preamble (Warm-Up Delay)"
       },

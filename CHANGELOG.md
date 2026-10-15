@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Added
+
+- **The rain that starts the dry-down is a setting.** Three new sliders in the zone's settings (Rain group, next to Routine Dry-Down Holdoff): **Dry-Down Rain Threshold (24h)**, **(4 days)** and **(7 days)**. They start at 35, 50 and 100 mm, the values that were fixed before, so nothing changes until you move them. Rain over any of them starts both dry-down holdoffs (routine and deep soak). Shown in your units; hidden where no rain is measured; copied with a zone's settings and presets.
+
 ### Changed
 
 - **One place works out the routine dose.** The routine watering, the hourly "watered by the rain" check and the Status estimate now share the same calculation, so they can never disagree about how much a routine watering gives. No change in behaviour.

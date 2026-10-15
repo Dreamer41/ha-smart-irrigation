@@ -354,7 +354,8 @@ STARTUP_GRACE_SECONDS = 120  # "delay: 00:02:00" before checking stale lock on s
 SELF_TUNE_STREAK_THRESHOLD = 3
 SELF_TUNE_ADJUST_STEP_DAYS = 0.5  # matches routine_drydown_days' own NUMBER_DEFS step
 
-# Significant-rain thresholds (avocado_significant_rain_logger)
+# Significant-rain thresholds (avocado_significant_rain_logger): the starting
+# values of the Dry-Down Rain Threshold settings (1.7.3; adjustable per zone).
 SIGNIFICANT_RAIN_24H_MM = 35.0
 SIGNIFICANT_RAIN_4D_MM = 50.0
 SIGNIFICANT_RAIN_7D_MM = 100.0
@@ -411,6 +412,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "deep_soak_rain_threshold": ("Deep Soak Rain Ceiling (14d)", 0.0, 100.0, 5.0, "mm"),
     "rain_mm_per_tip": ("Rain Gauge mm per Tip (Calibration)", 0.05, 1.0, 0.001, "mm"),
     "preirrigation_rain_threshold_mm": ("Pre-Irrigation Cancel Threshold (30min)", 0.5, 20.0, 0.5, "mm"),
+    # Rain heavy enough to start the dry-down holdoffs (routine and deep soak).
+    "drydown_rain_24h_mm": ("Dry-Down Rain Threshold (24h)", 5.0, 200.0, 1.0, "mm"),
+    "drydown_rain_4d_mm": ("Dry-Down Rain Threshold (4 days)", 10.0, 300.0, 1.0, "mm"),
+    "drydown_rain_7d_mm": ("Dry-Down Rain Threshold (7 days)", 10.0, 500.0, 5.0, "mm"),
     # Manual rain (1.6.1): the amount the "Add Manual Rain" button adds,
     # back to 0 after each press (controller.add_manual_rain_from_number).
     "manual_rain_mm": ("Manual Rain", 0.0, 200.0, 0.5, "mm"),
@@ -549,6 +554,9 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "deep_soak_rain_threshold": 40.0,
     "rain_mm_per_tip": 0.3,
     "preirrigation_rain_threshold_mm": 3.0,
+    "drydown_rain_24h_mm": SIGNIFICANT_RAIN_24H_MM,
+    "drydown_rain_4d_mm": SIGNIFICANT_RAIN_4D_MM,
+    "drydown_rain_7d_mm": SIGNIFICANT_RAIN_7D_MM,
     "manual_rain_mm": 0.0,
     "zone_flow_l_min": 0.0,
     "pump_preamble_seconds": 0.0,

@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Avbruddsgrense før vanning (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Regngrense for opptørking (24 t)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Regngrense for opptørking (4 dager)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Regngrense for opptørking (7 dager)"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpe: forsinkelse før start"
       },

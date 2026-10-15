@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Regngräns för att avbryta (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Regngräns för upptorkning (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Regngräns för upptorkning (4 dagar)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Regngräns för upptorkning (7 dagar)"
+      },
       "pump_preamble_seconds": {
         "name": "Pump: förkörning (startfördröjning)"
       },

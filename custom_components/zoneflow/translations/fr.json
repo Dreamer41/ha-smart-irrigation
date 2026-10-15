@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Seuil d'annulation par la pluie (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Seuil de pluie pour ressuyage (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Seuil de pluie pour ressuyage (4 jours)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Seuil de pluie pour ressuyage (7 jours)"
+      },
       "pump_preamble_seconds": {
         "name": "Pompe : délai de mise en route"
       },

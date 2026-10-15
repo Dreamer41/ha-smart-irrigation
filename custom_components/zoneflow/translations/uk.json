@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Скасування перед поливом: поріг дощу (30 хв)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Поріг дощу для просихання (24 год)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Поріг дощу для просихання (4 дні)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Поріг дощу для просихання (7 днів)"
+      },
       "pump_preamble_seconds": {
         "name": "Насос: затримка на старті (розгін)"
       },

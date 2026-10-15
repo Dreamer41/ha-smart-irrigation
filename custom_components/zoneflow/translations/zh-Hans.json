@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "浇水前取消阈值（30分钟）"
       },
+      "drydown_rain_24h_mm": {
+        "name": "晾干雨量阈值（24 小时）"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "晾干雨量阈值（4 天）"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "晾干雨量阈值（7 天）"
+      },
       "pump_preamble_seconds": {
         "name": "水泵预启动（预热延时）"
       },

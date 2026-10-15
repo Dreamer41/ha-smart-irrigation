@@ -20,6 +20,9 @@ DEPTH_KEYS = {
     "deep_soak_rain_threshold",
     "rain_mm_per_tip",
     "preirrigation_rain_threshold_mm",
+    "drydown_rain_24h_mm",
+    "drydown_rain_4d_mm",
+    "drydown_rain_7d_mm",
     "forecast_rain_threshold_mm",
     "manual_rain_mm",
 }

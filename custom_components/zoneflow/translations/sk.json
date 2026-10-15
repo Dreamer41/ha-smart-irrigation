@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Prah zrušenia pred zálievkou (30 min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Prah dažďa pre vysychanie (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Prah dažďa pre vysychanie (4 dni)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Prah dažďa pre vysychanie (7 dní)"
+      },
       "pump_preamble_seconds": {
         "name": "Nábeh čerpadla (oneskorenie pred štartom)"
       },

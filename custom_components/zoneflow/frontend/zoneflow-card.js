@@ -4608,7 +4608,8 @@ const SETTINGS_GROUPS = [
   ]],
   ["water_use", ["number.zone_flow_l_min"]],
   ["rain", [
-    "number.routine_drydown_days", "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
+    "number.routine_drydown_days", "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm",
+    "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
     "number.forecast_dry_override_days", "number.frost_guard_temp",
     "number.rain_eff_low", "number.rain_eff_mid", "number.rain_eff_high",

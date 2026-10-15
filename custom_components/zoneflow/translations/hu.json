@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Öntözés előtti esőküszöb leállításhoz (30 min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Kiszáradási esőküszöb (24 óra)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Kiszáradási esőküszöb (4 nap)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Kiszáradási esőküszöb (7 nap)"
+      },
       "pump_preamble_seconds": {
         "name": "Szivattyú előfutása (indítási késleltetés)"
       },

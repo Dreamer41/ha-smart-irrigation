@@ -806,6 +806,15 @@
       "preirrigation_rain_threshold_mm": {
         "name": "Chuva que cancela a rega (30min)"
       },
+      "drydown_rain_24h_mm": {
+        "name": "Limite de chuva para secagem (24 h)"
+      },
+      "drydown_rain_4d_mm": {
+        "name": "Limite de chuva para secagem (4 dias)"
+      },
+      "drydown_rain_7d_mm": {
+        "name": "Limite de chuva para secagem (7 dias)"
+      },
       "pump_preamble_seconds": {
         "name": "Bomba: atraso inicial (aquecimento)"
       },
