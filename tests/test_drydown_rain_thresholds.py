@@ -72,3 +72,13 @@ async def test_they_are_shown_where_rain_is_measured(hass):
     c = await _zone(hass)  # has a rain gauge
     hidden = visibility.hidden_for(c)
     assert not any(("number", key) in hidden for key in KEYS)
+
+
+@pytest.mark.asyncio
+async def test_the_three_thresholds_are_all_sliders_on_the_card(hass):
+    from homeassistant.components.number import NumberMode
+
+    controller = await _zone(hass)
+    for key in ("drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm"):
+        assert controller.numbers[key].mode is NumberMode.SLIDER
+    assert controller.numbers["target_weekly_mm"].mode is NumberMode.AUTO
