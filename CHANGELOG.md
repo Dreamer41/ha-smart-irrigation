@@ -6,6 +6,8 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.3] — Days between waterings, Watering time, Delete zone, Valve Overlap
+
 ### Added
 
 - **Days between waterings are settings.** Two new sliders next to the weekly targets in the zone's settings: **Routine Days Between Waterings** (normal and cool weather, 4 to start with) and **Routine Days Between Waterings (Hot)** (3 to start with), 1 to 10 days each. These were fixed before. A longer gap gives a bigger dose each time, so the weekly target is still met; if one watering then no longer fits the zone's Routine Max Safety Runtime Cap, Check my setup says so. Copied with a zone's settings and presets.

@@ -16,6 +16,12 @@ Ideas queued for upcoming releases.
 
 ## Shipped
 
+### 1.7.3 — days between waterings, Watering time, Delete zone, Valve Overlap
+
+- Days between routine waterings (normal and hot) and the rain that starts the dry-down are settings.
+- Watering time and Delete zone on the zone card.
+- Valve Overlap for zones that share a pump.
+
 ### 1.7.2 — watered by the rain, drag and drop plants
 
 - Rain that covers the next routine dose (or a deep soak) counts as the watering; Mark Deep Soak Done for zones with no rain measuring.
