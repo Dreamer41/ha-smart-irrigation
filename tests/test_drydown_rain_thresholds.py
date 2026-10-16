@@ -82,3 +82,18 @@ async def test_the_three_thresholds_are_all_sliders_on_the_card(hass):
     for key in ("drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm"):
         assert controller.numbers[key].mode is NumberMode.SLIDER
     assert controller.numbers["target_weekly_mm"].mode is NumberMode.AUTO
+
+
+@pytest.mark.asyncio
+async def test_moving_a_threshold_does_not_make_old_rain_a_new_storm(hass, monkeypatch):
+    c = await _zone(hass)
+    monkeypatch.setattr(c, "rain_windows", lambda: {"24h": 0.0, "3d": 0.0, "4d": 0.0, "7d": 60.0})
+    c._check_significant_rain()
+    assert c.store.state.last_significant_rain_ts is None  # 60 mm in 7 days is under 100 mm
+    await c.numbers["drydown_rain_7d_mm"].async_set_metric_value(50.0)  # now over it: but not a new storm
+    c._check_significant_rain()
+    assert c.store.state.last_significant_rain_ts is None
+    # genuinely new rain that crosses a threshold still counts
+    monkeypatch.setattr(c, "rain_windows", lambda: {"24h": 40.0, "3d": 40.0, "4d": 40.0, "7d": 60.0})
+    c._check_significant_rain()
+    assert c.store.state.last_significant_rain_ts is not None

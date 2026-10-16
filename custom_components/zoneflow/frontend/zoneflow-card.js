@@ -271,7 +271,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Delete this zone",
-      "confirm": "Delete {name}? Its watering history, plants and settings are removed. This cannot be undone.",
+      "confirm": "Delete {name}? The zone and its settings are removed. This cannot be undone.",
       "yes": "Yes, delete",
       "cancel": "Cancel"
     }
@@ -530,7 +530,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Diese Zone löschen",
-      "confirm": "{name} löschen? Bewässerungsverlauf, Pflanzen und Einstellungen werden entfernt. Das kann nicht rückgängig gemacht werden.",
+      "confirm": "{name} löschen? Die Zone und ihre Einstellungen werden entfernt. Das kann nicht rückgängig gemacht werden.",
       "yes": "Ja, löschen",
       "cancel": "Abbrechen"
     }
@@ -789,7 +789,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Eliminar esta zona",
-      "confirm": "¿Eliminar {name}? Se borran su historial de riego, sus plantas y sus ajustes. No se puede deshacer.",
+      "confirm": "¿Eliminar {name}? Se eliminan la zona y sus ajustes. No se puede deshacer.",
       "yes": "Sí, eliminar",
       "cancel": "Cancelar"
     }
@@ -1048,7 +1048,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Poista tämä vyöhyke",
-      "confirm": "Poistetaanko {name}? Sen kastelun historia, kasvit ja asetukset poistetaan. Tätä ei voi peruuttaa.",
+      "confirm": "Poistetaanko {name}? Vyöhyke ja sen asetukset poistetaan. Tätä ei voi peruuttaa.",
       "yes": "Kyllä, poista",
       "cancel": "Peruuta"
     }
@@ -1307,7 +1307,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Supprimer cette zone",
-      "confirm": "Supprimer {name} ? Son historique d'arrosage, ses plantes et ses réglages sont effacés. Action irréversible.",
+      "confirm": "Supprimer {name} ? La zone et ses réglages sont supprimés. Action irréversible.",
       "yes": "Oui, supprimer",
       "cancel": "Annuler"
     }
@@ -1566,7 +1566,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Elimina questa zona",
-      "confirm": "Eliminare {name}? Storico dell'irrigazione, piante e impostazioni vengono rimossi. Non si può annullare.",
+      "confirm": "Eliminare {name}? La zona e le sue impostazioni vengono rimosse. Non si può annullare.",
       "yes": "Sì, elimina",
       "cancel": "Annulla"
     }
@@ -1825,7 +1825,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Deze zone verwijderen",
-      "confirm": "{name} verwijderen? De bewateringsgeschiedenis, planten en instellingen worden gewist. Dit kan niet ongedaan worden gemaakt.",
+      "confirm": "{name} verwijderen? De zone en haar instellingen worden verwijderd. Dit kan niet ongedaan worden gemaakt.",
       "yes": "Ja, verwijderen",
       "cancel": "Annuleren"
     }
@@ -2084,7 +2084,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Usuń tę strefę",
-      "confirm": "Usunąć {name}? Historia podlewania, rośliny i ustawienia zostaną usunięte. Nie można tego cofnąć.",
+      "confirm": "Usunąć {name}? Strefa i jej ustawienia zostaną usunięte. Nie można tego cofnąć.",
       "yes": "Tak, usuń",
       "cancel": "Anuluj"
     }
@@ -2343,7 +2343,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Eliminar esta zona",
-      "confirm": "Eliminar {name}? O histórico de rega, as plantas e as definições são removidos. Não pode ser desfeito.",
+      "confirm": "Eliminar {name}? A zona e as suas definições são removidas. Não pode ser desfeito.",
       "yes": "Sim, eliminar",
       "cancel": "Cancelar"
     }
@@ -2602,7 +2602,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Ta bort den här zonen",
-      "confirm": "Ta bort {name}? Dess bevattningshistorik, växter och inställningar tas bort. Det går inte att ångra.",
+      "confirm": "Ta bort {name}? Zonen och dess inställningar tas bort. Det går inte att ångra.",
       "yes": "Ja, ta bort",
       "cancel": "Avbryt"
     }
@@ -2861,7 +2861,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Smazat tuto zónu",
-      "confirm": "Smazat {name}? Historie zálivky, rostliny a nastavení budou odstraněny. Nelze vrátit zpět.",
+      "confirm": "Smazat {name}? Zóna a její nastavení budou odstraněny. Nelze vrátit zpět.",
       "yes": "Ano, smazat",
       "cancel": "Zrušit"
     }
@@ -3120,7 +3120,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Slet denne zone",
-      "confirm": "Slet {name}? Dens vandingshistorik, planter og indstillinger fjernes. Det kan ikke fortrydes.",
+      "confirm": "Slet {name}? Zonen og dens indstillinger fjernes. Det kan ikke fortrydes.",
       "yes": "Ja, slet",
       "cancel": "Annuller"
     }
@@ -3379,7 +3379,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "A zóna törlése",
-      "confirm": "Törlöd: {name}? Az öntözési előzmények, a növények és a beállítások is törlődnek. Nem vonható vissza.",
+      "confirm": "Törlöd: {name}? A zóna és a beállításai törlődnek. Nem vonható vissza.",
       "yes": "Igen, törlés",
       "cancel": "Mégse"
     }
@@ -3638,7 +3638,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Slett denne sonen",
-      "confirm": "Slette {name}? Vanningshistorikk, planter og innstillinger fjernes. Dette kan ikke angres.",
+      "confirm": "Slette {name}? Sonen og innstillingene fjernes. Dette kan ikke angres.",
       "yes": "Ja, slett",
       "cancel": "Avbryt"
     }
@@ -3897,7 +3897,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Excluir esta zona",
-      "confirm": "Excluir {name}? O histórico de rega, as plantas e as configurações serão removidos. Não dá para desfazer.",
+      "confirm": "Excluir {name}? A zona e as configurações dela serão removidas. Não dá para desfazer.",
       "yes": "Sim, excluir",
       "cancel": "Cancelar"
     }
@@ -4156,7 +4156,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Удалить эту зону",
-      "confirm": "Удалить {name}? История полива, растения и настройки будут удалены. Это нельзя отменить.",
+      "confirm": "Удалить {name}? Зона и её настройки будут удалены. Это нельзя отменить.",
       "yes": "Да, удалить",
       "cancel": "Отмена"
     }
@@ -4415,7 +4415,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Odstrániť túto zónu",
-      "confirm": "Odstrániť {name}? História polievania, rastliny a nastavenia sa odstránia. Nedá sa to vrátiť.",
+      "confirm": "Odstrániť {name}? Zóna a jej nastavenia sa odstránia. Nedá sa to vrátiť.",
       "yes": "Áno, odstrániť",
       "cancel": "Zrušiť"
     }
@@ -4674,7 +4674,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "Видалити цю зону",
-      "confirm": "Видалити {name}? Історію поливу, рослини й налаштування буде видалено. Це не можна скасувати.",
+      "confirm": "Видалити {name}? Зону та її налаштування буде видалено. Це не можна скасувати.",
       "yes": "Так, видалити",
       "cancel": "Скасувати"
     }
@@ -4933,7 +4933,7 @@ const I18N = {
     },
     "delete_zone": {
       "button": "删除此区域",
-      "confirm": "删除 {name}？它的浇水记录、植物和设置都会被删除，无法撤销。",
+      "confirm": "删除 {name}？该区域及其设置将被删除，无法撤销。",
       "yes": "是，删除",
       "cancel": "取消"
     }
@@ -5459,7 +5459,7 @@ class ZoneFlowCard extends HTMLElement {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
     }
     // When the routine watering and the deep soak start (a zone that waters).
-    if (this._config.show_settings && valve && statusAttrs.schedule) {
+    if (this._config.show_settings && valve && statusAttrs.schedule && hass.user?.is_admin) {
       this._popups.schedule = {
         icon: "mdi:clock-outline", custom: "schedule", parts: [], label: t(hass, "schedule.title"),
         schedule: statusAttrs.schedule,
@@ -5778,7 +5778,9 @@ class ZoneFlowCard extends HTMLElement {
     };
     const routine = block("routine", "routine");
     const deep = s.deep_soak_enabled ? block("deep_soak", "deep_soak") : null;
-    const message = make("div", "group-note");
+    // Saving reloads the zone and the popup opens again: say it was saved there.
+    const message = make("div", "group-note", this._scheduleSaved || "");
+    this._scheduleSaved = "";
     const save = make("button", "plant-button", ts("save"));
     save.addEventListener("click", async () => {
       const payload = { device_id: this._config.device_id };
@@ -5789,9 +5791,11 @@ class ZoneFlowCard extends HTMLElement {
         payload[`${prefix}_sun_offset_minutes`] = Number(fields.offset.value) || 0;
       }
       try {
+        this._scheduleSaved = ts("saved");
         await hass.callService("zoneflow", "set_schedule", payload);
         message.textContent = ts("saved");
       } catch (err) {
+        this._scheduleSaved = "";
         message.textContent = String(err?.message || err);
       }
     });

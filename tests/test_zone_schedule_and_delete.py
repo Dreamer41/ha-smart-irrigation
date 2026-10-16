@@ -104,3 +104,91 @@ async def test_delete_zone_never_picks_the_only_zone_for_you(hass):
     with pytest.raises(ServiceValidationError):
         await hass.services.async_call(DOMAIN, "delete_zone", {}, blocking=True)
     assert entry.state is ConfigEntryState.LOADED
+
+
+async def _two_loaded(hass):
+    await _seed_source_entities(hass)
+    from .test_multi_zone_pump_sharing import VALVE_B
+
+    hass.states.async_set(VALVE_B, "off")
+    a = make_entry(hass, zone_name="Zone A")
+    b = make_entry(hass, zone_name="Zone B", valve_entity=VALVE_B, csv_path="/tmp/test_zoneflow_b.csv")
+    assert await hass.config_entries.async_setup(a.entry_id)
+    await hass.async_block_till_done()
+    return a, b
+
+
+def _device_of(hass, entry):
+    from homeassistant.helpers import device_registry as dr
+
+    return next(d.id for d in dr.async_get(hass).devices.values() if entry.entry_id in d.config_entries)
+
+
+@pytest.mark.asyncio
+async def test_delete_zone_deletes_the_zone_it_names_not_the_only_loaded_one(hass):
+    a, b = await _two_loaded(hass)
+    # B is not loaded (a setup error, say): naming B must not delete A
+    await hass.config_entries.async_unload(b.entry_id)
+    await hass.async_block_till_done()
+    await hass.services.async_call(DOMAIN, "delete_zone", {"device_id": [_device_of(hass, b)]}, blocking=True)
+    await hass.async_block_till_done()
+    assert hass.config_entries.async_get_entry(a.entry_id) is not None
+    assert hass.config_entries.async_get_entry(b.entry_id) is None
+
+
+@pytest.mark.asyncio
+async def test_delete_zone_with_an_unrelated_target_deletes_nothing(hass):
+    entry = await _loaded(hass)
+    hass.states.async_set("light.kitchen", "off")
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(DOMAIN, "delete_zone", {"entity_id": ["light.kitchen"]}, blocking=True)
+    assert hass.config_entries.async_get_entry(entry.entry_id) is not None
+
+
+@pytest.mark.asyncio
+async def test_a_second_delete_call_does_not_delete_the_next_zone(hass):
+    a, b = await _two_loaded(hass)
+    device_a = _device_of(hass, a)
+    await hass.services.async_call(DOMAIN, "delete_zone", {"device_id": [device_a]}, blocking=True)
+    await hass.async_block_till_done()
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(DOMAIN, "delete_zone", {"device_id": [device_a]}, blocking=True)
+    assert hass.config_entries.async_get_entry(b.entry_id) is not None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("service,data", [("delete_zone", {}), ("set_schedule", {"routine_time": "06:00:00"})])
+async def test_zone_services_that_change_configuration_need_an_administrator(hass, hass_read_only_user, hass_admin_user, service, data):
+    from homeassistant.core import Context
+    from homeassistant.exceptions import Unauthorized
+
+    entry = await _loaded(hass)
+    data = {**data, "device_id": [_device_of(hass, entry)]}
+    with pytest.raises(Unauthorized):
+        await hass.services.async_call(
+            DOMAIN, service, data, blocking=True, context=Context(user_id=hass_read_only_user.id)
+        )
+    assert hass.config_entries.async_get_entry(entry.entry_id) is not None
+    assert not entry.options.get(CONF_ROUTINE_TIME)
+    # an administrator (and an automation, which has no user) may
+    await hass.services.async_call(DOMAIN, service, data, blocking=True, context=Context(user_id=hass_admin_user.id))
+
+
+@pytest.mark.asyncio
+async def test_set_schedule_refuses_while_the_zone_is_watering(hass):
+    entry = await _loaded(hass)
+    controller = hass.data[DOMAIN][entry.entry_id]
+    controller.store.state.lock_on = True
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(DOMAIN, "set_schedule", {"routine_time": "06:00:00"}, blocking=True)
+    assert not entry.options.get(CONF_ROUTINE_TIME)
+
+
+@pytest.mark.asyncio
+async def test_schedule_summary_survives_an_entry_with_no_times(hass):
+    from custom_components.zoneflow.const import CONF_DEEP_SOAK_TIME
+
+    entry = await _loaded(hass)
+    hass.config_entries.async_update_entry(entry, data={k: v for k, v in entry.data.items() if k not in (CONF_ROUTINE_TIME, CONF_DEEP_SOAK_TIME)})
+    controller = hass.data[DOMAIN][entry.entry_id]
+    assert controller.schedule_summary()["routine_time"] == "05:30"

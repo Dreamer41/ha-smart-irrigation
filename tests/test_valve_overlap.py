@@ -104,11 +104,64 @@ async def test_a_zone_alone_on_its_pump_just_closes(hass, fake_valve_services, m
 
 
 @pytest.mark.asyncio
-async def test_overlap_is_for_zones_that_share_a_pump_only(hass, fake_valve_services, monkeypatch, tmp_path):
+async def test_the_next_zone_skips_its_warm_up_when_the_pump_is_handed_over(hass, fake_valve_services, monkeypatch, tmp_path):
+    await _seed(hass)
+    entry_a = make_entry(hass, zone_name="Zone A", pump_id="P", csv_path=str(tmp_path / "a.csv"))
+    entry_b = make_entry(hass, zone_name="Zone B", valve_entity=VALVE_B, pump_id="P", csv_path=str(tmp_path / "b.csv"))
+    await _setup_both(hass, entry_a, entry_b)
+    a, b = hass.data[DOMAIN][entry_a.entry_id], hass.data[DOMAIN][entry_b.entry_id]
+    for zone in (a, b):
+        zone.numbers["routine_pulse_count"].metric_value = 1
+        zone.numbers["pump_preamble_seconds"].metric_value = 7
+        zone.numbers["valve_overlap_seconds"].metric_value = 4
+    clock = CompressedTime(hass, [VALVE, VALVE_B]).install(monkeypatch)
+    await _run_both(hass, a, b)
+    # the first zone started cold (7 s warm-up); the second found the pump running
+    assert clock.sleeps_seconds.count(7) == 1, clock.sleeps_seconds
+    assert 4 in clock.sleeps_seconds  # the overlap itself
+
+
+@pytest.mark.asyncio
+async def test_no_overlap_when_both_zones_share_one_flow_meter(hass, fake_valve_services, monkeypatch, tmp_path):
+    await _seed(hass)
+    hass.states.async_set("sensor.meter", "0")
+    entry_a = make_entry(hass, zone_name="Zone A", pump_id="P", flow_meter_entity="sensor.meter", csv_path=str(tmp_path / "a.csv"))
+    entry_b = make_entry(
+        hass, zone_name="Zone B", valve_entity=VALVE_B, pump_id="P", flow_meter_entity="sensor.meter", csv_path=str(tmp_path / "b.csv")
+    )
+    await _setup_both(hass, entry_a, entry_b)
+    a, b = hass.data[DOMAIN][entry_a.entry_id], hass.data[DOMAIN][entry_b.entry_id]
+    for zone in (a, b):
+        zone.numbers["routine_pulse_count"].metric_value = 1
+        zone.numbers["valve_overlap_seconds"].metric_value = 5
+    CompressedTime(hass, [VALVE, VALVE_B]).install(monkeypatch)
+    events = await _run_both(hass, a, b)
+    assert not _overlapped(events), events
+
+
+@pytest.mark.asyncio
+async def test_the_overlap_counts_toward_the_runtime_the_zone_reports(hass, fake_valve_services, monkeypatch, tmp_path):
+    a, b = await _two_zones(hass, monkeypatch, tmp_path, overlap=0)
+    await _run_both(hass, a, b)
+    without = a.store.state.today_runtime_minutes
+    b.store.state.today_runtime_minutes = 0.0
+    a.store.state.today_runtime_minutes = 0.0
+    for zone in (a, b):
+        zone.numbers["valve_overlap_seconds"].metric_value = 6
+        zone.store.state.last_routine_ts = None
+    await _run_both(hass, a, b)
+    # the zone that finished first kept its valve open 6 s more
+    assert max(a.store.state.today_runtime_minutes, b.store.state.today_runtime_minutes) > 0
+    assert a.store.state.today_runtime_minutes + b.store.state.today_runtime_minutes >= 2 * without - 0.01
+
+
+@pytest.mark.asyncio
+async def test_a_zone_that_shares_no_pump_does_not_offer_the_setting(hass, fake_valve_services, monkeypatch, tmp_path):
     from custom_components.zoneflow import visibility
 
-    a, b = await _two_zones(hass, monkeypatch, tmp_path, overlap=0)
-    solo = hass.data[DOMAIN]
-    # the zones above share pump "P": the setting is offered
-    assert ("number", "valve_overlap_seconds") not in visibility.hidden_for(a)
-    assert ("number", "valve_overlap_seconds") in visibility.SHARED_PUMP
+    await _seed(hass)
+    entry = make_entry(hass, zone_name="Solo", pump_power_entity=None, csv_path=str(tmp_path / "s.csv"))
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    solo = hass.data[DOMAIN][entry.entry_id]
+    assert ("number", "valve_overlap_seconds") in visibility.hidden_for(solo)

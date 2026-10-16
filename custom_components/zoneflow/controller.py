@@ -92,6 +92,8 @@ from .const import (
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    DEFAULT_DEEP_SOAK_TIME,
+    DEFAULT_ROUTINE_TIME,
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
@@ -205,6 +207,11 @@ def _weather_temp_c(state: State | None) -> float | None:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+# hass.data key: pump lock key -> True while a zone has handed its pump to the
+# next one with its own valve still open (valve overlap).
+PUMP_HANDOVER_KEY = f"{DOMAIN}_pump_handover"
 
 
 def _parse_hms(value: str) -> dt_time:
@@ -773,11 +780,15 @@ class ZoneFlowController:
 
     @property
     def deep_soak_time(self) -> dt_time:
-        return _parse_hms(self.entry.options.get(CONF_DEEP_SOAK_TIME, self.entry.data.get(CONF_DEEP_SOAK_TIME)))
+        return _parse_hms(
+            self.entry.options.get(CONF_DEEP_SOAK_TIME, self.entry.data.get(CONF_DEEP_SOAK_TIME)) or DEFAULT_DEEP_SOAK_TIME
+        )
 
     @property
     def routine_time(self) -> dt_time:
-        return _parse_hms(self.entry.options.get(CONF_ROUTINE_TIME, self.entry.data.get(CONF_ROUTINE_TIME)))
+        return _parse_hms(
+            self.entry.options.get(CONF_ROUTINE_TIME, self.entry.data.get(CONF_ROUTINE_TIME)) or DEFAULT_ROUTINE_TIME
+        )
 
     def schedule_summary(self) -> dict[str, Any]:
         """When the routine watering and the deep soak start (a clock time, or
@@ -1243,17 +1254,31 @@ class ZoneFlowController:
             return  # only an attribute changed: not a new reading (a repeat comes as a state report)
         self._sync_rain_from_counter_state(new_state)
 
+    def _rain_threshold_checks(self) -> dict[str, tuple[float, float]]:
+        """The rain in each window and the Dry-Down Rain Threshold it is held against."""
+        windows = self.rain_windows()
+        return {
+            "24h": (windows["24h"], self.number("drydown_rain_24h_mm")),
+            "4d": (windows["4d"], self.number("drydown_rain_4d_mm")),
+            "7d": (windows["7d"], self.number("drydown_rain_7d_mm")),
+        }
+
+    def _resync_rain_flags(self) -> None:
+        """A Dry-Down Rain Threshold was moved: note which windows are over
+        their threshold now, without calling it a new storm. Otherwise rain
+        that fell days ago would count as heavy rain "now" the next time the
+        rain is checked, restart the dry-down holdoff and send an alert."""
+        state = self.store.state
+        for key, (value, threshold) in self._rain_threshold_checks().items():
+            state.rain_threshold_flags[key] = value > threshold
+        self.hass.async_create_task(self.store.async_save())
+
     def _check_significant_rain(self) -> None:
         """Port of avocado_significant_rain_logger (edge-triggered). Reads
         the combined rain (gauge and manual), so heavy rain entered by hand
         restarts the dry-down too."""
         now_ts = dt_util.utcnow().timestamp()
-        windows = self.rain_windows()
-        checks = {
-            "24h": (windows["24h"], self.number("drydown_rain_24h_mm")),
-            "4d": (windows["4d"], self.number("drydown_rain_4d_mm")),
-            "7d": (windows["7d"], self.number("drydown_rain_7d_mm")),
-        }
+        checks = self._rain_threshold_checks()
         state = self.store.state
         fired = False
         for key, (value, threshold) in checks.items():
@@ -1578,6 +1603,8 @@ class ZoneFlowController:
         """A slider was moved (number.py)."""
         if key == "flow_rate_mm_per_min":
             self._check_issues()  # a calibrated flow rate clears its repair at once
+        elif key in ("drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm"):
+            self._resync_rain_flags()
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
 
@@ -2459,7 +2486,10 @@ class ZoneFlowController:
         runtime_for_log: int,
     ) -> bool:
         preamble = self.number("pump_preamble_seconds")
-        if preamble > 0:
+        # The zone before this one handed the pump over with its valve still
+        # open (valve overlap): the pump is already running, no warm-up.
+        pump_running = self.hass.data.get(PUMP_HANDOVER_KEY, {}).pop(self._pump_lock_key, False)
+        if preamble > 0 and not pump_running:
             await self._pause(preamble)
 
         flow_start = await self._flow_meter_reading()
@@ -2724,18 +2754,25 @@ class ZoneFlowController:
             await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
             self._end_pulse(pulse_minutes, full=True)
             self._open_seconds += overlap
+            self._delivered_minutes += overlap / 60.0  # the valve was open: it counts toward the daily cap
 
             if index < count:
                 await self._pause(rest_minutes * 60)
         return _DONE
 
-    def _zone_waiting_on_my_pump(self) -> bool:
-        """Another zone is queued for the pump this zone is running on."""
+    def _next_zone_on_my_pump(self) -> "ZoneFlowController | None":
+        """Another zone queued for the pump this zone is running on."""
         key = self._pump_lock_key
-        return any(
-            other is not self and other._pump_lock_key == key and other._waiting_pump_kind
-            for other in self.hass.data.get(DOMAIN, {}).values()
-            if isinstance(other, ZoneFlowController)
+        return next(
+            (
+                other
+                for other in self.hass.data.get(DOMAIN, {}).values()
+                if isinstance(other, ZoneFlowController)
+                and other is not self
+                and other._pump_lock_key == key
+                and other._waiting_pump_kind
+            ),
+            None,
         )
 
     async def _overlap_with_next_zone(self, kind: str) -> float:
@@ -2749,14 +2786,24 @@ class ZoneFlowController:
         seconds = self.number("valve_overlap_seconds")
         if seconds <= 0 or kind not in ("Deep Soak", "Routine Irrigation") or self._measuring:
             return 0.0
-        if self._stopping or self.store.state.abort_on or not self._zone_waiting_on_my_pump():
+        if self._stopping or self.store.state.abort_on:
             return 0.0
+        following = self._next_zone_on_my_pump()
+        if following is None:
+            return 0.0
+        if self.flow_meter_entity and following.flow_meter_entity == self.flow_meter_entity:
+            return 0.0  # one meter for both: the overlap water would be counted in both zones
         pump_lock = self._get_pump_lock()
+        handovers = self.hass.data.setdefault(PUMP_HANDOVER_KEY, {})
         if pump_lock.locked() and not self._pump_handed_over:
             self._pump_handed_over = True
+            handovers[self._pump_lock_key] = True  # the next zone skips its warm-up
             pump_lock.release()
         started = dt_util.utcnow().timestamp()
-        await self._pause(seconds)
+        try:
+            await self._pause(seconds)
+        finally:
+            handovers.pop(self._pump_lock_key, None)  # nobody took it: not for a later run
         return max(dt_util.utcnow().timestamp() - started, 0.0)
 
     async def _wait_pulse(self, seconds: float, *, service: bool) -> None:

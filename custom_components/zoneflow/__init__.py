@@ -14,6 +14,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers.service import async_register_admin_service
 
 import homeassistant.util.dt as dt_util
 
@@ -196,6 +197,29 @@ PLANT_NOTE_SCHEMA = vol.Schema({vol.Required("plant_id"): cv.string, vol.Require
 def _date_ts(day) -> float | None:
     """A date from a service call, as the start of that day (local time)."""
     return dt_util.start_of_local_day(day).timestamp() if day is not None else None
+
+
+def _zone_entry_for_target(hass: HomeAssistant, call: ServiceCall) -> ConfigEntry:
+    """The one zone a call names, exactly (a device, or an entity of one),
+    loaded or not. Unlike _resolve_controller it never falls back to "the only
+    zone": a destructive call must hit what it names, or nothing."""
+    device_ids: set[str] = set(call.data.get(ATTR_DEVICE_ID) or [])
+    ent_reg = er.async_get(hass)
+    for entity_id in call.data.get(ATTR_ENTITY_ID) or []:
+        entity_entry = ent_reg.async_get(entity_id)
+        if entity_entry and entity_entry.device_id:
+            device_ids.add(entity_entry.device_id)
+    dev_reg = dr.async_get(hass)
+    zones: dict[str, ConfigEntry] = {}
+    for device_id in device_ids:
+        device = dev_reg.async_get(device_id)
+        for entry_id in device.config_entries if device else ():
+            entry = hass.config_entries.async_get_entry(entry_id)
+            if entry and entry.domain == DOMAIN and not is_area_entry(entry) and not is_wu_entry(entry):
+                zones[entry.entry_id] = entry
+    if len(zones) != 1:
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="delete_zone_needs_target")
+    return next(iter(zones.values()))
 
 
 def _resolve_controller(hass: HomeAssistant, call: ServiceCall) -> ZoneFlowController:
@@ -496,6 +520,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             time, or sunrise/sunset with an offset. The same settings as
             Configure > Settings; the zone reloads to use them."""
             controller = _resolve_controller(hass, call)
+            if controller.store.state.lock_on or controller._runs or controller._service_active:
+                # Saving reloads the zone, which would stop the watering in progress.
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
             fields = {
                 "routine_time": CONF_ROUTINE_TIME,
                 "deep_soak_time": CONF_DEEP_SOAK_TIME,
@@ -529,13 +556,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             """Deletes a zone, with its history and plants, as Delete does on
             its device page. Needs the zone named (never guessed), even when
             it is the only one."""
-            if not (call.data.get(ATTR_DEVICE_ID) or call.data.get(ATTR_ENTITY_ID)):
-                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="delete_zone_needs_target")
-            controller = _resolve_controller(hass, call)
-            await hass.config_entries.async_remove(controller.entry.entry_id)
+            await hass.config_entries.async_remove(_zone_entry_for_target(hass, call).entry_id)
 
-        hass.services.async_register(DOMAIN, SERVICE_SET_SCHEDULE, _handle_set_schedule, schema=SET_SCHEDULE_SCHEMA)
-        hass.services.async_register(DOMAIN, SERVICE_DELETE_ZONE, _handle_delete_zone, schema=ZONE_TARGET_SCHEMA)
+        # Both change or remove a zone's configuration, which is administrators' work
+        # (an automation, which has no user, may still call them).
+        async_register_admin_service(hass, DOMAIN, SERVICE_SET_SCHEDULE, _handle_set_schedule, SET_SCHEDULE_SCHEMA)
+        async_register_admin_service(hass, DOMAIN, SERVICE_DELETE_ZONE, _handle_delete_zone, ZONE_TARGET_SCHEMA)
         hass.services.async_register(DOMAIN, SERVICE_CALIBRATE_FLOW, _handle_calibrate_flow, schema=CALIBRATE_FLOW_SCHEMA)
 
         async def _handle_save_preset(call: ServiceCall) -> None:

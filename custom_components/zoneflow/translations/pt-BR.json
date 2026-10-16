@@ -1667,15 +1667,15 @@
     },
     "delete_zone": {
       "name": "Delete Zone",
-      "description": "Deletes the zone with its watering history and plants, as Delete does on its device page. This cannot be undone. The zone must be named, even when it is the only one.",
+      "description": "Deletes the zone, as Delete does on its device page. This cannot be undone. The zone must be named, even when it is the only one.",
       "fields": {
         "device_id": {
           "name": "Zone Device",
-          "description": "The zone. Only needed with 2+ zones configured."
+          "description": "The zone to delete."
         },
         "entity_id": {
           "name": "Zone Entity",
-          "description": "Any entity belonging to the zone's device (alternative to Zone Device)."
+          "description": "Any entity belonging to the zone to delete (alternative to Zone Device)."
         }
       }
     }
@@ -1784,7 +1784,7 @@
       "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     },
     "delete_zone_needs_target": {
-      "message": "Name the zone to delete (its device or one of its entities): a zone is never picked for you."
+      "message": "Name exactly one zone to delete (its device, or one of its entities). A zone is never picked for you."
     }
   },
   "issues": {
