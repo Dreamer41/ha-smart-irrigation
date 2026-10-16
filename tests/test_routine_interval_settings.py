@@ -150,3 +150,76 @@ async def test_days_until_next_run_follows_a_changed_gap_at_once(hass, fake_valv
         await zone.numbers[key].async_set_metric_value(9.0)
     await hass.async_block_till_done()
     assert float(hass.states.get(entity_id).attributes["routine_days"]) - short >= 5.0  # 7 days more, shown without waiting for a poll
+
+
+GAP_COMBOS = [(1, 1), (4, 3), (3, 4), (6, 2), (2, 6), (10, 1), (1, 10), (10, 10)]
+TIERS = {"hot": 35.0, "normal": 25.0, "cool": 10.0}  # a temperature in each tier (hot 31.5, cool 20)
+
+
+@pytest.mark.parametrize("normal,hot", GAP_COMBOS)
+@pytest.mark.parametrize("tier", list(TIERS))
+def test_every_gap_combination_picks_the_right_gap_and_dose_in_every_tier(normal, hot, tier):
+    temp = TIERS[tier]
+    gap = hot if tier == "hot" else normal  # cool weather uses the normal gap
+    assert calc.routine_interval_days(temp, 31.5, normal, hot) == gap
+    plan = _plan(avg_peak_temp=temp, normal_interval_days=normal, hot_interval_days=hot)
+    weekly = {"hot": 45.0, "normal": 35.0, "cool": 25.0}[tier]
+    assert plan.interval_target_mm == pytest.approx(weekly * gap / 7, abs=0.1)  # the week's water, in gap-sized doses
+    # due exactly one gap after the last watering (less the 6 h buffer), never before
+    buffer = 6 * 3600
+    assert not calc.routine_due(gap * 86400 - buffer - 60, gap, buffer)
+    assert calc.routine_due(gap * 86400 - buffer + 60, gap, buffer)
+
+
+@pytest.mark.parametrize("normal,hot", GAP_COMBOS)
+@pytest.mark.asyncio
+async def test_a_zone_follows_every_gap_combination(hass, fake_valve_services, monkeypatch, normal, hot):
+    await _seed_source_entities(hass)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][entry.entry_id]
+    await zone.numbers["routine_interval_days"].async_set_metric_value(float(normal))
+    await zone.numbers["routine_interval_hot_days"].async_set_metric_value(float(hot))
+    for temp, expected in ((35.0, hot), (25.0, normal), (10.0, normal)):
+        monkeypatch.setattr(zone, "effective_avg_peak_temp", lambda temp=temp: temp)
+        assert zone._routine_interval_days() == expected
+        assert zone._routine_plan().interval_target_mm > 0
+
+
+@pytest.mark.parametrize("normal,hot", [(1, 1), (4, 3), (3, 4), (10, 2), (2, 10)])
+@pytest.mark.parametrize("temp,name", [(35.0, "hot"), (25.0, "normal")])
+@pytest.mark.asyncio
+async def test_a_zone_waters_when_its_gap_is_up_and_not_before(hass, fake_valve_services, monkeypatch, tmp_path, normal, hot, temp, name):
+    """End to end: the scheduled routine does nothing one hour before the gap
+    (less the 6 h buffer) has passed and waters one hour after."""
+    import homeassistant.util.dt as dt_util
+
+    from .scenario_harness import CompressedTime
+    from .test_smoke_setup import VALVE
+
+    await _seed_source_entities(hass)
+    entry = make_entry(hass, csv_path=str(tmp_path / "g.csv"))
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][entry.entry_id]
+    await zone.numbers["routine_interval_days"].async_set_metric_value(float(normal))
+    await zone.numbers["routine_interval_hot_days"].async_set_metric_value(float(hot))
+    zone.numbers["max_runtime_minutes"].metric_value = 900
+    zone.numbers["max_daily_runtime_minutes"].metric_value = 900
+    monkeypatch.setattr(zone, "effective_avg_peak_temp", lambda: temp)
+    gap = hot if name == "hot" else normal
+    now = dt_util.utcnow().timestamp()
+    zone.store.state.last_significant_rain_ts = 0.0
+    zone.store.state.last_deep_soak_ts = now - 86400  # a deep soak is not what is due
+    clock = CompressedTime(hass, [VALVE]).install(monkeypatch)
+
+    zone.store.state.last_routine_ts = now - (gap * 86400 - 6 * 3600 - 3600)  # one hour short
+    await zone.run_routine_irrigation(manual=False)
+    await hass.async_block_till_done()
+    assert clock.valve_minutes(VALVE) == 0, f"watered a {gap}-day gap too early"
+
+    zone.store.state.last_routine_ts = now - (gap * 86400 - 6 * 3600 + 3600)  # one hour past
+    await zone.run_routine_irrigation(manual=False)
+    await hass.async_block_till_done()
+    assert clock.valve_minutes(VALVE) > 0, f"did not water after a {gap}-day gap"
