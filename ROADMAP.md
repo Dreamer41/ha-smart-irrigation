@@ -4,6 +4,9 @@ Ideas queued for upcoming releases.
 
 ## Next update
 
+- Valve overlap for zones that share a pump: the next zone's valve opens a few
+  seconds before the running zone's closes, so the pump never pushes against
+  closed valves and the pipes do not bang.
 - A plant inventory across all zones.
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
   inside the notifications and the status, not only the sentences around
