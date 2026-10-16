@@ -209,8 +209,8 @@ def _weather_temp_c(state: State | None) -> float | None:
 _LOGGER = logging.getLogger(__name__)
 
 
-# hass.data key: pump lock key -> entry id of the zone a zone has handed its pump to
-# while its own valve is still open (valve overlap).
+# hass.data key: pump lock key -> {"zones": entry ids that were waiting, "until": time the
+# handing-over zone closes} while it keeps its own valve open for the next one (valve overlap).
 PUMP_HANDOVER_KEY = f"{DOMAIN}_pump_handover"
 
 
@@ -340,6 +340,8 @@ class ZoneFlowController:
         self._run_liters: float | None = None
         # The pump lock was handed to the next zone before this valve closed (valve overlap).
         self._pump_handed_over = False
+        # Set on the zone that received the pump this way: its pump-power audit waits until then.
+        self._audit_not_before: float | None = None
         self._open_seconds = 0.0
         self._pump_check_seconds = 0.0
         # Frost guard: the cycles waiting for it to warm up (deep soak is
@@ -2423,6 +2425,7 @@ class ZoneFlowController:
             return False
         pump_lock = self._get_pump_lock()
         self._pump_handed_over = False
+        self._audit_not_before = None
         # What's running, for the Status sensor -- from the pump wait until
         # the run ends, however it ends.
         self._cycle_kind = kind
@@ -2506,9 +2509,13 @@ class ZoneFlowController:
         # The zone before this one handed the pump over with its valve still
         # open (valve overlap): the pump is already running, no warm-up.
         handovers = self.hass.data.get(PUMP_HANDOVER_KEY, {})
-        pump_running = handovers.get(self._pump_lock_key) == self.entry.entry_id
+        handover = handovers.get(self._pump_lock_key)
+        pump_running = handover is not None and self.entry.entry_id in handover["zones"]
         if pump_running:
             handovers.pop(self._pump_lock_key, None)
+            # The zone before is still open for a moment: the pump's power says nothing
+            # about this zone's own valve until it has closed.
+            self._audit_not_before = handover["until"]
         if preamble > 0 and not pump_running:
             await self._pause(preamble)
 
@@ -2711,6 +2718,11 @@ class ZoneFlowController:
             if self.pump_power_entity and not self._stopping and not self.store.state.abort_on:
                 # wait_template pump-power check, timeout 45s, continue_on_timeout
                 check_started = dt_util.utcnow().timestamp()
+                if self._audit_not_before is not None:
+                    delay = self._audit_not_before - check_started
+                    self._audit_not_before = None
+                    if delay > 0:
+                        await self._pause(delay)
                 with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(
                         self._wait_for_pump_watts_or_abort(min_pump_watts, service=kind == SERVICE_RUN_KIND),
@@ -2774,26 +2786,22 @@ class ZoneFlowController:
             await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
             self._end_pulse(pulse_minutes, full=True)
             self._open_seconds += overlap
-            self._delivered_minutes += overlap / 60.0  # the valve was open: it counts toward the daily cap
 
             if index < count:
                 await self._pause(rest_minutes * 60)
         return _DONE
 
-    def _next_zone_on_my_pump(self) -> "ZoneFlowController | None":
-        """Another zone queued for the pump this zone is running on."""
+    def _zones_waiting_on_my_pump(self) -> "list[ZoneFlowController]":
+        """The other zones queued for the pump this zone is running on."""
         key = self._pump_lock_key
-        return next(
-            (
-                other
-                for other in self.hass.data.get(DOMAIN, {}).values()
-                if isinstance(other, ZoneFlowController)
-                and other is not self
-                and other._pump_lock_key == key
-                and other._waiting_pump_kind
-            ),
-            None,
-        )
+        return [
+            other
+            for other in self.hass.data.get(DOMAIN, {}).values()
+            if isinstance(other, ZoneFlowController)
+            and other is not self
+            and other._pump_lock_key == key
+            and other._waiting_pump_kind
+        ]
 
     async def _overlap_with_next_zone(self, kind: str) -> float:
         """Valve overlap: at the end of its last pulse, a zone whose pump has
@@ -2808,23 +2816,27 @@ class ZoneFlowController:
             return 0.0
         if self._stopping or self.store.state.abort_on:
             return 0.0
-        following = self._next_zone_on_my_pump()
-        if following is None:
+        waiting = self._zones_waiting_on_my_pump()
+        if not waiting:
             return 0.0
-        if self.flow_meter_entity and following.flow_meter_entity == self.flow_meter_entity:
+        if self.flow_meter_entity and any(z.flow_meter_entity == self.flow_meter_entity for z in waiting):
             return 0.0  # one meter for both: the overlap water would be counted in both zones
         pump_lock = self._get_pump_lock()
         handovers = self.hass.data.setdefault(PUMP_HANDOVER_KEY, {})
+        started = dt_util.utcnow().timestamp()
         if pump_lock.locked() and not self._pump_handed_over:
             self._pump_handed_over = True
-            handovers[self._pump_lock_key] = following.entry.entry_id  # that zone skips its warm-up
+            # Whichever of the waiting zones gets the pump first takes this: it skips its
+            # warm-up (the pump is running) and holds its pump-power audit until we close.
+            handovers[self._pump_lock_key] = {"zones": {z.entry.entry_id for z in waiting}, "until": started + seconds}
             pump_lock.release()
-        started = dt_util.utcnow().timestamp()
         try:
             await self._pause(seconds)
         finally:
             handovers.pop(self._pump_lock_key, None)  # nobody took it: not for a later run
-        return max(dt_util.utcnow().timestamp() - started, 0.0)
+        open_for = max(dt_util.utcnow().timestamp() - started, 0.0)
+        self.store.state.today_runtime_minutes += open_for / 60.0  # the valve was open: it counts toward the daily cap
+        return open_for
 
     async def _wait_pulse(self, seconds: float, *, service: bool) -> None:
         """The open-valve wait of a pulse: ends early on an abort, a reload
@@ -3609,7 +3621,7 @@ class ZoneFlowController:
         # one would otherwise measure its gap from 1970 (~20,000 days).
         # (A pause is deliberate: the gap only counts from when it ended.)
         overdue_days = int((now_ts - max(last_run_ts, state.pause_ended_ts or 0.0)) / 86400)
-        if state.last_routine_ts is not None and overdue_days > 10:
+        if state.last_routine_ts is not None and overdue_days > max(10, int(interval_days * 2.5)):
             await self._log_event(
                 event_type="Irrigation Overdue",
                 status="WARNING",

@@ -1790,7 +1790,7 @@
       "message": "Choose 1 to {max} days (or 0 to stop following the plant)."
     },
     "delete_zone_needs_target": {
-      "message": "Name exactly one zone to delete (its device, or one of its entities). A zone is never picked for you."
+      "message": "Name exactly one zone (its device, or one of its entities). A zone is never picked for you."
     }
   },
   "issues": {

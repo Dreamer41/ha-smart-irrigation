@@ -357,6 +357,9 @@
       "ok": "Telefonbeskeder sendes til {entity}.",
       "none": "Ingen telefon at underrette. Du får ikke beskeder om vanding.",
       "fail": "Telefonen {entity} findes ikke længere, så ingen beskeder når dig."
+    },
+    "cap": {
+      "low": "En rutinevanding kræver {minutes} min, mere end zonens sikkerhedsgrænse ({cap} min), så den afvises hver gang. Hæv grænsen eller forkort dagene mellem vandingerne."
     }
   },
   "why": {

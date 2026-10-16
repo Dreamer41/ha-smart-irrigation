@@ -404,8 +404,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "routine_drydown_days": ("Routine Dry-Down Holdoff", 1.0, 10.0, 0.5, "d"),
     # How often the routine watering runs (1.7.3): the days between waterings in the
     # normal and cool tiers, and in the hot tier (a shorter gap when it is hot).
-    "routine_interval_days": ("Routine Days Between Waterings", 1.0, 14.0, 1.0, "d"),
-    "routine_interval_hot_days": ("Routine Days Between Waterings (Hot)", 1.0, 14.0, 1.0, "d"),
+    "routine_interval_days": ("Routine Days Between Waterings", 1.0, 10.0, 1.0, "d"),
+    "routine_interval_hot_days": ("Routine Days Between Waterings (Hot)", 1.0, 10.0, 1.0, "d"),
     "deep_soak_drydown_days": ("Deep Soak Subsoil Dry-Down Holdoff", 4.0, 14.0, 0.5, "d"),
     "deep_soak_interval_days": ("Deep Soak Interval", 3.0, 30.0, 1.0, "d"),
     # NOTE: the rain-ceiling check just below still looks at the fixed

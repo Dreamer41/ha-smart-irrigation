@@ -65,3 +65,66 @@ async def test_the_zone_uses_its_own_gaps_and_the_normal_tier_in_cool_weather(ha
     assert ("number", "routine_interval_days") not in visibility.hidden_for(zone)
     assert ("number", "routine_interval_hot_days") not in visibility.hidden_for(zone)
     assert "routine_interval_days" in presets.COPY_NUMBER_KEYS and "routine_interval_hot_days" in presets.COPY_NUMBER_KEYS
+
+
+@pytest.mark.asyncio
+async def test_why_shows_the_same_dose_as_the_run(hass, fake_valve_services):
+    from custom_components.zoneflow import why
+
+    await _seed_source_entities(hass)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][entry.entry_id]
+    await zone.numbers["routine_interval_days"].async_set_metric_value(7.0)
+    await zone.numbers["routine_interval_hot_days"].async_set_metric_value(7.0)
+    _scale, plan = why._preview(zone)
+    assert plan.interval_target_mm == pytest.approx(zone._routine_plan().interval_target_mm)
+    assert plan.interval_target_mm == pytest.approx(35.0, abs=0.5)  # 7 of 7 days of the 35 mm week
+
+
+@pytest.mark.asyncio
+async def test_check_my_setup_warns_when_one_watering_no_longer_fits_the_runtime_cap(hass, fake_valve_services):
+    from custom_components.zoneflow import setup_check
+
+    await _seed_source_entities(hass)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][entry.entry_id]
+    assert not any(i["id"] == "cap" for i in setup_check.run_checks(zone))
+    await zone.numbers["routine_interval_days"].async_set_metric_value(10.0)
+    await zone.numbers["routine_interval_hot_days"].async_set_metric_value(10.0)
+    items = [i for i in setup_check.run_checks(zone) if i["id"] == "cap"]
+    assert items and items[0]["level"] == "warn"
+
+
+@pytest.mark.asyncio
+async def test_a_long_gap_that_is_on_time_is_not_reported_overdue(hass, fake_valve_services, monkeypatch, tmp_path):
+    import homeassistant.util.dt as dt_util
+
+    from .scenario_harness import CompressedTime
+
+    await _seed_source_entities(hass)
+    entry = make_entry(hass, csv_path=str(tmp_path / "a.csv"))
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][entry.entry_id]
+    for key in ("routine_interval_days", "routine_interval_hot_days"):
+        await zone.numbers[key].async_set_metric_value(10.0)
+    zone.numbers["max_runtime_minutes"].metric_value = 900
+    zone.numbers["max_daily_runtime_minutes"].metric_value = 900
+    zone.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 9.8 * 86400  # just due: 10 days minus the buffer
+    zone.store.state.last_significant_rain_ts = 0.0
+    CompressedTime(hass, ["switch.watering1"]).install(monkeypatch)
+    logged = []
+    real = zone._log_event
+
+    async def spy(**kwargs):
+        logged.append(kwargs.get("event_type"))
+        return await real(**kwargs)
+
+    monkeypatch.setattr(zone, "_log_event", spy)
+    await zone.run_routine_irrigation(manual=False)
+    await hass.async_block_till_done()
+    assert "Irrigation Overdue" not in logged, logged

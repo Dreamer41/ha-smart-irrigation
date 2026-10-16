@@ -357,6 +357,9 @@
       "ok": "Telefonmeldinger går til {entity}.",
       "none": "Ingen telefon å varsle. Du vil ikke få meldinger om vanning.",
       "fail": "Telefonen {entity} finnes ikke lenger, så ingen meldinger når deg."
+    },
+    "cap": {
+      "low": "En rutinevanning trenger {minutes} min, mer enn sonens sikkerhetsgrense ({cap} min), så den avvises hver gang. Hev grensen eller forkort dagene mellom vanningene."
     }
   },
   "why": {

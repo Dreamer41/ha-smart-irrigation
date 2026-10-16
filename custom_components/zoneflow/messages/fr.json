@@ -357,6 +357,9 @@
       "ok": "Les messages téléphoniques sont envoyés à {entity}.",
       "none": "Aucun téléphone à notifier. Vous ne recevrez pas de messages concernant l'arrosage.",
       "fail": "Le téléphone {entity} n'existe plus, aucun message ne vous parviendra."
+    },
+    "cap": {
+      "low": "Un arrosage de routine demande {minutes} min, plus que la limite de sécurité de cette zone ({cap} min) : il est refusé à chaque fois. Relevez la limite ou raccourcissez les jours entre arrosages."
     }
   },
   "why": {

@@ -357,6 +357,9 @@
       "ok": "Telefonmeddelanden går till {entity}.",
       "none": "Ingen telefon att avisera. Du får inga meddelanden om vattning.",
       "fail": "Telefonen {entity} finns inte längre, så inga meddelanden når dig."
+    },
+    "cap": {
+      "low": "En rutinbevattning behöver {minutes} min, mer än zonens säkerhetsgräns ({cap} min), så den nekas varje gång. Höj gränsen eller korta dagarna mellan bevattningarna."
     }
   },
   "why": {

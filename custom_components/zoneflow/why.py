@@ -12,36 +12,14 @@ import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
 from . import messages, units
-from .const import DEMAND_MODEL_ET, ROUTINE_MIN_PULSE_MINUTES
+from .const import DEMAND_MODEL_ET
 
 
 def _preview(controller: Any):
     """The plan the next routine would make if it ran now."""
-    state = controller.store.state
-    now_ts = dt_util.utcnow().timestamp()
-    days_elapsed = int((now_ts - state.last_routine_ts) / 86400) if state.last_routine_ts else 0
-    et_weekly = controller.et_weekly_target_mm()
-    scale = controller.routine_target_scale()
-    return scale, calc.plan_routine_irrigation(
-        avg_peak_temp=controller.effective_avg_peak_temp(),
-        hot_threshold=controller.number("hot_temp_threshold"),
-        cool_threshold=controller.number("cool_temp_threshold"),
-        normal_weekly_mm=controller.number("target_weekly_mm") * scale,
-        hot_weekly_mm=controller.number("target_weekly_hot_mm") * scale,
-        cool_weekly_mm=controller.number("target_weekly_cool_mm") * scale,
-        flow_rate=controller.number("flow_rate_mm_per_min"),
-        days_elapsed=days_elapsed,
-        today_rain_mm=controller.today_rain_mm(),
-        rain_day_history_mm=state.rain_day_history_mm,
-        rain_eff_low=controller.number("rain_eff_low"),
-        rain_eff_mid=controller.number("rain_eff_mid"),
-        rain_eff_high=controller.number("rain_eff_high"),
-        pulse_count=max(int(round(controller.number("routine_pulse_count"))), 1),
-        min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
-        weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
-        site=controller.site,
-        interval_fraction=1.0,
-    )
+    # The zone's own plan (controller._routine_plan): the one place the dose is
+    # worked out, so this panel can never show a different amount than the run.
+    return controller.routine_target_scale(), controller._routine_plan()
 
 
 def explain(controller: Any) -> list[dict[str, str]]:

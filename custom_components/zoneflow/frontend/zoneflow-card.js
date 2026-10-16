@@ -5619,6 +5619,7 @@ class ZoneFlowCard extends HTMLElement {
     });
     dialog.addEventListener("close", () => {
       if (this._popupKey === key) this._popupKey = undefined;
+      if (key === "schedule") this._scheduleSaved = ""; // closed by the person: the note was seen
       this._rows = (this._rows || []).filter((row) => !box.contains(row));
       dialog.remove();
     });
@@ -5740,7 +5741,10 @@ class ZoneFlowCard extends HTMLElement {
       if (text !== undefined) el.textContent = text;
       return el;
     };
-    const s = popup.schedule || {};
+    // The zone's times as they are now (not as they were when the card was built).
+    const statusId = Object.values(hass.entities || {}).find(
+      (e) => e.device_id === this._config.device_id && e.translation_key === "status")?.entity_id;
+    const s = hass.states?.[statusId]?.attributes?.schedule || popup.schedule || {};
     const MODES = ["fixed", "before_sunrise", "after_sunrise", "before_sunset", "after_sunset"];
     body.textContent = "";
     body.appendChild(make("div", "group-note", ts("note")));
@@ -5783,6 +5787,7 @@ class ZoneFlowCard extends HTMLElement {
     this._scheduleSaved = "";
     const save = make("button", "plant-button", ts("save"));
     save.addEventListener("click", async () => {
+      save.disabled = true; // one save at a time: the zone reloads under it
       const payload = { device_id: this._config.device_id };
       for (const [prefix, fields] of [["routine", routine], ["deep_soak", deep]]) {
         if (!fields) continue;
@@ -5798,6 +5803,7 @@ class ZoneFlowCard extends HTMLElement {
         this._scheduleSaved = "";
         message.textContent = String(err?.message || err);
       }
+      save.disabled = false;
     });
     body.append(save, message);
   }

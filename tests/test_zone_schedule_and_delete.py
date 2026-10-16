@@ -192,3 +192,26 @@ async def test_schedule_summary_survives_an_entry_with_no_times(hass):
     hass.config_entries.async_update_entry(entry, data={k: v for k, v in entry.data.items() if k not in (CONF_ROUTINE_TIME, CONF_DEEP_SOAK_TIME)})
     controller = hass.data[DOMAIN][entry.entry_id]
     assert controller.schedule_summary()["routine_time"] == "05:30"
+
+
+@pytest.mark.asyncio
+async def test_set_schedule_changes_the_zone_it_names_not_the_only_loaded_one(hass):
+    a, b = await _two_loaded(hass)
+    await hass.config_entries.async_unload(b.entry_id)  # B is not loaded: A is the only controller
+    await hass.async_block_till_done()
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN, "set_schedule", {"device_id": [_device_of(hass, b)], "routine_time": "21:15:00"}, blocking=True
+        )
+    assert not a.options.get(CONF_ROUTINE_TIME)
+
+
+@pytest.mark.asyncio
+async def test_set_schedule_with_an_unrelated_target_changes_nothing(hass):
+    entry = await _loaded(hass)
+    hass.states.async_set("light.kitchen", "off")
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN, "set_schedule", {"entity_id": ["light.kitchen"], "routine_time": "21:15:00"}, blocking=True
+        )
+    assert not entry.options.get(CONF_ROUTINE_TIME)

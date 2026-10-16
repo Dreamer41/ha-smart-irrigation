@@ -357,6 +357,9 @@
       "ok": "I messaggi telefonici vanno a {entity}.",
       "none": "Nessun telefono da notificare. Non riceverai messaggi sull'irrigazione.",
       "fail": "Il telefono {entity} non esiste più, quindi non riceverai messaggi."
+    },
+    "cap": {
+      "low": "Un'irrigazione di routine richiede {minutes} min, più del limite di sicurezza di questa zona ({cap} min), quindi viene sempre rifiutata. Alza il limite o riduci i giorni tra le irrigazioni."
     }
   },
   "why": {

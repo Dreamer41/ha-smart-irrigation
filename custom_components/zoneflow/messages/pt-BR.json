@@ -357,6 +357,9 @@
       "ok": "As mensagens de celular vão para {entity}.",
       "none": "Nenhum celular para notificar. Você não receberá mensagens sobre a irrigação.",
       "fail": "O celular {entity} não existe mais, portanto nenhuma mensagem chegará até você."
+    },
+    "cap": {
+      "low": "Uma rega de rotina precisa de {minutes} min, mais que o limite de segurança desta zona ({cap} min), então é sempre recusada. Aumente o limite ou reduza os dias entre regas."
     }
   },
   "why": {

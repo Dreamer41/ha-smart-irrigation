@@ -90,6 +90,15 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("flow", "warn", "flow.default", action="calibrate")
         else:
             add("flow", "ok", "flow.ok", value=f"{flow:g}")
+        # A routine watering must fit inside the runtime cap, or it is refused every time
+        # (a longer gap between waterings, or a low flow rate, makes each one longer).
+        try:
+            minutes = controller._routine_plan().calc_runtime_minutes
+        except Exception:  # noqa: BLE001 - a check must never raise
+            minutes = 0
+        cap = controller.number("max_runtime_minutes")
+        if minutes > cap:
+            add("cap", "warn", "cap.low", minutes=f"{minutes:.0f}", cap=f"{cap:.0f}")
         # Litres.
         if controller.has_water_volume:
             add("volume", "ok", "volume.ok")

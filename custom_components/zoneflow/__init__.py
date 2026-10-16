@@ -519,7 +519,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             """When the zone's routine watering and deep soak start: a clock
             time, or sunrise/sunset with an offset. The same settings as
             Configure > Settings; the zone reloads to use them."""
-            controller = _resolve_controller(hass, call)
+            if call.data.get(ATTR_DEVICE_ID) or call.data.get(ATTR_ENTITY_ID):
+                # A named zone is that zone, never "the only one that is loaded"
+                # (a zone that is reloading, or failed to set up, is not loaded).
+                controller = hass.data.get(DOMAIN, {}).get(_zone_entry_for_target(hass, call).entry_id)
+                if controller is None:
+                    raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
+            else:
+                controller = _resolve_controller(hass, call)
             if controller.store.state.lock_on or controller._runs or controller._service_active:
                 # Saving reloads the zone, which would stop the watering in progress.
                 raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")

@@ -37,6 +37,8 @@ async def test_a_1_7_2_zone_upgrades_cleanly(hass, fake_valve_services, hass_sto
     # the new settings start at the values that used to be fixed / off
     assert (zone.number("drydown_rain_24h_mm"), zone.number("drydown_rain_4d_mm"), zone.number("drydown_rain_7d_mm")) == (35.0, 50.0, 100.0)
     assert zone.number("valve_overlap_seconds") == 0.0
+    assert (zone.number("routine_interval_days"), zone.number("routine_interval_hot_days")) == (4.0, 3.0)
+    assert zone._routine_interval_days() in (3, 4)
     assert zone.schedule_summary()["routine_time"] == "05:30"
     # a rain check with no rain changes nothing
     zone._check_significant_rain()

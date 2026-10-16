@@ -357,6 +357,9 @@
       "ok": "Phone messages go to {entity}.",
       "none": "No phone to notify. You will not get messages about watering.",
       "fail": "The phone {entity} does not exist any more, so no messages reach you."
+    },
+    "cap": {
+      "low": "A routine watering needs {minutes} min, more than this zone's Routine Max Safety Runtime Cap ({cap} min), so it is refused each time. Raise the cap, or shorten the days between waterings."
     }
   },
   "why": {

@@ -357,6 +357,9 @@
       "ok": "Telefonnachrichten gehen an {entity}.",
       "none": "Kein Telefon für Benachrichtigungen. Sie erhalten keine Nachrichten über die Bewässerung.",
       "fail": "Das Telefon {entity} existiert nicht mehr, sodass Sie keine Nachrichten erreichen."
+    },
+    "cap": {
+      "low": "Eine Routinebewässerung braucht {minutes} Min., mehr als die maximale Sicherheitslaufzeit dieser Zone ({cap} Min.) und wird deshalb jedes Mal abgelehnt. Erhöhe die Grenze oder verkürze die Tage zwischen den Bewässerungen."
     }
   },
   "why": {

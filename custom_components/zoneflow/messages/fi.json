@@ -357,6 +357,9 @@
       "ok": "Puhelinviestit menevät kohteeseen {entity}.",
       "none": "Ei ilmoituspuhelinta. Et saa viestejä kastelusta.",
       "fail": "Puhelinta {entity} ei ole enää possessed, joten viestit eivät tavoita sinua."
+    },
+    "cap": {
+      "low": "Rutiinikastelu vaatii {minutes} min, enemmän kuin tämän vyöhykkeen turvaraja ({cap} min), joten se hylätään joka kerta. Nosta rajaa tai lyhennä kastelujen välistä aikaa."
     }
   },
   "why": {

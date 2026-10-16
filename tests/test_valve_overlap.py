@@ -203,3 +203,79 @@ async def test_a_reload_or_abort_during_the_overlap_leaves_both_valves_closed_an
     assert not a._get_pump_lock().locked()
     assert not any(isinstance(r, BaseException) for r in results), results
     assert not errors, errors
+
+
+@pytest.mark.asyncio
+async def test_the_overlap_seconds_count_toward_the_daily_runtime(hass, fake_valve_services, monkeypatch, tmp_path):
+    a, b = await _two_zones(hass, monkeypatch, tmp_path, overlap=10)
+    await _run_both(hass, a, b)
+    planned = a._routine_plan().calc_runtime_minutes + b._routine_plan().calc_runtime_minutes
+    # CompressedTime shrinks the waits to nothing, so the extra here is only the (compressed)
+    # overlap wait: it is added on top of the plans (>= planned), never dropped.
+    assert a.store.state.today_runtime_minutes + b.store.state.today_runtime_minutes >= planned - 0.01
+
+
+@pytest.mark.asyncio
+async def test_the_next_zone_holds_its_pump_audit_until_the_first_has_closed(hass, fake_valve_services, monkeypatch, tmp_path):
+    from custom_components.zoneflow.controller import ZoneFlowController
+
+    a, b = await _two_zones(hass, monkeypatch, tmp_path, overlap=8)
+    waits = []
+    real_pause = ZoneFlowController._pause
+
+    async def spy(self, seconds):
+        waits.append((self.entry.title, seconds))
+        return await real_pause(self, seconds)
+
+    monkeypatch.setattr(ZoneFlowController, "_pause", spy)
+    await _run_both(hass, a, b)
+    overlapping = [title for title, seconds in waits if seconds == 8]
+    assert len(overlapping) == 1, waits  # one zone kept its valve open the 8 s
+    holders = [title for title, seconds in waits if title != overlapping[0] and 0 < seconds < 8]
+    assert holders, waits  # the other held its pump-power audit until then
+
+
+VALVE_C = "switch.watering3"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("order", ["ACB", "ABC"])
+async def test_three_zones_one_pump_never_have_two_valves_open_when_a_meter_is_shared(
+    hass, fake_valve_services, monkeypatch, tmp_path, order
+):
+    await _seed(hass)
+    hass.states.async_set(VALVE_C, "off")
+    for meter in ("sensor.meter_m", "sensor.meter_n"):
+        hass.states.async_set(meter, "0")
+    specs = {
+        "A": dict(zone_name="Zone A", pump_id="P", flow_meter_entity="sensor.meter_m", csv_path=str(tmp_path / "a.csv")),
+        "B": dict(zone_name="Zone B", valve_entity=VALVE_B, pump_id="P", flow_meter_entity="sensor.meter_m", csv_path=str(tmp_path / "b.csv")),
+        "C": dict(zone_name="Zone C", valve_entity=VALVE_C, pump_id="P", flow_meter_entity="sensor.meter_n", csv_path=str(tmp_path / "c.csv")),
+    }
+    entries = {k: make_entry(hass, **specs[k]) for k in order}
+    assert await hass.config_entries.async_setup(entries[order[0]].entry_id)
+    await hass.async_block_till_done()
+    zones = {k: hass.data[DOMAIN][entries[k].entry_id] for k in "ABC"}
+    for zone in zones.values():
+        zone.numbers["routine_pulse_count"].metric_value = 1
+        zone.numbers["valve_overlap_seconds"].metric_value = 5
+    CompressedTime(hass, [VALVE, VALVE_B, VALVE_C]).install(monkeypatch)
+    events = []
+
+    @callback
+    def _record(event):
+        if event.data.get("entity_id") in (VALVE, VALVE_B, VALVE_C) and event.data.get("new_state"):
+            events.append((event.data["entity_id"], event.data["new_state"].state))
+
+    unsub = hass.bus.async_listen("state_changed", _record)
+    try:
+        await asyncio.gather(*(z.run_routine_now() for z in zones.values()))
+        await hass.async_block_till_done()
+    finally:
+        unsub()
+    open_now, both_a_and_b = set(), False
+    for entity, state in events:
+        (open_now.add if state == "on" else open_now.discard)(entity)
+        if {VALVE, VALVE_B} <= open_now:
+            both_a_and_b = True  # A and B share a meter: they must never overlap
+    assert not both_a_and_b, events
