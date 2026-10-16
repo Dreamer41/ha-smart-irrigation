@@ -165,3 +165,57 @@ async def test_a_zone_that_shares_no_pump_does_not_offer_the_setting(hass, fake_
     await hass.async_block_till_done()
     solo = hass.data[DOMAIN][entry.entry_id]
     assert ("number", "valve_overlap_seconds") in visibility.hidden_for(solo)
+
+
+_real_sleep = asyncio.sleep
+_real_wait_for = asyncio.wait_for
+
+
+def _scaled_clock(monkeypatch):
+    """Real-ish time, sped up 50x, so another task can act during the overlap."""
+    from custom_components.zoneflow import controller as controller_module
+
+    proxy = controller_module.asyncio
+
+    async def sleep(seconds, *args, **kwargs):
+        await _real_sleep(min(seconds, 60) * 0.02)
+
+    async def wait_for(aw, timeout=None):
+        if timeout is not None and timeout > 50:
+            timeout = 0.6  # a pulse
+        elif timeout is not None:
+            timeout = timeout * 0.02
+        return await _real_wait_for(aw, timeout)
+
+    monkeypatch.setattr(proxy, "sleep", sleep)
+    monkeypatch.setattr(proxy, "wait_for", wait_for)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("action", ["reload", "abort"])
+async def test_a_reload_or_abort_during_the_overlap_leaves_both_valves_closed_and_the_pump_free(
+    hass, fake_valve_services, monkeypatch, tmp_path, action
+):
+    a, b = await _two_zones(hass, monkeypatch, tmp_path, overlap=10)
+    _scaled_clock(monkeypatch)
+    errors = []
+    asyncio.get_running_loop().set_exception_handler(lambda _loop, context: errors.append(context))
+    run = asyncio.gather(a.run_routine_now(), b.run_routine_now(), return_exceptions=True)
+    first = None
+    for _ in range(2000):
+        first = next((z for z in (a, b) if z._pump_handed_over), None)
+        if first is not None:
+            break
+        await _real_sleep(0.005)
+    assert first is not None, "no hand-over happened"
+    await _real_sleep(0.05)  # inside the overlap: the first zone's valve is still open
+    if action == "reload":
+        await hass.config_entries.async_reload(first.entry.entry_id)
+    else:
+        await first._set_abort(True)
+    results = await run
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "off" and hass.states.get(VALVE_B).state == "off"
+    assert not a._get_pump_lock().locked()
+    assert not any(isinstance(r, BaseException) for r in results), results
+    assert not errors, errors
