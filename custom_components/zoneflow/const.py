@@ -354,7 +354,8 @@ STARTUP_GRACE_SECONDS = 120  # "delay: 00:02:00" before checking stale lock on s
 SELF_TUNE_STREAK_THRESHOLD = 3
 SELF_TUNE_ADJUST_STEP_DAYS = 0.5  # matches routine_drydown_days' own NUMBER_DEFS step
 
-# Significant-rain thresholds (avocado_significant_rain_logger)
+# Significant-rain thresholds (avocado_significant_rain_logger): the starting
+# values of the Dry-Down Rain Threshold settings (1.7.3; adjustable per zone).
 SIGNIFICANT_RAIN_24H_MM = 35.0
 SIGNIFICANT_RAIN_4D_MM = 50.0
 SIGNIFICANT_RAIN_7D_MM = 100.0
@@ -401,6 +402,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "deep_soak_max_runtime_minutes": ("Deep Soak Max Safety Runtime Cap", 30.0, 900.0, 10.0, "min"),
     "max_runtime_minutes": ("Routine Max Safety Runtime Cap", 10.0, 900.0, 5.0, "min"),
     "routine_drydown_days": ("Routine Dry-Down Holdoff", 1.0, 10.0, 0.5, "d"),
+    # How often the routine watering runs (1.7.3): the days between waterings in the
+    # normal and cool tiers, and in the hot tier (a shorter gap when it is hot).
+    "routine_interval_days": ("Routine Days Between Waterings", 1.0, 10.0, 1.0, "d"),
+    "routine_interval_hot_days": ("Routine Days Between Waterings (Hot)", 1.0, 10.0, 1.0, "d"),
     "deep_soak_drydown_days": ("Deep Soak Subsoil Dry-Down Holdoff", 4.0, 14.0, 0.5, "d"),
     "deep_soak_interval_days": ("Deep Soak Interval", 3.0, 30.0, 1.0, "d"),
     # NOTE: the rain-ceiling check just below still looks at the fixed
@@ -411,6 +416,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "deep_soak_rain_threshold": ("Deep Soak Rain Ceiling (14d)", 0.0, 100.0, 5.0, "mm"),
     "rain_mm_per_tip": ("Rain Gauge mm per Tip (Calibration)", 0.05, 1.0, 0.001, "mm"),
     "preirrigation_rain_threshold_mm": ("Pre-Irrigation Cancel Threshold (30min)", 0.5, 20.0, 0.5, "mm"),
+    # Rain heavy enough to start the dry-down holdoffs (routine and deep soak).
+    "drydown_rain_24h_mm": ("Dry-Down Rain Threshold (24h)", 5.0, 200.0, 1.0, "mm"),
+    "drydown_rain_4d_mm": ("Dry-Down Rain Threshold (4 days)", 10.0, 300.0, 1.0, "mm"),
+    "drydown_rain_7d_mm": ("Dry-Down Rain Threshold (7 days)", 10.0, 500.0, 5.0, "mm"),
     # Manual rain (1.6.1): the amount the "Add Manual Rain" button adds,
     # back to 0 after each press (controller.add_manual_rain_from_number).
     "manual_rain_mm": ("Manual Rain", 0.0, 200.0, 0.5, "mm"),
@@ -419,6 +428,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # behavior change for a single-zone/independent-pump setup.
     "pump_preamble_seconds": ("Pump Preamble (Warm-Up Delay)", 0.0, 60.0, 1.0, "s"),
     "pump_postamble_seconds": ("Pump Postamble (Settle Delay)", 0.0, 60.0, 1.0, "s"),
+    # The next zone on this pump opens its valve this long before this one closes (1.7.3).
+    "valve_overlap_seconds": ("Valve Overlap", 0.0, 10.0, 1.0, "s"),
     # Only apply when a weather entity is configured for this zone -- see
     # ZoneFlowController._forecast_gate_allows_run. Skip is preemptive
     # (rain forecast -> hold off, check again next scheduled run); the dry
@@ -544,15 +555,21 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "deep_soak_max_runtime_minutes": 124.0,
     "max_runtime_minutes": 103.0,
     "routine_drydown_days": 4.0,
+    "routine_interval_days": float(ROUTINE_NORMAL_INTERVAL_DAYS),
+    "routine_interval_hot_days": float(ROUTINE_HOT_INTERVAL_DAYS),
     "deep_soak_drydown_days": 8.0,
     "deep_soak_interval_days": 14.0,
     "deep_soak_rain_threshold": 40.0,
     "rain_mm_per_tip": 0.3,
     "preirrigation_rain_threshold_mm": 3.0,
+    "drydown_rain_24h_mm": SIGNIFICANT_RAIN_24H_MM,
+    "drydown_rain_4d_mm": SIGNIFICANT_RAIN_4D_MM,
+    "drydown_rain_7d_mm": SIGNIFICANT_RAIN_7D_MM,
     "manual_rain_mm": 0.0,
     "zone_flow_l_min": 0.0,
     "pump_preamble_seconds": 0.0,
     "pump_postamble_seconds": 0.0,
+    "valve_overlap_seconds": 0.0,
     "forecast_rain_threshold_mm": 3.0,
     "forecast_probability_threshold_pct": 60.0,
     "forecast_dry_override_days": 2.0,

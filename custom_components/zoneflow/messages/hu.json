@@ -357,6 +357,9 @@
       "ok": "A telefonos üzenetek ide érkeznek: {entity}.",
       "none": "Nincs értesítendő telefon. Nem fog üzeneteket kapni az öntözésről.",
       "fail": "A(z) {entity} telefon már nem létezik, így nem kap üzeneteket."
+    },
+    "cap": {
+      "low": "Egy rutinöntözés {minutes} percet igényel, ami több a zóna biztonsági korlátjánál ({cap} perc), ezért minden alkalommal elutasítja. Emeld a korlátot, vagy rövidítsd az öntözések közti napokat."
     }
   },
   "why": {

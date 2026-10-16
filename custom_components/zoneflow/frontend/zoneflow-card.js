@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.7.2";
+const CARD_VERSION = "1.7.3";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -253,6 +253,27 @@ const I18N = {
       "button": "Why?",
       "hide": "Hide",
       "loading": "Looking…"
+    },
+    "schedule": {
+      "title": "Watering time",
+      "routine": "Routine watering",
+      "deep_soak": "Deep soak",
+      "time": "Time",
+      "offset": "Minutes",
+      "save": "Save",
+      "saved": "Saved. The zone reloads to use the new time.",
+      "fixed": "At a set time",
+      "before_sunrise": "Before sunrise",
+      "after_sunrise": "After sunrise",
+      "before_sunset": "Before sunset",
+      "after_sunset": "After sunset",
+      "note": "When each watering starts. Choose sunrise or sunset to let it move with the seasons."
+    },
+    "delete_zone": {
+      "button": "Delete this zone",
+      "confirm": "Delete {name}? The zone and its settings are removed. This cannot be undone.",
+      "yes": "Yes, delete",
+      "cancel": "Cancel"
     }
   },
   "de": {
@@ -491,6 +512,27 @@ const I18N = {
       "button": "Warum?",
       "hide": "Ausblenden",
       "loading": "Wird gesucht…"
+    },
+    "schedule": {
+      "title": "Bewässerungszeit",
+      "routine": "Routinebewässerung",
+      "deep_soak": "Tiefenbewässerung",
+      "time": "Uhrzeit",
+      "offset": "Minuten",
+      "save": "Speichern",
+      "saved": "Gespeichert. Die Zone lädt neu und nutzt die neue Zeit.",
+      "fixed": "Zu einer festen Uhrzeit",
+      "before_sunrise": "Vor Sonnenaufgang",
+      "after_sunrise": "Nach Sonnenaufgang",
+      "before_sunset": "Vor Sonnenuntergang",
+      "after_sunset": "Nach Sonnenuntergang",
+      "note": "Wann jede Bewässerung beginnt. Mit Sonnenaufgang oder Sonnenuntergang wandert sie mit den Jahreszeiten."
+    },
+    "delete_zone": {
+      "button": "Diese Zone löschen",
+      "confirm": "{name} löschen? Die Zone und ihre Einstellungen werden entfernt. Das kann nicht rückgängig gemacht werden.",
+      "yes": "Ja, löschen",
+      "cancel": "Abbrechen"
     }
   },
   "es": {
@@ -729,6 +771,27 @@ const I18N = {
       "button": "¿Por qué?",
       "hide": "Ocultar",
       "loading": "Buscando…"
+    },
+    "schedule": {
+      "title": "Hora de riego",
+      "routine": "Riego de rutina",
+      "deep_soak": "Riego profundo",
+      "time": "Hora",
+      "offset": "Minutos",
+      "save": "Guardar",
+      "saved": "Guardado. La zona se recarga para usar la nueva hora.",
+      "fixed": "A una hora fija",
+      "before_sunrise": "Antes del amanecer",
+      "after_sunrise": "Después del amanecer",
+      "before_sunset": "Antes del atardecer",
+      "after_sunset": "Después del atardecer",
+      "note": "Cuándo empieza cada riego. Elige amanecer o atardecer para que cambie con las estaciones."
+    },
+    "delete_zone": {
+      "button": "Eliminar esta zona",
+      "confirm": "¿Eliminar {name}? Se eliminan la zona y sus ajustes. No se puede deshacer.",
+      "yes": "Sí, eliminar",
+      "cancel": "Cancelar"
     }
   },
   "fi": {
@@ -967,6 +1030,27 @@ const I18N = {
       "button": "Miksi?",
       "hide": "Piilota",
       "loading": "Hetaan…"
+    },
+    "schedule": {
+      "title": "Kastelun aika",
+      "routine": "Rutiinikastelu",
+      "deep_soak": "Syväkastelu",
+      "time": "Kellonaika",
+      "offset": "Minuuttia",
+      "save": "Tallenna",
+      "saved": "Tallennettu. Vyöhyke latautuu uudelleen ja käyttää uutta aikaa.",
+      "fixed": "Kiinteänä kellonaikana",
+      "before_sunrise": "Ennen auringonnousua",
+      "after_sunrise": "Auringonnousun jälkeen",
+      "before_sunset": "Ennen auringonlaskua",
+      "after_sunset": "Auringonlaskun jälkeen",
+      "note": "Milloin kukin kastelu alkaa. Valitse auringonnousu tai -lasku, niin aika seuraa vuodenaikoja."
+    },
+    "delete_zone": {
+      "button": "Poista tämä vyöhyke",
+      "confirm": "Poistetaanko {name}? Vyöhyke ja sen asetukset poistetaan. Tätä ei voi peruuttaa.",
+      "yes": "Kyllä, poista",
+      "cancel": "Peruuta"
     }
   },
   "fr": {
@@ -1205,6 +1289,27 @@ const I18N = {
       "button": "Pourquoi ?",
       "hide": "Masquer",
       "loading": "Recherche…"
+    },
+    "schedule": {
+      "title": "Heure d'arrosage",
+      "routine": "Arrosage de routine",
+      "deep_soak": "Arrosage profond",
+      "time": "Heure",
+      "offset": "Minutes",
+      "save": "Enregistrer",
+      "saved": "Enregistré. La zone se recharge pour utiliser la nouvelle heure.",
+      "fixed": "À une heure fixe",
+      "before_sunrise": "Avant le lever du soleil",
+      "after_sunrise": "Après le lever du soleil",
+      "before_sunset": "Avant le coucher du soleil",
+      "after_sunset": "Après le coucher du soleil",
+      "note": "Quand chaque arrosage commence. Choisissez le lever ou le coucher du soleil pour suivre les saisons."
+    },
+    "delete_zone": {
+      "button": "Supprimer cette zone",
+      "confirm": "Supprimer {name} ? La zone et ses réglages sont supprimés. Action irréversible.",
+      "yes": "Oui, supprimer",
+      "cancel": "Annuler"
     }
   },
   "it": {
@@ -1443,6 +1548,27 @@ const I18N = {
       "button": "Perché?",
       "hide": "Nascondi",
       "loading": "Ricerca in corso…"
+    },
+    "schedule": {
+      "title": "Orario di irrigazione",
+      "routine": "Irrigazione di routine",
+      "deep_soak": "Irrigazione profonda",
+      "time": "Ora",
+      "offset": "Minuti",
+      "save": "Salva",
+      "saved": "Salvato. La zona si ricarica per usare il nuovo orario.",
+      "fixed": "A un'ora fissa",
+      "before_sunrise": "Prima dell'alba",
+      "after_sunrise": "Dopo l'alba",
+      "before_sunset": "Prima del tramonto",
+      "after_sunset": "Dopo il tramonto",
+      "note": "Quando inizia ogni irrigazione. Scegli alba o tramonto per seguire le stagioni."
+    },
+    "delete_zone": {
+      "button": "Elimina questa zona",
+      "confirm": "Eliminare {name}? La zona e le sue impostazioni vengono rimosse. Non si può annullare.",
+      "yes": "Sì, elimina",
+      "cancel": "Annulla"
     }
   },
   "nl": {
@@ -1681,6 +1807,27 @@ const I18N = {
       "button": "Waarom?",
       "hide": "Verbergen",
       "loading": "Zoeken…"
+    },
+    "schedule": {
+      "title": "Bewateringstijd",
+      "routine": "Routinebewatering",
+      "deep_soak": "Diepe bewatering",
+      "time": "Tijd",
+      "offset": "Minuten",
+      "save": "Opslaan",
+      "saved": "Opgeslagen. De zone laadt opnieuw om de nieuwe tijd te gebruiken.",
+      "fixed": "Op een vaste tijd",
+      "before_sunrise": "Voor zonsopgang",
+      "after_sunrise": "Na zonsopgang",
+      "before_sunset": "Voor zonsondergang",
+      "after_sunset": "Na zonsondergang",
+      "note": "Wanneer elke bewatering begint. Kies zonsopgang of zonsondergang om met de seizoenen mee te schuiven."
+    },
+    "delete_zone": {
+      "button": "Deze zone verwijderen",
+      "confirm": "{name} verwijderen? De zone en haar instellingen worden verwijderd. Dit kan niet ongedaan worden gemaakt.",
+      "yes": "Ja, verwijderen",
+      "cancel": "Annuleren"
     }
   },
   "pl": {
@@ -1919,6 +2066,27 @@ const I18N = {
       "button": "Dlaczego?",
       "hide": "Ukryj",
       "loading": "Szukanie…"
+    },
+    "schedule": {
+      "title": "Godzina podlewania",
+      "routine": "Podlewanie rutynowe",
+      "deep_soak": "Głębokie podlewanie",
+      "time": "Godzina",
+      "offset": "Minuty",
+      "save": "Zapisz",
+      "saved": "Zapisano. Strefa wczyta się ponownie z nową godziną.",
+      "fixed": "O stałej godzinie",
+      "before_sunrise": "Przed wschodem słońca",
+      "after_sunrise": "Po wschodzie słońca",
+      "before_sunset": "Przed zachodem słońca",
+      "after_sunset": "Po zachodzie słońca",
+      "note": "Kiedy zaczyna się każde podlewanie. Wybierz wschód lub zachód słońca, by zmieniało się z porami roku."
+    },
+    "delete_zone": {
+      "button": "Usuń tę strefę",
+      "confirm": "Usunąć {name}? Strefa i jej ustawienia zostaną usunięte. Nie można tego cofnąć.",
+      "yes": "Tak, usuń",
+      "cancel": "Anuluj"
     }
   },
   "pt": {
@@ -2157,6 +2325,27 @@ const I18N = {
       "button": "Porquê?",
       "hide": "Ocultar",
       "loading": "A procurar…"
+    },
+    "schedule": {
+      "title": "Hora da rega",
+      "routine": "Rega de rotina",
+      "deep_soak": "Rega profunda",
+      "time": "Hora",
+      "offset": "Minutos",
+      "save": "Guardar",
+      "saved": "Guardado. A zona recarrega para usar a nova hora.",
+      "fixed": "A uma hora fixa",
+      "before_sunrise": "Antes do nascer do sol",
+      "after_sunrise": "Depois do nascer do sol",
+      "before_sunset": "Antes do pôr do sol",
+      "after_sunset": "Depois do pôr do sol",
+      "note": "Quando começa cada rega. Escolha nascer ou pôr do sol para acompanhar as estações."
+    },
+    "delete_zone": {
+      "button": "Eliminar esta zona",
+      "confirm": "Eliminar {name}? A zona e as suas definições são removidas. Não pode ser desfeito.",
+      "yes": "Sim, eliminar",
+      "cancel": "Cancelar"
     }
   },
   "sv": {
@@ -2395,6 +2584,27 @@ const I18N = {
       "button": "Varför?",
       "hide": "Dölj",
       "loading": "Söker…"
+    },
+    "schedule": {
+      "title": "Bevattningstid",
+      "routine": "Rutinbevattning",
+      "deep_soak": "Djupbevattning",
+      "time": "Tid",
+      "offset": "Minuter",
+      "save": "Spara",
+      "saved": "Sparat. Zonen laddas om och använder den nya tiden.",
+      "fixed": "Vid en fast tid",
+      "before_sunrise": "Före soluppgång",
+      "after_sunrise": "Efter soluppgång",
+      "before_sunset": "Före solnedgång",
+      "after_sunset": "Efter solnedgång",
+      "note": "När varje bevattning startar. Välj soluppgång eller solnedgång så följer den årstiderna."
+    },
+    "delete_zone": {
+      "button": "Ta bort den här zonen",
+      "confirm": "Ta bort {name}? Zonen och dess inställningar tas bort. Det går inte att ångra.",
+      "yes": "Ja, ta bort",
+      "cancel": "Avbryt"
     }
   },
   "cs": {
@@ -2633,6 +2843,27 @@ const I18N = {
       "button": "Proč?",
       "hide": "Skrýt",
       "loading": "Hledá se…"
+    },
+    "schedule": {
+      "title": "Čas zálivky",
+      "routine": "Běžná zálivka",
+      "deep_soak": "Hluboká zálivka",
+      "time": "Čas",
+      "offset": "Minuty",
+      "save": "Uložit",
+      "saved": "Uloženo. Zóna se znovu načte s novým časem.",
+      "fixed": "V pevný čas",
+      "before_sunrise": "Před východem slunce",
+      "after_sunrise": "Po východu slunce",
+      "before_sunset": "Před západem slunce",
+      "after_sunset": "Po západu slunce",
+      "note": "Kdy každá zálivka začíná. Zvolte východ nebo západ slunce, aby se čas posouval s ročním obdobím."
+    },
+    "delete_zone": {
+      "button": "Smazat tuto zónu",
+      "confirm": "Smazat {name}? Zóna a její nastavení budou odstraněny. Nelze vrátit zpět.",
+      "yes": "Ano, smazat",
+      "cancel": "Zrušit"
     }
   },
   "da": {
@@ -2871,6 +3102,27 @@ const I18N = {
       "button": "Hvorfor?",
       "hide": "Skjul",
       "loading": "Kigger…"
+    },
+    "schedule": {
+      "title": "Vandingstid",
+      "routine": "Rutinevanding",
+      "deep_soak": "Dybdevanding",
+      "time": "Tid",
+      "offset": "Minutter",
+      "save": "Gem",
+      "saved": "Gemt. Zonen genindlæses og bruger den nye tid.",
+      "fixed": "På et fast tidspunkt",
+      "before_sunrise": "Før solopgang",
+      "after_sunrise": "Efter solopgang",
+      "before_sunset": "Før solnedgang",
+      "after_sunset": "Efter solnedgang",
+      "note": "Hvornår hver vanding starter. Vælg solopgang eller solnedgang, så følger den årstiderne."
+    },
+    "delete_zone": {
+      "button": "Slet denne zone",
+      "confirm": "Slet {name}? Zonen og dens indstillinger fjernes. Det kan ikke fortrydes.",
+      "yes": "Ja, slet",
+      "cancel": "Annuller"
     }
   },
   "hu": {
@@ -3109,6 +3361,27 @@ const I18N = {
       "button": "Miért?",
       "hide": "Elrejtés",
       "loading": "Keresés…"
+    },
+    "schedule": {
+      "title": "Öntözés ideje",
+      "routine": "Rutinöntözés",
+      "deep_soak": "Mélyöntözés",
+      "time": "Időpont",
+      "offset": "Perc",
+      "save": "Mentés",
+      "saved": "Mentve. A zóna újratöltődik, és az új időt használja.",
+      "fixed": "Rögzített időpontban",
+      "before_sunrise": "Napkelte előtt",
+      "after_sunrise": "Napkelte után",
+      "before_sunset": "Napnyugta előtt",
+      "after_sunset": "Napnyugta után",
+      "note": "Mikor indul az egyes öntözés. Válaszd a napkeltét vagy napnyugtát, hogy kövesse az évszakokat."
+    },
+    "delete_zone": {
+      "button": "A zóna törlése",
+      "confirm": "Törlöd: {name}? A zóna és a beállításai törlődnek. Nem vonható vissza.",
+      "yes": "Igen, törlés",
+      "cancel": "Mégse"
     }
   },
   "nb": {
@@ -3347,6 +3620,27 @@ const I18N = {
       "button": "Hvorfor?",
       "hide": "Skjul",
       "loading": "Ser etter…"
+    },
+    "schedule": {
+      "title": "Vanningstid",
+      "routine": "Rutinevanning",
+      "deep_soak": "Dypvanning",
+      "time": "Tid",
+      "offset": "Minutter",
+      "save": "Lagre",
+      "saved": "Lagret. Sonen lastes på nytt og bruker den nye tiden.",
+      "fixed": "På et fast tidspunkt",
+      "before_sunrise": "Før soloppgang",
+      "after_sunrise": "Etter soloppgang",
+      "before_sunset": "Før solnedgang",
+      "after_sunset": "Etter solnedgang",
+      "note": "Når hver vanning starter. Velg soloppgang eller solnedgang, så følger den årstidene."
+    },
+    "delete_zone": {
+      "button": "Slett denne sonen",
+      "confirm": "Slette {name}? Sonen og innstillingene fjernes. Dette kan ikke angres.",
+      "yes": "Ja, slett",
+      "cancel": "Avbryt"
     }
   },
   "pt-BR": {
@@ -3585,6 +3879,27 @@ const I18N = {
       "button": "Por quê?",
       "hide": "Ocultar",
       "loading": "Buscando…"
+    },
+    "schedule": {
+      "title": "Horário da rega",
+      "routine": "Rega de rotina",
+      "deep_soak": "Rega profunda",
+      "time": "Hora",
+      "offset": "Minutos",
+      "save": "Salvar",
+      "saved": "Salvo. A zona recarrega para usar o novo horário.",
+      "fixed": "Em um horário fixo",
+      "before_sunrise": "Antes do nascer do sol",
+      "after_sunrise": "Depois do nascer do sol",
+      "before_sunset": "Antes do pôr do sol",
+      "after_sunset": "Depois do pôr do sol",
+      "note": "Quando cada rega começa. Escolha nascer ou pôr do sol para acompanhar as estações."
+    },
+    "delete_zone": {
+      "button": "Excluir esta zona",
+      "confirm": "Excluir {name}? A zona e as configurações dela serão removidas. Não dá para desfazer.",
+      "yes": "Sim, excluir",
+      "cancel": "Cancelar"
     }
   },
   "ru": {
@@ -3823,6 +4138,27 @@ const I18N = {
       "button": "Почему?",
       "hide": "Скрыть",
       "loading": "Поиск…"
+    },
+    "schedule": {
+      "title": "Время полива",
+      "routine": "Обычный полив",
+      "deep_soak": "Глубокий полив",
+      "time": "Время",
+      "offset": "Минуты",
+      "save": "Сохранить",
+      "saved": "Сохранено. Зона перезагрузится и будет использовать новое время.",
+      "fixed": "В заданное время",
+      "before_sunrise": "До восхода солнца",
+      "after_sunrise": "После восхода солнца",
+      "before_sunset": "До заката",
+      "after_sunset": "После заката",
+      "note": "Когда начинается каждый полив. Выберите восход или закат, чтобы время менялось с сезонами."
+    },
+    "delete_zone": {
+      "button": "Удалить эту зону",
+      "confirm": "Удалить {name}? Зона и её настройки будут удалены. Это нельзя отменить.",
+      "yes": "Да, удалить",
+      "cancel": "Отмена"
     }
   },
   "sk": {
@@ -4061,6 +4397,27 @@ const I18N = {
       "button": "Prečo?",
       "hide": "Skryť",
       "loading": "Hľadá sa…"
+    },
+    "schedule": {
+      "title": "Čas polievania",
+      "routine": "Bežné polievanie",
+      "deep_soak": "Hlboké polievanie",
+      "time": "Čas",
+      "offset": "Minúty",
+      "save": "Uložiť",
+      "saved": "Uložené. Zóna sa znova načíta s novým časom.",
+      "fixed": "V pevnom čase",
+      "before_sunrise": "Pred východom slnka",
+      "after_sunrise": "Po východe slnka",
+      "before_sunset": "Pred západom slnka",
+      "after_sunset": "Po západe slnka",
+      "note": "Kedy sa každé polievanie začína. Vyberte východ alebo západ slnka, aby sa čas posúval s ročnými obdobiami."
+    },
+    "delete_zone": {
+      "button": "Odstrániť túto zónu",
+      "confirm": "Odstrániť {name}? Zóna a jej nastavenia sa odstránia. Nedá sa to vrátiť.",
+      "yes": "Áno, odstrániť",
+      "cancel": "Zrušiť"
     }
   },
   "uk": {
@@ -4299,6 +4656,27 @@ const I18N = {
       "button": "Чому?",
       "hide": "Сховати",
       "loading": "Пошук…"
+    },
+    "schedule": {
+      "title": "Час поливу",
+      "routine": "Звичайний полив",
+      "deep_soak": "Глибокий полив",
+      "time": "Час",
+      "offset": "Хвилини",
+      "save": "Зберегти",
+      "saved": "Збережено. Зона перезавантажиться й використовуватиме новий час.",
+      "fixed": "У заданий час",
+      "before_sunrise": "До сходу сонця",
+      "after_sunrise": "Після сходу сонця",
+      "before_sunset": "До заходу сонця",
+      "after_sunset": "Після заходу сонця",
+      "note": "Коли починається кожен полив. Оберіть схід або захід сонця, щоб час змінювався з порами року."
+    },
+    "delete_zone": {
+      "button": "Видалити цю зону",
+      "confirm": "Видалити {name}? Зону та її налаштування буде видалено. Це не можна скасувати.",
+      "yes": "Так, видалити",
+      "cancel": "Скасувати"
     }
   },
   "zh-Hans": {
@@ -4537,6 +4915,27 @@ const I18N = {
       "button": "原因？",
       "hide": "隐藏",
       "loading": "正在查找…"
+    },
+    "schedule": {
+      "title": "浇水时间",
+      "routine": "常规浇水",
+      "deep_soak": "深度浇水",
+      "time": "时间",
+      "offset": "分钟",
+      "save": "保存",
+      "saved": "已保存。该区域将重新加载并使用新的时间。",
+      "fixed": "固定时间",
+      "before_sunrise": "日出前",
+      "after_sunrise": "日出后",
+      "before_sunset": "日落前",
+      "after_sunset": "日落后",
+      "note": "每次浇水的开始时间。选择日出或日落，可随季节变化。"
+    },
+    "delete_zone": {
+      "button": "删除此区域",
+      "confirm": "删除 {name}？该区域及其设置将被删除，无法撤销。",
+      "yes": "是，删除",
+      "cancel": "取消"
     }
   }
 };
@@ -4602,13 +5001,14 @@ const SETTINGS_GROUPS = [
   ]],
   ["amounts", [
     "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
-    "number.target_weekly_cool_mm", "select.demand_model", "number.crop_coefficient",
+    "number.target_weekly_cool_mm", "number.routine_interval_days", "number.routine_interval_hot_days", "select.demand_model", "number.crop_coefficient",
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
     "number.routine_pulse_count", "number.routine_pulse_rest_minutes",
   ]],
   ["water_use", ["number.zone_flow_l_min"]],
   ["rain", [
-    "number.routine_drydown_days", "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
+    "number.routine_drydown_days", "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm",
+    "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
     "number.forecast_dry_override_days", "number.frost_guard_temp",
     "number.rain_eff_low", "number.rain_eff_mid", "number.rain_eff_high",
@@ -4634,6 +5034,7 @@ const SETTINGS_GROUPS = [
   ["safety", [
     "number.max_runtime_minutes", "number.max_daily_runtime_minutes", "number.service_mode_auto_off_minutes",
     "number.pump_min_watts", "number.pump_preamble_seconds", "number.pump_postamble_seconds",
+    "number.valve_overlap_seconds",
   ]],
   ["notifications", ["select.notifications", "select.weekly_summary"]],
 ];
@@ -4847,6 +5248,8 @@ class ZoneFlowCard extends HTMLElement {
       .plant-button { font: inherit; color: var(--primary-color); background: none; border: 1px solid var(--divider-color);
         border-radius: 16px; padding: 4px 12px; cursor: pointer; }
       .plant-button:hover { background: var(--secondary-background-color); }
+      .plant-button.danger { color: var(--error-color, #db4437); border-color: var(--error-color, #db4437); }
+      .delete-zone { margin-top: 16px; }
       .plant-stage { font-weight: 500; margin: 4px 0; }
       .plant-stage.ready { color: var(--success-color, #43a047); }
       .plant-nursery .area-input[type="number"] { width: 110px; }
@@ -5055,6 +5458,13 @@ class ZoneFlowCard extends HTMLElement {
     if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
     }
+    // When the routine watering and the deep soak start (a zone that waters).
+    if (this._config.show_settings && valve && statusAttrs.schedule && hass.user?.is_admin) {
+      this._popups.schedule = {
+        icon: "mdi:clock-outline", custom: "schedule", parts: [], label: t(hass, "schedule.title"),
+        schedule: statusAttrs.schedule,
+      };
+    }
     if (this._config.show_diagnostics) {
       this._popups.diagnostics = { icon: "mdi:chart-box-outline", parts: [[null, diagnostics]] };
     }
@@ -5155,6 +5565,7 @@ class ZoneFlowCard extends HTMLElement {
     body.className = "dlg-body";
     if (popup.custom === "plants") this._plantsBody(body);
     if (popup.custom === "check") this._checkBody(body);
+    if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       if (groupKey) {
@@ -5186,6 +5597,8 @@ class ZoneFlowCard extends HTMLElement {
       body.appendChild(list);
       this._addRows(list, confs, "popup");
     }
+    // The settings end with the way out: deleting the zone (administrators).
+    if (key === "settings" && hass.user?.is_admin) this._deleteZoneBlock(body);
     box.append(header, body);
     if (hass.user?.is_admin) {
       // The zone's own device page: every entity, logbook, and more.
@@ -5206,6 +5619,7 @@ class ZoneFlowCard extends HTMLElement {
     });
     dialog.addEventListener("close", () => {
       if (this._popupKey === key) this._popupKey = undefined;
+      if (key === "schedule") this._scheduleSaved = ""; // closed by the person: the note was seen
       this._rows = (this._rows || []).filter((row) => !box.contains(row));
       dialog.remove();
     });
@@ -5316,6 +5730,122 @@ class ZoneFlowCard extends HTMLElement {
       }
     });
     body.append(set, done);
+  }
+
+  _scheduleBody(body, popup) {
+    const hass = this._hass;
+    const ts = (key) => t(hass, `schedule.${key}`);
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    // The zone's times as they are now (not as they were when the card was built).
+    const statusId = Object.values(hass.entities || {}).find(
+      (e) => e.device_id === this._config.device_id && e.translation_key === "status")?.entity_id;
+    const s = hass.states?.[statusId]?.attributes?.schedule || popup.schedule || {};
+    const MODES = ["fixed", "before_sunrise", "after_sunrise", "before_sunset", "after_sunset"];
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", ts("note")));
+    const block = (prefix, titleKey) => {
+      body.appendChild(make("div", "group-title", ts(titleKey)));
+      const mode = make("select", "area-input");
+      for (const m of MODES) {
+        const option = make("option", "", ts(m));
+        option.value = m;
+        mode.appendChild(option);
+      }
+      mode.value = s[`${prefix}_sun_mode`] || "fixed";
+      const time = make("input", "area-input");
+      time.type = "time";
+      time.value = s[`${prefix}_time`] || "";
+      const offset = make("input", "area-input");
+      offset.type = "number";
+      offset.min = "0";
+      offset.max = "180";
+      offset.step = "5";
+      offset.value = s[`${prefix}_sun_offset_minutes`] ?? 0;
+      const timeRow = make("label", "plant-choice");
+      timeRow.append(document.createTextNode(`${ts("time")} `), time);
+      const offsetRow = make("label", "plant-choice");
+      offsetRow.append(document.createTextNode(`${ts("offset")} `), offset);
+      const sync = () => {
+        const fixed = mode.value === "fixed";
+        timeRow.style.display = fixed ? "" : "none";
+        offsetRow.style.display = fixed ? "none" : "";
+      };
+      mode.addEventListener("change", sync);
+      sync();
+      body.append(mode, timeRow, offsetRow);
+      return { mode, time, offset };
+    };
+    const routine = block("routine", "routine");
+    const deep = s.deep_soak_enabled ? block("deep_soak", "deep_soak") : null;
+    // Saving reloads the zone and the popup opens again: say it was saved there.
+    const message = make("div", "group-note", this._scheduleSaved || "");
+    this._scheduleSaved = "";
+    const save = make("button", "plant-button", ts("save"));
+    save.addEventListener("click", async () => {
+      save.disabled = true; // one save at a time: the zone reloads under it
+      const payload = { device_id: this._config.device_id };
+      for (const [prefix, fields] of [["routine", routine], ["deep_soak", deep]]) {
+        if (!fields) continue;
+        payload[`${prefix}_sun_mode`] = fields.mode.value;
+        if (fields.time.value) payload[`${prefix}_time`] = `${fields.time.value}:00`.slice(0, 8);
+        payload[`${prefix}_sun_offset_minutes`] = Number(fields.offset.value) || 0;
+      }
+      try {
+        this._scheduleSaved = ts("saved");
+        await hass.callService("zoneflow", "set_schedule", payload);
+        message.textContent = ts("saved");
+      } catch (err) {
+        this._scheduleSaved = "";
+        message.textContent = String(err?.message || err);
+      }
+      save.disabled = false;
+    });
+    body.append(save, message);
+  }
+
+  _deleteZoneBlock(body) {
+    const hass = this._hass;
+    const device = hass.devices?.[this._config.device_id];
+    const name = this._config.title || device?.name_by_user || device?.name || "";
+    const wrap = document.createElement("div");
+    wrap.className = "delete-zone";
+    const ask = document.createElement("button");
+    ask.className = "plant-button danger";
+    ask.textContent = t(hass, "delete_zone.button");
+    wrap.appendChild(ask);
+    ask.addEventListener("click", () => {
+      wrap.textContent = "";
+      const text = document.createElement("div");
+      text.className = "group-note";
+      text.textContent = t(hass, "delete_zone.confirm").split("{name}").join(name);
+      const yes = document.createElement("button");
+      yes.className = "plant-button danger";
+      yes.textContent = t(hass, "delete_zone.yes");
+      const no = document.createElement("button");
+      no.className = "plant-button";
+      no.textContent = t(hass, "delete_zone.cancel");
+      yes.addEventListener("click", async () => {
+        yes.disabled = true;
+        try {
+          await hass.callService("zoneflow", "delete_zone", { device_id: this._config.device_id });
+          this.shadowRoot.querySelector("dialog")?.close();
+        } catch (err) {
+          text.textContent = String(err?.message || err);
+          yes.disabled = false;
+        }
+      });
+      no.addEventListener("click", () => {
+        wrap.textContent = "";
+        wrap.appendChild(ask);
+      });
+      wrap.append(text, yes, no);
+    });
+    body.appendChild(wrap);
   }
 
   async _plantsBody(body) {

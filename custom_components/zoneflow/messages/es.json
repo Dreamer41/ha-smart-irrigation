@@ -357,6 +357,9 @@
       "ok": "Los mensajes del teléfono van a {entity}.",
       "none": "Sin teléfono para notificar. No recibirás mensajes sobre el riego.",
       "fail": "El teléfono {entity} ya no existe, por lo que no te llegarán mensajes."
+    },
+    "cap": {
+      "low": "Un riego de rutina necesita {minutes} min, más que el límite de seguridad de esta zona ({cap} min), así que se rechaza siempre. Sube el límite o acorta los días entre riegos."
     }
   },
   "why": {

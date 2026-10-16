@@ -357,6 +357,9 @@
       "ok": "Telefoonberichten gaan naar {entity}.",
       "none": "Geen telefoon om te melden. Je krijgt geen berichten over het sproeien.",
       "fail": "De telefoon {entity} bestaat niet meer, dus er komen geen berichten an."
+    },
+    "cap": {
+      "low": "Een routinebewatering duurt {minutes} min, langer dan de veiligheidslimiet van deze zone ({cap} min), dus hij wordt elke keer geweigerd. Verhoog de limiet of verkort de dagen tussen bewateringen."
     }
   },
   "why": {

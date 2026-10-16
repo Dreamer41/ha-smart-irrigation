@@ -25,6 +25,9 @@ FORECAST = {
 }
 RAIN_GAUGE = {
     ("number", "rain_mm_per_tip"),
+    ("number", "drydown_rain_24h_mm"),
+    ("number", "drydown_rain_4d_mm"),
+    ("number", "drydown_rain_7d_mm"),
     ("number", "preirrigation_rain_threshold_mm"),
     ("number", "deep_soak_rain_threshold"),
     ("sensor", "rain_past_30min"),
@@ -46,7 +49,11 @@ RAIN_GAUGE_ONLY = {
 # Shown by another entity: Days Until Next Run says the same, and the Status sentence says when.
 DUPLICATES = {("sensor", "next_irrigation_estimate")}
 PUMP_POWER = {("number", "pump_min_watts")}
-SHARED_PUMP = {("number", "pump_preamble_seconds"), ("number", "pump_postamble_seconds")}
+SHARED_PUMP = {
+    ("number", "pump_preamble_seconds"),
+    ("number", "pump_postamble_seconds"),
+    ("number", "valve_overlap_seconds"),
+}
 TEMPERATURE = {
     ("sensor", "avg_peak_temp_3d"),
     ("sensor", "reference_et0_3d"),

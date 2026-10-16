@@ -211,6 +211,8 @@ pump.
 **Shared pump safety** matters: two valves open on one pump split its flow,
 and both zones get less water than their calibrated runtime assumes.
 
+**Valve overlap.** If the pipes bang when a valve closes, set **Valve Overlap** (0 to 10 seconds, in the Safety settings of zones that share a pump). The next zone's valve then opens that many seconds before the running zone's closes. At 0 (the default) the zones take turns exactly as before.
+
 ## More features
 
 - **Tidy device page**: settings sit under *Configuration*, technical
@@ -231,7 +233,11 @@ and both zones get less water than their calibrated runtime assumes.
   English.
 - **Tunable live**: every threshold is a `number` entity with a sensible
   default — weekly targets per tier, hot/cool thresholds, emitter flow
-  rate, pulse count and soak time per cadence, dry-down days, deep-soak
+  rate, pulse count and soak time per cadence, the days between routine
+  waterings (4 in normal and cool weather, 3 in hot weather to start with),
+  dry-down days and the rain
+  that starts the dry-down (Dry-Down Rain Threshold: 35 mm in 24 h, 50 mm in
+  4 days, 100 mm in 7 days to start with), deep-soak
   interval and depth, rain efficiency, forecast thresholds, runtime caps.
 - **Climate at setup**: pick tropical, hot summers, temperate or cool
   summers, and the hot/cool thresholds and fallback temperature are

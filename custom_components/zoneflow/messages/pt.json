@@ -357,6 +357,9 @@
       "ok": "As mensagens do telemóvel vão para {entity}.",
       "none": "Nenhum telemóvel para notificar. Não receberá mensagens sobre a rega.",
       "fail": "O telemóvel {entity} já não existe, pelo que não receberá mensagens."
+    },
+    "cap": {
+      "low": "Uma rega de rotina precisa de {minutes} min, mais do que o limite de segurança desta zona ({cap} min), por isso é sempre recusada. Aumente o limite ou encurte os dias entre regas."
     }
   },
   "why": {

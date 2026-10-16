@@ -92,6 +92,8 @@ from .const import (
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    DEFAULT_DEEP_SOAK_TIME,
+    DEFAULT_ROUTINE_TIME,
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
@@ -139,9 +141,6 @@ from .const import (
     ROUTINE_MIN_PULSE_MINUTES,
     SELF_TUNE_ADJUST_STEP_DAYS,
     SELF_TUNE_STREAK_THRESHOLD,
-    SIGNIFICANT_RAIN_24H_MM,
-    SIGNIFICANT_RAIN_4D_MM,
-    SIGNIFICANT_RAIN_7D_MM,
     STALE_LOCK_MINUTES,
     STARTUP_GRACE_SECONDS,
     SUN_MODE_AFTER_SUNRISE,
@@ -208,6 +207,11 @@ def _weather_temp_c(state: State | None) -> float | None:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+# hass.data key: pump lock key -> {"zones": entry ids that were waiting, "until": time the
+# handing-over zone closes} while it keeps its own valve open for the next one (valve overlap).
+PUMP_HANDOVER_KEY = f"{DOMAIN}_pump_handover"
 
 
 def _parse_hms(value: str) -> dt_time:
@@ -334,6 +338,10 @@ class ZoneFlowController:
         # valve was really open (seconds).
         self._measuring = False
         self._run_liters: float | None = None
+        # The pump lock was handed to the next zone before this valve closed (valve overlap).
+        self._pump_handed_over = False
+        # Set on the zone that received the pump this way: its pump-power audit waits until then.
+        self._audit_not_before: float | None = None
         self._open_seconds = 0.0
         self._pump_check_seconds = 0.0
         # Frost guard: the cycles waiting for it to warm up (deep soak is
@@ -774,11 +782,28 @@ class ZoneFlowController:
 
     @property
     def deep_soak_time(self) -> dt_time:
-        return _parse_hms(self.entry.options.get(CONF_DEEP_SOAK_TIME, self.entry.data.get(CONF_DEEP_SOAK_TIME)))
+        return _parse_hms(
+            self.entry.options.get(CONF_DEEP_SOAK_TIME, self.entry.data.get(CONF_DEEP_SOAK_TIME)) or DEFAULT_DEEP_SOAK_TIME
+        )
 
     @property
     def routine_time(self) -> dt_time:
-        return _parse_hms(self.entry.options.get(CONF_ROUTINE_TIME, self.entry.data.get(CONF_ROUTINE_TIME)))
+        return _parse_hms(
+            self.entry.options.get(CONF_ROUTINE_TIME, self.entry.data.get(CONF_ROUTINE_TIME)) or DEFAULT_ROUTINE_TIME
+        )
+
+    def schedule_summary(self) -> dict[str, Any]:
+        """When the routine watering and the deep soak start (a clock time, or
+        sunrise/sunset plus an offset), for the card's Watering time popup."""
+        return {
+            "routine_time": self.routine_time.strftime("%H:%M"),
+            "routine_sun_mode": self.routine_sun_mode,
+            "routine_sun_offset_minutes": self.routine_sun_offset_minutes,
+            "deep_soak_enabled": bool(self.deep_soak_enabled),
+            "deep_soak_time": self.deep_soak_time.strftime("%H:%M"),
+            "deep_soak_sun_mode": self.deep_soak_sun_mode,
+            "deep_soak_sun_offset_minutes": self.deep_soak_sun_offset_minutes,
+        }
 
     @property
     def deep_soak_sun_mode(self) -> str:
@@ -1231,17 +1256,31 @@ class ZoneFlowController:
             return  # only an attribute changed: not a new reading (a repeat comes as a state report)
         self._sync_rain_from_counter_state(new_state)
 
+    def _rain_threshold_checks(self) -> dict[str, tuple[float, float]]:
+        """The rain in each window and the Dry-Down Rain Threshold it is held against."""
+        windows = self.rain_windows()
+        return {
+            "24h": (windows["24h"], self.number("drydown_rain_24h_mm")),
+            "4d": (windows["4d"], self.number("drydown_rain_4d_mm")),
+            "7d": (windows["7d"], self.number("drydown_rain_7d_mm")),
+        }
+
+    def _resync_rain_flags(self) -> None:
+        """A Dry-Down Rain Threshold was moved: note which windows are over
+        their threshold now, without calling it a new storm. Otherwise rain
+        that fell days ago would count as heavy rain "now" the next time the
+        rain is checked, restart the dry-down holdoff and send an alert."""
+        state = self.store.state
+        for key, (value, threshold) in self._rain_threshold_checks().items():
+            state.rain_threshold_flags[key] = value > threshold
+        self.hass.async_create_task(self.store.async_save())
+
     def _check_significant_rain(self) -> None:
         """Port of avocado_significant_rain_logger (edge-triggered). Reads
         the combined rain (gauge and manual), so heavy rain entered by hand
         restarts the dry-down too."""
         now_ts = dt_util.utcnow().timestamp()
-        windows = self.rain_windows()
-        checks = {
-            "24h": (windows["24h"], SIGNIFICANT_RAIN_24H_MM),
-            "4d": (windows["4d"], SIGNIFICANT_RAIN_4D_MM),
-            "7d": (windows["7d"], SIGNIFICANT_RAIN_7D_MM),
-        }
+        checks = self._rain_threshold_checks()
         state = self.store.state
         fired = False
         for key, (value, threshold) in checks.items():
@@ -1566,6 +1605,10 @@ class ZoneFlowController:
         """A slider was moved (number.py)."""
         if key == "flow_rate_mm_per_min":
             self._check_issues()  # a calibrated flow rate clears its repair at once
+        elif key in ("drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm"):
+            self._resync_rain_flags()
+        elif key in ("routine_interval_days", "routine_interval_hot_days", "routine_drydown_days"):
+            self._notify_status()  # when the next watering is changed with it: show it at once
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
 
@@ -2208,8 +2251,24 @@ class ZoneFlowController:
         reported = getattr(state, "last_reported", None) or state.last_updated
         return round((dt_util.utcnow() - reported).total_seconds() / 3600, 1)
 
+    def _routine_interval_settings(self) -> dict[str, int]:
+        """The two Routine Days Between Waterings settings, as the keyword
+        arguments the calculations take (one place, so the dose, the due check
+        and the Status estimate can never read them differently)."""
+        return {
+            "normal_interval_days": max(int(round(self.number("routine_interval_days"))), 1),
+            "hot_interval_days": max(int(round(self.number("routine_interval_hot_days"))), 1),
+        }
+
     def _routine_interval_days(self) -> int:
-        return calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        """Days between routine waterings now: the hot gap in the hot tier, else the normal one."""
+        gaps = self._routine_interval_settings()
+        return calc.routine_interval_days(
+            self.effective_avg_peak_temp(),
+            self.number("hot_temp_threshold"),
+            gaps["normal_interval_days"],
+            gaps["hot_interval_days"],
+        )
 
     def _wet_hold_days(self) -> float | None:
         since = self.store.state.wet_hold_since_ts
@@ -2286,6 +2345,7 @@ class ZoneFlowController:
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
             routine_drydown_days=self.number("routine_drydown_days"),
+            **self._routine_interval_settings(),
         ).next_ts
         if status == "dry":
             now_ts = dt_util.utcnow().timestamp()
@@ -2366,6 +2426,8 @@ class ZoneFlowController:
         if self._stopping:
             return False
         pump_lock = self._get_pump_lock()
+        self._pump_handed_over = False
+        self._audit_not_before = None
         # What's running, for the Status sensor -- from the pump wait until
         # the run ends, however it ends.
         self._cycle_kind = kind
@@ -2397,7 +2459,8 @@ class ZoneFlowController:
                     runtime_for_log=runtime_for_log,
                 )
             finally:
-                pump_lock.release()
+                if not self._pump_handed_over:  # (valve overlap already gave it to the next zone)
+                    pump_lock.release()
         finally:
             self._cycle_kind = ""
             self._notify_status()
@@ -2445,7 +2508,17 @@ class ZoneFlowController:
         runtime_for_log: int,
     ) -> bool:
         preamble = self.number("pump_preamble_seconds")
-        if preamble > 0:
+        # The zone before this one handed the pump over with its valve still
+        # open (valve overlap): the pump is already running, no warm-up.
+        handovers = self.hass.data.get(PUMP_HANDOVER_KEY, {})
+        handover = handovers.get(self._pump_lock_key)
+        pump_running = handover is not None and self.entry.entry_id in handover["zones"]
+        if pump_running:
+            handovers.pop(self._pump_lock_key, None)
+            # The zone before is still open for a moment: the pump's power says nothing
+            # about this zone's own valve until it has closed.
+            self._audit_not_before = handover["until"]
+        if preamble > 0 and not pump_running:
             await self._pause(preamble)
 
         flow_start = await self._flow_meter_reading()
@@ -2491,7 +2564,7 @@ class ZoneFlowController:
                 )
 
         postamble = self.number("pump_postamble_seconds")
-        if postamble > 0 and not self._stopping:
+        if postamble > 0 and not self._stopping and not self._pump_handed_over:
             # Runs whether or not the cycle completed cleanly -- the
             # valve is already closed either way, and the point is
             # letting pressure settle before the next zone queued on
@@ -2647,6 +2720,11 @@ class ZoneFlowController:
             if self.pump_power_entity and not self._stopping and not self.store.state.abort_on:
                 # wait_template pump-power check, timeout 45s, continue_on_timeout
                 check_started = dt_util.utcnow().timestamp()
+                if self._audit_not_before is not None:
+                    delay = self._audit_not_before - check_started
+                    self._audit_not_before = None
+                    if delay > 0:
+                        await self._pause(delay)
                 with contextlib.suppress(asyncio.TimeoutError):
                     await asyncio.wait_for(
                         self._wait_for_pump_watts_or_abort(min_pump_watts, service=kind == SERVICE_RUN_KIND),
@@ -2706,12 +2784,61 @@ class ZoneFlowController:
                 return _ABORTED
 
             self._expected_pulse_minutes = None
+            overlap = await self._overlap_with_next_zone(kind) if index == count else 0.0
             await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
             self._end_pulse(pulse_minutes, full=True)
+            self._open_seconds += overlap
 
             if index < count:
                 await self._pause(rest_minutes * 60)
         return _DONE
+
+    def _zones_waiting_on_my_pump(self) -> "list[ZoneFlowController]":
+        """The other zones queued for the pump this zone is running on."""
+        key = self._pump_lock_key
+        return [
+            other
+            for other in self.hass.data.get(DOMAIN, {}).values()
+            if isinstance(other, ZoneFlowController)
+            and other is not self
+            and other._pump_lock_key == key
+            and other._waiting_pump_kind
+        ]
+
+    async def _overlap_with_next_zone(self, kind: str) -> float:
+        """Valve overlap: at the end of its last pulse, a zone whose pump has
+        another zone waiting hands the pump over now and keeps its own valve
+        open for the Valve Overlap seconds, so the next zone's valve opens
+        before this one closes and the pump never pushes against shut valves.
+        Returns the seconds it kept the valve open (0: no overlap). Only a
+        watering cycle, never a service run or a flow measurement, and never
+        when nothing is waiting."""
+        seconds = self.number("valve_overlap_seconds")
+        if seconds <= 0 or kind not in ("Deep Soak", "Routine Irrigation") or self._measuring:
+            return 0.0
+        if self._stopping or self.store.state.abort_on:
+            return 0.0
+        waiting = self._zones_waiting_on_my_pump()
+        if not waiting:
+            return 0.0
+        if self.flow_meter_entity and any(z.flow_meter_entity == self.flow_meter_entity for z in waiting):
+            return 0.0  # one meter for both: the overlap water would be counted in both zones
+        pump_lock = self._get_pump_lock()
+        handovers = self.hass.data.setdefault(PUMP_HANDOVER_KEY, {})
+        started = dt_util.utcnow().timestamp()
+        if pump_lock.locked() and not self._pump_handed_over:
+            self._pump_handed_over = True
+            # Whichever of the waiting zones gets the pump first takes this: it skips its
+            # warm-up (the pump is running) and holds its pump-power audit until we close.
+            handovers[self._pump_lock_key] = {"zones": {z.entry.entry_id for z in waiting}, "until": started + seconds}
+            pump_lock.release()
+        try:
+            await self._pause(seconds)
+        finally:
+            handovers.pop(self._pump_lock_key, None)  # nobody took it: not for a later run
+        open_for = max(dt_util.utcnow().timestamp() - started, 0.0)
+        self.store.state.today_runtime_minutes += open_for / 60.0  # the valve was open: it counts toward the daily cap
+        return open_for
 
     async def _wait_pulse(self, seconds: float, *, service: bool) -> None:
         """The open-valve wait of a pulse: ends early on an abort, a reload
@@ -3144,7 +3271,7 @@ class ZoneFlowController:
             now_ts - state.last_routine_ts,
             now_ts - (state.last_deep_soak_ts or 0.0),
             self.number("deep_soak_interval_days"),
-            calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+            self._routine_interval_days(),
             ROUTINE_INTERVAL_BUFFER_SECONDS,
             DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
         )
@@ -3155,7 +3282,7 @@ class ZoneFlowController:
         state = self.store.state
         if state.last_routine_ts is None or state.last_deep_soak_ts is None:
             return deep_ts
-        interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        interval = self._routine_interval_days()
         routine_due_ts = state.last_routine_ts + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS
         latest = (
             state.last_deep_soak_ts
@@ -3405,7 +3532,7 @@ class ZoneFlowController:
         if state.lock_on:
             if self._service_active and calc.routine_due(
                 elapsed_seconds,
-                calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+                self._routine_interval_days(),
                 ROUTINE_INTERVAL_BUFFER_SECONDS,
             ):
                 await self._log_skipped_for_service("Routine Irrigation")
@@ -3419,7 +3546,7 @@ class ZoneFlowController:
         # Temperature slider -- see watering_temp.
         avg_peak_temp = self.effective_avg_peak_temp()
         hot_threshold = self.number("hot_temp_threshold")
-        interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
+        interval_days = self._routine_interval_days()
         interval_due = calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS)
 
         # A due deep soak replaces this routine instead of adding a second
@@ -3484,50 +3611,19 @@ class ZoneFlowController:
         if not manual and not await self._forecast_gate_allows_run("routine"):
             return
 
-        # Growth-stage auto-ramp (optional, off by default -- see
-        # growth_ramp_fraction) scales only the routine weekly targets, not
-        # the deep-soak depth target: it models "a young plant needs less
-        # water overall right now", which is the routine cycle's job, while
-        # deep soak's job (root-zone penetration depth) doesn't scale the
-        # same way with plant age.
-        deficit_share, deficit_reason = self.deficit()
-        # The routine dose scales with the growth ramp, deficit mode, and
-        # mulch adjustment alike -- see routine_target_scale().
-        scale = self.routine_target_scale()
-        et_weekly = self.et_weekly_target_mm()
-        routine_pulse_count = max(int(round(self.number("routine_pulse_count"))), 1)
-        days_elapsed = int(elapsed_seconds / 86400)
+        deficit_share, deficit_reason = self.deficit()  # for the log's notes; the dose scales in _routine_plan
         # Brought forward by a dry probe (the schedule says not yet): only the
         # elapsed days' share of the dose, so a probe stuck on "dry" can't
         # flood the zone with a full dose every morning.
         interval_fraction = 1.0 if interval_due else calc.early_run_fraction(elapsed_seconds, interval_days)
-        plan = calc.plan_routine_irrigation(
-            avg_peak_temp=avg_peak_temp,
-            hot_threshold=hot_threshold,
-            cool_threshold=self.number("cool_temp_threshold"),
-            normal_weekly_mm=self.number("target_weekly_mm") * scale,
-            hot_weekly_mm=self.number("target_weekly_hot_mm") * scale,
-            cool_weekly_mm=self.number("target_weekly_cool_mm") * scale,
-            flow_rate=self.number("flow_rate_mm_per_min"),
-            days_elapsed=days_elapsed,
-            today_rain_mm=self.today_rain_mm(),
-            rain_day_history_mm=state.rain_day_history_mm,
-            rain_eff_low=self.number("rain_eff_low"),
-            rain_eff_mid=self.number("rain_eff_mid"),
-            rain_eff_high=self.number("rain_eff_high"),
-            pulse_count=routine_pulse_count,
-            min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
-            weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
-            site=self.site,
-            interval_fraction=interval_fraction,
-            rain_offset_mm=self.rain_offset_mm(),
-        )
+        # The same plan the rain check and the Status estimate use (_routine_plan).
+        plan = self._routine_plan(interval_fraction=interval_fraction, elapsed_seconds=elapsed_seconds)
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
         # one would otherwise measure its gap from 1970 (~20,000 days).
         # (A pause is deliberate: the gap only counts from when it ended.)
         overdue_days = int((now_ts - max(last_run_ts, state.pause_ended_ts or 0.0)) / 86400)
-        if state.last_routine_ts is not None and overdue_days > 10:
+        if state.last_routine_ts is not None and overdue_days > max(10, int(interval_days * 2.5)):
             await self._log_event(
                 event_type="Irrigation Overdue",
                 status="WARNING",
@@ -4094,18 +4190,31 @@ class ZoneFlowController:
             return 0.0
         if (state.last_routine_ts or 0.0) > spent_ts + 1:
             return 0.0  # watered since: the credit window started again
-        interval_days = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        interval_days = self._routine_interval_days()
         if dt_util.utcnow().timestamp() - spent_ts > (interval_days + 1) * 86400:
             return 0.0
         return state.rain_credit_spent_mm
 
-    def _routine_plan(self) -> calc.RoutinePlan:
-        """What a routine watering would give now, on the zone's own settings
-        (a full interval's dose, with the rain credit since the last watering)."""
+    def _routine_plan(
+        self, *, interval_fraction: float = 1.0, elapsed_seconds: float | None = None
+    ) -> calc.RoutinePlan:
+        """What a routine watering gives, on the zone's own settings: the dose
+        for the interval (all of it, or `interval_fraction` of it for a run a
+        dry probe brought forward), less the rain credit since the last
+        watering. The one place the dose is worked out: the routine watering
+        itself, the hourly "watered by the rain" check and the Status estimate
+        all use it, so they can never disagree.
+
+        Growth-stage auto-ramp (optional, off by default -- see
+        growth_ramp_fraction), deficit mode and the mulch adjustment scale only
+        the routine weekly targets (routine_target_scale), not the deep-soak
+        depth target: they model "this plant needs less water overall right
+        now", which is the routine cycle's job."""
         state = self.store.state
         scale = self.routine_target_scale()
         et_weekly = self.et_weekly_target_mm()
-        elapsed = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
+        if elapsed_seconds is None:
+            elapsed_seconds = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
         return calc.plan_routine_irrigation(
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
@@ -4114,7 +4223,7 @@ class ZoneFlowController:
             hot_weekly_mm=self.number("target_weekly_hot_mm") * scale,
             cool_weekly_mm=self.number("target_weekly_cool_mm") * scale,
             flow_rate=self.number("flow_rate_mm_per_min"),
-            days_elapsed=int(elapsed / 86400),
+            days_elapsed=int(elapsed_seconds / 86400),
             today_rain_mm=self.today_rain_mm(),
             rain_day_history_mm=state.rain_day_history_mm,
             rain_eff_low=self.number("rain_eff_low"),
@@ -4124,8 +4233,9 @@ class ZoneFlowController:
             min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
-            interval_fraction=1.0,
+            interval_fraction=interval_fraction,
             rain_offset_mm=self.rain_offset_mm(),
+            **self._routine_interval_settings(),
         )
 
     async def _on_rain_credit_check(self, now=None) -> None:
@@ -4147,7 +4257,7 @@ class ZoneFlowController:
             return
         offset = self.rain_offset_mm()
         now_ts = dt_util.utcnow().timestamp()
-        interval_days = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        interval_days = self._routine_interval_days()
         if offset > 0 and now_ts - (state.rain_credit_spent_ts or 0.0) < interval_days * 86400:
             return  # already counted this interval; what is left over waits for the next one
         state.last_routine_ts = now_ts
@@ -4744,7 +4854,7 @@ class ZoneFlowController:
         routine = None
         if routine_est is not None:
             if source == "schedule":
-                interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+                interval = self._routine_interval_days()
                 drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
                 routine_est = max(
                     (state.last_routine_ts or 0.0) + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS, drydown_end

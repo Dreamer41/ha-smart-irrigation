@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import math
 
-from homeassistant.components.number import RestoreNumber
+from homeassistant.components.number import NumberMode, RestoreNumber
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
@@ -26,6 +26,8 @@ from . import units
 from . import greenhouse_logic
 from .const import CONF_INITIAL_NUMBERS, DOMAIN, GREENHOUSE_NUMBERS, MOISTURE_ONLY_NUMBERS, NUMBER_DEFAULTS, NUMBER_DEFS
 from .entity_cleanup import remove_entities
+
+SLIDER_KEYS = {"drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm"}
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:
@@ -104,6 +106,12 @@ class ZoneFlowNumber(RestoreNumber):
             # to seed it from (see ZoneFlowController._seed_fallback_temp).
             return None
         return units.display_value(self._key, self.metric_value, self._metric_step, self._imperial)
+
+    @property
+    def mode(self) -> NumberMode:
+        # The three dry-down rain thresholds are always sliders: Home Assistant
+        # would turn the 4-day one (10-300 mm in 1 mm steps) into a number box.
+        return NumberMode.SLIDER if self._key in SLIDER_KEYS else NumberMode.AUTO
 
     @property
     def native_min_value(self) -> float:

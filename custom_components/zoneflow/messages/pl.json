@@ -357,6 +357,9 @@
       "ok": "Wiadomości na telefon trafiają do {entity}.",
       "none": "Brak telefonu do powiadomień. Nie będziesz otrzymywać wiadomości o podlewaniu.",
       "fail": "Telefon {entity} już nie istnieje, więc wiadomości do Ciebie nie dotrą."
+    },
+    "cap": {
+      "low": "Podlewanie rutynowe wymaga {minutes} min, więcej niż limit bezpieczeństwa tej strefy ({cap} min), więc jest za każdym razem odrzucane. Podnieś limit lub skróć odstęp między podlewaniami."
     }
   },
   "why": {

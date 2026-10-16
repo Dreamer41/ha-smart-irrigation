@@ -806,7 +806,7 @@ average of daily HIGH temperatures** (afternoon peaks, not the daily mean):
 
 | Field | Starting values (hot / cool / fallback, °C) | What it does |
 |---|---|---|
-| Hot weather threshold | tropical 31.5, hot summers 34, temperate 28, cool summers 24 | at or above this: hot tier — waters every 3 days with the hot weekly target |
+| Hot weather threshold | tropical 31.5, hot summers 34, temperate 28, cool summers 24 | at or above this: hot tier — waters at the hot gap (**Routine Days Between Waterings (Hot)**, 3 days to start with) with the hot weekly target. The normal and cool tiers use **Routine Days Between Waterings** (4 days to start with); a longer gap gives a bigger dose each time, so the week still gets its water |
 | Cool weather threshold | tropical 30, hot summers 26, temperate 20, cool summers 16 | below this: cool tier — the cool weekly target; between cool and hot is normal. Must be below hot (the form refuses otherwise) |
 | Fallback / manual temperature | tropical 30.5, hot summers 30, temperate 24, cool summers 20 | used when there is no real reading: **with no temperature sensor it is the person's manual control** (raise it for a heat wave, lower it for a cold spell); with a sensor, only until the sensor has recorded its first full day, and after 3 days without a single reading (§7.6). Leave it in the normal band unless there's a reason not to |
 
@@ -1295,6 +1295,15 @@ the next queued zone can start) on the zones that share that pump ID. Ask
 the person if their pump has a noticeable spin-up/pressure-settle time; if
 they don't know, leave both at 0 and revisit only if they see flow-rate
 inconsistency between zones.
+
+If the pipes bang when a valve closes against the running pump, set
+`valve_overlap_seconds` (0-10 s, "Valve Overlap") on the zones that share the
+pump: when a zone finishes its last pulse and another zone is waiting for the
+pump, it hands the pump over and keeps its own valve open for that many
+seconds, so the next valve opens first. 0 (the default) leaves it as it was.
+It is not used for service runs or flow measurements, or when both zones
+share one flow meter. For that hand-over the next zone skips its pump
+preamble (the pump is already running) and the finishing zone its postamble.
 
 Worth setting expectations on if the person asks how the queuing actually
 behaves: a zone holds the shared pump for its **entire** cycle once it

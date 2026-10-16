@@ -4,6 +4,9 @@ Ideas queued for upcoming releases.
 
 ## Next update
 
+- Valve overlap for zones that share a pump: the next zone's valve opens a few
+  seconds before the running zone's closes, so the pump never pushes against
+  closed valves and the pipes do not bang.
 - A plant inventory across all zones.
 - Greenhouse: device names ("Fans", "Vents", "Heater", "Misting") translated
   inside the notifications and the status, not only the sentences around
@@ -12,6 +15,12 @@ Ideas queued for upcoming releases.
   machine translated).
 
 ## Shipped
+
+### 1.7.3 — days between waterings, Watering time, Delete zone, Valve Overlap
+
+- Days between routine waterings (normal and hot) and the rain that starts the dry-down are settings.
+- Watering time and Delete zone on the zone card.
+- Valve Overlap for zones that share a pump.
 
 ### 1.7.2 — watered by the rain, drag and drop plants
 

@@ -357,6 +357,9 @@
       "ok": "Správy na telefón sa odosielajú na {entity}.",
       "none": "Žiadny telefón na upozornenie. Nebudete dostávať správy o zalievaní.",
       "fail": "Telefón {entity} už neexistuje, takže vám neprídu žiadne správy."
+    },
+    "cap": {
+      "low": "Bežné polievanie potrebuje {minutes} min, viac ako bezpečnostný limit tejto zóny ({cap} min), preto je vždy odmietnuté. Zvýšte limit alebo skráťte dni medzi polievaniami."
     }
   },
   "why": {
