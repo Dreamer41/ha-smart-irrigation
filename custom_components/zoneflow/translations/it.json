@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Sovrapposizione valvole"
+      },
+      "routine_interval_days": {
+        "name": "Routine: giorni tra le irrigazioni"
+      },
+      "routine_interval_hot_days": {
+        "name": "Routine: giorni tra le irrigazioni (caldo)"
       }
     },
     "datetime": {

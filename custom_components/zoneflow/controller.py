@@ -2248,7 +2248,13 @@ class ZoneFlowController:
         return round((dt_util.utcnow() - reported).total_seconds() / 3600, 1)
 
     def _routine_interval_days(self) -> int:
-        return calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        """Days between routine waterings now: the hot gap in the hot tier, else the normal one."""
+        return calc.routine_interval_days(
+            self.effective_avg_peak_temp(),
+            self.number("hot_temp_threshold"),
+            max(int(round(self.number("routine_interval_days"))), 1),
+            max(int(round(self.number("routine_interval_hot_days"))), 1),
+        )
 
     def _wet_hold_days(self) -> float | None:
         since = self.store.state.wet_hold_since_ts
@@ -2325,6 +2331,8 @@ class ZoneFlowController:
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
             routine_drydown_days=self.number("routine_drydown_days"),
+            normal_interval_days=max(int(round(self.number("routine_interval_days"))), 1),
+            hot_interval_days=max(int(round(self.number("routine_interval_hot_days"))), 1),
         ).next_ts
         if status == "dry":
             now_ts = dt_util.utcnow().timestamp()
@@ -3237,7 +3245,7 @@ class ZoneFlowController:
             now_ts - state.last_routine_ts,
             now_ts - (state.last_deep_soak_ts or 0.0),
             self.number("deep_soak_interval_days"),
-            calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+            self._routine_interval_days(),
             ROUTINE_INTERVAL_BUFFER_SECONDS,
             DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
         )
@@ -3248,7 +3256,7 @@ class ZoneFlowController:
         state = self.store.state
         if state.last_routine_ts is None or state.last_deep_soak_ts is None:
             return deep_ts
-        interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        interval = self._routine_interval_days()
         routine_due_ts = state.last_routine_ts + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS
         latest = (
             state.last_deep_soak_ts
@@ -3498,7 +3506,7 @@ class ZoneFlowController:
         if state.lock_on:
             if self._service_active and calc.routine_due(
                 elapsed_seconds,
-                calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold")),
+                self._routine_interval_days(),
                 ROUTINE_INTERVAL_BUFFER_SECONDS,
             ):
                 await self._log_skipped_for_service("Routine Irrigation")
@@ -3512,7 +3520,7 @@ class ZoneFlowController:
         # Temperature slider -- see watering_temp.
         avg_peak_temp = self.effective_avg_peak_temp()
         hot_threshold = self.number("hot_temp_threshold")
-        interval_days = calc.routine_interval_days(avg_peak_temp, hot_threshold)
+        interval_days = self._routine_interval_days()
         interval_due = calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS)
 
         # A due deep soak replaces this routine instead of adding a second
@@ -4156,7 +4164,7 @@ class ZoneFlowController:
             return 0.0
         if (state.last_routine_ts or 0.0) > spent_ts + 1:
             return 0.0  # watered since: the credit window started again
-        interval_days = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        interval_days = self._routine_interval_days()
         if dt_util.utcnow().timestamp() - spent_ts > (interval_days + 1) * 86400:
             return 0.0
         return state.rain_credit_spent_mm
@@ -4201,6 +4209,8 @@ class ZoneFlowController:
             site=self.site,
             interval_fraction=interval_fraction,
             rain_offset_mm=self.rain_offset_mm(),
+            normal_interval_days=max(int(round(self.number("routine_interval_days"))), 1),
+            hot_interval_days=max(int(round(self.number("routine_interval_hot_days"))), 1),
         )
 
     async def _on_rain_credit_check(self, now=None) -> None:
@@ -4222,7 +4232,7 @@ class ZoneFlowController:
             return
         offset = self.rain_offset_mm()
         now_ts = dt_util.utcnow().timestamp()
-        interval_days = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+        interval_days = self._routine_interval_days()
         if offset > 0 and now_ts - (state.rain_credit_spent_ts or 0.0) < interval_days * 86400:
             return  # already counted this interval; what is left over waits for the next one
         state.last_routine_ts = now_ts
@@ -4819,7 +4829,7 @@ class ZoneFlowController:
         routine = None
         if routine_est is not None:
             if source == "schedule":
-                interval = calc.routine_interval_days(self.effective_avg_peak_temp(), self.number("hot_temp_threshold"))
+                interval = self._routine_interval_days()
                 drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
                 routine_est = max(
                     (state.last_routine_ts or 0.0) + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS, drydown_end

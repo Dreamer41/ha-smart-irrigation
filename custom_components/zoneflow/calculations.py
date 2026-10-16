@@ -393,15 +393,21 @@ class RoutinePlan:
     pulse_count: int = 3
 
 
-def routine_interval_days(avg_peak_temp: float | None, hot_threshold: float) -> int:
-    """Port of `target_interval_days`: 3 if hot, else 4.
+def routine_interval_days(
+    avg_peak_temp: float | None,
+    hot_threshold: float,
+    normal_days: int = 4,
+    hot_days: int = 3,
+) -> int:
+    """Port of `target_interval_days`: the hot gap (3 days to start with) if hot,
+    else the normal one (4). Both are zone settings since 1.7.3.
 
     The controller always passes a temperature (real recorded days, or the
     zone's Fallback / Manual Temperature -- ZoneFlowController.watering_temp);
     None is still accepted as an explicit "normal tier" for direct callers."""
     if avg_peak_temp is None:
-        return 4
-    return 3 if avg_peak_temp >= hot_threshold else 4
+        return normal_days
+    return hot_days if avg_peak_temp >= hot_threshold else normal_days
 
 
 def temperature_tier(avg_peak_temp: float | None, hot_threshold: float, cool_threshold: float) -> str:
@@ -458,6 +464,8 @@ def plan_routine_irrigation(
     site: tuple[str, str, str] | None = None,
     interval_fraction: float = 1.0,
     rain_offset_mm: float = 0.0,
+    normal_interval_days: int = 4,
+    hot_interval_days: int = 3,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -466,7 +474,7 @@ def plan_routine_irrigation(
     pulses, 1-min floor) for the same backward-compatibility reason as
     plan_deep_soak above -- a zone's real pulse_count comes from its
     "Routine Pulse Count (Split-Cycle)" number entity."""
-    interval_days = routine_interval_days(avg_peak_temp, hot_threshold)
+    interval_days = routine_interval_days(avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days)
     # weekly_target_override_mm is the ET demand model's target (see
     # et_weekly_target_mm) when a zone uses it and ET0 is available; None
     # means the original temperature-tier target, exactly as before.
@@ -680,9 +688,11 @@ def estimate_next_irrigation(
     avg_peak_temp: float | None,
     hot_threshold: float,
     routine_drydown_days: float,
+    normal_interval_days: int = 4,
+    hot_interval_days: int = 3,
 ) -> NextIrrigationEstimate:
     """Port of `sensor.avocado_next_irrigation_estimate`."""
-    interval_days = routine_interval_days(avg_peak_temp, hot_threshold)
+    interval_days = routine_interval_days(avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days)
     routine_next = last_routine_ts + interval_days * 86400
     rain_next = last_significant_rain_ts + routine_drydown_days * 86400
     return NextIrrigationEstimate(routine_next, rain_next, max(routine_next, rain_next))

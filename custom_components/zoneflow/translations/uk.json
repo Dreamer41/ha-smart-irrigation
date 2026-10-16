@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Перекриття клапанів"
+      },
+      "routine_interval_days": {
+        "name": "Звичайний полив: днів між поливами"
+      },
+      "routine_interval_hot_days": {
+        "name": "Звичайний полив: днів між поливами (спека)"
       }
     },
     "datetime": {

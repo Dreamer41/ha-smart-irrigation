@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Sobreposição de válvulas"
+      },
+      "routine_interval_days": {
+        "name": "Rotina: dias entre regas"
+      },
+      "routine_interval_hot_days": {
+        "name": "Rotina: dias entre regas (calor)"
       }
     },
     "datetime": {

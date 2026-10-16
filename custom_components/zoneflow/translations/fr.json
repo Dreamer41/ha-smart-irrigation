@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Chevauchement des vannes"
+      },
+      "routine_interval_days": {
+        "name": "Routine : jours entre arrosages"
+      },
+      "routine_interval_hot_days": {
+        "name": "Routine : jours entre arrosages (chaud)"
       }
     },
     "datetime": {

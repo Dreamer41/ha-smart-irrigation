@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Prekrytie ventilov"
+      },
+      "routine_interval_days": {
+        "name": "Bežné polievanie: dni medzi polievaniami"
+      },
+      "routine_interval_hot_days": {
+        "name": "Bežné polievanie: dni medzi polievaniami (horúco)"
       }
     },
     "datetime": {

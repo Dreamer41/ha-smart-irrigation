@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Ventiloverlap"
+      },
+      "routine_interval_days": {
+        "name": "Rutine: dage mellem vandinger"
+      },
+      "routine_interval_hot_days": {
+        "name": "Rutine: dage mellem vandinger (varmt)"
       }
     },
     "datetime": {

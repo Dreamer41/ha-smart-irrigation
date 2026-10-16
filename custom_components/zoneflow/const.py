@@ -402,6 +402,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "deep_soak_max_runtime_minutes": ("Deep Soak Max Safety Runtime Cap", 30.0, 900.0, 10.0, "min"),
     "max_runtime_minutes": ("Routine Max Safety Runtime Cap", 10.0, 900.0, 5.0, "min"),
     "routine_drydown_days": ("Routine Dry-Down Holdoff", 1.0, 10.0, 0.5, "d"),
+    # How often the routine watering runs (1.7.3): the days between waterings in the
+    # normal and cool tiers, and in the hot tier (a shorter gap when it is hot).
+    "routine_interval_days": ("Routine Days Between Waterings", 1.0, 14.0, 1.0, "d"),
+    "routine_interval_hot_days": ("Routine Days Between Waterings (Hot)", 1.0, 14.0, 1.0, "d"),
     "deep_soak_drydown_days": ("Deep Soak Subsoil Dry-Down Holdoff", 4.0, 14.0, 0.5, "d"),
     "deep_soak_interval_days": ("Deep Soak Interval", 3.0, 30.0, 1.0, "d"),
     # NOTE: the rain-ceiling check just below still looks at the fixed
@@ -551,6 +555,8 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "deep_soak_max_runtime_minutes": 124.0,
     "max_runtime_minutes": 103.0,
     "routine_drydown_days": 4.0,
+    "routine_interval_days": float(ROUTINE_NORMAL_INTERVAL_DAYS),
+    "routine_interval_hot_days": float(ROUTINE_HOT_INTERVAL_DAYS),
     "deep_soak_drydown_days": 8.0,
     "deep_soak_interval_days": 14.0,
     "deep_soak_rain_threshold": 40.0,

@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Překryv ventilů"
+      },
+      "routine_interval_days": {
+        "name": "Běžná zálivka: dny mezi zálivkami"
+      },
+      "routine_interval_hot_days": {
+        "name": "Běžná zálivka: dny mezi zálivkami (horko)"
       }
     },
     "datetime": {

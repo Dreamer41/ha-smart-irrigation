@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Klep-overlap"
+      },
+      "routine_interval_days": {
+        "name": "Routine: dagen tussen bewateringen"
+      },
+      "routine_interval_hot_days": {
+        "name": "Routine: dagen tussen bewateringen (heet)"
       }
     },
     "datetime": {

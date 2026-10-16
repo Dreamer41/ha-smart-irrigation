@@ -131,7 +131,7 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             days = (dt_util.utcnow().timestamp() - last) / 86400
             from . import calculations as calc
 
-            interval = calc.routine_interval_days(controller.effective_avg_peak_temp(), controller.number("hot_temp_threshold"))
+            interval = controller._routine_interval_days()
             when = dt_util.as_local(dt_util.utc_from_timestamp(last)).strftime("%Y-%m-%d %H:%M")
             if days > interval * OVERDUE_FACTOR and not controller.paused:
                 add("last", "warn", "last.overdue", days=f"{days:.0f}")

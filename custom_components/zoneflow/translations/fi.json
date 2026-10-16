@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Venttiilien päällekkäisyys"
+      },
+      "routine_interval_days": {
+        "name": "Rutiini: päiviä kastelujen välillä"
+      },
+      "routine_interval_hot_days": {
+        "name": "Rutiini: päiviä kastelujen välillä (kuuma)"
       }
     },
     "datetime": {

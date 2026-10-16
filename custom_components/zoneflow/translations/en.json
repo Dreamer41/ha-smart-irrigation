@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "Valve Overlap"
+      },
+      "routine_interval_days": {
+        "name": "Routine Days Between Waterings"
+      },
+      "routine_interval_hot_days": {
+        "name": "Routine Days Between Waterings (Hot)"
       }
     },
     "datetime": {

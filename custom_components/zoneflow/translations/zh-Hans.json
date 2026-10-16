@@ -949,6 +949,12 @@
       },
       "valve_overlap_seconds": {
         "name": "阀门重叠"
+      },
+      "routine_interval_days": {
+        "name": "常规浇水：浇水间隔天数"
+      },
+      "routine_interval_hot_days": {
+        "name": "常规浇水：浇水间隔天数（炎热）"
       }
     },
     "datetime": {

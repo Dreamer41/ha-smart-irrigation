@@ -5001,7 +5001,7 @@ const SETTINGS_GROUPS = [
   ]],
   ["amounts", [
     "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
-    "number.target_weekly_cool_mm", "select.demand_model", "number.crop_coefficient",
+    "number.target_weekly_cool_mm", "number.routine_interval_days", "number.routine_interval_hot_days", "select.demand_model", "number.crop_coefficient",
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
     "number.routine_pulse_count", "number.routine_pulse_rest_minutes",
   ]],
