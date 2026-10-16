@@ -128,3 +128,25 @@ async def test_a_long_gap_that_is_on_time_is_not_reported_overdue(hass, fake_val
     await zone.run_routine_irrigation(manual=False)
     await hass.async_block_till_done()
     assert "Irrigation Overdue" not in logged, logged
+
+
+@pytest.mark.asyncio
+async def test_days_until_next_run_follows_a_changed_gap_at_once(hass, fake_valve_services):
+    import homeassistant.util.dt as dt_util
+
+    await _seed_source_entities(hass)
+    entry = make_entry(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    zone = hass.data[DOMAIN][entry.entry_id]
+    zone.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 86400
+    zone.store.state.last_significant_rain_ts = 0.0
+    entity_id = next(s.entity_id for s in hass.states.async_all("sensor") if s.entity_id.endswith("days_until_next_run"))
+    for key in ("routine_interval_days", "routine_interval_hot_days"):
+        await zone.numbers[key].async_set_metric_value(2.0)
+    await hass.async_block_till_done()
+    short = float(hass.states.get(entity_id).attributes["routine_days"])
+    for key in ("routine_interval_days", "routine_interval_hot_days"):
+        await zone.numbers[key].async_set_metric_value(9.0)
+    await hass.async_block_till_done()
+    assert float(hass.states.get(entity_id).attributes["routine_days"]) - short >= 5.0  # 7 days more, shown without waiting for a poll

@@ -1607,6 +1607,8 @@ class ZoneFlowController:
             self._check_issues()  # a calibrated flow rate clears its repair at once
         elif key in ("drydown_rain_24h_mm", "drydown_rain_4d_mm", "drydown_rain_7d_mm"):
             self._resync_rain_flags()
+        elif key in ("routine_interval_days", "routine_interval_hot_days", "routine_drydown_days"):
+            self._notify_status()  # when the next watering is changed with it: show it at once
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
 

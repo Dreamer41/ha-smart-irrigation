@@ -358,6 +358,11 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
         self._attr_unique_id = f"{entry.entry_id}_days_until_next_run"
         self._attr_translation_key = "days_until_next_run"
 
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Right away when the days between waterings are changed, not at the next poll.
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
     def _next_times(self) -> tuple[float | None, float | None]:
         if self._controller.paused:
             return None, None  # nothing is scheduled while the zone is paused
