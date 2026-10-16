@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Витрата зони"
+      },
+      "valve_overlap_seconds": {
+        "name": "Перекриття клапанів"
       }
     },
     "datetime": {

@@ -211,6 +211,8 @@ pump.
 **Shared pump safety** matters: two valves open on one pump split its flow,
 and both zones get less water than their calibrated runtime assumes.
 
+**Valve overlap.** If the pipes bang when a valve closes, set **Valve Overlap** (0 to 10 seconds, in the Safety settings of zones that share a pump). The next zone's valve then opens that many seconds before the running zone's closes. At 0 (the default) the zones take turns exactly as before.
+
 ## More features
 
 - **Tidy device page**: settings sit under *Configuration*, technical

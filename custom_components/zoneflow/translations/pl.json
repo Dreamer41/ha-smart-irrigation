@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Przepływ w strefie"
+      },
+      "valve_overlap_seconds": {
+        "name": "Nakładanie zaworów"
       }
     },
     "datetime": {

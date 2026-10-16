@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Prietok zóny"
+      },
+      "valve_overlap_seconds": {
+        "name": "Prekrytie ventilov"
       }
     },
     "datetime": {

@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Zonendurchfluss"
+      },
+      "valve_overlap_seconds": {
+        "name": "Ventil-Überlappung"
       }
     },
     "datetime": {

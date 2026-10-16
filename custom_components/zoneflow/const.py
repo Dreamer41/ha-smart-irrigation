@@ -424,6 +424,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # behavior change for a single-zone/independent-pump setup.
     "pump_preamble_seconds": ("Pump Preamble (Warm-Up Delay)", 0.0, 60.0, 1.0, "s"),
     "pump_postamble_seconds": ("Pump Postamble (Settle Delay)", 0.0, 60.0, 1.0, "s"),
+    # The next zone on this pump opens its valve this long before this one closes (1.7.3).
+    "valve_overlap_seconds": ("Valve Overlap", 0.0, 10.0, 1.0, "s"),
     # Only apply when a weather entity is configured for this zone -- see
     # ZoneFlowController._forecast_gate_allows_run. Skip is preemptive
     # (rain forecast -> hold off, check again next scheduled run); the dry
@@ -561,6 +563,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "zone_flow_l_min": 0.0,
     "pump_preamble_seconds": 0.0,
     "pump_postamble_seconds": 0.0,
+    "valve_overlap_seconds": 0.0,
     "forecast_rain_threshold_mm": 3.0,
     "forecast_probability_threshold_pct": 60.0,
     "forecast_dry_override_days": 2.0,

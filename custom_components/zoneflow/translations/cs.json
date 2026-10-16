@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Průtok zóny"
+      },
+      "valve_overlap_seconds": {
+        "name": "Překryv ventilů"
       }
     },
     "datetime": {

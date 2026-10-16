@@ -1296,6 +1296,15 @@ the person if their pump has a noticeable spin-up/pressure-settle time; if
 they don't know, leave both at 0 and revisit only if they see flow-rate
 inconsistency between zones.
 
+If the pipes bang when a valve closes against the running pump, set
+`valve_overlap_seconds` (0-10 s, "Valve Overlap") on the zones that share the
+pump: when a zone finishes its last pulse and another zone is waiting for the
+pump, it hands the pump over and keeps its own valve open for that many
+seconds, so the next valve opens first. 0 (the default) leaves it as it was.
+It is not used for service runs or flow measurements, and it replaces the
+postamble for that hand-over. A flow meter shared by both zones counts the
+overlap seconds in both.
+
 Worth setting expectations on if the person asks how the queuing actually
 behaves: a zone holds the shared pump for its **entire** cycle once it
 starts, including any soak gaps between split-cycle pulses (§5) — a second

@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Fluxo da zona"
+      },
+      "valve_overlap_seconds": {
+        "name": "Sobreposição de válvulas"
       }
     },
     "datetime": {

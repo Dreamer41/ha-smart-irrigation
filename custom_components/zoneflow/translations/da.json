@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Zonens flow"
+      },
+      "valve_overlap_seconds": {
+        "name": "Ventiloverlap"
       }
     },
     "datetime": {

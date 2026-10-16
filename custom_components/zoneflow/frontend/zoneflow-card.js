@@ -5034,6 +5034,7 @@ const SETTINGS_GROUPS = [
   ["safety", [
     "number.max_runtime_minutes", "number.max_daily_runtime_minutes", "number.service_mode_auto_off_minutes",
     "number.pump_min_watts", "number.pump_preamble_seconds", "number.pump_postamble_seconds",
+    "number.valve_overlap_seconds",
   ]],
   ["notifications", ["select.notifications", "select.weekly_summary"]],
 ];

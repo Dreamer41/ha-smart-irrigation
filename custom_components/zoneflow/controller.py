@@ -331,6 +331,8 @@ class ZoneFlowController:
         # valve was really open (seconds).
         self._measuring = False
         self._run_liters: float | None = None
+        # The pump lock was handed to the next zone before this valve closed (valve overlap).
+        self._pump_handed_over = False
         self._open_seconds = 0.0
         self._pump_check_seconds = 0.0
         # Frost guard: the cycles waiting for it to warm up (deep soak is
@@ -2376,6 +2378,7 @@ class ZoneFlowController:
         if self._stopping:
             return False
         pump_lock = self._get_pump_lock()
+        self._pump_handed_over = False
         # What's running, for the Status sensor -- from the pump wait until
         # the run ends, however it ends.
         self._cycle_kind = kind
@@ -2407,7 +2410,8 @@ class ZoneFlowController:
                     runtime_for_log=runtime_for_log,
                 )
             finally:
-                pump_lock.release()
+                if not self._pump_handed_over:  # (valve overlap already gave it to the next zone)
+                    pump_lock.release()
         finally:
             self._cycle_kind = ""
             self._notify_status()
@@ -2501,7 +2505,7 @@ class ZoneFlowController:
                 )
 
         postamble = self.number("pump_postamble_seconds")
-        if postamble > 0 and not self._stopping:
+        if postamble > 0 and not self._stopping and not self._pump_handed_over:
             # Runs whether or not the cycle completed cleanly -- the
             # valve is already closed either way, and the point is
             # letting pressure settle before the next zone queued on
@@ -2716,12 +2720,44 @@ class ZoneFlowController:
                 return _ABORTED
 
             self._expected_pulse_minutes = None
+            overlap = await self._overlap_with_next_zone(kind) if index == count else 0.0
             await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
             self._end_pulse(pulse_minutes, full=True)
+            self._open_seconds += overlap
 
             if index < count:
                 await self._pause(rest_minutes * 60)
         return _DONE
+
+    def _zone_waiting_on_my_pump(self) -> bool:
+        """Another zone is queued for the pump this zone is running on."""
+        key = self._pump_lock_key
+        return any(
+            other is not self and other._pump_lock_key == key and other._waiting_pump_kind
+            for other in self.hass.data.get(DOMAIN, {}).values()
+            if isinstance(other, ZoneFlowController)
+        )
+
+    async def _overlap_with_next_zone(self, kind: str) -> float:
+        """Valve overlap: at the end of its last pulse, a zone whose pump has
+        another zone waiting hands the pump over now and keeps its own valve
+        open for the Valve Overlap seconds, so the next zone's valve opens
+        before this one closes and the pump never pushes against shut valves.
+        Returns the seconds it kept the valve open (0: no overlap). Only a
+        watering cycle, never a service run or a flow measurement, and never
+        when nothing is waiting."""
+        seconds = self.number("valve_overlap_seconds")
+        if seconds <= 0 or kind not in ("Deep Soak", "Routine Irrigation") or self._measuring:
+            return 0.0
+        if self._stopping or self.store.state.abort_on or not self._zone_waiting_on_my_pump():
+            return 0.0
+        pump_lock = self._get_pump_lock()
+        if pump_lock.locked() and not self._pump_handed_over:
+            self._pump_handed_over = True
+            pump_lock.release()
+        started = dt_util.utcnow().timestamp()
+        await self._pause(seconds)
+        return max(dt_util.utcnow().timestamp() - started, 0.0)
 
     async def _wait_pulse(self, seconds: float, *, service: bool) -> None:
         """The open-valve wait of a pulse: ends early on an abort, a reload

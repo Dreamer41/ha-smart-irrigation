@@ -49,7 +49,11 @@ RAIN_GAUGE_ONLY = {
 # Shown by another entity: Days Until Next Run says the same, and the Status sentence says when.
 DUPLICATES = {("sensor", "next_irrigation_estimate")}
 PUMP_POWER = {("number", "pump_min_watts")}
-SHARED_PUMP = {("number", "pump_preamble_seconds"), ("number", "pump_postamble_seconds")}
+SHARED_PUMP = {
+    ("number", "pump_preamble_seconds"),
+    ("number", "pump_postamble_seconds"),
+    ("number", "valve_overlap_seconds"),
+}
 TEMPERATURE = {
     ("sensor", "avg_peak_temp_3d"),
     ("sensor", "reference_et0_3d"),

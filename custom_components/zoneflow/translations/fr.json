@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Débit de zone"
+      },
+      "valve_overlap_seconds": {
+        "name": "Chevauchement des vannes"
       }
     },
     "datetime": {

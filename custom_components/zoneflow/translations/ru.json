@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Расход зоны"
+      },
+      "valve_overlap_seconds": {
+        "name": "Перекрытие клапанов"
       }
     },
     "datetime": {

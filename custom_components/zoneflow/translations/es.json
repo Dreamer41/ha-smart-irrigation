@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Caudal de la zona"
+      },
+      "valve_overlap_seconds": {
+        "name": "Solape de válvulas"
       }
     },
     "datetime": {

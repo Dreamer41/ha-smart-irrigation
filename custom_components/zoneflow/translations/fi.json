@@ -946,6 +946,9 @@
       },
       "zone_flow_l_min": {
         "name": "Vyöhykkeen virtaama"
+      },
+      "valve_overlap_seconds": {
+        "name": "Venttiilien päällekkäisyys"
       }
     },
     "datetime": {
