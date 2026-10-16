@@ -16,6 +16,13 @@ def test_they_start_at_the_old_fixed_gaps():
     assert calc.routine_interval_days(32.0, 31.5) == 3 and calc.routine_interval_days(20.0, 31.5) == 4
 
 
+def test_the_calculation_defaults_match_the_constants():
+    from custom_components.zoneflow import const
+
+    assert (calc.ROUTINE_NORMAL_INTERVAL_DAYS, calc.ROUTINE_HOT_INTERVAL_DAYS) == (
+        const.ROUTINE_NORMAL_INTERVAL_DAYS, const.ROUTINE_HOT_INTERVAL_DAYS)
+
+
 def test_the_gaps_follow_the_settings():
     assert calc.routine_interval_days(32.0, 31.5, normal_days=6, hot_days=2) == 2
     assert calc.routine_interval_days(25.0, 31.5, normal_days=6, hot_days=2) == 6

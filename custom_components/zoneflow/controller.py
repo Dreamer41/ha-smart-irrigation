@@ -209,8 +209,8 @@ def _weather_temp_c(state: State | None) -> float | None:
 _LOGGER = logging.getLogger(__name__)
 
 
-# hass.data key: pump lock key -> True while a zone has handed its pump to the
-# next one with its own valve still open (valve overlap).
+# hass.data key: pump lock key -> entry id of the zone a zone has handed its pump to
+# while its own valve is still open (valve overlap).
 PUMP_HANDOVER_KEY = f"{DOMAIN}_pump_handover"
 
 
@@ -2247,13 +2247,23 @@ class ZoneFlowController:
         reported = getattr(state, "last_reported", None) or state.last_updated
         return round((dt_util.utcnow() - reported).total_seconds() / 3600, 1)
 
+    def _routine_interval_settings(self) -> dict[str, int]:
+        """The two Routine Days Between Waterings settings, as the keyword
+        arguments the calculations take (one place, so the dose, the due check
+        and the Status estimate can never read them differently)."""
+        return {
+            "normal_interval_days": max(int(round(self.number("routine_interval_days"))), 1),
+            "hot_interval_days": max(int(round(self.number("routine_interval_hot_days"))), 1),
+        }
+
     def _routine_interval_days(self) -> int:
         """Days between routine waterings now: the hot gap in the hot tier, else the normal one."""
+        gaps = self._routine_interval_settings()
         return calc.routine_interval_days(
             self.effective_avg_peak_temp(),
             self.number("hot_temp_threshold"),
-            max(int(round(self.number("routine_interval_days"))), 1),
-            max(int(round(self.number("routine_interval_hot_days"))), 1),
+            gaps["normal_interval_days"],
+            gaps["hot_interval_days"],
         )
 
     def _wet_hold_days(self) -> float | None:
@@ -2331,8 +2341,7 @@ class ZoneFlowController:
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
             routine_drydown_days=self.number("routine_drydown_days"),
-            normal_interval_days=max(int(round(self.number("routine_interval_days"))), 1),
-            hot_interval_days=max(int(round(self.number("routine_interval_hot_days"))), 1),
+            **self._routine_interval_settings(),
         ).next_ts
         if status == "dry":
             now_ts = dt_util.utcnow().timestamp()
@@ -2496,7 +2505,10 @@ class ZoneFlowController:
         preamble = self.number("pump_preamble_seconds")
         # The zone before this one handed the pump over with its valve still
         # open (valve overlap): the pump is already running, no warm-up.
-        pump_running = self.hass.data.get(PUMP_HANDOVER_KEY, {}).pop(self._pump_lock_key, False)
+        handovers = self.hass.data.get(PUMP_HANDOVER_KEY, {})
+        pump_running = handovers.get(self._pump_lock_key) == self.entry.entry_id
+        if pump_running:
+            handovers.pop(self._pump_lock_key, None)
         if preamble > 0 and not pump_running:
             await self._pause(preamble)
 
@@ -2805,7 +2817,7 @@ class ZoneFlowController:
         handovers = self.hass.data.setdefault(PUMP_HANDOVER_KEY, {})
         if pump_lock.locked() and not self._pump_handed_over:
             self._pump_handed_over = True
-            handovers[self._pump_lock_key] = True  # the next zone skips its warm-up
+            handovers[self._pump_lock_key] = following.entry.entry_id  # that zone skips its warm-up
             pump_lock.release()
         started = dt_util.utcnow().timestamp()
         try:
@@ -4209,8 +4221,7 @@ class ZoneFlowController:
             site=self.site,
             interval_fraction=interval_fraction,
             rain_offset_mm=self.rain_offset_mm(),
-            normal_interval_days=max(int(round(self.number("routine_interval_days"))), 1),
-            hot_interval_days=max(int(round(self.number("routine_interval_hot_days"))), 1),
+            **self._routine_interval_settings(),
         )
 
     async def _on_rain_credit_check(self, now=None) -> None:

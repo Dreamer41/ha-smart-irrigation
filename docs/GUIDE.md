@@ -233,7 +233,9 @@ and both zones get less water than their calibrated runtime assumes.
   English.
 - **Tunable live**: every threshold is a `number` entity with a sensible
   default — weekly targets per tier, hot/cool thresholds, emitter flow
-  rate, pulse count and soak time per cadence, dry-down days and the rain
+  rate, pulse count and soak time per cadence, the days between routine
+  waterings (4 in normal and cool weather, 3 in hot weather to start with),
+  dry-down days and the rain
   that starts the dry-down (Dry-Down Rain Threshold: 35 mm in 24 h, 50 mm in
   4 days, 100 mm in 7 days to start with), deep-soak
   interval and depth, rain efficiency, forecast thresholds, runtime caps.

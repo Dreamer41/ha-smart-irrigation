@@ -16,6 +16,11 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+# Starting gaps between routine waterings (const.ROUTINE_NORMAL_INTERVAL_DAYS and
+# ROUTINE_HOT_INTERVAL_DAYS: this module stays importable on its own, so no import).
+ROUTINE_NORMAL_INTERVAL_DAYS = 4
+ROUTINE_HOT_INTERVAL_DAYS = 3
+
 
 # Skip journal (1.6.1): was a watering skipped for forecast rain worth
 # skipping? Judged 48 hours after the skip.
@@ -396,8 +401,8 @@ class RoutinePlan:
 def routine_interval_days(
     avg_peak_temp: float | None,
     hot_threshold: float,
-    normal_days: int = 4,
-    hot_days: int = 3,
+    normal_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
+    hot_days: int = ROUTINE_HOT_INTERVAL_DAYS,
 ) -> int:
     """Port of `target_interval_days`: the hot gap (3 days to start with) if hot,
     else the normal one (4). Both are zone settings since 1.7.3.
@@ -464,8 +469,8 @@ def plan_routine_irrigation(
     site: tuple[str, str, str] | None = None,
     interval_fraction: float = 1.0,
     rain_offset_mm: float = 0.0,
-    normal_interval_days: int = 4,
-    hot_interval_days: int = 3,
+    normal_interval_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
+    hot_interval_days: int = ROUTINE_HOT_INTERVAL_DAYS,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -688,8 +693,8 @@ def estimate_next_irrigation(
     avg_peak_temp: float | None,
     hot_threshold: float,
     routine_drydown_days: float,
-    normal_interval_days: int = 4,
-    hot_interval_days: int = 3,
+    normal_interval_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
+    hot_interval_days: int = ROUTINE_HOT_INTERVAL_DAYS,
 ) -> NextIrrigationEstimate:
     """Port of `sensor.avocado_next_irrigation_estimate`."""
     interval_days = routine_interval_days(avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days)

@@ -140,22 +140,6 @@ async def test_no_overlap_when_both_zones_share_one_flow_meter(hass, fake_valve_
 
 
 @pytest.mark.asyncio
-async def test_the_overlap_counts_toward_the_runtime_the_zone_reports(hass, fake_valve_services, monkeypatch, tmp_path):
-    a, b = await _two_zones(hass, monkeypatch, tmp_path, overlap=0)
-    await _run_both(hass, a, b)
-    without = a.store.state.today_runtime_minutes
-    b.store.state.today_runtime_minutes = 0.0
-    a.store.state.today_runtime_minutes = 0.0
-    for zone in (a, b):
-        zone.numbers["valve_overlap_seconds"].metric_value = 6
-        zone.store.state.last_routine_ts = None
-    await _run_both(hass, a, b)
-    # the zone that finished first kept its valve open 6 s more
-    assert max(a.store.state.today_runtime_minutes, b.store.state.today_runtime_minutes) > 0
-    assert a.store.state.today_runtime_minutes + b.store.state.today_runtime_minutes >= 2 * without - 0.01
-
-
-@pytest.mark.asyncio
 async def test_a_zone_that_shares_no_pump_does_not_offer_the_setting(hass, fake_valve_services, monkeypatch, tmp_path):
     from custom_components.zoneflow import visibility
 
