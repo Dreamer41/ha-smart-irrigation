@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Activer l'arrosage profond",
           "deep_soak_time": "Heure de l'arrosage profond",
           "routine_time": "Heure de l'arrosage régulier",
+          "summary_time": "Heure du résumé hebdomadaire",
+          "fertilize_reminder_time": "Heure du rappel d'engrais",
           "deep_soak_sun_mode": "Déclenchement de l'arrosage profond",
           "deep_soak_sun_offset_minutes": "Décalage solaire de l'arrosage profond (minutes)",
           "routine_sun_mode": "Déclenchement de l'arrosage régulier",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "L'arrosage profond est un arrosage copieux et lent toutes les deux semaines environ (14 jours au départ) qui humidifie le sol en profondeur, pour que les racines descendent. Idéal pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et les aromatiques. L'arrosage régulier fonctionne dans tous les cas.",
           "deep_soak_time": "L'heure de début de l'arrosage profond les jours où il est prévu, si son déclenchement ci-dessous est l'heure fixe. Tôt le matin, c'est idéal : moins d'eau perdue à cause du soleil et du vent.",
           "routine_time": "L'heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage régulier est prévu, et arrose si c'est le cas. Sa fréquence dépend de la météo et de votre objectif hebdo. Tôt le matin, c'est idéal.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Démarrer l'arrosage profond à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
           "deep_soak_sun_offset_minutes": "Combien de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
           "routine_sun_mode": "Démarrer l'arrosage régulier à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Activer le cycle d'arrosage en profondeur",
           "deep_soak_time": "Heure programmée d'arrosage en profondeur",
           "routine_time": "Heure programmée d'arrosage de routine",
+          "summary_time": "Heure du résumé hebdomadaire",
+          "fertilize_reminder_time": "Heure du rappel d'engrais",
           "deep_soak_sun_mode": "Déclencheur d'arrosage en profondeur",
           "deep_soak_sun_offset_minutes": "Décalage solaire d'arrosage en profondeur (minutes)",
           "routine_sun_mode": "Déclencheur de routine",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Un arrosage en profondeur est un arrosage important et lent toutes les quelques semaines (14 jours au départ) qui humidifie le sol en profondeur pour inciter les racines à s'ancrer loin. Recommandé pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et aromatiques. L'arrosage de routine s'exécute dans les deux cas.",
           "deep_soak_time": "Heure de début de l'arrosage en profondeur les jours prévus, lorsque son déclencheur ci-dessous est réglé sur l'heure fixe. Le tôt le matin est préférable : moins d'eau évaporée par le soleil et le vent.",
           "routine_time": "Heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage de routine est nécessaire et arrose le cas échéant. La fréquence dépend de la météo et de votre objectif hebdomadaire. Le tôt le matin est préférable.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Démarrer l'arrosage en profondeur à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
           "deep_soak_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
           "routine_sun_mode": "Démarrer l'arrosage de routine à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Activer l'arrosage profond",
           "deep_soak_time": "Heure de l'arrosage profond",
           "routine_time": "Heure de l'arrosage régulier",
+          "summary_time": "Heure du résumé hebdomadaire",
+          "fertilize_reminder_time": "Heure du rappel d'engrais",
           "deep_soak_sun_mode": "Déclenchement de l'arrosage profond",
           "deep_soak_sun_offset_minutes": "Décalage solaire de l'arrosage profond (minutes)",
           "routine_sun_mode": "Déclenchement de l'arrosage régulier",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "L'arrosage profond est un arrosage copieux et lent toutes les deux semaines environ (14 jours au départ) qui humidifie le sol en profondeur, pour que les racines descendent. Idéal pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et les aromatiques. L'arrosage régulier fonctionne dans tous les cas.",
           "deep_soak_time": "L'heure de début de l'arrosage profond les jours où il est prévu, si son déclenchement ci-dessous est l'heure fixe. Tôt le matin, c'est idéal : moins d'eau perdue à cause du soleil et du vent.",
           "routine_time": "L'heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage régulier est prévu, et arrose si c'est le cas. Sa fréquence dépend de la météo et de votre objectif hebdo. Tôt le matin, c'est idéal.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Démarrer l'arrosage profond à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
           "deep_soak_sun_offset_minutes": "Combien de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
           "routine_sun_mode": "Démarrer l'arrosage régulier à l'heure fixe ci-dessus, ou avant ou après le lever ou le coucher du soleil, pour qu'il suive les saisons.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Activer le cycle d'arrosage en profondeur",
           "deep_soak_time": "Heure programmée d'arrosage en profondeur",
           "routine_time": "Heure programmée d'arrosage de routine",
+          "summary_time": "Heure du résumé hebdomadaire",
+          "fertilize_reminder_time": "Heure du rappel d'engrais",
           "deep_soak_sun_mode": "Déclencheur d'arrosage en profondeur",
           "deep_soak_sun_offset_minutes": "Décalage solaire d'arrosage en profondeur (minutes)",
           "routine_sun_mode": "Déclencheur de routine",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "Un arrosage en profondeur est un arrosage important et lent toutes les quelques semaines (14 jours au départ) qui humidifie le sol en profondeur pour inciter les racines à s'ancrer loin. Recommandé pour les arbres, arbustes et vivaces ; désactivez-le pour les plantes à racines superficielles comme les salades et aromatiques. L'arrosage de routine s'exécute dans les deux cas.",
           "deep_soak_time": "Heure de début de l'arrosage en profondeur les jours prévus, lorsque son déclencheur ci-dessous est réglé sur l'heure fixe. Le tôt le matin est préférable : moins d'eau évaporée par le soleil et le vent.",
           "routine_time": "Heure à laquelle ZoneFlow vérifie chaque jour si l'arrosage de routine est nécessaire et arrose le cas échéant. La fréquence dépend de la météo et de votre objectif hebdomadaire. Le tôt le matin est préférable.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Démarrer l'arrosage en profondeur à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
           "deep_soak_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
           "routine_sun_mode": "Démarrer l'arrosage de routine à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Routine : jours entre arrosages (chaud)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Routine : durée minimale d'une impulsion"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Arrosage profond : durée minimale d'une impulsion"
+      },
+      "self_tune_streak": {
+        "name": "Auto-réglage : appuis nécessaires"
+      },
+      "self_tune_step_days": {
+        "name": "Auto-réglage : pas"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Reprise automatique"
+      },
+      "self_tuning": {
+        "name": "Auto-réglage"
       }
     },
     "sensor": {

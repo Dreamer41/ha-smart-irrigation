@@ -316,9 +316,12 @@ figure if you want the timer to cover it.
   current temperature): a due cycle waits while it's below 2 °C
   (adjustable), re-checks every hour for a few hours, and only then waits
   for the next day. Set it to its lowest to switch it off.
-- **Weekly summary** (optional, per zone): pick a weekday and at 18:00 you
-  get one message per phone for all its zones — water given, rain, how
-  often a run was held back, and the next watering.
+- **Weekly summary** (optional, per zone): pick a weekday and at the **Weekly
+  summary time** set for the zone (18:00 to start with; asked in the zone's
+  setup and under Configure) you get one message per phone for all its zones —
+  water given, rain, how often a run was held back, and the next watering. The
+  fertilizing reminder has its own **Fertilizing reminder time** (09:00 to
+  start with) in the same place.
 - **Repairs**: an unavailable valve, a sensor offline for days, a missing
   notify target or a never-calibrated flow rate show up in Settings →
   System → Repairs, and clear themselves once fixed.

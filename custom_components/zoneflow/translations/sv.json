@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Aktivera djupvattning",
           "deep_soak_time": "Schemalagd tid för djupvattning",
           "routine_time": "Schemalagd tid för rutinvattning",
+          "summary_time": "Tid för veckosammanfattningen",
+          "fertilize_reminder_time": "Tid för gödslingspåminnelsen",
           "deep_soak_sun_mode": "Start för djupvattning",
           "deep_soak_sun_offset_minutes": "Djupvattning: förskjutning mot solen (minuter)",
           "routine_sun_mode": "Start för rutinvattning",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "En djupvattning är en stor, långsam vattning med ett par veckors mellanrum (till att börja med var 14:e dag) som blöter jorden långt ner, så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av den för grunt rotade växter som sallat och kryddväxter. Rutinvattningen körs oavsett.",
           "deep_soak_time": "När djupvattningen startar de dagar den ska köras, om starten nedan är den fasta klocktiden. Tidig morgon är bäst: mindre vatten går förlorat till sol och vind.",
           "routine_time": "När ZoneFlow varje dag kontrollerar om det är dags för rutinvattning, och vattnar i så fall. Hur ofta det är dags beror på vädret och ditt veckomål. Tidig morgon är bäst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
           "routine_sun_mode": "Starta rutinvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Aktivera djupvattningscykeln",
           "deep_soak_time": "Schemalagd tid för djupvattning",
           "routine_time": "Schemalagd tid för rutinbevattning",
+          "summary_time": "Tid för veckosammanfattningen",
+          "fertilize_reminder_time": "Tid för gödslingspåminnelsen",
           "deep_soak_sun_mode": "Utlösare för djupvattning",
           "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
           "routine_sun_mode": "Utlösare för rutinbevattning",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "En djupvattning är en stor, långsam bevattning med några veckors mellanrum (14 dagar som start) som fuktar jorden djupt ner så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av för grundrotade växter som sallat och örter. Rutinbevattningen körs oavsett.",
           "deep_soak_time": "När djupvattningen startar de dagar den ska köras, om utlösaren nedan är inställd på en fast tid. Tidig morgon är bäst: mindre vatten går förlorat till sol och vind.",
           "routine_time": "När ZoneFlow varje dag kontrollerar om det är dags för rutinbevattning och vattnar om så är fallet. Hur ofta det är dags beror på vädret och ditt veckomål. Tidig morgon är bäst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
           "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång so att den följer årstiderna.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Aktivera djupvattning",
           "deep_soak_time": "Schemalagd tid för djupvattning",
           "routine_time": "Schemalagd tid för rutinvattning",
+          "summary_time": "Tid för veckosammanfattningen",
+          "fertilize_reminder_time": "Tid för gödslingspåminnelsen",
           "deep_soak_sun_mode": "Start för djupvattning",
           "deep_soak_sun_offset_minutes": "Djupvattning: förskjutning mot solen (minuter)",
           "routine_sun_mode": "Start för rutinvattning",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "En djupvattning är en stor, långsam vattning med ett par veckors mellanrum (till att börja med var 14:e dag) som blöter jorden långt ner, så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av den för grunt rotade växter som sallat och kryddväxter. Rutinvattningen körs oavsett.",
           "deep_soak_time": "När djupvattningen startar de dagar den ska köras, om starten nedan är den fasta klocktiden. Tidig morgon är bäst: mindre vatten går förlorat till sol och vind.",
           "routine_time": "När ZoneFlow varje dag kontrollerar om det är dags för rutinvattning, och vattnar i så fall. Hur ofta det är dags beror på vädret och ditt veckomål. Tidig morgon är bäst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
           "routine_sun_mode": "Starta rutinvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Aktivera djupvattningscykeln",
           "deep_soak_time": "Schemalagd tid för djupvattning",
           "routine_time": "Schemalagd tid för rutinbevattning",
+          "summary_time": "Tid för veckosammanfattningen",
+          "fertilize_reminder_time": "Tid för gödslingspåminnelsen",
           "deep_soak_sun_mode": "Utlösare för djupvattning",
           "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
           "routine_sun_mode": "Utlösare för rutinbevattning",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "En djupvattning är en stor, långsam bevattning med några veckors mellanrum (14 dagar som start) som fuktar jorden djupt ner så att rötterna växer djupt. Bra för träd, buskar och perenner; stäng av för grundrotade växter som sallat och örter. Rutinbevattningen körs oavsett.",
           "deep_soak_time": "När djupvattningen startar de dagar den ska köras, om utlösaren nedan är inställd på en fast tid. Tidig morgon är bäst: mindre vatten går förlorat till sol och vind.",
           "routine_time": "När ZoneFlow varje dag kontrollerar om det är dags för rutinbevattning och vattnar om så är fallet. Hur ofta det är dags beror på vädret och ditt veckomål. Tidig morgon är bäst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
           "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutin: dagar mellan bevattningar (varmt)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutin: kortaste puls"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Djupbevattning: kortaste puls"
+      },
+      "self_tune_streak": {
+        "name": "Självjustering: antal tryck som krävs"
+      },
+      "self_tune_step_days": {
+        "name": "Självjustering: steg"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Auto-återgång"
+      },
+      "self_tuning": {
+        "name": "Självjustering"
       }
     },
     "sensor": {

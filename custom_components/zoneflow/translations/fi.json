@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Ota syväkastelu käyttöön",
           "deep_soak_time": "Syväkastelun kellonaika",
           "routine_time": "Peruskastelun kellonaika",
+          "summary_time": "Viikkoyhteenvedon kellonaika",
+          "fertilize_reminder_time": "Lannoitusmuistutuksen kellonaika",
           "deep_soak_sun_mode": "Syväkastelun ajoitus",
           "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
           "routine_sun_mode": "Peruskastelun ajoitus",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "Syväkastelu on runsas, hidas kastelu parin viikon välein (aluksi 14 päivän välein). Se kostuttaa maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; ota se pois käytöstä matalajuurisilta kasveilta, kuten salaatilta ja yrteiltä. Peruskastelu toimii joka tapauksessa.",
           "deep_soak_time": "Milloin syväkastelu alkaa päivinä, jolloin se on vuorossa, kun alla olevaksi ajoitukseksi on valittu tämä kellonaika. Aikainen aamu on paras: vähemmän vettä menee hukkaan auringon ja tuulen takia.",
           "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko peruskastelu vuorossa, ja kastelee, jos on. Kuinka usein se on vuorossa, riippuu säästä ja viikkotavoitteestasi. Aikainen aamu on paras.",
+          "summary_time": "Mihin aikaan päivästä viikkoyhteenveto lähetetään, vyöhykkeen Weekly Summary -asetuksessa valittuna päivänä.",
+          "fertilize_reminder_time": "Mihin aikaan päivästä lannoitusmuistutus lähetetään lannoituspäivänä.",
           "deep_soak_sun_mode": "Aloita syväkastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
           "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Ota käyttöön syväkastelusykli",
           "deep_soak_time": "Syväkastelun aikataulutettu aika",
           "routine_time": "Rutiinikastelun aikataulutettu aika",
+          "summary_time": "Viikkoyhteenvedon kellonaika",
+          "fertilize_reminder_time": "Lannoitusmuistutuksen kellonaika",
           "deep_soak_sun_mode": "Syväkastelun käynnistys",
           "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
           "routine_sun_mode": "Rutiinikastelun käynnistys",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Syväkastelu on suuri, hidas kastelu parin viikon välein (aluksi 14 päivää), joka kastelee maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; kytke pois matalajuurisille kasveille, kuten salaatille ja yrteille. Rutiinikastelu pyörii silti.",
           "deep_soak_time": "Milloin syväkastelu alkaa kastelupäivinä, kun sen käynnistin alla on kiinteä aika. Varhainen aamu on paras: vähemmän vettä menetetään auringon ja tuulen vuoksi.",
           "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko rutiinikastelu ajankohtaista, ja kastelee tarvittaessa. Kastelutiheys riippuu säästä ja viikoittaisesta tavoitteestasi. Varhainen aamu on paras.",
+          "summary_time": "Mihin aikaan päivästä viikkoyhteenveto lähetetään, vyöhykkeen Weekly Summary -asetuksessa valittuna päivänä.",
+          "fertilize_reminder_time": "Mihin aikaan päivästä lannoitusmuistutus lähetetään lannoituspäivänä.",
           "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Ota syväkastelu käyttöön",
           "deep_soak_time": "Syväkastelun kellonaika",
           "routine_time": "Peruskastelun kellonaika",
+          "summary_time": "Viikkoyhteenvedon kellonaika",
+          "fertilize_reminder_time": "Lannoitusmuistutuksen kellonaika",
           "deep_soak_sun_mode": "Syväkastelun ajoitus",
           "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
           "routine_sun_mode": "Peruskastelun ajoitus",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "Syväkastelu on runsas, hidas kastelu parin viikon välein (aluksi 14 päivän välein). Se kostuttaa maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; ota se pois käytöstä matalajuurisilta kasveilta, kuten salaatilta ja yrteiltä. Peruskastelu toimii joka tapauksessa.",
           "deep_soak_time": "Milloin syväkastelu alkaa päivinä, jolloin se on vuorossa, kun alla olevaksi ajoitukseksi on valittu tämä kellonaika. Aikainen aamu on paras: vähemmän vettä menee hukkaan auringon ja tuulen takia.",
           "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko peruskastelu vuorossa, ja kastelee, jos on. Kuinka usein se on vuorossa, riippuu säästä ja viikkotavoitteestasi. Aikainen aamu on paras.",
+          "summary_time": "Mihin aikaan päivästä viikkoyhteenveto lähetetään, vyöhykkeen Weekly Summary -asetuksessa valittuna päivänä.",
+          "fertilize_reminder_time": "Mihin aikaan päivästä lannoitusmuistutus lähetetään lannoituspäivänä.",
           "deep_soak_sun_mode": "Aloita syväkastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
           "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Ota käyttöön syväkastelusykli",
           "deep_soak_time": "Syväkastelun aikataulutettu aika",
           "routine_time": "Rutiinikastelun aikataulutettu aika",
+          "summary_time": "Viikkoyhteenvedon kellonaika",
+          "fertilize_reminder_time": "Lannoitusmuistutuksen kellonaika",
           "deep_soak_sun_mode": "Syväkastelun käynnistys",
           "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
           "routine_sun_mode": "Rutiinikastelun käynnistys",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "Syväkastelu on suuri, hidas kastelu parin viikon välein (aluksi 14 päivää), joka kastelee maan syvältä, jotta juuret kasvavat syvälle. Hyvä puille, pensaille ja perennoille; kytke pois matalajuurisille kasveille, kuten salaatille ja yrteille. Rutiinikastelu pyörii silti.",
           "deep_soak_time": "Milloin syväkastelu alkaa kastelupäivinä, kun sen käynnistin alla on kiinteä aika. Varhainen aamu on paras: vähemmän vettä menetetään auringon ja tuulen vuoksi.",
           "routine_time": "Milloin ZoneFlow tarkistaa joka päivä, onko rutiinikastelu ajankohtaista, ja kastelee tarvittaessa. Kastelutiheys riippuu säästä ja viikoittaisesta tavoitteestasi. Varhainen aamu on paras.",
+          "summary_time": "Mihin aikaan päivästä viikkoyhteenveto lähetetään, vyöhykkeen Weekly Summary -asetuksessa valittuna päivänä.",
+          "fertilize_reminder_time": "Mihin aikaan päivästä lannoitusmuistutus lähetetään lannoituspäivänä.",
           "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutiini: päiviä kastelujen välillä (kuuma)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutiini: lyhin jakso"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Syväkastelu: lyhin jakso"
+      },
+      "self_tune_streak": {
+        "name": "Itsesäätö: tarvittavat painallukset"
+      },
+      "self_tune_step_days": {
+        "name": "Itsesäätö: askel"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Automaattipaluu"
+      },
+      "self_tuning": {
+        "name": "Itsesäätö"
       }
     },
     "sensor": {

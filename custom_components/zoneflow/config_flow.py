@@ -74,6 +74,8 @@ from .const import (
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    CONF_SUMMARY_TIME,
+    CONF_FERTILIZE_TIME,
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
@@ -97,6 +99,8 @@ from .const import (
     DEFAULT_GROWTH_RAMP_PROFILE,
     DEFAULT_IRRIGATION_METHOD,
     DEFAULT_ROUTINE_TIME,
+    DEFAULT_SUMMARY_TIME,
+    DEFAULT_FERTILIZE_TIME,
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
     DEFAULT_SUN_MODE,
@@ -121,6 +125,12 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_NOTIFY_ENTITY,
     CONF_WEATHER_ENTITY,
+)
+
+
+# The time-of-day fields: the form can hand back HH:MM, which is stored as HH:MM:SS.
+_TIME_KEYS = (
+    CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME, CONF_SUMMARY_TIME, CONF_FERTILIZE_TIME,
 )
 
 
@@ -225,6 +235,15 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             ): selector.TimeSelector(),
             vol.Required(
                 CONF_ROUTINE_TIME, default=defaults.get(CONF_ROUTINE_TIME, DEFAULT_ROUTINE_TIME)
+            ): selector.TimeSelector(),
+            # When the phone messages that are sent at a set time of day arrive
+            # (the weekly summary on its chosen day, the fertilizing reminder on
+            # its due date): asked here, not on the card.
+            vol.Required(
+                CONF_SUMMARY_TIME, default=defaults.get(CONF_SUMMARY_TIME, DEFAULT_SUMMARY_TIME)
+            ): selector.TimeSelector(),
+            vol.Required(
+                CONF_FERTILIZE_TIME, default=defaults.get(CONF_FERTILIZE_TIME, DEFAULT_FERTILIZE_TIME)
             ): selector.TimeSelector(),
             # Sun-relative scheduling is optional and additive: mode "fixed"
             # (the default) means the *_TIME fields above are what fires, so
@@ -861,8 +880,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 user_input = {k: v for k, v in user_input.items() if k not in ("emitters", "emitter_flow", "area")}
                 data = _schema(defaults)({**defaults, **user_input})
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(data[key].split(":")) == 2:
+                for key in _TIME_KEYS:
+                    if key in data and len(data[key].split(":")) == 2:
                         data[key] = f"{data[key]}:00"
                 data[CONF_ZONE_NAME] = self._zone_name
                 self._data = data
@@ -932,8 +951,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             errors = _duplicate_errors(self.hass, user_input)
             if not errors:
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(user_input[key].split(":")) == 2:
+                for key in _TIME_KEYS:
+                    if key in user_input and len(user_input[key].split(":")) == 2:
                         user_input[key] = f"{user_input[key]}:00"
                 user_input[CONF_ZONE_NAME] = self._zone_name
                 self._data = user_input
@@ -1021,8 +1040,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Greenhouse / indoor zone with a valve: the watering settings."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                if len(user_input[key].split(":")) == 2:
+            for key in _TIME_KEYS:
+                if key in user_input and len(user_input[key].split(":")) == 2:
                     user_input[key] = f"{user_input[key]}:00"
             self._data = {
                 **self._data,
@@ -1431,8 +1450,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         """Greenhouse / indoor zone with a valve: the watering settings
         (the same as an outdoor zone's, without rain gauge and forecast)."""
         if user_input is not None:
-            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                if len(user_input[key].split(":")) == 2:
+            for key in _TIME_KEYS:
+                if key in user_input and len(user_input[key].split(":")) == 2:
                     user_input[key] = f"{user_input[key]}:00"
             await self._apply_site(user_input)
             return self.async_create_entry(title="", data={**self._config_entry.options, **user_input})
@@ -1627,8 +1646,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             errors = _duplicate_errors(self.hass, user_input, exclude_entry_id=self._config_entry.entry_id)
             if not errors:
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(user_input[key].split(":")) == 2:
+                for key in _TIME_KEYS:
+                    if key in user_input and len(user_input[key].split(":")) == 2:
                         user_input[key] = f"{user_input[key]}:00"
                 # A cleared optional sensor is left out of the form's answer;
                 # store it as None, or the zone would fall back to the one

@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Slå på dypvanning",
           "deep_soak_time": "Tidspunkt for dypvanning",
           "routine_time": "Tidspunkt for rutinevanning",
+          "summary_time": "Tidspunkt for ukesammendraget",
+          "fertilize_reminder_time": "Tidspunkt for gjødslingspåminnelsen",
           "deep_soak_sun_mode": "Start av dypvanning",
           "deep_soak_sun_offset_minutes": "Dypvanning: avstand til sol (minutter)",
           "routine_sun_mode": "Start av rutinevanning",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "Dypvanning er en stor, langsom vanning med noen ukers mellomrom (14 dager til å begynne med) som fukter jorda langt ned, så røttene vokser dypt. Bra for trær, busker og stauder; slå den av for planter med grunne røtter, som salat og urter. Rutinevanningen går uansett.",
           "deep_soak_time": "Når dypvanningen starter på dagene den skal gå, hvis starten nedenfor er fast klokkeslett. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
           "routine_time": "Når ZoneFlow hver dag sjekker om det er tid for rutinevanning, og vanner i så fall. Hvor ofte det skjer, avhenger av været og ukemålet ditt. Tidlig morgen er best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dypvanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter soloppgang eller solnedgang. Brukes ikke med fast klokkeslett.",
           "routine_sun_mode": "Start rutinevanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Aktiver dypvanning",
           "deep_soak_time": "Tidsplan for dypvanning",
           "routine_time": "Tidsplan for rutinevanning",
+          "summary_time": "Tidspunkt for ukesammendraget",
+          "fertilize_reminder_time": "Tidspunkt for gjødslingspåminnelsen",
           "deep_soak_sun_mode": "Utløser for dypvanning",
           "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
           "routine_sun_mode": "Utløser for rutinevanning",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "En dypvanning er en stor, treig vanning med noen ukers mellomrom (14 dager som utgangspunkt) som fukter jorden dypt ned, slik at røttene søker dypt. Bra for trær, busker og stauder; slå det av for planter med grunne røtter som salat og urter. Rutinevanning kjører uansett.",
           "deep_soak_time": "Når dypvanning starter de dagene den skal kjøre, dersom utløseren nedenfor er det faste tidspunktet. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
           "routine_time": "Når ZoneFlow sjekker hver dag om det er tid for rutinevanning, og vanner dersom det er det. Hvor ofte det skjer følger været og det ukentlige målet ditt. Tidlig morgen er best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dypvanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Slå på dypvanning",
           "deep_soak_time": "Tidspunkt for dypvanning",
           "routine_time": "Tidspunkt for rutinevanning",
+          "summary_time": "Tidspunkt for ukesammendraget",
+          "fertilize_reminder_time": "Tidspunkt for gjødslingspåminnelsen",
           "deep_soak_sun_mode": "Start av dypvanning",
           "deep_soak_sun_offset_minutes": "Dypvanning: avstand til sol (minutter)",
           "routine_sun_mode": "Start av rutinevanning",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "Dypvanning er en stor, langsom vanning med noen ukers mellomrom (14 dager til å begynne med) som fukter jorda langt ned, så røttene vokser dypt. Bra for trær, busker og stauder; slå den av for planter med grunne røtter, som salat og urter. Rutinevanningen går uansett.",
           "deep_soak_time": "Når dypvanningen starter på dagene den skal gå, hvis starten nedenfor er fast klokkeslett. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
           "routine_time": "Når ZoneFlow hver dag sjekker om det er tid for rutinevanning, og vanner i så fall. Hvor ofte det skjer, avhenger av været og ukemålet ditt. Tidlig morgen er best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dypvanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter soloppgang eller solnedgang. Brukes ikke med fast klokkeslett.",
           "routine_sun_mode": "Start rutinevanningen på det faste klokkeslettet over, eller før eller etter soloppgang eller solnedgang, så den følger årstidene.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Aktiver dypvanning",
           "deep_soak_time": "Tidsplan for dypvanning",
           "routine_time": "Tidsplan for rutinevanning",
+          "summary_time": "Tidspunkt for ukesammendraget",
+          "fertilize_reminder_time": "Tidspunkt for gjødslingspåminnelsen",
           "deep_soak_sun_mode": "Utløser for dypvanning",
           "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
           "routine_sun_mode": "Utløser for rutinevanning",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "En dypvanning er en stor, treig vanning med noen ukers mellomrom (14 dager som utgangspunkt) som fukter jorden dypt ned, slik at røttene søker dypt. Bra for trær, busker og stauder; slå det av for planter med grunne røtter som salat og urter. Rutinevanning kjører uansett.",
           "deep_soak_time": "Når dypvanning starter de dagene den skal kjøre, dersom utløseren nedenfor er det faste tidspunktet. Tidlig morgen er best: mindre vann går tapt til sol og vind.",
           "routine_time": "Når ZoneFlow sjekker hver dag om det er tid for rutinevanning, og vanner dersom det er det. Hvor ofte det skjer følger været og det ukentlige målet ditt. Tidlig morgen er best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dypvanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutine: dager mellom vanninger (varmt)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutine: korteste puls"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Dypvanning: korteste puls"
+      },
+      "self_tune_streak": {
+        "name": "Selvjustering: nødvendige trykk"
+      },
+      "self_tune_step_days": {
+        "name": "Selvjustering: trinn"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Automatisk gjenoptakelse"
+      },
+      "self_tuning": {
+        "name": "Selvjustering"
       }
     },
     "sensor": {

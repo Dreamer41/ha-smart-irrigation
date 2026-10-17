@@ -251,7 +251,9 @@ unanswered optional field is not the same as a "no."
    **Notifications** setting (all / warnings only / none), set after the
    config flow on the device page under Configuration. And would they like
    a **weekly summary** (one message per phone for all its zones, at 18:00
-   on a weekday they pick — the zone's **Weekly Summary** select)?
+   to start with on a weekday they pick — the zone's **Weekly Summary** select;
+   the time is the zone's `summary_time` option, and the fertilizing reminder's
+   is `fertilize_reminder_time` (09:00), both asked in the setup form)?
 8. **Weather forecast gate?** Point this zone at a `weather.*` entity to
    hold off watering when rain is forecast (§7.4). Do they have one they'd
    like to use here? Skip offering this one at all if question 4 said
@@ -1793,7 +1795,7 @@ whole list):
 
 ### 7.10 Optional deficit mode (controlled water stress)
 Deficit mode trims every routine dose to a set share (the zone's **Deficit
-Mode Water** slider, 50-100%, default 70%) until an end date, then switches
+Mode Water** slider, 30-100%, default 70%) until an end date, then switches
 itself off. It's the garden version of *regulated deficit irrigation*, a
 real agricultural practice: growers of processing tomatoes, wine grapes and
 olives cut water in a chosen growth stage to trade a little yield for

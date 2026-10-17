@@ -12,8 +12,14 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 - **When Soil Gets Wet During Watering, for zones with a soil probe.** A new choice in the Soil settings: **Finish the watering** (the start, exactly as before: the routine watering always gives its planned pulses) or **Stop at the wet level**: before each later pulse of a routine watering the probe is read, and once it shows the Soil Moisture Wet Threshold or more the rest is not given. The soak between pulses is what lets the water reach the probe. A watering stopped this way counts as the watering (the interval starts again, the valve minutes count toward the daily cap) and sends a phone message. A probe with no usable reading keeps watering, and a press of Run Routine Now is never cut short. Only the routine watering, not the deep soak.
 
+- **Minimum pulse length is a setting** for the routine watering (1 minute to start with) and the deep soak (5 minutes to start with): **Routine Minimum Pulse Length** and **Deep Soak Minimum Pulse Length**, next to the pulse count and the soak. A dose too small for every pulse to reach the minimum runs fewer pulses. The Longest Valve Open Time follows them.
+- **Self-tuning can be turned off, and its numbers are settings.** A **Self-Tuning** switch (on to start with, as it always was) and two sliders in the Rain group: **Self-Tuning Presses Needed** (3 to start with) and **Self-Tuning Step** (0.5 days to start with). With the switch off, early presses of Run Routine Now and Snooze presses never change the dry-down holdoff.
+- **Weekly summary time and fertilizing reminder time are chosen at setup** (and under Configure): 18:00 and 09:00 to start with, the old fixed times, so nothing changes until you pick another. They are not on the card.
+
 ### Changed
 
+- **Deficit Mode Water goes down to 30 %** (it stopped at 50 %).
+- **A watering fires on its day even when the last one took hours.** The last watering is stamped when it finishes, and a watering counts as due a few hours early (6 hours) so the next one still falls on the set day. A run that took longer than that (a long soak between many pulses on clay) used to push the next one a day late; the early margin now grows with how long the last run took, up to 20 hours.
 - **Water now with minutes splits into pulses**, like the zone's own routine watering: the zone's Routine Pulse Count, more pulses where the soil or slope needs them to avoid runoff, and the soak between them (it can be stopped in the soak). It was one single pulse. It still counts in the water record and does not move the schedule; the cap and the daily cap still apply. The 10-minute button on a phone notification works the same way. Service runs (the 1 / 5 / 10 / 15 minute buttons and Service Mode) stay one pulse.
 
 ## [1.7.3] — Days between waterings, Watering time, Delete zone, Valve Overlap

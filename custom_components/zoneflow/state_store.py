@@ -265,6 +265,16 @@ class IrrigationState:
     # pulses once the soil probe reads the wet threshold or more.
     soil_wet_action: str = "finish"
 
+    # 1.7.4 Self-tuning on/off (it was always on), and how long the last routine /
+    # deep soak run took, so the "due" buffer covers a run that takes hours (the
+    # stamp is for the last_*_ts it belongs to; a later stamp from something else
+    # makes it stale).
+    self_tune_enabled: bool = True
+    last_routine_run_seconds: float = 0.0
+    last_routine_run_for_ts: float | None = None
+    last_deep_run_seconds: float = 0.0
+    last_deep_run_for_ts: float | None = None
+
     # --- 1.6.1 skip journal (controller._journal_skip) ---
     # One entry per watering skipped for forecast rain: {ts, cycle,
     # forecast_mm, actual_mm, paid_off}. actual_mm/paid_off stay None until

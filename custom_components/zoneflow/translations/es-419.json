@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Activar el ciclo de riego profundo",
           "deep_soak_time": "Hora del riego profundo",
           "routine_time": "Hora del riego habitual",
+          "summary_time": "Hora del resumen semanal",
+          "fertilize_reminder_time": "Hora del recordatorio de abono",
           "deep_soak_sun_mode": "Inicio del riego profundo",
           "deep_soak_sun_offset_minutes": "Desfase solar del riego profundo (minutos)",
           "routine_sun_mode": "Inicio del riego habitual",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "El riego profundo es un riego abundante y lento cada dos semanas o así (14 días para empezar) que moja el suelo en profundidad, para que las raíces crezcan hondas. Va bien para árboles, arbustos y perennes; desactívalo para plantas de raíz superficial como ensaladas y aromáticas. El riego habitual funciona en cualquier caso.",
           "deep_soak_time": "A qué hora empieza el riego profundo los días que toca, cuando su inicio (abajo) es la hora fija. Lo mejor es a primera hora de la mañana: se pierde menos agua por el sol y el viento.",
           "routine_time": "A qué hora comprueba ZoneFlow cada día si toca el riego habitual, y riega si toca. Cada cuánto toca depende del tiempo y de tu objetivo semanal. Lo mejor es a primera hora de la mañana.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicia el riego profundo a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
           "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o del atardecer. No se usa con la hora fija.",
           "routine_sun_mode": "Inicia el riego habitual a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Habilitar el ciclo de riego profundo",
           "deep_soak_time": "Hora programada de riego profundo",
           "routine_time": "Hora programada de riego de rutina",
+          "summary_time": "Hora del resumen semanal",
+          "fertilize_reminder_time": "Hora del recordatorio de abono",
           "deep_soak_sun_mode": "Activador de riego profundo",
           "deep_soak_sun_offset_minutes": "Desfase solar de riego profundo (minutos)",
           "routine_sun_mode": "Activador de rutina",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Un riego profundo es un riego grande y lento cada par de semanas (14 días para empezar) que humedece el suelo a gran profundidad, de modo que las raíces crezcan profundas. Ideal para árboles, arbustos y plantas perennes; desactívelo para plantas de raíz superficial como lechuga y hierbas. El riego de rutina se ejecuta en ambos casos.",
           "deep_soak_time": "Cuándo comienza el riego profundo los días previstos, cuando el activador de abajo es una hora fija. Temprano en la mañana es mejor: menos agua perdida por el sol y el viento.",
           "routine_time": "Cuándo comprueba ZoneFlow cada día si corresponde el riego de rutina, y riega si es así. La frecuencia depende del clima y de su objetivo semanal. Temprano en la mañana es mejor.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Iniciar el riego profundo a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
           "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija.",
           "routine_sun_mode": "Iniciar el riego de rutina a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Activar el ciclo de riego profundo",
           "deep_soak_time": "Hora del riego profundo",
           "routine_time": "Hora del riego habitual",
+          "summary_time": "Hora del resumen semanal",
+          "fertilize_reminder_time": "Hora del recordatorio de abono",
           "deep_soak_sun_mode": "Inicio del riego profundo",
           "deep_soak_sun_offset_minutes": "Desfase solar del riego profundo (minutos)",
           "routine_sun_mode": "Inicio del riego habitual",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "El riego profundo es un riego abundante y lento cada dos semanas o así (14 días para empezar) que moja el suelo en profundidad, para que las raíces crezcan hondas. Va bien para árboles, arbustos y perennes; desactívalo para plantas de raíz superficial como ensaladas y aromáticas. El riego habitual funciona en cualquier caso.",
           "deep_soak_time": "A qué hora empieza el riego profundo los días que toca, cuando su inicio (abajo) es la hora fija. Lo mejor es a primera hora de la mañana: se pierde menos agua por el sol y el viento.",
           "routine_time": "A qué hora comprueba ZoneFlow cada día si toca el riego habitual, y riega si toca. Cada cuánto toca depende del tiempo y de tu objetivo semanal. Lo mejor es a primera hora de la mañana.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicia el riego profundo a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
           "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o del atardecer. No se usa con la hora fija.",
           "routine_sun_mode": "Inicia el riego habitual a la hora fija de arriba, o antes o después del amanecer o del atardecer, para que se adapte a las estaciones.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Habilitar el ciclo de riego profundo",
           "deep_soak_time": "Hora programada de riego profundo",
           "routine_time": "Hora programada de riego de rutina",
+          "summary_time": "Hora del resumen semanal",
+          "fertilize_reminder_time": "Hora del recordatorio de abono",
           "deep_soak_sun_mode": "Activador de riego profundo",
           "deep_soak_sun_offset_minutes": "Desfase solar de riego profundo (minutos)",
           "routine_sun_mode": "Activador de rutina",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "Un riego profundo es un riego grande y lento cada par de semanas (14 días para empezar) que humedece el suelo a gran profundidad, de modo que las raíces crezcan profundas. Ideal para árboles, arbustos y plantas perennes; desactívelo para plantas de raíz superficial como lechuga y hierbas. El riego de rutina se ejecuta en ambos casos.",
           "deep_soak_time": "Cuándo comienza el riego profundo los días previstos, cuando el activador de abajo es una hora fija. Temprano en la mañana es mejor: menos agua perdida por el sol y el viento.",
           "routine_time": "Cuándo comprueba ZoneFlow cada día si corresponde el riego de rutina, y riega si es así. La frecuencia depende del clima y de su objetivo semanal. Temprano en la mañana es mejor.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Iniciar el riego profundo a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
           "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija.",
           "routine_sun_mode": "Iniciar el riego de rutina a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutina: días entre riegos (calor)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutina: duración mínima del pulso"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Riego profundo: duración mínima del pulso"
+      },
+      "self_tune_streak": {
+        "name": "Autoajuste: pulsaciones necesarias"
+      },
+      "self_tune_step_days": {
+        "name": "Autoajuste: paso"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Reanudación automática"
+      },
+      "self_tuning": {
+        "name": "Autoajuste"
       }
     },
     "sensor": {

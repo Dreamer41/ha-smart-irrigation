@@ -51,7 +51,6 @@ from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
-    FERTILIZE_REMINDER_HOUR,
     FLOW_MEASURE_MIN_MINUTES,
     FLOW_METER_SETTLE_SECONDS,
     FLOW_MEASURE_MINUTES,
@@ -92,8 +91,12 @@ from .const import (
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    CONF_SUMMARY_TIME,
+    CONF_FERTILIZE_TIME,
     DEFAULT_DEEP_SOAK_TIME,
     DEFAULT_ROUTINE_TIME,
+    DEFAULT_SUMMARY_TIME,
+    DEFAULT_FERTILIZE_TIME,
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
@@ -111,8 +114,6 @@ from .const import (
     DEFAULT_ZONE_TYPE,
     ZONE_TYPE_OUTDOOR,
     DAILY_SHIFT_TIME,
-    DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
-    DEEP_SOAK_MIN_PULSE_MINUTES,
     DEFAULT_DEEP_SOAK_ENABLED,
     DEFAULT_DRAINAGE,
     DEFAULT_GROWTH_RAMP_PROFILE,
@@ -137,10 +138,6 @@ from .const import (
     SOIL_WET_HOLD_ALERT_INTERVALS,
     POWER_LOSS_GRACE_MINUTES,
     PUMP_POWER_WAIT_TIMEOUT_SECONDS,
-    ROUTINE_INTERVAL_BUFFER_SECONDS,
-    ROUTINE_MIN_PULSE_MINUTES,
-    SELF_TUNE_ADJUST_STEP_DAYS,
-    SELF_TUNE_STREAK_THRESHOLD,
     STALE_LOCK_MINUTES,
     STARTUP_GRACE_SECONDS,
     SUN_MODE_AFTER_SUNRISE,
@@ -234,12 +231,15 @@ _PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
+_ROUTINE_BUFFER_SECONDS = 6 * 3600  # the base "due" buffer (const.ROUTINE_INTERVAL_BUFFER_SECONDS)
+_DEEP_BUFFER_SECONDS = 6 * 3600
 # The settings the Longest Valve Open Time is worked out from (valve_open_times).
 VALVE_OPEN_KEYS = frozenset({
     "flow_rate_mm_per_min", "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm",
     "routine_interval_days", "routine_interval_hot_days", "routine_pulse_count", "deep_soak_pulse_count",
     "deep_soak_target_mm", "max_runtime_minutes", "deep_soak_max_runtime_minutes",
     "service_mode_auto_off_minutes", "mulch_et_adjustment_pct",
+    "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes",
 })
 # Home Assistant 2024.4+: a sensor that reports the same value again.
 EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
@@ -802,6 +802,21 @@ class ZoneFlowController:
             self.entry.options.get(CONF_ROUTINE_TIME, self.entry.data.get(CONF_ROUTINE_TIME)) or DEFAULT_ROUTINE_TIME
         )
 
+    @property
+    def summary_time(self) -> dt_time:
+        """When this zone's weekly summary is sent on its chosen day (asked at setup)."""
+        return _parse_hms(
+            self.entry.options.get(CONF_SUMMARY_TIME, self.entry.data.get(CONF_SUMMARY_TIME)) or DEFAULT_SUMMARY_TIME
+        )
+
+    @property
+    def fertilize_time(self) -> dt_time:
+        """When the fertilizing reminder is sent on the due date (asked at setup)."""
+        return _parse_hms(
+            self.entry.options.get(CONF_FERTILIZE_TIME, self.entry.data.get(CONF_FERTILIZE_TIME))
+            or DEFAULT_FERTILIZE_TIME
+        )
+
     def schedule_summary(self) -> dict[str, Any]:
         """When the routine watering and the deep soak start (a clock time, or
         sunrise/sunset plus an offset), for the card's Watering time popup."""
@@ -1024,7 +1039,8 @@ class ZoneFlowController:
         )
         self._unsubs.append(
             async_track_time_change(
-                self.hass, self._on_fertilize_check, hour=FERTILIZE_REMINDER_HOUR, minute=0, second=0
+                self.hass, self._on_fertilize_check,
+                hour=self.fertilize_time.hour, minute=self.fertilize_time.minute, second=0,
             )
         )
         # Stop a running cycle when Home Assistant shuts down. A shutdown job
@@ -2263,6 +2279,35 @@ class ZoneFlowController:
         reported = getattr(state, "last_reported", None) or state.last_updated
         return round((dt_util.utcnow() - reported).total_seconds() / 3600, 1)
 
+    def _routine_min_pulse(self) -> int:
+        """The shortest a routine pulse may be (the zone's setting, whole minutes)."""
+        return max(int(round(self.number("routine_min_pulse_minutes"))), 1)
+
+    def _deep_min_pulse(self) -> int:
+        """The shortest a deep soak pulse may be (the zone's setting, whole minutes)."""
+        return max(int(round(self.number("deep_soak_min_pulse_minutes"))), 1)
+
+    def _routine_buffer(self) -> int:
+        """How early the routine counts as due (calc.due_buffer_seconds): 6 h, or
+        longer when the last routine run itself took hours."""
+        state = self.store.state
+        run = state.last_routine_run_seconds if state.last_routine_run_for_ts == state.last_routine_ts else 0.0
+        return calc.due_buffer_seconds(_ROUTINE_BUFFER_SECONDS, run)
+
+    def _deep_buffer(self) -> int:
+        """The same for the deep soak, from the last deep soak run's length."""
+        state = self.store.state
+        run = state.last_deep_run_seconds if state.last_deep_run_for_ts == state.last_deep_soak_ts else 0.0
+        return calc.due_buffer_seconds(_DEEP_BUFFER_SECONDS, run)
+
+    def _remember_run_length(self, started: float, *, deep: bool) -> None:
+        """Called as a watering is stamped done: how long it took, for the due buffer."""
+        state = self.store.state
+        took = max(dt_util.utcnow().timestamp() - started, 0.0)
+        state.last_routine_run_seconds, state.last_routine_run_for_ts = took, state.last_routine_ts
+        if deep:
+            state.last_deep_run_seconds, state.last_deep_run_for_ts = took, state.last_deep_soak_ts
+
     def _routine_interval_settings(self) -> dict[str, int]:
         """The two Routine Days Between Waterings settings, as the keyword
         arguments the calculations take (one place, so the dose, the due check
@@ -3333,8 +3378,8 @@ class ZoneFlowController:
             now_ts - (state.last_deep_soak_ts or 0.0),
             self.number("deep_soak_interval_days"),
             self._routine_interval_days(),
-            ROUTINE_INTERVAL_BUFFER_SECONDS,
-            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+            self._routine_buffer(),
+            self._deep_buffer(),
         )
 
     def _stretch_deep_soak_ts(self, deep_ts: float) -> float:
@@ -3344,11 +3389,11 @@ class ZoneFlowController:
         if state.last_routine_ts is None or state.last_deep_soak_ts is None:
             return deep_ts
         interval = self._routine_interval_days()
-        routine_due_ts = state.last_routine_ts + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS
+        routine_due_ts = state.last_routine_ts + interval * 86400 - self._routine_buffer()
         latest = (
             state.last_deep_soak_ts
             + self.number("deep_soak_interval_days") * 86400
-            - DEEP_SOAK_INTERVAL_BUFFER_SECONDS
+            - self._deep_buffer()
             + interval * 86400
         )
         return max(deep_ts, min(routine_due_ts, latest))
@@ -3364,7 +3409,7 @@ class ZoneFlowController:
         if not calc.deep_soak_due(
             now_ts - (state.last_deep_soak_ts or 0.0),
             self.number("deep_soak_interval_days"),
-            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+            self._deep_buffer(),
         ):
             return False
         if not calc.drydown_satisfied(
@@ -3377,7 +3422,7 @@ class ZoneFlowController:
             self.number("deep_soak_target_mm"),
             self.number("flow_rate_mm_per_min"),
             pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
-            min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+            min_pulse_minutes=self._deep_min_pulse(),
             site=self.site,
         )
         if plan.total_runtime_minutes > self.number("deep_soak_max_runtime_minutes"):
@@ -3405,7 +3450,7 @@ class ZoneFlowController:
             if self._service_active and calc.deep_soak_due(
                 now_ts - (state.last_deep_soak_ts or 0.0),
                 self.number("deep_soak_interval_days"),
-                DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+                self._deep_buffer(),
             ):
                 await self._log_skipped_for_service("Deep Soak")
             return
@@ -3414,7 +3459,7 @@ class ZoneFlowController:
         if not calc.deep_soak_due(
             now_ts - (state.last_deep_soak_ts or 0.0),
             self.number("deep_soak_interval_days"),
-            DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+            self._deep_buffer(),
         ):
             return
         if not (replacing_routine or self._manual_press) and self._deep_soak_waits_for_routine(now_ts):
@@ -3443,7 +3488,7 @@ class ZoneFlowController:
             self.number("deep_soak_target_mm"),
             self.number("flow_rate_mm_per_min"),
             pulse_count=deep_soak_pulse_count,
-            min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+            min_pulse_minutes=self._deep_min_pulse(),
             site=self.site,
         )
 
@@ -3505,6 +3550,7 @@ class ZoneFlowController:
         await self._set_lock(True)
         await self._set_abort(False)
 
+        run_started = dt_util.utcnow().timestamp()
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -3529,6 +3575,7 @@ class ZoneFlowController:
         # next-run estimate and Days Until Next Run. Only a completed soak
         # counts (an aborted or interrupted one returned above).
         state.last_routine_ts = done_ts
+        self._remember_run_length(run_started, deep=True)
         state.today_runtime_minutes += plan.total_runtime_minutes
         self._count_for_summary(plan.total_runtime_minutes, "deep_soak")
         self._record_decision(
@@ -3594,7 +3641,7 @@ class ZoneFlowController:
             if self._service_active and calc.routine_due(
                 elapsed_seconds,
                 self._routine_interval_days(),
-                ROUTINE_INTERVAL_BUFFER_SECONDS,
+                self._routine_buffer(),
             ):
                 await self._log_skipped_for_service("Routine Irrigation")
             return
@@ -3608,7 +3655,7 @@ class ZoneFlowController:
         avg_peak_temp = self.effective_avg_peak_temp()
         hot_threshold = self.number("hot_temp_threshold")
         interval_days = self._routine_interval_days()
-        interval_due = calc.routine_due(elapsed_seconds, interval_days, ROUTINE_INTERVAL_BUFFER_SECONDS)
+        interval_due = calc.routine_due(elapsed_seconds, interval_days, self._routine_buffer())
 
         # A due deep soak replaces this routine instead of adding a second
         # watering on top of it.
@@ -3780,6 +3827,7 @@ class ZoneFlowController:
             # self-tune "early" signal.
             await self._register_self_tune_signal("early")
 
+        run_started = dt_util.utcnow().timestamp()
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -3796,6 +3844,7 @@ class ZoneFlowController:
             # so this is the watering (the valve minutes already count toward the daily cap).
             given = self._delivered_minutes
             state.last_routine_ts = dt_util.utcnow().timestamp()
+            self._remember_run_length(run_started, deep=False)
             self._count_for_summary(given, "routine")
             self._record_decision(
                 "routine", "done", minutes=round(given), amount_mm=round(given * self.number("flow_rate_mm_per_min"), 1)
@@ -3807,6 +3856,7 @@ class ZoneFlowController:
             return
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
+        self._remember_run_length(run_started, deep=False)
         state.today_runtime_minutes += plan.calc_runtime_minutes
         self._count_for_summary(plan.calc_runtime_minutes, "routine")
         self._record_decision(
@@ -4051,7 +4101,7 @@ class ZoneFlowController:
             *self.site,
             minimum=max(int(round(self.number("routine_pulse_count"))), 1),
         )
-        count, each = calc.split_pulses(minutes, count, ROUTINE_MIN_PULSE_MINUTES)
+        count, each = calc.split_pulses(minutes, count, self._routine_min_pulse())
         return count, each, int(round(self.number("routine_pulse_rest_minutes")))
 
     async def _service_task(
@@ -4160,14 +4210,14 @@ class ZoneFlowController:
             demand_model_et=self.demand_model == DEMAND_MODEL_ET,
         )
         routine_count = max(int(round(self.number("routine_pulse_count"))), 1)
-        routine = calc.longest_pulse_minutes(routine_total, flow, routine_count, ROUTINE_MIN_PULSE_MINUTES, self.site)
+        routine = calc.longest_pulse_minutes(routine_total, flow, routine_count, self._routine_min_pulse(), self.site)
         deep = 0.0
         if self.deep_soak_enabled and flow > 0:
             plan = calc.plan_deep_soak(
                 self.number("deep_soak_target_mm"),
                 flow,
                 pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
-                min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+                min_pulse_minutes=self._deep_min_pulse(),
                 site=self.site,
             )
             # A deep soak over its own cap is refused, so it never runs.
@@ -4181,7 +4231,7 @@ class ZoneFlowController:
         longest = max(routine, deep, service)
         by_hand = max(
             longest,
-            calc.longest_pulse_minutes(routine_cap, flow, routine_count, ROUTINE_MIN_PULSE_MINUTES, self.site),
+            calc.longest_pulse_minutes(routine_cap, flow, routine_count, self._routine_min_pulse(), self.site),
         )
         return {
             "longest_minutes": round(longest, 1),
@@ -4383,7 +4433,7 @@ class ZoneFlowController:
             rain_eff_mid=self.number("rain_eff_mid"),
             rain_eff_high=self.number("rain_eff_high"),
             pulse_count=max(int(round(self.number("routine_pulse_count"))), 1),
-            min_pulse_minutes=int(ROUTINE_MIN_PULSE_MINUTES),
+            min_pulse_minutes=self._routine_min_pulse(),
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
             interval_fraction=interval_fraction,
@@ -4650,18 +4700,21 @@ class ZoneFlowController:
         streak, so an early-then-skip (or vice versa) pattern never quietly
         carries partial progress toward the opposite nudge."""
         state = self.store.state
+        if not state.self_tune_enabled:
+            return  # switched off on the zone: presses are only presses
+        step = self.number("self_tune_step_days")
         if direction == "early":
             state.self_tune_early_streak += 1
             state.self_tune_skip_streak = 0
-            step_days = -SELF_TUNE_ADJUST_STEP_DAYS
+            step_days = -step
             streak = state.self_tune_early_streak
         else:
             state.self_tune_skip_streak += 1
             state.self_tune_early_streak = 0
-            step_days = SELF_TUNE_ADJUST_STEP_DAYS
+            step_days = step
             streak = state.self_tune_skip_streak
 
-        if streak < SELF_TUNE_STREAK_THRESHOLD:
+        if streak < max(int(round(self.number("self_tune_streak"))), 1):
             await self.store.async_save()
             return
 
@@ -5010,7 +5063,7 @@ class ZoneFlowController:
                 interval = self._routine_interval_days()
                 drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
                 routine_est = max(
-                    (state.last_routine_ts or 0.0) + interval * 86400 - ROUTINE_INTERVAL_BUFFER_SECONDS, drydown_end
+                    (state.last_routine_ts or 0.0) + interval * 86400 - self._routine_buffer(), drydown_end
                 )
             routine = self.next_slot("routine", max(routine_est, not_before))
         _, deep_est = self.next_watering()
@@ -5021,7 +5074,7 @@ class ZoneFlowController:
                 deep_est = max(
                     state.last_deep_soak_ts
                     + self.number("deep_soak_interval_days") * 86400
-                    - DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+                    - self._deep_buffer(),
                     drydown_end,
                 )
                 deep_est = self._stretch_deep_soak_ts(deep_est)

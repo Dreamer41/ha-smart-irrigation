@@ -535,6 +535,18 @@ def early_run_fraction(elapsed_seconds: float, interval_days: int) -> float:
     return min(max(elapsed_seconds / 86400.0 / interval_days, EARLY_RUN_MIN_FRACTION), 1.0)
 
 
+DUE_BUFFER_MAX_SECONDS = 20 * 3600
+
+
+def due_buffer_seconds(base_seconds: int, last_run_seconds: float = 0.0) -> int:
+    """How early before the full gap a watering counts as due. The last watering
+    is stamped when it finishes, so a run that takes hours (a long soak between
+    pulses) would otherwise push the next one a day late: the buffer is at least
+    the last run's length plus an hour, never under the base 6 h and never over
+    20 h (it must stay under a day or a watering could fire twice)."""
+    return int(min(max(base_seconds, last_run_seconds + 3600.0), DUE_BUFFER_MAX_SECONDS))
+
+
 def routine_due(elapsed_seconds: float, interval_days: int, buffer_seconds: int) -> bool:
     """Port of `elapsed_seconds >= target_interval_seconds`
     where target_interval_seconds = interval_days*86400 - buffer_seconds."""
@@ -627,7 +639,7 @@ def soil_moisture_status(moisture_pct: float | None, dry_pct: float, wet_pct: fl
     return "in_range"
 
 
-DEFICIT_MIN_PCT = 50.0
+DEFICIT_MIN_PCT = 30.0
 DEFICIT_MAX_PCT = 100.0
 
 
@@ -651,7 +663,7 @@ def deficit_factor(
     tier (3-day average of daily peaks), while a configured temperature
     sensor has no real reading in the last 3 days, and when a soil-moisture sensor reads at or below
     its Dry threshold (checked at each run); an end date that has passed
-    switches it off. Clamped to 50-100%: a deeper cut is well past "mild
+    switches it off. Clamped to 30-100%: a deeper cut is well past "mild
     stress" for any crop this is meant for."""
     if not enabled:
         return 1.0, "off"

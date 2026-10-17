@@ -123,6 +123,9 @@ CONF_DEEP_SOAK_ENABLED = "deep_soak_enabled"
 DEFAULT_DEEP_SOAK_ENABLED = True
 CONF_DEEP_SOAK_TIME = "deep_soak_time"  # "HH:MM:SS", default matches live YAML -- irrelevant while deep_soak_enabled is False
 CONF_ROUTINE_TIME = "routine_time"
+# 1.7.4: when the weekly summary and the fertilizing reminder are sent (asked at setup).
+CONF_SUMMARY_TIME = "summary_time"
+CONF_FERTILIZE_TIME = "fertilize_reminder_time"
 
 # Descriptive soil/site metadata -- informational context an AI or person
 # uses to pick sensible split-cycle NUMBER_DEFS values below (pulse count,
@@ -300,6 +303,8 @@ SUN_MODE_OPTIONS = [
 DEFAULT_CSV_PATH = "/config/zoneflow_v2.csv"
 DEFAULT_DEEP_SOAK_TIME = "05:00:00"
 DEFAULT_ROUTINE_TIME = "05:30:00"
+DEFAULT_SUMMARY_TIME = "18:00:00"  # the old fixed SUMMARY_HOUR
+DEFAULT_FERTILIZE_TIME = "09:00:00"  # the old fixed FERTILIZE_REMINDER_HOUR
 DEFAULT_SUN_MODE = SUN_MODE_FIXED
 DEFAULT_SUN_OFFSET_MINUTES = 0
 DAILY_SHIFT_TIME = "23:59:50"  # matches shift_avocado_daily_peak_temps / shift_avocado_daily_rain
@@ -453,7 +458,7 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "soil_moisture_wet_pct": ("Soil Moisture Wet Threshold", 0.0, 100.0, 1.0, "%"),
     # Deficit mode (regulated deficit irrigation): share of the normal
     # routine dose while it's on -- see calculations.deficit_factor.
-    "deficit_water_pct": ("Deficit Mode Water", 50.0, 100.0, 5.0, "%"),
+    "deficit_water_pct": ("Deficit Mode Water", 30.0, 100.0, 5.0, "%"),
     # Split-cycle watering: how many on/soak/on pulses a cycle is broken
     # into, and how long the soak gap between pulses is. Slow-draining
     # soil (clay) generally wants MORE pulses and a LONGER soak so water
@@ -468,6 +473,15 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "routine_pulse_rest_minutes": ("Routine Soak Interval Between Pulses", 0.0, 120.0, 5.0, "min"),
     "deep_soak_pulse_count": ("Deep Soak Pulse Count (Split-Cycle)", 1.0, 8.0, 1.0, None),
     "deep_soak_pulse_rest_minutes": ("Deep Soak Soak Interval Between Pulses", 0.0, 120.0, 5.0, "min"),
+    # The shortest a single pulse may be (1.7.4; they were fixed): a dose too small for
+    # every pulse to reach it runs fewer pulses instead.
+    "routine_min_pulse_minutes": ("Routine Minimum Pulse Length", 1.0, 10.0, 1.0, "min"),
+    "deep_soak_min_pulse_minutes": ("Deep Soak Minimum Pulse Length", 1.0, 30.0, 1.0, "min"),
+    # Self-tuning (1.7.4; it was fixed at 3 presses and 0.5 days): how many early
+    # "Run Routine Now" presses (or Snooze presses) in a row nudge the dry-down
+    # holdoff, and by how much. The switch that turns it off is on the zone.
+    "self_tune_streak": ("Self-Tuning Presses Needed", 2.0, 10.0, 1.0, None),
+    "self_tune_step_days": ("Self-Tuning Step", 0.5, 2.0, 0.5, "d"),
     # A hard ceiling on total irrigation runtime across BOTH cycles in a
     # rolling day, independent of the per-cycle safety caps above -- those
     # catch one miscalculated cycle, this catches the case where several
@@ -584,6 +598,10 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "routine_pulse_rest_minutes": 20.0,
     "deep_soak_pulse_count": 3.0,
     "deep_soak_pulse_rest_minutes": 20.0,
+    "routine_min_pulse_minutes": float(ROUTINE_MIN_PULSE_MINUTES),
+    "deep_soak_min_pulse_minutes": float(DEEP_SOAK_MIN_PULSE_MINUTES),
+    "self_tune_streak": float(SELF_TUNE_STREAK_THRESHOLD),
+    "self_tune_step_days": SELF_TUNE_ADJUST_STEP_DAYS,
     "max_daily_runtime_minutes": 240.0,
     "growth_stage_override_pct": 40.0,
     # Defaults trace out a reasonable generic curve on their own (40% -> 60%

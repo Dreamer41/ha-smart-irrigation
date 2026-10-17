@@ -5003,11 +5003,12 @@ const SETTINGS_GROUPS = [
     "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
     "number.target_weekly_cool_mm", "number.routine_interval_days", "number.routine_interval_hot_days", "select.demand_model", "number.crop_coefficient",
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
-    "number.routine_pulse_count", "number.routine_pulse_rest_minutes",
+    "number.routine_pulse_count", "number.routine_pulse_rest_minutes", "number.routine_min_pulse_minutes",
   ]],
   ["water_use", ["number.zone_flow_l_min"]],
   ["rain", [
-    "number.routine_drydown_days", "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm",
+    "number.routine_drydown_days", "switch.self_tuning", "number.self_tune_streak", "number.self_tune_step_days",
+    "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm",
     "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
     "number.forecast_dry_override_days", "number.frost_guard_temp",
@@ -5016,7 +5017,7 @@ const SETTINGS_GROUPS = [
   ["deep_soak", [
     "switch.deep_soak_enabled", "number.deep_soak_target_mm", "number.deep_soak_interval_days",
     "number.deep_soak_drydown_days", "number.deep_soak_rain_threshold", "number.deep_soak_pulse_count",
-    "number.deep_soak_pulse_rest_minutes", "number.deep_soak_max_runtime_minutes",
+    "number.deep_soak_pulse_rest_minutes", "number.deep_soak_min_pulse_minutes", "number.deep_soak_max_runtime_minutes",
   ]],
   ["soil", [
     "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_wet_action", "select.soil_type", "select.drainage", "select.slope",

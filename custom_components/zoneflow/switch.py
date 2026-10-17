@@ -38,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowDeficitModeSwitch(entry, controller),
         ZoneFlowServiceModeSwitch(entry, controller),
         ZoneFlowPauseSwitch(entry, controller),
+        ZoneFlowSelfTuningSwitch(entry, controller),
     ]
     if controller.is_outdoor:
         remove_entities(hass, entry, "switch", ["greenhouse_control", "mist_at_night", "auto_resume"])
@@ -151,6 +152,41 @@ class ZoneFlowDeepSoakEnabledSwitch(SwitchEntity):
         self.hass.config_entries.async_update_entry(
             self._entry, options={**self._entry.options, CONF_DEEP_SOAK_ENABLED: value}
         )
+
+
+class ZoneFlowSelfTuningSwitch(SwitchEntity):
+    """Self-tuning (1.7.4): on (the start, as it always was) = a streak of early
+    "Run Routine Now" presses or Snooze presses nudges the dry-down holdoff;
+    off = presses never change a setting."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:auto-fix"
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_self_tuning"
+        self._attr_translation_key = "self_tuning"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.store.state.self_tune_enabled
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._set(True)
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._set(False)
+
+    async def _set(self, value: bool) -> None:
+        state = self._controller.store.state
+        state.self_tune_enabled = value
+        if not value:
+            state.self_tune_early_streak = 0  # a streak from before it was off must not count later
+            state.self_tune_skip_streak = 0
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
 
 
 class ZoneFlowPauseSwitch(SwitchEntity):

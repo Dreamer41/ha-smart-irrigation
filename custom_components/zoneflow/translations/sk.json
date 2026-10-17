@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Zapnúť hĺbkovú zálievku",
           "deep_soak_time": "Čas hĺbkovej zálievky",
           "routine_time": "Čas bežnej zálievky",
+          "summary_time": "Čas týždenného súhrnu",
+          "fertilize_reminder_time": "Čas pripomenutia hnojenia",
           "deep_soak_sun_mode": "Spúšťač hĺbkovej zálievky",
           "deep_soak_sun_offset_minutes": "Posun hĺbkovej zálievky voči slnku (minúty)",
           "routine_sun_mode": "Spúšťač bežnej zálievky",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "Hĺbková zálievka je výdatné, pomalé zalievanie raz za pár týždňov (na začiatok 14 dní), ktoré zavlaží pôdu hlboko, aby korene rástli do hĺbky. Vhodná pre stromy, kry a trvalky; pre plytko koreniace rastliny ako šalát a bylinky ju vypnite. Bežná zálievka beží v každom prípade.",
           "deep_soak_time": "Kedy sa hĺbková zálievka spustí v dňoch, keď je na rade, ak je spúšťač nižšie nastavený na pevný čas. Najlepšie je skoré ráno: menej vody sa stratí slnkom a vetrom.",
           "routine_time": "Kedy ZoneFlow každý deň skontroluje, či je bežná zálievka na rade, a ak áno, zaleje. Ako často je na rade, závisí od počasia a týždenného cieľa. Najlepšie je skoré ráno.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Spustiť hĺbkovú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
           "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
           "routine_sun_mode": "Spustiť bežnú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Povoliť cyklus hĺbkového premočenia",
           "deep_soak_time": "Čas plánu hĺbkového premočenia",
           "routine_time": "Čas plánu Bežného zavlažovania",
+          "summary_time": "Čas týždenného súhrnu",
+          "fertilize_reminder_time": "Čas pripomenutia hnojenia",
           "deep_soak_sun_mode": "Spúšťač hĺbkového premočenia",
           "deep_soak_sun_offset_minutes": "Posun hĺbkového premočenia voči slnku (minúty)",
           "routine_sun_mode": "Spúšťač bežného zavlažovania",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Hĺbkové premočenie je veľké, pomalé zavlažovanie každých pár týždňov (na začiatok každých 14 dní), ktoré navlhčí pôdu hlboko, aby korene rástli do hĺbky. Dobré pre stromy, kríky a trvalky; vypnite pre rastliny s plytkými koreňmi, ako sú šaláty a bylinky. Bežné zavlažovanie beží tak či tak.",
           "deep_soak_time": "Kedy sa v stanovených dňoch spustí hĺbkové premočenie, ak je jeho spúšťač nižšie nastavený na pevný čas. Skoré ráno je najlepšie: menej strát vody slnkom a vetrom.",
           "routine_time": "Kedy ZoneFlow každý deň kontroluje, či je potrebné bežné zavlažovanie, a ak áno, zavlažuje. Ako často je potrebné, závisí od počasia a vášho týždenného cieľa. Skoré ráno je najlepšie.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Spustite hĺbkové premočenie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
           "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase.",
           "routine_sun_mode": "Spustite bežné zavlažovanie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Zapnúť hĺbkovú zálievku",
           "deep_soak_time": "Čas hĺbkovej zálievky",
           "routine_time": "Čas bežnej zálievky",
+          "summary_time": "Čas týždenného súhrnu",
+          "fertilize_reminder_time": "Čas pripomenutia hnojenia",
           "deep_soak_sun_mode": "Spúšťač hĺbkovej zálievky",
           "deep_soak_sun_offset_minutes": "Posun hĺbkovej zálievky voči slnku (minúty)",
           "routine_sun_mode": "Spúšťač bežnej zálievky",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "Hĺbková zálievka je výdatné, pomalé zalievanie raz za pár týždňov (na začiatok 14 dní), ktoré zavlaží pôdu hlboko, aby korene rástli do hĺbky. Vhodná pre stromy, kry a trvalky; pre plytko koreniace rastliny ako šalát a bylinky ju vypnite. Bežná zálievka beží v každom prípade.",
           "deep_soak_time": "Kedy sa hĺbková zálievka spustí v dňoch, keď je na rade, ak je spúšťač nižšie nastavený na pevný čas. Najlepšie je skoré ráno: menej vody sa stratí slnkom a vetrom.",
           "routine_time": "Kedy ZoneFlow každý deň skontroluje, či je bežná zálievka na rade, a ak áno, zaleje. Ako často je na rade, závisí od počasia a týždenného cieľa. Najlepšie je skoré ráno.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Spustiť hĺbkovú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
           "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
           "routine_sun_mode": "Spustiť bežnú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Povoliť cyklus hĺbkového premočenia",
           "deep_soak_time": "Čas plánu hĺbkového premočenia",
           "routine_time": "Čas plánu Bežného zavlažovania",
+          "summary_time": "Čas týždenného súhrnu",
+          "fertilize_reminder_time": "Čas pripomenutia hnojenia",
           "deep_soak_sun_mode": "Spúšťač hĺbkového premočenia",
           "deep_soak_sun_offset_minutes": "Posun hĺbkového premočenia voči slnku (minúty)",
           "routine_sun_mode": "Spúšťač bežného zavlažovania",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "Hĺbkové premočenie je veľké, pomalé zavlažovanie každých pár týždňov (na začiatok každých 14 dní), ktoré navlhčí pôdu hlboko, aby korene rástli do hĺbky. Dobré pre stromy, kríky a trvalky; vypnite pre rastliny s plytkými koreňmi, ako sú šaláty a bylinky. Bežné zavlažovanie beží tak či tak.",
           "deep_soak_time": "Kedy sa v stanovených dňoch spustí hĺbkové premočenie, ak je jeho spúšťač nižšie nastavený na pevný čas. Skoré ráno je najlepšie: menej strát vody slnkom a vetrom.",
           "routine_time": "Kedy ZoneFlow každý deň kontroluje, či je potrebné bežné zavlažovanie, a ak áno, zavlažuje. Ako často je potrebné, závisí od počasia a vášho týždenného cieľa. Skoré ráno je najlepšie.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Spustite hĺbkové premočenie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
           "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase.",
           "routine_sun_mode": "Spustite bežné zavlažovanie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Bežné polievanie: dni medzi polievaniami (horúco)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Bežné polievanie: najkratší impulz"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Hlboké polievanie: najkratší impulz"
+      },
+      "self_tune_streak": {
+        "name": "Samoladenie: potrebný počet stlačení"
+      },
+      "self_tune_step_days": {
+        "name": "Samoladenie: krok"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Automatický návrat"
+      },
+      "self_tuning": {
+        "name": "Samoladenie"
       }
     },
     "sensor": {

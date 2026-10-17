@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Ativar o ciclo de rega profunda",
           "deep_soak_time": "Hora da rega profunda",
           "routine_time": "Hora da rega de rotina",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Início da rega profunda",
           "deep_soak_sun_offset_minutes": "Rega profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da rega de rotina",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
           "deep_soak_time": "A hora a que a rega profunda começa nos dias em que calha, quando o início abaixo está na hora fixa. De manhã cedo é o melhor: perde-se menos água com o sol e o vento.",
           "routine_time": "A hora a que o ZoneFlow verifica todos os dias se a rega de rotina é devida, e rega se for. A frequência depende do tempo e da sua meta semanal. De manhã cedo é o melhor.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicie a rega profunda à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Ativar o ciclo de rega profunda",
           "deep_soak_time": "Hora da rega profunda programada",
           "routine_time": "Hora da rega de rotina programada",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Gatilho da rega profunda",
           "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Uma rega profunda é uma rega grande e lenta realizada a cada poucas semanas (14 dias para começar) que molha o solo em profundidade, para que as raízes cresçam fundas. Adequada para árvores, arbustos e plantas perenes; desligue para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina é executada de qualquer forma.",
           "deep_soak_time": "Quando a rega profunda se inicia nos dias agendados, caso o gatilho abaixo seja a hora fixa. O início da manhã é ideal: reduz a perda de água pelo sol e vento.",
           "routine_time": "Quando o ZoneFlow verifica diariamente se a rega de rotina é necessária e realiza a rega se for o caso. A frequência depende do tempo e da sua meta semanal. O início da manhã é ideal.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Ativar o ciclo de rega profunda",
           "deep_soak_time": "Hora da rega profunda",
           "routine_time": "Hora da rega de rotina",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Início da rega profunda",
           "deep_soak_sun_offset_minutes": "Rega profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da rega de rotina",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "A rega profunda é uma rega grande e lenta de poucas em poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desligue-a para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina funciona na mesma.",
           "deep_soak_time": "A hora a que a rega profunda começa nos dias em que calha, quando o início abaixo está na hora fixa. De manhã cedo é o melhor: perde-se menos água com o sol e o vento.",
           "routine_time": "A hora a que o ZoneFlow verifica todos os dias se a rega de rotina é devida, e rega se for. A frequência depende do tempo e da sua meta semanal. De manhã cedo é o melhor.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicie a rega profunda à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Ativar o ciclo de rega profunda",
           "deep_soak_time": "Hora da rega profunda programada",
           "routine_time": "Hora da rega de rotina programada",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Gatilho da rega profunda",
           "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "Uma rega profunda é uma rega grande e lenta realizada a cada poucas semanas (14 dias para começar) que molha o solo em profundidade, para que as raízes cresçam fundas. Adequada para árvores, arbustos e plantas perenes; desligue para plantas de raízes superficiais, como alfaces e ervas aromáticas. A rega de rotina é executada de qualquer forma.",
           "deep_soak_time": "Quando a rega profunda se inicia nos dias agendados, caso o gatilho abaixo seja a hora fixa. O início da manhã é ideal: reduz a perda de água pelo sol e vento.",
           "routine_time": "Quando o ZoneFlow verifica diariamente se a rega de rotina é necessária e realiza a rega se for o caso. A frequência depende do tempo e da sua meta semanal. O início da manhã é ideal.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Rotina: dias entre regas (calor)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rotina: duração mínima do pulso"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Rega profunda: duração mínima do pulso"
+      },
+      "self_tune_streak": {
+        "name": "Autoajuste: pressões necessárias"
+      },
+      "self_tune_step_days": {
+        "name": "Autoajuste: passo"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Retoma automática"
+      },
+      "self_tuning": {
+        "name": "Autoajuste"
       }
     },
     "sensor": {

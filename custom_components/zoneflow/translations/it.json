@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Attiva l'irrigazione profonda",
           "deep_soak_time": "Orario dell'irrigazione profonda",
           "routine_time": "Orario dell'irrigazione ordinaria",
+          "summary_time": "Ora del riepilogo settimanale",
+          "fertilize_reminder_time": "Ora del promemoria concimazione",
           "deep_soak_sun_mode": "Avvio dell'irrigazione profonda",
           "deep_soak_sun_offset_minutes": "Irrigazione profonda: scarto da alba/tramonto (minuti)",
           "routine_sun_mode": "Avvio dell'irrigazione ordinaria",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "L'irrigazione profonda è un'irrigazione abbondante e lenta ogni due settimane circa (14 giorni per iniziare) che bagna il terreno in profondità, così le radici scendono in basso. Ottima per alberi, arbusti e perenni; disattivala per piante a radici superficiali come insalata ed erbe aromatiche. L'irrigazione ordinaria funziona in ogni caso.",
           "deep_soak_time": "Quando parte l'irrigazione profonda nei giorni previsti, se il suo avvio qui sotto è l'orario fisso. La mattina presto è l'ideale: si perde meno acqua per sole e vento.",
           "routine_time": "Quando ZoneFlow controlla ogni giorno se tocca all'irrigazione ordinaria, e irriga se è così. Quanto spesso tocca dipende dal meteo e dal tuo obiettivo settimanale. La mattina presto è l'ideale.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Avvia l'irrigazione profonda all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
           "routine_sun_mode": "Avvia l'irrigazione ordinaria all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Abilita ciclo di bagnatura profonda",
           "deep_soak_time": "Orario bagnatura profonda",
           "routine_time": "Orario irrigazione di routine",
+          "summary_time": "Ora del riepilogo settimanale",
+          "fertilize_reminder_time": "Ora del promemoria concimazione",
           "deep_soak_sun_mode": "Attivazione bagnatura profonda",
           "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
           "routine_sun_mode": "Attivazione routine",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "La bagnatura profonda è un’irrigazione abbondante e lenta ogni paio di settimane (14 giorni per iniziare) che inumidisce il terreno in profondità per far sviluppare le radici verso il basso. Ottimo per alberi, arbusti e piante perenni; disattivala per piante a radice superficiale come insalata ed erbe aromatiche. L’irrigazione di routine viene eseguita comunque.",
           "deep_soak_time": "Orario di avvio della bagnatura profonda nei giorni previsti, quando la relativa attivazione qui sotto è impostata su un orario fisso. Il mattino presto è l’ideale: meno acqua persa per sole e vento.",
           "routine_time": "Ora in cui ZoneFlow controlla ogni giorno se l’irrigazione di routine è dovuta, ed esegue l’irrigazione in caso affermativo. La frequenza dipende dal meteo e dall’obiettivo settimanale. Il mattino presto è l’ideale.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Avvia la bagnatura profonda all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
           "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
@@ -338,6 +346,8 @@
           "deep_soak_enabled": "Attiva l'irrigazione profonda",
           "deep_soak_time": "Orario dell'irrigazione profonda",
           "routine_time": "Orario dell'irrigazione ordinaria",
+          "summary_time": "Ora del riepilogo settimanale",
+          "fertilize_reminder_time": "Ora del promemoria concimazione",
           "deep_soak_sun_mode": "Avvio dell'irrigazione profonda",
           "deep_soak_sun_offset_minutes": "Irrigazione profonda: scarto da alba/tramonto (minuti)",
           "routine_sun_mode": "Avvio dell'irrigazione ordinaria",
@@ -364,6 +374,8 @@
           "deep_soak_enabled": "L'irrigazione profonda è un'irrigazione abbondante e lenta ogni due settimane circa (14 giorni per iniziare) che bagna il terreno in profondità, così le radici scendono in basso. Ottima per alberi, arbusti e perenni; disattivala per piante a radici superficiali come insalata ed erbe aromatiche. L'irrigazione ordinaria funziona in ogni caso.",
           "deep_soak_time": "Quando parte l'irrigazione profonda nei giorni previsti, se il suo avvio qui sotto è l'orario fisso. La mattina presto è l'ideale: si perde meno acqua per sole e vento.",
           "routine_time": "Quando ZoneFlow controlla ogni giorno se tocca all'irrigazione ordinaria, e irriga se è così. Quanto spesso tocca dipende dal meteo e dal tuo obiettivo settimanale. La mattina presto è l'ideale.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Avvia l'irrigazione profonda all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
           "routine_sun_mode": "Avvia l'irrigazione ordinaria all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
@@ -453,6 +465,8 @@
           "deep_soak_enabled": "Abilita ciclo di bagnatura profonda",
           "deep_soak_time": "Orario bagnatura profonda",
           "routine_time": "Orario irrigazione di routine",
+          "summary_time": "Ora del riepilogo settimanale",
+          "fertilize_reminder_time": "Ora del promemoria concimazione",
           "deep_soak_sun_mode": "Attivazione bagnatura profonda",
           "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
           "routine_sun_mode": "Attivazione routine",
@@ -471,6 +485,8 @@
           "deep_soak_enabled": "La bagnatura profonda è un’irrigazione abbondante e lenta ogni paio di settimane (14 giorni per iniziare) che inumidisce il terreno in profondità per far sviluppare le radici verso il basso. Ottimo per alberi, arbusti e piante perenni; disattivala per piante a radice superficiale come insalata ed erbe aromatiche. L’irrigazione di routine viene eseguita comunque.",
           "deep_soak_time": "Orario di avvio della bagnatura profonda nei giorni previsti, quando la relativa attivazione qui sotto è impostata su un orario fisso. Il mattino presto è l’ideale: meno acqua persa per sole e vento.",
           "routine_time": "Ora in cui ZoneFlow controlla ogni giorno se l’irrigazione di routine è dovuta, ed esegue l’irrigazione in caso affermativo. La frequenza dipende dal meteo e dall’obiettivo settimanale. Il mattino presto è l’ideale.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Avvia la bagnatura profonda all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
           "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
@@ -955,6 +971,18 @@
       },
       "routine_interval_hot_days": {
         "name": "Routine: giorni tra le irrigazioni (caldo)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Routine: durata minima dell'impulso"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Irrigazione profonda: durata minima dell'impulso"
+      },
+      "self_tune_streak": {
+        "name": "Autoregolazione: pressioni necessarie"
+      },
+      "self_tune_step_days": {
+        "name": "Autoregolazione: passo"
       }
     },
     "datetime": {
@@ -1053,6 +1081,9 @@
       },
       "auto_resume": {
         "name": "Ripristino automatico"
+      },
+      "self_tuning": {
+        "name": "Autoregolazione"
       }
     },
     "sensor": {

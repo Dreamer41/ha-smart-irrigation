@@ -72,6 +72,7 @@ DEEP_SOAK = {
     ("number", "deep_soak_rain_threshold"),
     ("number", "deep_soak_pulse_count"),
     ("number", "deep_soak_pulse_rest_minutes"),
+    ("number", "deep_soak_min_pulse_minutes"),
     ("button", "run_deep_soak"),
 }
 CUSTOM_RAMP = {

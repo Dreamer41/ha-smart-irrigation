@@ -53,6 +53,7 @@ COPY_NUMBER_KEYS = (
     "forecast_rain_threshold_mm", "forecast_probability_threshold_pct", "forecast_dry_override_days",
     "deficit_water_pct", "mulch_et_adjustment_pct",
     "routine_pulse_count", "routine_pulse_rest_minutes", "deep_soak_pulse_count", "deep_soak_pulse_rest_minutes",
+    "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes", "self_tune_streak", "self_tune_step_days",
     "growth_stage_override_pct",
     "growth_ramp_custom_start_pct", "growth_ramp_custom_point1_day", "growth_ramp_custom_point1_pct",
     "growth_ramp_custom_point2_day", "growth_ramp_custom_point2_pct", "growth_ramp_custom_full_day",
@@ -61,6 +62,7 @@ COPY_NUMBER_KEYS = (
 COPY_STATE_KEYS = (
     "growth_stage_mode", "demand_model", "mulch_status", "notify_level", "fertilizing_interval_months",
     "soil_type_override", "drainage_override", "slope_override", "growth_ramp_profile_override",
+    "self_tune_enabled",
 )
 # Kept in the zone's config entry (and asked for at setup under these names).
 COPY_OPTION_KEYS = (
