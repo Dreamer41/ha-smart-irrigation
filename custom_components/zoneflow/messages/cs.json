@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} je připravena k přesazení",
       "message": "Rostla tolik dní, kolik jste nastavili. Otevřete v zóně dialog Rostliny a přesuňte ji do záhonu."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

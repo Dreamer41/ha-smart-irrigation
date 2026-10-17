@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "¿Dónde está esto?"
+      },
+      "soil_wet_action": {
+        "name": "Si el suelo se humedece al regar",
+        "state": {
+          "finish": "Terminar el riego",
+          "stop": "Parar al nivel húmedo"
+        }
       }
     },
     "text": {

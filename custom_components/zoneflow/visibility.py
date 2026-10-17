@@ -49,6 +49,7 @@ RAIN_GAUGE_ONLY = {
 # Shown by another entity: Days Until Next Run says the same, and the Status sentence says when.
 DUPLICATES = {("sensor", "next_irrigation_estimate")}
 PUMP_POWER = {("number", "pump_min_watts")}
+SOIL_PROBE = {("select", "soil_wet_action")}
 SHARED_PUMP = {
     ("number", "pump_preamble_seconds"),
     ("number", "pump_postamble_seconds"),
@@ -171,6 +172,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= MANUAL_RAIN
     if not controller.pump_power_entity:
         hidden |= PUMP_POWER
+    if not controller.soil_moisture_entity:
+        hidden |= SOIL_PROBE
     if (
         not controller.pump_id
         and not controller.pump_power_entity  # the older "same pump-power sensor" grouping

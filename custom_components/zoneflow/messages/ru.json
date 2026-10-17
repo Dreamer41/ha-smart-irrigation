@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} готово к пересадке",
       "message": "Оно росло столько дней, сколько вы задали. Откройте диалог «Растения» зоны, чтобы перенести его на грядку."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

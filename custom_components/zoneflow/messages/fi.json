@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} on valmis siirrettäväksi",
       "message": "Se on kasvanut asettamasi päivämäärän verran. Avaa vyöhykkeen Kasvit-ikkuna ja siirrä se kasvupenkkiin."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} pysäytetty: maa on märkä",
+      "message": "Pysäytetty {given} / {planned} min jälkeen: kosteusanturi näyttää {pct} %, eli märkärajan verran tai yli. Tämä lasketaan kasteluksi."
     }
   },
   "notes": {

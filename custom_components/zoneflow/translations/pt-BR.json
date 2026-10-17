@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Onde fica isso?"
+      },
+      "soil_wet_action": {
+        "name": "Se o solo ficar úmido durante a rega",
+        "state": {
+          "finish": "Terminar a rega",
+          "stop": "Parar no nível úmido"
+        }
       }
     },
     "text": {

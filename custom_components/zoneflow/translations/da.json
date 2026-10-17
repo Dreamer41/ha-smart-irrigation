@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Hvor er dette?"
+      },
+      "soil_wet_action": {
+        "name": "Når jorden bliver våd under vanding",
+        "state": {
+          "finish": "Afslut vandingen",
+          "stop": "Stop ved vådt niveau"
+        }
       }
     },
     "text": {

@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} jest gotowa do przesadzenia",
       "message": "Rosła tyle dni, ile ustawiono. Otwórz okno Rośliny strefy, aby przenieść ją na grządkę."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

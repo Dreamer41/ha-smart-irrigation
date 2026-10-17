@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Wo befindet sich dies?"
+      },
+      "soil_wet_action": {
+        "name": "Wenn der Boden beim Gießen nass wird",
+        "state": {
+          "finish": "Gießen beenden",
+          "stop": "Bei Nässegrenze stoppen"
+        }
       }
     },
     "text": {

@@ -213,6 +213,19 @@ and both zones get less water than their calibrated runtime assumes.
 
 **Valve overlap.** If the pipes bang when a valve closes, set **Valve Overlap** (0 to 10 seconds, in the Safety settings of zones that share a pump). The next zone's valve then opens that many seconds before the running zone's closes. At 0 (the default) the zones take turns exactly as before.
 
+## Soil probe: stop when it is wet
+
+With a soil moisture probe, a routine watering is only held back or brought
+forward at its start: wet soil skips a due watering, dry soil waters at the next
+scheduled time. Once a watering is running it gives its planned pulses. If you
+want it to stop earlier, set **When Soil Gets Wet During Watering** (Soil
+settings) to **Stop at the wet level**: before each later pulse the probe is
+read, and at the Soil Moisture Wet Threshold or more the rest is not given. The
+soak between pulses gives the water time to reach the probe, so set the soak to
+suit your soil. A watering stopped this way counts as done. **Finish the
+watering** (the start) always gives every pulse. The deep soak never looks at
+the probe, and the Run Routine Now button is never cut short.
+
 ## The valve's own backup timer
 
 ZoneFlow closes the valve itself, but if Home Assistant (or the network) stops

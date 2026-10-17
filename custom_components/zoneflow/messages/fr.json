@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone} : {plant} est prête à être repiquée",
       "message": "Elle a poussé le nombre de jours que vous avez réglé. Ouvrez la boîte Plantes de la zone pour la déplacer dans sa planche."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

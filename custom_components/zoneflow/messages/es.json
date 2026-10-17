@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} está lista para trasplantar",
       "message": "Ha crecido los días que indicó. Abra el diálogo Plantas de la zona para moverla a su bancal."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

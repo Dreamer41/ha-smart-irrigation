@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} is klaar om te verplaatsen",
       "message": "Hij heeft zoveel dagen gegroeid als u hebt ingesteld. Open het dialoogvenster Planten van de zone om hem naar zijn bed te verplaatsen."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

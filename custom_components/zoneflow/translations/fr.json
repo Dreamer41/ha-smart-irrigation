@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Où est-ce situé ?"
+      },
+      "soil_wet_action": {
+        "name": "Si le sol devient humide pendant l'arrosage",
+        "state": {
+          "finish": "Terminer l'arrosage",
+          "stop": "Arrêter au niveau humide"
+        }
       }
     },
     "text": {

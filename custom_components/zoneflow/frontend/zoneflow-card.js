@@ -5019,7 +5019,7 @@ const SETTINGS_GROUPS = [
     "number.deep_soak_pulse_rest_minutes", "number.deep_soak_max_runtime_minutes",
   ]],
   ["soil", [
-    "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_type", "select.drainage", "select.slope",
+    "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_wet_action", "select.soil_type", "select.drainage", "select.slope",
     "select.mulch_status", "number.mulch_et_adjustment_pct",
   ]],
   ["growth", [

@@ -318,6 +318,10 @@ DEEP_SOAK_INTERVAL_BUFFER_SECONDS = 6 * 3600  # "14-day check with a 6-hour buff
 # automation's floor exactly; there's no agronomic reason to make an
 # absolute minimum pulse length itself configurable).
 DEEP_SOAK_MIN_PULSE_MINUTES = 5
+# What a routine watering does when the soil probe reads wet between pulses.
+SOIL_WET_FINISH = "finish"
+SOIL_WET_STOP = "stop"
+SOIL_WET_ACTION_OPTIONS = [SOIL_WET_FINISH, SOIL_WET_STOP]
 ROUTINE_MIN_PULSE_MINUTES = 1
 ROUTINE_INTERVAL_BUFFER_SECONDS = 6 * 3600  # (interval_days*86400) - 21600, same buffer
 ROUTINE_HOT_INTERVAL_DAYS = 3

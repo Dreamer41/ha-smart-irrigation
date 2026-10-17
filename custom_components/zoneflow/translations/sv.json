@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Var finns detta?"
+      },
+      "soil_wet_action": {
+        "name": "När jorden blir blöt under bevattning",
+        "state": {
+          "finish": "Avsluta bevattningen",
+          "stop": "Stoppa vid blöt nivå"
+        }
       }
     },
     "text": {

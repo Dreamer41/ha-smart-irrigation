@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "位置在哪里？"
+      },
+      "soil_wet_action": {
+        "name": "浇水时土壤变湿",
+        "state": {
+          "finish": "完成浇水",
+          "stop": "达到湿润水平时停止"
+        }
       }
     },
     "text": {

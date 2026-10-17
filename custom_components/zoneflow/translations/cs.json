@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Kde se nachází?"
+      },
+      "soil_wet_action": {
+        "name": "Když půda při zálivce zvlhne",
+        "state": {
+          "finish": "Dokončit zálivku",
+          "stop": "Zastavit na úrovni mokra"
+        }
       }
     },
     "text": {

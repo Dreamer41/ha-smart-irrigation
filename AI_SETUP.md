@@ -1305,6 +1305,14 @@ It is not used for service runs or flow measurements, or when both zones
 share one flow meter. For that hand-over the next zone skips its pump
 preamble (the pump is already running) and the finishing zone its postamble.
 
+For a zone with a soil probe, the select `soil_wet_action` ("When Soil Gets Wet
+During Watering") chooses between `finish` (the start: every planned pulse is
+given) and `stop` (before each later pulse of a routine watering the probe is
+read, and at `soil_moisture_wet_pct` or more the rest is not given; it counts as
+the watering). Offer `stop` where heavy soil or a slow-draining bed is easily
+over-watered; keep the soak between pulses long enough for the water to reach
+the probe.
+
 Tell the person to set an auto-off timer on the valve or switch itself (Shelly
 app, Tasmota PulseTime, ESPHome, the device's own app): a backup if Home
 Assistant stops while the valve is open. The right length is the zone's

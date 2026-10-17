@@ -260,6 +260,11 @@ class IrrigationState:
     # lasts until the Resume Automatic button is pressed.
     gh_auto_resume: bool = True
 
+    # 1.7.4 When Soil Gets Wet During Watering: "finish" = a routine watering
+    # always gives its planned pulses (as before); "stop" = it stops between
+    # pulses once the soil probe reads the wet threshold or more.
+    soil_wet_action: str = "finish"
+
     # --- 1.6.1 skip journal (controller._journal_skip) ---
     # One entry per watering skipped for forecast rain: {ts, cycle,
     # forecast_mm, actual_mm, paid_off}. actual_mm/paid_off stay None until

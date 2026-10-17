@@ -151,6 +151,7 @@ from .const import (
     DEFAULT_SUN_MODE,
     DEFAULT_SUN_OFFSET_MINUTES,
     SERVICE_RUN_BUTTON_MINUTES,
+    SOIL_WET_STOP,
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
     RAIN_RATE_MAX_GAP_SECONDS,
@@ -224,6 +225,7 @@ def _parse_hms(value: str) -> dt_time:
 _DONE = "done"
 _ABORTED = "aborted"
 _RAIN = "rain"
+_SOIL = "soil"  # stopped between pulses: the soil probe reads wet
 _STOPPED = "stopped"
 # A service run ended by the person (Service Mode switched off).
 _USER_STOPPED = "user_stopped"
@@ -2712,6 +2714,13 @@ class ZoneFlowController:
                 runtime_for_log=runtime_for_log,
             ):
                 return _RAIN
+            if index > 1 and kind == "Routine Irrigation" and await self._stopped_by_wet_soil(
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            ):
+                return _SOIL
 
             if kind == SERVICE_RUN_KIND and self._service_stop.is_set():
                 return _USER_STOPPED
@@ -3019,6 +3028,45 @@ class ZoneFlowController:
                 "given": given,
                 "planned": runtime_for_log,
                 "rain": units.depth_text(rain_30min, self.imperial),
+            },
+        )
+        return True
+
+    async def _stopped_by_wet_soil(
+        self,
+        *,
+        kind: str,
+        target_mm_for_log: float,
+        deducted_mm_for_log: float,
+        runtime_for_log: int,
+    ) -> bool:
+        """Before each later pulse of a routine watering, with When Soil Gets Wet
+        During Watering set to stop and a readable probe: the soil already reads the wet threshold or
+        more, so the rest is not given. The soak before this check is what lets
+        the water reach the probe. The watering counts as done (the soil got
+        what it needed), see run_routine_irrigation."""
+        if self.store.state.soil_wet_action != SOIL_WET_STOP or not self.soil_moisture_entity:
+            return False
+        if self._manual_press:
+            return False  # a press is the person's own decision to water: no automatic stop
+        pct = self.soil_moisture_reading()  # None: no usable reading, so keep watering
+        if pct is None or pct < self.number("soil_moisture_wet_pct"):
+            return False
+        given = int(round(self._delivered_minutes))
+        await self._set_lock(False)
+        await self._log_event(
+            event_type=f"{kind} Stopped (Soil Wet)",
+            status="Completed",
+            target_mm=target_mm_for_log,
+            deducted_mm=deducted_mm_for_log,
+            runtime=given,
+            notify_phone=True,
+            message="stopped_soil_wet",
+            params={
+                "cycle": self._cycle_name(kind),
+                "given": given,
+                "planned": runtime_for_log,
+                "pct": f"{pct:.0f}",
             },
         )
         return True
@@ -3743,6 +3791,17 @@ class ZoneFlowController:
             runtime_for_log=plan.calc_runtime_minutes,
         )
 
+        if self._last_outcome == _SOIL and not state.abort_on:
+            # Stopped between pulses because the soil is wet: the soil got what it needed,
+            # so this is the watering (the valve minutes already count toward the daily cap).
+            given = self._delivered_minutes
+            state.last_routine_ts = dt_util.utcnow().timestamp()
+            self._count_for_summary(given, "routine")
+            self._record_decision(
+                "routine", "done", minutes=round(given), amount_mm=round(given * self.number("flow_rate_mm_per_min"), 1)
+            )
+            await self.store.async_save()
+            return
         if not completed or state.abort_on:
             await self._decide("routine", "interrupted")
             return

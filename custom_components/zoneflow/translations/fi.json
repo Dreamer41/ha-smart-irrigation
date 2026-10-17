@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Missä tämä sijaitsee?"
+      },
+      "soil_wet_action": {
+        "name": "Kun maa kastuu kastelun aikana",
+        "state": {
+          "finish": "Kastele loppuun",
+          "stop": "Pysäytä märkärajalla"
+        }
       }
     },
     "text": {

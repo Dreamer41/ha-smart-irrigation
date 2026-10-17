@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Hol található ez?"
+      },
+      "soil_wet_action": {
+        "name": "Ha a talaj nedves lesz öntözés közben",
+        "state": {
+          "finish": "Öntözés befejezése",
+          "stop": "Leállítás a nedves szintnél"
+        }
       }
     },
     "text": {

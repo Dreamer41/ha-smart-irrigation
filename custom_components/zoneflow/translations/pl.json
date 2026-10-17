@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Gdzie to jest?"
+      },
+      "soil_wet_action": {
+        "name": "Gdy gleba zwilgotnieje podczas podlewania",
+        "state": {
+          "finish": "Dokończ podlewanie",
+          "stop": "Zatrzymaj przy poziomie mokrym"
+        }
       }
     },
     "text": {

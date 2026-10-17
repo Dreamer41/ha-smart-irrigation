@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}:{plant} 可以移栽了",
       "message": "它已生长了您设定的天数。打开该区域的“植物”对话框,把它移到种植床。"
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} stopped: soil is wet",
+      "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
     }
   },
   "notes": {

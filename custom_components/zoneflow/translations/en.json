@@ -1307,6 +1307,13 @@
       },
       "location": {
         "name": "Where is this?"
+      },
+      "soil_wet_action": {
+        "name": "When Soil Gets Wet During Watering",
+        "state": {
+          "finish": "Finish the watering",
+          "stop": "Stop at the wet level"
+        }
       }
     },
     "text": {
