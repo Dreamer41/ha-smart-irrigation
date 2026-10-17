@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "一次常规浇水需要 {minutes} 分钟，超过本区域的安全运行时间上限（{cap} 分钟），因此每次都会被拒绝。请提高上限，或缩短浇水间隔天数。"
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "浇水方式：{method}。",

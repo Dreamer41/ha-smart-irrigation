@@ -16,6 +16,11 @@ Ideas queued for upcoming releases.
 
 ## Shipped
 
+### Next release (on dev-1.7.4)
+
+- Longest Valve Open Time and the recommended backup timer for the valve's own auto-off.
+- Water now with minutes splits into pulses like the zone's own watering.
+
 ### 1.7.3 — days between waterings, Watering time, Delete zone, Valve Overlap
 
 - Days between routine waterings (normal and hot) and the rain that starts the dry-down are settings.

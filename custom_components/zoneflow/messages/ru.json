@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Обычный полив занимает {minutes} мин, больше предела безопасности этой зоны ({cap} мин), поэтому он каждый раз отклоняется. Повысьте предел или сократите дни между поливами."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Способ полива: {method}.",

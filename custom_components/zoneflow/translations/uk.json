@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Об'єм останнього поливу"
+      },
+      "longest_valve_open": {
+        "name": "Найдовший час відкриття клапана"
       }
     },
     "select": {

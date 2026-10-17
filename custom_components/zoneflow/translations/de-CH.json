@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Letztes Wasservolumen"
+      },
+      "longest_valve_open": {
+        "name": "Längste Ventil-Öffnungszeit"
       }
     },
     "select": {

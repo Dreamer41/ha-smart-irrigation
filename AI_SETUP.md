@@ -1305,6 +1305,16 @@ It is not used for service runs or flow measurements, or when both zones
 share one flow meter. For that hand-over the next zone skips its pump
 preamble (the pump is already running) and the finishing zone its postamble.
 
+Tell the person to set an auto-off timer on the valve or switch itself (Shelly
+app, Tasmota PulseTime, ESPHome, the device's own app): a backup if Home
+Assistant stops while the valve is open. The right length is the zone's
+`sensor.<zone>_longest_valve_open_time` (minutes, the longest the valve is open
+in one go, from the zone's own settings) plus a margin; its attribute
+`recommended_timer_minutes` and the line in Check my setup give the figure to
+set. A timer shorter than the sensor cuts waterings short without ZoneFlow
+noticing, so do not guess a round number. Re-read it after changing the pulse
+count, flow rate, days between waterings or caps: it follows them.
+
 Worth setting expectations on if the person asks how the queuing actually
 behaves: a zone holds the shared pump for its **entire** cycle once it
 starts, including any soak gaps between split-cycle pulses (§5) — a second

@@ -26,7 +26,7 @@ async def test_water_now_waters_for_the_minutes_and_counts_in_the_water_record(h
     last_routine, last_deep = state.last_routine_ts, state.last_deep_soak_ts
     await hass.services.async_call(DOMAIN, "water_now", {"minutes": 7}, blocking=True)
     await hass.async_block_till_done()
-    assert clock.pulses_for(VALVE) == [7]
+    assert sum(clock.pulses_for(VALVE)) == pytest.approx(7)  # in pulses, the zone's way (see test_longest_valve_open)
     assert hass.states.get(VALVE).state == "off" and state.lock_on is False
     # In the record: the last watering amount and the litres (7 min x 12 L/min).
     assert state.last_cycle_kind == "manual" and state.last_cycle_runtime_min == pytest.approx(7)
@@ -43,7 +43,7 @@ async def test_water_now_defaults_to_ten_minutes_and_keeps_to_the_safety_limits(
     controller, clock, _ = await _ready(hass, monkeypatch, tmp_path)
     await hass.services.async_call(DOMAIN, "water_now", {}, blocking=True)
     await hass.async_block_till_done()
-    assert clock.pulses_for(VALVE) == [10]
+    assert sum(clock.pulses_for(VALVE)) == pytest.approx(10)
     cap = controller.number("max_runtime_minutes")
     with pytest.raises(ServiceValidationError):
         await hass.services.async_call(DOMAIN, "water_now", {"minutes": cap + 1}, blocking=True)

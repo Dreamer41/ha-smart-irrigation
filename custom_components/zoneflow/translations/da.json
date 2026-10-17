@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Seneste vandvolumen"
+      },
+      "longest_valve_open": {
+        "name": "Længste ventil-åbningstid"
       }
     },
     "select": {

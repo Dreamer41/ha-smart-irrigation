@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "上次浇水量"
+      },
+      "longest_valve_open": {
+        "name": "阀门最长开启时间"
       }
     },
     "select": {

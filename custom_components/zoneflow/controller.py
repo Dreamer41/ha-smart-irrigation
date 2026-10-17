@@ -150,6 +150,7 @@ from .const import (
     SUN_MODE_FIXED,
     DEFAULT_SUN_MODE,
     DEFAULT_SUN_OFFSET_MINUTES,
+    SERVICE_RUN_BUTTON_MINUTES,
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
     RAIN_RATE_MAX_GAP_SECONDS,
@@ -231,6 +232,13 @@ _PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
+# The settings the Longest Valve Open Time is worked out from (valve_open_times).
+VALVE_OPEN_KEYS = frozenset({
+    "flow_rate_mm_per_min", "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm",
+    "routine_interval_days", "routine_interval_hot_days", "routine_pulse_count", "deep_soak_pulse_count",
+    "deep_soak_target_mm", "max_runtime_minutes", "deep_soak_max_runtime_minutes",
+    "service_mode_auto_off_minutes", "mulch_et_adjustment_pct",
+})
 # Home Assistant 2024.4+: a sensor that reports the same value again.
 EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
 WATER_LEDGER_DAYS = 400
@@ -1611,6 +1619,8 @@ class ZoneFlowController:
             self._notify_status()  # when the next watering is changed with it: show it at once
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
+        if key in VALVE_OPEN_KEYS:
+            self._notify_status()  # the Longest Valve Open Time follows the change at once
 
     def _schedule_resume(self) -> None:
         """Paused Until: switch Pause off by itself at that time."""
@@ -2695,7 +2705,7 @@ class ZoneFlowController:
             if self.store.state.abort_on:
                 _LOGGER.warning("%s: aborted by power-loss watchdog before pulse %d", kind, index)
                 return _ABORTED
-            if index > 1 and await self._stopped_by_rain(
+            if index > 1 and kind != SERVICE_RUN_KIND and await self._stopped_by_rain(
                 kind=kind,
                 target_mm_for_log=target_mm_for_log,
                 deducted_mm_for_log=deducted_mm_for_log,
@@ -2969,12 +2979,15 @@ class ZoneFlowController:
         cut short by an abort, reload or shutdown -- a stopped cycle mustn't
         sit on a shared pump for the rest of a long gap."""
         sleeper = asyncio.ensure_future(asyncio.sleep(seconds))
-        waker = asyncio.ensure_future(self._abort_or_paused(self._watering_cycle))
+        wakers = {asyncio.ensure_future(self._abort_or_paused(self._watering_cycle))}
+        if self._service_active:  # a manual watering in pulses: the person can stop it in the soak
+            wakers.add(asyncio.ensure_future(self._service_stop.wait()))
         try:
-            await asyncio.wait({sleeper, waker}, return_when=asyncio.FIRST_COMPLETED)
+            await asyncio.wait({sleeper, *wakers}, return_when=asyncio.FIRST_COMPLETED)
         finally:
             sleeper.cancel()
-            waker.cancel()
+            for waker in wakers:
+                waker.cancel()
 
     async def _stopped_by_rain(
         self,
@@ -3922,10 +3935,16 @@ class ZoneFlowController:
                 translation_domain=DOMAIN, translation_key="water_now_out_of_range",
                 translation_placeholders={"max": f"{cap:.0f}"},
             )
-        await self.start_service_run(minutes, counted=True)
+        await self.start_service_run(minutes, counted=True, split=True)
 
     async def start_service_run(
-        self, minutes: float, *, from_switch: bool = False, measure_area: float | None = None, counted: bool = False
+        self,
+        minutes: float,
+        *,
+        from_switch: bool = False,
+        measure_area: float | None = None,
+        counted: bool = False,
+        split: bool = False,
     ) -> None:
         """Run the valve for `minutes` to check emitters, flush a line or
         find a leak -- the 1/5/10 min buttons and the Service Mode switch.
@@ -3956,21 +3975,35 @@ class ZoneFlowController:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="daily_cap_reached")
         shortened = float(minutes) > room
         minutes = min(float(minutes), room)
+        pulses = self._manual_pulses(minutes) if split else None
         self._service_active = True
         self._service_counted = counted
         self._service_stop.clear()
         self._notify_service_listeners()
-        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area, counted))
+        self.hass.async_create_task(self._service_task(minutes, from_switch, shortened, measure_area, counted, pulses))
+
+    def _manual_pulses(self, minutes: float) -> tuple[int, float, int]:
+        """A typed "Water now" in pulses, the way the zone's own routine
+        watering splits: the zone's Routine Pulse Count, more of them where the
+        soil or slope needs it to take the water without runoff, and the zone's
+        soak between them. Returns (pulses, minutes per pulse, soak minutes)."""
+        count = calc.soil_pulse_count(
+            minutes * self.number("flow_rate_mm_per_min"),
+            *self.site,
+            minimum=max(int(round(self.number("routine_pulse_count"))), 1),
+        )
+        count, each = calc.split_pulses(minutes, count, ROUTINE_MIN_PULSE_MINUTES)
+        return count, each, int(round(self.number("routine_pulse_rest_minutes")))
 
     async def _service_task(
         self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None,
-        counted: bool = False,
+        counted: bool = False, pulses: tuple[int, float, int] | None = None,
     ) -> None:
         """Owns the service-run flags, so they're cleared however the run
         ends -- including a zone that started stopping before it began."""
         self._measuring = measure_area is not None
         try:
-            await self._service_run(minutes, from_switch, shortened, measure_area, counted)
+            await self._service_run(minutes, from_switch, shortened, measure_area, counted, pulses)
         finally:
             self._measuring = False
             self._service_counted = False
@@ -3986,7 +4019,7 @@ class ZoneFlowController:
     @_tracked_run
     async def _service_run(
         self, minutes: float, from_switch: bool, shortened: bool, measure_area: float | None = None,
-        counted: bool = False,
+        counted: bool = False, pulses: tuple[int, float, int] | None = None,
     ) -> None:
         state = self.store.state
         if state.lock_on:
@@ -3994,10 +4027,11 @@ class ZoneFlowController:
         await self._set_lock(True)
         await self._set_abort(False)
         self._last_outcome = None
+        count, pulse_minutes, rest_minutes = pulses or (1, minutes, 0)
         completed = await self._run_pulses(
-            count=1,
-            pulse_minutes=minutes,
-            rest_minutes=0,
+            count=count,
+            pulse_minutes=pulse_minutes,
+            rest_minutes=rest_minutes,
             min_pump_watts=self.number("pump_min_watts"),
             kind=SERVICE_RUN_KIND,
             target_mm_for_log=0.0,
@@ -4012,7 +4046,7 @@ class ZoneFlowController:
         if completed:
             # A finished pulse isn't counted by the pulse loop (a watering
             # cycle adds its planned minutes itself); a stopped one was.
-            state.today_runtime_minutes += minutes
+            state.today_runtime_minutes += count * pulse_minutes
         await self.store.async_save()
         await self._set_lock(False)
         ran = self._delivered_minutes
@@ -4039,6 +4073,66 @@ class ZoneFlowController:
         )
         if measure_area is not None:
             await self._finish_flow_measurement(measure_area, minutes, stopped_by_person)
+
+    def valve_open_times(self) -> dict[str, Any] | None:
+        """The longest the valve is open in one go, from the zone's own settings
+        as they are now (None for a zone with no valve): what the valve's own
+        auto-off timer has to allow, or it cuts a run short. Counts the routine
+        watering (the biggest dose its tiers and days between waterings can give,
+        split the way the zone splits it), the deep soak, and the service and
+        test runs. A typed "Water now" is the person's own choice and is given
+        apart (the `with_water_now` values)."""
+        if not self.has_valve:
+            return None
+        flow = self.number("flow_rate_mm_per_min")
+        gaps = self._routine_interval_settings()
+        normal_gap, hot_gap = gaps["normal_interval_days"], gaps["hot_interval_days"]
+        routine_cap = self.number("max_runtime_minutes")
+        routine_total = calc.largest_routine_minutes(
+            flow_rate=flow,
+            runtime_cap=routine_cap,
+            weekly_mm=(
+                self.number("target_weekly_mm"),
+                self.number("target_weekly_hot_mm"),
+                self.number("target_weekly_cool_mm"),
+            ),
+            interval_days=(normal_gap, hot_gap, normal_gap),
+            scale=self.mulch_factor(),
+            demand_model_et=self.demand_model == DEMAND_MODEL_ET,
+        )
+        routine_count = max(int(round(self.number("routine_pulse_count"))), 1)
+        routine = calc.longest_pulse_minutes(routine_total, flow, routine_count, ROUTINE_MIN_PULSE_MINUTES, self.site)
+        deep = 0.0
+        if self.deep_soak_enabled and flow > 0:
+            plan = calc.plan_deep_soak(
+                self.number("deep_soak_target_mm"),
+                flow,
+                pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
+                min_pulse_minutes=int(DEEP_SOAK_MIN_PULSE_MINUTES),
+                site=self.site,
+            )
+            # A deep soak over its own cap is refused, so it never runs.
+            if plan.total_runtime_minutes <= self.number("deep_soak_max_runtime_minutes"):
+                deep = plan.pulse_runtime_minutes
+        service = max(
+            self.number("service_mode_auto_off_minutes"),
+            float(max(SERVICE_RUN_BUTTON_MINUTES)),
+            float(FLOW_MEASURE_MINUTES),
+        )
+        longest = max(routine, deep, service)
+        by_hand = max(
+            longest,
+            calc.longest_pulse_minutes(routine_cap, flow, routine_count, ROUTINE_MIN_PULSE_MINUTES, self.site),
+        )
+        return {
+            "longest_minutes": round(longest, 1),
+            "recommended_timer_minutes": calc.recommended_backup_timer_minutes(longest),
+            "routine_minutes": round(routine, 1),
+            "deep_soak_minutes": round(deep, 1),
+            "service_minutes": round(service, 1),
+            "with_water_now_minutes": round(by_hand, 1),
+            "recommended_timer_with_water_now_minutes": calc.recommended_backup_timer_minutes(by_hand),
+        }
 
     async def start_flow_measurement(self, area_m2: float) -> None:
         """Measure the emitter flow rate with the flow meter: a service run

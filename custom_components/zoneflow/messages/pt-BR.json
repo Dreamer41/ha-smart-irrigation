@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Uma rega de rotina precisa de {minutes} min, mais que o limite de segurança desta zona ({cap} min), então é sempre recusada. Aumente o limite ou reduza os dias entre regas."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Método de irrigação: {method}.",

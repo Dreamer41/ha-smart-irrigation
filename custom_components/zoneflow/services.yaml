@@ -467,8 +467,11 @@ water_now:
   description: >-
     Waters the zone by hand for a number of minutes. Not while the zone is
     paused, never longer than the zone's Routine Max Safety Runtime Cap, and
-    inside the day's runtime cap. Counts in the water record (litres), but does
-    not move the routine or deep soak schedule.
+    inside the day's runtime cap. The minutes are split into pulses like the
+    zone's own routine watering (its Routine Pulse Count, more pulses where the
+    soil or slope needs them to avoid runoff, and the soak between them). Counts
+    in the water record (litres), but does not move the routine or deep soak
+    schedule.
   fields:
     minutes:
       name: Minutes

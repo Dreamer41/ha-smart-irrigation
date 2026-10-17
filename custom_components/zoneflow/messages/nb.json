@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "En rutinevanning trenger {minutes} min, mer enn sonens sikkerhetsgrense ({cap} min), så den avvises hver gang. Hev grensen eller forkort dagene mellom vanningene."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Vanningsmetode: {method}.",

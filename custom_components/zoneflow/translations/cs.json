@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Objem poslední zálivky"
+      },
+      "longest_valve_open": {
+        "name": "Nejdelší doba otevření ventilu"
       }
     },
     "select": {

@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Objętość ostatniego podania wody"
+      },
+      "longest_valve_open": {
+        "name": "Najdłuższy czas otwarcia zaworu"
       }
     },
     "select": {

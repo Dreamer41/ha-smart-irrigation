@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "En rutinevanding kræver {minutes} min, mere end zonens sikkerhedsgrænse ({cap} min), så den afvises hver gang. Hæv grænsen eller forkort dagene mellem vandingerne."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Vandingsmetode: {method}.",

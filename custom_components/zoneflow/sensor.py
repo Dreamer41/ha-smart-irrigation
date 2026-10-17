@@ -60,6 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowGrowthRampSensor(entry, controller),
         ZoneFlowLastCycleWaterSensor(entry, controller),
         ZoneFlowDeficitStatusSensor(entry, controller),
+        ZoneFlowLongestValveOpenSensor(entry, controller),
         ZoneFlowStatusSensor(entry, controller),
     ]
     if controller.is_outdoor:
@@ -390,6 +391,39 @@ class ZoneFlowDaysUntilNextRunSensor(_Base):
             "deep_soak_days": self._days(deep_next),
             "next_cycle": next_cycle,
         }
+
+
+class ZoneFlowLongestValveOpenSensor(_Base):
+    """The longest the valve is open in one go, worked out from the zone's own
+    settings (controller.valve_open_times): what the valve's own auto-off timer
+    has to allow. The recommended timer is an attribute. Unknown for a zone
+    with no valve."""
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_native_unit_of_measurement = "min"
+    _attr_icon = "mdi:timer-sand"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_longest_valve_open"
+        self._attr_translation_key = "longest_valve_open"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # Right away when a setting it depends on is moved, not at the next poll.
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
+    @property
+    def native_value(self) -> float | None:
+        times = self._controller.valve_open_times()
+        return times["longest_minutes"] if times else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        times = self._controller.valve_open_times()
+        if not times:
+            return {}
+        return {key: value for key, value in times.items() if key != "longest_minutes"}
 
 
 class ZoneFlowLastWaterDeliveredSensor(_Base):

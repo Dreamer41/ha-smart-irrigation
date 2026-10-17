@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Eine Routinebewässerung braucht {minutes} Min., mehr als die maximale Sicherheitslaufzeit dieser Zone ({cap} Min.) und wird deshalb jedes Mal abgelehnt. Erhöhe die Grenze oder verkürze die Tage zwischen den Bewässerungen."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Bewässerungsmethode: {method}.",

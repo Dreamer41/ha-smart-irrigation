@@ -213,6 +213,36 @@ and both zones get less water than their calibrated runtime assumes.
 
 **Valve overlap.** If the pipes bang when a valve closes, set **Valve Overlap** (0 to 10 seconds, in the Safety settings of zones that share a pump). The next zone's valve then opens that many seconds before the running zone's closes. At 0 (the default) the zones take turns exactly as before.
 
+## The valve's own backup timer
+
+ZoneFlow closes the valve itself, but if Home Assistant (or the network) stops
+while a valve is open, nothing is left to close it. Set an **auto-off timer on
+the valve or switch itself** as a backup: Shelly (the auto-off timer in the
+Shelly app: it stays on the device), Tasmota (PulseTime), ESPHome (a delay or
+`on_turn_on` with a `delay` and `turn_off`), or the "auto off", "countdown" or
+"timer" setting in your device's own app. A Zigbee-only valve depends on the
+device: some have a timer, some do not.
+
+How long? **Longer than the longest time ZoneFlow keeps the valve open in one
+go**, or the timer cuts a watering short without ZoneFlow noticing. Each zone
+works that out: the **Longest Valve Open Time** sensor (Safety settings) and a
+line in **Check my setup** give it, with the timer to set (the longest plus the
+larger of 10 minutes or 20 %, rounded up to 5 minutes).
+
+It comes from the zone's own settings, so it follows when you change them:
+the weekly targets, the **days between waterings**, the flow rate, the pulse
+counts, the soil and slope (heavy soil and slopes add pulses, so each one is
+shorter), the runtime caps, the deep soak and the Service Mode auto-off. A
+cycle is split into pulses with the valve closed in between, so the longest
+open time is one pulse, not the whole watering. Raise the pulse count and the
+number comes down.
+
+A typed **Water now** (the service, or the 10 minute button on a phone
+notification) is split into pulses too, the zone's way. Its own longest pulse
+can be longer than the number above when you type a long time and the soil
+takes it in one go: the sensor's `with_water_now_minutes` attribute gives that
+figure if you want the timer to cover it.
+
 ## More features
 
 - **Tidy device page**: settings sit under *Configuration*, technical

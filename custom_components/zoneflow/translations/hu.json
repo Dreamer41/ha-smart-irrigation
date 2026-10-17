@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Utolsó öntözési térfogat"
+      },
+      "longest_valve_open": {
+        "name": "Szelep leghosszabb nyitvatartása"
       }
     },
     "select": {

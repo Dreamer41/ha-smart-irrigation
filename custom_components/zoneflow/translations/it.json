@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Volume dell'ultima irrigazione"
+      },
+      "longest_valve_open": {
+        "name": "Tempo massimo di valvola aperta"
       }
     },
     "select": {

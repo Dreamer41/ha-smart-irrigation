@@ -82,7 +82,7 @@ async def test_tapping_the_buttons_waters_snoozes_and_records_a_feed(hass, fake_
         await hass.async_block_till_done()
 
     await tap("water")
-    assert clock.pulses_for(VALVE) == [10]
+    assert sum(clock.pulses_for(VALVE)) == pytest.approx(10)
     await tap("snooze")
     assert controller.store.state.snooze_date_iso is not None
     assert controller.store.state.last_fertilizing_ts is None

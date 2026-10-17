@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Rutiinikastelu vaatii {minutes} min, enemmän kuin tämän vyöhykkeen turvaraja ({cap} min), joten se hylätään joka kerta. Nosta rajaa tai lyhennä kastelujen välistä aikaa."
-    }
+    },
+    "backup_timer": "Aseta venttiilin oma automaattisammutusajastin vähintään {minutes} minuuttiin. Se on varmistus, jos Home Assistant pysähtyy venttiilin ollessa auki. Venttiili on pisimmillään auki {longest} min kerrallaan; lyhyempi ajastin katkaisee kastelun kesken."
   },
   "why": {
     "method": "Kastelutapa: {method}.",

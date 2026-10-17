@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Un arrosage de routine demande {minutes} min, plus que la limite de sécurité de cette zone ({cap} min) : il est refusé à chaque fois. Relevez la limite ou raccourcissez les jours entre arrosages."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Méthode d'arrosage : {method}.",

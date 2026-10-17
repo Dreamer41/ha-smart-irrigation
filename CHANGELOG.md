@@ -6,6 +6,14 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Added
+
+- **Longest Valve Open Time, and the backup timer to set on the valve.** A new diagnostic sensor (zones with a valve), shown in the Safety group: the longest the valve is open in one go, worked out from the zone's own settings as they are now. It counts the biggest routine watering the zone can start (its weekly targets, the days between waterings in each temperature tier, the flow rate and the Routine Max Safety Runtime Cap), split the way the zone splits it (the Routine Pulse Count, more pulses where the soil or slope needs them), the deep soak the same way, and the service and check runs (Service Mode auto-off, the 15-minute button, a flow measurement). It follows every one of those settings at once. The sensor's attributes give the recommended timer: the longest plus the larger of 10 minutes or 20 %, rounded up to 5 minutes. **Check my setup** says it in a line: set the valve's own auto-off timer (Shelly, Tasmota, ESPHome, the device's app) to at least that, as a backup in case Home Assistant stops while the valve is open. A typed Water now is the person's own choice and is given apart in the attributes (`with_water_now_minutes`).
+
+### Changed
+
+- **Water now with minutes splits into pulses**, like the zone's own routine watering: the zone's Routine Pulse Count, more pulses where the soil or slope needs them to avoid runoff, and the soak between them (it can be stopped in the soak). It was one single pulse. It still counts in the water record and does not move the schedule; the cap and the daily cap still apply. The 10-minute button on a phone notification works the same way. Service runs (the 1 / 5 / 10 / 15 minute buttons and Service Mode) stay one pulse.
+
 ## [1.7.3] — Days between waterings, Watering time, Delete zone, Valve Overlap
 
 ### Added

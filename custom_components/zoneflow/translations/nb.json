@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Siste vannvolum"
+      },
+      "longest_valve_open": {
+        "name": "Lengste ventil-åpningstid"
       }
     },
     "select": {

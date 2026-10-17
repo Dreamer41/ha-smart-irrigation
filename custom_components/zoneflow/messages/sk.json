@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Bežné polievanie potrebuje {minutes} min, viac ako bezpečnostný limit tejto zóny ({cap} min), preto je vždy odmietnuté. Zvýšte limit alebo skráťte dni medzi polievaniami."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Spôsob zalievania: {method}.",

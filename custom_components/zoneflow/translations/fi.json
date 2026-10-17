@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Viimeisimmän kastelun litrat"
+      },
+      "longest_valve_open": {
+        "name": "Venttiilin pisin aukioloaika"
       }
     },
     "select": {

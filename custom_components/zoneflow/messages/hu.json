@@ -360,7 +360,8 @@
     },
     "cap": {
       "low": "Egy rutinöntözés {minutes} percet igényel, ami több a zóna biztonsági korlátjánál ({cap} perc), ezért minden alkalommal elutasítja. Emeld a korlátot, vagy rövidítsd az öntözések közti napokat."
-    }
+    },
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
   },
   "why": {
     "method": "Öntözési mód: {method}.",

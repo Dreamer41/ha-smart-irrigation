@@ -1159,6 +1159,9 @@
       },
       "last_water_volume": {
         "name": "Volume du dernier arrosage"
+      },
+      "longest_valve_open": {
+        "name": "Durée maximale d'ouverture de la vanne"
       }
     },
     "select": {

@@ -99,6 +99,16 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         cap = controller.number("max_runtime_minutes")
         if minutes > cap:
             add("cap", "warn", "cap.low", minutes=f"{minutes:.0f}", cap=f"{cap:.0f}")
+        # The valve's own auto-off timer: a backup in case Home Assistant stops while it is open.
+        try:
+            times = controller.valve_open_times()
+        except Exception:  # noqa: BLE001 - a check must never raise
+            times = None
+        if times:
+            add(
+                "backup_timer", "info", "backup_timer",
+                minutes=f"{times['recommended_timer_minutes']:.0f}", longest=f"{times['longest_minutes']:.0f}",
+            )
         # Litres.
         if controller.has_water_volume:
             add("volume", "ok", "volume.ok")
