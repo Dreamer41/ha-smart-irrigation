@@ -32,7 +32,7 @@ from .const import (
 if TYPE_CHECKING:
     from .controller import ZoneFlowController
 
-LEARN_MORE = "https://github.com/Dreamer41/ha-smart-irrigation#what-each-sensor-adds"
+LEARN_MORE = "https://zoneflowirrigation.com/docs/sensors"
 OFFLINE = ("unavailable", "unknown")
 
 
@@ -188,7 +188,7 @@ def async_check(controller: ZoneFlowController) -> None:
         severity=ir.IssueSeverity.WARNING,
         translation_key="flow_rate_default",
         translation_placeholders={"zone": zone},
-        learn_more_url="https://github.com/Dreamer41/ha-smart-irrigation#installation",
+        learn_more_url="https://zoneflowirrigation.com/docs/getting-started",
         fix={"kind": "flow_rate"},
     )
 

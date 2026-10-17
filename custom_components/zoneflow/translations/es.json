@@ -283,6 +283,20 @@
           "emitter_flow": "Lo que da un emisor por hora: viene impreso en el propio emisor o en su envase (p. ej., 2 L/h, 0.5 gal/h).",
           "area": "La superficie que realmente se moja. Para goteros en plantas sueltas, suma la superficie mojada alrededor de cada una, no todo el bancal."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "Autoajuste: paso"
+      },
+      "valve_timer_minutes": {
+        "name": "Temporizador propio de la válvula"
       }
     },
     "datetime": {

@@ -283,6 +283,20 @@
           "emitter_flow": "单个灌水器每小时的出水量：印在灌水器或其包装上（例如 2 L/h、0.5 gal/h）。",
           "area": "实际被浇湿的面积。对于单株植物旁的滴头，请把它们周围的湿润区域加起来，而不是整个苗床。"
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "自动调整：步长"
+      },
+      "valve_timer_minutes": {
+        "name": "阀门自带定时器"
       }
     },
     "datetime": {

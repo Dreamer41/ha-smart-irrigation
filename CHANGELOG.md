@@ -16,6 +16,12 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 - **Self-tuning can be turned off, and its numbers are settings.** A **Self-Tuning** switch (on to start with, as it always was) and two sliders in the Rain group: **Self-Tuning Presses Needed** (3 to start with) and **Self-Tuning Step** (0.5 days to start with). With the switch off, early presses of Run Routine Now and Snooze presses never change the dry-down holdoff.
 - **Weekly summary time and fertilizing reminder time are chosen at setup** (and under Configure): 18:00 and 09:00 to start with, the old fixed times, so nothing changes until you pick another. They are not on the card.
 
+- **My Valve's Own Timer.** Type in the minutes you set as the auto-off timer on the valve or switch itself (0 = not set). ZoneFlow cannot read that timer, but Check my setup now compares it with the Longest Valve Open Time: a warning if it is shorter (with the minutes to set instead), a tick if it is enough, and the warning comes back by itself if you later change a pulse count, a gap or the flow rate so the longest time grows past it.
+- **The next watering, previewed in Why?** A new line: "If it ran now: 42 min in 3 pulses of about 14 min, with 20 min of soak between them. The valve is open at most 14 min at once." (or "in one go", or "nothing, the rain already covers it"). It uses the zone's own plan, so it follows every slider at once.
+- **Simpler Settings popup.** The zone card's Settings opens with the everyday settings (the flow rate, the three weekly targets and the days between waterings; Watering time is its own button) and **Show all settings** shows the rest. The choice is remembered in the browser. Nothing is removed.
+- **A "?" on every setting.** Each setting in the Settings popup, and each group, has a help button that opens the matching page on the ZoneFlow website (zoneflowirrigation.com/docs), where the card's help used to open GitHub pages. The Repairs "learn more" links, the dashboard card's documentation link and the integration's documentation link go to the website too.
+- **A valve test at the end of zone setup.** The last step offers to open the valve for about 2 seconds and says whether it answered and closed again ("The valve answered…", "did not answer", "did not report closed: check it now"). It can be skipped, and the zone is added whatever the result.
+
 ### Changed
 
 - **Deficit Mode Water goes down to 30 %** (it stopped at 50 %).

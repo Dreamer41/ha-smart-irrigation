@@ -239,7 +239,7 @@ VALVE_OPEN_KEYS = frozenset({
     "routine_interval_days", "routine_interval_hot_days", "routine_pulse_count", "deep_soak_pulse_count",
     "deep_soak_target_mm", "max_runtime_minutes", "deep_soak_max_runtime_minutes",
     "service_mode_auto_off_minutes", "mulch_et_adjustment_pct",
-    "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes",
+    "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes", "valve_timer_minutes",
 })
 # Home Assistant 2024.4+: a sensor that reports the same value again.
 EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
@@ -4241,6 +4241,7 @@ class ZoneFlowController:
             "service_minutes": round(service, 1),
             "with_water_now_minutes": round(by_hand, 1),
             "recommended_timer_with_water_now_minutes": calc.recommended_backup_timer_minutes(by_hand),
+            "my_timer_minutes": round(self.number("valve_timer_minutes"), 1),
         }
 
     async def start_flow_measurement(self, area_m2: float) -> None:

@@ -20,6 +20,9 @@ Ideas queued for upcoming releases.
 
 - Longest Valve Open Time and the recommended backup timer for the valve's own auto-off.
 - Water now with minutes splits into pulses like the zone's own watering.
+- When Soil Gets Wet During Watering (finish, or stop at the wet level) for zones with a soil probe.
+- Former fixed values as settings: deficit range 30-100, minimum pulse lengths, self-tuning switch and sliders, summary and reminder times at setup; the due buffer follows the last run's length.
+- My Valve's Own Timer, the next watering previewed in Why?, a simpler Settings popup, a "?" on every setting (website docs), a valve test at the end of zone setup.
 
 ### 1.7.3 — days between waterings, Watering time, Delete zone, Valve Overlap
 

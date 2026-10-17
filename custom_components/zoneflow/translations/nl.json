@@ -283,6 +283,20 @@
           "emitter_flow": "Wat één druppelaar per uur geeft: dat staat op de druppelaar of de verpakking (bv. 2 L/h, 0,5 gal/h).",
           "area": "De oppervlakte die echt nat wordt. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "Zelfafstelling: stap"
+      },
+      "valve_timer_minutes": {
+        "name": "Eigen timer van de klep"
       }
     },
     "datetime": {

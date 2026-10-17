@@ -26,6 +26,8 @@ const I18N = {
     "diagnostics": "Diagnostics",
     "valve": "Valve",
     "water_now": "Water now",
+    "settings_all": "Show all settings",
+    "settings_basic": "Show only everyday settings",
     "deep_soak_now": "Deep soak now",
     "snooze": "Snooze today",
     "reset_lock": "Reset lock",
@@ -285,6 +287,8 @@ const I18N = {
     "diagnostics": "Diagnose",
     "valve": "Ventil",
     "water_now": "Jetzt gießen",
+    "settings_all": "Alle Einstellungen anzeigen",
+    "settings_basic": "Nur alltägliche Einstellungen anzeigen",
     "deep_soak_now": "Jetzt Tiefenbewässerung",
     "snooze": "Heute aussetzen",
     "reset_lock": "Sperre zurücksetzen",
@@ -544,6 +548,8 @@ const I18N = {
     "diagnostics": "Diagnóstico",
     "valve": "Válvula",
     "water_now": "Regar ahora",
+    "settings_all": "Mostrar todos los ajustes",
+    "settings_basic": "Mostrar solo los ajustes habituales",
     "deep_soak_now": "Riego profundo ahora",
     "snooze": "Omitir hoy",
     "reset_lock": "Restablecer bloqueo",
@@ -803,6 +809,8 @@ const I18N = {
     "diagnostics": "Diagnostiikka",
     "valve": "Venttiili",
     "water_now": "Kastele nyt",
+    "settings_all": "Näytä kaikki asetukset",
+    "settings_basic": "Näytä vain perusasetukset",
     "deep_soak_now": "Syväkastele nyt",
     "snooze": "Ei kastelua tänään",
     "reset_lock": "Nollaa lukko",
@@ -1062,6 +1070,8 @@ const I18N = {
     "diagnostics": "Diagnostic",
     "valve": "Vanne",
     "water_now": "Arroser maintenant",
+    "settings_all": "Afficher tous les réglages",
+    "settings_basic": "Afficher seulement les réglages courants",
     "deep_soak_now": "Lancer l'arrosage profond",
     "snooze": "Sauter aujourd'hui",
     "reset_lock": "Réinitialiser le verrou",
@@ -1321,6 +1331,8 @@ const I18N = {
     "diagnostics": "Diagnostica",
     "valve": "Valvola",
     "water_now": "Irriga ora",
+    "settings_all": "Mostra tutte le impostazioni",
+    "settings_basic": "Mostra solo le impostazioni principali",
     "deep_soak_now": "Avvia irrigazione profonda",
     "snooze": "Salta oggi",
     "reset_lock": "Reimposta blocco",
@@ -1580,6 +1592,8 @@ const I18N = {
     "diagnostics": "Diagnose",
     "valve": "Klep",
     "water_now": "Nu water geven",
+    "settings_all": "Alle instellingen tonen",
+    "settings_basic": "Alleen de gewone instellingen tonen",
     "deep_soak_now": "Nu diepe watergift",
     "snooze": "Vandaag overslaan",
     "reset_lock": "Slot resetten",
@@ -1839,6 +1853,8 @@ const I18N = {
     "diagnostics": "Diagnostyka",
     "valve": "Zawór",
     "water_now": "Podlej teraz",
+    "settings_all": "Pokaż wszystkie ustawienia",
+    "settings_basic": "Pokaż tylko podstawowe ustawienia",
     "deep_soak_now": "Podlej głęboko teraz",
     "snooze": "Pomiń dzisiaj",
     "reset_lock": "Zresetuj blokadę",
@@ -2098,6 +2114,8 @@ const I18N = {
     "diagnostics": "Diagnóstico",
     "valve": "Válvula",
     "water_now": "Regar agora",
+    "settings_all": "Mostrar todas as definições",
+    "settings_basic": "Mostrar só as definições habituais",
     "deep_soak_now": "Rega profunda agora",
     "snooze": "Não regar hoje",
     "reset_lock": "Desbloquear",
@@ -2357,6 +2375,8 @@ const I18N = {
     "diagnostics": "Diagnostik",
     "valve": "Ventil",
     "water_now": "Vattna nu",
+    "settings_all": "Visa alla inställningar",
+    "settings_basic": "Visa bara vanliga inställningar",
     "deep_soak_now": "Djupvattna nu",
     "snooze": "Hoppa över idag",
     "reset_lock": "Återställ lås",
@@ -2616,6 +2636,8 @@ const I18N = {
     "diagnostics": "Diagnostika",
     "valve": "Ventil",
     "water_now": "Zalít teď",
+    "settings_all": "Zobrazit všechna nastavení",
+    "settings_basic": "Zobrazit jen běžná nastavení",
     "deep_soak_now": "Hloubková zálivka teď",
     "snooze": "Dnes vynechat",
     "reset_lock": "Resetovat zámek",
@@ -2875,6 +2897,8 @@ const I18N = {
     "diagnostics": "Diagnosticering",
     "valve": "Ventil",
     "water_now": "Vand nu",
+    "settings_all": "Vis alle indstillinger",
+    "settings_basic": "Vis kun de almindelige indstillinger",
     "deep_soak_now": "Dybdevand nu",
     "snooze": "Spring over i dag",
     "reset_lock": "Nulstil lås",
@@ -3134,6 +3158,8 @@ const I18N = {
     "diagnostics": "Diagnosztika",
     "valve": "Szelep",
     "water_now": "Öntözés most",
+    "settings_all": "Összes beállítás megjelenítése",
+    "settings_basic": "Csak a gyakori beállítások megjelenítése",
     "deep_soak_now": "Mélyöntözés most",
     "snooze": "Kihagyás ma",
     "reset_lock": "Zárolás feloldása",
@@ -3393,6 +3419,8 @@ const I18N = {
     "diagnostics": "Diagnostikk",
     "valve": "Ventil",
     "water_now": "Vann nå",
+    "settings_all": "Vis alle innstillinger",
+    "settings_basic": "Vis bare vanlige innstillinger",
     "deep_soak_now": "Dypvann nå",
     "snooze": "Hopp over i dag",
     "reset_lock": "Nullstill lås",
@@ -3652,6 +3680,8 @@ const I18N = {
     "diagnostics": "Diagnóstico",
     "valve": "Válvula",
     "water_now": "Irrigar agora",
+    "settings_all": "Mostrar todas as configurações",
+    "settings_basic": "Mostrar só as configurações comuns",
     "deep_soak_now": "Irrigação profunda agora",
     "snooze": "Não irrigar hoje",
     "reset_lock": "Desbloquear",
@@ -3911,6 +3941,8 @@ const I18N = {
     "diagnostics": "Диагностика",
     "valve": "Клапан",
     "water_now": "Полить сейчас",
+    "settings_all": "Показать все настройки",
+    "settings_basic": "Показать только основные настройки",
     "deep_soak_now": "Глубокий полив сейчас",
     "snooze": "Пропустить сегодня",
     "reset_lock": "Сбросить блокировку",
@@ -4170,6 +4202,8 @@ const I18N = {
     "diagnostics": "Diagnostika",
     "valve": "Ventil",
     "water_now": "Zaliať teraz",
+    "settings_all": "Zobraziť všetky nastavenia",
+    "settings_basic": "Zobraziť len bežné nastavenia",
     "deep_soak_now": "Hĺbková zálievka teraz",
     "snooze": "Dnes vynechať",
     "reset_lock": "Resetovať zámok",
@@ -4429,6 +4463,8 @@ const I18N = {
     "diagnostics": "Діагностика",
     "valve": "Клапан",
     "water_now": "Полити зараз",
+    "settings_all": "Показати всі налаштування",
+    "settings_basic": "Показати лише основні налаштування",
     "deep_soak_now": "Глибокий полив зараз",
     "snooze": "Пропустити сьогодні",
     "reset_lock": "Скинути блокування",
@@ -4688,6 +4724,8 @@ const I18N = {
     "diagnostics": "诊断",
     "valve": "阀门",
     "water_now": "立即浇水",
+    "settings_all": "显示所有设置",
+    "settings_basic": "仅显示常用设置",
     "deep_soak_now": "立即深层浇灌",
     "snooze": "今天跳过",
     "reset_lock": "重置锁",
@@ -4977,16 +5015,52 @@ const ONLY_WHEN = {
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
-// "?" beside a settings group: the guide that explains it. The watering-method
-// choice (temperature tiers, ET, soil probe) has a blog post of its own: the
-// second "?" next to How much water links to it.
-const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";
+// Help: every "?" opens the ZoneFlow website's documentation. One beside each
+// settings group and one beside every setting in the Settings popup: the page that
+// explains it (a setting without a page of its own gets its group's). The
+// watering-method choice (temperature tiers, ET, soil probe) has a blog post of its
+// own: the second "?" next to How much water links to it.
+const DOCS = "https://zoneflowirrigation.com/docs/";
 const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";
-const HELP_LINKS = {
-  amounts: [METHOD_HELP_URL], // the flow rate's own help is in the Calibrate popup
-  water_use: [`${GUIDE}CALIBRATION.md`],
-  rain: [`${GUIDE}RAIN-GAUGES.md`],
+const GROUP_HELP = {
+  garden: "areas-and-plants", climate: "greenhouse-and-indoor-zones", misting: "greenhouse-and-indoor-zones",
+  amounts: "how-it-works", water_use: "calibration", rain: "rain-gauges-and-weather-stations",
+  deep_soak: "schedules-and-cadences", soil: "soil-moisture-probe", growth: "growth-ramp-and-climate",
+  deficit: "how-it-works", history: "health-journal-and-history", safety: "how-it-works",
+  notifications: "status-notifications-repairs", more: "how-it-works",
 };
+// By "<domain>.<translation key>": the page that explains this setting. (Page level for
+// now; a "#section" is added where the page has one.)
+const SETTING_HELP = {
+  "number.flow_rate_mm_per_min": "calibration", "number.zone_flow_l_min": "calibration",
+  "number.routine_interval_days": "schedules-and-cadences", "number.routine_interval_hot_days": "schedules-and-cadences",
+  "number.routine_pulse_count": "schedules-and-cadences", "number.routine_pulse_rest_minutes": "schedules-and-cadences",
+  "number.routine_min_pulse_minutes": "schedules-and-cadences", "number.deep_soak_pulse_count": "schedules-and-cadences",
+  "number.deep_soak_pulse_rest_minutes": "schedules-and-cadences", "number.deep_soak_min_pulse_minutes": "schedules-and-cadences",
+  "number.rain_mm_per_tip": "rain-gauges-and-weather-stations",
+  "number.frost_guard_temp": "frost-guard-and-pause",
+  "switch.self_tuning": "snooze-and-self-tuning", "number.self_tune_streak": "snooze-and-self-tuning",
+  "number.self_tune_step_days": "snooze-and-self-tuning", "number.routine_drydown_days": "snooze-and-self-tuning",
+  "number.pump_min_watts": "multiple-zones-shared-pumps", "number.pump_preamble_seconds": "multiple-zones-shared-pumps",
+  "number.pump_postamble_seconds": "multiple-zones-shared-pumps", "number.valve_overlap_seconds": "multiple-zones-shared-pumps",
+  "number.service_mode_auto_off_minutes": "service-runs-and-service-mode",
+  "sensor.longest_valve_open": "valve-backup-timer", "number.valve_timer_minutes": "valve-backup-timer",
+  "select.soil_wet_action": "soil-moisture-probe", "number.soil_moisture_dry_pct": "soil-moisture-probe",
+  "number.soil_moisture_wet_pct": "soil-moisture-probe",
+  "select.notifications": "status-notifications-repairs", "select.weekly_summary": "status-notifications-repairs",
+};
+const helpUrl = (key, group) => {
+  const page = SETTING_HELP[key] || GROUP_HELP[group];
+  return page ? `${DOCS}${page}` : "";
+};
+const HELP_LINKS = Object.fromEntries(Object.entries(GROUP_HELP).map(([group, page]) => [group, [`${DOCS}${page}`]]));
+HELP_LINKS.amounts.push(METHOD_HELP_URL); // the flow rate's own help is in the Calibrate popup
+// The settings an everyday user changes: the Settings popup shows only these until
+// "Show all settings" is pressed. (Watering time has its own button.)
+const BASIC_KEYS = new Set([
+  "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm", "number.target_weekly_cool_mm",
+  "number.routine_interval_days", "number.routine_interval_hot_days",
+]);
 const SETTINGS_GROUPS = [
   ["garden", ["select.location"]],
   ["climate", [
@@ -5035,7 +5109,7 @@ const SETTINGS_GROUPS = [
   ["safety", [
     "number.max_runtime_minutes", "number.max_daily_runtime_minutes", "number.service_mode_auto_off_minutes",
     "number.pump_min_watts", "number.pump_preamble_seconds", "number.pump_postamble_seconds",
-    "number.valve_overlap_seconds", "sensor.longest_valve_open",
+    "number.valve_overlap_seconds", "sensor.longest_valve_open", "number.valve_timer_minutes",
   ]],
   ["notifications", ["select.notifications", "select.weekly_summary"]],
 ];
@@ -5226,6 +5300,10 @@ class ZoneFlowCard extends HTMLElement {
         border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
       .advanced-toggle { display: block; margin: 4px 16px 14px; padding: 6px 12px; font: inherit; color: var(--primary-color);
         background: none; border: none; cursor: pointer; }
+      .help-row { display: flex; align-items: center; }
+      .help-row > :first-child { flex: 1; min-width: 0; }
+      .help-row .help-link { margin: 0 12px 0 0; flex: none; }
+      .dlg.basic .adv { display: none !important; }
       .help-link { display: inline-block; margin-left: 8px; width: 18px; height: 18px; line-height: 18px; text-align: center;
         border: 1px solid var(--secondary-text-color); border-radius: 50%; font-size: 0.8em; text-decoration: none;
         color: var(--secondary-text-color); text-transform: none; }
@@ -5367,9 +5445,12 @@ class ZoneFlowCard extends HTMLElement {
       used.add(key);
       return visible[key]?.entity_id;
     };
-    const rows = (keys) => keys
+    const rows = (keys, group) => keys
       .filter((key) => id(key))
-      .map((key) => ({ entity: visible[key].entity_id, _tip: tip(hass, key.split(".")[1]) }));
+      .map((key) => ({
+        entity: visible[key].entity_id, _tip: tip(hass, key.split(".")[1]),
+        _help: group ? helpUrl(key, group) : "", _adv: group ? !BASIC_KEYS.has(key) : false,
+      }));
     const buttons = (items) => {
       const entities = items
         .map(([key, name, icon]) => (id(key) ? {
@@ -5416,7 +5497,7 @@ class ZoneFlowCard extends HTMLElement {
       ]),
     ];
     const journal = rows(JOURNAL);
-    const groups = SETTINGS_GROUPS.map(([name, keys]) => [name, rows(keys)]);
+    const groups = SETTINGS_GROUPS.map(([name, keys]) => [name, rows(keys, name)]);
     for (const key of HANDLED) used.add(key);
     // Everything else, by category -- including entities added later.
     const more = [];
@@ -5564,14 +5645,32 @@ class ZoneFlowCard extends HTMLElement {
     header.append(title, close);
     const body = document.createElement("div");
     body.className = "dlg-body";
+    // The Settings popup starts with the everyday settings; the rest is one press away.
+    const everyday = key === "settings" && popup.parts.some(([, confs]) => confs.some((conf) => !conf._adv));
+    if (everyday) {
+      box.classList.toggle("basic", !this._showAllSettings());
+      const toggle = document.createElement("button");
+      toggle.className = "advanced-toggle";
+      const label = () => t(hass, box.classList.contains("basic") ? "settings_all" : "settings_basic");
+      toggle.textContent = label();
+      toggle.addEventListener("click", () => {
+        const basic = !box.classList.contains("basic");
+        box.classList.toggle("basic", basic);
+        try { localStorage.setItem("zoneflow_settings_all", basic ? "0" : "1"); } catch (err) { /* private window */ }
+        toggle.textContent = label();
+      });
+      body.appendChild(toggle);
+    }
     if (popup.custom === "plants") this._plantsBody(body);
     if (popup.custom === "check") this._checkBody(body);
     if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
+      // A group of settings that are all "advanced" is hidden with them.
+      const advGroup = everyday && confs.every((conf) => conf._adv);
       if (groupKey) {
         const heading = document.createElement("div");
-        heading.className = "group-title";
+        heading.className = advGroup ? "group-title adv" : "group-title";
         heading.textContent = t(hass, `groups.${groupKey}`);
         for (const url of (HELP_LINKS[groupKey] || []).filter(Boolean)) {
           const help = document.createElement("a");
@@ -5588,7 +5687,7 @@ class ZoneFlowCard extends HTMLElement {
         const noteText = t(hass, `groups.${groupKey}_note`);
         if (noteText && !noteText.startsWith("groups.")) {
           const note = document.createElement("div");
-          note.className = "group-note";
+          note.className = advGroup ? "group-note adv" : "group-note";
           note.textContent = noteText;
           body.appendChild(note);
         }
@@ -5691,7 +5790,7 @@ class ZoneFlowCard extends HTMLElement {
     body.textContent = "";
     const intro = make("div", "group-note", t(hass, "calibrate.intro"));
     const helpLink = make("a", "help-link", "?");
-    helpLink.href = `${GUIDE}CALIBRATION.md`;
+    helpLink.href = `${DOCS}calibration`;
     helpLink.target = "_blank";
     helpLink.rel = "noopener";
     helpLink.title = t(hass, "help");
@@ -6239,6 +6338,10 @@ class ZoneFlowCard extends HTMLElement {
     return wrap;
   }
 
+  _showAllSettings() {
+    try { return localStorage.getItem("zoneflow_settings_all") === "1"; } catch (err) { return false; }
+  }
+
   _addRows(list, confs) {
     const build = this._buildId;
     this._helpers().then(
@@ -6260,10 +6363,32 @@ class ZoneFlowCard extends HTMLElement {
               this._rows = this._rows.filter((r) => r !== row);
               return replacement;
             }, { once: true });
-            list.insertBefore(row, before ? before.nextSibling : null);
+            if (conf._help) {
+              // A "?" beside the setting, to the page on the website that explains it.
+              wrap.insertBefore(row, before ? before.nextSibling : helpEl);
+            } else {
+              list.insertBefore(row, before ? before.nextSibling : null);
+            }
+            if (row.classList) row.classList.toggle("adv", Boolean(conf._adv));
             this._rows.push(row);
             return row;
           };
+          let wrap = null;
+          let helpEl = null;
+          if (conf._help) {
+            wrap = document.createElement("div");
+            wrap.className = "help-row";
+            helpEl = document.createElement("a");
+            helpEl.className = "help-link";
+            helpEl.href = conf._help;
+            helpEl.target = "_blank";
+            helpEl.rel = "noopener";
+            helpEl.title = t(this._hass, "help");
+            helpEl.textContent = "?";
+            wrap.appendChild(helpEl);
+            if (wrap.classList) wrap.classList.toggle("adv", Boolean(conf._adv));
+            list.appendChild(wrap);
+          }
           add(null);
         }
       },
@@ -7457,7 +7582,7 @@ if (!window.customCards.some((c) => c.type === "zoneflow-overview-card")) {
     name: "ZoneFlow overview",
     description: "All ZoneFlow zones in one table: status, next and last watering, water now. Click a zone for its full card.",
     preview: true,
-    documentationURL: "https://github.com/Dreamer41/ha-smart-irrigation#dashboard",
+    documentationURL: "https://zoneflowirrigation.com/docs/dashboard",
   });
 }
 if (!window.customCards.some((c) => c.type === "zoneflow-card")) {
@@ -7466,7 +7591,7 @@ if (!window.customCards.some((c) => c.type === "zoneflow-card")) {
     name: "ZoneFlow zone",
     description: "One ZoneFlow irrigation zone: status and why, controls, service runs and settings.",
     preview: true,
-    documentationURL: "https://github.com/Dreamer41/ha-smart-irrigation#dashboard",
+    documentationURL: "https://zoneflowirrigation.com/docs/dashboard",
   });
 }
 console.info(`%c ZONEFLOW-CARD %c ${CARD_VERSION} `, "color:white;background:#2e7d32", "color:#2e7d32");

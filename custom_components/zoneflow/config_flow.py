@@ -12,6 +12,7 @@ a different name/entities; each zone is its own independent config entry.
 """
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import voluptuous as vol
@@ -75,6 +76,8 @@ from .const import (
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
     CONF_SUMMARY_TIME,
+    VALVE_TEST_HOLD_SECONDS,
+    VALVE_TEST_WAIT_SECONDS,
     CONF_FERTILIZE_TIME,
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
@@ -126,6 +129,50 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_NOTIFY_ENTITY,
     CONF_WEATHER_ENTITY,
 )
+
+
+def _offers_valve_test(data: dict[str, Any]) -> bool:
+    """A zone with a valve ends its setup with the optional valve test."""
+    return bool(data.get(CONF_VALVE_ENTITY))
+
+
+async def _test_valve(hass, valve: str) -> str:
+    """Open the valve for a moment and say, in words, what happened: it answered and
+    closed again, it never reported open, or it did not report closed. Always ends
+    by telling the valve to close."""
+    state = hass.states.get(valve)
+    if state is None or state.state in ("unavailable", "unknown"):
+        return messages.text(hass, "valve_test.unavailable", valve=valve)
+
+    async def _reaches(target: str) -> bool:
+        for _ in range(int(VALVE_TEST_WAIT_SECONDS / 0.25)):
+            current = hass.states.get(valve)
+            if current is not None and current.state == target:
+                return True
+            await asyncio.sleep(0.25)
+        return False
+
+    try:
+        await hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
+        opened = await _reaches("on")
+        if opened:
+            await asyncio.sleep(VALVE_TEST_HOLD_SECONDS)
+    except HomeAssistantError:
+        opened = False
+    closed = False
+    for _ in range(2):  # told twice before it is called stuck open
+        try:
+            await hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+        except HomeAssistantError:
+            continue
+        if await _reaches("off"):
+            closed = True
+            break
+    if not closed:
+        return messages.text(hass, "valve_test.still_open", valve=valve)
+    if not opened:
+        return messages.text(hass, "valve_test.no_answer", valve=valve)
+    return messages.text(hass, "valve_test.ok", valve=valve)
 
 
 # The time-of-day fields: the form can hand back HH:MM, which is stored as HH:MM:SS.
@@ -595,6 +642,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._wu_candidates: list[dict[str, Any]] = []
         self._bundle: dict[str, Any] = {}
         self._area_id: str | None = None  # the area the new zone is placed in
+        self._pending_entry: tuple[str, dict[str, Any]] | None = None  # the zone, held for the valve test
+        self._valve_result: str = ""
 
     def _offer_wu(self) -> bool:
         """Weather Underground rain is offered once a zone exists, and only
@@ -944,7 +993,42 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._zone_type != ZONE_TYPE_OUTDOOR:
             data[CONF_ZONE_TYPE] = self._zone_type
             data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
+        if _offers_valve_test(data):
+            # The last step: offer a quick test of the valve before the zone is added.
+            self._pending_entry = (self._zone_name, data)
+            return self._show_valve_test(data[CONF_VALVE_ENTITY])
         return self.async_create_entry(title=self._zone_name, data=data)
+
+    def _show_valve_test(self, valve: str):
+        return self.async_show_form(
+            step_id="test_valve",
+            data_schema=vol.Schema({vol.Optional("test", default=True): selector.BooleanSelector()}),
+            description_placeholders={"valve": valve},
+        )
+
+    async def async_step_test_valve(self, user_input: dict[str, Any] | None = None):
+        """Optional: open the valve for a moment, to see that it answers and closes."""
+        if self._pending_entry is None:
+            return self.async_abort(reason="unknown")
+        title, data = self._pending_entry
+        valve = data[CONF_VALVE_ENTITY]
+        if user_input is None:
+            return self._show_valve_test(valve)
+        if not user_input.get("test"):
+            return self.async_create_entry(title=title, data=data)
+        self._valve_result = await _test_valve(self.hass, valve)
+        return self.async_show_form(
+            step_id="valve_result",
+            data_schema=vol.Schema({}),
+            description_placeholders={"result": self._valve_result},
+        )
+
+    async def async_step_valve_result(self, user_input: dict[str, Any] | None = None):
+        """The test's result is read, then the zone is added whatever it said."""
+        if self._pending_entry is None:
+            return self.async_abort(reason="unknown")
+        title, data = self._pending_entry
+        return self.async_create_entry(title=title, data=data)
 
     async def async_step_entities(self, user_input: dict[str, Any] | None = None):
         errors: dict[str, str] = {}

@@ -213,6 +213,27 @@ and both zones get less water than their calibrated runtime assumes.
 
 **Valve overlap.** If the pipes bang when a valve closes, set **Valve Overlap** (0 to 10 seconds, in the Safety settings of zones that share a pump). The next zone's valve then opens that many seconds before the running zone's closes. At 0 (the default) the zones take turns exactly as before.
 
+## Settings you can find on the card
+
+The zone card's **Settings** popup opens with the everyday settings only: the flow
+rate, the three weekly targets and the days between waterings. **Show all settings**
+at the top shows every group; the choice is remembered in your browser. Every setting
+and every group has a **?** that opens the matching page on the ZoneFlow website
+(zoneflowirrigation.com/docs).
+
+**Why?** ends with a preview of the next watering with your current settings: how
+many minutes, in how many pulses, how long the soak between them is, and the longest
+the valve is open at once. Change a slider and read it again to see what it does
+before the next run.
+
+**My Valve's Own Timer** (Safety settings): type in the minutes you set as the
+auto-off timer on the valve itself. Check my setup then tells you if it is shorter
+than the Longest Valve Open Time, and says so again later if a setting change makes
+the longest time grow past it.
+
+When you add a zone with a valve, the last step offers a **valve test**: the valve
+opens for about 2 seconds and ZoneFlow tells you whether it answered and closed.
+
 ## Soil probe: stop when it is wet
 
 With a soil moisture probe, a routine watering is only held back or brought

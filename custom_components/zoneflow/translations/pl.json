@@ -283,6 +283,20 @@
           "emitter_flow": "Ile wody daje jeden emiter na godzinę: jest to podane na emiterze lub opakowaniu (np. 2 L/h, 0,5 gal/h).",
           "area": "Powierzchnia, która faktycznie jest mokra. Przy kroplownikach pod pojedynczymi roślinami zsumuj mokre plamy wokół nich, a nie całą grządkę."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "Samodostrajanie: krok"
+      },
+      "valve_timer_minutes": {
+        "name": "Własny timer zaworu"
       }
     },
     "datetime": {

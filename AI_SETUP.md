@@ -1315,6 +1315,13 @@ the watering). Offer `stop` where heavy soil or a slow-draining bed is easily
 over-watered; keep the soak between pulses long enough for the water to reach
 the probe.
 
+Zone setup ends with an optional valve test (the valve opens for about 2 seconds):
+suggest leaving it ticked the first time, and read the result to the person. If it
+says the valve did not answer, check the switch entity before anything else.
+The person records the timer they set on the valve in the number
+`valve_timer_minutes` ("My Valve's Own Timer", 0 = not set); Check my setup compares
+it with the longest open time, so ask them to enter it.
+
 Tell the person to set an auto-off timer on the valve or switch itself (Shelly
 app, Tasmota PulseTime, ESPHome, the device's own app): a backup if Home
 Assistant stops while the valve is open. The right length is the zone's

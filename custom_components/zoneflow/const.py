@@ -482,6 +482,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # holdoff, and by how much. The switch that turns it off is on the zone.
     "self_tune_streak": ("Self-Tuning Presses Needed", 2.0, 10.0, 1.0, None),
     "self_tune_step_days": ("Self-Tuning Step", 0.5, 2.0, 0.5, "d"),
+    # What the person set as the auto-off timer on the valve or switch itself (ZoneFlow
+    # cannot read it): Check my setup warns when it is shorter than the longest the
+    # valve is open. 0 = not set.
+    "valve_timer_minutes": ("My Valve's Own Timer", 0.0, 300.0, 5.0, "min"),
     # A hard ceiling on total irrigation runtime across BOTH cycles in a
     # rolling day, independent of the per-cycle safety caps above -- those
     # catch one miscalculated cycle, this catches the case where several
@@ -602,6 +606,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "deep_soak_min_pulse_minutes": float(DEEP_SOAK_MIN_PULSE_MINUTES),
     "self_tune_streak": float(SELF_TUNE_STREAK_THRESHOLD),
     "self_tune_step_days": SELF_TUNE_ADJUST_STEP_DAYS,
+    "valve_timer_minutes": 0.0,
     "max_daily_runtime_minutes": 240.0,
     "growth_stage_override_pct": 40.0,
     # Defaults trace out a reasonable generic curve on their own (40% -> 60%
@@ -800,6 +805,10 @@ READY_DAYS_MAX = 365
 # Flow-rate measurement with a flow meter (options -> Flow rate): a service
 # run this long, then litres / area / minutes.
 FLOW_MEASURE_MINUTES = 10
+# The valve test at the end of zone setup: how long the valve is held open once it
+# has answered, and how long to wait for it to report open (and closed again).
+VALVE_TEST_HOLD_SECONDS = 2
+VALVE_TEST_WAIT_SECONDS = 6
 # ...and at least this long (or 80% of it, if the daily cap shortened it),
 # and the meter's last report waited for up to this long.
 FLOW_MEASURE_MIN_MINUTES = 5

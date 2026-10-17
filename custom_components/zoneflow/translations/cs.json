@@ -283,6 +283,20 @@
           "emitter_flow": "Kolik dá jeden emitor za hodinu: je to uvedeno na emitoru nebo na obalu (např. 2 L/h, 0.5 gal/h).",
           "area": "Plocha, která opravdu zvlhne. U kapkovačů u jednotlivých rostlin sečtěte mokré plochy kolem nich, ne celý záhon."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "Samoladění: krok"
+      },
+      "valve_timer_minutes": {
+        "name": "Vlastní časovač ventilu"
       }
     },
     "datetime": {

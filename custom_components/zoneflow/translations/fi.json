@@ -283,6 +283,20 @@
           "emitter_flow": "Paljonko yksi suutin antaa tunnissa: se on painettu suuttimeen tai sen pakkaukseen (esim. 2 L/h, 0,5 gal/h).",
           "area": "Ala, joka oikeasti kastuu. Jos tippusuuttimet ovat yksittäisten kasvien juurella, laske yhteen kasvien ympärille kastuvat alueet, älä koko penkkiä."
         }
+      },
+      "test_valve": {
+        "title": "Testaa venttiili",
+        "description": "Viimeinen vaihe, valinnainen: ZoneFlow avaa venttiilin {valve} noin 2 sekunniksi ja tarkistaa, että se vastaa ja sulkeutuu. Vettä virtaa hetken. Poista valinta, jos haluat ohittaa.",
+        "data": {
+          "test": "Testaa venttiili nyt"
+        },
+        "data_description": {
+          "test": "Avaa venttiilin noin 2 sekunniksi, sulkee sen ja kertoo, vastasiko se. Vettä virtaa hetken."
+        }
+      },
+      "valve_result": {
+        "title": "Venttiilitesti",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "Itsesäätö: askel"
+      },
+      "valve_timer_minutes": {
+        "name": "Venttiilin oma ajastin"
       }
     },
     "datetime": {

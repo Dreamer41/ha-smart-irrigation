@@ -365,7 +365,9 @@
     "cap": {
       "low": "Uma rega de rotina precisa de {minutes} min, mais que o limite de segurança desta zona ({cap} min), então é sempre recusada. Aumente o limite ou reduza os dias entre regas."
     },
-    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short."
+    "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
+    "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
   },
   "why": {
     "method": "Método de irrigação: {method}.",
@@ -391,7 +393,10 @@
     "soil": "Umidade do solo {pct} % ({status}).",
     "soil_dry": "seco",
     "soil_wet": "úmido",
-    "soil_ok": "médio"
+    "soil_ok": "médio",
+    "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
+    "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
   },
   "suggest": {
     "heading": "Possíveis elementos encontrados no seu Home Assistant:",
@@ -410,5 +415,11 @@
   "setup": {
     "progress": "Passo {n} de {total}",
     "nothing_found": "Nenhum sensor foi encontrado. Adicione-os depois em Configurar."
+  },
+  "valve_test": {
+    "ok": "The valve answered: it opened and closed again.",
+    "no_answer": "The valve did not answer: {valve} never reported open. Check that it is the right switch and that the device is online. The zone is still added.",
+    "still_open": "The valve opened but did not report closed after being told to. Check {valve} now, and close it by hand if it is open.",
+    "unavailable": "The valve {valve} is unavailable right now, so it was not tested. The zone is still added."
   }
 }

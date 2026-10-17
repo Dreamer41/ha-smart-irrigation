@@ -691,14 +691,35 @@ def test_the_simple_view_shows_the_few_controls_and_hides_the_rest_behind_advanc
     assert out["flipped"] is True and "render" in out["calls"]
 
 
-def test_the_help_links_point_at_guides_that_exist():
+# The pages of the ZoneFlow website's documentation (zoneflowirrigation.com/docs/<page>).
+# "valve-backup-timer" and "soil-moisture-probe" are the pages written for 1.7.4.
+WEBSITE_DOC_PAGES = {
+    "ai-setup", "areas-and-plants", "calibration", "csv-event-log", "dashboard", "frost-guard-and-pause",
+    "getting-started", "greenhouse-and-indoor-zones", "growth-ramp-and-climate", "health-journal-and-history",
+    "how-it-works", "languages", "migrating-from-yaml", "multiple-zones-shared-pumps",
+    "rain-gauges-and-weather-stations", "rain-without-a-gauge", "schedules-and-cadences", "sensors",
+    "service-runs-and-service-mode", "services", "snooze-and-self-tuning", "status-notifications-repairs",
+    "testing", "units", "valve-backup-timer", "soil-moisture-probe",
+}
+
+
+def test_every_help_link_goes_to_a_page_on_the_website():
     import re
 
     text = CARD.read_text(encoding="utf-8")
-    base = re.search(r'const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";', text)
-    assert base, "the guide base address changed"
-    for name in set(re.findall(r"\$\{GUIDE\}([A-Z-]+\.md)", text)):
-        assert (CARD.parents[3] / "docs" / name).is_file(), name
+    assert 'const DOCS = "https://zoneflowirrigation.com/docs/";' in text
+    assert "github.com/Dreamer41/ha-smart-irrigation" not in text  # help is on the website, not on GitHub
+    block = text[text.index("const GROUP_HELP"): text.index("const helpUrl")]
+    pages = set(re.findall(r': "([a-z][a-z-]+)"', block))
+    assert pages, "no help pages found"
+    unknown = pages - WEBSITE_DOC_PAGES
+    assert not unknown, unknown
+    # every settings group has a page, and every setting in the groups gets a "?"
+    groups = re.findall(r'^  \["(\w+)", \[', text, re.M)
+    group_help = text[text.index("const GROUP_HELP"): text.index("const SETTING_HELP")]
+    for group in groups:
+        assert re.search(rf"\b{group}: \"", group_help), group
+    assert "_help: group ? helpUrl(key, group)" in text
 
 
 WHY_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async")] + r"""
@@ -814,7 +835,7 @@ def test_the_overview_keeps_each_greenhouse_and_its_crops_in_a_group_of_its_own(
 def test_the_watering_method_help_link_points_at_the_blog_post():
     text = CARD.read_text(encoding="utf-8")
     assert 'const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";' in text
-    assert "amounts: [METHOD_HELP_URL]" in text  # one "?" beside How much water (the flow rate has its own in Calibrate)
+    assert "HELP_LINKS.amounts.push(METHOD_HELP_URL)" in text  # a second "?" beside How much water (the flow rate has its own in Calibrate)
 
 
 PLANTS_LINE_HARNESS = SIMPLE_HARNESS[: SIMPLE_HARNESS.rindex("const run = async")] + r"""

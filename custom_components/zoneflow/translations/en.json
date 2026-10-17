@@ -283,6 +283,20 @@
           "emitter_flow": "What one emitter gives per hour: it's printed on the emitter or its packaging (e.g. 2 L/h, 0.5 gal/h).",
           "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -983,6 +997,9 @@
       },
       "self_tune_step_days": {
         "name": "Self-Tuning Step"
+      },
+      "valve_timer_minutes": {
+        "name": "My Valve's Own Timer"
       }
     },
     "datetime": {

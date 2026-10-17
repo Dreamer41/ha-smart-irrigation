@@ -105,10 +105,17 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         except Exception:  # noqa: BLE001 - a check must never raise
             times = None
         if times:
-            add(
-                "backup_timer", "info", "backup_timer",
+            params = dict(
                 minutes=f"{times['recommended_timer_minutes']:.0f}", longest=f"{times['longest_minutes']:.0f}",
+                timer=f"{times['my_timer_minutes']:.0f}",
             )
+            mine = times["my_timer_minutes"]
+            if mine <= 0:
+                add("backup_timer", "info", "backup_timer", **params)
+            elif mine < times["longest_minutes"]:
+                add("backup_timer", "warn", "backup_timer_short", **params)
+            else:
+                add("backup_timer", "ok", "backup_timer_ok", **params)
         # Litres.
         if controller.has_water_volume:
             add("volume", "ok", "volume.ok")

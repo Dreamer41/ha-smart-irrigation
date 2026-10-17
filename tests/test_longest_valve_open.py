@@ -263,3 +263,53 @@ async def test_a_service_run_stays_one_pulse(hass, fake_valve_services, monkeypa
     await controller.start_service_run(10)
     await hass.async_block_till_done()
     assert clock.pulses_for(VALVE) == [10]
+
+
+# --- My Valve's Own Timer (1.7.4) and the preview in Why? ------------------------
+@pytest.mark.asyncio
+async def test_check_my_setup_follows_the_timer_the_person_set(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _, _ = await _ready(hass, monkeypatch, tmp_path)
+    await _set(controller, service_mode_auto_off_minutes=5.0, routine_pulse_count=1.0)
+
+    def item():
+        return {i["id"]: i for i in setup_check.run_checks(controller)}["backup_timer"]
+
+    longest = controller.valve_open_times()["longest_minutes"]
+    assert item()["level"] == "info" and "My Valve's Own Timer" in item()["text"]  # not set: the advice
+    await _set(controller, valve_timer_minutes=5.0)  # shorter than the longest open time
+    assert longest > 5
+    assert item()["level"] == "warn" and "set to 5 min" in item()["text"]
+    assert f"at least {controller.valve_open_times()['recommended_timer_minutes']} min" in item()["text"]
+    await _set(controller, valve_timer_minutes=300.0)
+    assert item()["level"] == "ok" and "300 min" in item()["text"]
+    # a later change makes the longest time grow past the timer: the warning is back
+    await _set(controller, valve_timer_minutes=float(controller.valve_open_times()["longest_minutes"] // 5 * 5 + 5))
+    assert item()["level"] == "ok"
+    await _set(controller, routine_interval_days=10.0, routine_interval_hot_days=10.0, flow_rate_mm_per_min=0.2,
+               max_runtime_minutes=300.0)
+    if controller.valve_open_times()["longest_minutes"] > controller.number("valve_timer_minutes"):
+        assert item()["level"] == "warn"
+    assert controller.valve_open_times()["my_timer_minutes"] == controller.number("valve_timer_minutes")
+
+
+@pytest.mark.asyncio
+async def test_why_previews_what_would_run_now(hass, fake_valve_services, monkeypatch, tmp_path):
+    from custom_components.zoneflow import why
+
+    controller, _, _ = await _ready(hass, monkeypatch, tmp_path)
+    await _set(controller, routine_pulse_count=3.0, routine_pulse_rest_minutes=25.0, flow_rate_mm_per_min=0.2,
+               routine_min_pulse_minutes=1.0)
+    plan = controller._routine_plan()
+    texts = {item["id"]: item["text"] for item in why.explain(controller)}
+    assert plan.calc_runtime_minutes > 0 and plan.pulse_count > 1
+    preview = texts["preview"]
+    assert preview.startswith(f"If it ran now: {plan.calc_runtime_minutes} min in {plan.pulse_count} pulses")
+    assert "25 min of soak" in preview
+    assert f"at most {controller.valve_open_times()['longest_minutes']:g} min" in preview
+    # a dose in one go
+    await _set(controller, routine_pulse_count=1.0)
+    controller.store.state.soil_type_override = "sandy"
+    one = {item["id"]: item["text"] for item in why.explain(controller)}["preview"]
+    plan = controller._routine_plan()
+    if plan.pulse_count == 1:
+        assert "in one go" in one
