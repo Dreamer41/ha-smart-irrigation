@@ -179,7 +179,11 @@ def async_check(controller: ZoneFlowController) -> None:
 
     flow = controller.numbers.get("flow_rate_mm_per_min")
     value = getattr(flow, "metric_value", None)
-    untouched = controller.has_valve and value is not None and abs(value - NUMBER_DEFAULTS["flow_rate_mm_per_min"]) < FLOW_DEFAULT_TOLERANCE
+    untouched = (
+        controller.has_valve and value is not None
+        and abs(value - NUMBER_DEFAULTS["flow_rate_mm_per_min"]) < FLOW_DEFAULT_TOLERANCE
+        and "flow" not in controller.store.state.check_ignored  # "this is my real flow rate": ignored in Check my setup
+    )
     _set(
         hass,
         controller,

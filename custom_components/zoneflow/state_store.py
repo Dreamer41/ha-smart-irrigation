@@ -270,6 +270,9 @@ class IrrigationState:
     # stamp is for the last_*_ts it belongs to; a later stamp from something else
     # makes it stale).
     self_tune_enabled: bool = True
+    # Check my setup warnings the person chose to ignore (item ids, e.g. "flow"): a
+    # warning stays in the list but no longer counts, and its Repairs notice goes away.
+    check_ignored: list[str] = field(default_factory=list)
     last_routine_run_seconds: float = 0.0
     last_routine_run_for_ts: float | None = None
     last_deep_run_seconds: float = 0.0

@@ -231,6 +231,11 @@ auto-off timer on the valve itself. Check my setup then tells you if it is short
 than the Longest Valve Open Time, and says so again later if a setting change makes
 the longest time grow past it.
 
+A **Check my setup** warning that is wrong for your zone has an **Ignore** button
+(administrators; it asks you to confirm). It moves to an **Ignored** list at the
+bottom with **Show again**, and no longer counts. If it goes away and later comes
+back, it is a new warning.
+
 When you add a zone with a valve, the last step offers a **valve test**: the valve
 opens for about 2 seconds and ZoneFlow tells you whether it answered and closed.
 

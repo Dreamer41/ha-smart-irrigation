@@ -108,3 +108,97 @@ async def test_the_card_can_ask_for_the_check(hass, fake_valve_services):
     plant_api.ws_check(hass, missing, {"id": 2, "type": "zoneflow/check", "device_id": "nope"})
     await hass.async_block_till_done()
     assert missing.error == "not_found"
+
+
+# --- ignoring a warning (1.7.4) ---------------------------------------------------
+class _Admin:
+    def __init__(self, is_admin=True):
+        self.user = type("User", (), {"is_admin": is_admin})()
+        self.result = self.error = None
+
+    def send_result(self, msg_id, result):
+        self.result = result
+
+    def send_error(self, msg_id, code, message):
+        self.error = code
+
+
+async def _ignore(hass, zone, item_id, ignore, admin=True):
+    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, zone.entry_id)})
+    connection = _Admin(admin)
+    plant_api.ws_check_ignore(
+        hass, connection,
+        {"id": 7, "type": "zoneflow/check_ignore", "device_id": device.id, "id": item_id, "ignore": ignore},
+    )
+    await hass.async_block_till_done()
+    return connection
+
+
+@pytest.mark.asyncio
+async def test_a_warning_can_be_ignored_and_shown_again(hass, fake_valve_services):
+    from homeassistant.helpers import issue_registry as ir
+
+    zone = _zone(hass, valve=VALVE)
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    from custom_components.zoneflow import issues
+
+    issues.async_check(c)
+    registry = ir.async_get(hass)
+    issue_id = f"{zone.entry_id}_flow_rate_default"
+    assert registry.async_get_issue(DOMAIN, issue_id) is not None  # the example flow rate: a warning and a repair
+    assert _by_id(setup_check.run_checks(c))["flow"]["level"] == "warn"
+    before = setup_check.summary(setup_check.run_checks(c))
+    assert before == "warn"
+
+    done = await _ignore(hass, zone, "flow", True)
+    assert done.error is None
+    flow = {i["id"]: i for i in done.result["items"]}["flow"]
+    assert flow["ignored"] is True and flow["level"] == "warn"  # still listed, as a warning
+    order = {"fail": 0, "warn": 1, "info": 2, "ok": 3}
+    counted = [i["level"] for i in done.result["items"] if not i["ignored"]]
+    assert done.result["level"] == min(counted, key=order.get)  # it no longer counts
+    assert setup_check.summary([{"level": "warn", "ignored": True}]) == "ok"
+    assert registry.async_get_issue(DOMAIN, issue_id) is None  # and its Repairs notice is gone
+    assert c.store.state.check_ignored == ["flow"]
+    ordered = [i["id"] for i in done.result["items"]]
+    assert ordered.index("flow") > ordered.index("notify")  # ignored ones go last
+
+    shown = await _ignore(hass, zone, "flow", False)
+    assert {i["id"]: i for i in shown.result["items"]}["flow"]["ignored"] is False
+    assert shown.result["level"] == "warn"
+    assert registry.async_get_issue(DOMAIN, issue_id) is not None  # the repair is back
+
+
+@pytest.mark.asyncio
+async def test_only_a_warning_can_be_ignored_and_only_by_an_administrator(hass, fake_valve_services):
+    zone = _zone(hass, valve=VALVE)
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    hass.states.async_set(VALVE, "unavailable")  # a failure
+    assert _by_id(setup_check.run_checks(c))["valve"]["ignorable"] is False
+    refused = await _ignore(hass, zone, "valve", True)
+    assert refused.error == "not_ignorable" and c.store.state.check_ignored == []
+    unknown = await _ignore(hass, zone, "nonsense", True)
+    assert unknown.error == "not_ignorable"
+    from homeassistant.exceptions import Unauthorized
+
+    with pytest.raises(Unauthorized):
+        await _ignore(hass, zone, "flow", True, admin=False)
+    assert c.store.state.check_ignored == []  # a non-administrator changed nothing
+
+
+@pytest.mark.asyncio
+async def test_an_ignored_warning_that_goes_away_comes_back_as_new_if_it_returns(hass, fake_valve_services):
+    zone = _zone(hass, valve=VALVE)
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    await _ignore(hass, zone, "flow", True)
+    await c.numbers["flow_rate_mm_per_min"].async_set_metric_value(0.42)  # calibrated: the warning is gone
+    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, zone.entry_id)})
+    connection = type("C", (), {"result": None, "send_result": lambda self, i, r: setattr(self, "result", r), "send_error": lambda *a: None})()
+    plant_api.ws_check(hass, connection, {"id": 1, "type": "zoneflow/check", "device_id": device.id})
+    await hass.async_block_till_done()
+    assert c.store.state.check_ignored == []  # forgotten
+    await c.numbers["flow_rate_mm_per_min"].async_set_metric_value(1.0)  # back to the example value
+    assert _by_id(setup_check.run_checks(c))["flow"]["ignored"] is False  # a new warning

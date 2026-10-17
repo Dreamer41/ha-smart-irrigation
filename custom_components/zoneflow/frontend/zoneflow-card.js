@@ -228,7 +228,13 @@ const I18N = {
       "needs_fixing": "Something needs fixing.",
       "needs_a_look": "A few things to look at.",
       "calibrate": "Calibrate",
-      "again": "Check again"
+      "again": "Check again",
+      "ignore": "Ignore",
+      "ignore_confirm": "Ignore this warning? Check my setup stops counting it as a problem, and its Repairs notice goes away. It stays in the list below, where you can turn it back on.",
+      "ignore_yes": "Yes, ignore it",
+      "ignore_cancel": "Cancel",
+      "ignored_title": "Ignored",
+      "unignore": "Show again"
     },
     "calibrate": {
       "title": "Calibrate the flow rate",
@@ -489,7 +495,13 @@ const I18N = {
       "needs_fixing": "Etwas muss korrigiert werden.",
       "needs_a_look": "Ein paar Dinge, die Sie sich ansehen sollten.",
       "calibrate": "Kalibrieren",
-      "again": "Erneut prüfen"
+      "again": "Erneut prüfen",
+      "ignore": "Ignorieren",
+      "ignore_confirm": "Diese Warnung ignorieren? „Meine Einrichtung prüfen“ zählt sie nicht mehr als Problem, und die Reparatur-Meldung verschwindet. Sie bleibt unten in der Liste, wo Sie sie wieder einschalten können.",
+      "ignore_yes": "Ja, ignorieren",
+      "ignore_cancel": "Abbrechen",
+      "ignored_title": "Ignoriert",
+      "unignore": "Wieder anzeigen"
     },
     "calibrate": {
       "title": "Durchflussrate kalibrieren",
@@ -750,7 +762,13 @@ const I18N = {
       "needs_fixing": "Algo necesita corrección.",
       "needs_a_look": "Algunas cosas que revisar.",
       "calibrate": "Calibrar",
-      "again": "Comprobar de nuevo"
+      "again": "Comprobar de nuevo",
+      "ignore": "Ignorar",
+      "ignore_confirm": "¿Ignorar esta advertencia? «Revisar mi configuración» deja de contarla como problema y desaparece su aviso de Reparaciones. Sigue en la lista de abajo, donde puede volver a activarla.",
+      "ignore_yes": "Sí, ignorar",
+      "ignore_cancel": "Cancelar",
+      "ignored_title": "Ignoradas",
+      "unignore": "Mostrar de nuevo"
     },
     "calibrate": {
       "title": "Calibrar el caudal",
@@ -1011,7 +1029,13 @@ const I18N = {
       "needs_fixing": "Jotain täytyy korjata.",
       "needs_a_look": "Muutama tarkistettava asia.",
       "calibrate": "Kalibroi",
-      "again": "Tarkista uudelleen"
+      "again": "Tarkista uudelleen",
+      "ignore": "Ohita",
+      "ignore_confirm": "Ohitetaanko tämä varoitus? Asetusten tarkistus ei enää laske sitä ongelmaksi, ja sen korjausilmoitus poistuu. Se pysyy alla olevassa listassa, josta sen voi ottaa takaisin käyttöön.",
+      "ignore_yes": "Kyllä, ohita",
+      "ignore_cancel": "Peruuta",
+      "ignored_title": "Ohitetut",
+      "unignore": "Näytä uudelleen"
     },
     "calibrate": {
       "title": "Kalibroi virtausnopeus",
@@ -1272,7 +1296,13 @@ const I18N = {
       "needs_fixing": "Quelque chose doit être corrigé.",
       "needs_a_look": "Quelques points à vérifier.",
       "calibrate": "Étalonner",
-      "again": "Vérifier à nouveau"
+      "again": "Vérifier à nouveau",
+      "ignore": "Ignorer",
+      "ignore_confirm": "Ignorer cet avertissement ? « Vérifier ma configuration » ne le compte plus comme un problème et son avis dans Réparations disparaît. Il reste dans la liste ci-dessous, où vous pouvez le réactiver.",
+      "ignore_yes": "Oui, ignorer",
+      "ignore_cancel": "Annuler",
+      "ignored_title": "Ignorés",
+      "unignore": "Afficher à nouveau"
     },
     "calibrate": {
       "title": "Étalonner le débit",
@@ -1533,7 +1563,13 @@ const I18N = {
       "needs_fixing": "Qualcosa richiede una correzione.",
       "needs_a_look": "Alcune cose da controllare.",
       "calibrate": "Tarare",
-      "again": "Ricontrolla"
+      "again": "Ricontrolla",
+      "ignore": "Ignora",
+      "ignore_confirm": "Ignorare questo avviso? «Controlla la mia configurazione» non lo conta più come problema e la sua notifica in Riparazioni scompare. Resta nell'elenco qui sotto, dove puoi riattivarlo.",
+      "ignore_yes": "Sì, ignora",
+      "ignore_cancel": "Annulla",
+      "ignored_title": "Ignorati",
+      "unignore": "Mostra di nuovo"
     },
     "calibrate": {
       "title": "Tarare la portata",
@@ -1794,7 +1830,13 @@ const I18N = {
       "needs_fixing": "Er moet iets worden hersteld.",
       "needs_a_look": "Enkele dingen om naar te kijken.",
       "calibrate": "Kalibreren",
-      "again": "Opnieuw controleren"
+      "again": "Opnieuw controleren",
+      "ignore": "Negeren",
+      "ignore_confirm": "Deze waarschuwing negeren? „Mijn installatie controleren” telt hem niet meer als probleem en de melding bij Reparaties verdwijnt. Hij blijft in de lijst hieronder, waar je hem weer kunt aanzetten.",
+      "ignore_yes": "Ja, negeren",
+      "ignore_cancel": "Annuleren",
+      "ignored_title": "Genegeerd",
+      "unignore": "Weer tonen"
     },
     "calibrate": {
       "title": "Debiet kalibreren",
@@ -2055,7 +2097,13 @@ const I18N = {
       "needs_fixing": "Coś wymaga naprawy.",
       "needs_a_look": "Kilka rzeczy do sprawdzenia.",
       "calibrate": "Skalibruj",
-      "again": "Sprawdź ponowanie"
+      "again": "Sprawdź ponowanie",
+      "ignore": "Ignoruj",
+      "ignore_confirm": "Zignorować to ostrzeżenie? „Sprawdź moją konfigurację” przestaje je liczyć jako problem, a jego powiadomienie w Naprawach znika. Zostaje na liście poniżej, gdzie można je znów włączyć.",
+      "ignore_yes": "Tak, ignoruj",
+      "ignore_cancel": "Anuluj",
+      "ignored_title": "Zignorowane",
+      "unignore": "Pokaż ponownie"
     },
     "calibrate": {
       "title": "Skalibruj wydajność",
@@ -2316,7 +2364,13 @@ const I18N = {
       "needs_fixing": "Algo precisa de ser corrigido.",
       "needs_a_look": "Algumas coisas a verificar.",
       "calibrate": "Calibrar",
-      "again": "Verificar novamente"
+      "again": "Verificar novamente",
+      "ignore": "Ignorar",
+      "ignore_confirm": "Ignorar este aviso? «Verificar a minha configuração» deixa de o contar como problema e o seu aviso em Reparações desaparece. Fica na lista abaixo, onde o pode voltar a ativar.",
+      "ignore_yes": "Sim, ignorar",
+      "ignore_cancel": "Cancelar",
+      "ignored_title": "Ignorados",
+      "unignore": "Mostrar de novo"
     },
     "calibrate": {
       "title": "Calibrar o fluxo",
@@ -2577,7 +2631,13 @@ const I18N = {
       "needs_fixing": "Något behöver åtgärdas.",
       "needs_a_look": "Ett par saker att titta på.",
       "calibrate": "Kalibrera",
-      "again": "Kontrollera igen"
+      "again": "Kontrollera igen",
+      "ignore": "Ignorera",
+      "ignore_confirm": "Ignorera varningen? ”Kontrollera min installation” räknar den inte längre som ett problem och dess Reparationsavisering försvinner. Den finns kvar i listan nedan, där du kan slå på den igen.",
+      "ignore_yes": "Ja, ignorera",
+      "ignore_cancel": "Avbryt",
+      "ignored_title": "Ignorerade",
+      "unignore": "Visa igen"
     },
     "calibrate": {
       "title": "Kalibrera flödet",
@@ -2838,7 +2898,13 @@ const I18N = {
       "needs_fixing": "Něco vyžaduje opravu.",
       "needs_a_look": "Několik věcí ke kontrole.",
       "calibrate": "Kalibrovat",
-      "again": "Zkontrolovat znovu"
+      "again": "Zkontrolovat znovu",
+      "ignore": "Ignorovat",
+      "ignore_confirm": "Ignorovat toto upozornění? „Zkontrolovat mé nastavení“ ho už nepočítá jako problém a jeho oznámení v Opravách zmizí. Zůstane v seznamu níže, kde ho lze znovu zapnout.",
+      "ignore_yes": "Ano, ignorovat",
+      "ignore_cancel": "Zrušit",
+      "ignored_title": "Ignorováno",
+      "unignore": "Zobrazit znovu"
     },
     "calibrate": {
       "title": "Kalibrovat průtok",
@@ -3099,7 +3165,13 @@ const I18N = {
       "needs_fixing": "Noget skal rettes.",
       "needs_a_look": "Et par ting at se på.",
       "calibrate": "Kalibrer",
-      "again": "Tjek igen"
+      "again": "Tjek igen",
+      "ignore": "Ignorer",
+      "ignore_confirm": "Ignorer denne advarsel? „Tjek min opsætning“ tæller den ikke længere som et problem, og dens meddelelse under Reparationer forsvinder. Den bliver i listen nedenfor, hvor du kan slå den til igen.",
+      "ignore_yes": "Ja, ignorer",
+      "ignore_cancel": "Annuller",
+      "ignored_title": "Ignoreret",
+      "unignore": "Vis igen"
     },
     "calibrate": {
       "title": "Kalibrer flowet",
@@ -3360,7 +3432,13 @@ const I18N = {
       "needs_fixing": "Valamit javítani kell.",
       "needs_a_look": "Néhány átvizsgálandó dolog.",
       "calibrate": "Kalibrálás",
-      "again": "Ellenőrzés ismét"
+      "again": "Ellenőrzés ismét",
+      "ignore": "Mellőzés",
+      "ignore_confirm": "Mellőzi ezt a figyelmeztetést? A „Beállításaim ellenőrzése” már nem számolja problémának, és a Javítások értesítése eltűnik. Az alábbi listában marad, ahol újra bekapcsolhatja.",
+      "ignore_yes": "Igen, mellőzöm",
+      "ignore_cancel": "Mégse",
+      "ignored_title": "Mellőzött",
+      "unignore": "Mutassa újra"
     },
     "calibrate": {
       "title": "Vízhozam kalibrálása",
@@ -3621,7 +3699,13 @@ const I18N = {
       "needs_fixing": "Noe må rettes.",
       "needs_a_look": "Et par ting å se på.",
       "calibrate": "Kalibrer",
-      "again": "Sjekk igjen"
+      "again": "Sjekk igjen",
+      "ignore": "Ignorer",
+      "ignore_confirm": "Ignorere denne advarselen? «Sjekk oppsettet mitt» teller den ikke lenger som et problem, og varselet under Reparasjoner forsvinner. Den blir stående i listen under, der du kan slå den på igjen.",
+      "ignore_yes": "Ja, ignorer",
+      "ignore_cancel": "Avbryt",
+      "ignored_title": "Ignorert",
+      "unignore": "Vis igjen"
     },
     "calibrate": {
       "title": "Kalibrer vannmengde",
@@ -3882,7 +3966,13 @@ const I18N = {
       "needs_fixing": "Algo precisa ser corrigido.",
       "needs_a_look": "Algumas coisas para verificar.",
       "calibrate": "Calibrar",
-      "again": "Verificar novamente"
+      "again": "Verificar novamente",
+      "ignore": "Ignorar",
+      "ignore_confirm": "Ignorar este aviso? “Verificar minha configuração” deixa de contá-lo como problema e o aviso em Reparos some. Ele continua na lista abaixo, onde você pode reativá-lo.",
+      "ignore_yes": "Sim, ignorar",
+      "ignore_cancel": "Cancelar",
+      "ignored_title": "Ignorados",
+      "unignore": "Mostrar de novo"
     },
     "calibrate": {
       "title": "Calibrar a vazão",
@@ -4143,7 +4233,13 @@ const I18N = {
       "needs_fixing": "Что-то требует исправления.",
       "needs_a_look": "Несколько моментов для проверки.",
       "calibrate": "Калибровать",
-      "again": "Проверить снова"
+      "again": "Проверить снова",
+      "ignore": "Игнорировать",
+      "ignore_confirm": "Игнорировать это предупреждение? «Проверка настройки» больше не считает его проблемой, а его уведомление в «Ремонте» исчезает. Оно остаётся в списке ниже, где его можно вернуть.",
+      "ignore_yes": "Да, игнорировать",
+      "ignore_cancel": "Отмена",
+      "ignored_title": "Игнорируются",
+      "unignore": "Показать снова"
     },
     "calibrate": {
       "title": "Калибровать расход",
@@ -4404,7 +4500,13 @@ const I18N = {
       "needs_fixing": "Niečo vyžaduje opravu.",
       "needs_a_look": "Nezopár vecí na kontrolu.",
       "calibrate": "Kalibrovať",
-      "again": "Skontrolovať znova"
+      "again": "Skontrolovať znova",
+      "ignore": "Ignorovať",
+      "ignore_confirm": "Ignorovať toto upozornenie? „Skontrolovať moje nastavenie“ ho už nepočíta ako problém a jeho oznámenie v Opravách zmizne. Zostane v zozname nižšie, kde ho možno znova zapnúť.",
+      "ignore_yes": "Áno, ignorovať",
+      "ignore_cancel": "Zrušiť",
+      "ignored_title": "Ignorované",
+      "unignore": "Zobraziť znova"
     },
     "calibrate": {
       "title": "Kalibrovať prietok",
@@ -4665,7 +4767,13 @@ const I18N = {
       "needs_fixing": "Щось потребує виправлення.",
       "needs_a_look": "Кілька моментів для перевірки.",
       "calibrate": "Калібрувати",
-      "again": "Перевірити знову"
+      "again": "Перевірити знову",
+      "ignore": "Ігнорувати",
+      "ignore_confirm": "Ігнорувати це попередження? «Перевірка налаштувань» більше не вважає його проблемою, а його сповіщення в «Ремонті» зникає. Воно лишається в списку нижче, де його можна повернути.",
+      "ignore_yes": "Так, ігнорувати",
+      "ignore_cancel": "Скасувати",
+      "ignored_title": "Ігноровані",
+      "unignore": "Показати знову"
     },
     "calibrate": {
       "title": "Калібрувати інтенсивність поливу",
@@ -4926,7 +5034,13 @@ const I18N = {
       "needs_fixing": "需要进行修复。",
       "needs_a_look": "有事项需要留意。",
       "calibrate": "校准",
-      "again": "再次检查"
+      "again": "再次检查",
+      "ignore": "忽略",
+      "ignore_confirm": "忽略此警告？“检查我的设置”不再将其视为问题，其“修复”通知也会消失。它仍留在下方列表中，可随时重新打开。",
+      "ignore_yes": "是，忽略",
+      "ignore_cancel": "取消",
+      "ignored_title": "已忽略",
+      "unignore": "重新显示"
     },
     "calibrate": {
       "title": "校准流量",
@@ -5315,6 +5429,8 @@ class ZoneFlowCard extends HTMLElement {
       .check-headline.warn, .check-item.warn ha-icon { color: var(--warning-color, #ff9800); }
       .check-headline.fail, .check-item.fail ha-icon { color: var(--error-color, #db4437); }
       .check-item.ok ha-icon { color: var(--success-color, #43a047); }
+      .check-confirm { padding: 0 0 10px 34px; }
+      .check-confirm .plant-button { margin-right: 8px; }
       .check-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; flex-wrap: wrap; }
       .check-text { flex: 1; min-width: 180px; }
       .waternow-minutes { min-width: 56px; text-align: center; }
@@ -5760,15 +5876,53 @@ class ZoneFlowCard extends HTMLElement {
     const headline = { ok: "check.all_good", info: "check.all_good", warn: "check.needs_a_look", fail: "check.needs_fixing" }[data.level];
     body.appendChild(make("div", `check-headline ${data.level}`, t(hass, headline)));
     const ICONS = { ok: "mdi:check-circle-outline", info: "mdi:information-outline", warn: "mdi:alert-outline", fail: "mdi:close-circle-outline" };
+    const ignore = async (item, ignored) => {
+      try {
+        await hass.callWS({ type: "zoneflow/check_ignore", device_id: this._config.device_id, id: item.id, ignore: ignored });
+      } catch (err) {
+        body.appendChild(make("div", "check-item fail", String(err?.message || err)));
+        return;
+      }
+      this._checkBody(body);
+    };
+    const admin = Boolean(hass.user?.is_admin);
+    let ignoredHeading = false;
     for (const item of data.items) {
-      const row = make("div", `check-item ${item.level}`);
+      if (item.ignored && !ignoredHeading) {
+        ignoredHeading = true;
+        body.appendChild(make("div", "group-title", t(hass, "check.ignored_title")));
+      }
+      const row = make("div", `check-item ${item.ignored ? "info" : item.level}`);
       const icon = document.createElement("ha-icon");
-      icon.setAttribute("icon", ICONS[item.level] || ICONS.info);
+      icon.setAttribute("icon", item.ignored ? "mdi:eye-off-outline" : (ICONS[item.level] || ICONS.info));
       row.append(icon, make("span", "check-text", item.text));
-      if (item.action === "calibrate" && this._popups?.calibrate) {
+      if (!item.ignored && item.action === "calibrate" && this._popups?.calibrate) {
         const button = make("button", "plant-button", t(hass, "check.calibrate"));
         button.addEventListener("click", () => this._openPopup("calibrate"));
         row.appendChild(button);
+      }
+      if (admin && item.ignorable) {
+        if (item.ignored) {
+          const again = make("button", "plant-button", t(hass, "check.unignore"));
+          again.addEventListener("click", () => ignore(item, false));
+          row.appendChild(again);
+        } else {
+          // Ignoring asks first: it is for a warning that is wrong for this zone, not a way to hide a real problem.
+          const button = make("button", "plant-button", t(hass, "check.ignore"));
+          button.addEventListener("click", () => {
+            const sure = make("div", "check-confirm");
+            sure.appendChild(make("div", "group-note", t(hass, "check.ignore_confirm")));
+            const yes = make("button", "plant-button", t(hass, "check.ignore_yes"));
+            yes.addEventListener("click", () => ignore(item, true));
+            const no = make("button", "plant-button", t(hass, "check.ignore_cancel"));
+            no.addEventListener("click", () => sure.remove());
+            sure.append(yes, no);
+            row.after(sure);
+            button.hidden = true;
+            no.addEventListener("click", () => { button.hidden = false; });
+          });
+          row.appendChild(button);
+        }
       }
       body.appendChild(row);
     }
