@@ -25,6 +25,7 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ### Changed
 
+- **The three Rain Efficiency sliders (light, moderate, heavy rain) are shown.** They were hidden for every zone as "fine-tuning", but how much rain reaches the roots differs between shallow and deep rooted plants. They are in the Rain group of the zone card's Settings (under Show all settings) and unhide by themselves on existing zones.
 - **Deficit Mode Water goes down to 30 %** (it stopped at 50 %).
 - **A watering fires on its day even when the last one took hours.** The last watering is stamped when it finishes, and a watering counts as due a few hours early (6 hours) so the next one still falls on the set day. A run that took longer than that (a long soak between many pulses on clay) used to push the next one a day late; the early margin now grows with how long the last run took, up to 20 hours.
 - **Water now with minutes splits into pulses**, like the zone's own routine watering: the zone's Routine Pulse Count, more pulses where the soil or slope needs them to avoid runoff, and the soak between them (it can be stopped in the soak). It was one single pulse. It still counts in the water record and does not move the schedule; the cap and the daily cap still apply. The 10-minute button on a phone notification works the same way. Service runs (the 1 / 5 / 10 / 15 minute buttons and Service Mode) stay one pulse.

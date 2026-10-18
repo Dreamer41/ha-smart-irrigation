@@ -99,7 +99,6 @@ async def test_a_valve_only_zone_hides_everything_it_cannot_use(hass, fake_valve
         ("sensor", "last_cycle_water_liters"),  # no flow meter
         ("number", "growth_ramp_custom_start_pct"),  # growth ramp off
         ("select", "growth_stage_mode"),
-        ("number", "rain_eff_mid"),  # advanced
     ]:
         assert _hidden(hass, entry, domain, key) == HIDDEN_BY_ZONEFLOW, (domain, key)
     for domain, key in [
@@ -124,6 +123,10 @@ async def test_features_that_are_set_up_stay_visible(hass, fake_valve_services):
         ("number", "pump_min_watts"),
         ("sensor", "avg_peak_temp_3d"),
         ("select", "demand_model"),
+        # Shallow and deep rooted plants need different values: never hidden from the start.
+        ("number", "rain_eff_low"),
+        ("number", "rain_eff_mid"),
+        ("number", "rain_eff_high"),
     ]:
         assert _hidden(hass, entry, domain, key) is None, (domain, key)
     assert _hidden(hass, entry, "number", "forecast_rain_threshold_mm") == HIDDEN_BY_ZONEFLOW
@@ -143,12 +146,12 @@ async def test_adding_and_removing_a_feature_unhides_and_hides_again(hass, fake_
 async def test_a_persons_own_choice_is_left_alone(hass, fake_valve_services):
     entry, _ = await _setup(hass)
     registry = er.async_get(hass)
-    # Unhid an advanced slider themselves: it stays visible after a reload.
-    eff = _reg(hass, entry, "number", "rain_eff_low").entity_id
-    registry.async_update_entity(eff, hidden_by=None)
+    # Unhid something ZoneFlow hid (no weather entity yet): it stays visible after a reload.
+    fc = _reg(hass, entry, "number", "forecast_rain_threshold_mm").entity_id
+    registry.async_update_entity(fc, hidden_by=None)
     assert await hass.config_entries.async_reload(entry.entry_id)
     await hass.async_block_till_done()
-    assert _hidden(hass, entry, "number", "rain_eff_low") is None
+    assert _hidden(hass, entry, "number", "forecast_rain_threshold_mm") is None
 
     # Hid something themselves: ZoneFlow never unhides it.
     await _set_options(hass, entry, **{CONF_WEATHER_ENTITY: "weather.home"})

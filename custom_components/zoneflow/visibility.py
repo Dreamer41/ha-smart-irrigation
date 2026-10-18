@@ -88,14 +88,6 @@ GROWTH_RAMP = {
     ("number", "growth_stage_override_pct"),
     ("sensor", "growth_ramp_pct"),
 }
-# Fine-tuning almost nobody needs: hidden from the start, and (since the
-# reason never changes) left as the person sets it after that.
-ADVANCED = {
-    ("number", "rain_eff_low"),
-    ("number", "rain_eff_mid"),
-    ("number", "rain_eff_high"),
-}
-
 
 # The greenhouse / indoor climate entities (1.6), each shown only when the
 # hardware or sensor it acts on is configured.
@@ -156,7 +148,7 @@ def _greenhouse_hidden(controller) -> set[tuple[str, str]]:
 
 def hidden_for(controller) -> set[tuple[str, str]]:
     """The entities that do nothing for this zone right now."""
-    hidden = set(ADVANCED) | DUPLICATES
+    hidden = set(DUPLICATES)
     if not controller.weather_entity:
         hidden |= FORECAST
     if controller.uses_wu:
