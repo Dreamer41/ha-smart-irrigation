@@ -2021,6 +2021,14 @@ class ZoneFlowController:
         """Port of avocado_mutex_safety_watchdog (lock stuck ON 180min)."""
         if not self.store.state.lock_on:
             return
+        if self._runs or self._service_active:
+            # A watering that is still running (many pulses with long soaks, or a Water now in
+            # pulses, can take longer than this) is not a stuck lock: check again later. A valve
+            # that stays open is the stuck-valve watchdog's job.
+            self._lock_stale_cancel = async_track_point_in_time(
+                self.hass, self._on_stale_lock, dt_util.utcnow() + timedelta(minutes=30)
+            )
+            return
         self.hass.async_create_task(self._fire_stale_lock())
 
     async def _fire_stale_lock(self) -> None:
@@ -3551,6 +3559,7 @@ class ZoneFlowController:
         await self._set_abort(False)
 
         run_started = dt_util.utcnow().timestamp()
+        self._last_outcome = None  # never read an earlier run's outcome if this one does not start
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -3828,6 +3837,7 @@ class ZoneFlowController:
             await self._register_self_tune_signal("early")
 
         run_started = dt_util.utcnow().timestamp()
+        self._last_outcome = None  # never read an earlier run's outcome if this one does not start
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -4102,6 +4112,9 @@ class ZoneFlowController:
             minimum=max(int(round(self.number("routine_pulse_count"))), 1),
         )
         count, each = calc.split_pulses(minutes, count, self._routine_min_pulse())
+        if count * each > minutes + 1e-9:
+            # A typed time shorter than one minimum pulse: exactly what was typed, never longer.
+            count, each = 1, float(minutes)
         return count, each, int(round(self.number("routine_pulse_rest_minutes")))
 
     async def _service_task(
@@ -4229,18 +4242,23 @@ class ZoneFlowController:
             float(FLOW_MEASURE_MINUTES),
         )
         longest = max(routine, deep, service)
+        # The valve is open a little before the pulse is timed: while the pump-power check waits
+        # for the pump to come up (up to PUMP_POWER_WAIT_TIMEOUT_SECONDS), and for the Valve Overlap
+        # seconds the next zone's hand-over keeps it open after its pulse.
+        extra = (PUMP_POWER_WAIT_TIMEOUT_SECONDS if self.pump_power_entity else 0) + self.number("valve_overlap_seconds")
         by_hand = max(
             longest,
             calc.longest_pulse_minutes(routine_cap, flow, routine_count, self._routine_min_pulse(), self.site),
         )
         return {
             "longest_minutes": round(longest, 1),
-            "recommended_timer_minutes": calc.recommended_backup_timer_minutes(longest),
+            "recommended_timer_minutes": calc.recommended_backup_timer_minutes(longest + extra / 60.0),
+            "open_before_and_after_minutes": round(extra / 60.0, 2),
             "routine_minutes": round(routine, 1),
             "deep_soak_minutes": round(deep, 1),
             "service_minutes": round(service, 1),
             "with_water_now_minutes": round(by_hand, 1),
-            "recommended_timer_with_water_now_minutes": calc.recommended_backup_timer_minutes(by_hand),
+            "recommended_timer_with_water_now_minutes": calc.recommended_backup_timer_minutes(by_hand + extra / 60.0),
             "my_timer_minutes": round(self.number("valve_timer_minutes"), 1),
         }
 

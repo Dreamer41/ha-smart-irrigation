@@ -143,6 +143,9 @@ async def _test_valve(hass, valve: str) -> str:
     state = hass.states.get(valve)
     if state is None or state.state in ("unavailable", "unknown"):
         return messages.text(hass, "valve_test.unavailable", valve=valve)
+    if state.state == "on":
+        # Someone is watering by hand: leave it exactly as it is.
+        return messages.text(hass, "valve_test.already_open", valve=valve)
 
     async def _reaches(target: str) -> bool:
         for _ in range(int(VALVE_TEST_WAIT_SECONDS / 0.25)):
@@ -157,17 +160,17 @@ async def _test_valve(hass, valve: str) -> str:
         opened = await _reaches("on")
         if opened:
             await asyncio.sleep(VALVE_TEST_HOLD_SECONDS)
-    except HomeAssistantError:
-        opened = False
     except asyncio.CancelledError:
         # The flow was cut short (Home Assistant stopping) with the valve open: close it anyway.
         hass.async_create_task(hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True))
         raise
+    except Exception:  # noqa: BLE001 - a device may raise anything on a lost answer; the valve is closed below
+        opened = False
     closed = False
     for _ in range(2):  # told twice before it is called stuck open
         try:
             await hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
-        except HomeAssistantError:
+        except Exception:  # noqa: BLE001
             continue
         if await _reaches("off"):
             closed = True

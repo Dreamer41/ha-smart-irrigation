@@ -420,6 +420,7 @@
     "ok": "The valve answered: it opened and closed again.",
     "no_answer": "The valve did not answer: {valve} never reported open. Check that it is the right switch and that the device is online. The zone is still added.",
     "still_open": "The valve opened but did not report closed after being told to. Check {valve} now, and close it by hand if it is open.",
-    "unavailable": "The valve {valve} is unavailable right now, so it was not tested. The zone is still added."
+    "unavailable": "The valve {valve} is unavailable right now, so it was not tested. The zone is still added.",
+    "already_open": "The valve {valve} is already open, so it was not tested (it was left open as it was). Close it and run the test again from Configure if you want. The zone is still added."
   }
 }

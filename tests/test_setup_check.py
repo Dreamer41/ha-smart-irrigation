@@ -126,10 +126,11 @@ class _Admin:
 async def _ignore(hass, zone, item_id, ignore, admin=True):
     device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, zone.entry_id)})
     connection = _Admin(admin)
-    plant_api.ws_check_ignore(
-        hass, connection,
-        {"id": 7, "type": "zoneflow/check_ignore", "device_id": device.id, "id": item_id, "ignore": ignore},
+    # Through the command's real schema, as Home Assistant checks it: "id" is the message id (an int).
+    message = plant_api.ws_check_ignore._ws_schema(
+        {"id": 7, "type": "zoneflow/check_ignore", "device_id": device.id, "item_id": item_id, "ignore": ignore}
     )
+    plant_api.ws_check_ignore(hass, connection, message)
     await hass.async_block_till_done()
     return connection
 

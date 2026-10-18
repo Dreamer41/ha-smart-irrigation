@@ -420,6 +420,7 @@
     "ok": "Venttiili vastasi: se avautui ja sulkeutui uudelleen.",
     "no_answer": "Venttiili ei vastannut: {valve} ei koskaan ilmoittanut olevansa auki. Tarkista, että kytkin on oikea ja laite verkossa. Vyöhyke lisätään silti.",
     "still_open": "Venttiili avautui, mutta ei ilmoittanut sulkeutuneensa sulkukäskyn jälkeen. Tarkista {valve} heti ja sulje se käsin, jos se on auki.",
-    "unavailable": "Venttiili {valve} ei ole juuri nyt saatavilla, joten sitä ei testattu. Vyöhyke lisätään silti."
+    "unavailable": "Venttiili {valve} ei ole juuri nyt saatavilla, joten sitä ei testattu. Vyöhyke lisätään silti.",
+    "already_open": "Venttiili {valve} on jo auki, joten sitä ei testattu (se jätettiin auki sellaisenaan). Sulje se ja aja testi uudelleen halutessasi. Vyöhyke lisätään silti."
   }
 }

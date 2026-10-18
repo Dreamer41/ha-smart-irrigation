@@ -388,3 +388,22 @@ async def test_an_open_valve_alert_comes_through_with_notifications_off(hass, fa
         message="deficit_ended",
     )
     assert len(sent) == 1 and "OPEN" in sent[0]["message"]
+
+
+@pytest.mark.asyncio
+async def test_an_ignored_sensor_warning_takes_its_repairs_notice_with_it(hass, fake_valve_services, monkeypatch, tmp_path):
+    await _seed(hass)
+    zone = await _zone(hass, tmp_path, "Chilis")
+    await zone.numbers["flow_rate_mm_per_min"].async_set_metric_value(0.3)
+    hass.states.async_remove(OUTDOOR_TEMP)  # missing for days
+    issues.async_check(zone)  # noted as gone now
+    much_later = dt_util.utcnow() + timedelta(days=4)
+    monkeypatch.setattr(issues, "dt_util", SimpleNamespace(utcnow=lambda: much_later))
+    issues.async_check(zone)
+    assert _issue(hass, zone, "sensor_offline_temperature") is not None
+    zone.store.state.check_ignored = ["temperature"]  # ignored in Check my setup
+    issues.async_check(zone)
+    assert _issue(hass, zone, "sensor_offline_temperature") is None
+    zone.store.state.check_ignored = []  # shown again
+    issues.async_check(zone)
+    assert _issue(hass, zone, "sensor_offline_temperature") is not None

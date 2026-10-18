@@ -117,3 +117,41 @@ async def test_an_unavailable_valve_is_not_tested(hass, fake_valve_services, val
 def test_a_zone_without_a_valve_has_no_valve_test(valve_test_on):
     assert config_flow._offers_valve_test({CONF_VALVE_ENTITY: "switch.v"}) is True
     assert config_flow._offers_valve_test({}) is False
+
+
+@pytest.mark.asyncio
+async def test_a_device_that_raises_a_raw_error_is_still_closed(hass, fake_valve_services, valve_test_on):
+    result = await _to_the_last_step(hass)
+    offs = []
+
+    async def open_then_fail(call):
+        hass.states.async_set(call.data["entity_id"], "on")
+        raise TimeoutError("no answer from the device")
+
+    async def off(call):
+        hass.states.async_set(call.data["entity_id"], "off")
+        offs.append(call.data["entity_id"])
+
+    hass.services.async_register("switch", "turn_on", open_then_fail)
+    hass.services.async_register("switch", "turn_off", off)
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"test": True})
+    assert result["step_id"] == "valve_result"  # not "Unknown error"
+    assert offs == [VALVE] and hass.states.get(VALVE).state == "off"
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["type"] == FlowResultType.CREATE_ENTRY
+
+
+@pytest.mark.asyncio
+async def test_a_valve_that_is_already_open_is_left_alone(hass, fake_valve_services, valve_test_on):
+    result = await _to_the_last_step(hass)
+    hass.states.async_set(VALVE, "on")  # someone is watering by hand
+    calls = []
+
+    async def record(call):
+        calls.append(call.service)
+
+    hass.services.async_register("switch", "turn_on", record)
+    hass.services.async_register("switch", "turn_off", record)
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"test": True})
+    assert "already open" in result["description_placeholders"]["result"]
+    assert calls == [] and hass.states.get(VALVE).state == "on"

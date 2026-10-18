@@ -117,7 +117,7 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             mine = times["my_timer_minutes"]
             if mine <= 0:
                 add("backup_timer", "info", "backup_timer", **params)
-            elif mine < times["longest_minutes"]:
+            elif mine < times["longest_minutes"] + times["open_before_and_after_minutes"]:
                 add("backup_timer", "warn", "backup_timer_short", **params)
             else:
                 add("backup_timer", "ok", "backup_timer_ok", **params)

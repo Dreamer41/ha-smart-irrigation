@@ -5607,7 +5607,7 @@ class ZoneFlowCard extends HTMLElement {
     const diagnostics = [];
     for (const [key, entry] of Object.entries(visible).sort((a, b) => a[0].localeCompare(b[0]))) {
       if (used.has(key)) continue;
-      if (entry.entity_category === "config") more.push({ entity: entry.entity_id });
+      if (entry.entity_category === "config") more.push({ entity: entry.entity_id, _adv: true });
       else if (entry.entity_category === "diagnostic") diagnostics.push({ entity: entry.entity_id });
       else now.push({ entity: entry.entity_id });
     }
@@ -5865,7 +5865,7 @@ class ZoneFlowCard extends HTMLElement {
     const ICONS = { ok: "mdi:check-circle-outline", info: "mdi:information-outline", warn: "mdi:alert-outline", fail: "mdi:close-circle-outline" };
     const ignore = async (item, ignored) => {
       try {
-        await hass.callWS({ type: "zoneflow/check_ignore", device_id: this._config.device_id, id: item.id, ignore: ignored });
+        await hass.callWS({ type: "zoneflow/check_ignore", device_id: this._config.device_id, item_id: item.id, ignore: ignored });
       } catch (err) {
         body.appendChild(make("div", "check-item fail", String(err?.message || err)));
         return;

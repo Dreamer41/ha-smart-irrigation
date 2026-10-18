@@ -108,10 +108,18 @@ def _sensors(controller: ZoneFlowController) -> dict[str, str | None]:
     }
 
 
+# The Check my setup warning (item id) whose Repairs notice goes away when the person ignores it.
+IGNORABLE_SENSOR_ROLES = {
+    "temperature": "temperature", "soil": "soil_moisture", "pump": "pump_power", "weather": "weather",
+}
+
+
 def async_check(controller: ZoneFlowController) -> None:
     """Raise or clear this zone's issues."""
     hass = controller.hass
     zone = controller.entry.title
+    ignored = set(controller.store.state.check_ignored)
+    ignored_roles = {role for item, role in IGNORABLE_SENSOR_ROLES.items() if item in ignored}
 
     # A paused zone isn't watering: a valve or sensor switched off for the
     # winter isn't a problem to report.
@@ -133,7 +141,7 @@ def async_check(controller: ZoneFlowController) -> None:
             hass,
             controller,
             f"sensor_offline_{role}",
-            offline is not None and offline >= REPAIR_SENSOR_OFFLINE_SECONDS,
+            offline is not None and offline >= REPAIR_SENSOR_OFFLINE_SECONDS and role not in ignored_roles,
             severity=ir.IssueSeverity.WARNING,
             translation_key="sensor_offline",
             translation_placeholders={"zone": zone, "entity": entity_id or "", "days": f"{(offline or 0) / 86400:.0f}"},
@@ -148,7 +156,7 @@ def async_check(controller: ZoneFlowController) -> None:
         hass,
         controller,
         "notify_missing",
-        missing is not None and missing >= REPAIR_NOTIFY_MISSING_SECONDS,
+        missing is not None and missing >= REPAIR_NOTIFY_MISSING_SECONDS and "notify" not in ignored,
         severity=ir.IssueSeverity.WARNING,
         translation_key="notify_missing",
         translation_placeholders={"zone": zone, "entity": notify or ""},

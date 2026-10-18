@@ -112,3 +112,30 @@ async def test_without_a_probe_the_choice_is_hidden(hass, fake_valve_services):
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
     assert ("select", "soil_wet_action") in visibility.hidden_for(controller)
+
+
+@pytest.mark.asyncio
+async def test_yesterdays_soil_stop_is_not_taken_for_a_run_that_never_started(
+    hass, fake_valve_services, monkeypatch, tmp_path
+):
+    """A routine run that never gets to open the valve (here the zone is stopping) must not
+    be recorded as done because the run before it was stopped by wet soil."""
+    controller, clock, events = await _probe_zone(hass, monkeypatch, tmp_path, stop=True)
+    _wet_after_first_pulse(hass, clock)
+    await controller.run_routine_irrigation()  # day 1: stopped by the wet soil
+    await hass.async_block_till_done()
+    assert controller._last_outcome == "soil" and controller._delivered_minutes > 0
+
+    state = controller.store.state
+    _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
+    stamp = state.last_routine_ts
+    clock.on_pulse = None
+    hass.states.async_set(SOIL, "40")  # the soil has dried: a watering is due again
+    await hass.async_block_till_done()
+    async def never_started(**kwargs):  # day 2: due, but it queues for a shared pump and is paused before it opens
+        return False
+
+    controller._run_pulses = never_started
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert state.last_routine_ts == stamp  # nothing was watered, so nothing is marked done

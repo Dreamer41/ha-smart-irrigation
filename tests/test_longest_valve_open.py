@@ -89,7 +89,9 @@ async def test_the_zone_works_it_out_from_its_own_settings_and_follows_every_cha
     base = times()
     assert base["routine_minutes"] > 0 and base["service_minutes"] == 15.0  # the 15-minute check button
     assert base["longest_minutes"] == max(base["routine_minutes"], base["deep_soak_minutes"], 15.0)
-    assert base["recommended_timer_minutes"] == calc.recommended_backup_timer_minutes(base["longest_minutes"])
+    extra = base["open_before_and_after_minutes"]  # the pump-power wait before the pulse, the overlap after it
+    assert extra == pytest.approx(0.75)  # a pump-power sensor is set here: up to 45 s
+    assert base["recommended_timer_minutes"] == calc.recommended_backup_timer_minutes(base["longest_minutes"] + extra)
 
     # More pulses: shorter pulses.
     await _set(controller, routine_pulse_count=4.0)
@@ -313,3 +315,17 @@ async def test_why_previews_what_would_run_now(hass, fake_valve_services, monkey
     plan = controller._routine_plan()
     if plan.pulse_count == 1:
         assert "in one go" in one
+
+
+@pytest.mark.asyncio
+async def test_water_now_is_never_longer_than_the_minutes_typed(hass, fake_valve_services, monkeypatch, tmp_path):
+    """A minimum pulse longer than the time typed must not stretch it, nor go past the daily cap."""
+    controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
+    await _set(controller, routine_min_pulse_minutes=10)
+    count, each, _rest = controller._manual_pulses(3.0)
+    assert count * each == pytest.approx(3.0)
+    controller.store.state.today_runtime_minutes = 237.0  # 3 minutes left of the 240 a day
+    await controller.water_now(20)  # shortened to the 3 minutes left
+    await hass.async_block_till_done()
+    assert sum(clock.pulses_for(VALVE)) == pytest.approx(3.0)
+    assert controller.store.state.today_runtime_minutes == pytest.approx(240.0)
