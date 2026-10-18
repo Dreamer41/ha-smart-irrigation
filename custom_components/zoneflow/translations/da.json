@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Slå dybdevanding til",
           "deep_soak_time": "Tidspunkt for dybdevanding",
           "routine_time": "Tidspunkt for rutinevanding",
+          "summary_time": "Tidspunkt for ugeopsummeringen",
+          "fertilize_reminder_time": "Tidspunkt for gødningspåmindelsen",
           "deep_soak_sun_mode": "Start af dybdevanding",
           "deep_soak_sun_offset_minutes": "Dybdevanding: forskydning ift. solen (minutter)",
           "routine_sun_mode": "Start af rutinevanding",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "En dybdevanding er en stor, langsom vanding med nogle ugers mellemrum (14 dage til at starte med), der gør jorden våd langt nede, så rødderne vokser dybt. God til træer, buske og stauder; slå den fra til planter med overfladiske rødder som salat og krydderurter. Rutinevandingen kører under alle omstændigheder.",
           "deep_soak_time": "Hvornår dybdevandingen starter på de dage, den skal køre, når starten nedenfor er det faste tidspunkt. Tidligt om morgenen er bedst: mindre vand går tabt til sol og vind.",
           "routine_time": "Hvornår ZoneFlow hver dag tjekker, om der skal rutinevandes, og vander, hvis der skal. Hvor ofte det sker, afhænger af vejret og dit ugemål. Tidligt om morgenen er bedst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dybdevandingen på det faste tidspunkt ovenfor eller før eller efter solopgang eller solnedgang, så den følger årstiderne.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller efter solopgang eller solnedgang. Bruges ikke med det faste tidspunkt.",
           "routine_sun_mode": "Start rutinevandingen på det faste tidspunkt ovenfor eller før eller efter solopgang eller solnedgang, så den følger årstiderne.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Aktivér dybdevandingscyklus",
           "deep_soak_time": "Planlagt tidspunkt for dybdevanding",
           "routine_time": "Planlagt tidspunkt for rutinevanding",
+          "summary_time": "Tidspunkt for ugeopsummeringen",
+          "fertilize_reminder_time": "Tidspunkt for gødningspåmindelsen",
           "deep_soak_sun_mode": "Udløser for dybdevanding",
           "deep_soak_sun_offset_minutes": "Solforskydning for dybdevanding (minutter)",
           "routine_sun_mode": "Udløser for rutinevanding",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Dybdevanding er en stor, langsom vanding med et par ugers mellemrum (startende med 14 dage), som gennemvæder jorden i dybden, så rødderne vokser dybt. Godt til træer, buske og stauder; sluk for planter med overfladiske rødder som salat og krydderurter. Rutinevandingen kører uanset hvad.",
           "deep_soak_time": "Hvornår dybdevandingen starter på de dage, hvor den skal køre, hvis udløseren nedenfor er det faste tidspunkt. Tidlig morgen er bedst: mindre vand går tabt til sol og vind.",
           "routine_time": "Hvornår ZoneFlow hver dag kontrollerer, om rutinevandingen skal køre, og vander hvis det er tilfældet. Hvor ofte det sker, afhænger af vejret og dit ugentlige mål. Tidlig morgen er bedst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dybdevandingen på det faste tidspunkt ovenfor, eller før/efter solopgang eller solnedgang, så den tilpasser sig årstiderne.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller efter solopgang eller solnedgang. Bruges ikke med det faste tidspunkt.",
           "routine_sun_mode": "Start rutinevandingen på det faste tidspunkt ovenfor, eller før/efter solopgang eller solnedgang, så den tilpasser sig årstiderne.",
@@ -275,6 +283,20 @@
           "emitter_flow": "Hvad én drypper giver i timen: det står på drypperen eller emballagen (f.eks. 2 L/h, 0.5 gal/h).",
           "area": "Det område, der faktisk bliver vådt. Ved dryppere ved enkelte planter lægger du de våde pletter omkring dem sammen, ikke hele bedet."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "Slå dybdevanding til",
           "deep_soak_time": "Tidspunkt for dybdevanding",
           "routine_time": "Tidspunkt for rutinevanding",
+          "summary_time": "Tidspunkt for ugeopsummeringen",
+          "fertilize_reminder_time": "Tidspunkt for gødningspåmindelsen",
           "deep_soak_sun_mode": "Start af dybdevanding",
           "deep_soak_sun_offset_minutes": "Dybdevanding: forskydning ift. solen (minutter)",
           "routine_sun_mode": "Start af rutinevanding",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "En dybdevanding er en stor, langsom vanding med nogle ugers mellemrum (14 dage til at starte med), der gør jorden våd langt nede, så rødderne vokser dybt. God til træer, buske og stauder; slå den fra til planter med overfladiske rødder som salat og krydderurter. Rutinevandingen kører under alle omstændigheder.",
           "deep_soak_time": "Hvornår dybdevandingen starter på de dage, den skal køre, når starten nedenfor er det faste tidspunkt. Tidligt om morgenen er bedst: mindre vand går tabt til sol og vind.",
           "routine_time": "Hvornår ZoneFlow hver dag tjekker, om der skal rutinevandes, og vander, hvis der skal. Hvor ofte det sker, afhænger af vejret og dit ugemål. Tidligt om morgenen er bedst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dybdevandingen på det faste tidspunkt ovenfor eller før eller efter solopgang eller solnedgang, så den følger årstiderne.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller efter solopgang eller solnedgang. Bruges ikke med det faste tidspunkt.",
           "routine_sun_mode": "Start rutinevandingen på det faste tidspunkt ovenfor eller før eller efter solopgang eller solnedgang, så den følger årstiderne.",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "Aktivér dybdevandingscyklus",
           "deep_soak_time": "Planlagt tidspunkt for dybdevanding",
           "routine_time": "Planlagt tidspunkt for rutinevanding",
+          "summary_time": "Tidspunkt for ugeopsummeringen",
+          "fertilize_reminder_time": "Tidspunkt for gødningspåmindelsen",
           "deep_soak_sun_mode": "Udløser for dybdevanding",
           "deep_soak_sun_offset_minutes": "Solforskydning for dybdevanding (minutter)",
           "routine_sun_mode": "Udløser for rutinevanding",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "Dybdevanding er en stor, langsom vanding med et par ugers mellemrum (startende med 14 dage), som gennemvæder jorden i dybden, så rødderne vokser dybt. Godt til træer, buske og stauder; sluk for planter med overfladiske rødder som salat og krydderurter. Rutinevandingen kører uanset hvad.",
           "deep_soak_time": "Hvornår dybdevandingen starter på de dage, hvor den skal køre, hvis udløseren nedenfor er det faste tidspunkt. Tidlig morgen er bedst: mindre vand går tabt til sol og vind.",
           "routine_time": "Hvornår ZoneFlow hver dag kontrollerer, om rutinevandingen skal køre, og vander hvis det er tilfældet. Hvor ofte det sker, afhænger af vejret og dit ugentlige mål. Tidlig morgen er bedst.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start dybdevandingen på det faste tidspunkt ovenfor, eller før/efter solopgang eller solnedgang, så den tilpasser sig årstiderne.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller efter solopgang eller solnedgang. Bruges ikke med det faste tidspunkt.",
           "routine_sun_mode": "Start rutinevandingen på det faste tidspunkt ovenfor, eller før/efter solopgang eller solnedgang, så den tilpasser sig årstiderne.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutine: dage mellem vandinger (varmt)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutine: korteste puls"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Dybdevanding: korteste puls"
+      },
+      "self_tune_streak": {
+        "name": "Selvjustering: nødvendige tryk"
+      },
+      "self_tune_step_days": {
+        "name": "Selvjustering: trin"
+      },
+      "valve_timer_minutes": {
+        "name": "Ventilens egen timer"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Auto-genoptag"
+      },
+      "self_tuning": {
+        "name": "Selvjustering"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Seneste vandvolumen"
+      },
+      "longest_valve_open": {
+        "name": "Længste ventil-åbningstid"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Hvor er dette?"
+      },
+      "soil_wet_action": {
+        "name": "Når jorden bliver våd under vanding",
+        "state": {
+          "finish": "Afslut vandingen",
+          "stop": "Stop ved vådt niveau"
+        }
       }
     },
     "text": {

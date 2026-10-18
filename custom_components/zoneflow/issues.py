@@ -32,7 +32,7 @@ from .const import (
 if TYPE_CHECKING:
     from .controller import ZoneFlowController
 
-LEARN_MORE = "https://github.com/Dreamer41/ha-smart-irrigation#what-each-sensor-adds"
+LEARN_MORE = "https://zoneflowirrigation.com/docs/sensors"
 OFFLINE = ("unavailable", "unknown")
 
 
@@ -108,10 +108,18 @@ def _sensors(controller: ZoneFlowController) -> dict[str, str | None]:
     }
 
 
+# The Check my setup warning (item id) whose Repairs notice goes away when the person ignores it.
+IGNORABLE_SENSOR_ROLES = {
+    "temperature": "temperature", "soil": "soil_moisture", "pump": "pump_power", "weather": "weather",
+}
+
+
 def async_check(controller: ZoneFlowController) -> None:
     """Raise or clear this zone's issues."""
     hass = controller.hass
     zone = controller.entry.title
+    ignored = set(controller.store.state.check_ignored)
+    ignored_roles = {role for item, role in IGNORABLE_SENSOR_ROLES.items() if item in ignored}
 
     # A paused zone isn't watering: a valve or sensor switched off for the
     # winter isn't a problem to report.
@@ -133,7 +141,7 @@ def async_check(controller: ZoneFlowController) -> None:
             hass,
             controller,
             f"sensor_offline_{role}",
-            offline is not None and offline >= REPAIR_SENSOR_OFFLINE_SECONDS,
+            offline is not None and offline >= REPAIR_SENSOR_OFFLINE_SECONDS and role not in ignored_roles,
             severity=ir.IssueSeverity.WARNING,
             translation_key="sensor_offline",
             translation_placeholders={"zone": zone, "entity": entity_id or "", "days": f"{(offline or 0) / 86400:.0f}"},
@@ -148,7 +156,7 @@ def async_check(controller: ZoneFlowController) -> None:
         hass,
         controller,
         "notify_missing",
-        missing is not None and missing >= REPAIR_NOTIFY_MISSING_SECONDS,
+        missing is not None and missing >= REPAIR_NOTIFY_MISSING_SECONDS and "notify" not in ignored,
         severity=ir.IssueSeverity.WARNING,
         translation_key="notify_missing",
         translation_placeholders={"zone": zone, "entity": notify or ""},
@@ -179,7 +187,11 @@ def async_check(controller: ZoneFlowController) -> None:
 
     flow = controller.numbers.get("flow_rate_mm_per_min")
     value = getattr(flow, "metric_value", None)
-    untouched = controller.has_valve and value is not None and abs(value - NUMBER_DEFAULTS["flow_rate_mm_per_min"]) < FLOW_DEFAULT_TOLERANCE
+    untouched = (
+        controller.has_valve and value is not None
+        and abs(value - NUMBER_DEFAULTS["flow_rate_mm_per_min"]) < FLOW_DEFAULT_TOLERANCE
+        and "flow" not in controller.store.state.check_ignored  # "this is my real flow rate": ignored in Check my setup
+    )
     _set(
         hass,
         controller,
@@ -188,7 +200,7 @@ def async_check(controller: ZoneFlowController) -> None:
         severity=ir.IssueSeverity.WARNING,
         translation_key="flow_rate_default",
         translation_placeholders={"zone": zone},
-        learn_more_url="https://github.com/Dreamer41/ha-smart-irrigation#installation",
+        learn_more_url="https://zoneflowirrigation.com/docs/getting-started",
         fix={"kind": "flow_rate"},
     )
 

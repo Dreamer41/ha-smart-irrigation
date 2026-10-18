@@ -160,7 +160,7 @@ def test_deficit_factor_rules():
     assert calc.deficit_factor(**{**kw, "avg_peak_temp": 32.0}) == (1.0, "full_dose_hot")
     assert calc.deficit_factor(**{**kw, "moisture_pct": 20.0}) == (1.0, "full_dose_soil_dry")
     assert calc.deficit_factor(**{**kw, "growth_ramp": 0.8}) == (1.0, "full_dose_young_plant")
-    assert calc.deficit_factor(**{**kw, "water_pct": 20}) == (0.5, "active")  # never below 50%
+    assert calc.deficit_factor(**{**kw, "water_pct": 20}) == (0.3, "active")  # never below 30%
     assert calc.deficit_factor(**{**kw, "avg_peak_temp": None}) == (0.7, "active")  # no temp sensor: no heat guard
     assert calc.deficit_factor(**{**kw, "avg_peak_temp": None, "temp_unavailable": True}) == (1.0, "full_dose_no_temp")
 

@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Ativar o ciclo de irrigação profunda",
           "deep_soak_time": "Horário da irrigação profunda",
           "routine_time": "Horário da irrigação de rotina",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Início da irrigação profunda",
           "deep_soak_sun_offset_minutes": "Irrigação profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da irrigação de rotina",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "A irrigação profunda é uma irrigação grande e lenta a cada poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desative para plantas de raiz rasa, como alface e ervas. A irrigação de rotina funciona de qualquer forma.",
           "deep_soak_time": "O horário em que a irrigação profunda começa nos dias previstos, quando o início abaixo está no horário fixo. De manhã cedo é melhor: menos água se perde com o sol e o vento.",
           "routine_time": "O horário em que o ZoneFlow verifica, todo dia, se a irrigação de rotina está na hora, e irriga se estiver. A frequência depende do tempo e da sua meta semanal. De manhã cedo é melhor.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicie a irrigação profunda no horário fixo acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não é usado com o horário fixo.",
           "routine_sun_mode": "Inicie a irrigação de rotina no horário fixo acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Ativar o ciclo de encharcamento profundo",
           "deep_soak_time": "Horário programado para encharcamento profundo",
           "routine_time": "Horário programado para irrigação de rotina",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Gatilho de encharcamento profundo",
           "deep_soak_sun_offset_minutes": "Deslocamento em relação ao sol para encharcamento profundo (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Um encharcamento profundo é uma irrigação grande e lenta a cada duas semanas (14 dias para começar) que umedece o solo profundamente para que as raízes cresçam em profundidade. Bom para árvores, arbustos e plantas perenes; desative para plantas de raízes rasas, como saladas e ervas. A irrigação de rotina funciona de qualquer maneira.",
           "deep_soak_time": "Quando o encharcamento profundo começa nos dias devidos, caso o gatilho abaixo seja um horário fixo. O início da manhã é ideal: menos água perdida pelo sol e vento.",
           "routine_time": "Quando o ZoneFlow verifica diariamente se a irrigação de rotina é devida e irriga se for o caso. A frequência depende do clima e da sua meta semanal. O início da manhã é ideal.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicia o encharcamento profundo no horário fixo acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não usado com horário fixo.",
           "routine_sun_mode": "Inicia a irrigação de rotina no horário fixo acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações.",
@@ -275,6 +283,20 @@
           "emitter_flow": "Quanto um emissor fornece por hora: vem impresso no emissor ou na embalagem (ex.: 2 L/h, 0,5 gal/h).",
           "area": "A área que realmente fica molhada. Para gotejadores em plantas isoladas, some as manchas molhadas ao redor delas, não o canteiro inteiro."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "Ativar o ciclo de irrigação profunda",
           "deep_soak_time": "Horário da irrigação profunda",
           "routine_time": "Horário da irrigação de rotina",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Início da irrigação profunda",
           "deep_soak_sun_offset_minutes": "Irrigação profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da irrigação de rotina",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "A irrigação profunda é uma irrigação grande e lenta a cada poucas semanas (a cada 14 dias, para começar) que molha o solo em profundidade, para as raízes crescerem fundo. Boa para árvores, arbustos e plantas perenes; desative para plantas de raiz rasa, como alface e ervas. A irrigação de rotina funciona de qualquer forma.",
           "deep_soak_time": "O horário em que a irrigação profunda começa nos dias previstos, quando o início abaixo está no horário fixo. De manhã cedo é melhor: menos água se perde com o sol e o vento.",
           "routine_time": "O horário em que o ZoneFlow verifica, todo dia, se a irrigação de rotina está na hora, e irriga se estiver. A frequência depende do tempo e da sua meta semanal. De manhã cedo é melhor.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicie a irrigação profunda no horário fixo acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não é usado com o horário fixo.",
           "routine_sun_mode": "Inicie a irrigação de rotina no horário fixo acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "Ativar o ciclo de encharcamento profundo",
           "deep_soak_time": "Horário programado para encharcamento profundo",
           "routine_time": "Horário programado para irrigação de rotina",
+          "summary_time": "Hora do resumo semanal",
+          "fertilize_reminder_time": "Hora do lembrete de adubação",
           "deep_soak_sun_mode": "Gatilho de encharcamento profundo",
           "deep_soak_sun_offset_minutes": "Deslocamento em relação ao sol para encharcamento profundo (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "Um encharcamento profundo é uma irrigação grande e lenta a cada duas semanas (14 dias para começar) que umedece o solo profundamente para que as raízes cresçam em profundidade. Bom para árvores, arbustos e plantas perenes; desative para plantas de raízes rasas, como saladas e ervas. A irrigação de rotina funciona de qualquer maneira.",
           "deep_soak_time": "Quando o encharcamento profundo começa nos dias devidos, caso o gatilho abaixo seja um horário fixo. O início da manhã é ideal: menos água perdida pelo sol e vento.",
           "routine_time": "Quando o ZoneFlow verifica diariamente se a irrigação de rotina é devida e irriga se for o caso. A frequência depende do clima e da sua meta semanal. O início da manhã é ideal.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Inicia o encharcamento profundo no horário fixo acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não usado com horário fixo.",
           "routine_sun_mode": "Inicia a irrigação de rotina no horário fixo acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Rotina: dias entre regas (calor)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rotina: duração mínima do pulso"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Rega profunda: duração mínima do pulso"
+      },
+      "self_tune_streak": {
+        "name": "Autoajuste: acionamentos necessários"
+      },
+      "self_tune_step_days": {
+        "name": "Autoajuste: passo"
+      },
+      "valve_timer_minutes": {
+        "name": "Temporizador próprio da válvula"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Retomada automática"
+      },
+      "self_tuning": {
+        "name": "Autoajuste"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Volume da última irrigação"
+      },
+      "longest_valve_open": {
+        "name": "Tempo máximo de válvula aberta"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Onde fica isso?"
+      },
+      "soil_wet_action": {
+        "name": "Se o solo ficar úmido durante a rega",
+        "state": {
+          "finish": "Terminar a rega",
+          "stop": "Parar no nível úmido"
+        }
       }
     },
     "text": {

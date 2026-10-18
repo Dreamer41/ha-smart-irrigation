@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.7.3";
+const CARD_VERSION = "1.7.4";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -26,6 +26,8 @@ const I18N = {
     "diagnostics": "Diagnostics",
     "valve": "Valve",
     "water_now": "Water now",
+    "settings_all": "Show all settings",
+    "settings_basic": "Show only everyday settings",
     "deep_soak_now": "Deep soak now",
     "snooze": "Snooze today",
     "reset_lock": "Reset lock",
@@ -226,7 +228,13 @@ const I18N = {
       "needs_fixing": "Something needs fixing.",
       "needs_a_look": "A few things to look at.",
       "calibrate": "Calibrate",
-      "again": "Check again"
+      "again": "Check again",
+      "ignore": "Ignore",
+      "ignore_confirm": "Ignore this warning? Check my setup stops counting it as a problem, and its Repairs notice goes away. It stays in the list below, where you can turn it back on.",
+      "ignore_yes": "Yes, ignore it",
+      "ignore_cancel": "Cancel",
+      "ignored_title": "Ignored",
+      "unignore": "Show again"
     },
     "calibrate": {
       "title": "Calibrate the flow rate",
@@ -285,6 +293,8 @@ const I18N = {
     "diagnostics": "Diagnose",
     "valve": "Ventil",
     "water_now": "Jetzt gießen",
+    "settings_all": "Alle Einstellungen anzeigen",
+    "settings_basic": "Nur alltägliche Einstellungen anzeigen",
     "deep_soak_now": "Jetzt Tiefenbewässerung",
     "snooze": "Heute aussetzen",
     "reset_lock": "Sperre zurücksetzen",
@@ -485,7 +495,13 @@ const I18N = {
       "needs_fixing": "Etwas muss korrigiert werden.",
       "needs_a_look": "Ein paar Dinge, die Sie sich ansehen sollten.",
       "calibrate": "Kalibrieren",
-      "again": "Erneut prüfen"
+      "again": "Erneut prüfen",
+      "ignore": "Ignorieren",
+      "ignore_confirm": "Diese Warnung ignorieren? „Meine Einrichtung prüfen“ zählt sie nicht mehr als Problem, und die Reparatur-Meldung verschwindet. Sie bleibt unten in der Liste, wo Sie sie wieder einschalten können.",
+      "ignore_yes": "Ja, ignorieren",
+      "ignore_cancel": "Abbrechen",
+      "ignored_title": "Ignoriert",
+      "unignore": "Wieder anzeigen"
     },
     "calibrate": {
       "title": "Durchflussrate kalibrieren",
@@ -544,6 +560,8 @@ const I18N = {
     "diagnostics": "Diagnóstico",
     "valve": "Válvula",
     "water_now": "Regar ahora",
+    "settings_all": "Mostrar todos los ajustes",
+    "settings_basic": "Mostrar solo los ajustes habituales",
     "deep_soak_now": "Riego profundo ahora",
     "snooze": "Omitir hoy",
     "reset_lock": "Restablecer bloqueo",
@@ -744,7 +762,13 @@ const I18N = {
       "needs_fixing": "Algo necesita corrección.",
       "needs_a_look": "Algunas cosas que revisar.",
       "calibrate": "Calibrar",
-      "again": "Comprobar de nuevo"
+      "again": "Comprobar de nuevo",
+      "ignore": "Ignorar",
+      "ignore_confirm": "¿Ignorar esta advertencia? «Revisar mi configuración» deja de contarla como problema y desaparece su aviso de Reparaciones. Sigue en la lista de abajo, donde puede volver a activarla.",
+      "ignore_yes": "Sí, ignorar",
+      "ignore_cancel": "Cancelar",
+      "ignored_title": "Ignoradas",
+      "unignore": "Mostrar de nuevo"
     },
     "calibrate": {
       "title": "Calibrar el caudal",
@@ -803,6 +827,8 @@ const I18N = {
     "diagnostics": "Diagnostiikka",
     "valve": "Venttiili",
     "water_now": "Kastele nyt",
+    "settings_all": "Näytä kaikki asetukset",
+    "settings_basic": "Näytä vain perusasetukset",
     "deep_soak_now": "Syväkastele nyt",
     "snooze": "Ei kastelua tänään",
     "reset_lock": "Nollaa lukko",
@@ -1003,7 +1029,13 @@ const I18N = {
       "needs_fixing": "Jotain täytyy korjata.",
       "needs_a_look": "Muutama tarkistettava asia.",
       "calibrate": "Kalibroi",
-      "again": "Tarkista uudelleen"
+      "again": "Tarkista uudelleen",
+      "ignore": "Ohita",
+      "ignore_confirm": "Ohitetaanko tämä varoitus? Asetusten tarkistus ei enää laske sitä ongelmaksi, ja sen korjausilmoitus poistuu. Se pysyy alla olevassa listassa, josta sen voi ottaa takaisin käyttöön.",
+      "ignore_yes": "Kyllä, ohita",
+      "ignore_cancel": "Peruuta",
+      "ignored_title": "Ohitetut",
+      "unignore": "Näytä uudelleen"
     },
     "calibrate": {
       "title": "Kalibroi virtausnopeus",
@@ -1062,6 +1094,8 @@ const I18N = {
     "diagnostics": "Diagnostic",
     "valve": "Vanne",
     "water_now": "Arroser maintenant",
+    "settings_all": "Afficher tous les réglages",
+    "settings_basic": "Afficher seulement les réglages courants",
     "deep_soak_now": "Lancer l'arrosage profond",
     "snooze": "Sauter aujourd'hui",
     "reset_lock": "Réinitialiser le verrou",
@@ -1262,7 +1296,13 @@ const I18N = {
       "needs_fixing": "Quelque chose doit être corrigé.",
       "needs_a_look": "Quelques points à vérifier.",
       "calibrate": "Étalonner",
-      "again": "Vérifier à nouveau"
+      "again": "Vérifier à nouveau",
+      "ignore": "Ignorer",
+      "ignore_confirm": "Ignorer cet avertissement ? « Vérifier ma configuration » ne le compte plus comme un problème et son avis dans Réparations disparaît. Il reste dans la liste ci-dessous, où vous pouvez le réactiver.",
+      "ignore_yes": "Oui, ignorer",
+      "ignore_cancel": "Annuler",
+      "ignored_title": "Ignorés",
+      "unignore": "Afficher à nouveau"
     },
     "calibrate": {
       "title": "Étalonner le débit",
@@ -1321,6 +1361,8 @@ const I18N = {
     "diagnostics": "Diagnostica",
     "valve": "Valvola",
     "water_now": "Irriga ora",
+    "settings_all": "Mostra tutte le impostazioni",
+    "settings_basic": "Mostra solo le impostazioni principali",
     "deep_soak_now": "Avvia irrigazione profonda",
     "snooze": "Salta oggi",
     "reset_lock": "Reimposta blocco",
@@ -1521,7 +1563,13 @@ const I18N = {
       "needs_fixing": "Qualcosa richiede una correzione.",
       "needs_a_look": "Alcune cose da controllare.",
       "calibrate": "Tarare",
-      "again": "Ricontrolla"
+      "again": "Ricontrolla",
+      "ignore": "Ignora",
+      "ignore_confirm": "Ignorare questo avviso? «Controlla la mia configurazione» non lo conta più come problema e la sua notifica in Riparazioni scompare. Resta nell'elenco qui sotto, dove puoi riattivarlo.",
+      "ignore_yes": "Sì, ignora",
+      "ignore_cancel": "Annulla",
+      "ignored_title": "Ignorati",
+      "unignore": "Mostra di nuovo"
     },
     "calibrate": {
       "title": "Tarare la portata",
@@ -1580,6 +1628,8 @@ const I18N = {
     "diagnostics": "Diagnose",
     "valve": "Klep",
     "water_now": "Nu water geven",
+    "settings_all": "Alle instellingen tonen",
+    "settings_basic": "Alleen de gewone instellingen tonen",
     "deep_soak_now": "Nu diepe watergift",
     "snooze": "Vandaag overslaan",
     "reset_lock": "Slot resetten",
@@ -1780,7 +1830,13 @@ const I18N = {
       "needs_fixing": "Er moet iets worden hersteld.",
       "needs_a_look": "Enkele dingen om naar te kijken.",
       "calibrate": "Kalibreren",
-      "again": "Opnieuw controleren"
+      "again": "Opnieuw controleren",
+      "ignore": "Negeren",
+      "ignore_confirm": "Deze waarschuwing negeren? „Mijn installatie controleren” telt hem niet meer als probleem en de melding bij Reparaties verdwijnt. Hij blijft in de lijst hieronder, waar je hem weer kunt aanzetten.",
+      "ignore_yes": "Ja, negeren",
+      "ignore_cancel": "Annuleren",
+      "ignored_title": "Genegeerd",
+      "unignore": "Weer tonen"
     },
     "calibrate": {
       "title": "Debiet kalibreren",
@@ -1839,6 +1895,8 @@ const I18N = {
     "diagnostics": "Diagnostyka",
     "valve": "Zawór",
     "water_now": "Podlej teraz",
+    "settings_all": "Pokaż wszystkie ustawienia",
+    "settings_basic": "Pokaż tylko podstawowe ustawienia",
     "deep_soak_now": "Podlej głęboko teraz",
     "snooze": "Pomiń dzisiaj",
     "reset_lock": "Zresetuj blokadę",
@@ -2039,7 +2097,13 @@ const I18N = {
       "needs_fixing": "Coś wymaga naprawy.",
       "needs_a_look": "Kilka rzeczy do sprawdzenia.",
       "calibrate": "Skalibruj",
-      "again": "Sprawdź ponowanie"
+      "again": "Sprawdź ponowanie",
+      "ignore": "Ignoruj",
+      "ignore_confirm": "Zignorować to ostrzeżenie? „Sprawdź moją konfigurację” przestaje je liczyć jako problem, a jego powiadomienie w Naprawach znika. Zostaje na liście poniżej, gdzie można je znów włączyć.",
+      "ignore_yes": "Tak, ignoruj",
+      "ignore_cancel": "Anuluj",
+      "ignored_title": "Zignorowane",
+      "unignore": "Pokaż ponownie"
     },
     "calibrate": {
       "title": "Skalibruj wydajność",
@@ -2098,6 +2162,8 @@ const I18N = {
     "diagnostics": "Diagnóstico",
     "valve": "Válvula",
     "water_now": "Regar agora",
+    "settings_all": "Mostrar todas as definições",
+    "settings_basic": "Mostrar só as definições habituais",
     "deep_soak_now": "Rega profunda agora",
     "snooze": "Não regar hoje",
     "reset_lock": "Desbloquear",
@@ -2298,7 +2364,13 @@ const I18N = {
       "needs_fixing": "Algo precisa de ser corrigido.",
       "needs_a_look": "Algumas coisas a verificar.",
       "calibrate": "Calibrar",
-      "again": "Verificar novamente"
+      "again": "Verificar novamente",
+      "ignore": "Ignorar",
+      "ignore_confirm": "Ignorar este aviso? «Verificar a minha configuração» deixa de o contar como problema e o seu aviso em Reparações desaparece. Fica na lista abaixo, onde o pode voltar a ativar.",
+      "ignore_yes": "Sim, ignorar",
+      "ignore_cancel": "Cancelar",
+      "ignored_title": "Ignorados",
+      "unignore": "Mostrar de novo"
     },
     "calibrate": {
       "title": "Calibrar o fluxo",
@@ -2357,6 +2429,8 @@ const I18N = {
     "diagnostics": "Diagnostik",
     "valve": "Ventil",
     "water_now": "Vattna nu",
+    "settings_all": "Visa alla inställningar",
+    "settings_basic": "Visa bara vanliga inställningar",
     "deep_soak_now": "Djupvattna nu",
     "snooze": "Hoppa över idag",
     "reset_lock": "Återställ lås",
@@ -2557,7 +2631,13 @@ const I18N = {
       "needs_fixing": "Något behöver åtgärdas.",
       "needs_a_look": "Ett par saker att titta på.",
       "calibrate": "Kalibrera",
-      "again": "Kontrollera igen"
+      "again": "Kontrollera igen",
+      "ignore": "Ignorera",
+      "ignore_confirm": "Ignorera varningen? ”Kontrollera min installation” räknar den inte längre som ett problem och dess Reparationsavisering försvinner. Den finns kvar i listan nedan, där du kan slå på den igen.",
+      "ignore_yes": "Ja, ignorera",
+      "ignore_cancel": "Avbryt",
+      "ignored_title": "Ignorerade",
+      "unignore": "Visa igen"
     },
     "calibrate": {
       "title": "Kalibrera flödet",
@@ -2616,6 +2696,8 @@ const I18N = {
     "diagnostics": "Diagnostika",
     "valve": "Ventil",
     "water_now": "Zalít teď",
+    "settings_all": "Zobrazit všechna nastavení",
+    "settings_basic": "Zobrazit jen běžná nastavení",
     "deep_soak_now": "Hloubková zálivka teď",
     "snooze": "Dnes vynechat",
     "reset_lock": "Resetovat zámek",
@@ -2816,7 +2898,13 @@ const I18N = {
       "needs_fixing": "Něco vyžaduje opravu.",
       "needs_a_look": "Několik věcí ke kontrole.",
       "calibrate": "Kalibrovat",
-      "again": "Zkontrolovat znovu"
+      "again": "Zkontrolovat znovu",
+      "ignore": "Ignorovat",
+      "ignore_confirm": "Ignorovat toto upozornění? „Zkontrolovat mé nastavení“ ho už nepočítá jako problém a jeho oznámení v Opravách zmizí. Zůstane v seznamu níže, kde ho lze znovu zapnout.",
+      "ignore_yes": "Ano, ignorovat",
+      "ignore_cancel": "Zrušit",
+      "ignored_title": "Ignorováno",
+      "unignore": "Zobrazit znovu"
     },
     "calibrate": {
       "title": "Kalibrovat průtok",
@@ -2875,6 +2963,8 @@ const I18N = {
     "diagnostics": "Diagnosticering",
     "valve": "Ventil",
     "water_now": "Vand nu",
+    "settings_all": "Vis alle indstillinger",
+    "settings_basic": "Vis kun de almindelige indstillinger",
     "deep_soak_now": "Dybdevand nu",
     "snooze": "Spring over i dag",
     "reset_lock": "Nulstil lås",
@@ -3075,7 +3165,13 @@ const I18N = {
       "needs_fixing": "Noget skal rettes.",
       "needs_a_look": "Et par ting at se på.",
       "calibrate": "Kalibrer",
-      "again": "Tjek igen"
+      "again": "Tjek igen",
+      "ignore": "Ignorer",
+      "ignore_confirm": "Ignorer denne advarsel? „Tjek min opsætning“ tæller den ikke længere som et problem, og dens meddelelse under Reparationer forsvinder. Den bliver i listen nedenfor, hvor du kan slå den til igen.",
+      "ignore_yes": "Ja, ignorer",
+      "ignore_cancel": "Annuller",
+      "ignored_title": "Ignoreret",
+      "unignore": "Vis igen"
     },
     "calibrate": {
       "title": "Kalibrer flowet",
@@ -3134,6 +3230,8 @@ const I18N = {
     "diagnostics": "Diagnosztika",
     "valve": "Szelep",
     "water_now": "Öntözés most",
+    "settings_all": "Összes beállítás megjelenítése",
+    "settings_basic": "Csak a gyakori beállítások megjelenítése",
     "deep_soak_now": "Mélyöntözés most",
     "snooze": "Kihagyás ma",
     "reset_lock": "Zárolás feloldása",
@@ -3334,7 +3432,13 @@ const I18N = {
       "needs_fixing": "Valamit javítani kell.",
       "needs_a_look": "Néhány átvizsgálandó dolog.",
       "calibrate": "Kalibrálás",
-      "again": "Ellenőrzés ismét"
+      "again": "Ellenőrzés ismét",
+      "ignore": "Mellőzés",
+      "ignore_confirm": "Mellőzi ezt a figyelmeztetést? A „Beállításaim ellenőrzése” már nem számolja problémának, és a Javítások értesítése eltűnik. Az alábbi listában marad, ahol újra bekapcsolhatja.",
+      "ignore_yes": "Igen, mellőzöm",
+      "ignore_cancel": "Mégse",
+      "ignored_title": "Mellőzött",
+      "unignore": "Mutassa újra"
     },
     "calibrate": {
       "title": "Vízhozam kalibrálása",
@@ -3393,6 +3497,8 @@ const I18N = {
     "diagnostics": "Diagnostikk",
     "valve": "Ventil",
     "water_now": "Vann nå",
+    "settings_all": "Vis alle innstillinger",
+    "settings_basic": "Vis bare vanlige innstillinger",
     "deep_soak_now": "Dypvann nå",
     "snooze": "Hopp over i dag",
     "reset_lock": "Nullstill lås",
@@ -3593,7 +3699,13 @@ const I18N = {
       "needs_fixing": "Noe må rettes.",
       "needs_a_look": "Et par ting å se på.",
       "calibrate": "Kalibrer",
-      "again": "Sjekk igjen"
+      "again": "Sjekk igjen",
+      "ignore": "Ignorer",
+      "ignore_confirm": "Ignorere denne advarselen? «Sjekk oppsettet mitt» teller den ikke lenger som et problem, og varselet under Reparasjoner forsvinner. Den blir stående i listen under, der du kan slå den på igjen.",
+      "ignore_yes": "Ja, ignorer",
+      "ignore_cancel": "Avbryt",
+      "ignored_title": "Ignorert",
+      "unignore": "Vis igjen"
     },
     "calibrate": {
       "title": "Kalibrer vannmengde",
@@ -3652,6 +3764,8 @@ const I18N = {
     "diagnostics": "Diagnóstico",
     "valve": "Válvula",
     "water_now": "Irrigar agora",
+    "settings_all": "Mostrar todas as configurações",
+    "settings_basic": "Mostrar só as configurações comuns",
     "deep_soak_now": "Irrigação profunda agora",
     "snooze": "Não irrigar hoje",
     "reset_lock": "Desbloquear",
@@ -3852,7 +3966,13 @@ const I18N = {
       "needs_fixing": "Algo precisa ser corrigido.",
       "needs_a_look": "Algumas coisas para verificar.",
       "calibrate": "Calibrar",
-      "again": "Verificar novamente"
+      "again": "Verificar novamente",
+      "ignore": "Ignorar",
+      "ignore_confirm": "Ignorar este aviso? “Verificar minha configuração” deixa de contá-lo como problema e o aviso em Reparos some. Ele continua na lista abaixo, onde você pode reativá-lo.",
+      "ignore_yes": "Sim, ignorar",
+      "ignore_cancel": "Cancelar",
+      "ignored_title": "Ignorados",
+      "unignore": "Mostrar de novo"
     },
     "calibrate": {
       "title": "Calibrar a vazão",
@@ -3911,6 +4031,8 @@ const I18N = {
     "diagnostics": "Диагностика",
     "valve": "Клапан",
     "water_now": "Полить сейчас",
+    "settings_all": "Показать все настройки",
+    "settings_basic": "Показать только основные настройки",
     "deep_soak_now": "Глубокий полив сейчас",
     "snooze": "Пропустить сегодня",
     "reset_lock": "Сбросить блокировку",
@@ -4111,7 +4233,13 @@ const I18N = {
       "needs_fixing": "Что-то требует исправления.",
       "needs_a_look": "Несколько моментов для проверки.",
       "calibrate": "Калибровать",
-      "again": "Проверить снова"
+      "again": "Проверить снова",
+      "ignore": "Игнорировать",
+      "ignore_confirm": "Игнорировать это предупреждение? «Проверка настройки» больше не считает его проблемой, а его уведомление в «Ремонте» исчезает. Оно остаётся в списке ниже, где его можно вернуть.",
+      "ignore_yes": "Да, игнорировать",
+      "ignore_cancel": "Отмена",
+      "ignored_title": "Игнорируются",
+      "unignore": "Показать снова"
     },
     "calibrate": {
       "title": "Калибровать расход",
@@ -4170,6 +4298,8 @@ const I18N = {
     "diagnostics": "Diagnostika",
     "valve": "Ventil",
     "water_now": "Zaliať teraz",
+    "settings_all": "Zobraziť všetky nastavenia",
+    "settings_basic": "Zobraziť len bežné nastavenia",
     "deep_soak_now": "Hĺbková zálievka teraz",
     "snooze": "Dnes vynechať",
     "reset_lock": "Resetovať zámok",
@@ -4370,7 +4500,13 @@ const I18N = {
       "needs_fixing": "Niečo vyžaduje opravu.",
       "needs_a_look": "Nezopár vecí na kontrolu.",
       "calibrate": "Kalibrovať",
-      "again": "Skontrolovať znova"
+      "again": "Skontrolovať znova",
+      "ignore": "Ignorovať",
+      "ignore_confirm": "Ignorovať toto upozornenie? „Skontrolovať moje nastavenie“ ho už nepočíta ako problém a jeho oznámenie v Opravách zmizne. Zostane v zozname nižšie, kde ho možno znova zapnúť.",
+      "ignore_yes": "Áno, ignorovať",
+      "ignore_cancel": "Zrušiť",
+      "ignored_title": "Ignorované",
+      "unignore": "Zobraziť znova"
     },
     "calibrate": {
       "title": "Kalibrovať prietok",
@@ -4429,6 +4565,8 @@ const I18N = {
     "diagnostics": "Діагностика",
     "valve": "Клапан",
     "water_now": "Полити зараз",
+    "settings_all": "Показати всі налаштування",
+    "settings_basic": "Показати лише основні налаштування",
     "deep_soak_now": "Глибокий полив зараз",
     "snooze": "Пропустити сьогодні",
     "reset_lock": "Скинути блокування",
@@ -4629,7 +4767,13 @@ const I18N = {
       "needs_fixing": "Щось потребує виправлення.",
       "needs_a_look": "Кілька моментів для перевірки.",
       "calibrate": "Калібрувати",
-      "again": "Перевірити знову"
+      "again": "Перевірити знову",
+      "ignore": "Ігнорувати",
+      "ignore_confirm": "Ігнорувати це попередження? «Перевірка налаштувань» більше не вважає його проблемою, а його сповіщення в «Ремонті» зникає. Воно лишається в списку нижче, де його можна повернути.",
+      "ignore_yes": "Так, ігнорувати",
+      "ignore_cancel": "Скасувати",
+      "ignored_title": "Ігноровані",
+      "unignore": "Показати знову"
     },
     "calibrate": {
       "title": "Калібрувати інтенсивність поливу",
@@ -4688,6 +4832,8 @@ const I18N = {
     "diagnostics": "诊断",
     "valve": "阀门",
     "water_now": "立即浇水",
+    "settings_all": "显示所有设置",
+    "settings_basic": "仅显示常用设置",
     "deep_soak_now": "立即深层浇灌",
     "snooze": "今天跳过",
     "reset_lock": "重置锁",
@@ -4888,7 +5034,13 @@ const I18N = {
       "needs_fixing": "需要进行修复。",
       "needs_a_look": "有事项需要留意。",
       "calibrate": "校准",
-      "again": "再次检查"
+      "again": "再次检查",
+      "ignore": "忽略",
+      "ignore_confirm": "忽略此警告？“检查我的设置”不再将其视为问题，其“修复”通知也会消失。它仍留在下方列表中，可随时重新打开。",
+      "ignore_yes": "是，忽略",
+      "ignore_cancel": "取消",
+      "ignored_title": "已忽略",
+      "unignore": "重新显示"
     },
     "calibrate": {
       "title": "校准流量",
@@ -4977,16 +5129,39 @@ const ONLY_WHEN = {
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
-// "?" beside a settings group: the guide that explains it. The watering-method
-// choice (temperature tiers, ET, soil probe) has a blog post of its own: the
-// second "?" next to How much water links to it.
-const GUIDE = "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/";
+// Help: every "?" opens the ZoneFlow website's documentation. One beside each
+// settings group and one beside every setting in the Settings popup: the page that
+// explains it (a setting without a page of its own gets its group's). The
+// watering-method choice (temperature tiers, ET, soil probe) has a blog post of its
+// own: the second "?" next to How much water links to it.
+const DOCS = "https://zoneflowirrigation.com/docs/";
 const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";
-const HELP_LINKS = {
-  amounts: [METHOD_HELP_URL], // the flow rate's own help is in the Calibrate popup
-  water_use: [`${GUIDE}CALIBRATION.md`],
-  rain: [`${GUIDE}RAIN-GAUGES.md`],
+const GROUP_HELP = {
+  garden: "areas-and-plants", climate: "greenhouse-and-indoor-zones", misting: "greenhouse-and-indoor-zones",
+  amounts: "settings-how-much-water", water_use: "calibration", rain: "settings-rain-forecast-frost",
+  deep_soak: "settings-deep-soak", soil: "settings-soil", growth: "settings-growth",
+  deficit: "settings-deficit-mode", history: "health-journal-and-history", safety: "settings-safety-and-pump",
+  notifications: "status-notifications-repairs", more: "how-it-works",
 };
+// By "<domain>.<translation key>": a setting whose own page is not its group's. Each
+// group's settings page has every setting under its own heading, in the card's order.
+const SETTING_HELP = {
+  "number.flow_rate_mm_per_min": "calibration", "number.rain_mm_per_tip": "calibration",
+  "number.service_mode_auto_off_minutes": "service-runs-and-service-mode",
+  "sensor.longest_valve_open": "valve-backup-timer", "number.valve_timer_minutes": "valve-backup-timer",
+};
+const helpUrl = (key, group) => {
+  const page = SETTING_HELP[key] || GROUP_HELP[group];
+  return page ? `${DOCS}${page}` : "";
+};
+const HELP_LINKS = Object.fromEntries(Object.entries(GROUP_HELP).map(([group, page]) => [group, [`${DOCS}${page}`]]));
+HELP_LINKS.amounts.push(METHOD_HELP_URL); // the flow rate's own help is in the Calibrate popup
+// The settings an everyday user changes: the Settings popup shows only these until
+// "Show all settings" is pressed. (Watering time has its own button.)
+const BASIC_KEYS = new Set([
+  "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm", "number.target_weekly_cool_mm",
+  "number.routine_interval_days", "number.routine_interval_hot_days",
+]);
 const SETTINGS_GROUPS = [
   ["garden", ["select.location"]],
   ["climate", [
@@ -5003,11 +5178,12 @@ const SETTINGS_GROUPS = [
     "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
     "number.target_weekly_cool_mm", "number.routine_interval_days", "number.routine_interval_hot_days", "select.demand_model", "number.crop_coefficient",
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
-    "number.routine_pulse_count", "number.routine_pulse_rest_minutes",
+    "number.routine_pulse_count", "number.routine_pulse_rest_minutes", "number.routine_min_pulse_minutes",
   ]],
   ["water_use", ["number.zone_flow_l_min"]],
   ["rain", [
-    "number.routine_drydown_days", "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm",
+    "number.routine_drydown_days", "switch.self_tuning", "number.self_tune_streak", "number.self_tune_step_days",
+    "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm",
     "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
     "number.forecast_dry_override_days", "number.frost_guard_temp",
@@ -5016,10 +5192,10 @@ const SETTINGS_GROUPS = [
   ["deep_soak", [
     "switch.deep_soak_enabled", "number.deep_soak_target_mm", "number.deep_soak_interval_days",
     "number.deep_soak_drydown_days", "number.deep_soak_rain_threshold", "number.deep_soak_pulse_count",
-    "number.deep_soak_pulse_rest_minutes", "number.deep_soak_max_runtime_minutes",
+    "number.deep_soak_pulse_rest_minutes", "number.deep_soak_min_pulse_minutes", "number.deep_soak_max_runtime_minutes",
   ]],
   ["soil", [
-    "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_type", "select.drainage", "select.slope",
+    "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_wet_action", "select.soil_type", "select.drainage", "select.slope",
     "select.mulch_status", "number.mulch_et_adjustment_pct",
   ]],
   ["growth", [
@@ -5034,7 +5210,7 @@ const SETTINGS_GROUPS = [
   ["safety", [
     "number.max_runtime_minutes", "number.max_daily_runtime_minutes", "number.service_mode_auto_off_minutes",
     "number.pump_min_watts", "number.pump_preamble_seconds", "number.pump_postamble_seconds",
-    "number.valve_overlap_seconds",
+    "number.valve_overlap_seconds", "sensor.longest_valve_open", "number.valve_timer_minutes",
   ]],
   ["notifications", ["select.notifications", "select.weekly_summary"]],
 ];
@@ -5225,6 +5401,10 @@ class ZoneFlowCard extends HTMLElement {
         border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
       .advanced-toggle { display: block; margin: 4px 16px 14px; padding: 6px 12px; font: inherit; color: var(--primary-color);
         background: none; border: none; cursor: pointer; }
+      .help-row { display: flex; align-items: center; }
+      .help-row > :first-child { flex: 1; min-width: 0; }
+      .help-row .help-link { margin: 0 12px 0 0; flex: none; }
+      .dlg.basic .adv { display: none !important; }
       .help-link { display: inline-block; margin-left: 8px; width: 18px; height: 18px; line-height: 18px; text-align: center;
         border: 1px solid var(--secondary-text-color); border-radius: 50%; font-size: 0.8em; text-decoration: none;
         color: var(--secondary-text-color); text-transform: none; }
@@ -5236,6 +5416,8 @@ class ZoneFlowCard extends HTMLElement {
       .check-headline.warn, .check-item.warn ha-icon { color: var(--warning-color, #ff9800); }
       .check-headline.fail, .check-item.fail ha-icon { color: var(--error-color, #db4437); }
       .check-item.ok ha-icon { color: var(--success-color, #43a047); }
+      .check-confirm { padding: 0 0 10px 34px; }
+      .check-confirm .plant-button { margin-right: 8px; }
       .check-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; flex-wrap: wrap; }
       .check-text { flex: 1; min-width: 180px; }
       .waternow-minutes { min-width: 56px; text-align: center; }
@@ -5366,9 +5548,12 @@ class ZoneFlowCard extends HTMLElement {
       used.add(key);
       return visible[key]?.entity_id;
     };
-    const rows = (keys) => keys
+    const rows = (keys, group) => keys
       .filter((key) => id(key))
-      .map((key) => ({ entity: visible[key].entity_id, _tip: tip(hass, key.split(".")[1]) }));
+      .map((key) => ({
+        entity: visible[key].entity_id, _tip: tip(hass, key.split(".")[1]),
+        _help: group ? helpUrl(key, group) : "", _adv: group ? !BASIC_KEYS.has(key) : false,
+      }));
     const buttons = (items) => {
       const entities = items
         .map(([key, name, icon]) => (id(key) ? {
@@ -5415,14 +5600,14 @@ class ZoneFlowCard extends HTMLElement {
       ]),
     ];
     const journal = rows(JOURNAL);
-    const groups = SETTINGS_GROUPS.map(([name, keys]) => [name, rows(keys)]);
+    const groups = SETTINGS_GROUPS.map(([name, keys]) => [name, rows(keys, name)]);
     for (const key of HANDLED) used.add(key);
     // Everything else, by category -- including entities added later.
     const more = [];
     const diagnostics = [];
     for (const [key, entry] of Object.entries(visible).sort((a, b) => a[0].localeCompare(b[0]))) {
       if (used.has(key)) continue;
-      if (entry.entity_category === "config") more.push({ entity: entry.entity_id });
+      if (entry.entity_category === "config") more.push({ entity: entry.entity_id, _adv: true });
       else if (entry.entity_category === "diagnostic") diagnostics.push({ entity: entry.entity_id });
       else now.push({ entity: entry.entity_id });
     }
@@ -5563,14 +5748,32 @@ class ZoneFlowCard extends HTMLElement {
     header.append(title, close);
     const body = document.createElement("div");
     body.className = "dlg-body";
+    // The Settings popup starts with the everyday settings; the rest is one press away.
+    const everyday = key === "settings" && popup.parts.some(([, confs]) => confs.some((conf) => !conf._adv));
+    if (everyday) {
+      box.classList.toggle("basic", !this._showAllSettings());
+      const toggle = document.createElement("button");
+      toggle.className = "advanced-toggle";
+      const label = () => t(hass, box.classList.contains("basic") ? "settings_all" : "settings_basic");
+      toggle.textContent = label();
+      toggle.addEventListener("click", () => {
+        const basic = !box.classList.contains("basic");
+        box.classList.toggle("basic", basic);
+        try { localStorage.setItem("zoneflow_settings_all", basic ? "0" : "1"); } catch (err) { /* private window */ }
+        toggle.textContent = label();
+      });
+      body.appendChild(toggle);
+    }
     if (popup.custom === "plants") this._plantsBody(body);
     if (popup.custom === "check") this._checkBody(body);
     if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
+      // A group of settings that are all "advanced" is hidden with them.
+      const advGroup = everyday && confs.every((conf) => conf._adv);
       if (groupKey) {
         const heading = document.createElement("div");
-        heading.className = "group-title";
+        heading.className = advGroup ? "group-title adv" : "group-title";
         heading.textContent = t(hass, `groups.${groupKey}`);
         for (const url of (HELP_LINKS[groupKey] || []).filter(Boolean)) {
           const help = document.createElement("a");
@@ -5587,7 +5790,7 @@ class ZoneFlowCard extends HTMLElement {
         const noteText = t(hass, `groups.${groupKey}_note`);
         if (noteText && !noteText.startsWith("groups.")) {
           const note = document.createElement("div");
-          note.className = "group-note";
+          note.className = advGroup ? "group-note adv" : "group-note";
           note.textContent = noteText;
           body.appendChild(note);
         }
@@ -5660,15 +5863,53 @@ class ZoneFlowCard extends HTMLElement {
     const headline = { ok: "check.all_good", info: "check.all_good", warn: "check.needs_a_look", fail: "check.needs_fixing" }[data.level];
     body.appendChild(make("div", `check-headline ${data.level}`, t(hass, headline)));
     const ICONS = { ok: "mdi:check-circle-outline", info: "mdi:information-outline", warn: "mdi:alert-outline", fail: "mdi:close-circle-outline" };
+    const ignore = async (item, ignored) => {
+      try {
+        await hass.callWS({ type: "zoneflow/check_ignore", device_id: this._config.device_id, item_id: item.id, ignore: ignored });
+      } catch (err) {
+        body.appendChild(make("div", "check-item fail", String(err?.message || err)));
+        return;
+      }
+      this._checkBody(body);
+    };
+    const admin = Boolean(hass.user?.is_admin);
+    let ignoredHeading = false;
     for (const item of data.items) {
-      const row = make("div", `check-item ${item.level}`);
+      if (item.ignored && !ignoredHeading) {
+        ignoredHeading = true;
+        body.appendChild(make("div", "group-title", t(hass, "check.ignored_title")));
+      }
+      const row = make("div", `check-item ${item.ignored ? "info" : item.level}`);
       const icon = document.createElement("ha-icon");
-      icon.setAttribute("icon", ICONS[item.level] || ICONS.info);
+      icon.setAttribute("icon", item.ignored ? "mdi:eye-off-outline" : (ICONS[item.level] || ICONS.info));
       row.append(icon, make("span", "check-text", item.text));
-      if (item.action === "calibrate" && this._popups?.calibrate) {
+      if (!item.ignored && item.action === "calibrate" && this._popups?.calibrate) {
         const button = make("button", "plant-button", t(hass, "check.calibrate"));
         button.addEventListener("click", () => this._openPopup("calibrate"));
         row.appendChild(button);
+      }
+      if (admin && item.ignorable) {
+        if (item.ignored) {
+          const again = make("button", "plant-button", t(hass, "check.unignore"));
+          again.addEventListener("click", () => ignore(item, false));
+          row.appendChild(again);
+        } else {
+          // Ignoring asks first: it is for a warning that is wrong for this zone, not a way to hide a real problem.
+          const button = make("button", "plant-button", t(hass, "check.ignore"));
+          button.addEventListener("click", () => {
+            const sure = make("div", "check-confirm");
+            sure.appendChild(make("div", "group-note", t(hass, "check.ignore_confirm")));
+            const yes = make("button", "plant-button", t(hass, "check.ignore_yes"));
+            yes.addEventListener("click", () => ignore(item, true));
+            const no = make("button", "plant-button", t(hass, "check.ignore_cancel"));
+            no.addEventListener("click", () => sure.remove());
+            sure.append(yes, no);
+            row.after(sure);
+            button.hidden = true;
+            no.addEventListener("click", () => { button.hidden = false; });
+          });
+          row.appendChild(button);
+        }
       }
       body.appendChild(row);
     }
@@ -5690,7 +5931,7 @@ class ZoneFlowCard extends HTMLElement {
     body.textContent = "";
     const intro = make("div", "group-note", t(hass, "calibrate.intro"));
     const helpLink = make("a", "help-link", "?");
-    helpLink.href = `${GUIDE}CALIBRATION.md`;
+    helpLink.href = `${DOCS}calibration`;
     helpLink.target = "_blank";
     helpLink.rel = "noopener";
     helpLink.title = t(hass, "help");
@@ -6238,6 +6479,10 @@ class ZoneFlowCard extends HTMLElement {
     return wrap;
   }
 
+  _showAllSettings() {
+    try { return localStorage.getItem("zoneflow_settings_all") === "1"; } catch (err) { return false; }
+  }
+
   _addRows(list, confs) {
     const build = this._buildId;
     this._helpers().then(
@@ -6259,10 +6504,32 @@ class ZoneFlowCard extends HTMLElement {
               this._rows = this._rows.filter((r) => r !== row);
               return replacement;
             }, { once: true });
-            list.insertBefore(row, before ? before.nextSibling : null);
+            if (conf._help) {
+              // A "?" beside the setting, to the page on the website that explains it.
+              wrap.insertBefore(row, before ? before.nextSibling : helpEl);
+            } else {
+              list.insertBefore(row, before ? before.nextSibling : null);
+            }
+            if (row.classList) row.classList.toggle("adv", Boolean(conf._adv));
             this._rows.push(row);
             return row;
           };
+          let wrap = null;
+          let helpEl = null;
+          if (conf._help) {
+            wrap = document.createElement("div");
+            wrap.className = "help-row";
+            helpEl = document.createElement("a");
+            helpEl.className = "help-link";
+            helpEl.href = conf._help;
+            helpEl.target = "_blank";
+            helpEl.rel = "noopener";
+            helpEl.title = t(this._hass, "help");
+            helpEl.textContent = "?";
+            wrap.appendChild(helpEl);
+            if (wrap.classList) wrap.classList.toggle("adv", Boolean(conf._adv));
+            list.appendChild(wrap);
+          }
           add(null);
         }
       },
@@ -7456,7 +7723,7 @@ if (!window.customCards.some((c) => c.type === "zoneflow-overview-card")) {
     name: "ZoneFlow overview",
     description: "All ZoneFlow zones in one table: status, next and last watering, water now. Click a zone for its full card.",
     preview: true,
-    documentationURL: "https://github.com/Dreamer41/ha-smart-irrigation#dashboard",
+    documentationURL: "https://zoneflowirrigation.com/docs/dashboard",
   });
 }
 if (!window.customCards.some((c) => c.type === "zoneflow-card")) {
@@ -7465,7 +7732,7 @@ if (!window.customCards.some((c) => c.type === "zoneflow-card")) {
     name: "ZoneFlow zone",
     description: "One ZoneFlow irrigation zone: status and why, controls, service runs and settings.",
     preview: true,
-    documentationURL: "https://github.com/Dreamer41/ha-smart-irrigation#dashboard",
+    documentationURL: "https://zoneflowirrigation.com/docs/dashboard",
   });
 }
 console.info(`%c ZONEFLOW-CARD %c ${CARD_VERSION} `, "color:white;background:#2e7d32", "color:#2e7d32");

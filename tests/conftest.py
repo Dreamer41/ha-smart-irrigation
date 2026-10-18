@@ -55,6 +55,24 @@ async def block_till_done(hass):
 
 
 @pytest.fixture(autouse=True)
+def _skip_the_valve_test_in_setup(request, monkeypatch):
+    """The optional valve test that ends zone setup (1.7.4) would add a step to every
+    setup flow in the suite: leave it out, except in a test that asks for it
+    with the `valve_test_on` fixture."""
+    if "valve_test_on" in request.fixturenames:
+        return
+    from custom_components.zoneflow import config_flow
+
+    monkeypatch.setattr(config_flow, "_offers_valve_test", lambda data: False)
+
+
+@pytest.fixture
+def valve_test_on():
+    """Ask for the valve test at the end of setup (see _skip_the_valve_test_in_setup)."""
+    yield
+
+
+@pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations):
     """Make custom_components/zoneflow loadable in every test."""
     yield

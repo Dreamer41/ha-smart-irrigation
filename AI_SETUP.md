@@ -251,7 +251,9 @@ unanswered optional field is not the same as a "no."
    **Notifications** setting (all / warnings only / none), set after the
    config flow on the device page under Configuration. And would they like
    a **weekly summary** (one message per phone for all its zones, at 18:00
-   on a weekday they pick — the zone's **Weekly Summary** select)?
+   to start with on a weekday they pick — the zone's **Weekly Summary** select;
+   the time is the zone's `summary_time` option, and the fertilizing reminder's
+   is `fertilize_reminder_time` (09:00), both asked in the setup form)?
 8. **Weather forecast gate?** Point this zone at a `weather.*` entity to
    hold off watering when rain is forecast (§7.4). Do they have one they'd
    like to use here? Skip offering this one at all if question 4 said
@@ -935,8 +937,7 @@ without a rain gauge, the pump-power warning without a pump-power sensor,
 the crop factor without a temperature sensor, deep-soak sliders with deep
 soak off, the growth-ramp sliders with the ramp off (custom-curve points
 only for the "custom" profile), the pump delays when nothing points to a
-shared pump (no pump ID, no pump-power sensor, both still 0), and the three
-rain-efficiency sliders (fine-tuning). Hidden sliders keep working and
+shared pump (no pump ID, no pump-power sensor, both still 0). Hidden sliders keep working and
 keep their value; setting one through the API works as normal — target
 the slider's own `entity_id`: Home Assistant skips configuration and
 hidden entities when a service call targets a whole device or area. If the
@@ -1304,6 +1305,31 @@ seconds, so the next valve opens first. 0 (the default) leaves it as it was.
 It is not used for service runs or flow measurements, or when both zones
 share one flow meter. For that hand-over the next zone skips its pump
 preamble (the pump is already running) and the finishing zone its postamble.
+
+For a zone with a soil probe, the select `soil_wet_action` ("When Soil Gets Wet
+During Watering") chooses between `finish` (the start: every planned pulse is
+given) and `stop` (before each later pulse of a routine watering the probe is
+read, and at `soil_moisture_wet_pct` or more the rest is not given; it counts as
+the watering). Offer `stop` where heavy soil or a slow-draining bed is easily
+over-watered; keep the soak between pulses long enough for the water to reach
+the probe.
+
+Zone setup ends with an optional valve test (the valve opens for about 2 seconds):
+suggest leaving it ticked the first time, and read the result to the person. If it
+says the valve did not answer, check the switch entity before anything else.
+The person records the timer they set on the valve in the number
+`valve_timer_minutes` ("My Valve's Own Timer", 0 = not set); Check my setup compares
+it with the longest open time, so ask them to enter it.
+
+Tell the person to set an auto-off timer on the valve or switch itself (Shelly
+app, Tasmota PulseTime, ESPHome, the device's own app): a backup if Home
+Assistant stops while the valve is open. The right length is the zone's
+`sensor.<zone>_longest_valve_open_time` (minutes, the longest the valve is open
+in one go, from the zone's own settings) plus a margin; its attribute
+`recommended_timer_minutes` and the line in Check my setup give the figure to
+set. A timer shorter than the sensor cuts waterings short without ZoneFlow
+noticing, so do not guess a round number. Re-read it after changing the pulse
+count, flow rate, days between waterings or caps: it follows them.
 
 Worth setting expectations on if the person asks how the queuing actually
 behaves: a zone holds the shared pump for its **entire** cycle once it
@@ -1775,7 +1801,7 @@ whole list):
 
 ### 7.10 Optional deficit mode (controlled water stress)
 Deficit mode trims every routine dose to a set share (the zone's **Deficit
-Mode Water** slider, 50-100%, default 70%) until an end date, then switches
+Mode Water** slider, 30-100%, default 70%) until an end date, then switches
 itself off. It's the garden version of *regulated deficit irrigation*, a
 real agricultural practice: growers of processing tomatoes, wine grapes and
 olives cut water in a chosen growth stage to trade a little yield for
@@ -1797,7 +1823,7 @@ feel reckless -- and what each one needs):
 - Full dose whenever a soil-moisture sensor reads at or below its Dry
   threshold -- checked at each run, so the soil can still dry a little
   further between runs. Needs a moisture sensor (§7.7).
-- Never below 50%, and it ends on its own at the **Deficit Mode Ends** date.
+- Never below 30%, and it ends on its own at the **Deficit Mode Ends** date.
 
 **When to bring it up yourself:** only when the person's crop is one that
 can gain from it, and only once -- a short suggestion, not a pitch:

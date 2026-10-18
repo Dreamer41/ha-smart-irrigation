@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Mélyöntözés bekapcsolása",
           "deep_soak_time": "Mélyöntözés időpontja",
           "routine_time": "Rendszeres öntözés időpontja",
+          "summary_time": "A heti összefoglaló időpontja",
+          "fertilize_reminder_time": "A trágyázási emlékeztető időpontja",
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés eltolása a naphoz (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés néhány hetente (kezdetben 14 naponta), amely mélyen átnedvesíti a talajt, így a gyökerek mélyre nőnek. Fáknak, cserjéknek és évelőknek jó; sekélyen gyökerező növényeknél, mint a saláta és a fűszernövények, kapcsold ki. A rendszeres öntözés mindenképp fut.",
           "deep_soak_time": "Mikor indul a mélyöntözés azokon a napokon, amikor esedékes, ha lent a rögzített időpont van kiválasztva. A kora reggel a legjobb: kevesebb víz vész el a nap és a szél miatt.",
           "routine_time": "Mikor ellenőrzi a ZoneFlow naponta, hogy esedékes-e a rendszeres öntözés, és ha igen, öntöz. Hogy milyen gyakran esedékes, az az időjárástól és a heti céltól függ. A kora reggel a legjobb.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "A mélyöntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
           "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Mélyöntözési ciklus engedélyezése",
           "deep_soak_time": "Mélyöntözés ütemezett ideje",
           "routine_time": "Rendszeres öntözés ütemezett ideje",
+          "summary_time": "A heti összefoglaló időpontja",
+          "fertilize_reminder_time": "A trágyázási emlékeztető időpontja",
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés kéthetente (kezdésként 14 naponta), amely mélyen megnedvesíti a talajt, hogy a gyökerek mélyre nőjenek. Jó fákhoz, cserjékhez és évelőkhöz; kapcsolja ki az olyan sekély gyökerű növényeknél, mint a saláta és a fűszernövények. A rendszeres öntözés mindenképpen lefut.",
           "deep_soak_time": "Mikor kezdődik a mélyöntözés az esedékes napokon, ha az alábbi indító rögzített időpontra van állítva. A kora reggel a legjobb: kevesebb víz vész kárba a nap és a szél miatt.",
           "routine_time": "Mikor ellenőrzi a ZoneFlow minden nap, hogy esedékes-e a rendszeres öntözés, és öntöz, ha igen. Az esedékesség gyakorisága az időjárástól és a heti célértéktől függ. A kora reggel a legjobb.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
           "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
@@ -275,6 +283,20 @@
           "emitter_flow": "Mennyit ad egy csepegtető óránként: rá van nyomtatva vagy a csomagolásán szerepel (pl. 2 L/h, 0.5 gal/h).",
           "area": "A valóban nedvesedő terület. Egyes növényeknél elhelyezett csepegtetőknél a körülöttük lévő nedves foltokat add össze, ne az egész ágyást."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "Mélyöntözés bekapcsolása",
           "deep_soak_time": "Mélyöntözés időpontja",
           "routine_time": "Rendszeres öntözés időpontja",
+          "summary_time": "A heti összefoglaló időpontja",
+          "fertilize_reminder_time": "A trágyázási emlékeztető időpontja",
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés eltolása a naphoz (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés néhány hetente (kezdetben 14 naponta), amely mélyen átnedvesíti a talajt, így a gyökerek mélyre nőnek. Fáknak, cserjéknek és évelőknek jó; sekélyen gyökerező növényeknél, mint a saláta és a fűszernövények, kapcsold ki. A rendszeres öntözés mindenképp fut.",
           "deep_soak_time": "Mikor indul a mélyöntözés azokon a napokon, amikor esedékes, ha lent a rögzített időpont van kiválasztva. A kora reggel a legjobb: kevesebb víz vész el a nap és a szél miatt.",
           "routine_time": "Mikor ellenőrzi a ZoneFlow naponta, hogy esedékes-e a rendszeres öntözés, és ha igen, öntöz. Hogy milyen gyakran esedékes, az az időjárástól és a heti céltól függ. A kora reggel a legjobb.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "A mélyöntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
           "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "Mélyöntözési ciklus engedélyezése",
           "deep_soak_time": "Mélyöntözés ütemezett ideje",
           "routine_time": "Rendszeres öntözés ütemezett ideje",
+          "summary_time": "A heti összefoglaló időpontja",
+          "fertilize_reminder_time": "A trágyázási emlékeztető időpontja",
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "A mélyöntözés egy nagy, lassú öntözés kéthetente (kezdésként 14 naponta), amely mélyen megnedvesíti a talajt, hogy a gyökerek mélyre nőjenek. Jó fákhoz, cserjékhez és évelőkhöz; kapcsolja ki az olyan sekély gyökerű növényeknél, mint a saláta és a fűszernövények. A rendszeres öntözés mindenképpen lefut.",
           "deep_soak_time": "Mikor kezdődik a mélyöntözés az esedékes napokon, ha az alábbi indító rögzített időpontra van állítva. A kora reggel a legjobb: kevesebb víz vész kárba a nap és a szél miatt.",
           "routine_time": "Mikor ellenőrzi a ZoneFlow minden nap, hogy esedékes-e a rendszeres öntözés, és öntöz, ha igen. Az esedékesség gyakorisága az időjárástól és a heti célértéktől függ. A kora reggel a legjobb.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
           "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutin: napok az öntözések között (meleg)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutin: legrövidebb impulzus"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Mélyöntözés: legrövidebb impulzus"
+      },
+      "self_tune_streak": {
+        "name": "Önhangolás: szükséges gombnyomások"
+      },
+      "self_tune_step_days": {
+        "name": "Önhangolás: lépésköz"
+      },
+      "valve_timer_minutes": {
+        "name": "A szelep saját időzítője"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Automatikus folytatás"
+      },
+      "self_tuning": {
+        "name": "Önhangolás"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Utolsó öntözési térfogat"
+      },
+      "longest_valve_open": {
+        "name": "Szelep leghosszabb nyitvatartása"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Hol található ez?"
+      },
+      "soil_wet_action": {
+        "name": "Ha a talaj nedves lesz öntözés közben",
+        "state": {
+          "finish": "Öntözés befejezése",
+          "stop": "Leállítás a nedves szintnél"
+        }
       }
     },
     "text": {

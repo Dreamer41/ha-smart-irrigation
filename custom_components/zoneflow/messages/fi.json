@@ -170,6 +170,10 @@
     "plant_ready": {
       "title": "🌱 {zone}: {plant} on valmis siirrettäväksi",
       "message": "Se on kasvanut asettamasi päivämäärän verran. Avaa vyöhykkeen Kasvit-ikkuna ja siirrä se kasvupenkkiin."
+    },
+    "stopped_soil_wet": {
+      "title": "💧 {cycle} pysäytetty: maa on märkä",
+      "message": "Pysäytetty {given} / {planned} min jälkeen: kosteusanturi näyttää {pct} %, eli märkärajan verran tai yli. Tämä lasketaan kasteluksi."
     }
   },
   "notes": {
@@ -360,7 +364,10 @@
     },
     "cap": {
       "low": "Rutiinikastelu vaatii {minutes} min, enemmän kuin tämän vyöhykkeen turvaraja ({cap} min), joten se hylätään joka kerta. Nosta rajaa tai lyhennä kastelujen välistä aikaa."
-    }
+    },
+    "backup_timer": "Aseta venttiilin oma automaattisammutusajastin vähintään {minutes} minuuttiin. Se on varmistus, jos Home Assistant pysähtyy venttiilin ollessa auki. Venttiili on pisimmillään auki {longest} min kerrallaan; lyhyempi ajastin katkaisee kastelun kesken. Kirjaa asettamasi aika kohtaan Venttiilin oma ajastin, niin ZoneFlow varoittaa, jos siitä tulee liian lyhyt.",
+    "backup_timer_short": "Venttiilin oma ajastin on {timer} min, mutta venttiili voi olla auki {longest} min kerrallaan, joten ajastin katkaisee kastelun kesken. Aseta se vähintään {minutes} minuuttiin.",
+    "backup_timer_ok": "Venttiilin oma ajastin ({timer} min) riittää pisimmälle ajalle, jonka venttiili on auki ({longest} min)."
   },
   "why": {
     "method": "Kastelutapa: {method}.",
@@ -386,7 +393,10 @@
     "soil": "Maankosteus {pct} % ({status}).",
     "soil_dry": "kuiva",
     "soil_wet": "märkä",
-    "soil_ok": "siltä väliltä"
+    "soil_ok": "siltä väliltä",
+    "preview": "Jos kastelu ajettaisiin nyt: {minutes} min {pulses} jaksossa, noin {each} min kerrallaan, välissä {soak} min imeytystauko. Venttiili on auki enintään {longest} min kerrallaan.",
+    "preview_one": "Jos kastelu ajettaisiin nyt: {minutes} min yhdellä kertaa. Venttiili on auki enintään {longest} min kerrallaan.",
+    "preview_none": "Jos kastelu ajettaisiin nyt: ei mitään, sade kattaa jo tarpeen."
   },
   "suggest": {
     "heading": "Todennäköisimmät löydökset Home Assistantissasi:",
@@ -405,5 +415,12 @@
   "setup": {
     "progress": "Vaihe {n} / {total}",
     "nothing_found": "Antureita ei löytynyt. Lisää ne myöhemmin kohdassa Määritä."
+  },
+  "valve_test": {
+    "ok": "Venttiili vastasi: se avautui ja sulkeutui uudelleen.",
+    "no_answer": "Venttiili ei vastannut: {valve} ei koskaan ilmoittanut olevansa auki. Tarkista, että kytkin on oikea ja laite verkossa. Vyöhyke lisätään silti.",
+    "still_open": "Venttiili avautui, mutta ei ilmoittanut sulkeutuneensa sulkukäskyn jälkeen. Tarkista {valve} heti ja sulje se käsin, jos se on auki.",
+    "unavailable": "Venttiili {valve} ei ole juuri nyt saatavilla, joten sitä ei testattu. Vyöhyke lisätään silti.",
+    "already_open": "Venttiili {valve} on jo auki, joten sitä ei testattu (se jätettiin auki sellaisenaan). Sulje se ja aja testi uudelleen halutessasi. Vyöhyke lisätään silti."
   }
 }

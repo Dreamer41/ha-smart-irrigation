@@ -3,7 +3,8 @@ weekday (each zone's "Weekly Summary" select), covering every zone that
 sends to that target -- water given, rain, how often a due run was held
 back, and what happens next.
 
-One timer for the whole integration (at SUMMARY_HOUR local time); each zone
+One timer for the whole integration, ticking every minute; a zone's summary goes
+out at the time set for it at setup (summary_time, 18:00 to start with). Each zone
 keeps its own counters since its last summary (IrrigationState.summary_*),
 added up by the controller as cycles complete.
 """
@@ -18,7 +19,7 @@ from homeassistant.helpers.event import async_track_time_change
 import homeassistant.util.dt as dt_util
 
 from . import messages, units
-from .const import DOMAIN, SUMMARY_DAYS, SUMMARY_HOUR, SUMMARY_OFF
+from .const import DOMAIN, SUMMARY_DAYS, SUMMARY_OFF
 
 if TYPE_CHECKING:
     from .controller import ZoneFlowController
@@ -34,10 +35,11 @@ def async_setup(hass: HomeAssistant) -> None:
 
     @callback
     def _tick(now) -> None:
-        today = SUMMARY_DAYS[dt_util.as_local(now).weekday()]
-        hass.async_create_task(async_send(hass, day=today))
+        local = dt_util.as_local(now)
+        today = SUMMARY_DAYS[local.weekday()]
+        hass.async_create_task(async_send(hass, day=today, at=(local.hour, local.minute)))
 
-    hass.data[_UNSUB_KEY] = async_track_time_change(hass, _tick, hour=SUMMARY_HOUR, minute=0, second=0)
+    hass.data[_UNSUB_KEY] = async_track_time_change(hass, _tick, second=0)
 
 
 def async_teardown(hass: HomeAssistant) -> None:
@@ -85,9 +87,12 @@ def has_recipients(hass: HomeAssistant) -> bool:
     )
 
 
-async def async_send(hass: HomeAssistant, *, day: str | None = None, reset: bool = True) -> int:
+async def async_send(
+    hass: HomeAssistant, *, day: str | None = None, reset: bool = True, at: tuple[int, int] | None = None
+) -> int:
     """Send the summary for the zones set to `day` (every zone with a
-    notify target when None, e.g. from the send_weekly_summary service).
+    notify target when None, e.g. from the send_weekly_summary service),
+    and, when `at` (hour, minute) is given, only those whose summary time it is.
     Returns how many messages were sent."""
     controllers: dict[str, ZoneFlowController] = hass.data.get(DOMAIN, {})
     by_target: dict[str, list[ZoneFlowController]] = defaultdict(list)
@@ -99,6 +104,8 @@ async def async_send(hass: HomeAssistant, *, day: str | None = None, reset: bool
         if day is not None and state.summary_day != day:
             continue
         if day is None and state.summary_day == SUMMARY_OFF:
+            continue
+        if at is not None and (controller.summary_time.hour, controller.summary_time.minute) != at:
             continue
         by_target[controller.notify_entity].append(controller)
 

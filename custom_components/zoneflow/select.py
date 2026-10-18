@@ -75,6 +75,8 @@ from .const import (
     DEMAND_MODEL_OPTIONS,
     DOMAIN,
     FERTILIZING_INTERVAL_OPTIONS,
+    SOIL_WET_ACTION_OPTIONS,
+    SOIL_WET_FINISH,
     GROWTH_RAMP_PROFILE_OPTIONS,
     GROWTH_STAGE_MODE_AUTO,
     GROWTH_STAGE_PRESETS,
@@ -114,6 +116,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowFertilizingIntervalSelect(entry, controller),
             ZoneFlowDemandModelSelect(entry, controller),
             ZoneFlowMulchSelect(entry, controller),
+            ZoneFlowSoilWetActionSelect(entry, controller),
             ZoneFlowNotificationsSelect(entry, controller),
             ZoneFlowWeeklySummarySelect(entry, controller),
         ]
@@ -383,6 +386,31 @@ class ZoneFlowDemandModelSelect(_Base):
 
     async def async_select_option(self, option: str) -> None:
         self._controller.store.state.demand_model = option
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+
+
+class ZoneFlowSoilWetActionSelect(_Base):
+    """What a routine watering does when the soil probe reads wet between its
+    pulses (1.7.4): finish the planned pulses, or stop at the wet level. Read
+    by ZoneFlowController._stopped_by_wet_soil before each later pulse."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:water-check"
+    _attr_options = SOIL_WET_ACTION_OPTIONS
+    _attr_translation_key = "soil_wet_action"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_soil_wet_action"
+
+    @property
+    def current_option(self) -> str:
+        value = self._controller.store.state.soil_wet_action
+        return value if value in SOIL_WET_ACTION_OPTIONS else SOIL_WET_FINISH
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.soil_wet_action = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
 

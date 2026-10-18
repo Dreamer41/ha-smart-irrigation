@@ -39,6 +39,50 @@ async def ws_check(hass: HomeAssistant, connection: websocket_api.ActiveConnecti
     if controller is None:
         connection.send_error(msg["id"], "not_found", "No such ZoneFlow zone")
         return
+    items = await _tidy_ignored(controller, setup_check.run_checks(controller))
+    connection.send_result(msg["id"], {"zone": controller.entry.title, "level": setup_check.summary(items), "items": items})
+
+
+async def _tidy_ignored(controller, items: list[dict]) -> list[dict]:
+    """A warning that is gone (fixed, or the setting changed) is no longer ignored: if it
+    comes back, it is a new warning."""
+    state = controller.store.state
+    live = {item["id"] for item in items if item["level"] == "warn"}
+    kept = [item_id for item_id in state.check_ignored if item_id in live]
+    if kept != state.check_ignored:
+        state.check_ignored = kept
+        await controller.store.async_save()
+        controller._check_issues()
+    return items
+
+
+@websocket_api.websocket_command({
+    vol.Required("type"): "zoneflow/check_ignore",
+    vol.Required("device_id"): str,
+    vol.Required("item_id"): str,  # not "id": that is the websocket message id
+    vol.Required("ignore"): bool,
+})
+@websocket_api.require_admin
+@websocket_api.async_response
+async def ws_check_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
+    """Ignore a Check my setup warning (or show it again). Administrators only."""
+    controller = controller_for_device(hass, msg["device_id"])
+    if controller is None:
+        connection.send_error(msg["id"], "not_found", "No such ZoneFlow zone")
+        return
+    items = setup_check.run_checks(controller)
+    item = next((i for i in items if i["id"] == msg["item_id"]), None)
+    state = controller.store.state
+    if msg["ignore"]:
+        if item is None or not item["ignorable"]:
+            connection.send_error(msg["id"], "not_ignorable", "Only a warning can be ignored")
+            return
+        if msg["item_id"] not in state.check_ignored:
+            state.check_ignored = [*state.check_ignored, msg["item_id"]]
+    else:
+        state.check_ignored = [i for i in state.check_ignored if i != msg["item_id"]]
+    await controller.store.async_save()
+    controller._check_issues()
     items = setup_check.run_checks(controller)
     connection.send_result(msg["id"], {"zone": controller.entry.title, "level": setup_check.summary(items), "items": items})
 

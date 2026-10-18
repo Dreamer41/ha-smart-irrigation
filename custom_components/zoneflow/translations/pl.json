@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Włącz głębokie podlewanie",
           "deep_soak_time": "Godzina głębokiego podlewania",
           "routine_time": "Godzina regularnego podlewania",
+          "summary_time": "Godzina podsumowania tygodniowego",
+          "fertilize_reminder_time": "Godzina przypomnienia o nawożeniu",
           "deep_soak_sun_mode": "Wyzwalacz głębokiego podlewania",
           "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
           "routine_sun_mode": "Wyzwalacz regularnego podlewania",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "Głębokie podlewanie to duża, powolna dawka wody co kilka tygodni (na początek co 14 dni), która zwilża glebę głęboko, żeby korzenie rosły w głąb. Dobre dla drzew, krzewów i bylin; wyłącz je dla roślin o płytkich korzeniach, takich jak sałata i zioła. Regularne podlewanie działa niezależnie od tego.",
           "deep_soak_time": "O której startuje głębokie podlewanie w dniu, gdy przypada, jeśli jego wyzwalacz poniżej to stała godzina. Najlepiej wcześnie rano: mniej wody traci się przez słońce i wiatr.",
           "routine_time": "O której ZoneFlow codziennie sprawdza, czy przypada regularne podlewanie, i podlewa, jeśli tak. Jak często przypada, zależy od pogody i Twojej dawki tygodniowej. Najlepiej wcześnie rano.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Uruchamiaj głębokie podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
           "routine_sun_mode": "Uruchamiaj regularne podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Włącz cykl głębokiego nawadniania",
           "deep_soak_time": "Czas harmonogramu głębokiego nawadniania",
           "routine_time": "Czas harmonogramu rutynowego nawadniania",
+          "summary_time": "Godzina podsumowania tygodniowego",
+          "fertilize_reminder_time": "Godzina przypomnienia o nawożeniu",
           "deep_soak_sun_mode": "Wyzwalacz głębokiego nawadniania",
           "deep_soak_sun_offset_minutes": "przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
           "routine_sun_mode": "Wyzwalacz rutynowy",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Głębokie nawadnianie to duże, powolne podlewanie co kilka tygodni (na początek co 14 dni), które zwilża glebę w głębokich warstwach, dzięki czemu korzenie rosną głęboko. Dobre dla drzew, krzewów i bylin; wyłącz dla roślin o płytkich korzeniach, takich jak sałata i zioła. Rutynowe podlewanie działa w obu przypadkach.",
           "deep_soak_time": "Kiedy rozpoczyna się głębokie nawadnianie w zaplanowane dni, gdy jego wyzwalaczem poniżej jest stała godzina. Najlepszy jest wczesny poranek: mniej wody ucieka przez słońce i wiatr.",
           "routine_time": "Kiedy ZoneFlow sprawdza każdego dnia, czy przypada rutynowe podlewanie, i podlewa, jeśli tak jest. Częstotliwość zależy od pogody i tygodniowego celu. Najlepszy jest wczesny poranek.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Uruchom głębokie nawadnianie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
@@ -275,6 +283,20 @@
           "emitter_flow": "Ile wody daje jeden emiter na godzinę: jest to podane na emiterze lub opakowaniu (np. 2 L/h, 0,5 gal/h).",
           "area": "Powierzchnia, która faktycznie jest mokra. Przy kroplownikach pod pojedynczymi roślinami zsumuj mokre plamy wokół nich, a nie całą grządkę."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "Włącz głębokie podlewanie",
           "deep_soak_time": "Godzina głębokiego podlewania",
           "routine_time": "Godzina regularnego podlewania",
+          "summary_time": "Godzina podsumowania tygodniowego",
+          "fertilize_reminder_time": "Godzina przypomnienia o nawożeniu",
           "deep_soak_sun_mode": "Wyzwalacz głębokiego podlewania",
           "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
           "routine_sun_mode": "Wyzwalacz regularnego podlewania",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "Głębokie podlewanie to duża, powolna dawka wody co kilka tygodni (na początek co 14 dni), która zwilża glebę głęboko, żeby korzenie rosły w głąb. Dobre dla drzew, krzewów i bylin; wyłącz je dla roślin o płytkich korzeniach, takich jak sałata i zioła. Regularne podlewanie działa niezależnie od tego.",
           "deep_soak_time": "O której startuje głębokie podlewanie w dniu, gdy przypada, jeśli jego wyzwalacz poniżej to stała godzina. Najlepiej wcześnie rano: mniej wody traci się przez słońce i wiatr.",
           "routine_time": "O której ZoneFlow codziennie sprawdza, czy przypada regularne podlewanie, i podlewa, jeśli tak. Jak często przypada, zależy od pogody i Twojej dawki tygodniowej. Najlepiej wcześnie rano.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Uruchamiaj głębokie podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
           "routine_sun_mode": "Uruchamiaj regularne podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "Włącz cykl głębokiego nawadniania",
           "deep_soak_time": "Czas harmonogramu głębokiego nawadniania",
           "routine_time": "Czas harmonogramu rutynowego nawadniania",
+          "summary_time": "Godzina podsumowania tygodniowego",
+          "fertilize_reminder_time": "Godzina przypomnienia o nawożeniu",
           "deep_soak_sun_mode": "Wyzwalacz głębokiego nawadniania",
           "deep_soak_sun_offset_minutes": "Przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
           "routine_sun_mode": "Wyzwalacz rutynowy",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "Głębokie nawadnianie to duże, powolne podlewanie co kilka tygodni (na początek co 14 dni), które zwilża glebę w głębokich warstwach, dzięki czemu korzenie rosną głęboko. Dobre dla drzew, krzewów i bylin; wyłącz dla roślin o płytkich korzeniach, takich jak sałata i zioła. Rutynowe podlewanie działa w obu przypadkach.",
           "deep_soak_time": "Kiedy rozpoczyna się głębokie nawadnianie w zaplanowane dni, gdy jego wyzwalaczem poniżej jest stała godzina. Najlepszy jest wczesny poranek: mniej wody ucieka przez słońce i wiatr.",
           "routine_time": "Kiedy ZoneFlow sprawdza każdego dnia, czy przypada rutynowe podlewanie, i podlewa, jeśli tak jest. Częstotliwość zależy od pogody i tygodniowego celu. Najlepszy jest wczesny poranek.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Uruchom głębokie nawadnianie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Rutyna: dni między podlewaniami (upał)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Rutyna: minimalny czas impulsu"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Głębokie podlewanie: minimalny czas impulsu"
+      },
+      "self_tune_streak": {
+        "name": "Samodostrajanie: wymagane naciśnięcia"
+      },
+      "self_tune_step_days": {
+        "name": "Samodostrajanie: krok"
+      },
+      "valve_timer_minutes": {
+        "name": "Własny timer zaworu"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Wznowienie automatyczne"
+      },
+      "self_tuning": {
+        "name": "Samodostrajanie"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Objętość ostatniego podania wody"
+      },
+      "longest_valve_open": {
+        "name": "Najdłuższy czas otwarcia zaworu"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Gdzie to jest?"
+      },
+      "soil_wet_action": {
+        "name": "Gdy gleba zwilgotnieje podczas podlewania",
+        "state": {
+          "finish": "Dokończ podlewanie",
+          "stop": "Zatrzymaj przy poziomie mokrym"
+        }
       }
     },
     "text": {

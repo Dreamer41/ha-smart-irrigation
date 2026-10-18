@@ -44,6 +44,8 @@
           "deep_soak_enabled": "启用深层浇灌",
           "deep_soak_time": "深层浇灌时间",
           "routine_time": "常规浇水时间",
+          "summary_time": "每周摘要发送时间",
+          "fertilize_reminder_time": "施肥提醒发送时间",
           "deep_soak_sun_mode": "深层浇灌触发方式",
           "deep_soak_sun_offset_minutes": "深层浇灌日出日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "深层浇灌是每隔一两周（初始为 14 天）进行一次的大量、缓慢浇水，让水渗透到深层土壤，促使根系向深处生长。适合乔木、灌木和多年生植物；对于生菜、香草等浅根植物请关闭。常规浇水不受影响，照常进行。",
           "deep_soak_time": "在需要深层浇灌的日子里开始的时间（当下面的触发方式为固定时间时）。清晨最好：被阳光和风带走的水更少。",
           "routine_time": "ZoneFlow 每天检查是否需要常规浇水的时间，需要时就浇水。需要浇水的频率取决于天气和您的每周目标。清晨最好。",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "在上面的固定时间开始深层浇灌，或在日出、日落之前或之后开始，这样会随季节变化。",
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
           "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "启用深层浸润循环",
           "deep_soak_time": "深层浸润计划时间",
           "routine_time": "常规灌溉计划时间",
+          "summary_time": "每周摘要发送时间",
+          "fertilize_reminder_time": "施肥提醒发送时间",
           "deep_soak_sun_mode": "深层浸润触发方式",
           "deep_soak_sun_offset_minutes": "深层浸润日出/日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "深层浸润是指每隔几周（初始为 14 天）进行一次大水量、慢速的浇水，使土壤深层湿润，促进根系向下生长。非常适合树木、灌木和多年生植物；对于沙拉蔬菜和香草等浅根植物，请将其关闭。无论是否启用，常规浇水都会正常运行。",
           "deep_soak_time": "当深层浸润到期的那天，且下方的触发方式设为固定时间时的启动时间。清晨是最佳选择：阳光和风导致的水分蒸发较少。",
           "routine_time": "ZoneFlow 每天检查常规浇水是否到期的固定时间，若到期则执行浇水。到期频率取决于天气和您的每周目标量。清晨是最佳选择。",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "在上述固定时间启动深层浸润，或在日出/日落之前或之后启动，以便随季节自动调整。",
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
           "routine_sun_mode": "在上述固定时间启动常规浇水，或在日出/日落之前或之后启动，以便随季节自动调整。",
@@ -275,6 +283,20 @@
           "emitter_flow": "单个灌水器每小时的出水量：印在灌水器或其包装上（例如 2 L/h、0.5 gal/h）。",
           "area": "实际被浇湿的面积。对于单株植物旁的滴头，请把它们周围的湿润区域加起来，而不是整个苗床。"
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "启用深层浇灌",
           "deep_soak_time": "深层浇灌时间",
           "routine_time": "常规浇水时间",
+          "summary_time": "每周摘要发送时间",
+          "fertilize_reminder_time": "施肥提醒发送时间",
           "deep_soak_sun_mode": "深层浇灌触发方式",
           "deep_soak_sun_offset_minutes": "深层浇灌日出日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "深层浇灌是每隔一两周（初始为 14 天）进行一次的大量、缓慢浇水，让水渗透到深层土壤，促使根系向深处生长。适合乔木、灌木和多年生植物；对于生菜、香草等浅根植物请关闭。常规浇水不受影响，照常进行。",
           "deep_soak_time": "在需要深层浇灌的日子里开始的时间（当下面的触发方式为固定时间时）。清晨最好：被阳光和风带走的水更少。",
           "routine_time": "ZoneFlow 每天检查是否需要常规浇水的时间，需要时就浇水。需要浇水的频率取决于天气和您的每周目标。清晨最好。",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "在上面的固定时间开始深层浇灌，或在日出、日落之前或之后开始，这样会随季节变化。",
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
           "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "启用深层浸润循环",
           "deep_soak_time": "深层浸润计划时间",
           "routine_time": "常规灌溉计划时间",
+          "summary_time": "每周摘要发送时间",
+          "fertilize_reminder_time": "施肥提醒发送时间",
           "deep_soak_sun_mode": "深层浸润触发方式",
           "deep_soak_sun_offset_minutes": "深层浸润日出/日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "深层浸润是指每隔几周（初始为 14 天）进行一次大水量、慢速的浇水，使土壤深层湿润，促进根系向下生长。非常适合树木、灌木和多年生植物；对于沙拉蔬菜和香草等浅根植物，请将其关闭。无论是否启用，常规浇水都会正常运行。",
           "deep_soak_time": "当深层浸润到期的那天，且下方的触发方式设为固定时间时的启动时间。清晨是最佳选择：阳光和风导致的水分蒸发较少。",
           "routine_time": "ZoneFlow 每天检查常规浇水是否到期的固定时间，若到期则执行浇水。到期频率取决于天气和您的每周目标量。清晨是最佳选择。",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "在上述固定时间启动深层浸润，或在日出/日落之前或之后启动，以便随季节自动调整。",
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
           "routine_sun_mode": "在上述固定时间启动常规浇水，或在日出/日落之前或之后启动，以便随季节自动调整。",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "常规浇水：浇水间隔天数（炎热）"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "常规浇水：最短脉冲时长"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "深度浇灌：最短脉冲时长"
+      },
+      "self_tune_streak": {
+        "name": "自动调整：所需按键次数"
+      },
+      "self_tune_step_days": {
+        "name": "自动调整：步长"
+      },
+      "valve_timer_minutes": {
+        "name": "阀门自带定时器"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "自动恢复"
+      },
+      "self_tuning": {
+        "name": "自动调整"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "上次浇水量"
+      },
+      "longest_valve_open": {
+        "name": "阀门最长开启时间"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "位置在哪里？"
+      },
+      "soil_wet_action": {
+        "name": "浇水时土壤变湿",
+        "state": {
+          "finish": "完成浇水",
+          "stop": "达到湿润水平时停止"
+        }
       }
     },
     "text": {

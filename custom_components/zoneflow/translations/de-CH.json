@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Tiefenbewässerung aktivieren",
           "deep_soak_time": "Uhrzeit der Tiefenbewässerung",
           "routine_time": "Uhrzeit der Routinebewässerung",
+          "summary_time": "Uhrzeit der Wochenübersicht",
+          "fertilize_reminder_time": "Uhrzeit der Düngeerinnerung",
           "deep_soak_sun_mode": "Auslöser Tiefenbewässerung",
           "deep_soak_sun_offset_minutes": "Sonnenversatz Tiefenbewässerung (Minuten)",
           "routine_sun_mode": "Auslöser Routinebewässerung",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "Eine Tiefenbewässerung ist ein großes, langsames Gießen alle paar Wochen (anfangs alle 14 Tage), das den Boden tief durchfeuchtet, damit die Wurzeln in die Tiefe wachsen. Gut für Bäume, Sträucher und Stauden; schalte sie für flach wurzelnde Pflanzen wie Salat und Kräuter aus. Die Routinebewässerung läuft so oder so.",
           "deep_soak_time": "Wann die Tiefenbewässerung an fälligen Tagen startet, wenn unten als Auslöser die feste Uhrzeit gewählt ist. Früh am Morgen ist am besten: Es geht weniger Wasser an Sonne und Wind verloren.",
           "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und dann gießt. Wie oft sie fällig ist, richtet sich nach dem Wetter und deinem Wochenziel. Früh am Morgen ist am besten.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Starte die Tiefenbewässerung zur festen Uhrzeit oben oder vor bzw. nach Sonnenaufgang oder Sonnenuntergang – dann wandert sie mit den Jahreszeiten mit.",
           "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. Sonnenuntergang. Wird bei fester Uhrzeit nicht verwendet.",
           "routine_sun_mode": "Starte die Routinebewässerung zur festen Uhrzeit oben oder vor bzw. nach Sonnenaufgang oder Sonnenuntergang – dann wandert sie mit den Jahreszeiten mit.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Tiefenbewässerungszyklus aktivieren",
           "deep_soak_time": "Uhrzeit für Tiefenbewässerung",
           "routine_time": "Uhrzeit für Routinebewässerung",
+          "summary_time": "Uhrzeit der Wochenübersicht",
+          "fertilize_reminder_time": "Uhrzeit der Düngeerinnerung",
           "deep_soak_sun_mode": "Auslöser für Tiefenbewässerung",
           "deep_soak_sun_offset_minutes": "Sonnenversatz für Tiefenbewässerung (Minuten)",
           "routine_sun_mode": "Auslöser für Routinebewässerung",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Eine Tiefenbewässerung ist eine große, langsame Bewässerung alle paar Wochen (zu Beginn alle 14 Tage), die den Boden tief durchfeuchtet, damit die Wurzeln tief wachsen. Gut für Bäume, Sträucher und Stauden; für flach wurzelnde Pflanzen wie Salat und Kräuter ausschalten. Die Routinebewässerung läuft unabhängig davon.",
           "deep_soak_time": "Wann die Tiefenbewässerung an den fälligen Tagen beginnt, sofern unten eine feste Uhrzeit als Auslöser gewählt ist. Der frühe Morgen ist am besten: weniger Wasserverlust durch Sonne und Wind.",
           "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und gegebenenfalls gießt. Die Häufigkeit richtet sich nach dem Wetter und Ihrem Wochenziel. Der frühe Morgen ist am besten.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Startet die Tiefenbewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
           "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
           "routine_sun_mode": "Startet die Routinebewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
@@ -275,6 +283,20 @@
           "emitter_flow": "Was ein Tropfer pro Stunde abgibt: Das steht auf dem Tropfer oder seiner Verpackung (z. B. 2 L/h, 0,5 gal/h).",
           "area": "Die Fläche, die wirklich nass wird. Bei Tropfern an Einzelpflanzen zählst du die nassen Stellen um sie herum zusammen, nicht das ganze Beet."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "Tiefenbewässerung aktivieren",
           "deep_soak_time": "Uhrzeit der Tiefenbewässerung",
           "routine_time": "Uhrzeit der Routinebewässerung",
+          "summary_time": "Uhrzeit der Wochenübersicht",
+          "fertilize_reminder_time": "Uhrzeit der Düngeerinnerung",
           "deep_soak_sun_mode": "Auslöser Tiefenbewässerung",
           "deep_soak_sun_offset_minutes": "Sonnenversatz Tiefenbewässerung (Minuten)",
           "routine_sun_mode": "Auslöser Routinebewässerung",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "Eine Tiefenbewässerung ist ein großes, langsames Gießen alle paar Wochen (anfangs alle 14 Tage), das den Boden tief durchfeuchtet, damit die Wurzeln in die Tiefe wachsen. Gut für Bäume, Sträucher und Stauden; schalte sie für flach wurzelnde Pflanzen wie Salat und Kräuter aus. Die Routinebewässerung läuft so oder so.",
           "deep_soak_time": "Wann die Tiefenbewässerung an fälligen Tagen startet, wenn unten als Auslöser die feste Uhrzeit gewählt ist. Früh am Morgen ist am besten: Es geht weniger Wasser an Sonne und Wind verloren.",
           "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und dann gießt. Wie oft sie fällig ist, richtet sich nach dem Wetter und deinem Wochenziel. Früh am Morgen ist am besten.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Starte die Tiefenbewässerung zur festen Uhrzeit oben oder vor bzw. nach Sonnenaufgang oder Sonnenuntergang – dann wandert sie mit den Jahreszeiten mit.",
           "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. Sonnenuntergang. Wird bei fester Uhrzeit nicht verwendet.",
           "routine_sun_mode": "Starte die Routinebewässerung zur festen Uhrzeit oben oder vor bzw. nach Sonnenaufgang oder Sonnenuntergang – dann wandert sie mit den Jahreszeiten mit.",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "Tiefenbewässerungszyklus aktivieren",
           "deep_soak_time": "Uhrzeit für Tiefenbewässerung",
           "routine_time": "Uhrzeit für Routinebewässerung",
+          "summary_time": "Uhrzeit der Wochenübersicht",
+          "fertilize_reminder_time": "Uhrzeit der Düngeerinnerung",
           "deep_soak_sun_mode": "Auslöser für Tiefenbewässerung",
           "deep_soak_sun_offset_minutes": "Sonnenversatz für Tiefenbewässerung (Minuten)",
           "routine_sun_mode": "Auslöser für Routinebewässerung",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "Eine Tiefenbewässerung ist eine große, langsame Bewässerung alle paar Wochen (zu Beginn alle 14 Tage), die den Boden tief durchfeuchtet, damit die Wurzeln tief wachsen. Gut für Bäume, Sträucher und Stauden; für flach wurzelnde Pflanzen wie Salat und Kräuter ausschalten. Die Routinebewässerung läuft unabhängig davon.",
           "deep_soak_time": "Wann die Tiefenbewässerung an den fälligen Tagen beginnt, sofern unten eine feste Uhrzeit als Auslöser gewählt ist. Der frühe Morgen ist am besten: weniger Wasserverlust durch Sonne und Wind.",
           "routine_time": "Wann ZoneFlow jeden Tag prüft, ob die Routinebewässerung fällig ist, und gegebenenfalls gießt. Die Häufigkeit richtet sich nach dem Wetter und Ihrem Wochenziel. Der frühe Morgen ist am besten.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Startet die Tiefenbewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
           "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
           "routine_sun_mode": "Startet die Routinebewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Routine: Tage zwischen Bewässerungen (heiß)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Routine: Mindestlänge eines Impulses"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Tiefenbewässerung: Mindestlänge eines Impulses"
+      },
+      "self_tune_streak": {
+        "name": "Selbstanpassung: nötige Tastendrücke"
+      },
+      "self_tune_step_days": {
+        "name": "Selbstanpassung: Schrittweite"
+      },
+      "valve_timer_minutes": {
+        "name": "Eigener Timer des Ventils"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Automatische Fortsetzung"
+      },
+      "self_tuning": {
+        "name": "Selbstanpassung"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Letztes Wasservolumen"
+      },
+      "longest_valve_open": {
+        "name": "Längste Ventil-Öffnungszeit"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Wo befindet sich dies?"
+      },
+      "soil_wet_action": {
+        "name": "Wenn der Boden beim Gießen nass wird",
+        "state": {
+          "finish": "Gießen beenden",
+          "stop": "Bei Nässegrenze stoppen"
+        }
       }
     },
     "text": {

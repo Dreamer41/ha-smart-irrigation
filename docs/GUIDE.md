@@ -213,6 +213,75 @@ and both zones get less water than their calibrated runtime assumes.
 
 **Valve overlap.** If the pipes bang when a valve closes, set **Valve Overlap** (0 to 10 seconds, in the Safety settings of zones that share a pump). The next zone's valve then opens that many seconds before the running zone's closes. At 0 (the default) the zones take turns exactly as before.
 
+## Settings you can find on the card
+
+The zone card's **Settings** popup opens with the everyday settings only: the flow
+rate, the three weekly targets and the days between waterings. **Show all settings**
+at the top shows every group; the choice is remembered in your browser. Every setting
+and every group has a **?** that opens the matching page on the ZoneFlow website
+(zoneflowirrigation.com/docs).
+
+**Why?** ends with a preview of the next watering with your current settings: how
+many minutes, in how many pulses, how long the soak between them is, and the longest
+the valve is open at once. Change a slider and read it again to see what it does
+before the next run.
+
+**My Valve's Own Timer** (Safety settings): type in the minutes you set as the
+auto-off timer on the valve itself. Check my setup then tells you if it is shorter
+than the Longest Valve Open Time, and says so again later if a setting change makes
+the longest time grow past it.
+
+A **Check my setup** warning that is wrong for your zone has an **Ignore** button
+(administrators; it asks you to confirm). It moves to an **Ignored** list at the
+bottom with **Show again**, and no longer counts. If it goes away and later comes
+back, it is a new warning.
+
+When you add a zone with a valve, the last step offers a **valve test**: the valve
+opens for about 2 seconds and ZoneFlow tells you whether it answered and closed.
+
+## Soil probe: stop when it is wet
+
+With a soil moisture probe, a routine watering is only held back or brought
+forward at its start: wet soil skips a due watering, dry soil waters at the next
+scheduled time. Once a watering is running it gives its planned pulses. If you
+want it to stop earlier, set **When Soil Gets Wet During Watering** (Soil
+settings) to **Stop at the wet level**: before each later pulse the probe is
+read, and at the Soil Moisture Wet Threshold or more the rest is not given. The
+soak between pulses gives the water time to reach the probe, so set the soak to
+suit your soil. A watering stopped this way counts as done. **Finish the
+watering** (the start) always gives every pulse. The deep soak never looks at
+the probe, and the Run Routine Now button is never cut short.
+
+## The valve's own backup timer
+
+ZoneFlow closes the valve itself, but if Home Assistant (or the network) stops
+while a valve is open, nothing is left to close it. Set an **auto-off timer on
+the valve or switch itself** as a backup: Shelly (the auto-off timer in the
+Shelly app: it stays on the device), Tasmota (PulseTime), ESPHome (a delay or
+`on_turn_on` with a `delay` and `turn_off`), or the "auto off", "countdown" or
+"timer" setting in your device's own app. A Zigbee-only valve depends on the
+device: some have a timer, some do not.
+
+How long? **Longer than the longest time ZoneFlow keeps the valve open in one
+go**, or the timer cuts a watering short without ZoneFlow noticing. Each zone
+works that out: the **Longest Valve Open Time** sensor (Safety settings) and a
+line in **Check my setup** give it, with the timer to set (the longest plus the
+larger of 10 minutes or 20 %, rounded up to 5 minutes).
+
+It comes from the zone's own settings, so it follows when you change them:
+the weekly targets, the **days between waterings**, the flow rate, the pulse
+counts, the soil and slope (heavy soil and slopes add pulses, so each one is
+shorter), the runtime caps, the deep soak and the Service Mode auto-off. A
+cycle is split into pulses with the valve closed in between, so the longest
+open time is one pulse, not the whole watering. Raise the pulse count and the
+number comes down.
+
+A typed **Water now** (the service, or the 10 minute button on a phone
+notification) is split into pulses too, the zone's way. Its own longest pulse
+can be longer than the number above when you type a long time and the soil
+takes it in one go: the sensor's `with_water_now_minutes` attribute gives that
+figure if you want the timer to cover it.
+
 ## More features
 
 - **Tidy device page**: settings sit under *Configuration*, technical
@@ -273,9 +342,12 @@ and both zones get less water than their calibrated runtime assumes.
   current temperature): a due cycle waits while it's below 2 °C
   (adjustable), re-checks every hour for a few hours, and only then waits
   for the next day. Set it to its lowest to switch it off.
-- **Weekly summary** (optional, per zone): pick a weekday and at 18:00 you
-  get one message per phone for all its zones — water given, rain, how
-  often a run was held back, and the next watering.
+- **Weekly summary** (optional, per zone): pick a weekday and at the **Weekly
+  summary time** set for the zone (18:00 to start with; asked in the zone's
+  setup and under Configure) you get one message per phone for all its zones —
+  water given, rain, how often a run was held back, and the next watering. The
+  fertilizing reminder has its own **Fertilizing reminder time** (09:00 to
+  start with) in the same place.
 - **Repairs**: an unavailable valve, a sensor offline for days, a missing
   notify target or a never-calibrated flow rate show up in Settings →
   System → Repairs, and clear themselves once fixed.

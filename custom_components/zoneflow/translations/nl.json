@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Diepe watergift inschakelen",
           "deep_soak_time": "Tijdstip diepe watergift",
           "routine_time": "Tijdstip routinewatergift",
+          "summary_time": "Tijdstip van het weekoverzicht",
+          "fertilize_reminder_time": "Tijdstip van de bemestingsherinnering",
           "deep_soak_sun_mode": "Start diepe watergift",
           "deep_soak_sun_offset_minutes": "Diepe watergift: verschuiving t.o.v. zon (minuten)",
           "routine_sun_mode": "Start routinewatergift",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "Een diepe watergift is een grote, langzame watergift om de paar weken (om te beginnen elke 14 dagen) die de grond diep nat maakt, zodat wortels diep groeien. Goed voor bomen, heesters en vaste planten; zet hem uit voor ondiep wortelende planten zoals sla en kruiden. De routinewatergift draait hoe dan ook.",
           "deep_soak_time": "Wanneer de diepe watergift start op de dagen dat hij aan de beurt is, als de start hieronder op de vaste kloktijd staat. Vroeg in de ochtend is het best: er gaat minder water verloren door zon en wind.",
           "routine_time": "Wanneer ZoneFlow elke dag kijkt of de routinewatergift aan de beurt is, en dan water geeft. Hoe vaak dat is, hangt af van het weer en je weekdoel. Vroeg in de ochtend is het best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start de diepe watergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
           "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Diepe bewatering inschakelen",
           "deep_soak_time": "Geplande tijd diepe bewatering",
           "routine_time": "Geplande tijd routinebewatering",
+          "summary_time": "Tijdstip van het weekoverzicht",
+          "fertilize_reminder_time": "Tijdstip van de bemestingsherinnering",
           "deep_soak_sun_mode": "Trigger diepe bewatering",
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "Een diepe bewatering is een grote, trage bewatering om de paar weken (om te beginnen elke 14 dagen) die de grond diep bevochtigt, zodat wortels diep groeien. Goed voor bomen, struiken en vaste planten; schakel dit uit voor planten met oppervlakkige wortels zoals sla en kruiden. De routinebewatering draait in beide gevallen.",
           "deep_soak_time": "Wanneer de diepe bewatering begint op de dagen dat deze gepland is, als de onderstaande trigger een vaste tijd is. Vroeg in de morgen is het beste: minder waterverlies door zon en wind.",
           "routine_time": "Wanneer ZoneFlow elke dag controleert of de routinebewatering nodig is, en bewatert als dat zo is. Hoe vaak dit nodig is, volgt het weer en uw weekdoel. Vroeg in de morgen is het beste.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor or na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
@@ -275,6 +283,20 @@
           "emitter_flow": "Wat één druppelaar per uur geeft: dat staat op de druppelaar of de verpakking (bv. 2 L/h, 0,5 gal/h).",
           "area": "De oppervlakte die echt nat wordt. Bij druppelaars bij losse planten: tel de natte plekken eromheen op, niet het hele bed."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -338,6 +360,8 @@
           "deep_soak_enabled": "Diepe watergift inschakelen",
           "deep_soak_time": "Tijdstip diepe watergift",
           "routine_time": "Tijdstip routinewatergift",
+          "summary_time": "Tijdstip van het weekoverzicht",
+          "fertilize_reminder_time": "Tijdstip van de bemestingsherinnering",
           "deep_soak_sun_mode": "Start diepe watergift",
           "deep_soak_sun_offset_minutes": "Diepe watergift: verschuiving t.o.v. zon (minuten)",
           "routine_sun_mode": "Start routinewatergift",
@@ -364,6 +388,8 @@
           "deep_soak_enabled": "Een diepe watergift is een grote, langzame watergift om de paar weken (om te beginnen elke 14 dagen) die de grond diep nat maakt, zodat wortels diep groeien. Goed voor bomen, heesters en vaste planten; zet hem uit voor ondiep wortelende planten zoals sla en kruiden. De routinewatergift draait hoe dan ook.",
           "deep_soak_time": "Wanneer de diepe watergift start op de dagen dat hij aan de beurt is, als de start hieronder op de vaste kloktijd staat. Vroeg in de ochtend is het best: er gaat minder water verloren door zon en wind.",
           "routine_time": "Wanneer ZoneFlow elke dag kijkt of de routinewatergift aan de beurt is, en dan water geeft. Hoe vaak dat is, hangt af van het weer en je weekdoel. Vroeg in de ochtend is het best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start de diepe watergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
           "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
@@ -453,6 +479,8 @@
           "deep_soak_enabled": "Diepe bewatering inschakelen",
           "deep_soak_time": "Geplande tijd diepe bewatering",
           "routine_time": "Geplande tijd routinebewatering",
+          "summary_time": "Tijdstip van het weekoverzicht",
+          "fertilize_reminder_time": "Tijdstip van de bemestingsherinnering",
           "deep_soak_sun_mode": "Trigger diepe bewatering",
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
@@ -471,6 +499,8 @@
           "deep_soak_enabled": "Een diepe bewatering is een grote, trage bewatering om de paar weken (om te beginnen elke 14 dagen) die de grond diep bevochtigt, zodat wortels diep groeien. Goed voor bomen, struiken en vaste planten; schakel dit uit voor planten met oppervlakkige wortels zoals sla en kruiden. De routinebewatering draait in beide gevallen.",
           "deep_soak_time": "Wanneer de diepe bewatering begint op de dagen dat deze gepland is, als de onderstaande trigger een vaste tijd is. Vroeg in de morgen is het beste: minder waterverlies door zon en wind.",
           "routine_time": "Wanneer ZoneFlow elke dag controleert of de routinebewatering nodig is, en bewatert als dat zo is. Hoe vaak dit nodig is, volgt het weer en uw weekdoel. Vroeg in de morgen is het beste.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor of na zonsopgang or zonsondergang, zodat deze meebeweegt met de seizoenen.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Routine: dagen tussen bewateringen (heet)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Routine: minimale pulsduur"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Dieptebewatering: minimale pulsduur"
+      },
+      "self_tune_streak": {
+        "name": "Zelfafstelling: aantal keer drukken"
+      },
+      "self_tune_step_days": {
+        "name": "Zelfafstelling: stap"
+      },
+      "valve_timer_minutes": {
+        "name": "Eigen timer van de klep"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Automatisch hervatten"
+      },
+      "self_tuning": {
+        "name": "Zelfafstelling"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Laatste watervolume"
+      },
+      "longest_valve_open": {
+        "name": "Langste kleptijd open"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Waar bevindt dit zich?"
+      },
+      "soil_wet_action": {
+        "name": "Als de grond nat wordt tijdens het water geven",
+        "state": {
+          "finish": "Water geven afmaken",
+          "stop": "Stoppen bij het natte niveau"
+        }
       }
     },
     "text": {

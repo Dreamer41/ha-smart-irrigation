@@ -44,6 +44,8 @@
           "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
           "routine_time": "Routine irrigation schedule time",
+          "summary_time": "Weekly summary time",
+          "fertilize_reminder_time": "Fertilizing reminder time",
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
@@ -70,6 +72,8 @@
           "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
           "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
           "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
@@ -157,6 +161,8 @@
           "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
           "routine_time": "Routine irrigation schedule time",
+          "summary_time": "Weekly summary time",
+          "fertilize_reminder_time": "Fertilizing reminder time",
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
@@ -175,6 +181,8 @@
           "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
           "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
           "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
@@ -275,6 +283,20 @@
           "emitter_flow": "What one emitter gives per hour: it's printed on the emitter or its packaging (e.g. 2 L/h, 0.5 gal/h).",
           "area": "The area that actually gets wet. For drippers at single plants, add up the wet patches around them, not the whole bed."
         }
+      },
+      "test_valve": {
+        "title": "Test the valve",
+        "description": "Last step, optional: ZoneFlow opens {valve} for about 2 seconds and checks that it answers and closes again. Water will flow for a moment. Turn it off to skip.",
+        "data": {
+          "test": "Test the valve now"
+        },
+        "data_description": {
+          "test": "Opens the valve for about 2 seconds, then closes it, and tells you whether it answered. Water flows for a moment."
+        }
+      },
+      "valve_result": {
+        "title": "Valve test",
+        "description": "{result}"
       }
     },
     "error": {
@@ -355,6 +377,8 @@
           "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
           "routine_time": "Routine irrigation schedule time",
+          "summary_time": "Weekly summary time",
+          "fertilize_reminder_time": "Fertilizing reminder time",
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
@@ -381,6 +405,8 @@
           "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
           "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
           "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
@@ -470,6 +496,8 @@
           "deep_soak_enabled": "Enable the deep soak cycle",
           "deep_soak_time": "Deep soak schedule time",
           "routine_time": "Routine irrigation schedule time",
+          "summary_time": "Weekly summary time",
+          "fertilize_reminder_time": "Fertilizing reminder time",
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
@@ -488,6 +516,8 @@
           "deep_soak_enabled": "A deep soak is a big, slow watering every couple of weeks (14 days to start with) that wets the soil deep down, so roots grow deep. Good for trees, shrubs and perennials; turn it off for shallow-rooted plants like salad and herbs. The routine watering runs either way.",
           "deep_soak_time": "When the deep soak starts on the days it's due, when its trigger below is the fixed time. Early morning is best: less water lost to sun and wind.",
           "routine_time": "When ZoneFlow checks each day whether the routine watering is due, and waters if it is. How often it's due follows the weather and your weekly target. Early morning is best.",
+          "summary_time": "The time of day the weekly summary is sent, on the day chosen in the zone's Weekly Summary setting.",
+          "fertilize_reminder_time": "The time of day the fertilizing reminder is sent, on the day a feed is due.",
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
@@ -955,6 +985,21 @@
       },
       "routine_interval_hot_days": {
         "name": "Routine Days Between Waterings (Hot)"
+      },
+      "routine_min_pulse_minutes": {
+        "name": "Routine Minimum Pulse Length"
+      },
+      "deep_soak_min_pulse_minutes": {
+        "name": "Deep Soak Minimum Pulse Length"
+      },
+      "self_tune_streak": {
+        "name": "Self-Tuning Presses Needed"
+      },
+      "self_tune_step_days": {
+        "name": "Self-Tuning Step"
+      },
+      "valve_timer_minutes": {
+        "name": "My Valve's Own Timer"
       }
     },
     "datetime": {
@@ -1053,6 +1098,9 @@
       },
       "auto_resume": {
         "name": "Auto Resume"
+      },
+      "self_tuning": {
+        "name": "Self-Tuning"
       }
     },
     "sensor": {
@@ -1159,6 +1207,9 @@
       },
       "last_water_volume": {
         "name": "Last Water Volume"
+      },
+      "longest_valve_open": {
+        "name": "Longest Valve Open Time"
       }
     },
     "select": {
@@ -1304,6 +1355,13 @@
       },
       "location": {
         "name": "Where is this?"
+      },
+      "soil_wet_action": {
+        "name": "When Soil Gets Wet During Watering",
+        "state": {
+          "finish": "Finish the watering",
+          "stop": "Stop at the wet level"
+        }
       }
     },
     "text": {
@@ -1591,7 +1649,7 @@
     },
     "water_now": {
       "name": "Water Now",
-      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. Counts in the water record (litres), but does not move the routine or deep soak schedule.",
+      "description": "Waters the zone by hand for a number of minutes. Not while the zone is paused, never longer than the zone's Routine Max Safety Runtime Cap, and inside the day's runtime cap. The minutes are split into pulses like the zone's own routine watering (its Routine Pulse Count, more pulses where the soil or slope needs them to avoid runoff, and the soak between them). Counts in the water record (litres), but does not move the routine or deep soak schedule.",
       "fields": {
         "minutes": {
           "name": "Minutes",

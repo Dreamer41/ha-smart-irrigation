@@ -36,9 +36,14 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         return messages.text(hass, f"check.{path}", **params)
 
     items: list[dict[str, Any]] = []
+    ignored = set(controller.store.state.check_ignored)
 
     def add(item_id: str, level: str, path: str, action: str | None = None, **params: Any) -> None:
-        items.append({"id": item_id, "level": level, "text": text(path, **params), "action": action})
+        items.append({
+            "id": item_id, "level": level, "text": text(path, **params), "action": action,
+            # A warning can be ignored (by an administrator, after a confirmation on the card).
+            "ignorable": level == "warn", "ignored": level == "warn" and item_id in ignored,
+        })
 
     # The valve.
     if controller.has_valve:
@@ -99,6 +104,23 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         cap = controller.number("max_runtime_minutes")
         if minutes > cap:
             add("cap", "warn", "cap.low", minutes=f"{minutes:.0f}", cap=f"{cap:.0f}")
+        # The valve's own auto-off timer: a backup in case Home Assistant stops while it is open.
+        try:
+            times = controller.valve_open_times()
+        except Exception:  # noqa: BLE001 - a check must never raise
+            times = None
+        if times:
+            params = dict(
+                minutes=f"{times['recommended_timer_minutes']:.0f}", longest=f"{times['longest_minutes']:.0f}",
+                timer=f"{times['my_timer_minutes']:.0f}",
+            )
+            mine = times["my_timer_minutes"]
+            if mine <= 0:
+                add("backup_timer", "info", "backup_timer", **params)
+            elif mine < times["longest_minutes"] + times["open_before_and_after_minutes"]:
+                add("backup_timer", "warn", "backup_timer_short", **params)
+            else:
+                add("backup_timer", "ok", "backup_timer_ok", **params)
         # Litres.
         if controller.has_water_volume:
             add("volume", "ok", "volume.ok")
@@ -156,10 +178,12 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
     else:
         add("notify", "ok", "notify.ok", entity=notify)
 
-    items.sort(key=lambda i: LEVEL_ORDER[i["level"]])
+    items.sort(key=lambda i: (i["ignored"], LEVEL_ORDER[i["level"]]))
     return items
 
 
 def summary(items: list[dict[str, Any]]) -> str:
-    """The worst level among the items."""
-    return min((i["level"] for i in items), key=lambda level: LEVEL_ORDER[level], default="ok")
+    """The worst level among the items that are not ignored."""
+    return min(
+        (i["level"] for i in items if not i.get("ignored")), key=lambda level: LEVEL_ORDER[level], default="ok"
+    )

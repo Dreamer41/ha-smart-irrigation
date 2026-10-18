@@ -535,6 +535,18 @@ def early_run_fraction(elapsed_seconds: float, interval_days: int) -> float:
     return min(max(elapsed_seconds / 86400.0 / interval_days, EARLY_RUN_MIN_FRACTION), 1.0)
 
 
+DUE_BUFFER_MAX_SECONDS = 20 * 3600
+
+
+def due_buffer_seconds(base_seconds: int, last_run_seconds: float = 0.0) -> int:
+    """How early before the full gap a watering counts as due. The last watering
+    is stamped when it finishes, so a run that takes hours (a long soak between
+    pulses) would otherwise push the next one a day late: the buffer is at least
+    the last run's length plus an hour, never under the base 6 h and never over
+    20 h (it must stay under a day or a watering could fire twice)."""
+    return int(min(max(base_seconds, last_run_seconds + 3600.0), DUE_BUFFER_MAX_SECONDS))
+
+
 def routine_due(elapsed_seconds: float, interval_days: int, buffer_seconds: int) -> bool:
     """Port of `elapsed_seconds >= target_interval_seconds`
     where target_interval_seconds = interval_days*86400 - buffer_seconds."""
@@ -627,7 +639,7 @@ def soil_moisture_status(moisture_pct: float | None, dry_pct: float, wet_pct: fl
     return "in_range"
 
 
-DEFICIT_MIN_PCT = 50.0
+DEFICIT_MIN_PCT = 30.0
 DEFICIT_MAX_PCT = 100.0
 
 
@@ -651,7 +663,7 @@ def deficit_factor(
     tier (3-day average of daily peaks), while a configured temperature
     sensor has no real reading in the last 3 days, and when a soil-moisture sensor reads at or below
     its Dry threshold (checked at each run); an end date that has passed
-    switches it off. Clamped to 50-100%: a deeper cut is well past "mild
+    switches it off. Clamped to 30-100%: a deeper cut is well past "mild
     stress" for any crop this is meant for."""
     if not enabled:
         return 1.0, "off"
@@ -764,3 +776,68 @@ def estimate_last_water_delivered_mm(
             avg_peak_temp, hot_threshold, cool_threshold, normal_weekly_mm, hot_weekly_mm, cool_weekly_mm
         )
     return jinja_round(target / 2, 1)
+
+
+# ---------------------------------------------------------------------------
+# Longest valve open time (1.7.4): what the valve's own backup timer must allow
+# ---------------------------------------------------------------------------
+BACKUP_TIMER_MARGIN_MINUTES = 10
+BACKUP_TIMER_MARGIN_SHARE = 0.2
+BACKUP_TIMER_STEP_MINUTES = 5
+
+
+def longest_pulse_minutes(
+    max_total_minutes: float,
+    flow_rate: float,
+    pulse_count: int,
+    min_pulse_minutes: float,
+    site: tuple[str, str, str] | None,
+) -> float:
+    """The longest single valve-open time a watering of up to max_total_minutes
+    can have, on the zone's own pulse settings.
+
+    A watering can be any size from the smallest up to the biggest (rain takes
+    some of the dose off), and the pulse count steps up with the dose (the soil
+    takes only so much water per pulse before it runs off), so the longest pulse
+    is not always at the biggest dose: every whole-minute size is tried, with
+    the same pulse split a real watering uses (soil_pulse_count, split_pulses).
+    The dose is rounded down half a minute so the pulse count is never
+    over-estimated: an estimate that is too long is safe, too short is not."""
+    longest = 0.0
+    for total in range(1, int(math.ceil(max_total_minutes - 1e-9)) + 1):
+        count = max(int(pulse_count), 1)
+        if site is not None:
+            count = soil_pulse_count(max(total - 0.5, 0.0) * flow_rate, *site, minimum=count)
+        longest = max(longest, split_pulses(total, count, min_pulse_minutes)[1])
+    return longest
+
+
+def largest_routine_minutes(
+    *,
+    flow_rate: float,
+    runtime_cap: float,
+    weekly_mm: tuple[float, float, float],
+    interval_days: tuple[int, int, int],
+    scale: float = 1.0,
+    demand_model_et: bool = False,
+) -> float:
+    """The biggest routine watering the zone can start, in minutes: the largest
+    of its normal, hot and cool tier doses (weekly target / 7 x the days between
+    waterings, with no rain credit) over the flow rate. A routine watering
+    bigger than the Routine Max Safety Runtime Cap is refused, so the cap bounds
+    it. A zone on the ET demand model has no fixed target to work from: the
+    cap is the bound."""
+    if demand_model_et or flow_rate <= 0:
+        return max(runtime_cap, 0.0)
+    biggest = max(
+        int(jinja_round(weekly / 7.0 * days * scale / flow_rate, 0))
+        for weekly, days in zip(weekly_mm, interval_days)
+    )
+    return float(min(max(biggest, 0), max(runtime_cap, 0.0)))
+
+
+def recommended_backup_timer_minutes(longest_minutes: float) -> int:
+    """The valve's own auto-off timer to set: the longest open time plus the
+    larger of 10 minutes or 20 %, rounded up to 5 minutes."""
+    margin = max(BACKUP_TIMER_MARGIN_MINUTES, longest_minutes * BACKUP_TIMER_MARGIN_SHARE)
+    return int(math.ceil((longest_minutes + margin) / BACKUP_TIMER_STEP_MINUTES - 1e-9) * BACKUP_TIMER_STEP_MINUTES)

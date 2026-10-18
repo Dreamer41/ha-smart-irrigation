@@ -12,6 +12,7 @@ a different name/entities; each zone is its own independent config entry.
 """
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import voluptuous as vol
@@ -74,6 +75,10 @@ from .const import (
     CONF_ROUTINE_SUN_MODE,
     CONF_ROUTINE_SUN_OFFSET_MINUTES,
     CONF_ROUTINE_TIME,
+    CONF_SUMMARY_TIME,
+    VALVE_TEST_HOLD_SECONDS,
+    VALVE_TEST_WAIT_SECONDS,
+    CONF_FERTILIZE_TIME,
     CONF_SLOPE,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_SOIL_TYPE,
@@ -97,6 +102,8 @@ from .const import (
     DEFAULT_GROWTH_RAMP_PROFILE,
     DEFAULT_IRRIGATION_METHOD,
     DEFAULT_ROUTINE_TIME,
+    DEFAULT_SUMMARY_TIME,
+    DEFAULT_FERTILIZE_TIME,
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
     DEFAULT_SUN_MODE,
@@ -121,6 +128,63 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_NOTIFY_ENTITY,
     CONF_WEATHER_ENTITY,
+)
+
+
+def _offers_valve_test(data: dict[str, Any]) -> bool:
+    """A zone with a valve ends its setup with the optional valve test."""
+    return bool(data.get(CONF_VALVE_ENTITY))
+
+
+async def _test_valve(hass, valve: str) -> str:
+    """Open the valve for a moment and say, in words, what happened: it answered and
+    closed again, it never reported open, or it did not report closed. Always ends
+    by telling the valve to close."""
+    state = hass.states.get(valve)
+    if state is None or state.state in ("unavailable", "unknown"):
+        return messages.text(hass, "valve_test.unavailable", valve=valve)
+    if state.state == "on":
+        # Someone is watering by hand: leave it exactly as it is.
+        return messages.text(hass, "valve_test.already_open", valve=valve)
+
+    async def _reaches(target: str) -> bool:
+        for _ in range(int(VALVE_TEST_WAIT_SECONDS / 0.25)):
+            current = hass.states.get(valve)
+            if current is not None and current.state == target:
+                return True
+            await asyncio.sleep(0.25)
+        return False
+
+    try:
+        await hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
+        opened = await _reaches("on")
+        if opened:
+            await asyncio.sleep(VALVE_TEST_HOLD_SECONDS)
+    except asyncio.CancelledError:
+        # The flow was cut short (Home Assistant stopping) with the valve open: close it anyway.
+        hass.async_create_task(hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True))
+        raise
+    except Exception:  # noqa: BLE001 - a device may raise anything on a lost answer; the valve is closed below
+        opened = False
+    closed = False
+    for _ in range(2):  # told twice before it is called stuck open
+        try:
+            await hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+        except Exception:  # noqa: BLE001
+            continue
+        if await _reaches("off"):
+            closed = True
+            break
+    if not closed:
+        return messages.text(hass, "valve_test.still_open", valve=valve)
+    if not opened:
+        return messages.text(hass, "valve_test.no_answer", valve=valve)
+    return messages.text(hass, "valve_test.ok", valve=valve)
+
+
+# The time-of-day fields: the form can hand back HH:MM, which is stored as HH:MM:SS.
+_TIME_KEYS = (
+    CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME, CONF_SUMMARY_TIME, CONF_FERTILIZE_TIME,
 )
 
 
@@ -225,6 +289,15 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             ): selector.TimeSelector(),
             vol.Required(
                 CONF_ROUTINE_TIME, default=defaults.get(CONF_ROUTINE_TIME, DEFAULT_ROUTINE_TIME)
+            ): selector.TimeSelector(),
+            # When the phone messages that are sent at a set time of day arrive
+            # (the weekly summary on its chosen day, the fertilizing reminder on
+            # its due date): asked here, not on the card.
+            vol.Required(
+                CONF_SUMMARY_TIME, default=defaults.get(CONF_SUMMARY_TIME, DEFAULT_SUMMARY_TIME)
+            ): selector.TimeSelector(),
+            vol.Required(
+                CONF_FERTILIZE_TIME, default=defaults.get(CONF_FERTILIZE_TIME, DEFAULT_FERTILIZE_TIME)
             ): selector.TimeSelector(),
             # Sun-relative scheduling is optional and additive: mode "fixed"
             # (the default) means the *_TIME fields above are what fires, so
@@ -576,6 +649,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._wu_candidates: list[dict[str, Any]] = []
         self._bundle: dict[str, Any] = {}
         self._area_id: str | None = None  # the area the new zone is placed in
+        self._pending_entry: tuple[str, dict[str, Any]] | None = None  # the zone, held for the valve test
+        self._valve_result: str = ""
 
     def _offer_wu(self) -> bool:
         """Weather Underground rain is offered once a zone exists, and only
@@ -861,8 +936,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 user_input = {k: v for k, v in user_input.items() if k not in ("emitters", "emitter_flow", "area")}
                 data = _schema(defaults)({**defaults, **user_input})
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(data[key].split(":")) == 2:
+                for key in _TIME_KEYS:
+                    if key in data and len(data[key].split(":")) == 2:
                         data[key] = f"{data[key]}:00"
                 data[CONF_ZONE_NAME] = self._zone_name
                 self._data = data
@@ -925,15 +1000,50 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._zone_type != ZONE_TYPE_OUTDOOR:
             data[CONF_ZONE_TYPE] = self._zone_type
             data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
+        if _offers_valve_test(data):
+            # The last step: offer a quick test of the valve before the zone is added.
+            self._pending_entry = (self._zone_name, data)
+            return self._show_valve_test(data[CONF_VALVE_ENTITY])
         return self.async_create_entry(title=self._zone_name, data=data)
+
+    def _show_valve_test(self, valve: str):
+        return self.async_show_form(
+            step_id="test_valve",
+            data_schema=vol.Schema({vol.Optional("test", default=True): selector.BooleanSelector()}),
+            description_placeholders={"valve": valve},
+        )
+
+    async def async_step_test_valve(self, user_input: dict[str, Any] | None = None):
+        """Optional: open the valve for a moment, to see that it answers and closes."""
+        if self._pending_entry is None:
+            return self.async_abort(reason="unknown")
+        title, data = self._pending_entry
+        valve = data[CONF_VALVE_ENTITY]
+        if user_input is None:
+            return self._show_valve_test(valve)
+        if not user_input.get("test"):
+            return self.async_create_entry(title=title, data=data)
+        self._valve_result = await _test_valve(self.hass, valve)
+        return self.async_show_form(
+            step_id="valve_result",
+            data_schema=vol.Schema({}),
+            description_placeholders={"result": self._valve_result},
+        )
+
+    async def async_step_valve_result(self, user_input: dict[str, Any] | None = None):
+        """The test's result is read, then the zone is added whatever it said."""
+        if self._pending_entry is None:
+            return self.async_abort(reason="unknown")
+        title, data = self._pending_entry
+        return self.async_create_entry(title=title, data=data)
 
     async def async_step_entities(self, user_input: dict[str, Any] | None = None):
         errors: dict[str, str] = {}
         if user_input is not None:
             errors = _duplicate_errors(self.hass, user_input)
             if not errors:
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(user_input[key].split(":")) == 2:
+                for key in _TIME_KEYS:
+                    if key in user_input and len(user_input[key].split(":")) == 2:
                         user_input[key] = f"{user_input[key]}:00"
                 user_input[CONF_ZONE_NAME] = self._zone_name
                 self._data = user_input
@@ -1021,8 +1131,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Greenhouse / indoor zone with a valve: the watering settings."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                if len(user_input[key].split(":")) == 2:
+            for key in _TIME_KEYS:
+                if key in user_input and len(user_input[key].split(":")) == 2:
                     user_input[key] = f"{user_input[key]}:00"
             self._data = {
                 **self._data,
@@ -1431,8 +1541,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         """Greenhouse / indoor zone with a valve: the watering settings
         (the same as an outdoor zone's, without rain gauge and forecast)."""
         if user_input is not None:
-            for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                if len(user_input[key].split(":")) == 2:
+            for key in _TIME_KEYS:
+                if key in user_input and len(user_input[key].split(":")) == 2:
                     user_input[key] = f"{user_input[key]}:00"
             await self._apply_site(user_input)
             return self.async_create_entry(title="", data={**self._config_entry.options, **user_input})
@@ -1627,8 +1737,8 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             errors = _duplicate_errors(self.hass, user_input, exclude_entry_id=self._config_entry.entry_id)
             if not errors:
-                for key in (CONF_DEEP_SOAK_TIME, CONF_ROUTINE_TIME):
-                    if len(user_input[key].split(":")) == 2:
+                for key in _TIME_KEYS:
+                    if key in user_input and len(user_input[key].split(":")) == 2:
                         user_input[key] = f"{user_input[key]}:00"
                 # A cleared optional sensor is left out of the form's answer;
                 # store it as None, or the zone would fall back to the one

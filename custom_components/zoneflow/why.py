@@ -62,6 +62,25 @@ def explain(controller: Any) -> list[dict[str, str]]:
         )
         add("needed", "needed", needed=units.depth_text(max(plan.needed_mm, 0.0), imperial), minutes=plan.calc_runtime_minutes)
 
+        # What would run now: the pulses, the soak and the longest the valve is open at once.
+        try:
+            if plan.calc_runtime_minutes <= 0:
+                add("preview", "preview_none")
+            else:
+                times = controller.valve_open_times() or {}
+                longest = f"{times.get('longest_minutes', 0):g}"
+                if plan.pulse_count <= 1:
+                    add("preview", "preview_one", minutes=plan.calc_runtime_minutes, longest=longest)
+                else:
+                    add(
+                        "preview", "preview",
+                        minutes=plan.calc_runtime_minutes, pulses=plan.pulse_count,
+                        each=f"{plan.pulse_runtime_minutes:.1f}".rstrip("0").rstrip("."),
+                        soak=f"{controller.number('routine_pulse_rest_minutes'):g}", longest=longest,
+                    )
+        except Exception:  # noqa: BLE001 - an explanation must never raise
+            pass
+
     skips = controller.store.state.forecast_routine_skip_count
     if controller.weather_entity and skips:
         add("forecast", "forecast", n=skips)
