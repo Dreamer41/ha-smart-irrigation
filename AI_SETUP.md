@@ -937,8 +937,7 @@ without a rain gauge, the pump-power warning without a pump-power sensor,
 the crop factor without a temperature sensor, deep-soak sliders with deep
 soak off, the growth-ramp sliders with the ramp off (custom-curve points
 only for the "custom" profile), the pump delays when nothing points to a
-shared pump (no pump ID, no pump-power sensor, both still 0), and the three
-rain-efficiency sliders (fine-tuning). Hidden sliders keep working and
+shared pump (no pump ID, no pump-power sensor, both still 0). Hidden sliders keep working and
 keep their value; setting one through the API works as normal — target
 the slider's own `entity_id`: Home Assistant skips configuration and
 hidden entities when a service call targets a whole device or area. If the
@@ -1824,7 +1823,7 @@ feel reckless -- and what each one needs):
 - Full dose whenever a soil-moisture sensor reads at or below its Dry
   threshold -- checked at each run, so the soil can still dry a little
   further between runs. Needs a moisture sensor (§7.7).
-- Never below 50%, and it ends on its own at the **Deficit Mode Ends** date.
+- Never below 30%, and it ends on its own at the **Deficit Mode Ends** date.
 
 **When to bring it up yourself:** only when the person's crop is one that
 can gain from it, and only once -- a short suggestion, not a pitch:
