@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
-## [Unreleased]
+## [1.7.4] — Valve backup timer, help on every setting, fewer fixed values
 
 ### Added
 
