@@ -5138,30 +5138,17 @@ const DOCS = "https://zoneflowirrigation.com/docs/";
 const METHOD_HELP_URL = "https://zoneflowirrigation.com/blog/temperature-tiers-et-or-soil-sensor";
 const GROUP_HELP = {
   garden: "areas-and-plants", climate: "greenhouse-and-indoor-zones", misting: "greenhouse-and-indoor-zones",
-  amounts: "how-it-works", water_use: "calibration", rain: "rain-gauges-and-weather-stations",
-  deep_soak: "schedules-and-cadences", soil: "soil-moisture-probe", growth: "growth-ramp-and-climate",
-  deficit: "how-it-works", history: "health-journal-and-history", safety: "how-it-works",
+  amounts: "settings-how-much-water", water_use: "calibration", rain: "settings-rain-forecast-frost",
+  deep_soak: "settings-deep-soak", soil: "settings-soil", growth: "settings-growth",
+  deficit: "settings-deficit-mode", history: "health-journal-and-history", safety: "settings-safety-and-pump",
   notifications: "status-notifications-repairs", more: "how-it-works",
 };
-// By "<domain>.<translation key>": the page that explains this setting. (Page level for
-// now; a "#section" is added where the page has one.)
+// By "<domain>.<translation key>": a setting whose own page is not its group's. Each
+// group's settings page has every setting under its own heading, in the card's order.
 const SETTING_HELP = {
-  "number.flow_rate_mm_per_min": "calibration", "number.zone_flow_l_min": "calibration",
-  "number.routine_interval_days": "schedules-and-cadences", "number.routine_interval_hot_days": "schedules-and-cadences",
-  "number.routine_pulse_count": "schedules-and-cadences", "number.routine_pulse_rest_minutes": "schedules-and-cadences",
-  "number.routine_min_pulse_minutes": "schedules-and-cadences", "number.deep_soak_pulse_count": "schedules-and-cadences",
-  "number.deep_soak_pulse_rest_minutes": "schedules-and-cadences", "number.deep_soak_min_pulse_minutes": "schedules-and-cadences",
-  "number.rain_mm_per_tip": "rain-gauges-and-weather-stations",
-  "number.frost_guard_temp": "frost-guard-and-pause",
-  "switch.self_tuning": "snooze-and-self-tuning", "number.self_tune_streak": "snooze-and-self-tuning",
-  "number.self_tune_step_days": "snooze-and-self-tuning", "number.routine_drydown_days": "snooze-and-self-tuning",
-  "number.pump_min_watts": "multiple-zones-shared-pumps", "number.pump_preamble_seconds": "multiple-zones-shared-pumps",
-  "number.pump_postamble_seconds": "multiple-zones-shared-pumps", "number.valve_overlap_seconds": "multiple-zones-shared-pumps",
+  "number.flow_rate_mm_per_min": "calibration", "number.rain_mm_per_tip": "calibration",
   "number.service_mode_auto_off_minutes": "service-runs-and-service-mode",
   "sensor.longest_valve_open": "valve-backup-timer", "number.valve_timer_minutes": "valve-backup-timer",
-  "select.soil_wet_action": "soil-moisture-probe", "number.soil_moisture_dry_pct": "soil-moisture-probe",
-  "number.soil_moisture_wet_pct": "soil-moisture-probe",
-  "select.notifications": "status-notifications-repairs", "select.weekly_summary": "status-notifications-repairs",
 };
 const helpUrl = (key, group) => {
   const page = SETTING_HELP[key] || GROUP_HELP[group];

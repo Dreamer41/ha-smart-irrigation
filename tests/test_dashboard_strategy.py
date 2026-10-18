@@ -692,14 +692,15 @@ def test_the_simple_view_shows_the_few_controls_and_hides_the_rest_behind_advanc
 
 
 # The pages of the ZoneFlow website's documentation (zoneflowirrigation.com/docs/<page>).
-# "valve-backup-timer" and "soil-moisture-probe" are the pages written for 1.7.4.
+# "valve-backup-timer" and the "settings-..." pages (one per Settings group) are written for 1.7.4.
 WEBSITE_DOC_PAGES = {
     "ai-setup", "areas-and-plants", "calibration", "csv-event-log", "dashboard", "frost-guard-and-pause",
     "getting-started", "greenhouse-and-indoor-zones", "growth-ramp-and-climate", "health-journal-and-history",
     "how-it-works", "languages", "migrating-from-yaml", "multiple-zones-shared-pumps",
     "rain-gauges-and-weather-stations", "rain-without-a-gauge", "schedules-and-cadences", "sensors",
     "service-runs-and-service-mode", "services", "snooze-and-self-tuning", "status-notifications-repairs",
-    "testing", "units", "valve-backup-timer", "soil-moisture-probe",
+    "testing", "units", "valve-backup-timer", "settings-how-much-water", "settings-rain-forecast-frost",
+    "settings-deep-soak", "settings-soil", "settings-growth", "settings-deficit-mode", "settings-safety-and-pump",
 }
 
 
