@@ -159,6 +159,10 @@ async def _test_valve(hass, valve: str) -> str:
             await asyncio.sleep(VALVE_TEST_HOLD_SECONDS)
     except HomeAssistantError:
         opened = False
+    except asyncio.CancelledError:
+        # The flow was cut short (Home Assistant stopping) with the valve open: close it anyway.
+        hass.async_create_task(hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True))
+        raise
     closed = False
     for _ in range(2):  # told twice before it is called stuck open
         try:

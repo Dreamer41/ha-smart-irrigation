@@ -51,6 +51,8 @@ from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
+    DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
+    ROUTINE_INTERVAL_BUFFER_SECONDS,
     FLOW_MEASURE_MIN_MINUTES,
     FLOW_METER_SETTLE_SECONDS,
     FLOW_MEASURE_MINUTES,
@@ -231,8 +233,6 @@ _PAUSED = "paused"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
-_ROUTINE_BUFFER_SECONDS = 6 * 3600  # the base "due" buffer (const.ROUTINE_INTERVAL_BUFFER_SECONDS)
-_DEEP_BUFFER_SECONDS = 6 * 3600
 # The settings the Longest Valve Open Time is worked out from (valve_open_times).
 VALVE_OPEN_KEYS = frozenset({
     "flow_rate_mm_per_min", "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm",
@@ -2292,13 +2292,13 @@ class ZoneFlowController:
         longer when the last routine run itself took hours."""
         state = self.store.state
         run = state.last_routine_run_seconds if state.last_routine_run_for_ts == state.last_routine_ts else 0.0
-        return calc.due_buffer_seconds(_ROUTINE_BUFFER_SECONDS, run)
+        return calc.due_buffer_seconds(ROUTINE_INTERVAL_BUFFER_SECONDS, run)
 
     def _deep_buffer(self) -> int:
         """The same for the deep soak, from the last deep soak run's length."""
         state = self.store.state
         run = state.last_deep_run_seconds if state.last_deep_run_for_ts == state.last_deep_soak_ts else 0.0
-        return calc.due_buffer_seconds(_DEEP_BUFFER_SECONDS, run)
+        return calc.due_buffer_seconds(DEEP_SOAK_INTERVAL_BUFFER_SECONDS, run)
 
     def _remember_run_length(self, started: float, *, deep: bool) -> None:
         """Called as a watering is stamped done: how long it took, for the due buffer."""

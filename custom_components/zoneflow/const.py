@@ -318,10 +318,9 @@ DAILY_SHIFT_TIME = "23:59:50"  # matches shift_avocado_daily_peak_temps / shift_
 DEEP_SOAK_INTERVAL_BUFFER_SECONDS = 6 * 3600  # "14-day check with a 6-hour buffer"
 # Pulse COUNT and REST MINUTES used to be fixed here (3 / 20 for both
 # cycles) -- they are now the "..._pulse_count" / "..._pulse_rest_minutes"
-# NUMBER_DEFS below, adjustable per zone based on soil drainage. Only the
-# per-pulse MINIMUM floor stays a fixed constant (matches the original
-# automation's floor exactly; there's no agronomic reason to make an
-# absolute minimum pulse length itself configurable).
+# NUMBER_DEFS below, adjustable per zone based on soil drainage. The per-pulse
+# MINIMUM is a setting too since 1.7.4 ("routine_min_pulse_minutes" /
+# "deep_soak_min_pulse_minutes"); these are only their starting values.
 DEEP_SOAK_MIN_PULSE_MINUTES = 5
 # What a routine watering does when the soil probe reads wet between pulses.
 SOIL_WET_FINISH = "finish"
@@ -353,13 +352,11 @@ STARTUP_GRACE_SECONDS = 120  # "delay: 00:02:00" before checking stale lock on s
 # needs water sooner than the model thinks); a rolling streak of "Snooze
 # Today" presses nudges it longer (the person keeps deciding it doesn't).
 # Either streak resets the other -- a mixed pattern never quietly
-# accumulates toward a threshold on either side. These are algorithm
-# parameters, not a per-crop physical quantity, so they're fixed constants
-# rather than a tunable number entity (same category as VALVE_STUCK_ON_MINUTES
-# above), while the number they actually adjust (routine_drydown_days)
-# stays exactly as adjustable as it always was -- a self-tune nudge is
-# indistinguishable from a person moving that slider themselves, and
-# either can override the other at any time.
+# accumulates toward a threshold on either side. Since 1.7.4 these are only the
+# starting values of the "self_tune_streak" and "self_tune_step_days" settings,
+# and the Self-Tuning switch turns it off. A self-tune nudge is
+# indistinguishable from a person moving the routine_drydown_days slider
+# themselves, and either can override the other at any time.
 SELF_TUNE_STREAK_THRESHOLD = 3
 SELF_TUNE_ADJUST_STEP_DAYS = 0.5  # matches routine_drydown_days' own NUMBER_DEFS step
 
