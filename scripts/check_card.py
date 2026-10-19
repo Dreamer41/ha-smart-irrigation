@@ -485,7 +485,7 @@ def check_loader(browser, check) -> None:
         card, index = handlers(startup, fetched)
         page.route("http://ha.test/", index)
         page.route("http://ha.test/zoneflow_static/**", card)
-        page.route(f"http://ha.test{LOADER_URL}", lambda route: route.fulfill(body=loader_js, content_type="text/javascript"))
+        page.route(f"http://ha.test{LOADER_URL}*", lambda route: route.fulfill(body=loader_js, content_type="text/javascript"))
         page.goto("http://ha.test/")
         page.wait_for_timeout(300)
         page.evaluate(f"() => import('{LOADER_URL}?v=9')")  # the dashboard resource
