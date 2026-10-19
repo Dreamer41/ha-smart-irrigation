@@ -146,10 +146,11 @@ def main() -> int:
         now, controls, service = (shown["sections"].get(k, []) for k in ("Now", "Controls", "Service & checks (not counted as watering)"))
         popups = page.evaluate(JS_POPUPS)
         print(json.dumps(popups, indent=1))
-        check(shown["buttons"] == ["Plant journal", "Settings", "Diagnostics"], "journal, settings and diagnostics as buttons")
+        check(shown["buttons"] == ["Plant journal", "Settings", "Check my setup", "Calibrate the flow rate", "Diagnostics"], "journal, settings and diagnostics as buttons")
         check(all(p["modal"] for p in popups.values()), "they open as popups")
         settings = popups["Settings"]["rows"]
-        check(popups["Settings"]["groups"][0] == "How much water", "settings popup grouped")
+        # (each group's name is followed by its "?" help link)
+        check(popups["Settings"]["groups"][0].rstrip("?") == "How much water", "settings popup grouped")
         check(shown["status"] == "Next watering Tue 05:30", "status sentence at the top")
         check(now[:2] == ["Valve", "soil_moisture"], "valve first, names without the zone prefix")
         check("deficit_status" not in now, "deficit status left out while deficit mode is off")
@@ -219,14 +220,14 @@ def main() -> int:
         rows = page.evaluate("() => [...window._card.shadowRoot.querySelectorAll('.row')].map(r => r.dataset.entity)")
         check("sensor.chili_soil" in rows and "sensor.chilis_soil_moisture" not in rows, "a renamed entity is followed")
 
-        # Quick reconfiguring never leaves extra rows behind.
+        # Quick reconfiguring never leaves extra rows behind (the Water now line is tracked too, but is not a ".row").
         page.evaluate(
             """(hass) => { const c = window._card; for (let i = 0; i < 3; i++) { c.setConfig({device_id: 'dev1', show_diagnostics: true}); c.hass = hass; } }""",
             hass,
         )
         page.wait_for_timeout(300)
         counts = page.evaluate(
-            "() => [window._card._rows.length, window._card.shadowRoot.querySelectorAll('.row').length]"
+            "() => [window._card._rows.filter(r => r.classList.contains('row')).length, window._card.shadowRoot.querySelectorAll('.row').length]"
         )
         check(counts[0] == counts[1], f"no stray rows after quick reconfiguring ({counts[0]} tracked, {counts[1]} shown)")
         browser.close()
@@ -290,7 +291,7 @@ def check_greenhouse(pw, check) -> None:
           "greenhouse: heating is not a warning")
     popups = page.evaluate(JS_POPUPS)
     groups = popups["Settings"]["groups"]
-    check(groups[:2] == ["Climate control", "Misting"], "greenhouse: climate and misting settings groups first")
+    check([g.rstrip("?") for g in groups[:2]] == ["Climate control", "Misting"], "greenhouse: climate and misting settings groups first")
     check("heater_failsafe" in popups["Settings"]["rows"] and "mist_temp" in popups["Settings"]["rows"],
           "greenhouse: its settings are in the popup")
     hass["states"]["sensor.tunnel_greenhouse_status"]["attributes"]["code"] = "failsafe"
@@ -406,7 +407,7 @@ def check_overview(pw, check, args) -> None:
     check(rows[1]["feed"] is None, "overview: nothing before a first feed is recorded")
     check(rows[0]["status"] == "Rain skip" and rows[2]["status"] == "Watered today", "overview: short status labels")
     check(rows[1]["status"] == "Paused" and rows[1]["next"] == "—" and rows[1]["water_disabled"], "overview: paused zone")
-    check(rows[0]["last"] == "18 L" and rows[2]["last"] == "12.0 mm", "overview: measured litres, else the estimate")
+    check(rows[0]["last"] == "8.0 mm · 18 L" and rows[2]["last"] == "12.0 mm", "overview: measured litres, else the estimate")
     check("Mon" in rows[2]["next"] or "Tue" in rows[2]["next"], "overview: next as weekday and time")
 
     page.evaluate("() => { window._ov.setConfig({sort: 'next', icons: {chi: 'mdi:chili-hot'}}); window._ov.hass = window._ovHass; }")
