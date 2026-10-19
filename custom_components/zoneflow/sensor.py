@@ -3,7 +3,7 @@ estimate, last water delivered estimate, days since last run. Ports of the
 matching template sensors in configuration.yaml."""
 from __future__ import annotations
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import UNIT_CONVERTERS, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
@@ -114,8 +114,13 @@ class _Base(SensorEntity):
     @property
     def suggested_unit_of_measurement(self):
         # So a newly created entity shows the zone's units rather than
-        # whatever Home Assistant's own system would pick.
-        return self.native_unit_of_measurement if self._unit_kind is not None else None
+        # whatever Home Assistant's own system would pick. Only for a sensor whose device
+        # class has a unit converter: Home Assistant converts nothing else (the native unit
+        # already follows the zone), and some versions (2025.1) refuse to add a sensor that
+        # suggests a unit without one.
+        if self._unit_kind is None or self.device_class not in UNIT_CONVERTERS:
+            return None
+        return self.native_unit_of_measurement
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()

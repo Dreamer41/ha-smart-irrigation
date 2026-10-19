@@ -437,6 +437,13 @@ class GreenhouseManager:
         async with self._lock:
             if self._stopping:
                 return
+            # Let the state events already on their way (a person switching a device by hand) be
+            # seen first: newer Home Assistant hands them to listeners a moment after the change,
+            # and an evaluation that was waiting for the lock must not put the device back before
+            # the hold is noted.
+            await asyncio.sleep(0)
+            if self._stopping:
+                return
             try:
                 await self._evaluate()
             except Exception:  # noqa: BLE001 - one bad evaluation must never stop the next

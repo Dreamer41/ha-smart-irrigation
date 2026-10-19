@@ -20,7 +20,7 @@ from custom_components.zoneflow.const import (
 )
 
 from .test_scenarios_cycles import _history, _set, _zone
-from .test_smoke_setup import VALVE, _seed_source_entities, make_entry
+from .test_smoke_setup import VALVE, _seed_source_entities, force_entry, make_entry
 from .test_summary_repairs_pause_until import _seed as _seed_summary
 from .test_summary_repairs_pause_until import _zone as _summary_zone
 from .test_summary_repairs_pause_until import sent  # noqa: F401 - the notify fixture
@@ -123,7 +123,7 @@ async def test_the_deep_soak_minimum_pulse_is_a_setting_hidden_without_deep_soak
 ):
     controller, _, _ = await _zone(hass, monkeypatch, tmp_path)
     assert ("number", "deep_soak_min_pulse_minutes") not in visibility.hidden_for(controller)
-    controller.entry.options = {**controller.entry.options, "deep_soak_enabled": False}
+    force_entry(controller.entry, options={**controller.entry.options, "deep_soak_enabled": False})
     assert ("number", "deep_soak_min_pulse_minutes") in visibility.hidden_for(controller)
 
 

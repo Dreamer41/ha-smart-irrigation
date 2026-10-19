@@ -346,7 +346,27 @@ async def test_mister_left_on_while_not_misting_is_switched_off(hass, devices):
     entry = _entry(hass)
     c = await _ready(hass, entry)
     hass.states.async_set(INSIDE_TEMP, "22")  # nothing to mist for
-    hass.states.async_set(MISTER, "on")  # e.g. an ended manual hold
+    hass.states.async_set(MISTER, "on")  # switched on by something else...
+    await hass.async_block_till_done()
+    c.store.state.gh_hold_until["misters"] = 0.0  # ...and its manual hold has ended
+    await _go(c)
+    assert hass.states.get(MISTER).state == "off"
+
+
+@pytest.mark.asyncio
+async def test_a_mister_found_on_with_no_state_event_is_switched_off(hass, devices):
+    """No event at all (a restart, a lost report): the evaluation itself finds it on."""
+    entry = _entry(hass)
+    c = await _ready(hass, entry)
+    hass.states.async_set(INSIDE_TEMP, "22")  # nothing to mist for
+    await hass.async_block_till_done()
+    hass.states.async_set(MISTER, "on")
+    for unsub in c.greenhouse._unsubs:  # the listeners are gone: nothing sees the change
+        unsub()
+    c.greenhouse._unsubs.clear()
+    c.greenhouse._commanded.clear()
+    await hass.async_block_till_done()
+    c.store.state.gh_hold_until["misters"] = 0.0
     await _go(c)
     assert hass.states.get(MISTER).state == "off"
 

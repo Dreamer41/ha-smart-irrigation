@@ -13,7 +13,7 @@ from custom_components.zoneflow import setup_check
 from custom_components.zoneflow.const import CONF_VALVE_ENTITY, DOMAIN
 
 from .test_scenarios_cycles import _history, _set, _zone
-from .test_smoke_setup import VALVE, _seed_source_entities, make_entry
+from .test_smoke_setup import VALVE, _seed_source_entities, force_entry, make_entry
 
 SITE = ("unknown", "normal", "flat")  # 10 mm per pulse before the soil asks for more
 
@@ -146,7 +146,7 @@ async def test_deep_soak_off_leaves_it_out_and_water_now_by_hand_is_given_apart(
     # A typed Water now can be as long as the cap allows: given apart, not in the main number.
     assert times["with_water_now_minutes"] > times["longest_minutes"]
     assert times["recommended_timer_with_water_now_minutes"] > times["recommended_timer_minutes"]
-    controller.entry.options = {**controller.entry.options, "deep_soak_enabled": False}
+    force_entry(controller.entry, options={**controller.entry.options, "deep_soak_enabled": False})
     assert controller.valve_open_times()["deep_soak_minutes"] == 0.0 or not controller.deep_soak_enabled
 
 
