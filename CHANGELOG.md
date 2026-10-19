@@ -12,6 +12,7 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ### Fixed
 
+- **Rain after a "watered by rain" mark was wiped out by the old rain's credit.** When heavy rain counted as a watering, the amount used was taken off all the rain of the next days, even rain that fell after the mark and could never have been part of it. A zone marked by 23 mm and 19 mm days kept showing "Rain credit since the last watering: 0.0 mm" for five days while it rained again, and Why? and the next watering gave the full dose. The amount is now taken off only the rain of the mark's own day, which is the only rain it can have come from.
 - **Last Water Volume and Water Used sensors were not created on Home Assistant 2025.1** (that version refuses a sensor that suggests a display unit without a unit converter). They are created again; newer versions were not affected.
 - **A device switched by hand while a greenhouse evaluation was already waiting** could be switched back before ZoneFlow noticed the manual hold, on newer Home Assistant versions that hand state changes to listeners a moment later. The evaluation now lets pending state changes through first.
 
