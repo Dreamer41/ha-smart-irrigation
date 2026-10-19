@@ -41,11 +41,12 @@ async def test_card_is_served_and_loaded_once(hass, monkeypatch, tmp_path):
     assert len(added) == 1 and re.fullmatch(r"/zoneflow_static/zoneflow-card.js\?v=[0-9a-z.]+-[0-9]+", added[0])
     served = http.registered
     if served is not None:  # Home Assistant 2024.7+
-        assert served[0].url_path == "/zoneflow_static/zoneflow-card.js"
-        assert Path(served[0].path).is_file()
+        assert [c.url_path for c in served] == ["/zoneflow_static/zoneflow-card.js", "/zoneflow_static/zoneflow-loader.js"]
+        assert all(Path(c.path).is_file() for c in served)
     else:
-        url, path, _cache = http.register_static_path.call_args.args
-        assert url == "/zoneflow_static/zoneflow-card.js" and Path(path).is_file()
+        urls = {call.args[0]: call.args[1] for call in http.register_static_path.call_args_list}
+        assert set(urls) == {"/zoneflow_static/zoneflow-card.js", "/zoneflow_static/zoneflow-loader.js"}
+        assert all(Path(path).is_file() for path in urls.values())
 
 
 @pytest.mark.asyncio
@@ -95,7 +96,7 @@ async def test_zones_starting_together_register_once(hass, monkeypatch, tmp_path
     hass.http = Http()
     hass.config.components.add("frontend")
     await asyncio.gather(*(frontend.async_register(hass) for _ in range(6)))
-    assert registered == ["/zoneflow_static/zoneflow-card.js"] and len(added) == 1
+    assert registered == ["/zoneflow_static/zoneflow-card.js", "/zoneflow_static/zoneflow-loader.js"] and len(added) == 1
 
 
 class Resources:
@@ -164,7 +165,14 @@ async def _served(hass, monkeypatch, tmp_path, lovelace):
     return added[0].split("?")[1]
 
 
-LOADER = "/local/zoneflow/zoneflow-loader.js"
+LOADER = "/zoneflow_static/zoneflow-loader.js"
+OLD_LOADER = "/local/zoneflow/zoneflow-loader.js"  # 1.7.5 and older
+LOADER_FILE = ROOT / "frontend" / "zoneflow-loader.js"
+
+
+def test_the_loader_ships_inside_the_integration():
+    js = LOADER_FILE.read_text(encoding="utf-8")
+    assert '"/zoneflow_static/zoneflow-card.js"' in js and "ll-strategy-dashboard-zoneflow" in js
 
 
 @pytest.mark.asyncio
@@ -173,9 +181,7 @@ async def test_the_loader_is_added_to_the_dashboard_resources(hass, monkeypatch,
     resources = Resources([{"id": "1", "type": "module", "url": "/hacsfiles/other-card.js"}])
     lovelace = {"resources": resources} if as_dict else LovelaceData(resources)
     query = await _served(hass, monkeypatch, tmp_path, lovelace)
-    loader = tmp_path / "www" / "zoneflow" / "zoneflow-loader.js"
-    assert loader.read_text(encoding="utf-8") == frontend.LOADER_JS
-    assert "/zoneflow_static/zoneflow-card.js" in frontend.LOADER_JS
+    assert not (tmp_path / "www").exists()  # nothing is written into the person's folders
     assert [i["url"] for i in resources.items] == ["/hacsfiles/other-card.js", f"{LOADER}?{query}"]
     assert resources.items[1]["type"] == "module"
 
@@ -184,19 +190,31 @@ async def test_the_loader_is_added_to_the_dashboard_resources(hass, monkeypatch,
 async def test_an_update_moves_the_resource_to_the_new_version(hass, monkeypatch, tmp_path):
     resources = Resources(
         [
-            {"id": "1", "type": "module", "url": f"{LOADER}?v=1.5.0-1"},
+            {"id": "1", "type": "module", "url": f"{OLD_LOADER}?v=1.5.0-1"},
             {"id": "2", "type": "module", "url": "/hacsfiles/other-card.js"},
-            {"id": "3", "type": "module", "url": f"{LOADER}?v=1.5.0-2"},  # a stray copy
+            {"id": "3", "type": "module", "url": f"{LOADER}?v=1.7.5-2"},  # a stray copy
         ]
     )
     (tmp_path / "www" / "zoneflow").mkdir(parents=True)
     (tmp_path / "www" / "zoneflow" / "zoneflow-loader.js").write_text("old", encoding="utf-8")
+    (tmp_path / "www" / "mine.png").write_bytes(b"x")
     query = await _served(hass, monkeypatch, tmp_path, LovelaceData(resources))
     assert [(i["id"], i["url"]) for i in resources.items] == [
         ("1", f"{LOADER}?{query}"),
         ("2", "/hacsfiles/other-card.js"),
     ]
-    assert (tmp_path / "www" / "zoneflow" / "zoneflow-loader.js").read_text(encoding="utf-8") == frontend.LOADER_JS
+    # the file an older version wrote is gone, the person's own files stay
+    assert not (tmp_path / "www" / "zoneflow").exists() and (tmp_path / "www" / "mine.png").is_file()
+
+
+@pytest.mark.asyncio
+async def test_an_old_loader_folder_with_other_files_keeps_them(hass, monkeypatch, tmp_path):
+    folder = tmp_path / "www" / "zoneflow"
+    folder.mkdir(parents=True)
+    (folder / "zoneflow-loader.js").write_text("old", encoding="utf-8")
+    (folder / "mine.js").write_text("theirs", encoding="utf-8")
+    await _served(hass, monkeypatch, tmp_path, LovelaceData(Resources()))
+    assert not (folder / "zoneflow-loader.js").exists() and (folder / "mine.js").is_file()
 
 
 @pytest.mark.asyncio
@@ -210,10 +228,10 @@ async def test_nothing_changes_when_the_resource_is_current(hass, monkeypatch, t
 
 
 @pytest.mark.asyncio
-async def test_yaml_dashboards_get_the_file_but_no_resource(hass, monkeypatch, tmp_path):
-    # For adding it by hand (README); the resource list itself is theirs.
+async def test_yaml_dashboards_get_no_resource(hass, monkeypatch, tmp_path):
+    # The resource list is theirs; docs/GUIDE.md shows the URL to add by hand.
     await _served(hass, monkeypatch, tmp_path, LovelaceData(YamlResources()))
-    assert (tmp_path / "www" / "zoneflow" / "zoneflow-loader.js").is_file()
+    assert not (tmp_path / "www").exists()
 
 
 @pytest.mark.asyncio
@@ -230,10 +248,10 @@ async def test_a_loader_problem_leaves_the_card_working(hass, monkeypatch, tmp_p
 async def test_removing_the_last_zone_takes_the_loader_away(hass, monkeypatch, tmp_path):
     resources = Resources([{"id": "1", "type": "module", "url": "/hacsfiles/other-card.js"}])
     await _served(hass, monkeypatch, tmp_path, LovelaceData(resources))
+    (tmp_path / "www").mkdir()
     (tmp_path / "www" / "mine.png").write_bytes(b"x")  # the person's own file stays
     await frontend.async_remove_loader(hass)
     assert [i["url"] for i in resources.items] == ["/hacsfiles/other-card.js"]
-    assert not (tmp_path / "www" / "zoneflow").exists()
     assert (tmp_path / "www" / "mine.png").is_file()
     await frontend.async_remove_loader(hass)  # twice: nothing to do, no error
 

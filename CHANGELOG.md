@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Changed
+
+- **Nothing is written into your `/config/www` folder any more.** The small loader that lets the cards show on a dashboard opened while Home Assistant is still starting now ships inside the integration and is served from `/zoneflow_static/zoneflow-loader.js`, next to the card. At the first start after updating, ZoneFlow moves its dashboard resource to that address and deletes the old `www/zoneflow/zoneflow-loader.js` it wrote (the folder only when nothing else is in it). YAML-mode dashboards: change the resource URL to `/zoneflow_static/zoneflow-loader.js` (docs/GUIDE.md).
+
 ### Fixed
 
 - **Last Water Volume and Water Used sensors were not created on Home Assistant 2025.1** (that version refuses a sensor that suggests a display unit without a unit converter). They are created again; newer versions were not affected.

@@ -130,8 +130,10 @@ def test_the_loader_registers_the_strategy_at_once_and_waits_for_the_card(tmp_pa
         pytest.skip("node is not installed")
     harness = tmp_path / "stub.js"
     harness.write_text(STUB_HARNESS, encoding="utf-8")
+    loader = (Path(frontend.__file__).parent / "frontend" / frontend.LOADER_FILE).read_text(encoding="utf-8")
+    strategy_js = loader.split("const base =")[0]  # the part before it loads the card
     done = subprocess.run(
-        ["node", str(harness), frontend.STRATEGY_JS], capture_output=True, text=True, timeout=60, check=True
+        ["node", str(harness), strategy_js], capture_output=True, text=True, timeout=60, check=True
     )
     out = json.loads(done.stdout.strip().splitlines()[-1])
     assert out["views"] == ["from the real strategy"]

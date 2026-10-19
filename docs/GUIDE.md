@@ -422,17 +422,20 @@ through its device and leaves out whatever the zone doesn't use, so after
 a ZoneFlow update new features appear on it by themselves. Units follow
 the zone. Ordinary Home Assistant cards keep working alongside it.
 
-ZoneFlow also adds a small loader, `/local/zoneflow/zoneflow-loader.js`, to
-Settings → Dashboards → Resources (the file lives in `/config/www/zoneflow/`).
-It makes the cards show up on a dashboard opened while Home Assistant is
-still starting; removing ZoneFlow removes both. **Dashboards in YAML mode**
+ZoneFlow also adds a small loader, `/zoneflow_static/zoneflow-loader.js`, to
+Settings → Dashboards → Resources (the file ships inside the integration;
+nothing is written to `/config/www`). It makes the cards show up on a
+dashboard opened while Home Assistant is still starting; deleting the last
+zone removes the resource. (Versions up to 1.7.5 kept the file in
+`/config/www/zoneflow/`; ZoneFlow deletes that file and its old resource by
+itself at the next start.) **Dashboards in YAML mode**
 (`lovelace: mode: yaml`): ZoneFlow can't add the resource for you — add it
 under `lovelace:` in `configuration.yaml` if you like:
 
 ```yaml
 lovelace:
   resources:
-    - url: /local/zoneflow/zoneflow-loader.js
+    - url: /zoneflow_static/zoneflow-loader.js
       type: module
 ```
 

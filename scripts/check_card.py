@@ -453,11 +453,13 @@ def check_overview(pw, check, args) -> None:
 
 
 def check_loader(browser, check) -> None:
-    """The loader in /config/www/zoneflow (frontend.py): on a normal page the
+    """The loader frontend/zoneflow-loader.js (frontend.py): on a normal page the
     card loads once; on a page opened while Home Assistant was starting (no
     card on it, the card not served yet) the loader keeps trying."""
     sys.path.insert(0, str(ROOT))
-    from custom_components.zoneflow.frontend import CARD_URL, LOADER_JS, LOADER_URL
+    from custom_components.zoneflow.frontend import CARD_URL, LOADER_URL
+
+    loader_js = (ROOT / "custom_components" / "zoneflow" / "frontend" / "zoneflow-loader.js").read_text(encoding="utf-8")
 
     for startup in (False, True):
         page = browser.new_page()
@@ -483,7 +485,7 @@ def check_loader(browser, check) -> None:
         card, index = handlers(startup, fetched)
         page.route("http://ha.test/", index)
         page.route("http://ha.test/zoneflow_static/**", card)
-        page.route("http://ha.test/local/**", lambda route: route.fulfill(body=LOADER_JS, content_type="text/javascript"))
+        page.route(f"http://ha.test{LOADER_URL}", lambda route: route.fulfill(body=loader_js, content_type="text/javascript"))
         page.goto("http://ha.test/")
         page.wait_for_timeout(300)
         page.evaluate(f"() => import('{LOADER_URL}?v=9')")  # the dashboard resource
