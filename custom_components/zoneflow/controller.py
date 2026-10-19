@@ -4417,6 +4417,28 @@ class ZoneFlowController:
             return 0.0
         return state.rain_credit_spent_mm
 
+    def _rain_offset_in_window(self, elapsed_seconds: float) -> float:
+        """The part of rain_offset_mm() that can still come back into the
+        rain credit: the rain that was counted as a watering fell up to the
+        mark (the day of the mark at the latest), and the credit window only
+        reaches back as far as the days since the mark. Rain that fell after
+        the mark is new and is never taken off, however big the offset is."""
+        offset = self.rain_offset_mm()
+        if offset <= 0:
+            return 0.0
+        mark_day = dt_util.as_local(dt_util.utc_from_timestamp(self.store.state.rain_credit_spent_ts)).date()
+        days_since_mark = (dt_util.now().date() - mark_day).days
+        if days_since_mark <= 0:
+            mm = self.today_rain_mm()
+        else:
+            history = self.store.state.rain_day_history_mm
+            index = days_since_mark - 1  # the history starts at yesterday
+            if index >= min(int(elapsed_seconds / 86400), self._routine_interval_days()) or index >= len(history):
+                return 0.0  # the day of the mark is no longer in the window
+            mm = history[index]
+        credited = mm * calc.rain_efficiency(mm, self.number("rain_eff_low"), self.number("rain_eff_mid"), self.number("rain_eff_high"))
+        return min(offset, credited)
+
     def _routine_plan(
         self, *, interval_fraction: float = 1.0, elapsed_seconds: float | None = None
     ) -> calc.RoutinePlan:
@@ -4456,7 +4478,7 @@ class ZoneFlowController:
             weekly_target_override_mm=(et_weekly * scale) if et_weekly is not None else None,
             site=self.site,
             interval_fraction=interval_fraction,
-            rain_offset_mm=self.rain_offset_mm(),
+            rain_offset_mm=self._rain_offset_in_window(elapsed_seconds),
             **self._routine_interval_settings(),
         )
 
@@ -4482,13 +4504,14 @@ class ZoneFlowController:
         interval_days = self._routine_interval_days()
         if offset > 0 and now_ts - (state.rain_credit_spent_ts or 0.0) < interval_days * 86400:
             return  # already counted this interval; what is left over waits for the next one
+        applied = self._rain_offset_in_window(now_ts - (state.last_routine_ts or 0.0))
         state.last_routine_ts = now_ts
         # Only one dose counts as used: what the rain gave beyond it stays credited to the next watering.
-        state.rain_credit_spent_mm = round(offset + plan.interval_target_mm, 2)
+        state.rain_credit_spent_mm = round(applied + plan.interval_target_mm, 2)
         state.rain_credit_spent_ts = now_ts
         await self._decide(
             "routine", "watered_by_rain",
-            rain_mm=round(plan.eff_rain_mm + offset, 1), target_mm=round(plan.interval_target_mm, 1),
+            rain_mm=round(plan.eff_rain_mm + applied, 1), target_mm=round(plan.interval_target_mm, 1),
         )
         await self._log_event(
             event_type="Watered By Rain",
@@ -4496,7 +4519,7 @@ class ZoneFlowController:
             target_mm=round(plan.interval_target_mm, 1),
             deducted_mm=round(plan.eff_rain_mm, 1),
             runtime=0,
-            extra_log=f"Rain {plan.eff_rain_mm + offset:.1f} mm covered the {plan.interval_target_mm:.1f} mm a routine watering gives.",
+            extra_log=f"Rain {plan.eff_rain_mm + applied:.1f} mm covered the {plan.interval_target_mm:.1f} mm a routine watering gives.",
         )
 
     async def mark_deep_soak_done(self) -> None:
@@ -4539,11 +4562,12 @@ class ZoneFlowController:
             rain = self.rain_since(max(last, now_ts - 3 * 86400.0))
             if rain < target + DEEP_SOAK_RAIN_72H_EXTRA_MM:
                 return False
+        applied = self._rain_offset_in_window(now_ts - (state.last_routine_ts or 0.0))
         state.last_deep_soak_ts = now_ts
         state.last_routine_ts = now_ts
         # The routine's rain credit used one dose of this rain: not credited a second time.
         routine = self._routine_plan()
-        state.rain_credit_spent_mm = round(self.rain_offset_mm() + routine.interval_target_mm, 2)
+        state.rain_credit_spent_mm = round(applied + routine.interval_target_mm, 2)
         state.rain_credit_spent_ts = now_ts
         await self._decide("deep_soak", "watered_by_rain", rain_mm=round(rain, 1), target_mm=round(target, 1))
         await self._log_event(

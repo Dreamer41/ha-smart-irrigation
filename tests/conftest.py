@@ -55,6 +55,20 @@ async def block_till_done(hass):
 
 
 @pytest.fixture(autouse=True)
+def _no_dns_thread(monkeypatch):
+    """The test session aiohttp builds for a mocked request starts aiodns'
+    background thread (pycares) as soon as it is created, and Home Assistant's
+    end-of-test check fails any test that leaves a thread behind (the weekly
+    latest-Home-Assistant run on Linux; on Windows aiodns does not work with
+    the event loop at all). Nothing here resolves a real name, so the plain
+    threaded resolver is enough."""
+    import aiohttp.connector
+    import aiohttp.resolver
+
+    monkeypatch.setattr(aiohttp.connector, "DefaultResolver", aiohttp.resolver.ThreadedResolver)
+
+
+@pytest.fixture(autouse=True)
 def _skip_the_valve_test_in_setup(request, monkeypatch):
     """The optional valve test that ends zone setup (1.7.4) would add a step to every
     setup flow in the suite: leave it out, except in a test that asks for it

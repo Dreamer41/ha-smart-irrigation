@@ -4,6 +4,7 @@ than that, the zone counts as watered -- its interval starts again, the
 Status says so, nothing runs and no litres are counted."""
 from __future__ import annotations
 
+from datetime import timedelta
 from unittest.mock import AsyncMock
 
 import homeassistant.util.dt as dt_util
@@ -295,3 +296,33 @@ async def test_a_failing_estimate_never_breaks_the_status(hass, fake_valve_servi
     monkeypatch.setattr(type(c), "_routine_plan", lambda self: (_ for _ in ()).throw(ValueError("odd data")))
     assert c.next_amount_mm("routine") is None
     assert c.status()["code"] in ("next", "first_run", "next_deep_soak", "done", "idle")
+
+
+@pytest.mark.asyncio
+async def test_rain_after_the_mark_is_not_taken_off_by_the_old_offset(hass, fake_valve_services):
+    """A zone marked watered by heavy rain four days ago: the rain that fell
+    since is new, and the credit for the old rain must not wipe it."""
+    c = await _zone(hass, rain_today=0.0)
+    now_ts = dt_util.utcnow().timestamp()
+    mark = now_ts - 4.4 * DAY
+    c.store.state.last_routine_ts = mark
+    c.store.state.rain_credit_spent_ts = mark
+    c.store.state.rain_credit_spent_mm = 14.29
+    # yesterday 12 mm, the day before 12 mm, then two dry days (the mark day and before)
+    c.store.state.rain_day_history_mm = [12.0, 12.0, 0.0, 0.0] + [30.0] * 6
+    plan = c._routine_plan()
+    assert plan.eff_rain_mm > 10.0  # both new days count in full
+
+
+@pytest.mark.asyncio
+async def test_rain_of_the_mark_day_is_still_taken_off(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=0.0)
+    local_today = dt_util.now().replace(hour=12, minute=0, second=0, microsecond=0)
+    marked = (local_today - timedelta(days=1)).timestamp()  # noon yesterday, when that 60 mm had fallen
+    c.store.state.rain_day_history_mm = [60.0] + [0.0] * 9
+    c.store.state.last_routine_ts = marked
+    c.store.state.rain_credit_spent_ts = marked
+    c.store.state.rain_credit_spent_mm = 14.29  # one dose of it is used already
+    gross = 60.0 * c.number("rain_eff_high")
+    plan = c._routine_plan(elapsed_seconds=36 * 3600.0)  # a day and a half after the mark
+    assert plan.eff_rain_mm == pytest.approx(gross - 14.29, abs=0.05)

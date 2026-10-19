@@ -9,12 +9,17 @@ the first way, and showed "Configuration error" until it was reloaded.
 
 1. The card's URL is added to every page Home Assistant serves (as early as
    possible: when the integration loads, before any zone sets up).
-2. A small loader in /config/www/zoneflow/, listed under Settings ->
-   Dashboards -> Resources. Home Assistant loads that list from the first
-   second, and the loader keeps trying until ZoneFlow is up. On a normal
-   page it asks for the same URL as 1, so the card still loads once.
-   Dashboards in YAML mode can't have a resource added for them; docs/GUIDE.md
-   says how to add it by hand. Removing the last zone removes both.
+2. A small loader (frontend/zoneflow-loader.js, served from /zoneflow_static/
+   next to the card), listed under Settings -> Dashboards -> Resources. Home
+   Assistant loads that list from the first second, and the loader keeps
+   trying until ZoneFlow is up. On a normal page it asks for the same URL as
+   1, so the card still loads once. Dashboards in YAML mode can't have a
+   resource added for them; docs/GUIDE.md says how to add it by hand.
+   Removing the last zone removes the resource.
+
+Nothing is written outside the integration's own folder. Versions up to 1.7.4
+put the loader in /config/www/zoneflow/ (served as /local/zoneflow/); on
+start that file and its resource are removed.
 """
 from __future__ import annotations
 
@@ -30,61 +35,13 @@ _LOGGER = logging.getLogger(__name__)
 URL_BASE = "/zoneflow_static"
 CARD_FILE = "zoneflow-card.js"
 CARD_URL = f"{URL_BASE}/{CARD_FILE}"
-LOADER_DIR = "zoneflow"  # under /config/www, served as /local/zoneflow
 LOADER_FILE = "zoneflow-loader.js"
-LOADER_URL = f"/local/{LOADER_DIR}/{LOADER_FILE}"
+LOADER_URL = f"{URL_BASE}/{LOADER_FILE}"
+# Up to 1.7.4 the loader was a file written into the person's /config/www.
+OLD_LOADER_DIR = "zoneflow"
+OLD_LOADER_URL = f"/local/{OLD_LOADER_DIR}/{LOADER_FILE}"
 _DONE_KEY = "zoneflow_frontend_registered"
-
-# The dashboard strategy (`strategy: {type: custom:zoneflow}`). Home Assistant
-# waits only 5 seconds for a strategy's element to exist, and the card file
-# can be later than that on the first page after a restart or an update, which
-# showed "Timeout waiting for strategy element". So the loader (listed in the
-# Resources, loaded from the first second) defines the element at once; it
-# hands the work to the real strategy in the card file when that is there.
-STRATEGY_JS = """\
-const defineStrategy = () => {
-  const tag = "ll-strategy-dashboard-zoneflow";
-  if (window.customElements.get(tag)) return;
-  try {
-    window.customElements.define(tag, class extends HTMLElement {
-      static async generate(config, hass) {
-        for (let waited = 0; !window.__zoneflowDashboardStrategy; waited += 250) {
-          if (waited >= 60000) throw new Error("The ZoneFlow card did not load.");
-          await new Promise((resolve) => setTimeout(resolve, 250));
-        }
-        return window.__zoneflowDashboardStrategy.generate(config, hass);
-      }
-    });
-  } catch (err) {
-    // Known to the registry already: nothing to do.
-  }
-};
-defineStrategy();
-for (const delay of [250, 1000, 3000, 10000]) setTimeout(defineStrategy, delay);
-"""
-
-LOADER_JS = f"""\
-// ZoneFlow Irrigation: loads the ZoneFlow dashboard cards.
-// Written by the ZoneFlow integration and listed under Settings ->
-// Dashboards -> Resources; removing ZoneFlow removes both.
-//
-// Home Assistant can show a dashboard while it is still starting, before
-// ZoneFlow has loaded. This keeps trying until the cards are there.
-{STRATEGY_JS}const base = "{CARD_URL}";
-const query = new URL(import.meta.url).search;
-let tries = 0;
-const load = () => {{
-  if (window.customElements.get("zoneflow-overview-card")) return;
-  // The same URL as the one on the page: the browser loads it only once.
-  const url = query && !tries ? base + query : `${{base}}?t=${{Date.now()}}`;
-  import(url).catch(() => {{
-    tries += 1;
-    if (tries < 120) setTimeout(load, Math.min(1000 * tries, 5000));
-  }});
-}};
-load();
-"""
-
+_STATIC_KEY = "zoneflow_frontend_static_paths"  # a path can be registered only once
 
 async def async_register(hass: HomeAssistant) -> None:
     """Once per Home Assistant run (not per zone). The card is a nicety: a
@@ -113,14 +70,23 @@ async def async_register(hass: HomeAssistant) -> None:
 
 
 async def _register(hass: HomeAssistant) -> str:
-    card = Path(__file__).parent / "frontend" / CARD_FILE
-    try:
-        from homeassistant.components.http import StaticPathConfig  # 2024.7+
-    except ImportError:  # older Home Assistant: register_static_path is a
-        # blocking call, so it must not run directly on the event loop.
-        await hass.async_add_executor_job(hass.http.register_static_path, CARD_URL, str(card), True)
-    else:
-        await hass.http.async_register_static_paths([StaticPathConfig(CARD_URL, str(card), True)])
+    folder = Path(__file__).parent / "frontend"
+    card = folder / CARD_FILE
+    loader = folder / LOADER_FILE
+    if not hass.data.get(_STATIC_KEY):  # a retry (next zone) must not register them again
+        # The loader is tiny and its address carries no version in a YAML
+        # dashboard, so it is served without long-lived cache headers.
+        try:
+            from homeassistant.components.http import StaticPathConfig  # 2024.7+
+        except ImportError:  # older Home Assistant: register_static_path is a
+            # blocking call, so it must not run directly on the event loop.
+            await hass.async_add_executor_job(hass.http.register_static_path, CARD_URL, str(card), True)
+            await hass.async_add_executor_job(hass.http.register_static_path, LOADER_URL, str(loader), False)
+        else:
+            await hass.http.async_register_static_paths(
+                [StaticPathConfig(CARD_URL, str(card), True), StaticPathConfig(LOADER_URL, str(loader), False)]
+            )
+        hass.data[_STATIC_KEY] = True
     from homeassistant.components.frontend import add_extra_js_url
 
     # Browsers keep the card for a month: the version (and the file's own
@@ -133,43 +99,61 @@ async def _register(hass: HomeAssistant) -> str:
     return query
 
 
-def _loader_path(hass: HomeAssistant) -> Path:
-    return Path(hass.config.path("www", LOADER_DIR, LOADER_FILE))
-
-
-def _write_loader(path: Path) -> None:
-    if path.is_file() and path.read_text(encoding="utf-8") == LOADER_JS:
+def _remove_old_loader(hass: HomeAssistant) -> None:
+    """The file older versions wrote into /config/www (only ours, and the
+    folder only when nothing else is in it)."""
+    path = Path(hass.config.path("www", OLD_LOADER_DIR, LOADER_FILE))
+    if not path.is_file():
         return
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(LOADER_JS, encoding="utf-8")
+    try:
+        path.unlink(missing_ok=True)
+        path.parent.rmdir()  # only when nothing else is in it
+    except OSError:
+        _LOGGER.debug("ZoneFlow: could not remove the old loader file %s", path, exc_info=True)
+
+
+def _resources_any(hass: HomeAssistant):
+    data = hass.data.get("lovelace")
+    if data is None:
+        return None
+    return data.get("resources") if isinstance(data, dict) else getattr(data, "resources", None)
 
 
 def _storage_resources(hass: HomeAssistant):
     """The dashboard resources Home Assistant keeps itself, or None (no
     dashboards, or resources kept in YAML: nothing we may change)."""
-    data = hass.data.get("lovelace")
-    if data is None:
-        return None
-    resources = data.get("resources") if isinstance(data, dict) else getattr(data, "resources", None)
+    resources = _resources_any(hass)
     if resources is None or not hasattr(resources, "async_create_item"):
         return None
     return resources
 
 
-async def _ours(resources) -> list[dict]:
+async def _ours(resources, *urls: str) -> list[dict]:
     if not getattr(resources, "loaded", True):
         await resources.async_load()
         resources.loaded = True
-    return [item for item in resources.async_items() if str(item.get("url", "")).split("?")[0] == LOADER_URL]
+    return [item for item in resources.async_items() if str(item.get("url", "")).split("?")[0] in urls]
 
 
 async def _async_install_loader(hass: HomeAssistant, query: str) -> None:
-    await hass.async_add_executor_job(_write_loader, _loader_path(hass))
     resources = _storage_resources(hass)
     if resources is None:
+        # Resources kept in YAML are theirs. One that still points at the old
+        # file keeps the file (and is told to move), or the cards would lose
+        # their loader without a word.
+        yaml_items = _resources_any(hass)
+        if yaml_items is not None and await _ours(yaml_items, OLD_LOADER_URL):
+            _LOGGER.warning(
+                "ZoneFlow: your YAML dashboard resources still use %s; change it to %s "
+                "(the old file is kept until you do)", OLD_LOADER_URL, LOADER_URL,
+            )
+            return
+        await hass.async_add_executor_job(_remove_old_loader, hass)
         return
+    await hass.async_add_executor_job(_remove_old_loader, hass)
     url = LOADER_URL + query
-    ours = await _ours(resources)
+    ours = await _ours(resources, LOADER_URL, OLD_LOADER_URL)
+    # The resource of an older version is moved to the new address.
     keep = next((item for item in ours if item["url"] == url), None)
     if keep is None and ours:
         keep = ours[0]
@@ -182,20 +166,13 @@ async def _async_install_loader(hass: HomeAssistant, query: str) -> None:
 
 
 async def async_remove_loader(hass: HomeAssistant) -> None:
-    """The last zone was deleted: take the loader and its resource away."""
+    """The last zone was deleted: take the loader's resource away."""
     try:
         resources = _storage_resources(hass)
         if resources is not None:
-            for item in await _ours(resources):
+            for item in await _ours(resources, LOADER_URL, OLD_LOADER_URL):
                 await resources.async_delete_item(item["id"])
-
-        def _delete(path: Path) -> None:
-            path.unlink(missing_ok=True)
-            try:
-                path.parent.rmdir()  # only when nothing else is in it
-            except OSError:
-                pass
-
-        await hass.async_add_executor_job(_delete, _loader_path(hass))
+        await hass.async_add_executor_job(_remove_old_loader, hass)
     except Exception:  # noqa: BLE001
         _LOGGER.warning("ZoneFlow: could not remove the card loader", exc_info=True)
+    hass.data.pop(_DONE_KEY, None)  # a zone added again in this run installs it again
