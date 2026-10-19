@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [Unreleased]
+
+### Fixed
+
+- **Last Water Volume and Water Used sensors were not created on Home Assistant 2025.1** (that version refuses a sensor that suggests a display unit without a unit converter). They are created again; newer versions were not affected.
+- **A device switched by hand while a greenhouse evaluation was already waiting** could be switched back before ZoneFlow noticed the manual hold, on newer Home Assistant versions that hand state changes to listeners a moment later. The evaluation now lets pending state changes through first.
+
 ## [1.7.4] — Valve backup timer, help on every setting, fewer fixed values
 
 ### Added

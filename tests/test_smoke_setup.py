@@ -144,3 +144,12 @@ async def test_unload_cleans_up_services(hass):
     await hass.async_block_till_done()
 
     assert not hass.services.has_service(DOMAIN, "run_deep_soak")
+
+
+def force_entry(entry, **fields):
+    """Change a config entry's data or options in place, without the reload an update would
+    trigger. Newer Home Assistant forbids `entry.options = ...`; this works on old and new."""
+    from types import MappingProxyType
+
+    for name, value in fields.items():
+        object.__setattr__(entry, name, MappingProxyType(dict(value)))

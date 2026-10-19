@@ -14,7 +14,7 @@ from custom_components.zoneflow.const import (
 )
 
 from .test_manual_rain import _setup
-from .test_smoke_setup import RAIN_COUNTER
+from .test_smoke_setup import RAIN_COUNTER, force_entry
 
 
 async def _set(hass, value, unit="mm"):
@@ -109,7 +109,7 @@ async def test_changing_the_source_starts_the_rain_history_again(hass, tmp_path)
     _entry, controller = await _zone(hass, tmp_path, RAIN_SOURCE_TOTAL, 100.0)
     await _set(hass, 105.0)
     assert controller.rain_windows()["24h"] == pytest.approx(5.0)
-    controller.entry.data = {**controller.entry.data, CONF_RAIN_SOURCE: "tips"}
+    force_entry(controller.entry, data={**controller.entry.data, CONF_RAIN_SOURCE: "tips"})
     controller._reset_rain_if_source_changed()
     assert controller.store.state.rain_samples == []
     assert controller.store.state.rain_counter_total_tips is None
