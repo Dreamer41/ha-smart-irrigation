@@ -426,7 +426,7 @@ ZoneFlow also adds a small loader, `/zoneflow_static/zoneflow-loader.js`, to
 Settings → Dashboards → Resources (the file ships inside the integration;
 nothing is written to `/config/www`). It makes the cards show up on a
 dashboard opened while Home Assistant is still starting; deleting the last
-zone removes the resource. (Versions up to 1.7.5 kept the file in
+zone removes the resource. (Versions up to 1.7.4 kept the file in
 `/config/www/zoneflow/`; ZoneFlow deletes that file and its old resource by
 itself at the next start.) **Dashboards in YAML mode**
 (`lovelace: mode: yaml`): ZoneFlow can't add the resource for you — add it

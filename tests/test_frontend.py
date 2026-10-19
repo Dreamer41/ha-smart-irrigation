@@ -276,3 +276,81 @@ async def test_only_the_last_zone_removed_takes_the_loader_away(hass, monkeypatc
     assert removed == []
     await hass.config_entries.async_remove(second.entry_id)
     assert removed == [True]
+
+
+@pytest.mark.asyncio
+async def test_a_yaml_resource_on_the_old_address_keeps_the_old_file(hass, monkeypatch, tmp_path, caplog):
+    class OldYaml(YamlResources):
+        def async_items(self):
+            return [{"url": OLD_LOADER, "type": "module"}]
+
+    folder = tmp_path / "www" / "zoneflow"
+    folder.mkdir(parents=True)
+    (folder / "zoneflow-loader.js").write_text("old", encoding="utf-8")
+    await _served(hass, monkeypatch, tmp_path, LovelaceData(OldYaml()))
+    assert (folder / "zoneflow-loader.js").is_file()
+    assert "/zoneflow_static/zoneflow-loader.js" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_an_old_file_that_cannot_be_deleted_does_not_stop_the_resource_moving(hass, monkeypatch, tmp_path):
+    resources = Resources([{"id": "1", "type": "module", "url": f"{OLD_LOADER}?v=1.7.4-1"}])
+    folder = tmp_path / "www" / "zoneflow"
+    folder.mkdir(parents=True)
+    (folder / "zoneflow-loader.js").write_text("old", encoding="utf-8")
+
+    def refuse(self, missing_ok=False):
+        raise PermissionError("read-only")
+
+    monkeypatch.setattr(Path, "unlink", refuse)
+    query = await _served(hass, monkeypatch, tmp_path, LovelaceData(resources))
+    assert [i["url"] for i in resources.items] == [f"{LOADER}?{query}"]
+
+
+@pytest.mark.asyncio
+async def test_removing_the_last_zone_also_takes_an_old_resource_and_file(hass, monkeypatch, tmp_path):
+    resources = Resources([{"id": "1", "type": "module", "url": f"{OLD_LOADER}?v=1"}])
+    hass.config.config_dir = str(tmp_path)
+    hass.data["lovelace"] = LovelaceData(resources)
+    folder = tmp_path / "www" / "zoneflow"
+    folder.mkdir(parents=True)
+    (folder / "zoneflow-loader.js").write_text("old", encoding="utf-8")
+    await frontend.async_remove_loader(hass)
+    assert resources.items == [] and not folder.exists()
+
+
+@pytest.mark.asyncio
+async def test_a_retry_after_a_late_failure_does_not_register_the_paths_twice(hass, monkeypatch, tmp_path):
+    registered = []
+    added = []
+    monkeypatch.setattr(
+        "homeassistant.components.frontend.add_extra_js_url", lambda _hass, url, es5=False: added.append(url)
+    )
+
+    class Http:
+        def register_static_path(self, url, *args):
+            if url in registered:
+                raise RuntimeError("method GET is already registered")
+            registered.append(url)
+
+        async def async_register_static_paths(self, configs):
+            for config in configs:
+                self.register_static_path(config.url_path)
+
+    hass.http = Http()
+    hass.config.components.add("frontend")
+    hass.config.config_dir = str(tmp_path)
+    real = frontend.async_get_integration
+    calls = {"n": 0}
+
+    async def flaky(_hass, domain):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("integration not found yet")
+        return await real(_hass, domain)
+
+    monkeypatch.setattr(frontend, "async_get_integration", flaky)
+    await frontend.async_register(hass)  # fails after the paths are registered
+    assert not hass.data.get("zoneflow_frontend_registered") and not added
+    await frontend.async_register(hass)  # the next zone
+    assert len(registered) == 2 and len(added) == 1
