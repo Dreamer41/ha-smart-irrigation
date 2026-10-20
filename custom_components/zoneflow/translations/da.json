@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "Rutine: ugemål ved kølighed"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "Regnens nytte - let (3-5mm)"
       },

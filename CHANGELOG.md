@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Added
+
+- **Rain Ignored Below (per day) is a setting.** A day's rain up to 3 mm has always counted as nothing toward the watering (a little drizzle only wets the surface). That 3 mm was fixed; it is now a slider in the Rain group, 0 to 5 mm in steps of 0.5, starting at 3 mm so nothing changes until you move it. Lower it for shallow roots or sandy soil so light rain counts too (it then ramps up to the Light share at 5 mm); the three Rain Efficiency sliders still decide how much of the larger rain counts. Copied with Copy settings and presets.
+
 ## [1.7.5] — The loader moves inside the integration, rain credit fix
 
 ### Changed

@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "Bežná zálievka: týždenný cieľ (chladno)"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "Účinnosť dažďa – slabý (3-5mm)"
       },

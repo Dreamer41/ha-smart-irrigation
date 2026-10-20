@@ -990,6 +990,11 @@ between pulses.
 - **Loam / medium drainage:** the "average" case the factory defaults were
   tuned around — no adjustment needed unless something else about the site
   is unusual.
+- **Shallow roots or sandy soil:** light rain reaches the roots there, so
+  lower `rain_ignore_below_mm` (Rain Ignored Below, per day; default 3 mm,
+  range 0-5 mm) toward 1-2 mm and raise `rain_eff_low`. A day's rain up to
+  that amount counts as nothing toward the watering; the three Rain
+  Efficiency sliders then decide how much of the larger rain counts.
 - **Clay soil / slow drainage:** a heavy downpour runs off rather than
   soaking in, so heavy rain should get *less* credit than the factory
   default assumes — lower `rain_eff_high` (heavy rain efficiency, default

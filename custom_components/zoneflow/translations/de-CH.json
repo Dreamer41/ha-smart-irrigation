@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "Routine: Wochenziel kühl"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "Regenwirksamkeit – leicht (3-5mm)"
       },

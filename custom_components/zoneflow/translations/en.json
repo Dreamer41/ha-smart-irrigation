@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "Routine Cool Weekly Target"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "Rain Efficiency - Light (3-5mm)"
       },

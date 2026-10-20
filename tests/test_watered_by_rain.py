@@ -326,3 +326,15 @@ async def test_rain_of_the_mark_day_is_still_taken_off(hass, fake_valve_services
     gross = 60.0 * c.number("rain_eff_high")
     plan = c._routine_plan(elapsed_seconds=36 * 3600.0)  # a day and a half after the mark
     assert plan.eff_rain_mm == pytest.approx(gross - 14.29, abs=0.05)
+
+
+@pytest.mark.asyncio
+async def test_the_ignore_level_is_a_setting_that_starts_at_three_mm(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=0.0)
+    assert c.number("rain_ignore_below_mm") == 3.0
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 4.5 * DAY
+    c.store.state.rain_day_history_mm = [2.0, 2.0, 2.0, 2.0] + [0.0] * 6
+    assert c._routine_plan().eff_rain_mm == 0.0  # drizzle counts as nothing, as it always did
+    await c.numbers["rain_ignore_below_mm"].async_set_native_value(0.0)
+    assert c._routine_plan().eff_rain_mm > 0.0
+

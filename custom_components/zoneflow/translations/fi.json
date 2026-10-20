@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "Viikkotavoite: viileä sää"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "Sateen hyöty - vähäinen (3-5mm)"
       },

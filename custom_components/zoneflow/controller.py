@@ -4436,7 +4436,10 @@ class ZoneFlowController:
             if index >= min(int(elapsed_seconds / 86400), self._routine_interval_days()) or index >= len(history):
                 return 0.0  # the day of the mark is no longer in the window
             mm = history[index]
-        credited = mm * calc.rain_efficiency(mm, self.number("rain_eff_low"), self.number("rain_eff_mid"), self.number("rain_eff_high"))
+        credited = mm * calc.rain_efficiency(
+            mm, self.number("rain_eff_low"), self.number("rain_eff_mid"), self.number("rain_eff_high"),
+            self.number("rain_ignore_below_mm"),
+        )
         return min(offset, credited)
 
     def _routine_plan(
@@ -4479,6 +4482,7 @@ class ZoneFlowController:
             site=self.site,
             interval_fraction=interval_fraction,
             rain_offset_mm=self._rain_offset_in_window(elapsed_seconds),
+            rain_ignore_below_mm=self.number("rain_ignore_below_mm"),
             **self._routine_interval_settings(),
         )
 

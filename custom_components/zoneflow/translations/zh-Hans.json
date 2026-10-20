@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "常规浇水凉爽每周目标"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "降雨有效率 - 小雨（3-5mm）"
       },

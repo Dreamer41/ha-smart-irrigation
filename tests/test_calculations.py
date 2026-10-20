@@ -432,3 +432,30 @@ def test_the_plan_scales_the_interval_dose_by_the_fraction():
     quarter = calc.plan_routine_irrigation(**kw, interval_fraction=0.25)
     assert quarter.interval_target_mm == pytest.approx(full.interval_target_mm / 4)
     assert quarter.calc_runtime_minutes < full.calc_runtime_minutes
+
+
+def test_the_smallest_rain_that_counts_is_a_setting_and_three_mm_by_default():
+    low, mid, high = 0.2, 0.6, 1.0
+    # nothing passed: the old fixed 3 mm
+    assert calc.rain_efficiency(3, low, mid, high) == calc.rain_efficiency(3, low, mid, high, 3.0) == 0.0
+    # lowered to 0: even a drizzle counts, ramping up to the Light share at 5 mm
+    assert calc.rain_efficiency(0, low, mid, high, 0.0) == 0.0
+    assert math.isclose(calc.rain_efficiency(2.5, low, mid, high, 0.0), 0.5 * low)
+    assert math.isclose(calc.rain_efficiency(5, low, mid, high, 0.0), low)
+    # raised to 4: up to 4 mm counts as nothing, the ramp starts there
+    assert calc.rain_efficiency(4, low, mid, high, 4.0) == 0.0
+    assert math.isclose(calc.rain_efficiency(4.5, low, mid, high, 4.0), 0.5 * low)
+    # above 5 mm the bands do not move
+    assert calc.rain_efficiency(7, low, mid, high, 0.0) == calc.rain_efficiency(7, low, mid, high, 4.0)
+    # a setting of 5 (the top): five mm and under counts as nothing
+    assert calc.rain_efficiency(5, low, mid, high, 5.0) == 0.0
+
+
+def test_the_rain_credit_follows_the_ignore_level():
+    history = [2.0, 2.0, 2.0, 2.0] + [0.0] * 6  # four drizzly days
+    args = (0.0, history, 4, 0.2, 0.6, 1.0)
+    assert calc.rain_deduction_mm(*args, max_lookback_days=4) == 0.0  # as before: nothing
+    counted = calc.rain_deduction_mm(*args, max_lookback_days=4, ignore_below_mm=0.0)
+    assert math.isclose(counted, 4 * 2.0 * calc.rain_efficiency(2.0, 0.2, 0.6, 1.0, 0.0))
+    assert counted > 0
+

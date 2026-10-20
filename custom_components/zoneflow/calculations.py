@@ -83,19 +83,24 @@ def jinja_round(value: float, ndigits: int = 0) -> float:
     return result if ndigits > 0 else int(result) if result == int(result) else result
 
 
-def rain_efficiency(mm: float, low_eff: float, mid_eff: float, high_eff: float) -> float:
+RAIN_IGNORE_BELOW_MM = 3.0  # a day's rain up to this counts as nothing (the "Rain Ignored Below" setting)
+
+
+def rain_efficiency(
+    mm: float, low_eff: float, mid_eff: float, high_eff: float, ignore_below: float = RAIN_IGNORE_BELOW_MM
+) -> float:
     """Port of the `eff()` macro used by both rain-deduction blocks.
 
-    mm <= 3          -> 0.0
-    3  < mm <= 5      -> ramps 0 -> low_eff
-    5  < mm <= 10      -> ramps low_eff -> mid_eff
-    10 < mm <= 20      -> ramps mid_eff -> high_eff
-    mm > 20            -> high_eff
+    mm <= ignore_below (3) -> 0.0
+    ignore_below < mm <= 5 -> ramps 0 -> low_eff
+    5  < mm <= 10          -> ramps low_eff -> mid_eff
+    10 < mm <= 20          -> ramps mid_eff -> high_eff
+    mm > 20                -> high_eff
     """
-    if mm <= 3:
+    if mm <= ignore_below:
         return 0.0
     if mm <= 5:
-        return (mm - 3) / 2 * low_eff
+        return (mm - ignore_below) / (5 - ignore_below) * low_eff
     if mm <= 10:
         return low_eff + (mm - 5) / 5 * (mid_eff - low_eff)
     if mm <= 20:
@@ -111,6 +116,7 @@ def rain_deduction_mm(
     mid_eff: float,
     high_eff: float,
     max_lookback_days: int = 10,
+    ignore_below_mm: float = RAIN_IGNORE_BELOW_MM,
 ) -> float:
     """Port of the `eff_rain` variable in avocado_routine_irrigation.
 
@@ -128,10 +134,10 @@ def rain_deduction_mm(
     pass their own interval.
     """
     days_to_sum = min(days_elapsed, max_lookback_days)
-    total = today_mm * rain_efficiency(today_mm, low_eff, mid_eff, high_eff)
+    total = today_mm * rain_efficiency(today_mm, low_eff, mid_eff, high_eff, ignore_below_mm)
     for i in range(days_to_sum):
         mm = day_history_mm[i] if i < len(day_history_mm) else 0.0
-        total += mm * rain_efficiency(mm, low_eff, mid_eff, high_eff)
+        total += mm * rain_efficiency(mm, low_eff, mid_eff, high_eff, ignore_below_mm)
     return jinja_round(total, 2)
 
 
@@ -469,6 +475,7 @@ def plan_routine_irrigation(
     site: tuple[str, str, str] | None = None,
     interval_fraction: float = 1.0,
     rain_offset_mm: float = 0.0,
+    rain_ignore_below_mm: float = RAIN_IGNORE_BELOW_MM,
     normal_interval_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
     hot_interval_days: int = ROUTINE_HOT_INTERVAL_DAYS,
 ) -> RoutinePlan:
@@ -501,6 +508,7 @@ def plan_routine_irrigation(
         rain_eff_mid,
         rain_eff_high,
         max_lookback_days=interval_days,
+        ignore_below_mm=rain_ignore_below_mm,
     )
     # Rain that already counted as a watering (a "watered by the rain" mark) is not credited twice.
     eff_rain = max(eff_rain - rain_offset_mm, 0.0)

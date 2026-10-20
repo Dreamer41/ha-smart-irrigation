@@ -388,6 +388,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # last 3 (see ZoneFlowController.watering_temp).
     "fallback_temp": ("Fallback / Manual Temperature", 0.0, 45.0, 0.5, "°C"),
     "target_weekly_cool_mm": ("Routine Cool Weekly Target", 5.0, 40.0, 0.5, "mm"),
+    # 1.7.6: the day's rain below which nothing counts toward the watering (it was a fixed 3 mm).
+    "rain_ignore_below_mm": ("Rain Ignored Below (per day)", 0.0, 5.0, 0.5, "mm"),
     "rain_eff_low": ("Rain Efficiency - Light (3-5mm)", 0.0, 1.0, 0.05, None),
     "rain_eff_mid": ("Rain Efficiency - Moderate (5-10mm)", 0.0, 1.0, 0.05, None),
     "rain_eff_high": ("Rain Efficiency - Heavy (10-20mm+)", 0.0, 1.0, 0.05, None),
@@ -565,6 +567,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # cool/hot band -- ZoneFlowController._seed_fallback_temp.
     "fallback_temp": 30.75,
     "target_weekly_cool_mm": 25.0,
+    "rain_ignore_below_mm": 3.0,
     "rain_eff_low": 0.2,
     "rain_eff_mid": 0.6,
     "rain_eff_high": 1.0,

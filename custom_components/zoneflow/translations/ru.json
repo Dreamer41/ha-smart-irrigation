@@ -794,6 +794,9 @@
       "target_weekly_cool_mm": {
         "name": "Регулярный полив: недельная норма в прохладу"
       },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
+      },
       "rain_eff_low": {
         "name": "Эффективность дождя — слабый (3-5mm)"
       },
