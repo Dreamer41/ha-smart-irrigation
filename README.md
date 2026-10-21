@@ -10,7 +10,7 @@ If your garden is happier with ZoneFlow, give the project a ⭐ so other gardene
 
 ZoneFlow works out when and how much each part of your garden needs water, from the plant, the soil, the weather and the rain, then runs the valve and tells you in plain words what it did and why. It also controls the climate of a greenhouse or indoor grow space. Only a valve switch is required; every sensor is optional and each one adds a capability.
 
-<img src="docs/screenshots/hero.jpg" width="100%" alt="ZoneFlow dashboard on tablet and phone, in the garden">
+<img src="https://raw.githubusercontent.com/Dreamer41/ha-smart-irrigation/main/docs/screenshots/hero.jpg" width="100%" alt="ZoneFlow dashboard on tablet and phone, in the garden">
 
 ## What it can do
 
@@ -28,12 +28,12 @@ ZoneFlow works out when and how much each part of your garden needs water, from 
 
 <table>
 <tr>
-<td width="50%"><img src="docs/screenshots/overview.png" alt="The overview card: every zone grouped by area, with status, next watering and last watering in mm and litres"><br><sub><b>Your whole garden at a glance</b>, grouped by area.</sub></td>
-<td width="50%"><img src="docs/screenshots/card.png" alt="A zone card with the next watering, the plants in the zone and the Why? explanation of the numbers behind it"><br><sub><b>Says why.</b> The numbers behind the next watering, in plain words.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/Dreamer41/ha-smart-irrigation/main/docs/screenshots/overview.png" alt="The overview card: every zone grouped by area, with status, next watering and last watering in mm and litres"><br><sub><b>Your whole garden at a glance</b>, grouped by area.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/Dreamer41/ha-smart-irrigation/main/docs/screenshots/card.png" alt="A zone card with the next watering, the plants in the zone and the Why? explanation of the numbers behind it"><br><sub><b>Says why.</b> The numbers behind the next watering, in plain words.</sub></td>
 </tr>
 <tr>
-<td width="50%"><img src="docs/screenshots/greenhouse.png" alt="A greenhouse with its crops: ventilating because it is too warm, and each crop's own watering"><br><sub><b>Greenhouses</b> with fans, vents and their own crops.</sub></td>
-<td width="50%"><img src="docs/screenshots/check-my-setup.png" alt="Check my setup: a plain checklist with the problems first"><br><sub><b>Check my setup:</b> a plain checklist, problems first.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/Dreamer41/ha-smart-irrigation/main/docs/screenshots/greenhouse.png" alt="A greenhouse with its crops: ventilating because it is too warm, and each crop's own watering"><br><sub><b>Greenhouses</b> with fans, vents and their own crops.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/Dreamer41/ha-smart-irrigation/main/docs/screenshots/check-my-setup.png" alt="Check my setup: a plain checklist with the problems first"><br><sub><b>Check my setup:</b> a plain checklist, problems first.</sub></td>
 </tr>
 </table>
 
@@ -53,20 +53,20 @@ If HACS does not list it yet (its list refreshes now and then), add it by hand f
 
 Requires Home Assistant 2024.5 or newer. To install without HACS, copy `custom_components/zoneflow/` into `/config/custom_components/` and restart.
 
-**First steps for a new zone:** [set the flow rate](docs/CALIBRATION.md) (the one number that must be right), press **Service Run 1 min** to check the valve, then let it run.
+**First steps for a new zone:** [set the flow rate](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/CALIBRATION.md) (the one number that must be right), press **Service Run 1 min** to check the valve, then let it run.
 
 ## Documentation
 
 - **[zoneflowirrigation.com](https://zoneflowirrigation.com/)**: the full documentation.
 - **[Live demo](https://zoneflowirrigation.com/demo)**: try ZoneFlow in your browser, with a guided tour.
-- [Full guide](docs/GUIDE.md): what ZoneFlow does, sensors, dashboard, services, FAQ and the details behind this page.
-- [Calibration](docs/CALIBRATION.md): flow rate, Zone Flow (litres) and the rain gauge.
-- [Rain gauges and weather stations](docs/RAIN-GAUGES.md)
-- [Areas, plants and easy setup](docs/AREAS-AND-PLANTS.md)
-- [Greenhouse and indoor zones](docs/GREENHOUSE.md)
-- [Weather Underground rain](docs/WEATHER-UNDERGROUND.md) (experimental)
-- [AI-assisted setup](AI_SETUP.md): a guide an AI assistant follows to set ZoneFlow up for you.
-- [Changelog](CHANGELOG.md) and [roadmap](ROADMAP.md).
+- [Full guide](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/GUIDE.md): what ZoneFlow does, sensors, dashboard, services, FAQ and the details behind this page.
+- [Calibration](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/CALIBRATION.md): flow rate, Zone Flow (litres) and the rain gauge.
+- [Rain gauges and weather stations](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/RAIN-GAUGES.md)
+- [Areas, plants and easy setup](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/AREAS-AND-PLANTS.md)
+- [Greenhouse and indoor zones](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/GREENHOUSE.md)
+- [Weather Underground rain](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/WEATHER-UNDERGROUND.md) (experimental)
+- [AI-assisted setup](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/AI_SETUP.md): a guide an AI assistant follows to set ZoneFlow up for you.
+- [Changelog](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/CHANGELOG.md) and [roadmap](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/ROADMAP.md).
 
 ## Help and feedback
 
