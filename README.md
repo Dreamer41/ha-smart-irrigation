@@ -6,6 +6,8 @@ Full documentation: **[zoneflowirrigation.com](https://zoneflowirrigation.com/)*
 
 **Try it first: [live demo with a guided tour](https://zoneflowirrigation.com/demo)**. A simulated garden you can click through in your browser, no install needed.
 
+If your garden is happier with ZoneFlow, give the project a ⭐ so other gardeners can find it too.
+
 ZoneFlow works out when and how much each part of your garden needs water, from the plant, the soil, the weather and the rain, then runs the valve and tells you in plain words what it did and why. It also controls the climate of a greenhouse or indoor grow space. Only a valve switch is required; every sensor is optional and each one adds a capability.
 
 <img src="docs/screenshots/hero.jpg" width="100%" alt="ZoneFlow dashboard on tablet and phone, in the garden">
