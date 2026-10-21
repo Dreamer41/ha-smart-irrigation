@@ -2,6 +2,24 @@
 
 ZoneFlow 1.7.0 adds areas, plants with a history of their own, presets, and a set of helpers that make a new garden quicker to set up.
 
+## Watering tips: what your plant usually wants
+
+On a zone card, **Watering tips** (administrators only) looks up your plant in the
+[Plant Variety Database](https://github.com/bripatch/plant-variety-database) (Wind River
+Greens, CC BY 4.0) and shows how much water it usually wants each week, in your
+zone's units. It starts with the zone's main plant; type another name to look
+for something else. Searching a kind of plant (*pepper*, *basil*, *rose*) gives
+the middle of all its varieties first.
+
+- A suggestion is only that. Nothing changes until you press **Apply**, which sets
+  the **normal week** to the middle of the range and moves the **hot** and **cool**
+  weeks in the same proportion they have to the normal week now.
+- Some plants only have words ("Moderate, regular watering"). Those are shown, with
+  nothing to apply.
+- The amounts are averages from seed catalogs, and the weekly amount includes rain.
+  Your soil, slope, climate and rain decide the rest: check the result with **Why?**
+  and adjust.
+
 ## Areas
 
 <img src="screenshots/overview.png" width="520" alt="The overview card grouped by area (Backyard, Nursery), each with its own Pause and Snooze Today">

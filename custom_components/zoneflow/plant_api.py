@@ -9,7 +9,7 @@ from homeassistant.helpers import device_registry as dr
 
 from . import plant_actions
 from .const import DOMAIN
-from . import presets, setup_check, why
+from . import plant_water, presets, setup_check, why
 from .plants import async_get_book, default_ready_days, planting_ts, stage_of
 
 
@@ -29,6 +29,17 @@ async def ws_why(hass: HomeAssistant, connection: websocket_api.ActiveConnection
         connection.send_error(msg["id"], "not_found", "No such ZoneFlow zone")
         return
     connection.send_result(msg["id"], {"items": why.explain(controller)})
+
+
+@websocket_api.websocket_command({
+    vol.Required("type"): "zoneflow/plant_water",
+    vol.Required("query"): vol.All(str, vol.Length(max=plant_water.MAX_QUERY_LENGTH)),
+})
+@websocket_api.async_response
+async def ws_plant_water(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict) -> None:
+    """What a plant usually wants per week (a suggestion from the Plant Variety Database)."""
+    data = await plant_water.async_get_data(hass)
+    connection.send_result(msg["id"], {"results": plant_water.search(data, msg["query"]), "source": data["source"]})
 
 
 @websocket_api.websocket_command({vol.Required("type"): "zoneflow/check", vol.Required("device_id"): str})

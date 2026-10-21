@@ -222,6 +222,25 @@ const I18N = {
       "cancel": "Cancel",
       "moved": "{plant} moved to {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Check my setup",
       "loading": "Checking…",
@@ -489,6 +508,25 @@ const I18N = {
       "move_record_only": "Diese Zone hat kein Ventil, die Pflanze kommt nur als Aufzeichnung dorthin.",
       "cancel": "Abbrechen",
       "moved": "{plant} nach {to} verschoben"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -758,6 +796,25 @@ const I18N = {
       "cancel": "Cancelar",
       "moved": "{plant} movida a {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Comprobar mi configuración",
       "loading": "Comprobando…",
@@ -1025,6 +1082,25 @@ const I18N = {
       "move_record_only": "Siinä vyöhykkeessä ei ole venttiiliä, joten kasvi liittyy siihen vain tietueena.",
       "cancel": "Peruuta",
       "moved": "{plant} siirretty vyöhykkeelle {to}"
+    },
+    "water_tips": {
+      "title": "Kastelun vinkit",
+      "intro": "Hae kasvisi Plant Variety Databasesta nähdäksesi, paljonko vettä se yleensä haluaa viikossa. Tämä on vain ehdotus: mikään ei muutu ennen kuin painat Käytä.",
+      "search": "Kasvi tai laji, esim. kurkku",
+      "none": "Mitään ei löytynyt. Kokeile kasvin lajia (paprika, basilika, ruusu) tai toista kirjoitusasua.",
+      "kind": "kaikkien {n} lajikkeen keskiarvo",
+      "per_week": "viikossa",
+      "no_amount": "Viikkomäärää ei ole annettu.",
+      "pick": "Käytä tätä",
+      "proposal": "Ehdotus",
+      "normal": "Normaali viikko",
+      "hot": "Kuuma viikko",
+      "cool": "Viileä viikko",
+      "keep_shape": "Kuuma ja viileä viikko pysyvät samassa suhteessa normaaliin viikkoon kuin nyt.",
+      "apply": "Käytä",
+      "applied": "Valmis. Viikkotavoitteet on muutettu.",
+      "source": "Lähde: {name}, {author}, {license}.",
+      "caveat": "Siemenluetteloiden keskiarvoja: maaperäsi, ilmastosi ja sade ratkaisevat loput. Tarkista tulos Miksi?-kohdasta."
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -1294,6 +1370,25 @@ const I18N = {
       "cancel": "Annuler",
       "moved": "{plant} déplacée vers {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Vérifier ma configuration",
       "loading": "Vérification…",
@@ -1561,6 +1656,25 @@ const I18N = {
       "move_record_only": "Quella zona non ha valvola, quindi la pianta vi entra solo come scheda.",
       "cancel": "Annulla",
       "moved": "{plant} spostata in {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1830,6 +1944,25 @@ const I18N = {
       "cancel": "Annuleren",
       "moved": "{plant} verplaatst naar {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Mijn instellingen controleren",
       "loading": "Controleren…",
@@ -2097,6 +2230,25 @@ const I18N = {
       "move_record_only": "Ta strefa nie ma zaworu, więc roślina dołączy do niej tylko jako wpis.",
       "cancel": "Anuluj",
       "moved": "{plant} przeniesiona do {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -2366,6 +2518,25 @@ const I18N = {
       "cancel": "Cancelar",
       "moved": "{plant} movida para {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Verificar a minha configuração",
       "loading": "A verificar…",
@@ -2633,6 +2804,25 @@ const I18N = {
       "move_record_only": "Den zonen har ingen ventil, så växten följer bara med som en post.",
       "cancel": "Avbryt",
       "moved": "{plant} flyttad till {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -2902,6 +3092,25 @@ const I18N = {
       "cancel": "Zrušit",
       "moved": "{plant} přesunuta do {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Zkontrolovat mé nastavení",
       "loading": "Kontroluje se…",
@@ -3169,6 +3378,25 @@ const I18N = {
       "move_record_only": "Den zone har ingen ventil, så planten kommer kun med som en registrering.",
       "cancel": "Annuller",
       "moved": "{plant} flyttet til {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -3438,6 +3666,25 @@ const I18N = {
       "cancel": "Mégse",
       "moved": "{plant} áthelyezve ide: {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Beállítások ellenőrzése",
       "loading": "Ellenőrzés…",
@@ -3705,6 +3952,25 @@ const I18N = {
       "move_record_only": "Den sonen har ingen ventil, så planten blir med bare som en registrering.",
       "cancel": "Avbryt",
       "moved": "{plant} flyttet til {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -3974,6 +4240,25 @@ const I18N = {
       "cancel": "Cancelar",
       "moved": "{plant} movida para {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Verificar minha configuração",
       "loading": "Verificando…",
@@ -4241,6 +4526,25 @@ const I18N = {
       "move_record_only": "В этой зоне нет клапана, поэтому растение попадёт туда только как запись.",
       "cancel": "Отмена",
       "moved": "{plant} перемещено в {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "Проверить настройки",
@@ -4510,6 +4814,25 @@ const I18N = {
       "cancel": "Zrušiť",
       "moved": "{plant} presunutá do {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Skontrolovať moje nastavenie",
       "loading": "Kontroluje sa…",
@@ -4778,6 +5101,25 @@ const I18N = {
       "cancel": "Скасувати",
       "moved": "{plant} переміщено до {to}"
     },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+    },
     "check": {
       "title": "Перевірити мої налаштування",
       "loading": "Перевірка…",
@@ -5045,6 +5387,25 @@ const I18N = {
       "move_record_only": "该区域没有阀门,植物只会作为记录加入。",
       "cancel": "取消",
       "moved": "{plant} 已移到 {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
     },
     "check": {
       "title": "检查我的设置",
@@ -5446,6 +5807,10 @@ class ZoneFlowCard extends HTMLElement {
       .plant-badge { font-size: 0.75em; color: var(--secondary-text-color); }
       .plant-badge.main { color: var(--primary-color); font-weight: 500; }
       .plant-actions, .plant-form, .plant-noterow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+      .tips-row { padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
+      .tips-name { font-weight: 500; }
+      .tips-amount { color: var(--secondary-text-color); margin-bottom: 4px; }
+      .tips-proposal { margin-top: 12px; }
       .plant-button { font: inherit; color: var(--primary-color); background: none; border: 1px solid var(--divider-color);
         border-radius: 16px; padding: 4px 12px; cursor: pointer; }
       .plant-button:hover { background: var(--secondary-background-color); }
@@ -5662,6 +6027,20 @@ class ZoneFlowCard extends HTMLElement {
     if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
     }
+    // Watering tips: what the plant usually wants per week, from a plant database (administrators).
+    if (this._config.show_settings && valve && hass.user?.is_admin && visible["number.target_weekly_mm"]) {
+      const mainPlant = (statusAttrs.plants || []).find((plant) => plant.main) || (statusAttrs.plants || [])[0];
+      this._popups.water_tips = {
+        icon: "mdi:book-search-outline", custom: "water_tips", parts: [], label: t(hass, "water_tips.title"),
+        // The plant's own name without its variety ("Tomatoes 'Roma'" -> "Tomatoes").
+        plant: String(mainPlant?.name || "").replace(/['"\u2018\u2019].*$/, "").trim(),
+        targets: {
+          normal: visible["number.target_weekly_mm"]?.entity_id,
+          hot: visible["number.target_weekly_hot_mm"]?.entity_id,
+          cool: visible["number.target_weekly_cool_mm"]?.entity_id,
+        },
+      };
+    }
     // When the routine watering and the deep soak start (a zone that waters).
     if (this._config.show_settings && valve && statusAttrs.schedule && hass.user?.is_admin) {
       this._popups.schedule = {
@@ -5787,6 +6166,7 @@ class ZoneFlowCard extends HTMLElement {
     if (popup.custom === "check") this._checkBody(body);
     if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
+    if (popup.custom === "water_tips") this._waterTipsBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       // A group of settings that are all "advanced" is hidden with them.
       const advGroup = everyday && confs.every((conf) => conf._adv);
@@ -5935,6 +6315,122 @@ class ZoneFlowCard extends HTMLElement {
     const again = make("button", "plant-button", t(hass, "check.again"));
     again.addEventListener("click", () => this._checkBody(body));
     body.appendChild(again);
+  }
+
+  _waterTipsBody(body, popup) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const stateOf = (entityId) => hass.states?.[entityId];
+    const unit = stateOf(popup.targets.normal)?.attributes?.unit_of_measurement === "in" ? "in" : "mm";
+    const show = (mm) => {
+      const value = unit === "in" ? mm / 25.4 : mm;
+      return String(Number(value.toFixed(unit === "in" ? 2 : 1)));
+    };
+    const amount = (item) => {
+      const [low, high] = [show(item.low_mm), show(item.high_mm)];
+      return `${low === high ? low : `${low}\u2013${high}`} ${unit} ${t(hass, "water_tips.per_week")}`;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "water_tips.intro")));
+    const input = make("input", "area-input");
+    input.type = "search";
+    input.placeholder = t(hass, "water_tips.search");
+    input.value = popup.plant || "";
+    const list = make("div", "tips-list");
+    const proposal = make("div", "tips-proposal");
+    const credit = make("div", "group-note");
+    body.append(input, list, proposal, credit);
+
+    // What applying would do: the normal week gets the middle of the range, and the hot and
+    // cool weeks keep the proportion they have to it now.
+    const propose = (item) => {
+      proposal.textContent = "";
+      const middle = (item.low_mm + item.high_mm) / 2 / (unit === "in" ? 25.4 : 1);
+      const now = Object.fromEntries(Object.entries(popup.targets).map(([key, id]) => [key, Number(stateOf(id)?.state)]));
+      const factor = now.normal > 0 ? middle / now.normal : 1;
+      const next = {};
+      for (const key of ["normal", "hot", "cool"]) {
+        const entity = stateOf(popup.targets[key]);
+        if (!entity || !Number.isFinite(now[key])) continue;
+        const { min, max, step } = entity.attributes;
+        let value = key === "normal" ? middle : now[key] * factor;
+        value = Math.round(value / (step || 0.1)) * (step || 0.1);
+        next[key] = Number(Math.min(Math.max(value, min ?? value), max ?? value).toFixed(unit === "in" ? 3 : 2));
+      }
+      proposal.appendChild(make("div", "group-title", `${t(hass, "water_tips.proposal")}: ${item.name}`));
+      for (const key of ["normal", "hot", "cool"]) {
+        if (next[key] === undefined) continue;
+        const line = `${t(hass, `water_tips.${key}`)}: ${now[key]} \u2192 ${next[key]} ${unit}`;
+        proposal.appendChild(make("div", "", line));
+      }
+      proposal.appendChild(make("div", "group-note", t(hass, "water_tips.keep_shape")));
+      const done = make("div", "group-note");
+      const apply = make("button", "plant-button", t(hass, "water_tips.apply"));
+      apply.addEventListener("click", async () => {
+        try {
+          // The hot and cool weeks first: the normal one last, so the sliders never cross on the way.
+          for (const key of ["hot", "cool", "normal"]) {
+            if (next[key] !== undefined) await hass.callService("number", "set_value", { entity_id: popup.targets[key], value: next[key] });
+          }
+          done.textContent = t(hass, "water_tips.applied");
+        } catch (err) {
+          done.textContent = err?.message || String(err);
+        }
+      });
+      proposal.append(apply, done, make("div", "group-note", t(hass, "water_tips.caveat")));
+    };
+
+    let latest = 0;
+    const search = async () => {
+      const mine = ++latest;
+      proposal.textContent = "";
+      const query = input.value.trim();
+      if (!query) { list.textContent = ""; return; }
+      let data;
+      try {
+        data = await hass.callWS({ type: "zoneflow/plant_water", query });
+      } catch (err) {
+        list.textContent = err?.message || String(err);
+        return;
+      }
+      if (mine !== latest) return; // a newer search is on its way
+      list.textContent = "";
+      if (!data.results.length) list.appendChild(make("div", "group-note", t(hass, "water_tips.none")));
+      for (const item of data.results) {
+        const row = make("div", "tips-row");
+        row.appendChild(make("div", "tips-name", item.name));
+        if (item.low_mm != null) row.appendChild(make("div", "tips-amount", amount(item)));
+        const sub = item.kind === "category"
+          ? t(hass, "water_tips.kind").replace("{n}", item.count)
+          : (item.low_mm != null ? "" : item.note);
+        if (sub) row.appendChild(make("div", "group-note", sub));
+        if (item.low_mm != null) {
+          const use = make("button", "plant-button", t(hass, "water_tips.pick"));
+          use.addEventListener("click", () => propose(item));
+          row.appendChild(use);
+        } else {
+          row.appendChild(make("div", "group-note", t(hass, "water_tips.no_amount")));
+        }
+        list.appendChild(row);
+      }
+      const src = data.source || {};
+      credit.textContent = t(hass, "water_tips.source").replace("{name}", src.name).replace("{author}", src.author).replace("{license}", src.license) + " ";
+      if (src.url) {
+        const link = make("a", "", "GitHub");
+        link.href = src.url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        credit.appendChild(link);
+      }
+    };
+    let timer;
+    input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(search, 300); });
+    if (input.value) search();
   }
 
   _calibrateBody(body, popup) {

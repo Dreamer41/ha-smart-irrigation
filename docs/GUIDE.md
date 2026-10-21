@@ -184,6 +184,8 @@ Full details, settings and troubleshooting: **[docs/GREENHOUSE.md](GREENHOUSE.md
   moved between zones with their history, and the **Plants** button on the zone
   card does all of it.
 - **Copy settings and presets** start a new bed from an existing one.
+- **Watering tips** (administrators) look up your plant in the Plant Variety
+  Database and suggest a weekly amount, as a suggestion you apply yourself.
 - **Check my setup**, the guided **Calibrate**, **Water now for N minutes**,
   **Why?**, a **Simple view**, a **My Garden** summary and **Fix** buttons in
   Repairs make setup and daily use easier.

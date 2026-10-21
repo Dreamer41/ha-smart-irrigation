@@ -68,6 +68,14 @@ Requires Home Assistant 2024.5 or newer. To install without HACS, copy `custom_c
 
 Questions and bug reports: [GitHub issues](https://github.com/Dreamer41/ha-smart-irrigation/issues).
 
+## Credits
+
+The **Watering tips** on the zone card suggest weekly amounts from the
+[Plant Variety Database](https://github.com/bripatch/plant-variety-database) by
+Wind River Greens, licensed
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Only the weekly
+watering amounts were taken, converted from inches to millimetres.
+
 ## License
 
 [MIT](LICENSE).

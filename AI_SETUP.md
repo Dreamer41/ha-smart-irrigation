@@ -990,6 +990,10 @@ between pulses.
 - **Loam / medium drainage:** the "average" case the factory defaults were
   tuned around — no adjustment needed unless something else about the site
   is unusual.
+- **Not sure what weekly target to use:** the zone card's **Watering tips**
+  (administrators) looks the plant up in the Plant Variety Database and offers
+  its usual weekly amount; Apply sets the normal week and moves the hot and
+  cool weeks in proportion. Treat it as a starting point, not a setting to trust.
 - **Shallow roots or sandy soil:** light rain reaches the roots there, so
   lower `rain_ignore_below_mm` (Rain Ignored Below, per day; default 3 mm,
   range 0-5 mm) toward 1-2 mm and raise `rain_eff_low`. A day's rain up to

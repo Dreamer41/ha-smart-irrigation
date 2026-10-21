@@ -450,6 +450,7 @@ def check_overview(pw, check, args) -> None:
         page.locator("#ov").screenshot(path=str(shot))
         print(f"screenshot: {shot}")
     check_loader(browser, check)
+    check_water_tips(browser, check)
     browser.close()
 
 
@@ -499,6 +500,105 @@ def check_loader(browser, check) -> None:
             check(state == [True, True, 2] and len(fetched) == 3, "loader: keeps trying while Home Assistant starts")
         else:
             check(state == [True, True, 2] and fetched == [f"http://ha.test{CARD_URL}?v=9"], "loader: a normal page loads the card once")
+        page.close()
+
+
+def check_water_tips(browser, check) -> None:
+    """The Watering tips popup: a search that asks the integration, results with their amounts in the
+    zone's units, and Apply, which sets the three weekly targets in proportion."""
+    for unit, now, expected_amount, expected_calls in (
+        # mm: 25.4-38.1 mm -> middle 31.75 -> normal 32 (step 0.5); hot 45 x 1.058 = 47.6 -> 47.5; cool 20 x 1.058 = 21.2 -> 21
+        ("mm", {"normal": 30, "hot": 45, "cool": 20}, "25.4\u201338.1 mm per week", [47.5, 21, 32]),
+        # in: 1-1.5 in -> middle 1.25 -> normal 1.25 (step 0.05); hot 1.8 x 1.0417 = 1.875 -> 1.9; cool 0.8 x 1.0417 = 0.83 -> 0.85
+        ("in", {"normal": 1.2, "hot": 1.8, "cool": 0.8}, "1\u20131.5 in per week", [1.9, 0.85, 1.25]),
+    ):
+        page = browser.new_page()
+        page.route("http://card.test/", lambda route: route.fulfill(body=HARNESS, content_type="text/html"))
+        page.route("http://card.test/card.js", lambda route: route.fulfill(path=str(CARD), content_type="text/javascript"))
+        page.goto("http://card.test/")
+        hass = fake_hass()
+        step, low, high = (0.5, 5, 80) if unit == "mm" else (0.05, 0.2, 3.2)
+        for key, entity_key in (("normal", "target_weekly_mm"), ("hot", "target_weekly_hot_mm"), ("cool", "target_weekly_cool_mm")):
+            entity_id = f"number.chilis_{entity_key}"
+            hass["entities"][entity_id] = {
+                "entity_id": entity_id, "device_id": DEVICE, "platform": "zoneflow", "translation_key": entity_key,
+                "entity_category": "config", "hidden": False,
+            }
+            hass["states"][entity_id] = {
+                "entity_id": entity_id, "state": str(now[key]),
+                "attributes": {"friendly_name": entity_key, "unit_of_measurement": unit, "min": low, "max": high, "step": step},
+            }
+        hass["states"]["sensor.chilis_status"]["attributes"]["plants"] = [{"id": "p1", "name": "Peppers 'Jalape\u00f1o'", "type": "chilis", "main": True}]
+        hass["user"] = {"is_admin": True}
+        page.evaluate(
+            """([hass, device]) => {
+                window._calls = [];
+                window._queries = [];
+                hass.callService = async (domain, service, data) => { window._calls.push([domain, service, data]); };
+                hass.callWS = async (msg) => {
+                    window._queries.push(msg.query);
+                    return {
+                        results: [
+                            {kind: 'category', name: 'Pepper', category: 'pepper', latin: '', low_mm: 25.4, high_mm: 38.1, note: '', count: 69},
+                            {kind: 'plant', name: 'Hass Avocado', category: 'tropical', latin: '', low_mm: null, high_mm: null,
+                             note: 'Deep watering 1-2 times per week, drought tolerant once established'},
+                        ],
+                        source: {name: 'Plant Variety Database', author: 'Wind River Greens', license: 'CC BY 4.0',
+                                 url: 'https://github.com/bripatch/plant-variety-database'},
+                    };
+                };
+                const card = document.createElement('zoneflow-card');
+                card.setConfig({device_id: device});
+                card.hass = hass;
+                document.body.appendChild(card);
+                window._card = card;
+            }""",
+            [hass, DEVICE],
+        )
+        page.wait_for_timeout(200)
+        opened = page.evaluate(
+            """async () => {
+                const root = window._card.shadowRoot;
+                const button = [...root.querySelectorAll('.more button')].find((b) => b.textContent === 'Watering tips');
+                if (!button) return null;
+                button.click();
+                await new Promise((r) => setTimeout(r, 400));
+                const dialog = root.querySelector('dialog');
+                return {
+                    query: dialog.querySelector('input').value,
+                    names: [...dialog.querySelectorAll('.tips-name')].map((n) => n.textContent),
+                    amounts: [...dialog.querySelectorAll('.tips-amount')].map((n) => n.textContent),
+                    buttons: [...dialog.querySelectorAll('.tips-row .plant-button')].length,
+                    credit: [...dialog.querySelectorAll('.group-note')].pop().textContent,
+                    asked: window._queries,
+                };
+            }"""
+        )
+        check(opened is not None, f"water tips ({unit}): the button is there for an administrator")
+        if opened is None:
+            page.close()
+            continue
+        check(opened["query"] == "Peppers" and opened["asked"] == ["Peppers"], f"water tips ({unit}): starts with the zone's plant, without its variety")
+        check(opened["names"] == ["Pepper", "Hass Avocado"], f"water tips ({unit}): the results")
+        check(opened["amounts"] == [expected_amount], f"water tips ({unit}): the amount in the zone's units")
+        check(opened["buttons"] == 1, f"water tips ({unit}): only a result with an amount can be used")
+        check("CC BY 4.0" in opened["credit"], f"water tips ({unit}): the source and its license are shown")
+        result = page.evaluate(
+            """async () => {
+                const dialog = window._card.shadowRoot.querySelector('dialog');
+                dialog.querySelector('.tips-row .plant-button').click();
+                await new Promise((r) => setTimeout(r, 100));
+                const proposal = dialog.querySelector('.tips-proposal').textContent;
+                const before = window._calls.length;
+                [...dialog.querySelectorAll('.tips-proposal .plant-button')].find((b) => b.textContent === 'Apply').click();
+                await new Promise((r) => setTimeout(r, 100));
+                return {proposal, before, calls: window._calls.map((c) => [c[0], c[1], c[2].entity_id, c[2].value])};
+            }"""
+        )
+        check(result["before"] == 0, f"water tips ({unit}): nothing is changed until Apply")
+        check([c[3] for c in result["calls"]] == expected_calls, f"water tips ({unit}): the three targets, in proportion, the normal one last")
+        check(all(c[0] == "number" and c[1] == "set_value" for c in result["calls"]), f"water tips ({unit}): through number.set_value")
+        check("Suggestion: Pepper" in result["proposal"], f"water tips ({unit}): the suggestion names what it is from")
         page.close()
 
 
