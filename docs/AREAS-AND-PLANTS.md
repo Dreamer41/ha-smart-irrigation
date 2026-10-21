@@ -15,10 +15,20 @@ the middle of all its varieties first.
 (*cucumber*, *basil*) and it filters; each plant shows its usual weekly amount in your units. Pick one and that
 amount becomes the zone's starting weekly targets, with nothing more to press. Text that is not in the list
 (a misspelling, another language) is searched for on a second screen, where you pick or keep the starting
-values. Leave the field empty and nothing changes. The list comes before **What's planted**: if your plant is
-not in it, leave it empty and choose What's planted for typical starting values. A plant picked from the list
-gives the weekly water; What's planted still sets the crop factor, deep soak and growth ramp. The same list is
-on the screen for a crop in a greenhouse.
+values. Leave the field empty and nothing changes.
+
+**What's planted** comes after the list, and you answer only one of them:
+
+- **Your plant is in the list:** pick it and leave What's planted on *Something else*. The plant type that
+  fits your pick is chosen for you (tomatoes, chilis, leafy vegetables, herbs, strawberries, flowers, lawn,
+  shrubs or fruit tree), so deep soak, the growth ramp and the zone's plant type follow from it, and the
+  list's weekly water and crop factor are used. A pick with no fitting type (potatoes, cucumbers) keeps
+  *Something else*.
+- **Your plant is not in the list:** leave the list empty and choose What's planted for typical starting values.
+- **You choose a type yourself** as well: your choice is kept, and the list only supplies the weekly water and
+  crop factor.
+
+The same list is on the screen for a crop in a greenhouse.
 
 - A suggestion is only that. Nothing changes until you press **Apply**, which sets
   the **normal week** to the middle of the range and moves the **hot** and **cool**

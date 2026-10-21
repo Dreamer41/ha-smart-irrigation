@@ -28,6 +28,23 @@ MAX_RESULTS = 8
 MAX_QUERY_LENGTH = 60
 TARGET_KEYS = ("target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm")
 
+# Which of the setup's plant types (PLANT_PRESETS) fits a plant that was picked in the lookup, so that
+# What's planted does not have to be answered a second time. Anything not here has no fitting type.
+PRESET_BY_CROP = {
+    "tomato": "tomatoes", "eggplant": "tomatoes", "pepper": "chilis",
+    "lettuce": "leafy_vegetables", "spinach": "leafy_vegetables", "brassica": "leafy_vegetables",
+    "celery": "leafy_vegetables", "mint": "herbs", "strawberry": "strawberries",
+    "avocado": "fruit_tree", "citrus": "fruit_tree", "olive": "fruit_tree", "apple": "fruit_tree",
+    "stone_fruit": "fruit_tree", "almond": "fruit_tree", "walnut": "fruit_tree", "pistachio": "fruit_tree",
+    "kiwi": "fruit_tree", "banana": "fruit_tree", "turf_cool": "lawn", "turf_warm": "lawn",
+}
+PRESET_BY_CATEGORY = {
+    "tomato": "tomatoes", "pepper": "chilis", "eggplant": "tomatoes", "lettuce": "leafy_vegetables",
+    "brassica": "leafy_vegetables", "herb": "herbs", "berry": "strawberries", "flower": "flowers",
+    "rose": "flowers", "native-wildflower": "flowers", "shrub": "shrubs", "grass": "lawn",
+    "fruit-tree": "fruit_tree",
+}
+
 
 def _fold(text: str) -> str:
     """Lower case without accents, quotes or punctuation: 'Jalapeño' matches 'jalapeno'."""
@@ -63,6 +80,7 @@ def _load() -> dict[str, Any]:
         crop = _match_crop(crops, plant["category"], plant["_name"])
         plant["kc"] = crop["kc_mid"] if crop else None
         plant["crop"] = crop["name"] if crop else None
+        plant["crop_id"] = crop["id"] if crop else None
     return data
 
 
@@ -94,6 +112,7 @@ def _category_summary(data: dict[str, Any], category: str) -> dict[str, Any] | N
         "low_mm": round(median(p["low_mm"] for p in amounts), 1),
         "high_mm": round(median(p["high_mm"] for p in amounts), 1),
         "kc": crop["kc_mid"] if crop else None,
+        "preset": PRESET_BY_CATEGORY.get(category),
         "note": "",
         "count": len(amounts),
     }
@@ -108,6 +127,7 @@ def _public(plant: dict[str, Any]) -> dict[str, Any]:
         "low_mm": plant["low_mm"],
         "high_mm": plant["high_mm"],
         "kc": plant["kc"],
+        "preset": PRESET_BY_CROP.get(plant["crop_id"]) or PRESET_BY_CATEGORY.get(plant["category"]),
         "note": plant["note"],
     }
 
@@ -122,6 +142,7 @@ def _crop_item(crop: dict[str, Any]) -> dict[str, Any]:
         "low_mm": None,
         "high_mm": None,
         "kc": crop["kc_mid"],
+        "preset": PRESET_BY_CROP.get(crop["id"]),
         "note": f"Kc {crop['kc_ini']} / {crop['kc_mid']} / {crop['kc_end']}",
     }
 

@@ -15,12 +15,12 @@
         },
         "data_description": {
           "zone_name": "Stane se názvem zařízení zóny a začátkem názvů jejích entit a zobrazuje se ve zprávách na telefon. Např. \"Záhon rajčat\", \"Trávník před domem\".",
-          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. Use it when your plant was not found in the list above; if you picked one there, its weekly water is used instead and this still sets the crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
+          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu: týdenní cíle vody, plodinový koeficient, hloubkovou zálivku a růstovou křivku. \"Něco jiného\" začne od obecných hodnot. Vše můžete později změnit na stránce zařízení zóny.",
           "zone_type": "Venkovní prostředí je způsob, jakým ZoneFlow fungoval dosud. Skleníkové a vnitřní zóny přidávají řízení klimatu (ventilátory, větrací otvory, mlžení, topení), mohou fungovat bez ventilu a kvůli střeše nemají srážkoměr ani předpověď počasí.",
           "start_from": "Začněte kopií nastavení zalévání jiné zóny nebo uloženou předvolbou namísto nastavení typu rostliny. Ventil, snímače a průtok se nikdy nekopírují.",
           "location": "Oblast, ve které se tato zóna nachází, pokud nějaká je. Zóna pak používá srážkoměr, teplotní čidlo, počasí a telefon oblasti, pokud jí nedáte vlastní.",
           "quick_setup": "Zeptá se jen na ventil a způsob zálivky, zbytek doplní podle druhu rostliny a nalezených senzorů. Vše můžete později změnit v Konfiguraci. Zrušte zaškrtnutí, pokud chcete vidět všechna nastavení hned.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998), and these become the zone's starting values. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
         }
       },
       "entities": {
@@ -234,8 +234,8 @@
         "data_description": {
           "greenhouse_entry_id": "Skleník nebo vnitřní zóna s klimatickými zařízeními.",
           "zone_name": "Stane se názvem zařízení plodiny a začátkem názvů jejích entit, např. \"Rajčata\".",
-          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, its weekly water is used instead and this still sets the rest.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998), and these become the zone's starting values. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
+          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
         }
       },
       "crop_valve": {

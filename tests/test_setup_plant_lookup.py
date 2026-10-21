@@ -282,3 +282,70 @@ async def test_the_lookup_comes_before_whats_planted_which_is_the_fallback(hass,
     plant_key = next(k for k in result["data_schema"].schema if getattr(k, "schema", k) == "plant")
     assert plant_key.default() == "custom" or plant_key.default is not None
 
+
+# --- What's planted follows the pick when it was left on "Something else" ----------------
+async def _pick_and_finish(hass, label_part, plant):
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    options = {o["label"]: o["value"] for o in _field(result).config["options"]}
+    picked = next(value for label, value in options.items() if label_part in label)
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_ZONE_NAME: "Bed", "plant": plant, CONF_ZONE_TYPE: "outdoor", CONF_QUICK_SETUP: True, "plant_search": picked},
+    )
+    assert result["step_id"] == "quick"
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_VALVE_ENTITY: VALVE, CONF_IRRIGATION_METHOD: "drip", **FLOW}
+    )
+    return result["result"].data
+
+
+@pytest.mark.asyncio
+async def test_a_pick_chooses_the_plant_type_when_whats_planted_was_left_open(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_DEEP_SOAK_ENABLED, CONF_PLANT
+
+    _house(hass)
+    data = await _pick_and_finish(hass, "Avocado (FAO-56)", "custom")
+    assert data[CONF_PLANT] == "fruit_tree"  # the zone's plant type, and the type's own starting values
+    assert data[CONF_DEEP_SOAK_ENABLED] is PLANT_PRESETS["fruit_tree"]["deep_soak"]
+    assert data[CONF_INITIAL_NUMBERS]["crop_coefficient"] == 0.85  # the pick's value, not the type's
+
+
+@pytest.mark.asyncio
+async def test_a_plant_type_the_person_chose_is_kept(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_PLANT
+
+    _house(hass)
+    data = await _pick_and_finish(hass, "Avocado (FAO-56)", "young_tree")
+    assert data[CONF_PLANT] == "young_tree"
+
+
+@pytest.mark.asyncio
+async def test_a_kind_picked_gets_its_types_proportions(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_PLANT
+
+    _house(hass)
+    data = await _pick_and_finish(hass, "Pepper, the middle of all", "custom")
+    assert data[CONF_PLANT] == "chilis"
+    plants = await hass.async_add_executor_job(plant_water._load)
+    kind = next(r for r in plant_water.search(plants, "pepper") if r["kind"] == "category")
+    expected = plant_water.suggested_numbers(kind["low_mm"], kind["high_mm"], PLANT_PRESETS["chilis"]["numbers"], kind["kc"])
+    assert all(data[CONF_INITIAL_NUMBERS][key] == value for key, value in expected.items())
+
+
+@pytest.mark.asyncio
+async def test_a_pick_with_no_fitting_type_stays_on_something_else(hass, fake_valve_services):
+    from custom_components.zoneflow.const import CONF_PLANT
+
+    _house(hass)
+    data = await _pick_and_finish(hass, "Potato (FAO-56)", "custom")
+    assert data[CONF_PLANT] == "custom"
+    assert data[CONF_INITIAL_NUMBERS]["crop_coefficient"] == 1.15
+
+
+def test_every_plant_type_the_lookup_names_exists():
+    kc = __import__("json").loads(plant_water.KC_FILE.read_text(encoding="utf-8"))
+    crops = {c["id"] for c in kc["crops"]}
+    assert set(plant_water.PRESET_BY_CROP) <= crops
+    for table in (plant_water.PRESET_BY_CROP, plant_water.PRESET_BY_CATEGORY):
+        assert set(table.values()) <= set(PLANT_PRESETS)
+

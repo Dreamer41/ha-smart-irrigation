@@ -927,6 +927,15 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return Texts
 
+    def _apply_lookup(self, item: dict[str, Any]) -> None:
+        """A plant was picked: its amounts are the starting values. When What's planted was left on
+        "Something else", the plant type that fits the pick is used (deep soak, growth ramp and the
+        plant type of the zone follow from it), so What's planted need not be answered twice. A type
+        the person chose is kept."""
+        if self._plant == PLANT_CUSTOM and item.get("preset") in PLANT_PRESETS:
+            self._plant = item["preset"]
+        self._lookup_numbers = self._lookup_starting_numbers(item)
+
     def _lookup_starting_numbers(self, item: dict[str, Any]) -> dict[str, float]:
         """The starting values a picked plant gives: its weekly water (the hot and cool weeks in the
         proportion the chosen What's planted has) and its crop factor."""
@@ -951,7 +960,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         data = await plant_water.async_get_data(self.hass)
         if (item := plant_water.resolve(data, self._plant_search)) is not None:
             # Picked from the list on the first screen: its amounts are the starting values.
-            self._lookup_numbers = self._lookup_starting_numbers(item)
+            self._apply_lookup(item)
             self._plant_search = ""
             return await next_step()
         self._lookup_next = next_step
@@ -964,7 +973,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             pick = user_input.get("pick") or ""
             if pick.isdigit() and int(pick) < len(self._lookup_items):
-                self._lookup_numbers = self._lookup_starting_numbers(self._lookup_items[int(pick)])
+                self._apply_lookup(self._lookup_items[int(pick)])
             return await self._lookup_next()
         data = await plant_water.async_get_data(self.hass)
         found = [item for item in plant_water.search(data, self._plant_search, limit=10) if plant_water.usable(item)]

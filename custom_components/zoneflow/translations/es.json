@@ -15,12 +15,12 @@
         },
         "data_description": {
           "zone_name": "Pasa a ser el nombre del dispositivo de la zona y el comienzo de los nombres de sus entidades, y aparece en los mensajes del teléfono. P. ej., \"Bancal de tomates\", \"Césped delantero\".",
-          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. Use it when your plant was not found in the list above; if you picked one there, its weekly water is used instead and this still sets the crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
+          "plant": "Rellena valores iniciales razonables para este cultivo: objetivos semanales de agua, coeficiente de cultivo, riego profundo y rampa de crecimiento. \"Otra cosa\" parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona.",
           "zone_type": "Exterior es como siempre ha funcionado ZoneFlow. Las zonas de invernadero e interior añaden control de clima (ventiladores, rejillas de ventilación, nebulización, calefactor), pueden funcionar sin válvula y no tienen pluviómetro ni pronóstico del tiempo debido al techo.",
           "start_from": "Empieza desde una copia de los ajustes de riego de otra zona o un ajuste preestablecido guardado en lugar de los del tipo de planta. La válvula, los sensores y el caudal nunca se copian.",
           "location": "El área en la que está esta zona, si la hay. Entonces usa el pluviómetro, el sensor de temperatura, el tiempo y el teléfono del área, salvo que le des los suyos.",
           "quick_setup": "Solo pregunta por la válvula y cómo llega el agua, y completa el resto según el tipo de planta y los sensores que ZoneFlow encontró. Puede cambiarlo todo después en Configurar. Desmarque para ver todos los ajustes ahora.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998), and these become the zone's starting values. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
         }
       },
       "entities": {
@@ -234,8 +234,8 @@
         "data_description": {
           "greenhouse_entry_id": "El invernadero o zona interior con las dispositivos de clima.",
           "zone_name": "Se convierte en el nombre del dispositivo del cultivo y el inicio de los nombres de sus entidades, p. ej., \"Tomates\".",
-          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, its weekly water is used instead and this still sets the rest.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998), and these become the zone's starting values. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
+          "plant": "Rellena valores iniciales razonables para este cultivo.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
         }
       },
       "crop_valve": {
