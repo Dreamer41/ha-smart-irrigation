@@ -11,10 +11,11 @@ zone's units. It starts with the zone's main plant; type another name to look
 for something else. Searching a kind of plant (*pepper*, *basil*, *rose*) gives
 the middle of all its varieties first.
 
-**When you add a zone**, the first screen has an optional **Look up your plant** field. Type a plant there
-(*cucumber*, *basil*) and the next screen lists what the database says, in your units. Pick one and its usual
-weekly amount becomes the zone's starting weekly targets; **Keep the starting values** changes nothing. Leave the
-field empty and there is no extra screen. The same field is on the screen for a crop in a greenhouse.
+**When you add a zone**, the first screen has an optional **Look up your plant** list. Start typing
+(*cucumber*, *basil*) and it filters; each plant shows its usual weekly amount in your units. Pick one and that
+amount becomes the zone's starting weekly targets, with nothing more to press. Text that is not in the list
+(a misspelling, another language) is searched for on a second screen, where you pick or keep the starting
+values. Leave the field empty and nothing changes. The same field is on the screen for a crop in a greenhouse.
 
 - A suggestion is only that. Nothing changes until you press **Apply**, which sets
   the **normal week** to the middle of the range and moves the **hot** and **cool**

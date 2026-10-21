@@ -126,3 +126,39 @@ def suggested_numbers(low_mm: float, high_mm: float, base: dict[str, float] | No
         value = round(round(value / step) * step, 2)
         result[key] = min(max(value, low), high)
     return result
+
+
+def _amount_text(item: dict[str, Any], imperial: bool) -> str:
+    def show(mm: float) -> str:
+        return str(round(mm / 25.4, 2) if imperial else round(mm, 1))
+
+    low, high = show(item["low_mm"]), show(item["high_mm"])
+    return f"{low if low == high else f'{low}-{high}'} {'in' if imperial else 'mm'}"
+
+
+def picker_options(data: dict[str, Any], imperial: bool, kind_label) -> list[tuple[str, str]]:
+    """(value, label) for a searchable picker: first each kind of plant (the middle of all its
+    varieties), then every variety that gives a weekly amount, each with that amount in the
+    person's units. `kind_label(summary)` words a kind ("Pepper, the middle of all 69 varieties")."""
+    plants = data["plants"]
+    options: list[tuple[str, str]] = []
+    for category in sorted({p["category"] for p in plants if p["low_mm"] is not None}):
+        summary = _category_summary(plants, category)
+        if summary:
+            options.append((f"kind:{category}", f"{kind_label(summary)}: {_amount_text(summary, imperial)}"))
+    for index, plant in enumerate(plants):
+        if plant["low_mm"] is not None:
+            options.append((f"plant:{index}", f"{plant['name']}: {_amount_text(plant, imperial)}"))
+    return options
+
+
+def resolve(data: dict[str, Any], value: str) -> dict[str, Any] | None:
+    """The kind or plant a value from picker_options() stands for; None for anything else
+    (text typed by hand), which is then searched for."""
+    plants = data["plants"]
+    kind, _, key = value.partition(":")
+    if kind == "kind":
+        return _category_summary(plants, key)
+    if kind == "plant" and key.isdigit() and int(key) < len(plants) and plants[int(key)]["low_mm"] is not None:
+        return _public(plants[int(key)])
+    return None

@@ -20,7 +20,7 @@
           "start_from": "选择从其他区域的浇水设置副本或已保存的预设开始，而非使用该植物类型的默认设置。阀门、传感器和流量数据绝不会被复制。",
           "location": "这个区域所在的上级区域（如果有）。除非你为它指定自己的传感器，否则它会使用上级区域的雨量计、温度传感器、天气和手机。",
           "quick_setup": "只询问阀门和供水方式,其余根据植物类型和 ZoneFlow 找到的传感器自动填写。之后可在“配置”中更改所有内容。取消勾选可立即查看所有设置。",
-          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
         }
       },
       "entities": {
@@ -235,7 +235,7 @@
           "greenhouse_entry_id": "带有气候调节设备的温室或室内区域。",
           "zone_name": "将作为作物的设备名称以及其实体名称的前缀，例如 “番茄”。",
           "plant": "为此作物自动填充合理的初始值。",
-          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
         }
       },
       "crop_valve": {

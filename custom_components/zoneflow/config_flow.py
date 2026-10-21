@@ -731,7 +731,9 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
                     ),
-                    vol.Optional(CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search}): str,
+                    vol.Optional(
+                        CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search or None}
+                    ): await self._plant_search_field(),
                 }
             ),
             errors=errors,
@@ -876,7 +878,9 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     # Where it grows: outdoor is how ZoneFlow has always
                     # worked; greenhouse and indoor zones add climate control.
                     # Optional: type a plant ("cucumber") to start from its usual weekly amount of water.
-                    vol.Optional(CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search}): str,
+                    vol.Optional(
+                        CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search or None}
+                    ): await self._plant_search_field(),
                     vol.Required(CONF_ZONE_TYPE, default=self._zone_type): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),
@@ -887,6 +891,23 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
+        )
+
+    async def _plant_search_field(self) -> selector.SelectSelector:
+        """The "Look up your plant" field: a picker that filters as you type, each plant with its usual
+        weekly amount. Text that is not in the list is searched for on the next screen."""
+        data = await plant_water.async_get_data(self.hass)
+        options = plant_water.picker_options(
+            data,
+            self._imperial(),
+            lambda summary: messages.text(self.hass, "setup.plant_kind", name=summary["name"], n=summary["count"]),
+        )
+        return selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=[selector.SelectOptionDict(value=value, label=label) for value, label in options],
+                custom_value=True,
+                mode=selector.SelectSelectorMode.DROPDOWN,
+            )
         )
 
     async def _after_user(self):
@@ -903,6 +924,13 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._plant_search = (user_input.get(CONF_PLANT_SEARCH) or "").strip()
         self._lookup_numbers = {}
         if not self._plant_search:
+            return await next_step()
+        data = await plant_water.async_get_data(self.hass)
+        if (item := plant_water.resolve(data, self._plant_search)) is not None:
+            # Picked from the list on the first screen: its amount is the starting weekly target.
+            base = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
+            self._lookup_numbers = plant_water.suggested_numbers(item["low_mm"], item["high_mm"], base)
+            self._plant_search = ""
             return await next_step()
         self._lookup_next = next_step
         return await self.async_step_plant_pick()

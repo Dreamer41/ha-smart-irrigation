@@ -171,3 +171,84 @@ async def test_a_crop_in_a_greenhouse_gets_the_lookup_too(hass, fake_valve_servi
     numbers = result["result"].data[CONF_INITIAL_NUMBERS]
     assert all(numbers[key] == value for key, value in expected.items())
 
+
+# --- the picker on the first screen ---------------------------------------------------
+def _field(result):
+    return next(v for k, v in result["data_schema"].schema.items() if getattr(k, "schema", k) == "plant_search")
+
+
+async def _first_form(hass):
+    return await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+
+
+@pytest.mark.asyncio
+async def test_the_first_screen_has_a_searchable_list_of_plants_with_their_amounts(hass, fake_valve_services):
+    result = await _first_form(hass)
+    config = _field(result).config
+    assert config["custom_value"] is True  # the picker that filters as you type; other text is searched for
+    options = config["options"]
+    assert len(options) > 600
+    assert options[0]["value"].startswith("kind:") and "varieties" in options[0]["label"] and " mm" in options[0]["label"]
+    assert any(o["value"].startswith("plant:") and ": 25.4-38.1 mm" in o["label"] for o in options)
+    assert all(o["value"].split(":")[0] in ("kind", "plant") for o in options)
+
+
+@pytest.mark.asyncio
+async def test_a_plant_picked_on_the_first_screen_goes_straight_on(hass, fake_valve_services):
+    _house(hass)
+    result = await _first_form(hass)
+    options = {o["label"]: o["value"] for o in _field(result).config["options"]}
+    picked = next(value for label, value in options.items() if label.startswith("Jalape") and "Craig" in label)
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_ZONE_NAME: "Chilis", "plant": "chilis", CONF_ZONE_TYPE: "outdoor", CONF_QUICK_SETUP: True, "plant_search": picked},
+    )
+    assert result["step_id"] == "quick"  # no extra screen
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_VALVE_ENTITY: VALVE, CONF_IRRIGATION_METHOD: "drip", **FLOW}
+    )
+    numbers = result["result"].data[CONF_INITIAL_NUMBERS]
+    expected = plant_water.suggested_numbers(25.4, 25.4, PLANT_PRESETS["chilis"]["numbers"])
+    assert all(numbers[key] == value for key, value in expected.items())
+
+
+@pytest.mark.asyncio
+async def test_a_kind_picked_on_the_first_screen_works_too(hass, fake_valve_services):
+    _house(hass)
+    result = await _first_form(hass)
+    kind = next(o["value"] for o in _field(result).config["options"] if o["value"] == "kind:cucumber")
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_ZONE_NAME: "Cucumbers", "plant": "custom", CONF_ZONE_TYPE: "outdoor", CONF_QUICK_SETUP: True, "plant_search": kind},
+    )
+    assert result["step_id"] == "quick"
+
+
+@pytest.mark.asyncio
+async def test_text_that_is_not_in_the_list_is_searched_for_on_the_next_screen(hass, fake_valve_services):
+    _house(hass)
+    result = await _first(hass, "cucumb")
+    assert result["step_id"] == "plant_pick"
+
+
+@pytest.mark.asyncio
+async def test_the_list_is_in_inches_for_imperial(hass, fake_valve_services):
+    from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM
+
+    hass.config.units = US_CUSTOMARY_SYSTEM
+    options = _field(await _first_form(hass)).config["options"]
+    assert all(" in" in o["label"] and " mm" not in o["label"] for o in options[:50])
+
+
+@pytest.mark.parametrize("value", ["", "cucumber", "plant:", "plant:abc", "plant:999999", "plant:-1", "kind:nothing", "kind:", "x:1"])
+def test_odd_values_are_not_a_pick(value):
+    data = plant_water._load()
+    assert plant_water.resolve(data, value) is None
+
+
+def test_a_plant_with_only_words_is_never_in_the_list():
+    data = plant_water._load()
+    words_only = next(i for i, p in enumerate(data["plants"]) if p["low_mm"] is None)
+    assert plant_water.resolve(data, f"plant:{words_only}") is None
+    assert all(not value.endswith(f":{words_only}") for value, _ in plant_water.picker_options(data, False, lambda s: s["name"]))
+
