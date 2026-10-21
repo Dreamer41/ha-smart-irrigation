@@ -55,7 +55,8 @@ def _load() -> dict[str, Any]:
     data["crops"] = crops = kc["crops"]
     for crop in crops:
         crop["_words"] = [_fold(word) for word in crop["words"]]
-        crop["_search"] = _fold(" ".join([crop["name"], *crop["words"]])).split()
+        crop["_name_words"] = _fold(crop["name"]).split()
+        crop["_aliases"] = {token for word in crop["words"] for token in _fold(word).split()}
     for plant in data["plants"]:
         plant["_name"] = _fold(plant["name"])
         plant["_words"] = _fold(f"{plant['name']} {plant['latin']} {plant['category']}").split()
@@ -151,7 +152,9 @@ def search(data: dict[str, Any], query: str, limit: int = MAX_RESULTS) -> list[d
     plant_results = [_public(plant) for _, plant in hits]
     crop_results = [
         _crop_item(crop) for crop in data["crops"]
-        if all(any(word.startswith(w) for word in crop["_search"]) for w in words)
+        # words that start like the crop's name, or are exactly one of the names it goes by ("lemon" is
+        # citrus; "pepper" does not find mint because of "peppermint")
+        if all(any(word.startswith(w) for word in crop["_name_words"]) or w in crop["_aliases"] for w in words)
     ]
     results = [*crop_results, *plant_results][:limit]
     kind = " ".join(words)

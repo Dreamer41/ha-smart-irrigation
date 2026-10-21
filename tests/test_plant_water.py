@@ -213,3 +213,14 @@ def test_a_crop_with_no_weekly_amount_gives_only_the_crop_factor():
 def test_amount_and_crop_factor_together():
     got = plant_water.suggested_numbers(25.4, 38.1, {"target_weekly_mm": 30, "target_weekly_hot_mm": 40, "target_weekly_cool_mm": 20}, 1.15)
     assert got["target_weekly_mm"] == 32.0 and got["crop_coefficient"] == 1.15
+
+
+def test_a_crop_is_found_by_its_name_or_a_name_it_goes_by_but_not_by_a_lookalike(data):
+    def crops(query):
+        return [r["name"] for r in plant_water.search(data, query) if r["kind"] == "crop"]
+
+    assert "Citrus" in crops("lemon")  # a name it goes by
+    assert "Pepper (sweet and chili)" in crops("pepper") and "Mint" not in crops("pepper")  # not through "peppermint"
+    assert "Mint" in crops("peppermint")
+    assert crops("zzzz") == []
+
