@@ -10,7 +10,8 @@
           "zone_type": "Kasvupaikka",
           "start_from": "Aloituskohta",
           "location": "Missä tämä sijaitsee?",
-          "quick_setup": "Pika-asennus (suositus)"
+          "quick_setup": "Pika-asennus (suositus)",
+          "plant_search": "Hae kasvisi (valinnainen)"
         },
         "data_description": {
           "zone_name": "Tästä tulee vyöhykkeen laitteen nimi ja sen entiteettien nimien alku, ja se näkyy puhelinviesteissä. Esim. \"Tomaattipenkki\", \"Etunurmikko\".",
@@ -18,7 +19,8 @@
           "zone_type": "Ulkona on ZoneFlown perinteinen toimintatapa. Kasvihuone- ja sisätilavyöhykkeet lisäävät ilmastonsäädön (tuulettimet, tuuletusluukut, sumutus, lämmitin), voivat toimia ilman venttiiliä, eikä niissä ole sademittaria tai sääennostetta katon vuoksi.",
           "start_from": "Aloita toisen vyöhykkeen kasteluasetusten kopiolla tai tallennetulla esiasetuksella kasvityypin asetusten sijaan. Venttiiliä, antureita ja virtaamaa ei koskaan kopioida.",
           "location": "Alue, jossa tämä vyöhyke on, jos jokin. Vyöhyke käyttää silloin alueen sademittaria, lämpötila-anturia, säätä ja puhelinta, ellet anna sille omia.",
-          "quick_setup": "Kysyy vain venttiilin ja kastelutavan ja täyttää loput kasvityypin ja löydettyjen antureiden perusteella. Voit muuttaa kaiken myöhemmin kohdassa Määritä. Poista rasti nähdäksesi kaikki asetukset nyt."
+          "quick_setup": "Kysyy vain venttiilin ja kastelutavan ja täyttää loput kasvityypin ja löydettyjen antureiden perusteella. Voit muuttaa kaiken myöhemmin kohdassa Määritä. Poista rasti nähdäksesi kaikki asetukset nyt.",
+          "plant_search": "Kirjoita kasvi, esimerkiksi \"kurkku\" tai \"basilika\", niin aloitat siitä viikoittaisesta vesimäärästä, jonka Plant Variety Database (Wind River Greens, CC BY 4.0) antaa. Seuraava näyttö kertoo löydetyn; voit ohittaa sen siellä."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Kasvihuone",
           "zone_name": "Kasvin nimi",
-          "plant": "Mitä on istutettu"
+          "plant": "Mitä on istutettu",
+          "plant_search": "Hae kasvisi (valinnainen)"
         },
         "data_description": {
           "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet.",
           "zone_name": "Tästä tulee kasvin laitteen nimi ja sen entiteettien nimien alku, esim. \"Tomaatit\".",
-          "plant": "Täyttää tälle kasville sopivat alkuarvot."
+          "plant": "Täyttää tälle kasville sopivat alkuarvot.",
+          "plant_search": "Kirjoita kasvi, esimerkiksi \"kurkku\" tai \"basilika\", niin aloitat siitä viikoittaisesta vesimäärästä, jonka Plant Variety Database (Wind River Greens, CC BY 4.0) antaa. Seuraava näyttö kertoo löydetyn; voit ohittaa sen siellä."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Venttiilitesti",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "Mitä kasvitietokanta sanoo",
+        "description": "{result}\n\nLähde: {source}, {license}. Nämä ovat siemenluetteloiden keskiarvoja; maaperäsi, ilmastosi ja sade ratkaisevat loput.",
+        "data": {
+          "pick": "Viikoittaisen veden lähtöarvo"
+        },
+        "data_description": {
+          "pick": "Valitse sopiva kasvi tai säilytä lähtöarvot."
+        }
       }
     },
     "error": {

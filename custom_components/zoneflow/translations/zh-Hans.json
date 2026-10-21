@@ -10,7 +10,8 @@
           "zone_type": "种植环境",
           "start_from": "起点",
           "location": "位置在哪里？",
-          "quick_setup": "快速设置(推荐)"
+          "quick_setup": "快速设置(推荐)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "将作为该区域的设备名称和实体名称的开头，也会出现在手机消息中。例如“番茄畦”“前院草坪”。",
@@ -18,7 +19,8 @@
           "zone_type": "“室外”是 ZoneFlow 原有的工作模式。“温室”和“室内”分区增加了气候控制（风扇、通风口、喷雾、加热器），可以在没有阀门的情况下工作，并且由于有屋顶，不需要雨量计或天气预报。",
           "start_from": "选择从其他区域的浇水设置副本或已保存的预设开始，而非使用该植物类型的默认设置。阀门、传感器和流量数据绝不会被复制。",
           "location": "这个区域所在的上级区域（如果有）。除非你为它指定自己的传感器，否则它会使用上级区域的雨量计、温度传感器、天气和手机。",
-          "quick_setup": "只询问阀门和供水方式,其余根据植物类型和 ZoneFlow 找到的传感器自动填写。之后可在“配置”中更改所有内容。取消勾选可立即查看所有设置。"
+          "quick_setup": "只询问阀门和供水方式,其余根据植物类型和 ZoneFlow 找到的传感器自动填写。之后可在“配置”中更改所有内容。取消勾选可立即查看所有设置。",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "温室",
           "zone_name": "作物名称",
-          "plant": "种植的植物"
+          "plant": "种植的植物",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "带有气候调节设备的温室或室内区域。",
           "zone_name": "将作为作物的设备名称以及其实体名称的前缀，例如 “番茄”。",
-          "plant": "为此作物自动填充合理的初始值。"
+          "plant": "为此作物自动填充合理的初始值。",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

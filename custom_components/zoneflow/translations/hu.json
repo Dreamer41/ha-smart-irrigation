@@ -10,7 +10,8 @@
           "zone_type": "A növények helye",
           "start_from": "Kezdés innen",
           "location": "Hol található ez?",
-          "quick_setup": "Gyors beállítás (ajánlott)"
+          "quick_setup": "Gyors beállítás (ajánlott)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
@@ -18,7 +19,8 @@
           "zone_type": "A kültéri mód a ZoneFlow eredeti működése. Az üvegházi és beltéri zónák klímaszabályozást is biztosítanak (ventilátorok, szellőzők, párásítás, fűtés), szelep nélkül is működhetnek, valamint a tető miatt nincs esőmérőjük sem időjárás-előrejelzésük.",
           "start_from": "Kezdje egy másik zóna öntözési beállításainak másolatával vagy egy mentett előbeállítással a növénytípusé helyett. A szelep, az érzékelők és a vízhozam soha nem másolódnak.",
           "location": "A terület, amelyben ez a zóna van, ha van ilyen. A zóna ekkor a terület csapadékmérőjét, hőmérséklet-érzékelőjét, időjárását és telefonját használja, hacsak nem adsz neki sajátot.",
-          "quick_setup": "Csak a szelepet és az öntözés módját kérdezi, a többit a növénytípusból és a talált érzékelőkből tölti ki. Mindent módosíthat később a Beállításokban. Szüntesse meg a jelölést, ha most az összes beállítást látni szeretné."
+          "quick_setup": "Csak a szelepet és az öntözés módját kérdezi, a többit a növénytípusból és a talált érzékelőkből tölti ki. Mindent módosíthat később a Beállításokban. Szüntesse meg a jelölést, ha most az összes beállítást látni szeretné.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Üvegház",
           "zone_name": "Növény neve",
-          "plant": "Mi van ültetve"
+          "plant": "Mi van ültetve",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Az üvegház vagy beltéri zóna a klímaberendezésekkel.",
           "zone_name": "Ez lesz a növény eszközneve és az entitásnevek kezdete, pl. \"Paradicsom\".",
-          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez."
+          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

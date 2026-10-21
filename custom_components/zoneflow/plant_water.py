@@ -16,10 +16,13 @@ from typing import Any
 
 from homeassistant.core import HomeAssistant
 
+from .const import NUMBER_DEFAULTS, NUMBER_DEFS
+
 DATA_FILE = Path(__file__).parent / "data" / "plant_water.json"
 _DATA_KEY = "zoneflow_plant_water"
 MAX_RESULTS = 8
 MAX_QUERY_LENGTH = 60
+TARGET_KEYS = ("target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm")
 
 
 def _fold(text: str) -> str:
@@ -105,3 +108,21 @@ def search(data: dict[str, Any], query: str, limit: int = MAX_RESULTS) -> list[d
                 results = results[:limit]
             break
     return results
+
+
+def suggested_numbers(low_mm: float, high_mm: float, base: dict[str, float] | None = None) -> dict[str, float]:
+    """The three weekly targets (millimetres) for a plant that wants `low_mm`-`high_mm` a week:
+    the normal week gets the middle of the range, and the hot and cool weeks keep the proportion
+    they have to the normal week in `base` (a plant preset, else the ordinary starting values).
+    Each is rounded to its slider's step and kept inside its range."""
+    base = base or {}
+    start = {key: float(base.get(key, NUMBER_DEFAULTS[key])) for key in TARGET_KEYS}
+    middle = (low_mm + high_mm) / 2
+    factor = middle / start["target_weekly_mm"] if start["target_weekly_mm"] > 0 else 1.0
+    result: dict[str, float] = {}
+    for key in TARGET_KEYS:
+        _name, low, high, step, _unit = NUMBER_DEFS[key]
+        value = middle if key == "target_weekly_mm" else start[key] * factor
+        value = round(round(value / step) * step, 2)
+        result[key] = min(max(value, low), high)
+    return result

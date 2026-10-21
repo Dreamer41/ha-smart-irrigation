@@ -10,7 +10,8 @@
           "zone_type": "Onde cultiva",
           "start_from": "Começar a partir de",
           "location": "Onde fica isto?",
-          "quick_setup": "Configuração rápida (recomendada)"
+          "quick_setup": "Configuração rápida (recomendada)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Passa a ser o nome do dispositivo da zona e o início dos nomes das suas entidades, e aparece nas mensagens do telefone. Ex.: \"Canteiro de tomates\", \"Jardim da frente\".",
@@ -18,7 +19,8 @@
           "zone_type": "O modo exterior é como o ZoneFlow sempre funcionou. As zonas de estufa e interior adicionam controlo de clima (ventiladores, janelas de aberturas, nebulização, aquecedor), podem funcionar sem válvula e não têm medidor de chuva nem previsão devido ao teto.",
           "start_from": "Comece a partir de uma cópia das definições de rega de outra zona ou de uma pré-definição guardada em vez das do tipo de planta. A válvula, os sensores e o fluxo nunca são copiados.",
           "location": "A área em que esta zona se encontra, se houver. Passa a usar o pluviómetro, o sensor de temperatura, o tempo e o telemóvel da área, a não ser que lhe dê os seus próprios.",
-          "quick_setup": "Pergunta só pela válvula e como a água chega, e preenche o resto pelo tipo de planta e pelos sensores que o ZoneFlow encontrou. Pode alterar tudo mais tarde em Configurar. Desmarque para ver todas as definições agora."
+          "quick_setup": "Pergunta só pela válvula e como a água chega, e preenche o resto pelo tipo de planta e pelos sensores que o ZoneFlow encontrou. Pode alterar tudo mais tarde em Configurar. Desmarque para ver todas as definições agora.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Estufa",
           "zone_name": "Nome da cultura",
-          "plant": "O que está plantado"
+          "plant": "O que está plantado",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "A estufa ou zona interior com os dispositivos de clima.",
           "zone_name": "Torna-se o nome do dispositivo da cultura e o início dos nomes das suas entidades, ex.: \"Tomates\".",
-          "plant": "Preenche valores iniciais adequados para esta cultura."
+          "plant": "Preenche valores iniciais adequados para esta cultura.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

@@ -23,7 +23,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, location, messages, presets, suggest, units, wu_logic
+from . import calculations as calc, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic
 from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
@@ -198,6 +198,9 @@ def _optional_entity_key(defaults: dict[str, Any], conf_key: str):
     if value:
         return vol.Optional(conf_key, description={"suggested_value": value})
     return vol.Optional(conf_key)
+
+
+CONF_PLANT_SEARCH = "plant_search"  # a setup field only, never stored
 
 
 def _schema(defaults: dict[str, Any]) -> vol.Schema:
@@ -651,6 +654,11 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._area_id: str | None = None  # the area the new zone is placed in
         self._pending_entry: tuple[str, dict[str, Any]] | None = None  # the zone, held for the valve test
         self._valve_result: str = ""
+        self._plant_search = ""  # what was typed to look the plant up
+        self._quick = False
+        self._lookup_numbers: dict[str, float] = {}  # the weekly targets picked from the lookup
+        self._lookup_items: list[dict[str, Any]] = []
+        self._lookup_next = None  # the step to go on with after the lookup
 
     def _offer_wu(self) -> bool:
         """Weather Underground rain is offered once a zone exists, and only
@@ -711,7 +719,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_NOTIFY_ENTITY: source.get(CONF_NOTIFY_ENTITY),
                     CONF_UNIT_SYSTEM: source.get(CONF_UNIT_SYSTEM, units.UNIT_SYSTEM_AUTO),
                 }
-                return await self.async_step_crop_valve()
+                return await self._look_up_then(user_input, self.async_step_crop_valve)
         return self.async_show_form(
             step_id="crop",
             data_schema=vol.Schema(
@@ -723,6 +731,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
                     ),
+                    vol.Optional(CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search}): str,
                 }
             ),
             errors=errors,
@@ -833,11 +842,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._zone_type = user_input.get(CONF_ZONE_TYPE, DEFAULT_ZONE_TYPE)
                 self._bundle = await self._start_bundle(user_input.get(CONF_START_FROM, ""))
                 self._area_id = user_input.get("location") or None
-                if self._zone_type != ZONE_TYPE_OUTDOOR:
-                    return await self.async_step_greenhouse_devices()
-                if user_input.get(CONF_QUICK_SETUP):
-                    return await self.async_step_quick()
-                return await self.async_step_entities()
+                self._quick = bool(user_input.get(CONF_QUICK_SETUP))
+                return await self._look_up_then(user_input, self._after_user)
         choices = await self._start_choices()
         start_field: dict[Any, Any] = {}
         known_areas = areas(self.hass)
@@ -869,6 +875,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     # Where it grows: outdoor is how ZoneFlow has always
                     # worked; greenhouse and indoor zones add climate control.
+                    # Optional: type a plant ("cucumber") to start from its usual weekly amount of water.
+                    vol.Optional(CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search}): str,
                     vol.Required(CONF_ZONE_TYPE, default=self._zone_type): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),
@@ -879,6 +887,64 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
+        )
+
+    async def _after_user(self):
+        """What follows the first screen: the climate devices of a greenhouse, the quick setup, or the full one."""
+        if self._zone_type != ZONE_TYPE_OUTDOOR:
+            return await self.async_step_greenhouse_devices()
+        if self._quick:
+            return await self.async_step_quick()
+        return await self.async_step_entities()
+
+    async def _look_up_then(self, user_input: dict[str, Any], next_step):
+        """The plant was typed in the first screen: show what the plant database says about it before
+        going on (nothing is shown when the field was left empty)."""
+        self._plant_search = (user_input.get(CONF_PLANT_SEARCH) or "").strip()
+        self._lookup_numbers = {}
+        if not self._plant_search:
+            return await next_step()
+        self._lookup_next = next_step
+        return await self.async_step_plant_pick()
+
+    async def async_step_plant_pick(self, user_input: dict[str, Any] | None = None):
+        """Which plant of the database is meant: its usual weekly amount becomes the zone's starting
+        weekly targets. Skipping changes nothing."""
+        imperial = self._imperial()
+        if user_input is not None:
+            pick = user_input.get("pick") or ""
+            if pick.isdigit() and int(pick) < len(self._lookup_items):
+                item = self._lookup_items[int(pick)]
+                base = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
+                self._lookup_numbers = plant_water.suggested_numbers(item["low_mm"], item["high_mm"], base)
+            return await self._lookup_next()
+        data = await plant_water.async_get_data(self.hass)
+        found = [item for item in plant_water.search(data, self._plant_search, limit=10) if item["low_mm"] is not None]
+        self._lookup_items = found
+        unit = "in" if imperial else "mm"
+
+        def amount(mm: float) -> str:
+            return str(round(mm / 25.4, 2) if imperial else round(mm, 1))
+
+        options = [selector.SelectOptionDict(value="", label=messages.text(self.hass, "setup.plant_keep"))]
+        for index, item in enumerate(found):
+            low, high = amount(item["low_mm"]), amount(item["high_mm"])
+            name = (
+                messages.text(self.hass, "setup.plant_kind", name=item["name"], n=item["count"])
+                if item["kind"] == "category" else item["name"]
+            )
+            options.append(selector.SelectOptionDict(value=str(index), label=f"{name}: {low if low == high else f'{low}-{high}'} {unit}"))
+        text = messages.text(self.hass, "setup.plant_some" if found else "setup.plant_nothing", query=self._plant_search, unit=unit)
+        return self.async_show_form(
+            step_id="plant_pick",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("pick", default=options[1]["value"] if found else ""): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=options, mode=selector.SelectSelectorMode.LIST)
+                    )
+                }
+            ),
+            description_placeholders={"result": text, "source": data["source"]["name"], "license": data["source"]["license"]},
         )
 
     async def _entity_defaults(self) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
@@ -991,8 +1057,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_PLANT: self._plant,
             CONF_CLIMATE: self._climate,
             CONF_INITIAL_NUMBERS: {
-                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}), **metric,
-                **(extra_numbers or {}),
+                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}),
+                **self._lookup_numbers, **metric, **(extra_numbers or {}),
             },
         }
         if self._bundle.get("state"):

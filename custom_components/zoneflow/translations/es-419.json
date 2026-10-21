@@ -10,7 +10,8 @@
           "zone_type": "Dónde crece",
           "start_from": "Empezar desde",
           "location": "¿Dónde está esto?",
-          "quick_setup": "Configuración rápida (recomendada)"
+          "quick_setup": "Configuración rápida (recomendada)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Pasa a ser el nombre del dispositivo de la zona y el comienzo de los nombres de sus entidades, y aparece en los mensajes del teléfono. P. ej., \"Bancal de tomates\", \"Césped delantero\".",
@@ -18,7 +19,8 @@
           "zone_type": "Exterior es como siempre ha funcionado ZoneFlow. Las zonas de invernadero e interior añaden control de clima (ventiladores, rejillas de ventilación, nebulización, calefactor), pueden funcionar sin válvula y no tienen pluviómetro ni pronóstico del tiempo debido al techo.",
           "start_from": "Empieza desde una copia de los ajustes de riego de otra zona o un ajuste preestablecido guardado en lugar de los del tipo de planta. La válvula, los sensores y el caudal nunca se copian.",
           "location": "El área en la que está esta zona, si la hay. Entonces usa el pluviómetro, el sensor de temperatura, el tiempo y el teléfono del área, salvo que le des los suyos.",
-          "quick_setup": "Solo pregunta por la válvula y cómo llega el agua, y completa el resto según el tipo de planta y los sensores que ZoneFlow encontró. Puede cambiarlo todo después en Configurar. Desmarque para ver todos los ajustes ahora."
+          "quick_setup": "Solo pregunta por la válvula y cómo llega el agua, y completa el resto según el tipo de planta y los sensores que ZoneFlow encontró. Puede cambiarlo todo después en Configurar. Desmarque para ver todos los ajustes ahora.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Invernadero",
           "zone_name": "Nombre del cultivo",
-          "plant": "Qué está plantado"
+          "plant": "Qué está plantado",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "El invernadero o zona interior con las dispositivos de clima.",
           "zone_name": "Se convierte en el nombre del dispositivo del cultivo y el inicio de los nombres de sus entidades, p. ej., \"Tomates\".",
-          "plant": "Rellena valores iniciales razonables para este cultivo."
+          "plant": "Rellena valores iniciales razonables para este cultivo.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

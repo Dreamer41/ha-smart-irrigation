@@ -414,7 +414,11 @@
   },
   "setup": {
     "progress": "Vaihe {n} / {total}",
-    "nothing_found": "Antureita ei löytynyt. Lisää ne myöhemmin kohdassa Määritä."
+    "nothing_found": "Antureita ei löytynyt. Lisää ne myöhemmin kohdassa Määritä.",
+    "plant_keep": "Säilytä tämän kasvin lähtöarvot",
+    "plant_kind": "{name}, kaikkien {n} lajikkeen keskiarvo",
+    "plant_some": "“{query}”: viikoittaiset vesimäärät löytyivät, yksikkö {unit}. Valitse yksi lähtöarvoksi viikkotavoitteelle tai säilytä lähtöarvot.",
+    "plant_nothing": "“{query}”: viikkomäärällä varustettua tulosta ei löytynyt. Lähtöarvot säilyvät; jatka ja muuta niitä myöhemmin vyöhykekortilla."
   },
   "valve_test": {
     "ok": "Venttiili vastasi: se avautui ja sulkeutui uudelleen.",

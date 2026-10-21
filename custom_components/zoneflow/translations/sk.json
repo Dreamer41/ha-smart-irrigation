@@ -10,7 +10,8 @@
           "zone_type": "Kde rastie",
           "start_from": "Začať z",
           "location": "Kde sa nachádza?",
-          "quick_setup": "Rýchle nastavenie (odporúčané)"
+          "quick_setup": "Rýchle nastavenie (odporúčané)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Stane sa názvom zariadenia zóny a začiatkom názvov jej entít a zobrazuje sa v správach v telefóne. Napr. „Záhon paradajok“, „Predný trávnik“.",
@@ -18,7 +19,8 @@
           "zone_type": "Vonku je spôsob, akým ZoneFlow fungoval vždy. Skleníkové a vnútorné zóny pridávajú riadenie klímy (ventilátory, vetranie, hmloviny, ohrievač), môžu fungovať bez ventilu a kvôli streche nemajú zrážkomer ani predpoveď.",
           "start_from": "Začnite kópiou nastavení zalievania inej zóny alebo uloženej predvoľby namiesto nastavení typu rastliny. Ventil, snímače a prietok sa nikdy nekopírujú.",
           "location": "Oblasť, v ktorej sa táto zóna nachádza, ak nejaká je. Zóna potom používa zrážkomer, snímač teploty, počasie a telefón oblasti, ak jej nedáte vlastné.",
-          "quick_setup": "Opýta sa len na ventil a spôsob dodávky vody, zvyšok doplní podľa druhu rastliny a nájdených senzorov. Všetko môžete neskôr zmeniť v Konfigurácii. Zrušte zaškrtnutie, ak chcete vidieť všetky nastavenia hneď."
+          "quick_setup": "Opýta sa len na ventil a spôsob dodávky vody, zvyšok doplní podľa druhu rastliny a nájdených senzorov. Všetko môžete neskôr zmeniť v Konfigurácii. Zrušte zaškrtnutie, ak chcete vidieť všetky nastavenia hneď.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Skleník",
           "zone_name": "Názov plodiny",
-          "plant": "Čo je zasadené"
+          "plant": "Čo je zasadené",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Skleník alebo vnútorná zóna s klimatickými zariadeniami.",
           "zone_name": "Stane sa názvom zariadenia plodiny a začiatkom názvov jej entít, napr. „Parajdajky“.",
-          "plant": "Vyplní rozumné východiskové hodnoty pre túto plodinu."
+          "plant": "Vyplní rozumné východiskové hodnoty pre túto plodinu.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

@@ -10,7 +10,8 @@
           "zone_type": "Where it grows",
           "start_from": "Start from",
           "location": "Where is this?",
-          "quick_setup": "Quick setup (recommended)"
+          "quick_setup": "Quick setup (recommended)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
@@ -18,7 +19,8 @@
           "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof.",
           "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied.",
           "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own.",
-          "quick_setup": "Asks only for the valve and how the water is delivered, and fills in the rest from the plant type and the sensors ZoneFlow found. You can change everything later in Configure. Untick to see every setting now."
+          "quick_setup": "Asks only for the valve and how the water is delivered, and fills in the rest from the plant type and the sensors ZoneFlow found. You can change everything later in Configure. Untick to see every setting now.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Greenhouse",
           "zone_name": "Crop name",
-          "plant": "What's planted"
+          "plant": "What's planted",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
           "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "plant": "Fills in sensible starting values for this crop.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

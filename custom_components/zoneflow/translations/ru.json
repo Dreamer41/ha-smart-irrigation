@@ -10,7 +10,8 @@
           "zone_type": "Где растёт",
           "start_from": "Начать с",
           "location": "Где это находится?",
-          "quick_setup": "Быстрая настройка (рекомендуется)"
+          "quick_setup": "Быстрая настройка (рекомендуется)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Станет именем устройства зоны и началом имён её объектов, а также появится в сообщениях на телефон. Например, «Грядка томатов», «Газон у входа».",
@@ -18,7 +19,8 @@
           "zone_type": "Режим «На улице» — это привычная работа ZoneFlow. Теплица и помещение добавляют управление климатом (вентиляторы, форточки, туманообразование, обогреватель), могут работать без клапана и не используют датчик дождя или прогноз из-за наличия крыши.",
           "start_from": "Начните с копии настроек полива другой зоны или сохранённого пресета вместо настроек типа растения. Клапан, датчики и расход никогда не копируются.",
           "location": "Область, в которой находится эта зона, если есть. Тогда зона использует дождемер, датчик температуры, погоду и телефон области, если вы не задали ей собственные.",
-          "quick_setup": "Спрашивает только клапан и способ подачи воды, остальное заполняет по типу растения и найденным датчикам. Всё можно изменить позже в «Настроить». Снимите флажок, чтобы увидеть все параметры сейчас."
+          "quick_setup": "Спрашивает только клапан и способ подачи воды, остальное заполняет по типу растения и найденным датчикам. Всё можно изменить позже в «Настроить». Снимите флажок, чтобы увидеть все параметры сейчас.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Теплица",
           "zone_name": "Название культуры",
-          "plant": "Что посажено"
+          "plant": "Что посажено",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Теплица или помещение с климатическими устройствами.",
           "zone_name": "Станет названием устройства культуры и началом имён её сущностей, например «Помидоры».",
-          "plant": "Заполняет подходящие начальные значения для этой культуры."
+          "plant": "Заполняет подходящие начальные значения для этой культуры.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

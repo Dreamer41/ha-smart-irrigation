@@ -10,7 +10,8 @@
           "zone_type": "Miejsce uprawy",
           "start_from": "Rozpocznij od",
           "location": "Gdzie to jest?",
-          "quick_setup": "Szybka konfiguracja (zalecana)"
+          "quick_setup": "Szybka konfiguracja (zalecana)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
@@ -18,7 +19,8 @@
           "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody.",
           "start_from": "Rozpocznij od kopii ustawień podlewania innej strefy lub zapisanego szablonu zamiast ustawień typu rośliny. Zawór, czujniki i przepływ nigdy nie są kopiowane.",
           "location": "Obszar, w którym znajduje się ta strefa, jeśli jakiś jest. Strefa używa wtedy deszczomierza, czujnika temperatury, pogody i telefonu obszaru, chyba że nadasz jej własne.",
-          "quick_setup": "Pyta tylko o zawór i sposób podawania wody, a resztę uzupełnia na podstawie rodzaju rośliny i czujników znalezionych przez ZoneFlow. Wszystko można później zmienić w Konfiguracji. Odznacz, aby zobaczyć wszystkie ustawienia teraz."
+          "quick_setup": "Pyta tylko o zawór i sposób podawania wody, a resztę uzupełnia na podstawie rodzaju rośliny i czujników znalezionych przez ZoneFlow. Wszystko można później zmienić w Konfiguracji. Odznacz, aby zobaczyć wszystkie ustawienia teraz.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Szklarnia",
           "zone_name": "Nazwa uprawy",
-          "plant": "Co jest posadzone"
+          "plant": "Co jest posadzone",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi.",
           "zone_name": "Stanie się nazwą urządzenia uprawy i początkiem nazw jej encji, np. „Pomidory”.",
-          "plant": "Wypełnia rozsądne wartości początkowe dla tej uprawy."
+          "plant": "Wypełnia rozsądne wartości początkowe dla tej uprawy.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

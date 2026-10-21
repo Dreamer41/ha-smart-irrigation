@@ -10,7 +10,8 @@
           "zone_type": "Де росте",
           "start_from": "Почати з",
           "location": "Де це розташовано?",
-          "quick_setup": "Швидке налаштування (рекомендовано)"
+          "quick_setup": "Швидке налаштування (рекомендовано)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Стане назвою пристрою зони й початком назв її сутностей, а також з'являтиметься в повідомленнях на телефон. Напр. «Грядка з томатами», «Газон перед будинком».",
@@ -18,7 +19,8 @@
           "zone_type": "Зовнішня зона — це стандартний режим ZoneFlow. Зони теплиць та приміщень додають клімат-контроль (вентилятори, кватирки, туманоутворення, обігрівач), можуть працювати без клапана та не мають датчика дощу чи прогнозу через наявність даху.",
           "start_from": "Почніть з копії налаштувань поливу іншої зони або збереженого пресета замість налаштувань типу рослини. Клапан, датчики та витрата ніколи не копіюються.",
           "location": "Область, у якій розташована ця зона, якщо є. Тоді зона використовує дощомір, датчик температури, погоду та телефон області, якщо ви не вказали їй власні.",
-          "quick_setup": "Питає лише клапан і спосіб подачі води, решту заповнює за типом рослини та знайденими датчиками. Усе можна змінити пізніше в «Налаштувати». Зніміть позначку, щоб побачити всі параметри зараз."
+          "quick_setup": "Питає лише клапан і спосіб подачі води, решту заповнює за типом рослини та знайденими датчиками. Усе можна змінити пізніше в «Налаштувати». Зніміть позначку, щоб побачити всі параметри зараз.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Теплиця",
           "zone_name": "Назва культури",
-          "plant": "Що посаджено"
+          "plant": "Що посаджено",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Теплиця або приміщення з кліматичними пристроями.",
           "zone_name": "Стане назвою пристрою культури та початком назв її сутностей, наприклад «Помідори».",
-          "plant": "Заповнює доцільні початкові значення для цієї культури."
+          "plant": "Заповнює доцільні початкові значення для цієї культури.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

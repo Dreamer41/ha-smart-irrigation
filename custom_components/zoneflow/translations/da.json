@@ -10,7 +10,8 @@
           "zone_type": "Hvor det gror",
           "start_from": "Start fra",
           "location": "Hvor er dette?",
-          "quick_setup": "Hurtig opsætning (anbefalet)"
+          "quick_setup": "Hurtig opsætning (anbefalet)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Bliver zonens enhedsnavn og starten på dens entitetsnavne og vises i beskederne på telefonen. F.eks. \"Tomatbed\", \"Plæne foran\".",
@@ -18,7 +19,8 @@
           "zone_type": "Udendørs er sådan ZoneFlow altid har fungeret. Drivhus- og indendørszoner tilføjer klimastyring (ventilatorer, udluftning, forstøvning, varmelegeme), kan fungere uden ventil og har hverken regnmåler eller vejrudsigt på grund af taget.",
           "start_from": "Start fra en kopi af en anden zones vandingsindstillinger eller en gemt forudindstilling i stedet for plantetypens. Ventil, sensorer og flow kopieres aldrig.",
           "location": "Området, som denne zone er i, hvis nogen. Den bruger så områdets regnmåler, temperatursensor, vejr og telefon, medmindre du giver den sine egne.",
-          "quick_setup": "Spørger kun om ventilen og hvordan vandet leveres, og udfylder resten ud fra plantetypen og de sensorer, ZoneFlow fandt. Du kan ændre alt senere under Konfigurer. Fjern fluebenet for at se alle indstillinger nu."
+          "quick_setup": "Spørger kun om ventilen og hvordan vandet leveres, og udfylder resten ud fra plantetypen og de sensorer, ZoneFlow fandt. Du kan ændre alt senere under Konfigurer. Fjern fluebenet for at se alle indstillinger nu.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Drivhus",
           "zone_name": "Afgrøde-navn",
-          "plant": "Hvad der er plantet"
+          "plant": "Hvad der er plantet",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Drivhuset eller indendørszonen med klimaenhederne.",
           "zone_name": "Bliver afgrødens enhedsnavn og starten på dens entitetsnavne, f.eks. \"Tomater\".",
-          "plant": "Udfylder fornuftige startværdier for denne afgrøde."
+          "plant": "Udfylder fornuftige startværdier for denne afgrøde.",
+          "plant_search": "Type a plant, for example \"cucumber\" or \"basil\", to start from the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it. The next screen shows what was found; you can skip it there."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSource: {source}, {license}. These are averages from seed catalogs; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {

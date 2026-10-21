@@ -414,7 +414,11 @@
   },
   "setup": {
     "progress": "Passaggio {n} di {total}",
-    "nothing_found": "Nessun sensore trovato. Li aggiunga più tardi in Configura."
+    "nothing_found": "Nessun sensore trovato. Li aggiunga più tardi in Configura.",
+    "plant_keep": "Keep the starting values for this plant",
+    "plant_kind": "{name}, the middle of all {n} varieties",
+    "plant_some": "These weekly amounts of water were found for “{query}”, in {unit}. Pick one to use as the starting weekly target, or keep the starting values.",
+    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card."
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",
