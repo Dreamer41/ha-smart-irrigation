@@ -420,7 +420,8 @@ once they've agreed to let you drive.
    `/config/custom_components/zoneflow/` on the person's Home Assistant. If
    you have file access and they aren't there, that's step zero — get the
    contents of this repo's `custom_components/zoneflow/` folder onto their
-   system first (HACS custom repository, or copying the folder manually),
+   system first (HACS: search "ZoneFlow Irrigation", it is in the default
+   list; or copy the folder manually),
    then have them restart Home Assistant. If you have no file/HA access at
    all, just tell them this prerequisite plainly and ask them to confirm
    it's done before continuing.

@@ -43,9 +43,11 @@ Or try it yourself in the [live demo](https://zoneflowirrigation.com/demo).
 
 Or by hand:
 
-1. In HACS: ⋮ → **Custom repositories** → add `https://github.com/Dreamer41/ha-smart-irrigation` as type **Integration**.
-2. Find **ZoneFlow Irrigation** and click **Download**, then restart Home Assistant.
+1. In HACS, search for **ZoneFlow Irrigation** and click **Download**. ZoneFlow is in the HACS default list, so no custom repository is needed.
+2. Restart Home Assistant.
 3. Settings → Devices & services → **Add integration** → **ZoneFlow Irrigation**, and follow the screens.
+
+If HACS does not list it yet (its list refreshes now and then), add it by hand first: HACS → ⋮ → **Custom repositories** → `https://github.com/Dreamer41/ha-smart-irrigation`, type **Integration**.
 
 Requires Home Assistant 2024.5 or newer. To install without HACS, copy `custom_components/zoneflow/` into `/config/custom_components/` and restart.
 

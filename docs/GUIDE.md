@@ -550,18 +550,20 @@ closed. With a phone set up, an alert that a valve may still be open always
 comes through, even with notifications turned off.
 
 **What Home Assistant version do I need?**
-2024.5 or newer. Install with HACS (as a custom repository) or copy the
-folder by hand — see [Installation](#installation).
+2024.5 or newer. Install with HACS (ZoneFlow is in the default list) or copy
+the folder by hand — see [Installation](#installation).
 
 ## Installation
 
 **Via HACS (recommended):**
 
-1. HACS → ⋮ → **Custom repositories** → add
-   `https://github.com/Dreamer41/ha-smart-irrigation` as type
-   **Integration**.
-2. Find **ZoneFlow Irrigation** and click **Download**.
-3. Restart Home Assistant.
+1. In HACS, search for **ZoneFlow Irrigation** (it is in the HACS default
+   list, so no custom repository is needed) and click **Download**.
+2. Restart Home Assistant.
+
+If HACS does not list it yet, add it by hand first: HACS → ⋮ →
+**Custom repositories** → `https://github.com/Dreamer41/ha-smart-irrigation`
+as type **Integration**.
 
 **Manual:** copy `custom_components/zoneflow/` into
 `/config/custom_components/` and restart Home Assistant.
