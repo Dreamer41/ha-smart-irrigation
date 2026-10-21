@@ -20,7 +20,7 @@
           "start_from": "Aloita toisen vyöhykkeen kasteluasetusten kopiolla tai tallennetulla esiasetuksella kasvityypin asetusten sijaan. Venttiiliä, antureita ja virtaamaa ei koskaan kopioida.",
           "location": "Alue, jossa tämä vyöhyke on, jos jokin. Vyöhyke käyttää silloin alueen sademittaria, lämpötila-anturia, säätä ja puhelinta, ellet anna sille omia.",
           "quick_setup": "Kysyy vain venttiilin ja kastelutavan ja täyttää loput kasvityypin ja löydettyjen antureiden perusteella. Voit muuttaa kaiken myöhemmin kohdassa Määritä. Poista rasti nähdäksesi kaikki asetukset nyt.",
-          "plant_search": "Aloita kirjoittamalla kasvi, esimerkiksi \"kurkku\", ja valitse se listasta: jokaisen vieressä on viikoittainen vesimäärä, jonka Plant Variety Database (Wind River Greens, CC BY 4.0) antaa, ja siitä tulee vyöhykkeen lähtöarvo viikkotavoitteelle. Teksti, jota ei ole listassa, haetaan seuraavalla näytöllä. Etkö löydä kasviasi? Jätä tämä tyhjäksi ja valitse alta Mitä on istutettu tyypillisten lähtöarvojen saamiseksi."
+          "plant_search": "Aloita kirjoittamalla kasvi, esimerkiksi \"kurkku\", ja valitse se listasta: jokaisen vieressä on tavallinen viikoittainen vesimäärä (Plant Variety Database, Wind River Greens, CC BY 4.0) ja kasvikerroin (FAO-56, Allen ym. 1998), ja niistä tulee vyöhykkeen lähtöarvot. Teksti, jota ei ole listassa, haetaan seuraavalla näytöllä. Etkö löydä kasviasi? Jätä tämä tyhjäksi ja valitse alta Mitä on istutettu tyypillisten lähtöarvojen saamiseksi."
         }
       },
       "entities": {
@@ -235,7 +235,7 @@
           "greenhouse_entry_id": "Kasvihuone- tai sisätilavyöhyke, jossa on ilmastolaitteet.",
           "zone_name": "Tästä tulee kasvin laitteen nimi ja sen entiteettien nimien alku, esim. \"Tomaatit\".",
           "plant": "Täyttää tälle kasville sopivat alkuarvot. Jos valitsit kasvin yllä olevasta listasta, sen viikoittaista vettä käytetään ja tämä asettaa loput.",
-          "plant_search": "Aloita kirjoittamalla kasvi, esimerkiksi \"kurkku\", ja valitse se listasta: jokaisen vieressä on viikoittainen vesimäärä, jonka Plant Variety Database (Wind River Greens, CC BY 4.0) antaa, ja siitä tulee vyöhykkeen lähtöarvo viikkotavoitteelle. Teksti, jota ei ole listassa, haetaan seuraavalla näytöllä. Etkö löydä kasviasi? Jätä tämä tyhjäksi ja valitse alta Mitä on istutettu tyypillisten lähtöarvojen saamiseksi."
+          "plant_search": "Aloita kirjoittamalla kasvi, esimerkiksi \"kurkku\", ja valitse se listasta: jokaisen vieressä on tavallinen viikoittainen vesimäärä (Plant Variety Database, Wind River Greens, CC BY 4.0) ja kasvikerroin (FAO-56, Allen ym. 1998), ja niistä tulee vyöhykkeen lähtöarvot. Teksti, jota ei ole listassa, haetaan seuraavalla näytöllä. Etkö löydä kasviasi? Jätä tämä tyhjäksi ja valitse alta Mitä on istutettu tyypillisten lähtöarvojen saamiseksi."
         }
       },
       "crop_valve": {
@@ -304,7 +304,7 @@
       },
       "plant_pick": {
         "title": "Mitä kasvitietokanta sanoo",
-        "description": "{result}\n\nLähde: {source}, {license}. Nämä ovat siemenluetteloiden keskiarvoja; maaperäsi, ilmastosi ja sade ratkaisevat loput.",
+        "description": "{result}\n\nLähteet: {source}. Nämä ovat siemenluetteloiden ja oppikirjan keskiarvoja; maaperäsi, ilmastosi ja sade ratkaisevat loput.",
         "data": {
           "pick": "Viikoittaisen veden lähtöarvo"
         },

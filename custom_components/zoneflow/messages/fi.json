@@ -417,8 +417,10 @@
     "nothing_found": "Antureita ei löytynyt. Lisää ne myöhemmin kohdassa Määritä.",
     "plant_keep": "Säilytä tämän kasvin lähtöarvot",
     "plant_kind": "{name}, kaikkien {n} lajikkeen keskiarvo",
-    "plant_some": "“{query}”: viikoittaiset vesimäärät löytyivät, yksikkö {unit}. Valitse yksi lähtöarvoksi viikkotavoitteelle tai säilytä lähtöarvot.",
-    "plant_nothing": "“{query}”: viikkomäärällä varustettua tulosta ei löytynyt. Lähtöarvot säilyvät; jatka ja muuta niitä myöhemmin vyöhykekortilla."
+    "plant_some": "“{query}”: löytyi tavallinen viikoittainen vesimäärä ({unit}) ja kasvikerroin. Valitse yksi lähtöarvoiksi tai säilytä lähtöarvot.",
+    "plant_nothing": "“{query}”: viikkomäärällä varustettua tulosta ei löytynyt. Lähtöarvot säilyvät; jatka ja muuta niitä myöhemmin vyöhykekortilla.",
+    "plant_crop": "{name} (FAO-56)",
+    "plant_kc": "kasvikerroin {kc}"
   },
   "valve_test": {
     "ok": "Venttiili vastasi: se avautui ja sulkeutui uudelleen.",

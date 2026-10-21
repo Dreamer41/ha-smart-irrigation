@@ -224,7 +224,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -239,7 +239,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Check my setup",
@@ -511,7 +514,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -526,7 +529,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -798,7 +804,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -813,7 +819,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Comprobar mi configuración",
@@ -1085,7 +1094,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Kastelun vinkit",
-      "intro": "Hae kasvisi Plant Variety Databasesta nähdäksesi, paljonko vettä se yleensä haluaa viikossa. Tämä on vain ehdotus: mikään ei muutu ennen kuin painat Käytä.",
+      "intro": "Hae kasvisi nähdäksesi, paljonko vettä se yleensä haluaa viikossa (Plant Variety Database) ja sen kasvikerroin (FAO-56). Tämä on vain ehdotus: mikään ei muutu ennen kuin painat Käytä.",
       "search": "Kasvi tai laji, esim. kurkku",
       "none": "Mitään ei löytynyt. Kokeile kasvin lajia (paprika, basilika, ruusu) tai toista kirjoitusasua.",
       "kind": "kaikkien {n} lajikkeen keskiarvo",
@@ -1100,7 +1109,10 @@ const I18N = {
       "apply": "Käytä",
       "applied": "Valmis. Viikkotavoitteet on muutettu.",
       "source": "Lähde: {name}, {author}, {license}.",
-      "caveat": "Siemenluetteloiden keskiarvoja: maaperäsi, ilmastosi ja sade ratkaisevat loput. Tarkista tulos Miksi?-kohdasta."
+      "caveat": "Siemenluetteloiden keskiarvoja: maaperäsi, ilmastosi ja sade ratkaisevat loput. Tarkista tulos Miksi?-kohdasta.",
+      "crop_factor": "Kasvikerroin",
+      "crop_source": "FAO-56:n kasvitaulukosta.",
+      "kc_source": "Kasvikertoimet: {name}, {author}."
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -1372,7 +1384,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -1387,7 +1399,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Vérifier ma configuration",
@@ -1659,7 +1674,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -1674,7 +1689,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1946,7 +1964,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -1961,7 +1979,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Mijn instellingen controleren",
@@ -2233,7 +2254,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -2248,7 +2269,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -2520,7 +2544,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -2535,7 +2559,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Verificar a minha configuração",
@@ -2807,7 +2834,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -2822,7 +2849,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -3094,7 +3124,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -3109,7 +3139,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Zkontrolovat mé nastavení",
@@ -3381,7 +3414,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -3396,7 +3429,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -3668,7 +3704,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -3683,7 +3719,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Beállítások ellenőrzése",
@@ -3955,7 +3994,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -3970,7 +4009,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -4242,7 +4284,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -4257,7 +4299,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Verificar minha configuração",
@@ -4529,7 +4574,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -4544,7 +4589,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Проверить настройки",
@@ -4816,7 +4864,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -4831,7 +4879,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Skontrolovať moje nastavenie",
@@ -5103,7 +5154,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -5118,7 +5169,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "Перевірити мої налаштування",
@@ -5390,7 +5444,7 @@ const I18N = {
     },
     "water_tips": {
       "title": "Watering tips",
-      "intro": "Look up your plant in the Plant Variety Database to see how much water it usually wants each week. It is only a suggestion: nothing changes until you press Apply.",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
       "search": "Plant or kind, e.g. cucumber",
       "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
       "kind": "the middle of all {n} varieties",
@@ -5405,7 +5459,10 @@ const I18N = {
       "apply": "Apply",
       "applied": "Done. The weekly targets are changed.",
       "source": "Source: {name} by {author}, {license}.",
-      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?."
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "crop_source": "From the FAO-56 crop table.",
+      "kc_source": "Crop factors: {name}, {author}."
     },
     "check": {
       "title": "检查我的设置",
@@ -6038,6 +6095,7 @@ class ZoneFlowCard extends HTMLElement {
           normal: visible["number.target_weekly_mm"]?.entity_id,
           hot: visible["number.target_weekly_hot_mm"]?.entity_id,
           cool: visible["number.target_weekly_cool_mm"]?.entity_id,
+          kc: visible["number.crop_coefficient"]?.entity_id,
         },
       };
     }
@@ -6332,9 +6390,15 @@ class ZoneFlowCard extends HTMLElement {
       return String(Number(value.toFixed(unit === "in" ? 2 : 1)));
     };
     const amount = (item) => {
-      const [low, high] = [show(item.low_mm), show(item.high_mm)];
-      return `${low === high ? low : `${low}\u2013${high}`} ${unit} ${t(hass, "water_tips.per_week")}`;
+      const parts = [];
+      if (item.low_mm != null) {
+        const [low, high] = [show(item.low_mm), show(item.high_mm)];
+        parts.push(`${low === high ? low : `${low}\u2013${high}`} ${unit} ${t(hass, "water_tips.per_week")}`);
+      }
+      if (item.kc != null) parts.push(`${t(hass, "water_tips.crop_factor")} ${item.kc}`);
+      return parts.join(", ");
     };
+    const usable = (item) => item.low_mm != null || item.kc != null;
     body.textContent = "";
     body.appendChild(make("div", "group-note", t(hass, "water_tips.intro")));
     const input = make("input", "area-input");
@@ -6350,31 +6414,36 @@ class ZoneFlowCard extends HTMLElement {
     // cool weeks keep the proportion they have to it now.
     const propose = (item) => {
       proposal.textContent = "";
-      const middle = (item.low_mm + item.high_mm) / 2 / (unit === "in" ? 25.4 : 1);
       const now = Object.fromEntries(Object.entries(popup.targets).map(([key, id]) => [key, Number(stateOf(id)?.state)]));
-      const factor = now.normal > 0 ? middle / now.normal : 1;
       const next = {};
-      for (const key of ["normal", "hot", "cool"]) {
+      const fit = (key, wanted) => {
         const entity = stateOf(popup.targets[key]);
-        if (!entity || !Number.isFinite(now[key])) continue;
+        if (!entity || !Number.isFinite(now[key])) return;
         const { min, max, step } = entity.attributes;
-        let value = key === "normal" ? middle : now[key] * factor;
-        value = Math.round(value / (step || 0.1)) * (step || 0.1);
-        next[key] = Number(Math.min(Math.max(value, min ?? value), max ?? value).toFixed(unit === "in" ? 3 : 2));
+        const value = Math.round(wanted / (step || 0.1)) * (step || 0.1);
+        next[key] = Number(Math.min(Math.max(value, min ?? value), max ?? value).toFixed(unit === "in" && key !== "kc" ? 3 : 2));
+      };
+      if (item.low_mm != null) {
+        const middle = (item.low_mm + item.high_mm) / 2 / (unit === "in" ? 25.4 : 1);
+        const factor = now.normal > 0 ? middle / now.normal : 1;
+        fit("normal", middle);
+        fit("hot", now.hot * factor);
+        fit("cool", now.cool * factor);
       }
+      if (item.kc != null) fit("kc", item.kc);
       proposal.appendChild(make("div", "group-title", `${t(hass, "water_tips.proposal")}: ${item.name}`));
-      for (const key of ["normal", "hot", "cool"]) {
+      for (const key of ["normal", "hot", "cool", "kc"]) {
         if (next[key] === undefined) continue;
-        const line = `${t(hass, `water_tips.${key}`)}: ${now[key]} \u2192 ${next[key]} ${unit}`;
+        const line = `${t(hass, `water_tips.${key === "kc" ? "crop_factor" : key}`)}: ${now[key]} \u2192 ${next[key]}${key === "kc" ? "" : ` ${unit}`}`;
         proposal.appendChild(make("div", "", line));
       }
-      proposal.appendChild(make("div", "group-note", t(hass, "water_tips.keep_shape")));
+      if (item.low_mm != null) proposal.appendChild(make("div", "group-note", t(hass, "water_tips.keep_shape")));
       const done = make("div", "group-note");
       const apply = make("button", "plant-button", t(hass, "water_tips.apply"));
       apply.addEventListener("click", async () => {
         try {
           // The hot and cool weeks first: the normal one last, so the sliders never cross on the way.
-          for (const key of ["hot", "cool", "normal"]) {
+          for (const key of ["hot", "cool", "normal", "kc"]) {
             if (next[key] !== undefined) await hass.callService("number", "set_value", { entity_id: popup.targets[key], value: next[key] });
           }
           done.textContent = t(hass, "water_tips.applied");
@@ -6404,12 +6473,12 @@ class ZoneFlowCard extends HTMLElement {
       for (const item of data.results) {
         const row = make("div", "tips-row");
         row.appendChild(make("div", "tips-name", item.name));
-        if (item.low_mm != null) row.appendChild(make("div", "tips-amount", amount(item)));
+        if (usable(item)) row.appendChild(make("div", "tips-amount", amount(item)));
         const sub = item.kind === "category"
           ? t(hass, "water_tips.kind").replace("{n}", item.count)
-          : (item.low_mm != null ? "" : item.note);
+          : (item.kind === "crop" ? t(hass, "water_tips.crop_source") : (item.low_mm != null ? "" : item.note));
         if (sub) row.appendChild(make("div", "group-note", sub));
-        if (item.low_mm != null) {
+        if (usable(item)) {
           const use = make("button", "plant-button", t(hass, "water_tips.pick"));
           use.addEventListener("click", () => propose(item));
           row.appendChild(use);
@@ -6427,6 +6496,19 @@ class ZoneFlowCard extends HTMLElement {
         link.target = "_blank";
         link.rel = "noopener";
         credit.append(link, document.createTextNode(" "));
+      }
+      const kcSrc = data.kc_source || {};
+      if (data.results.some((item) => item.kc != null) && kcSrc.name) {
+        credit.appendChild(document.createElement("br"));
+        credit.appendChild(document.createTextNode(
+          t(hass, "water_tips.kc_source").replace("{name}", kcSrc.name).replace("{author}", kcSrc.author) + " "));
+        if (kcSrc.url) {
+          const link = make("a", "", "FAO");
+          link.href = kcSrc.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          credit.appendChild(link);
+        }
       }
     };
     let timer;

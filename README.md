@@ -70,11 +70,16 @@ Questions and bug reports: [GitHub issues](https://github.com/Dreamer41/ha-smart
 
 ## Credits
 
-The **Watering tips** on the zone card suggest weekly amounts from the
-[Plant Variety Database](https://github.com/bripatch/plant-variety-database) by
-Wind River Greens, licensed
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Only the weekly
-watering amounts were taken, converted from inches to millimetres.
+The plant lookup (**Watering tips** on the zone card, and when you add a zone) suggests:
+
+- weekly amounts of water from the
+  [Plant Variety Database](https://github.com/bripatch/plant-variety-database) by
+  Wind River Greens, licensed
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Only the weekly
+  watering amounts were taken, converted from inches to millimetres;
+- crop factors (Kc) from Allen, R. G., Pereira, L. S., Raes, D. and Smith, M. (1998),
+  [Crop evapotranspiration: guidelines for computing crop water requirements](https://www.fao.org/3/x0490E/x0490e00.htm),
+  FAO Irrigation and drainage paper 56, Table 12. The values were typed in from the table.
 
 ## License
 

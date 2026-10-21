@@ -23,6 +23,12 @@ from custom_components.zoneflow.const import (
 from .test_suggest import _house
 
 VALVE = "switch.sprinkler_valve"
+
+
+class _Texts:
+    kind = staticmethod(lambda summary: summary["name"])
+    crop = staticmethod(lambda crop: crop["name"])
+    kc = staticmethod(lambda value: f"kc {value:g}")
 FLOW = {"emitters": 10, "emitter_flow": 2.0, "area": 2.0}
 
 
@@ -83,10 +89,10 @@ async def test_a_plant_that_is_found_is_picked_and_becomes_the_starting_weekly_t
     assert result["type"] == FlowResultType.CREATE_ENTRY
     data = await hass.async_add_executor_job(plant_water._load)
     kind = plant_water.search(data, "cucumber")[0]
-    expected = plant_water.suggested_numbers(kind["low_mm"], kind["high_mm"], PLANT_PRESETS["tomatoes"]["numbers"])
+    expected = plant_water.suggested_numbers(kind["low_mm"], kind["high_mm"], PLANT_PRESETS["tomatoes"]["numbers"], kind["kc"])
     numbers = result["result"].data[CONF_INITIAL_NUMBERS]
     assert all(numbers[key] == value for key, value in expected.items())
-    assert numbers["crop_coefficient"] == PLANT_PRESETS["tomatoes"]["numbers"]["crop_coefficient"]  # the rest of the preset stays
+    assert numbers["crop_coefficient"] == 1.0  # the FAO crop factor of cucumbers, not the tomato preset's
 
 
 @pytest.mark.asyncio
@@ -114,10 +120,21 @@ async def test_nothing_found_says_so_and_goes_on(hass, fake_valve_services):
 
 
 @pytest.mark.asyncio
-async def test_a_plant_with_only_words_is_not_offered(hass, fake_valve_services):
+async def test_a_plant_with_only_a_crop_factor_is_offered_for_that(hass, fake_valve_services):
     _house(hass)
-    result = await _first(hass, "hass avocado")  # the database has words for it, but no weekly amount
-    assert list(_options(result)) == [""]
+    result = await _first(hass, "hass avocado")  # no weekly amount in the database, but FAO-56 has avocado
+    options = _options(result)
+    assert any("crop factor 0.85" in label and "mm" not in label for label in options.values())
+    index = next(v for v, label in options.items() if "Hass Avocado" in label)
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"pick": index})
+    assert result["step_id"] == "quick"
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_VALVE_ENTITY: VALVE, CONF_IRRIGATION_METHOD: "drip", **FLOW}
+    )
+    numbers = result["result"].data[CONF_INITIAL_NUMBERS]
+    assert numbers["crop_coefficient"] == 0.85
+    for key in plant_water.TARGET_KEYS:  # no weekly amount: the preset's weekly water stays
+        assert numbers[key] == PLANT_PRESETS["tomatoes"]["numbers"][key]
 
 
 @pytest.mark.asyncio
@@ -167,7 +184,7 @@ async def test_a_crop_in_a_greenhouse_gets_the_lookup_too(hass, fake_valve_servi
     assert result["type"] == FlowResultType.CREATE_ENTRY
     data = await hass.async_add_executor_job(plant_water._load)
     kind = plant_water.search(data, "cucumber")[0]
-    expected = plant_water.suggested_numbers(kind["low_mm"], kind["high_mm"])  # "something else": the ordinary starting values
+    expected = plant_water.suggested_numbers(kind["low_mm"], kind["high_mm"], None, kind["kc"])  # "something else": the ordinary starting values
     numbers = result["result"].data[CONF_INITIAL_NUMBERS]
     assert all(numbers[key] == value for key, value in expected.items())
 
@@ -190,7 +207,8 @@ async def test_the_first_screen_has_a_searchable_list_of_plants_with_their_amoun
     assert len(options) > 600
     assert options[0]["value"].startswith("kind:") and "varieties" in options[0]["label"] and " mm" in options[0]["label"]
     assert any(o["value"].startswith("plant:") and ": 25.4-38.1 mm" in o["label"] for o in options)
-    assert all(o["value"].split(":")[0] in ("kind", "plant") for o in options)
+    assert any(o["value"] == "crop:avocado" and "crop factor 0.85" in o["label"] for o in options)  # FAO-only crops too
+    assert all(o["value"].split(":")[0] in ("kind", "crop", "plant") for o in options)
 
 
 @pytest.mark.asyncio
@@ -208,7 +226,7 @@ async def test_a_plant_picked_on_the_first_screen_goes_straight_on(hass, fake_va
         result["flow_id"], {CONF_VALVE_ENTITY: VALVE, CONF_IRRIGATION_METHOD: "drip", **FLOW}
     )
     numbers = result["result"].data[CONF_INITIAL_NUMBERS]
-    expected = plant_water.suggested_numbers(25.4, 25.4, PLANT_PRESETS["chilis"]["numbers"])
+    expected = plant_water.suggested_numbers(25.4, 25.4, PLANT_PRESETS["chilis"]["numbers"], 1.05)  # a pepper: FAO crop factor 1.05
     assert all(numbers[key] == value for key, value in expected.items())
 
 
@@ -237,7 +255,8 @@ async def test_the_list_is_in_inches_for_imperial(hass, fake_valve_services):
 
     hass.config.units = US_CUSTOMARY_SYSTEM
     options = _field(await _first_form(hass)).config["options"]
-    assert all(" in" in o["label"] and " mm" not in o["label"] for o in options[:50])
+    weekly = [o for o in options if ": " in o["label"] and not o["label"].split(": ")[1].startswith("crop factor")]
+    assert weekly and all(" in" in o["label"] and " mm" not in o["label"] for o in weekly)
 
 
 @pytest.mark.parametrize("value", ["", "cucumber", "plant:", "plant:abc", "plant:999999", "plant:-1", "kind:nothing", "kind:", "x:1"])
@@ -250,7 +269,7 @@ def test_a_plant_with_only_words_is_never_in_the_list():
     data = plant_water._load()
     words_only = next(i for i, p in enumerate(data["plants"]) if p["low_mm"] is None)
     assert plant_water.resolve(data, f"plant:{words_only}") is None
-    assert all(not value.endswith(f":{words_only}") for value, _ in plant_water.picker_options(data, False, lambda s: s["name"]))
+    assert all(not value.endswith(f":{words_only}") for value, _ in plant_water.picker_options(data, False, _Texts))
 
 
 @pytest.mark.asyncio

@@ -899,11 +899,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """The "Look up your plant" field: a picker that filters as you type, each plant with its usual
         weekly amount. Text that is not in the list is searched for on the next screen."""
         data = await plant_water.async_get_data(self.hass)
-        options = plant_water.picker_options(
-            data,
-            self._imperial(),
-            lambda summary: messages.text(self.hass, "setup.plant_kind", name=summary["name"], n=summary["count"]),
-        )
+        options = plant_water.picker_options(data, self._imperial(), self._lookup_texts())
         return selector.SelectSelector(
             selector.SelectSelectorConfig(
                 options=[selector.SelectOptionDict(value=value, label=label) for value, label in options],
@@ -911,6 +907,31 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 mode=selector.SelectSelectorMode.DROPDOWN,
             )
         )
+
+    def _lookup_texts(self):
+        """How the lookup words its labels: a kind of plant, an FAO crop, a crop factor."""
+        hass = self.hass
+
+        class Texts:
+            @staticmethod
+            def kind(summary):
+                return messages.text(hass, "setup.plant_kind", name=summary["name"], n=summary["count"])
+
+            @staticmethod
+            def crop(crop):
+                return messages.text(hass, "setup.plant_crop", name=crop["name"])
+
+            @staticmethod
+            def kc(value):
+                return messages.text(hass, "setup.plant_kc", kc=f"{value:g}")
+
+        return Texts
+
+    def _lookup_starting_numbers(self, item: dict[str, Any]) -> dict[str, float]:
+        """The starting values a picked plant gives: its weekly water (the hot and cool weeks in the
+        proportion the chosen What's planted has) and its crop factor."""
+        base = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
+        return plant_water.suggested_numbers(item["low_mm"], item["high_mm"], base, item.get("kc"))
 
     async def _after_user(self):
         """What follows the first screen: the climate devices of a greenhouse, the quick setup, or the full one."""
@@ -929,9 +950,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return await next_step()
         data = await plant_water.async_get_data(self.hass)
         if (item := plant_water.resolve(data, self._plant_search)) is not None:
-            # Picked from the list on the first screen: its amount is the starting weekly target.
-            base = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
-            self._lookup_numbers = plant_water.suggested_numbers(item["low_mm"], item["high_mm"], base)
+            # Picked from the list on the first screen: its amounts are the starting values.
+            self._lookup_numbers = self._lookup_starting_numbers(item)
             self._plant_search = ""
             return await next_step()
         self._lookup_next = next_step
@@ -944,26 +964,21 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             pick = user_input.get("pick") or ""
             if pick.isdigit() and int(pick) < len(self._lookup_items):
-                item = self._lookup_items[int(pick)]
-                base = PLANT_PRESETS.get(self._plant, {}).get("numbers", {})
-                self._lookup_numbers = plant_water.suggested_numbers(item["low_mm"], item["high_mm"], base)
+                self._lookup_numbers = self._lookup_starting_numbers(self._lookup_items[int(pick)])
             return await self._lookup_next()
         data = await plant_water.async_get_data(self.hass)
-        found = [item for item in plant_water.search(data, self._plant_search, limit=10) if item["low_mm"] is not None]
+        found = [item for item in plant_water.search(data, self._plant_search, limit=10) if plant_water.usable(item)]
         self._lookup_items = found
         unit = "in" if imperial else "mm"
-
-        def amount(mm: float) -> str:
-            return str(round(mm / 25.4, 2) if imperial else round(mm, 1))
-
+        texts = self._lookup_texts()
         options = [selector.SelectOptionDict(value="", label=messages.text(self.hass, "setup.plant_keep"))]
         for index, item in enumerate(found):
-            low, high = amount(item["low_mm"]), amount(item["high_mm"])
-            name = (
-                messages.text(self.hass, "setup.plant_kind", name=item["name"], n=item["count"])
-                if item["kind"] == "category" else item["name"]
+            name = {"category": texts.kind, "crop": lambda i: texts.crop(i)}.get(item["kind"], lambda i: i["name"])(
+                {**item, "count": item.get("count", 0)}
             )
-            options.append(selector.SelectOptionDict(value=str(index), label=f"{name}: {low if low == high else f'{low}-{high}'} {unit}"))
+            options.append(
+                selector.SelectOptionDict(value=str(index), label=f"{name}: {plant_water.amount_text(item, imperial, texts.kc)}")
+            )
         text = messages.text(self.hass, "setup.plant_some" if found else "setup.plant_nothing", query=self._plant_search, unit=unit)
         return self.async_show_form(
             step_id="plant_pick",
@@ -974,7 +989,10 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 }
             ),
-            description_placeholders={"result": text, "source": data["source"]["name"], "license": data["source"]["license"]},
+            description_placeholders={
+                "result": text,
+                "source": f"{data['source']['name']} ({data['source']['license']}), {data['kc_source']['author']}, FAO-56",
+            },
         )
 
     async def _entity_defaults(self) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:

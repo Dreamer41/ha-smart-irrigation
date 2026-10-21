@@ -72,7 +72,9 @@ def test_a_kind_of_plant_starts_with_the_middle_of_all_of_it(data):
     results = plant_water.search(data, "cucumber")
     assert results[0]["kind"] == "category" and results[0]["count"] >= 3
     assert results[0]["low_mm"] is not None and len(results) <= plant_water.MAX_RESULTS
-    assert all(r["kind"] == "plant" for r in results[1:])
+    assert results[0]["kc"] == 1.0  # the FAO crop factor of cucumbers
+    assert results[1]["kind"] == "crop" and results[1]["kc"] == 1.0  # then the FAO crop itself
+    assert all(r["kind"] == "plant" for r in results[2:])
 
 
 def test_a_whole_word_comes_before_a_word_that_only_starts_like_it(data):
@@ -96,9 +98,16 @@ def test_several_words_all_have_to_match(data):
     assert plant_water.search(data, "genovese zzzz") == []
 
 
-def test_a_plant_with_only_words_is_found_but_has_nothing_to_apply(data):
-    avocado = plant_water.search(data, "hass avocado")[0]
+def test_a_plant_with_only_words_is_found_and_still_gets_its_crop_factor(data):
+    avocado = next(r for r in plant_water.search(data, "hass avocado") if r["kind"] == "plant")
     assert avocado["name"] == "Hass Avocado" and avocado["low_mm"] is None and avocado["note"]
+    assert avocado["kc"] == 0.85  # no weekly amount in the database, but the FAO crop factor
+    assert plant_water.usable(avocado)
+
+
+def test_a_plant_with_neither_is_not_usable(data):
+    nothing = next(p for p in data["plants"] if p["low_mm"] is None and p["kc"] is None)
+    assert not plant_water.usable(plant_water._public(nothing))
 
 
 def test_empty_and_odd_queries_are_safe(data):
@@ -139,6 +148,7 @@ async def test_the_websocket_command_answers_with_results_and_the_source(hass):
     msg_id, result = connection.sent[0]
     assert msg_id == 3 and result["results"][0]["kind"] == "category"
     assert result["source"]["license"] == "CC BY 4.0"
+    assert "Allen" in result["kc_source"]["author"]  # the crop factors' source is named too
 
 
 def test_a_query_that_is_too_long_is_refused_by_the_schema():
@@ -148,3 +158,58 @@ def test_a_query_that_is_too_long_is_refused_by_the_schema():
 
     with pytest.raises(vol.Invalid):
         plant_api.ws_plant_water._ws_schema({"id": 1, "type": "zoneflow/plant_water", "query": "x" * 200})
+
+
+# --- crop factors (FAO-56) ---------------------------------------------------------
+def _kc(data, name):
+    plant = next(p for p in data["plants"] if p["name"] == name)
+    return plant["kc"], plant["crop"]
+
+
+@pytest.mark.parametrize(
+    ("name", "kc"),
+    [
+        ("Hass Avocado", 0.85),
+        ("Banana Pepper 'Sweet Banana'", 1.05),  # a pepper, not a banana
+        ("Common Mint", 1.15),  # mint
+        ("Apple Mint", 1.15),  # a mint, not an apple tree
+        ("Genovese Basil", None),  # FAO-56 has no basil
+    ],
+)
+def test_plants_map_to_the_right_fao_crop(data, name, kc):
+    found = [p for p in data["plants"] if p["name"] == name]
+    assert found, name
+    assert found[0]["kc"] == kc
+
+
+def test_look_alikes_do_not_get_the_wrong_crop(data):
+    by_name = {p["name"]: p for p in data["plants"]}
+    for name, plant in by_name.items():
+        lowered = name.lower()
+        if plant["category"] == "herb" and "lemon" in lowered:
+            assert plant["crop"] != "Citrus", name  # lemon balm is not a lemon tree
+        if plant["category"] == "flower" and "grape" in lowered:
+            assert plant["crop"] != "Grapes (table)", name  # grape hyacinth is not a grape
+        if plant["category"] == "tomato" and "grape" in lowered:
+            assert plant["crop"] == "Tomato", name  # grape tomato is a tomato
+
+
+def test_the_crop_table_is_the_fao_one():
+    kc = json.loads(plant_water.KC_FILE.read_text(encoding="utf-8"))
+    assert "Allen" in kc["source"]["author"] and "FAO" in kc["source"]["name"]
+    crops = {c["id"]: c for c in kc["crops"]}
+    # a few values of Table 12 (initial, mid-season, end)
+    assert (crops["tomato"]["kc_ini"], crops["tomato"]["kc_mid"], crops["tomato"]["kc_end"]) == (0.6, 1.15, 0.8)
+    assert crops["avocado"]["kc_mid"] == 0.85 and crops["potato"]["kc_mid"] == 1.15 and crops["lettuce"]["kc_mid"] == 1.0
+    assert all(0.1 <= c["kc_mid"] <= 1.5 for c in kc["crops"])  # inside the crop factor slider
+    assert len({c["id"] for c in kc["crops"]}) == len(kc["crops"])
+
+
+def test_a_crop_with_no_weekly_amount_gives_only_the_crop_factor():
+    got = plant_water.suggested_numbers(None, None, None, 0.85)
+    assert got == {"crop_coefficient": 0.85}
+
+
+def test_amount_and_crop_factor_together():
+    got = plant_water.suggested_numbers(25.4, 38.1, {"target_weekly_mm": 30, "target_weekly_hot_mm": 40, "target_weekly_cool_mm": 20}, 1.15)
+    assert got["target_weekly_mm"] == 32.0 and got["crop_coefficient"] == 1.15

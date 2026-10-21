@@ -7,7 +7,7 @@ ZoneFlow 1.7.0 adds areas, plants with a history of their own, presets, and a se
 On a zone card, **Watering tips** (administrators only) looks up your plant in the
 [Plant Variety Database](https://github.com/bripatch/plant-variety-database) (Wind River
 Greens, CC BY 4.0) and shows how much water it usually wants each week, in your
-zone's units. It starts with the zone's main plant; type another name to look
+zone's units, together with the plant's **crop factor** (Kc, from FAO paper 56: Allen et al. 1998). It starts with the zone's main plant; type another name to look
 for something else. Searching a kind of plant (*pepper*, *basil*, *rose*) gives
 the middle of all its varieties first.
 
@@ -23,7 +23,11 @@ on the screen for a crop in a greenhouse.
 - A suggestion is only that. Nothing changes until you press **Apply**, which sets
   the **normal week** to the middle of the range and moves the **hot** and **cool**
   weeks in the same proportion they have to the normal week now.
-- Some plants only have words ("Moderate, regular watering"). Those are shown, with
+- The crop factor is the full-grown value of the FAO table. **Apply** sets the Crop Factor setting
+  too, which the ET demand model uses (the growth ramp lowers it early in the season). Crops the
+  database has no weekly amount for (avocado, olive, citrus, potato and more) are offered for
+  their crop factor alone; Apply then changes only that.
+- Some plants only have words ("Moderate, regular watering") and no crop. Those are shown, with
   nothing to apply.
 - The amounts are averages from seed catalogs, and the weekly amount includes rain.
   Your soil, slope, climate and rain decide the rest: check the result with **Why?**
