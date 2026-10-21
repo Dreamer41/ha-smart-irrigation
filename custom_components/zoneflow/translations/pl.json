@@ -6,21 +6,21 @@
         "description": "Nadaj tej strefie nawadniania krótką nazwę (np. „Trawnik przed domem”, „Awokado”). Aby dodać kolejne strefy, dodaj tę integrację ponownie.",
         "data": {
           "zone_name": "Nazwa strefy",
-          "plant": "Co tu rośnie",
+          "plant": "Co tu rośnie (jeśli nie wybrano wyżej)",
           "zone_type": "Miejsce uprawy",
           "start_from": "Rozpocznij od",
           "location": "Gdzie to jest?",
           "quick_setup": "Szybka konfiguracja (zalecana)",
-          "plant_search": "Look up your plant (optional)"
+          "plant_search": "Wyszukaj swoją roślinę (opcjonalnie)"
         },
         "data_description": {
           "zone_name": "Staje się nazwą urządzenia strefy i początkiem nazw jej encji, pojawia się też w wiadomościach na telefon. Np. „Grządka pomidorów”, „Trawnik przed domem”.",
-          "plant": "Wpisuje rozsądne wartości początkowe dla tej uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy.",
+          "plant": "Wpisuje wartości początkowe dla tego rodzaju uprawy: tygodniowe dawki wody, współczynnik roślinny, głębokie podlewanie i narastanie dawki. Jeśli roślinę wybrano z listy powyżej, zostaw tu „Coś innego”: pasujący typ zostanie wybrany za ciebie, a użyte będą tygodniowa ilość wody i współczynnik roślinny z listy. Wybierz tu typ, gdy twojej rośliny nie ma na liście. „Coś innego” zaczyna od wartości ogólnych. Wszystkie możesz później zmienić na stronie urządzenia strefy.",
           "zone_type": "Tryb zewnętrzny to dotychczasowy sposób działania ZoneFlow. Strefy szklarniowe i domowe dodają kontrolę klimatu (wentylatory, otwieracze okien, zamgławianie, ogrzewanie), mogą działać bez zaworu i ze względu na dach nie używają deszczomierza ani prognozy pogody.",
           "start_from": "Rozpocznij od kopii ustawień podlewania innej strefy lub zapisanego szablonu zamiast ustawień typu rośliny. Zawór, czujniki i przepływ nigdy nie są kopiowane.",
           "location": "Obszar, w którym znajduje się ta strefa, jeśli jakiś jest. Strefa używa wtedy deszczomierza, czujnika temperatury, pogody i telefonu obszaru, chyba że nadasz jej własne.",
           "quick_setup": "Pyta tylko o zawór i sposób podawania wody, a resztę uzupełnia na podstawie rodzaju rośliny i czujników znalezionych przez ZoneFlow. Wszystko można później zmienić w Konfiguracji. Odznacz, aby zobaczyć wszystkie ustawienia teraz.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant_search": "Zacznij wpisywać roślinę, na przykład „ogórek”, i wybierz ją z listy: przy każdej widać jej zwykłą tygodniową ilość wody (Plant Variety Database, Wind River Greens, CC BY 4.0) i współczynnik roślinny (FAO-56, Allen i in. 1998). Staną się wartościami początkowymi strefy, a typ rośliny poniżej zostanie dobrany, jeśli jest pasujący. Tekst, którego nie ma na liście, zostanie wyszukany na następnym ekranie. Nie możesz znaleźć rośliny? Zostaw puste i wybierz poniżej Co tu rośnie."
         }
       },
       "entities": {
@@ -228,14 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Szklarnia",
           "zone_name": "Nazwa uprawy",
-          "plant": "Co jest posadzone",
-          "plant_search": "Look up your plant (optional)"
+          "plant": "Co jest posadzone (jeśli nie wybrano wyżej)",
+          "plant_search": "Wyszukaj swoją roślinę (opcjonalnie)"
         },
         "data_description": {
           "greenhouse_entry_id": "Szklarnia lub strefa wewnętrzna z urządzeniami klimatycznymi.",
           "zone_name": "Stanie się nazwą urządzenia uprawy i początkiem nazw jej encji, np. „Pomidory”.",
-          "plant": "Wypełnia rozsądne wartości początkowe dla tej uprawy.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant": "Wypełnia rozsądne wartości początkowe dla tej uprawy. Jeśli roślinę wybrano z listy powyżej, zostaw tu „Coś innego”: pasujący typ zostanie wybrany za ciebie.",
+          "plant_search": "Zacznij wpisywać roślinę, na przykład „ogórek”, i wybierz ją z listy: przy każdej widać jej zwykłą tygodniową ilość wody (Plant Variety Database, Wind River Greens, CC BY 4.0) i współczynnik roślinny (FAO-56, Allen i in. 1998). Staną się wartościami początkowymi strefy, a typ rośliny poniżej zostanie dobrany, jeśli jest pasujący. Tekst, którego nie ma na liście, zostanie wyszukany na następnym ekranie. Nie możesz znaleźć rośliny? Zostaw puste i wybierz poniżej Co tu rośnie."
         }
       },
       "crop_valve": {
@@ -303,13 +303,13 @@
         "description": "{result}"
       },
       "plant_pick": {
-        "title": "What the plant database says",
-        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "title": "Co mówi baza roślin",
+        "description": "{result}\n\nŹródła: {source}. To średnie z katalogów nasion i podręcznika; resztę decydują twoja gleba, klimat i deszcz.",
         "data": {
-          "pick": "Starting weekly water"
+          "pick": "Początkowa tygodniowa ilość wody"
         },
         "data_description": {
-          "pick": "Pick the plant that fits, or keep the starting values."
+          "pick": "Wybierz pasującą roślinę lub zachowaj wartości początkowe."
         }
       }
     },
@@ -809,7 +809,7 @@
         "name": "Dawka tygodniowa – chłód"
       },
       "rain_ignore_below_mm": {
-        "name": "Rain Ignored Below (per day)"
+        "name": "Deszcz pomijany poniżej (na dobę)"
       },
       "rain_eff_low": {
         "name": "Efektywność deszczu – słaby (3-5mm)"

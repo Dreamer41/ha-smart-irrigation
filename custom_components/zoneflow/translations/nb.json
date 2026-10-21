@@ -6,21 +6,21 @@
         "description": "Gi vanningssonen et kort navn (f.eks. \"Plenen foran\", \"Avokadotreet\"). Vil du ha flere soner senere, legger du til integrasjonen på nytt.",
         "data": {
           "zone_name": "Sonenavn",
-          "plant": "Hva som vokser her",
+          "plant": "Hva som vokser her (hvis ikke valgt over)",
           "zone_type": "Hvor det dyrkes",
           "start_from": "Start fra",
           "location": "Hvor er dette?",
           "quick_setup": "Hurtigoppsett (anbefalt)",
-          "plant_search": "Look up your plant (optional)"
+          "plant_search": "Slå opp planten din (valgfritt)"
         },
         "data_description": {
           "zone_name": "Blir enhetsnavnet til sonen og starten på entitetsnavnene, og vises i telefonvarsler. F.eks. \"Tomatbed\", \"Plenen foran\".",
-          "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside.",
+          "plant": "Fyller inn startverdier for denne typen planter: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. Har du valgt planten din i listen over, la dette stå på «Noe annet»: typen som passer til valget ditt velges for deg, og listens ukentlige vann og avlingsfaktor brukes. Velg en type her når planten din ikke står i listen. «Noe annet» starter med generelle verdier. Du kan endre alt senere på sonens enhetsside.",
           "zone_type": "Utendørs er slik ZoneFlow alltid har fungert. Drivhus og innendørssoner legger til klimastyring (vifter, lufting, tåkelegging, varmeovn), kan fungere uten ventil, og har hverken regnmåler eller værvarsel på grunn av taket.",
           "start_from": "Start fra en kopi av en annen zones vanningsinnstillinger eller en lagret forhåndsinnstilling i stedet for plantetypens. Ventil, sensorer og gjennomstrømning kopieres aldri.",
           "location": "Området denne sonen er i, hvis noe. Den bruker da områdets regnmåler, temperatursensor, vær og telefon, med mindre du gir den egne.",
           "quick_setup": "Spør bare om ventilen og hvordan vannet leveres, og fyller ut resten fra plantetypen og sensorene ZoneFlow fant. Du kan endre alt senere under Konfigurer. Fjern haken for å se alle innstillinger nå.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant_search": "Begynn å skrive en plante, for eksempel «agurk», og velg den fra listen: hver viser sin vanlige ukentlige vannmengde (Plant Variety Database, Wind River Greens, CC BY 4.0) og sin avlingsfaktor (FAO-56, Allen m.fl. 1998). De blir sonens startverdier, og planttypen nedenfor velges slik at den passer, der det finnes en. Tekst som ikke står i listen, søkes det etter på neste skjerm. Finner du ikke planten din? La feltet stå tomt og velg Hva som vokser her nedenfor."
         }
       },
       "entities": {
@@ -228,14 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Drivhus",
           "zone_name": "Navn på kultur",
-          "plant": "Hva som er plantet",
-          "plant_search": "Look up your plant (optional)"
+          "plant": "Hva som er plantet (hvis ikke valgt over)",
+          "plant_search": "Slå opp planten din (valgfritt)"
         },
         "data_description": {
           "greenhouse_entry_id": "Drivhuset eller innendørssonen med klimaerhetene.",
           "zone_name": "Blir navnet på kulturen sin enhet og starten på enhetsnavnene, f.eks. «Tomater».",
-          "plant": "Fyller inn fornuftige startverdier for denne kulturen.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant": "Fyller inn fornuftige startverdier for denne kulturen. Har du valgt en plante i listen over, la dette stå på «Noe annet»: typen som passer velges for deg.",
+          "plant_search": "Begynn å skrive en plante, for eksempel «agurk», og velg den fra listen: hver viser sin vanlige ukentlige vannmengde (Plant Variety Database, Wind River Greens, CC BY 4.0) og sin avlingsfaktor (FAO-56, Allen m.fl. 1998). De blir sonens startverdier, og planttypen nedenfor velges slik at den passer, der det finnes en. Tekst som ikke står i listen, søkes det etter på neste skjerm. Finner du ikke planten din? La feltet stå tomt og velg Hva som vokser her nedenfor."
         }
       },
       "crop_valve": {
@@ -303,13 +303,13 @@
         "description": "{result}"
       },
       "plant_pick": {
-        "title": "What the plant database says",
-        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "title": "Hva plantedatabasen sier",
+        "description": "{result}\n\nKilder: {source}. Dette er gjennomsnitt fra frøkataloger og en lærebok; jorda, klimaet og regnet avgjør resten.",
         "data": {
-          "pick": "Starting weekly water"
+          "pick": "Ukentlig startvann"
         },
         "data_description": {
-          "pick": "Pick the plant that fits, or keep the starting values."
+          "pick": "Velg planten som passer, eller behold startverdiene."
         }
       }
     },
@@ -809,7 +809,7 @@
         "name": "Rutine: ukemål, kjølig"
       },
       "rain_ignore_below_mm": {
-        "name": "Rain Ignored Below (per day)"
+        "name": "Regn ignoreres under (per dag)"
       },
       "rain_eff_low": {
         "name": "Regnets effekt - lett (3-5mm)"

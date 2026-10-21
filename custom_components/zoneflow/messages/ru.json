@@ -415,14 +415,14 @@
   "setup": {
     "progress": "Шаг {n} из {total}",
     "nothing_found": "Датчики не найдены. Добавьте их позже в «Настроить».",
-    "plant_keep": "Keep the starting values for this plant",
-    "plant_kind": "{name}, the middle of all {n} varieties",
-    "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
-    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
+    "plant_keep": "Оставить стартовые значения для этого растения",
+    "plant_kind": "{name}, середина всех {n} сортов",
+    "plant_some": "Для «{query}» найдено следующее: обычная недельная норма воды в {unit} и коэффициент культуры. Выберите один вариант как стартовые значения или оставьте стартовые значения.",
+    "plant_nothing": "Для «{query}» ничего с недельным количеством не найдено. Стартовые значения остаются; продолжайте и измените их позже на карточке зоны.",
     "plant_crop": "{name} ({source})",
-    "plant_kc": "crop factor {kc}",
-    "plant_kc_estimate": "crop factor about {kc} (estimate)",
-    "plant_about": "about {amount}"
+    "plant_kc": "коэффициент культуры {kc}",
+    "plant_kc_estimate": "коэффициент культуры около {kc} (оценка)",
+    "plant_about": "около {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

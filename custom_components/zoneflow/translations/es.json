@@ -6,21 +6,21 @@
         "description": "Dale a esta zona de riego un nombre corto (p. ej., \"Césped delantero\", \"Aguacate\"). Para añadir más zonas después, vuelve a añadir esta integración.",
         "data": {
           "zone_name": "Nombre de la zona",
-          "plant": "Qué hay plantado",
+          "plant": "Qué hay plantado (si no lo elegiste arriba)",
           "zone_type": "Dónde crece",
           "start_from": "Empezar desde",
           "location": "¿Dónde está esto?",
           "quick_setup": "Configuración rápida (recomendada)",
-          "plant_search": "Look up your plant (optional)"
+          "plant_search": "Buscar tu planta (opcional)"
         },
         "data_description": {
           "zone_name": "Pasa a ser el nombre del dispositivo de la zona y el comienzo de los nombres de sus entidades, y aparece en los mensajes del teléfono. P. ej., \"Bancal de tomates\", \"Césped delantero\".",
-          "plant": "Rellena valores iniciales razonables para este cultivo: objetivos semanales de agua, coeficiente de cultivo, riego profundo y rampa de crecimiento. \"Otra cosa\" parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona.",
+          "plant": "Rellena valores iniciales para este tipo de cultivo: objetivos semanales de agua, coeficiente de cultivo, riego profundo y rampa de crecimiento. Si elegiste tu planta en la lista de arriba, deja esto en «Otra cosa»: el tipo que encaja con tu elección se elige por ti y se usan el agua semanal y el coeficiente de cultivo de la lista. Elige un tipo aquí cuando tu planta no esté en la lista. «Otra cosa» parte de valores generales. Puedes cambiarlos todos después en la página del dispositivo de la zona.",
           "zone_type": "Exterior es como siempre ha funcionado ZoneFlow. Las zonas de invernadero e interior añaden control de clima (ventiladores, rejillas de ventilación, nebulización, calefactor), pueden funcionar sin válvula y no tienen pluviómetro ni pronóstico del tiempo debido al techo.",
           "start_from": "Empieza desde una copia de los ajustes de riego de otra zona o un ajuste preestablecido guardado en lugar de los del tipo de planta. La válvula, los sensores y el caudal nunca se copian.",
           "location": "El área en la que está esta zona, si la hay. Entonces usa el pluviómetro, el sensor de temperatura, el tiempo y el teléfono del área, salvo que le des los suyos.",
           "quick_setup": "Solo pregunta por la válvula y cómo llega el agua, y completa el resto según el tipo de planta y los sensores que ZoneFlow encontró. Puede cambiarlo todo después en Configurar. Desmarque para ver todos los ajustes ahora.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant_search": "Empieza a escribir una planta, por ejemplo «pepino», y elígela de la lista: cada una muestra su cantidad habitual de agua por semana (Plant Variety Database, Wind River Greens, CC BY 4.0) y su coeficiente de cultivo (FAO-56, Allen et al. 1998). Estos pasan a ser los valores iniciales de la zona, y el tipo de planta de abajo se elige para que coincida cuando existe. El texto que no está en la lista se busca en la pantalla siguiente. ¿No encuentras tu planta? Deja esto vacío y elige Qué hay plantado abajo."
         }
       },
       "entities": {
@@ -228,14 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Invernadero",
           "zone_name": "Nombre del cultivo",
-          "plant": "Qué está plantado",
-          "plant_search": "Look up your plant (optional)"
+          "plant": "Qué está plantado (si no lo elegiste arriba)",
+          "plant_search": "Buscar tu planta (opcional)"
         },
         "data_description": {
           "greenhouse_entry_id": "El invernadero o zona interior con las dispositivos de clima.",
           "zone_name": "Se convierte en el nombre del dispositivo del cultivo y el inicio de los nombres de sus entidades, p. ej., \"Tomates\".",
-          "plant": "Rellena valores iniciales razonables para este cultivo.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant": "Rellena valores iniciales razonables para este cultivo. Si elegiste una planta en la lista de arriba, deja esto en «Otra cosa»: el tipo que encaja se elige por ti.",
+          "plant_search": "Empieza a escribir una planta, por ejemplo «pepino», y elígela de la lista: cada una muestra su cantidad habitual de agua por semana (Plant Variety Database, Wind River Greens, CC BY 4.0) y su coeficiente de cultivo (FAO-56, Allen et al. 1998). Estos pasan a ser los valores iniciales de la zona, y el tipo de planta de abajo se elige para que coincida cuando existe. El texto que no está en la lista se busca en la pantalla siguiente. ¿No encuentras tu planta? Deja esto vacío y elige Qué hay plantado abajo."
         }
       },
       "crop_valve": {
@@ -303,13 +303,13 @@
         "description": "{result}"
       },
       "plant_pick": {
-        "title": "What the plant database says",
-        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "title": "Lo que dice la base de datos de plantas",
+        "description": "{result}\n\nFuentes: {source}. Son promedios de catálogos de semillas y de un libro de texto; tu suelo, tu clima y la lluvia deciden el resto.",
         "data": {
-          "pick": "Starting weekly water"
+          "pick": "Agua semanal inicial"
         },
         "data_description": {
-          "pick": "Pick the plant that fits, or keep the starting values."
+          "pick": "Elige la planta que encaja o mantén los valores iniciales."
         }
       }
     },
@@ -809,7 +809,7 @@
         "name": "Objetivo semanal con fresco"
       },
       "rain_ignore_below_mm": {
-        "name": "Rain Ignored Below (per day)"
+        "name": "Lluvia ignorada por debajo de (por día)"
       },
       "rain_eff_low": {
         "name": "Lluvia efectiva - ligera (3-5mm)"

@@ -415,14 +415,14 @@
   "setup": {
     "progress": "Trin {n} af {total}",
     "nothing_found": "Ingen sensorer blev fundet. Tilføj dem senere under Konfigurer.",
-    "plant_keep": "Keep the starting values for this plant",
-    "plant_kind": "{name}, the middle of all {n} varieties",
-    "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
-    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
+    "plant_keep": "Behold startværdierne for denne plante",
+    "plant_kind": "{name}, midten af alle {n} sorter",
+    "plant_some": "Det her blev fundet for „{query}“: det sædvanlige ugentlige vand i {unit} og afgrødefaktoren. Vælg en som startværdier, eller behold startværdierne.",
+    "plant_nothing": "Intet med en ugentlig mængde blev fundet for „{query}“. Startværdierne bliver stående; fortsæt, og ret dem senere på zonekortet.",
     "plant_crop": "{name} ({source})",
-    "plant_kc": "crop factor {kc}",
-    "plant_kc_estimate": "crop factor about {kc} (estimate)",
-    "plant_about": "about {amount}"
+    "plant_kc": "afgrødefaktor {kc}",
+    "plant_kc_estimate": "afgrødefaktor ca. {kc} (skøn)",
+    "plant_about": "ca. {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

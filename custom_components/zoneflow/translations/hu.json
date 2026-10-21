@@ -6,21 +6,21 @@
         "description": "Adj ennek az öntözési zónának egy rövid nevet (pl. \"Előkert gyepe\", \"Avokádófa\"). Később további zónákhoz add hozzá újra ezt az integrációt.",
         "data": {
           "zone_name": "Zóna neve",
-          "plant": "Mi van ültetve",
+          "plant": "Mi van ültetve (ha fent nem választottad ki)",
           "zone_type": "A növények helye",
           "start_from": "Kezdés innen",
           "location": "Hol található ez?",
           "quick_setup": "Gyors beállítás (ajánlott)",
-          "plant_search": "Look up your plant (optional)"
+          "plant_search": "Növény keresése (nem kötelező)"
         },
         "data_description": {
           "zone_name": "Ez lesz a zóna eszközének neve és az entitásnevek eleje, és ez jelenik meg a telefonos üzenetekben. Pl. \"Paradicsomágyás\", \"Előkert gyepe\".",
-          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez: heti vízigény, növényi együttható, mélyöntözés és növekedési görbe. A \"Valami más\" általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán.",
+          "plant": "Kezdőértékeket tölt ki ehhez a növénytípushoz: heti vízcélok, növényi együttható, mélyöntözés és növekedési görbe. Ha a növényed a fenti listából választottad, hagyd ezt a „Valami más” értéken: a választásodhoz illő típus automatikusan kiválasztódik, és a lista heti vízmennyisége és növényi együtthatója érvényesül. Itt akkor válassz típust, ha a növényed nincs a listában. A „Valami más” általános értékekkel indul. Később mindet módosíthatod a zóna eszközoldalán.",
           "zone_type": "A kültéri mód a ZoneFlow eredeti működése. Az üvegházi és beltéri zónák klímaszabályozást is biztosítanak (ventilátorok, szellőzők, párásítás, fűtés), szelep nélkül is működhetnek, valamint a tető miatt nincs esőmérőjük sem időjárás-előrejelzésük.",
           "start_from": "Kezdje egy másik zóna öntözési beállításainak másolatával vagy egy mentett előbeállítással a növénytípusé helyett. A szelep, az érzékelők és a vízhozam soha nem másolódnak.",
           "location": "A terület, amelyben ez a zóna van, ha van ilyen. A zóna ekkor a terület csapadékmérőjét, hőmérséklet-érzékelőjét, időjárását és telefonját használja, hacsak nem adsz neki sajátot.",
           "quick_setup": "Csak a szelepet és az öntözés módját kérdezi, a többit a növénytípusból és a talált érzékelőkből tölti ki. Mindent módosíthat később a Beállításokban. Szüntesse meg a jelölést, ha most az összes beállítást látni szeretné.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant_search": "Kezdj el gépelni egy növényt, például „uborka”, és válaszd ki a listából: mindegyiknél látszik a szokásos heti vízmennyisége (Plant Variety Database, Wind River Greens, CC BY 4.0) és a növényi együtthatója (FAO-56, Allen és mtsai 1998). Ezek lesznek a zóna kezdőértékei, és az alábbi növénytípus is ehhez igazodik, ahol van ilyen. A listában nem szereplő szöveget a következő képernyőn keresi meg. Nem találod a növényed? Hagyd üresen, és válaszd lent a Mi van ültetve mezőt."
         }
       },
       "entities": {
@@ -228,14 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Üvegház",
           "zone_name": "Növény neve",
-          "plant": "Mi van ültetve",
-          "plant_search": "Look up your plant (optional)"
+          "plant": "Mi van ültetve (ha fent nem választottad ki)",
+          "plant_search": "Növény keresése (nem kötelező)"
         },
         "data_description": {
           "greenhouse_entry_id": "Az üvegház vagy beltéri zóna a klímaberendezésekkel.",
           "zone_name": "Ez lesz a növény eszközneve és az entitásnevek kezdete, pl. \"Paradicsom\".",
-          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant": "Ésszerű kezdőértékeket tölt ki ehhez a növényhez. Ha a fenti listából választottál növényt, hagyd ezt a „Valami más” értéken: az illő típus automatikusan kiválasztódik.",
+          "plant_search": "Kezdj el gépelni egy növényt, például „uborka”, és válaszd ki a listából: mindegyiknél látszik a szokásos heti vízmennyisége (Plant Variety Database, Wind River Greens, CC BY 4.0) és a növényi együtthatója (FAO-56, Allen és mtsai 1998). Ezek lesznek a zóna kezdőértékei, és az alábbi növénytípus is ehhez igazodik, ahol van ilyen. A listában nem szereplő szöveget a következő képernyőn keresi meg. Nem találod a növényed? Hagyd üresen, és válaszd lent a Mi van ültetve mezőt."
         }
       },
       "crop_valve": {
@@ -303,13 +303,13 @@
         "description": "{result}"
       },
       "plant_pick": {
-        "title": "What the plant database says",
-        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "title": "Mit mond a növényadatbázis",
+        "description": "{result}\n\nForrások: {source}. Ezek vetőmagkatalógusok és egy tankönyv átlagai; a többit a talajod, az éghajlatod és az eső dönti el.",
         "data": {
-          "pick": "Starting weekly water"
+          "pick": "Kezdő heti vízmennyiség"
         },
         "data_description": {
-          "pick": "Pick the plant that fits, or keep the starting values."
+          "pick": "Válaszd ki a hozzád illő növényt, vagy tartsd meg a kezdőértékeket."
         }
       }
     },
@@ -809,7 +809,7 @@
         "name": "Rendszeres öntözés: heti cél hűvösben"
       },
       "rain_ignore_below_mm": {
-        "name": "Rain Ignored Below (per day)"
+        "name": "Napi esőből figyelmen kívül hagyott mennyiség"
       },
       "rain_eff_low": {
         "name": "Eső hasznosulása - gyenge (3-5mm)"

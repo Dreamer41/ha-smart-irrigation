@@ -6,21 +6,21 @@
         "description": "Geef deze bewateringszone een korte naam (bv. \"Voortuin\", \"Avocadoboom\"). Wil je later meer zones? Voeg deze integratie dan opnieuw toe.",
         "data": {
           "zone_name": "Zonenaam",
-          "plant": "Wat staat er geplant",
+          "plant": "Wat staat er geplant (als je het hierboven niet koos)",
           "zone_type": "Waar er gekweekt wordt",
           "start_from": "Starten vanaf",
           "location": "Waar bevindt dit zich?",
           "quick_setup": "Snelle installatie (aanbevolen)",
-          "plant_search": "Look up your plant (optional)"
+          "plant_search": "Zoek je plant op (optioneel)"
         },
         "data_description": {
           "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
-          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone.",
+          "plant": "Vult beginwaarden in voor dit soort gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. Heb je je plant in de lijst hierboven gekozen, laat dit dan op “Iets anders”: het type dat bij je keuze past wordt voor je gekozen en het weekwater en de gewasfactor uit de lijst worden gebruikt. Kies hier een type als je plant niet in de lijst staat. “Iets anders” begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone.",
           "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak.",
           "start_from": "Start vanaf een kopie van de sproei-instellingen van een andere zone of een opgeslagen voorinstelling in plaats van die van het planttype. Klep, sensoren en debiet worden nooit gecopieerd.",
           "location": "Het gebied waarin deze zone ligt, indien van toepassing. De zone gebruikt dan de regenmeter, temperatuursensor, het weer en de telefoon van het gebied, tenzij je haar eigen opgeeft.",
           "quick_setup": "Vraagt alleen naar de klep en hoe het water wordt aangevoerd, en vult de rest in op basis van het plantentype en de sensoren die ZoneFlow vond. U kunt alles later wijzigen bij Configureren. Haal het vinkje weg om nu alle instellingen te zien.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant_search": "Begin een plant te typen, bijvoorbeeld “komkommer”, en kies hem uit de lijst: bij elke plant staat de gebruikelijke hoeveelheid water per week (Plant Variety Database, Wind River Greens, CC BY 4.0) en de gewasfactor (FAO-56, Allen e.a. 1998). Die worden de beginwaarden van de zone, en het plantentype hieronder wordt daarbij passend gekozen als er een is. Tekst die niet in de lijst staat, wordt op het volgende scherm gezocht. Vind je je plant niet? Laat dit leeg en kies hieronder Wat staat er geplant."
         }
       },
       "entities": {
@@ -228,14 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Kas",
           "zone_name": "Naam gewas",
-          "plant": "Wat er is geplant",
-          "plant_search": "Look up your plant (optional)"
+          "plant": "Wat er is geplant (als je het hierboven niet koos)",
+          "plant_search": "Zoek je plant op (optioneel)"
         },
         "data_description": {
           "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten.",
           "zone_name": "Wordt de apparaatnaam van het gewas en het begin van de entiteitsnamen, bijv. \"Tomaten\".",
-          "plant": "Vult verstandige beginwaarden in voor dit gewas.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant": "Vult verstandige beginwaarden in voor dit gewas. Heb je een plant in de lijst hierboven gekozen, laat dit dan op “Iets anders”: het type dat past wordt voor je gekozen.",
+          "plant_search": "Begin een plant te typen, bijvoorbeeld “komkommer”, en kies hem uit de lijst: bij elke plant staat de gebruikelijke hoeveelheid water per week (Plant Variety Database, Wind River Greens, CC BY 4.0) en de gewasfactor (FAO-56, Allen e.a. 1998). Die worden de beginwaarden van de zone, en het plantentype hieronder wordt daarbij passend gekozen als er een is. Tekst die niet in de lijst staat, wordt op het volgende scherm gezocht. Vind je je plant niet? Laat dit leeg en kies hieronder Wat staat er geplant."
         }
       },
       "crop_valve": {
@@ -303,13 +303,13 @@
         "description": "{result}"
       },
       "plant_pick": {
-        "title": "What the plant database says",
-        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "title": "Wat de plantendatabase zegt",
+        "description": "{result}\n\nBronnen: {source}. Dit zijn gemiddelden uit zaadcatalogi en een leerboek; je grond, klimaat en regen bepalen de rest.",
         "data": {
-          "pick": "Starting weekly water"
+          "pick": "Begin-weekwater"
         },
         "data_description": {
-          "pick": "Pick the plant that fits, or keep the starting values."
+          "pick": "Kies de plant die past, of behoud de beginwaarden."
         }
       }
     },
@@ -809,7 +809,7 @@
         "name": "Routine: weekdoel koel"
       },
       "rain_ignore_below_mm": {
-        "name": "Rain Ignored Below (per day)"
+        "name": "Regen genegeerd onder (per dag)"
       },
       "rain_eff_low": {
         "name": "Regenbenutting - licht (3-5mm)"

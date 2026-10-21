@@ -415,14 +415,14 @@
   "setup": {
     "progress": "Étape {n} sur {total}",
     "nothing_found": "Aucun capteur n'a été trouvé. Ajoutez-les plus tard dans Configurer.",
-    "plant_keep": "Keep the starting values for this plant",
-    "plant_kind": "{name}, the middle of all {n} varieties",
-    "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
-    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
+    "plant_keep": "Garder les valeurs de départ pour cette plante",
+    "plant_kind": "{name}, le milieu des {n} variétés",
+    "plant_some": "Voici ce qui a été trouvé pour « {query} » : l'eau hebdomadaire habituelle en {unit} et le coefficient cultural. Choisissez-en une comme valeurs de départ, ou gardez les valeurs de départ.",
+    "plant_nothing": "Rien avec une quantité hebdomadaire n'a été trouvé pour « {query} ». Les valeurs de départ restent ; continuez et modifiez-les plus tard sur la carte de la zone.",
     "plant_crop": "{name} ({source})",
-    "plant_kc": "crop factor {kc}",
-    "plant_kc_estimate": "crop factor about {kc} (estimate)",
-    "plant_about": "about {amount}"
+    "plant_kc": "coefficient cultural {kc}",
+    "plant_kc_estimate": "coefficient cultural d'environ {kc} (estimation)",
+    "plant_about": "environ {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

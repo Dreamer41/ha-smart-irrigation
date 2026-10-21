@@ -415,14 +415,14 @@
   "setup": {
     "progress": "Krok {n} z {total}",
     "nothing_found": "Nebyly nalezeny žádné senzory. Přidejte je později v Konfiguraci.",
-    "plant_keep": "Keep the starting values for this plant",
-    "plant_kind": "{name}, the middle of all {n} varieties",
-    "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
-    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
+    "plant_keep": "Ponechat výchozí hodnoty pro tuto rostlinu",
+    "plant_kind": "{name}, střed všech {n} odrůd",
+    "plant_some": "Pro „{query}“ bylo nalezeno toto: obvyklá týdenní voda v {unit} a plodinový koeficient. Vyberte jednu možnost jako výchozí hodnoty, nebo ponechte výchozí hodnoty.",
+    "plant_nothing": "Pro „{query}“ nebylo nalezeno nic s týdenním množstvím. Výchozí hodnoty zůstávají; pokračujte a později je změňte na kartě zóny.",
     "plant_crop": "{name} ({source})",
-    "plant_kc": "crop factor {kc}",
-    "plant_kc_estimate": "crop factor about {kc} (estimate)",
-    "plant_about": "about {amount}"
+    "plant_kc": "plodinový koeficient {kc}",
+    "plant_kc_estimate": "plodinový koeficient asi {kc} (odhad)",
+    "plant_about": "asi {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

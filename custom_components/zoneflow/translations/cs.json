@@ -6,21 +6,21 @@
         "description": "Pojmenujte tuto zavlažovací zónu krátce (např. \"Trávník před domem\", \"Avokádo\"). Další zóny přidáte později opětovným přidáním této integrace.",
         "data": {
           "zone_name": "Název zóny",
-          "plant": "Co je zasazeno",
+          "plant": "Co je zasazeno (pokud jste nevybrali výše)",
           "zone_type": "Kde roste",
           "start_from": "Začít z",
           "location": "Kde se nachází?",
           "quick_setup": "Rychlé nastavení (doporučeno)",
-          "plant_search": "Look up your plant (optional)"
+          "plant_search": "Vyhledat rostlinu (volitelné)"
         },
         "data_description": {
           "zone_name": "Stane se názvem zařízení zóny a začátkem názvů jejích entit a zobrazuje se ve zprávách na telefon. Např. \"Záhon rajčat\", \"Trávník před domem\".",
-          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu: týdenní cíle vody, plodinový koeficient, hloubkovou zálivku a růstovou křivku. \"Něco jiného\" začne od obecných hodnot. Vše můžete později změnit na stránce zařízení zóny.",
+          "plant": "Vyplní výchozí hodnoty pro tento druh plodiny: týdenní cíle vody, plodinový koeficient, hloubkovou zálivku a růstovou křivku. Pokud jste rostlinu vybrali v seznamu výše, nechte zde „Něco jiného“: vhodný typ se vybere za vás a použije se týdenní voda a plodinový koeficient ze seznamu. Typ zde vyberte, když vaše rostlina v seznamu není. „Něco jiného“ začne od obecných hodnot. Vše můžete později změnit na stránce zařízení zóny.",
           "zone_type": "Venkovní prostředí je způsob, jakým ZoneFlow fungoval dosud. Skleníkové a vnitřní zóny přidávají řízení klimatu (ventilátory, větrací otvory, mlžení, topení), mohou fungovat bez ventilu a kvůli střeše nemají srážkoměr ani předpověď počasí.",
           "start_from": "Začněte kopií nastavení zalévání jiné zóny nebo uloženou předvolbou namísto nastavení typu rostliny. Ventil, snímače a průtok se nikdy nekopírují.",
           "location": "Oblast, ve které se tato zóna nachází, pokud nějaká je. Zóna pak používá srážkoměr, teplotní čidlo, počasí a telefon oblasti, pokud jí nedáte vlastní.",
           "quick_setup": "Zeptá se jen na ventil a způsob zálivky, zbytek doplní podle druhu rostliny a nalezených senzorů. Vše můžete později změnit v Konfiguraci. Zrušte zaškrtnutí, pokud chcete vidět všechna nastavení hned.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant_search": "Začněte psát rostlinu, např. „okurka“, a vyberte ji ze seznamu: u každé je její obvyklé týdenní množství vody (Plant Variety Database, Wind River Greens, CC BY 4.0) a plodinový koeficient (FAO-56, Allen a kol. 1998). Stanou se výchozími hodnotami zóny a níže se podle nich vybere odpovídající typ rostliny, pokud existuje. Text, který v seznamu není, se vyhledá na další obrazovce. Nemůžete rostlinu najít? Nechte pole prázdné a vyberte Co je zasazeno níže."
         }
       },
       "entities": {
@@ -228,14 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Skleník",
           "zone_name": "Název plodiny",
-          "plant": "Co je zasazeno",
-          "plant_search": "Look up your plant (optional)"
+          "plant": "Co je zasazeno (pokud jste nevybrali výše)",
+          "plant_search": "Vyhledat rostlinu (volitelné)"
         },
         "data_description": {
           "greenhouse_entry_id": "Skleník nebo vnitřní zóna s klimatickými zařízeními.",
           "zone_name": "Stane se názvem zařízení plodiny a začátkem názvů jejích entit, např. \"Rajčata\".",
-          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
+          "plant": "Vyplní rozumné výchozí hodnoty pro tuto plodinu. Pokud jste rostlinu vybrali v seznamu výše, nechte zde „Něco jiného“: vhodný typ se vybere za vás.",
+          "plant_search": "Začněte psát rostlinu, např. „okurka“, a vyberte ji ze seznamu: u každé je její obvyklé týdenní množství vody (Plant Variety Database, Wind River Greens, CC BY 4.0) a plodinový koeficient (FAO-56, Allen a kol. 1998). Stanou se výchozími hodnotami zóny a níže se podle nich vybere odpovídající typ rostliny, pokud existuje. Text, který v seznamu není, se vyhledá na další obrazovce. Nemůžete rostlinu najít? Nechte pole prázdné a vyberte Co je zasazeno níže."
         }
       },
       "crop_valve": {
@@ -303,13 +303,13 @@
         "description": "{result}"
       },
       "plant_pick": {
-        "title": "What the plant database says",
-        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "title": "Co říká databáze rostlin",
+        "description": "{result}\n\nZdroje: {source}. Jde o průměry z katalogů semen a z učebnice; zbytek určuje vaše půda, podnebí a déšť.",
         "data": {
-          "pick": "Starting weekly water"
+          "pick": "Výchozí týdenní voda"
         },
         "data_description": {
-          "pick": "Pick the plant that fits, or keep the starting values."
+          "pick": "Vyberte rostlinu, která vám sedí, nebo ponechte výchozí hodnoty."
         }
       }
     },
@@ -809,7 +809,7 @@
         "name": "Týdenní cíl běžné zálivky – chladno"
       },
       "rain_ignore_below_mm": {
-        "name": "Rain Ignored Below (per day)"
+        "name": "Déšť se ignoruje pod (za den)"
       },
       "rain_eff_low": {
         "name": "Účinnost deště – slabý (3–5 mm)"

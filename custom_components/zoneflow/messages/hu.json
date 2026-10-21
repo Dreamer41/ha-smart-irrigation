@@ -415,14 +415,14 @@
   "setup": {
     "progress": "{n} / {total} lépés",
     "nothing_found": "Nem találtunk érzékelőt. Adja hozzá őket később a Beállításokban.",
-    "plant_keep": "Keep the starting values for this plant",
-    "plant_kind": "{name}, the middle of all {n} varieties",
-    "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
-    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
+    "plant_keep": "A kezdőértékek megtartása ennél a növénynél",
+    "plant_kind": "{name}, mind a(z) {n} fajta középértéke",
+    "plant_some": "Ezt találtam a(z) „{query}” keresésre: a szokásos heti vízmennyiség ({unit}) és a növényi együttható. Válassz egyet kezdőértéknek, vagy tartsd meg a kezdőértékeket.",
+    "plant_nothing": "A(z) „{query}” keresésre nem találtam heti mennyiséggel rendelkező találatot. A kezdőértékek maradnak; folytasd, és később módosítsd őket a zónakártyán.",
     "plant_crop": "{name} ({source})",
-    "plant_kc": "crop factor {kc}",
-    "plant_kc_estimate": "crop factor about {kc} (estimate)",
-    "plant_about": "about {amount}"
+    "plant_kc": "növényi együttható: {kc}",
+    "plant_kc_estimate": "növényi együttható kb. {kc} (becslés)",
+    "plant_about": "kb. {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

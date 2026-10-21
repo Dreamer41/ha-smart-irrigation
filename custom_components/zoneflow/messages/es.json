@@ -415,14 +415,14 @@
   "setup": {
     "progress": "Paso {n} de {total}",
     "nothing_found": "No se encontró ningún sensor. Añádalos después en Configurar.",
-    "plant_keep": "Keep the starting values for this plant",
-    "plant_kind": "{name}, the middle of all {n} varieties",
-    "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
-    "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
+    "plant_keep": "Mantener los valores iniciales para esta planta",
+    "plant_kind": "{name}, el punto medio de las {n} variedades",
+    "plant_some": "Esto se encontró para «{query}»: el agua semanal habitual en {unit} y el coeficiente de cultivo. Elige uno como valores iniciales o mantén los valores iniciales.",
+    "plant_nothing": "No se encontró nada con cantidad semanal para «{query}». Los valores iniciales se mantienen; continúa y cámbialos después en la tarjeta de la zona.",
     "plant_crop": "{name} ({source})",
-    "plant_kc": "crop factor {kc}",
-    "plant_kc_estimate": "crop factor about {kc} (estimate)",
-    "plant_about": "about {amount}"
+    "plant_kc": "coeficiente de cultivo {kc}",
+    "plant_kc_estimate": "coeficiente de cultivo de unos {kc} (estimación)",
+    "plant_about": "unos {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",
