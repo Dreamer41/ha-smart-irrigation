@@ -544,7 +544,8 @@ def check_water_tips(browser, check) -> None:
                              note: 'Deep watering 1-2 times per week, drought tolerant once established'},
                         ],
                         source: {name: 'Plant Variety Database', author: 'Wind River Greens', license: 'CC BY 4.0',
-                                 url: 'https://github.com/bripatch/plant-variety-database'},
+                                 url: 'https://github.com/bripatch/plant-variety-database',
+                                 license_url: 'https://creativecommons.org/licenses/by/4.0/'},
                     };
                 };
                 const card = document.createElement('zoneflow-card');
@@ -570,6 +571,7 @@ def check_water_tips(browser, check) -> None:
                     amounts: [...dialog.querySelectorAll('.tips-amount')].map((n) => n.textContent),
                     buttons: [...dialog.querySelectorAll('.tips-row .plant-button')].length,
                     credit: [...dialog.querySelectorAll('.group-note')].pop().textContent,
+                    links: [...dialog.querySelectorAll('.group-note')].pop().querySelectorAll('a').length,
                     asked: window._queries,
                 };
             }"""
@@ -582,7 +584,7 @@ def check_water_tips(browser, check) -> None:
         check(opened["names"] == ["Pepper", "Hass Avocado"], f"water tips ({unit}): the results")
         check(opened["amounts"] == [expected_amount], f"water tips ({unit}): the amount in the zone's units")
         check(opened["buttons"] == 1, f"water tips ({unit}): only a result with an amount can be used")
-        check("CC BY 4.0" in opened["credit"], f"water tips ({unit}): the source and its license are shown")
+        check("CC BY 4.0" in opened["credit"] and opened["links"] == 2, f"water tips ({unit}): the source and the license are shown and linked")
         result = page.evaluate(
             """async () => {
                 const dialog = window._card.shadowRoot.querySelector('dialog');

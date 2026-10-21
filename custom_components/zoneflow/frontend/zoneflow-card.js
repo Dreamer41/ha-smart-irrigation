@@ -6420,12 +6420,13 @@ class ZoneFlowCard extends HTMLElement {
       }
       const src = data.source || {};
       credit.textContent = t(hass, "water_tips.source").replace("{name}", src.name).replace("{author}", src.author).replace("{license}", src.license) + " ";
-      if (src.url) {
-        const link = make("a", "", "GitHub");
-        link.href = src.url;
+      for (const [label, url] of [["GitHub", src.url], [src.license, src.license_url]]) {
+        if (!url) continue;
+        const link = make("a", "", label);
+        link.href = url;
         link.target = "_blank";
         link.rel = "noopener";
-        credit.appendChild(link);
+        credit.append(link, document.createTextNode(" "));
       }
     };
     let timer;
