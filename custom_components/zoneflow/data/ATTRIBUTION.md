@@ -42,5 +42,11 @@ Where FAO-56 has no crop, `crop_kc.json` also holds values from these sources (e
   own gets one worked out from the crop factor, with 1 inch (25.4 mm) a week at a crop factor of 1.0, which is
   the figure the Plant Variety Database gives for most vegetables. These are estimates too.
 
+The UF/IFAS publication and the University of California (UC ANR) pages are published under the Creative
+Commons Attribution-NonCommercial-NoDerivatives 4.0 license. ZoneFlow does not reproduce or adapt those
+documents: it uses a handful of numbers (crop factors, the class values 0.2, 0.5 and 0.8) as facts and names
+the source for each, and facts are not covered by copyright. If you are a rights holder and want a value
+changed or removed, please open an issue.
+
 Only numbers were taken, with the sources named; no text, tables or files were copied. This attribution
 applies to `plant_water.json` and `crop_kc.json` only. ZoneFlow itself is MIT licensed.

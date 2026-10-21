@@ -206,10 +206,12 @@ async def test_the_first_screen_has_a_searchable_list_of_plants_with_their_amoun
     assert config["custom_value"] is True  # the picker that filters as you type; other text is searched for
     options = config["options"]
     assert len(options) > 600
-    assert options[0]["value"].startswith("kind:") and "varieties" in options[0]["label"] and " mm" in options[0]["label"]
-    assert any(o["value"].startswith("plant:") and ": 25.4-38.1 mm" in o["label"] for o in options)
-    assert any(o["value"] == "crop:avocado" and "crop factor 0.85" in o["label"] for o in options)  # FAO-only crops too
-    assert all(o["value"].split(":")[0] in ("kind", "crop", "plant") for o in options)
+    assert "varieties" in options[0]["label"] and " mm" in options[0]["label"]
+    assert any(": 25.4-38.1 mm" in o["label"] for o in options)
+    assert any(o["label"].startswith("Avocado") and "crop factor 0.85" in o["label"] for o in options)  # FAO-only crops too
+    # The field shows the value of what was picked, so the value is the readable label.
+    assert all(o["value"] == o["label"] for o in options)
+    assert len({o["value"] for o in options}) == len(options)
 
 
 @pytest.mark.asyncio
@@ -235,7 +237,7 @@ async def test_a_plant_picked_on_the_first_screen_goes_straight_on(hass, fake_va
 async def test_a_kind_picked_on_the_first_screen_works_too(hass, fake_valve_services):
     _house(hass)
     result = await _first_form(hass)
-    kind = next(o["value"] for o in _field(result).config["options"] if o["value"] == "kind:cucumber")
+    kind = next(o["value"] for o in _field(result).config["options"] if o["label"].startswith("Cucumber, the middle"))
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
         {CONF_ZONE_NAME: "Cucumbers", "plant": "custom", CONF_ZONE_TYPE: "outdoor", CONF_QUICK_SETUP: True, "plant_search": kind},
@@ -364,8 +366,8 @@ async def test_an_estimate_is_labelled_as_one_on_the_pick_screen(hass, fake_valv
 
 @pytest.mark.asyncio
 async def test_the_first_list_names_the_source_of_a_crop(hass, fake_valve_services):
-    options = {o["value"]: o["label"] for o in _field(await _first_form(hass)).config["options"]}
-    assert "Mango" in options["crop:mango"] and "UF/IFAS" in options["crop:mango"]
-    assert "(FAO-56)" in options["crop:avocado"]
-    assert "(study)" in options["crop:basil"]
+    labels = [o["label"] for o in _field(await _first_form(hass)).config["options"]]
+    assert any(l.startswith("Mango") and "UF/IFAS" in l for l in labels)
+    assert any(l.startswith("Avocado") and "(FAO-56)" in l for l in labels)
+    assert any(l.startswith("Basil") and "(study)" in l for l in labels)
 

@@ -899,10 +899,12 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """The "Look up your plant" field: a picker that filters as you type, each plant with its usual
         weekly amount. Text that is not in the list is searched for on the next screen."""
         data = await plant_water.async_get_data(self.hass)
-        options = plant_water.picker_options(data, self._imperial(), self._lookup_texts())
+        # With custom_value the field shows the option's value, not its label, so the label is the value
+        # (readable once picked); _look_up_then maps it back to the plant.
+        labels = list(dict.fromkeys(label for _, label in plant_water.picker_options(data, self._imperial(), self._lookup_texts())))
         return selector.SelectSelector(
             selector.SelectSelectorConfig(
-                options=[selector.SelectOptionDict(value=value, label=label) for value, label in options],
+                options=[selector.SelectOptionDict(value=label, label=label) for label in labels],
                 custom_value=True,
                 mode=selector.SelectSelectorMode.DROPDOWN,
             )
@@ -962,7 +964,10 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if not self._plant_search:
             return await next_step()
         data = await plant_water.async_get_data(self.hass)
-        if (item := plant_water.resolve(data, self._plant_search)) is not None:
+        by_label: dict[str, str] = {}
+        for value, label in plant_water.picker_options(data, self._imperial(), self._lookup_texts()):
+            by_label.setdefault(label, value)
+        if (item := plant_water.resolve(data, by_label.get(self._plant_search, self._plant_search))) is not None:
             # Picked from the list on the first screen: its amounts are the starting values.
             self._apply_lookup(item)
             self._plant_search = ""
