@@ -2,8 +2,11 @@
 
 - its weekly amount of water, from the Plant Variety Database (Wind River Greens, CC BY 4.0:
   data/plant_water.json, built by scripts/build_plant_water_data.py), and
-- its crop factor (Kc), from FAO Irrigation and drainage paper 56, Table 12 (Allen, Pereira, Raes and
-  Smith, 1998: data/crop_kc.json, built by scripts/build_crop_kc.py).
+- its crop factor (Kc): from FAO Irrigation and drainage paper 56, Table 12 (Allen, Pereira, Raes and
+  Smith, 1998) where it has the crop, from extension and published studies for a few more (mango, guava,
+  papaya, basil), and for a plant with nothing of its own an estimate from its water-use class, as
+  landscape plant factors do (data/crop_kc.json, built by scripts/build_crop_kc.py). Every value says
+  which source it comes from, and an estimate says so.
 
 The card shows them with their sources. The files are read the first time someone looks up a plant,
 not at start.
@@ -31,7 +34,8 @@ TARGET_KEYS = ("target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_m
 # Which of the setup's plant types (PLANT_PRESETS) fits a plant that was picked in the lookup, so that
 # What's planted does not have to be answered a second time. Anything not here has no fitting type.
 PRESET_BY_CROP = {
-    "tomato": "tomatoes", "eggplant": "tomatoes", "pepper": "chilis",
+    "tomato": "tomatoes", "eggplant": "tomatoes", "pepper": "chilis", "basil": "herbs",
+    "mango": "fruit_tree", "guava": "fruit_tree", "papaya": "fruit_tree",
     "lettuce": "leafy_vegetables", "spinach": "leafy_vegetables", "brassica": "leafy_vegetables",
     "celery": "leafy_vegetables", "mint": "herbs", "strawberry": "strawberries",
     "avocado": "fruit_tree", "citrus": "fruit_tree", "olive": "fruit_tree", "apple": "fruit_tree",
@@ -68,9 +72,12 @@ def _match_crop(crops: list[dict[str, Any]], category: str, name: str) -> dict[s
 def _load() -> dict[str, Any]:
     data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     kc = json.loads(KC_FILE.read_text(encoding="utf-8"))
-    data["kc_source"] = kc["source"]
+    data["kc_sources"] = kc["sources"]
+    data["classes"] = kc["classes"]
+    data["derived"] = kc["derived"]
     data["crops"] = crops = kc["crops"]
     for crop in crops:
+        crop["_short"] = kc["sources"][crop["source"]]["short"]
         crop["_words"] = [_fold(word) for word in crop["words"]]
         crop["_name_words"] = _fold(crop["name"]).split()
         crop["_aliases"] = {token for word in crop["words"] for token in _fold(word).split()}
@@ -81,7 +88,34 @@ def _load() -> dict[str, Any]:
         plant["kc"] = crop["kc_mid"] if crop else None
         plant["crop"] = crop["name"] if crop else None
         plant["crop_id"] = crop["id"] if crop else None
+        plant["kc_source"] = crop["source"] if crop else None
+        plant["kc_estimate"] = False
+        if crop is None and plant["low_mm"] is None:
+            # nothing of its own: an estimate from the water-use class its water text starts with
+            estimate = _estimate_kc(data["classes"], plant["category"], plant["note"])
+            if estimate is not None:
+                plant["kc"], plant["kc_source"], plant["kc_estimate"] = estimate, data["classes"]["source"], True
+        plant["mm_estimate"] = False
+        if plant["low_mm"] is None and plant["kc"] is not None:
+            # no weekly amount in the database: one worked out from the crop factor
+            plant["low_mm"] = plant["high_mm"] = round(plant["kc"] * data["derived"]["mm_per_kc"], 1)
+            plant["mm_estimate"] = True
     return data
+
+
+def _estimate_kc(classes: dict[str, Any], category: str, note: str) -> float | None:
+    """A crop factor from the water-use class (low, moderate, high) the plant's water text starts with
+    ("High, consistent moisture needed", "Drought tolerant"); None for plants kept in pots or trays and
+    for texts that start with none of the class words."""
+    if category in classes["skip"]:
+        return None
+    first = re.match(r"^[^a-z]*([a-z]+)", (note or "").lower())
+    if not first:
+        return None
+    for name, words in classes["words"].items():
+        if first.group(1) in words:
+            return classes["values"][name]
+    return None
 
 
 async def async_get_data(hass: HomeAssistant) -> dict[str, Any]:
@@ -100,7 +134,7 @@ def _category_summary(data: dict[str, Any], category: str) -> dict[str, Any] | N
     that give a weekly amount (None when fewer than three do), with the crop factor of the FAO crop
     that stands for the whole kind, if there is one."""
     plants = data["plants"]
-    amounts = [p for p in plants if p["category"] == category and p["low_mm"] is not None]
+    amounts = [p for p in plants if p["category"] == category and p["low_mm"] is not None and not p["mm_estimate"]]
     crop = next((c for c in data["crops"] if category in c["categories"] and not c["_words"]), None)
     if len(amounts) < 3:
         return None
@@ -112,6 +146,9 @@ def _category_summary(data: dict[str, Any], category: str) -> dict[str, Any] | N
         "low_mm": round(median(p["low_mm"] for p in amounts), 1),
         "high_mm": round(median(p["high_mm"] for p in amounts), 1),
         "kc": crop["kc_mid"] if crop else None,
+        "kc_source": crop["source"] if crop else None,
+        "kc_estimate": False,
+        "mm_estimate": False,
         "preset": PRESET_BY_CATEGORY.get(category),
         "note": "",
         "count": len(amounts),
@@ -127,23 +164,29 @@ def _public(plant: dict[str, Any]) -> dict[str, Any]:
         "low_mm": plant["low_mm"],
         "high_mm": plant["high_mm"],
         "kc": plant["kc"],
+        "kc_source": plant["kc_source"],
+        "kc_estimate": plant["kc_estimate"],
+        "mm_estimate": plant["mm_estimate"],
         "preset": PRESET_BY_CROP.get(plant["crop_id"]) or PRESET_BY_CATEGORY.get(plant["category"]),
         "note": plant["note"],
     }
 
 
-def _crop_item(crop: dict[str, Any]) -> dict[str, Any]:
+def _crop_item(crop: dict[str, Any], mm_per_kc: float = 25.4) -> dict[str, Any]:
     return {
         "kind": "crop",
         "name": crop["name"],
         "id": crop["id"],
         "category": "",
         "latin": "",
-        "low_mm": None,
-        "high_mm": None,
+        "low_mm": round(crop["kc_mid"] * mm_per_kc, 1),
+        "high_mm": round(crop["kc_mid"] * mm_per_kc, 1),
+        "mm_estimate": True,
         "kc": crop["kc_mid"],
+        "kc_source": crop["source"],
+        "kc_estimate": False,
         "preset": PRESET_BY_CROP.get(crop["id"]),
-        "note": f"Kc {crop['kc_ini']} / {crop['kc_mid']} / {crop['kc_end']}",
+        "note": "Kc " + " / ".join("-" if v is None else str(v) for v in (crop["kc_ini"], crop["kc_mid"], crop["kc_end"])),
     }
 
 
@@ -168,11 +211,12 @@ def search(data: dict[str, Any], query: str, limit: int = MAX_RESULTS) -> list[d
             else 2
         )
         # a plant that gives something to apply comes before one that only has words
-        hits.append(((rank, 0 if plant["low_mm"] is not None else 1 if plant["kc"] is not None else 2, plant["_name"]), plant))
+        measured = plant["low_mm"] is not None and not plant["mm_estimate"]
+        hits.append(((rank, 0 if measured else 1 if plant["low_mm"] is not None else 2, plant["_name"]), plant))
     hits.sort(key=lambda hit: hit[0])
     plant_results = [_public(plant) for _, plant in hits]
     crop_results = [
-        _crop_item(crop) for crop in data["crops"]
+        _crop_item(crop, data["derived"]["mm_per_kc"]) for crop in data["crops"]
         # words that start like the crop's name, or are exactly one of the names it goes by ("lemon" is
         # citrus; "pepper" does not find mint because of "peppermint")
         if all(any(word.startswith(w) for word in crop["_name_words"]) or w in crop["_aliases"] for w in words)
@@ -213,7 +257,7 @@ def suggested_numbers(
     return result
 
 
-def amount_text(item: dict[str, Any], imperial: bool, kc_text) -> str:
+def amount_text(item: dict[str, Any], imperial: bool, kc_text, about_text=lambda text: text) -> str:
     parts = []
     if item["low_mm"] is not None:
 
@@ -221,9 +265,10 @@ def amount_text(item: dict[str, Any], imperial: bool, kc_text) -> str:
             return str(round(mm / 25.4, 2) if imperial else round(mm, 1))
 
         low, high = show(item["low_mm"]), show(item["high_mm"])
-        parts.append(f"{low if low == high else f'{low}-{high}'} {'in' if imperial else 'mm'}")
+        text = f"{low if low == high else f'{low}-{high}'} {'in' if imperial else 'mm'}"
+        parts.append(about_text(text) if item.get("mm_estimate") else text)
     if item.get("kc") is not None:
-        parts.append(kc_text(item["kc"]))
+        parts.append(kc_text(item["kc"], bool(item.get("kc_estimate"))))
     return ", ".join(parts)
 
 
@@ -236,13 +281,13 @@ def picker_options(data: dict[str, Any], imperial: bool, texts) -> list[tuple[st
     for category in sorted({p["category"] for p in plants if p["low_mm"] is not None}):
         summary = _category_summary(data, category)
         if summary:
-            options.append((f"kind:{category}", f"{texts.kind(summary)}: {amount_text(summary, imperial, texts.kc)}"))
+            options.append((f"kind:{category}", f"{texts.kind(summary)}: {amount_text(summary, imperial, texts.kc, texts.about)}"))
     for crop in sorted(data["crops"], key=lambda c: c["name"]):
-        item = _crop_item(crop)
-        options.append((f"crop:{crop['id']}", f"{texts.crop(crop)}: {amount_text(item, imperial, texts.kc)}"))
+        item = _crop_item(crop, data["derived"]["mm_per_kc"])
+        options.append((f"crop:{crop['id']}", f"{texts.crop(crop)}: {amount_text(item, imperial, texts.kc, texts.about)}"))
     for index, plant in enumerate(plants):
-        if plant["low_mm"] is not None:
-            options.append((f"plant:{index}", f"{plant['name']}: {amount_text(plant, imperial, texts.kc)}"))
+        if plant["low_mm"] is not None and not plant["mm_estimate"]:  # the list holds measured amounts; the rest is searched
+            options.append((f"plant:{index}", f"{plant['name']}: {amount_text(plant, imperial, texts.kc, texts.about)}"))
     return options
 
 
@@ -255,7 +300,15 @@ def resolve(data: dict[str, Any], value: str) -> dict[str, Any] | None:
         return _category_summary(data, key)
     if kind == "crop":
         crop = next((c for c in data["crops"] if c["id"] == key), None)
-        return _crop_item(crop) if crop else None
+        return _crop_item(crop, data["derived"]["mm_per_kc"]) if crop else None
     if kind == "plant" and key.isdigit() and int(key) < len(plants) and plants[int(key)]["low_mm"] is not None:
         return _public(plants[int(key)])
     return None
+
+
+def sources_for(data: dict[str, Any], results: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """The crop factor sources behind a list of results (id -> source), for the credit under them."""
+    used = {item["kc_source"] for item in results if item.get("kc") is not None and item.get("kc_source")}
+    if any(item.get("mm_estimate") for item in results):
+        used.add(data["derived"]["source"])
+    return {key: source for key, source in data["kc_sources"].items() if key in used}

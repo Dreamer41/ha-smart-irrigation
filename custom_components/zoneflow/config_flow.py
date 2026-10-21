@@ -919,11 +919,15 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             @staticmethod
             def crop(crop):
-                return messages.text(hass, "setup.plant_crop", name=crop["name"])
+                return messages.text(hass, "setup.plant_crop", name=crop["name"], source=crop["_short"])
 
             @staticmethod
-            def kc(value):
-                return messages.text(hass, "setup.plant_kc", kc=f"{value:g}")
+            def about(text):
+                return messages.text(hass, "setup.plant_about", amount=text)
+
+            @staticmethod
+            def kc(value, estimate=False):
+                return messages.text(hass, "setup.plant_kc_estimate" if estimate else "setup.plant_kc", kc=f"{value:g}")
 
         return Texts
 
@@ -982,11 +986,12 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         texts = self._lookup_texts()
         options = [selector.SelectOptionDict(value="", label=messages.text(self.hass, "setup.plant_keep"))]
         for index, item in enumerate(found):
+            short = data["kc_sources"].get(item.get("kc_source"), {}).get("short", "")
             name = {"category": texts.kind, "crop": lambda i: texts.crop(i)}.get(item["kind"], lambda i: i["name"])(
-                {**item, "count": item.get("count", 0)}
+                {**item, "count": item.get("count", 0), "_short": short}
             )
             options.append(
-                selector.SelectOptionDict(value=str(index), label=f"{name}: {plant_water.amount_text(item, imperial, texts.kc)}")
+                selector.SelectOptionDict(value=str(index), label=f"{name}: {plant_water.amount_text(item, imperial, texts.kc, texts.about)}")
             )
         text = messages.text(self.hass, "setup.plant_some" if found else "setup.plant_nothing", query=self._plant_search, unit=unit)
         return self.async_show_form(
@@ -1000,7 +1005,10 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ),
             description_placeholders={
                 "result": text,
-                "source": f"{data['source']['name']} ({data['source']['license']}), {data['kc_source']['author']}, FAO-56",
+                "source": (
+                    f"{data['source']['name']} ({data['source']['license']}), FAO-56 (Allen et al. 1998), UF/IFAS, "
+                    "two published studies and WUCOLS/MWELO water-use classes"
+                ),
             },
         )
 

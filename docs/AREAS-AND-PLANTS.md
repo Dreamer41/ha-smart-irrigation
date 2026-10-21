@@ -37,8 +37,17 @@ The same list is on the screen for a crop in a greenhouse.
   too, which the ET demand model uses (the growth ramp lowers it early in the season). Crops the
   database has no weekly amount for (avocado, olive, citrus, potato and more) are offered for
   their crop factor alone; Apply then changes only that.
-- Some plants only have words ("Moderate, regular watering") and no crop. Those are shown, with
-  nothing to apply.
+- **Measured, worked out or estimated.** Nearly every plant gets a weekly amount and a crop factor, and each says
+  how sure it is:
+  - a weekly amount from the Plant Variety Database, or a crop factor from FAO paper 56, UF/IFAS (mango,
+    guava) or a published study (papaya, basil), is shown as it is;
+  - a weekly amount that is **about** a number was worked out from the crop factor (1 inch a week at a
+    crop factor of 1.0), because the database has none for that plant;
+  - a crop factor marked **(estimate)** comes from the plant's water-use class (low, moderate or high, as
+    landscape plant factors do), because no crop table has the plant.
+  The estimates are rougher than the measured values: look at what Apply would change, and check the result
+  with **Why?**. Plants kept in pots or trays (succulents, houseplants, microgreens) have neither, since
+  they are watered by interval, not by depth.
 - The amounts are averages from seed catalogs, and the weekly amount includes rain.
   Your soil, slope, climate and rain decide the rest: check the result with **Why?**
   and adjust.

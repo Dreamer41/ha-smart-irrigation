@@ -100,8 +100,9 @@ def test_several_words_all_have_to_match(data):
 
 def test_a_plant_with_only_words_is_found_and_still_gets_its_crop_factor(data):
     avocado = next(r for r in plant_water.search(data, "hass avocado") if r["kind"] == "plant")
-    assert avocado["name"] == "Hass Avocado" and avocado["low_mm"] is None and avocado["note"]
+    assert avocado["name"] == "Hass Avocado" and avocado["note"]
     assert avocado["kc"] == 0.85  # no weekly amount in the database, but the FAO crop factor
+    assert avocado["low_mm"] == 21.6 and avocado["mm_estimate"] is True  # so its weekly amount is worked out from it
     assert plant_water.usable(avocado)
 
 
@@ -148,7 +149,8 @@ async def test_the_websocket_command_answers_with_results_and_the_source(hass):
     msg_id, result = connection.sent[0]
     assert msg_id == 3 and result["results"][0]["kind"] == "category"
     assert result["source"]["license"] == "CC BY 4.0"
-    assert "Allen" in result["kc_source"]["author"]  # the crop factors' source is named too
+    assert "Allen" in result["kc_sources"]["fao56"]["author"]  # the crop factors' source is named too
+    assert set(result["kc_sources"]) == {"fao56", "derived"}  # only the sources behind these results
 
 
 def test_a_query_that_is_too_long_is_refused_by_the_schema():
@@ -173,7 +175,7 @@ def _kc(data, name):
         ("Banana Pepper 'Sweet Banana'", 1.05),  # a pepper, not a banana
         ("Common Mint", 1.15),  # mint
         ("Apple Mint", 1.15),  # a mint, not an apple tree
-        ("Genovese Basil", None),  # FAO-56 has no basil
+        ("Genovese Basil", 0.86),  # not FAO-56: a greenhouse study of basil
     ],
 )
 def test_plants_map_to_the_right_fao_crop(data, name, kc):
@@ -196,7 +198,7 @@ def test_look_alikes_do_not_get_the_wrong_crop(data):
 
 def test_the_crop_table_is_the_fao_one():
     kc = json.loads(plant_water.KC_FILE.read_text(encoding="utf-8"))
-    assert "Allen" in kc["source"]["author"] and "FAO" in kc["source"]["name"]
+    assert "Allen" in kc["sources"]["fao56"]["author"] and "FAO" in kc["sources"]["fao56"]["name"]
     crops = {c["id"]: c for c in kc["crops"]}
     # a few values of Table 12 (initial, mid-season, end)
     assert (crops["tomato"]["kc_ini"], crops["tomato"]["kc_mid"], crops["tomato"]["kc_end"]) == (0.6, 1.15, 0.8)
@@ -223,4 +225,116 @@ def test_a_crop_is_found_by_its_name_or_a_name_it_goes_by_but_not_by_a_lookalike
     assert "Pepper (sweet and chili)" in crops("pepper") and "Mint" not in crops("pepper")  # not through "peppermint"
     assert "Mint" in crops("peppermint")
     assert crops("zzzz") == []
+
+
+# --- gaps filled from other sources, and estimates ---------------------------------------
+def test_every_crop_names_a_source_that_exists():
+    kc = json.loads(plant_water.KC_FILE.read_text(encoding="utf-8"))
+    assert {c["source"] for c in kc["crops"]} <= set(kc["sources"])
+    assert kc["classes"]["source"] in kc["sources"]
+    by_id = {c["id"]: c for c in kc["crops"]}
+    assert (by_id["mango"]["kc_mid"], by_id["mango"]["source"]) == (0.8, "ifas")
+    assert (by_id["guava"]["kc_mid"], by_id["guava"]["source"]) == (1.0, "ifas")
+    assert (by_id["papaya"]["kc_mid"], by_id["papaya"]["source"]) == (1.05, "papaya")
+    assert (by_id["basil"]["kc_mid"], by_id["basil"]["source"]) == (0.86, "basil")
+    assert by_id["tomato"]["source"] == "fao56"
+    for source in kc["sources"].values():  # every source can be credited and found
+        assert source["name"] and source["author"] and source["url"].startswith("https://") and source["short"]
+
+
+@pytest.mark.parametrize(
+    ("category", "note", "expected"),
+    [
+        ("flower", "Low — drought tolerant once established", 0.2),
+        ("shrub", "Drought tolerant", 0.2),
+        ("shrub", "Moderate, regular watering", 0.5),
+        ("flower", "Regular", 0.5),
+        ("flower", "High — consistent moisture needed", 0.8),
+        ("ground-cover", "Consistent moisture", 0.8),
+        ("succulent", "Low", None),  # kept in pots: no estimate
+        ("houseplant", "Water when the top inch is dry", None),
+        ("microgreen", "High", None),
+        ("flower", "Water when the top inch of soil is dry", None),  # starts with none of the class words
+        ("flower", "", None),
+    ],
+)
+def test_the_water_use_class_gives_an_estimate(data, category, note, expected):
+    assert plant_water._estimate_kc(data["classes"], category, note) == expected
+
+
+def test_estimates_are_marked_and_never_replace_a_value_of_the_plants_own(data):
+    estimated = [p for p in data["plants"] if p["kc_estimate"]]
+    assert len(estimated) > 500
+    for plant in estimated:
+        assert plant["kc"] in (0.2, 0.5, 0.8) and plant["kc_source"] == "landscape"
+        assert plant["mm_estimate"] and plant["crop_id"] is None  # nothing else was known: its weekly amount follows the crop factor too
+        assert plant["category"] not in ("succulent", "houseplant", "microgreen")
+    for plant in data["plants"]:
+        if plant["crop_id"] is not None or (plant["low_mm"] is not None and not plant["mm_estimate"]):
+            assert not plant["kc_estimate"]
+
+
+def test_the_onion_family_stands_for_an_allium_with_no_name_of_its_own(data):
+    bandit = next(p for p in data["plants"] if p["name"] == "Bandit" and p["category"] == "allium")
+    assert bandit["crop"] == "Onion family" and bandit["kc"] == 1.05 and not bandit["kc_estimate"]
+
+
+def test_the_sources_behind_results_include_the_estimate_when_there_is_one(data):
+    flower = next(p for p in data["plants"] if p["kc_estimate"] and p["category"] == "flower" and " " not in p["name"])
+    results = [r for r in plant_water.search(data, flower["name"]) if r["name"] == flower["name"]]
+    assert results and results[0]["kc_estimate"] and results[0]["kc_source"] == "landscape"
+    sources = plant_water.sources_for(data, results)
+    assert set(sources) == {"landscape", "derived"}  # the class estimate and the weekly amount worked out from it
+    assert plant_water.sources_for(data, []) == {}
+
+
+def test_a_result_names_its_source_and_whether_it_is_an_estimate(data):
+    mango = next(r for r in plant_water.search(data, "mango") if r["kind"] == "crop")
+    assert mango["kc"] == 0.8 and mango["kc_source"] == "ifas" and mango["kc_estimate"] is False
+    assert mango["note"] == "Kc - / 0.8 / -"  # only the value the source gives
+
+
+def test_every_plant_with_a_water_text_has_a_weekly_amount_except_those_kept_in_pots(data):
+    without = [p for p in data["plants"] if p["low_mm"] is None]
+    assert len(without) < 160
+    assert all(p["category"] in ("microgreen", "succulent", "houseplant", "fruit-tree", "ground-cover", "rose") for p in without)
+    assert sum(1 for p in without if p["category"] in ("microgreen", "succulent", "houseplant")) > 130
+    for plant in data["plants"]:
+        if plant["low_mm"] is not None:
+            assert 4 <= plant["low_mm"] <= plant["high_mm"] <= 80, plant["name"]  # a worked-out amount stays sensible too
+
+
+def test_a_worked_out_weekly_amount_follows_the_crop_factor_and_is_marked(data):
+    per_kc = data["derived"]["mm_per_kc"]
+    worked = [p for p in data["plants"] if p["mm_estimate"]]
+    assert len(worked) > 1000
+    for plant in worked:
+        assert plant["low_mm"] == plant["high_mm"] == round(plant["kc"] * per_kc, 1), plant["name"]
+    assert all(not p["mm_estimate"] for p in data["plants"] if p["kc"] is None)
+
+
+def test_a_kind_is_the_middle_of_the_measured_amounts_only(data):
+    kinds = {}
+    for plant in data["plants"]:
+        if plant["low_mm"] is not None and not plant["mm_estimate"]:
+            kinds.setdefault(plant["category"], []).append(plant["low_mm"])
+    summary = plant_water._category_summary(data, "pepper")
+    assert summary["count"] == len(kinds["pepper"])  # the estimated ones are not in it
+    assert summary["mm_estimate"] is False
+
+
+def test_the_worked_out_amount_lines_up_with_the_setup_plant_types(data):
+    from custom_components.zoneflow.const import PLANT_PRESETS
+
+    per_kc = data["derived"]["mm_per_kc"]
+    kc = {c["id"]: c["kc_mid"] for c in data["crops"]}
+    # ZoneFlow's own plant types, which were set by hand, are within about 20 % of what the crop factor says
+    for crop, preset in (("tomato", "tomatoes"), ("pepper", "chilis"), ("lettuce", "leafy_vegetables")):
+        worked = kc[crop] * per_kc
+        assert abs(worked - PLANT_PRESETS[preset]["numbers"]["target_weekly_mm"]) / worked < 0.2, crop
+
+
+def test_the_derived_source_can_be_credited(data):
+    source = data["kc_sources"][data["derived"]["source"]]
+    assert source["short"] == "estimate" and source["url"].startswith("https://")
 

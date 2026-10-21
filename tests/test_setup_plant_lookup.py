@@ -28,7 +28,8 @@ VALVE = "switch.sprinkler_valve"
 class _Texts:
     kind = staticmethod(lambda summary: summary["name"])
     crop = staticmethod(lambda crop: crop["name"])
-    kc = staticmethod(lambda value: f"kc {value:g}")
+    kc = staticmethod(lambda value, estimate=False: f"kc {value:g}")
+    about = staticmethod(lambda text: f"about {text}")
 FLOW = {"emitters": 10, "emitter_flow": 2.0, "area": 2.0}
 
 
@@ -124,7 +125,7 @@ async def test_a_plant_with_only_a_crop_factor_is_offered_for_that(hass, fake_va
     _house(hass)
     result = await _first(hass, "hass avocado")  # no weekly amount in the database, but FAO-56 has avocado
     options = _options(result)
-    assert any("crop factor 0.85" in label and "mm" not in label for label in options.values())
+    assert any("crop factor 0.85" in label and "about 21.6 mm" in label for label in options.values())  # a worked-out weekly amount, said so
     index = next(v for v, label in options.items() if "Hass Avocado" in label)
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"pick": index})
     assert result["step_id"] == "quick"
@@ -133,8 +134,8 @@ async def test_a_plant_with_only_a_crop_factor_is_offered_for_that(hass, fake_va
     )
     numbers = result["result"].data[CONF_INITIAL_NUMBERS]
     assert numbers["crop_coefficient"] == 0.85
-    for key in plant_water.TARGET_KEYS:  # no weekly amount: the preset's weekly water stays
-        assert numbers[key] == PLANT_PRESETS["tomatoes"]["numbers"][key]
+    expected = plant_water.suggested_numbers(21.6, 21.6, PLANT_PRESETS["tomatoes"]["numbers"], 0.85)  # the weekly amount worked out from it
+    assert all(numbers[key] == value for key, value in expected.items())
 
 
 @pytest.mark.asyncio
@@ -348,4 +349,23 @@ def test_every_plant_type_the_lookup_names_exists():
     assert set(plant_water.PRESET_BY_CROP) <= crops
     for table in (plant_water.PRESET_BY_CROP, plant_water.PRESET_BY_CATEGORY):
         assert set(table.values()) <= set(PLANT_PRESETS)
+
+
+@pytest.mark.asyncio
+async def test_an_estimate_is_labelled_as_one_on_the_pick_screen(hass, fake_valve_services):
+    data = await hass.async_add_executor_job(plant_water._load)
+    flower = next(p for p in data["plants"] if p["kc_estimate"] and p["category"] == "flower" and " " not in p["name"])
+    _house(hass)
+    result = await _first(hass, flower["name"])
+    assert result["step_id"] == "plant_pick"
+    labels = " | ".join(_options(result).values())
+    assert flower["name"] in labels and "estimate" in labels.lower()
+
+
+@pytest.mark.asyncio
+async def test_the_first_list_names_the_source_of_a_crop(hass, fake_valve_services):
+    options = {o["value"]: o["label"] for o in _field(await _first_form(hass)).config["options"]}
+    assert "Mango" in options["crop:mango"] and "UF/IFAS" in options["crop:mango"]
+    assert "(FAO-56)" in options["crop:avocado"]
+    assert "(study)" in options["crop:basil"]
 

@@ -994,7 +994,8 @@ between pulses.
   (administrators) looks the plant up in the Plant Variety Database and offers
   its usual weekly amount; Apply sets the normal week and moves the hot and
   cool weeks in proportion, and also sets the Crop Factor from the FAO-56 table (Allen et al. 1998).
-  Treat it as a starting point, not a setting to trust.
+  Treat it as a starting point, not a setting to trust: a weekly amount marked "about" and a crop factor
+  marked "(estimate)" are worked out or estimated, not measured.
   When adding a zone, the first screen has the same lookup as an optional
   list (`plant_search`): the person starts typing and picks the plant; text that is not
   in the list gets a second screen with the matches.

@@ -419,8 +419,10 @@
     "plant_kind": "{name}, the middle of all {n} varieties",
     "plant_some": "These were found for “{query}”: the usual weekly water in {unit} and the crop factor. Pick one to use as the starting values, or keep the starting values.",
     "plant_nothing": "Nothing with a weekly amount was found for “{query}”. The starting values stay; go on, and change them later on the zone card.",
-    "plant_crop": "{name} (FAO-56)",
-    "plant_kc": "crop factor {kc}"
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "crop factor {kc}",
+    "plant_kc_estimate": "crop factor about {kc} (estimate)",
+    "plant_about": "about {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

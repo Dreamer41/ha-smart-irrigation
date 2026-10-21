@@ -241,8 +241,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Check my setup",
@@ -531,8 +535,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -821,8 +829,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Comprobar mi configuración",
@@ -1111,8 +1123,12 @@ const I18N = {
       "source": "Lähde: {name}, {author}, {license}.",
       "caveat": "Siemenluetteloiden keskiarvoja: maaperäsi, ilmastosi ja sade ratkaisevat loput. Tarkista tulos Miksi?-kohdasta.",
       "crop_factor": "Kasvikerroin",
-      "crop_source": "FAO-56:n kasvitaulukosta.",
-      "kc_source": "Kasvikertoimet: {name}, {author}."
+      "kc_source": "Lähde: {name}, {author}.",
+      "crop_source": "Kasvitaulukko: {source}.",
+      "estimate": "(arvio)",
+      "estimate_note": "Arvio kasvin vedenkulutusluokasta (maisemakasvikerroin), ei mitattu arvo.",
+      "about": "noin",
+      "mm_estimate_note": "Viikkomäärä on laskettu kasvikertoimesta (1 tuuma viikossa kasvikertoimella 1,0), ei mitattu."
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -1401,8 +1417,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Vérifier ma configuration",
@@ -1691,8 +1711,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1981,8 +2005,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Mijn instellingen controleren",
@@ -2271,8 +2299,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -2561,8 +2593,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Verificar a minha configuração",
@@ -2851,8 +2887,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -3141,8 +3181,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Zkontrolovat mé nastavení",
@@ -3431,8 +3475,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -3721,8 +3769,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Beállítások ellenőrzése",
@@ -4011,8 +4063,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -4301,8 +4357,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Verificar minha configuração",
@@ -4591,8 +4651,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Проверить настройки",
@@ -4881,8 +4945,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Skontrolovať moje nastavenie",
@@ -5171,8 +5239,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Перевірити мої налаштування",
@@ -5461,8 +5533,12 @@ const I18N = {
       "source": "Source: {name} by {author}, {license}.",
       "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
       "crop_factor": "Crop factor",
-      "crop_source": "From the FAO-56 crop table.",
-      "kc_source": "Crop factors: {name}, {author}."
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "检查我的设置",
@@ -6393,9 +6469,10 @@ class ZoneFlowCard extends HTMLElement {
       const parts = [];
       if (item.low_mm != null) {
         const [low, high] = [show(item.low_mm), show(item.high_mm)];
-        parts.push(`${low === high ? low : `${low}\u2013${high}`} ${unit} ${t(hass, "water_tips.per_week")}`);
+        const weekly = `${low === high ? low : `${low}\u2013${high}`} ${unit} ${t(hass, "water_tips.per_week")}`;
+        parts.push(item.mm_estimate ? `${t(hass, "water_tips.about")} ${weekly}` : weekly);
       }
-      if (item.kc != null) parts.push(`${t(hass, "water_tips.crop_factor")} ${item.kc}`);
+      if (item.kc != null) parts.push(`${t(hass, "water_tips.crop_factor")} ${item.kc}${item.kc_estimate ? ` ${t(hass, "water_tips.estimate")}` : ""}`);
       return parts.join(", ");
     };
     const usable = (item) => item.low_mm != null || item.kc != null;
@@ -6474,9 +6551,12 @@ class ZoneFlowCard extends HTMLElement {
         const row = make("div", "tips-row");
         row.appendChild(make("div", "tips-name", item.name));
         if (usable(item)) row.appendChild(make("div", "tips-amount", amount(item)));
+        const short = data.kc_sources?.[item.kc_source]?.short || "";
         const sub = item.kind === "category"
           ? t(hass, "water_tips.kind").replace("{n}", item.count)
-          : (item.kind === "crop" ? t(hass, "water_tips.crop_source") : (item.low_mm != null ? "" : item.note));
+          : (item.kind === "crop" ? t(hass, "water_tips.crop_source").replace("{source}", short)
+            : (item.kc_estimate ? t(hass, "water_tips.estimate_note")
+              : (item.mm_estimate ? t(hass, "water_tips.mm_estimate_note") : (item.low_mm != null ? "" : item.note))));
         if (sub) row.appendChild(make("div", "group-note", sub));
         if (usable(item)) {
           const use = make("button", "plant-button", t(hass, "water_tips.pick"));
@@ -6497,13 +6577,13 @@ class ZoneFlowCard extends HTMLElement {
         link.rel = "noopener";
         credit.append(link, document.createTextNode(" "));
       }
-      const kcSrc = data.kc_source || {};
-      if (data.results.some((item) => item.kc != null) && kcSrc.name) {
+      // The sources of the crop factors in these results, each with a link.
+      for (const kcSrc of Object.values(data.kc_sources || {})) {
         credit.appendChild(document.createElement("br"));
         credit.appendChild(document.createTextNode(
           t(hass, "water_tips.kc_source").replace("{name}", kcSrc.name).replace("{author}", kcSrc.author) + " "));
         if (kcSrc.url) {
-          const link = make("a", "", "FAO");
+          const link = make("a", "", kcSrc.short || "link");
           link.href = kcSrc.url;
           link.target = "_blank";
           link.rel = "noopener";
