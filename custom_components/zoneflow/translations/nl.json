@@ -15,12 +15,12 @@
         },
         "data_description": {
           "zone_name": "Wordt de apparaatnaam van de zone en het begin van de entiteitsnamen, en staat in telefoonmeldingen. Bv. \"Tomatenbed\", \"Voortuin\".",
-          "plant": "Vult logische startwaarden in voor dit gewas: weekdoelen voor water, gewasfactor, diepe watergift en opbouw per groeifase. \"Iets anders\" begint met algemene waarden. Je kunt alles later aanpassen op de apparaatpagina van de zone.",
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. Use it when your plant was not found in the list above; if you picked one there, its weekly water is used instead and this still sets the crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "Buiten is hoe ZoneFlow altijd heeft gewerkt. Kas- en binnenzones voegen klimaatbeheersing toe (ventilatoren, ventilatie, nevel, verwarming), kunnen werken zonder klep en hebben geen regenmeter of weersverwachting vanwege het dak.",
           "start_from": "Start vanaf een kopie van de sproei-instellingen van een andere zone of een opgeslagen voorinstelling in plaats van die van het planttype. Klep, sensoren en debiet worden nooit gecopieerd.",
           "location": "Het gebied waarin deze zone ligt, indien van toepassing. De zone gebruikt dan de regenmeter, temperatuursensor, het weer en de telefoon van het gebied, tenzij je haar eigen opgeeft.",
           "quick_setup": "Vraagt alleen naar de klep en hoe het water wordt aangevoerd, en vult de rest in op basis van het plantentype en de sensoren die ZoneFlow vond. U kunt alles later wijzigen bij Configureren. Haal het vinkje weg om nu alle instellingen te zien.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "entities": {
@@ -234,8 +234,8 @@
         "data_description": {
           "greenhouse_entry_id": "De kas of binnenzone met de klimaatapparaten.",
           "zone_name": "Wordt de apparaatnaam van het gewas en het begin van de entiteitsnamen, bijv. \"Tomaten\".",
-          "plant": "Vult verstandige beginwaarden in voor dit gewas.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, its weekly water is used instead and this still sets the rest.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "crop_valve": {

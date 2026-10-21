@@ -15,7 +15,10 @@ the middle of all its varieties first.
 (*cucumber*, *basil*) and it filters; each plant shows its usual weekly amount in your units. Pick one and that
 amount becomes the zone's starting weekly targets, with nothing more to press. Text that is not in the list
 (a misspelling, another language) is searched for on a second screen, where you pick or keep the starting
-values. Leave the field empty and nothing changes. The same field is on the screen for a crop in a greenhouse.
+values. Leave the field empty and nothing changes. The list comes before **What's planted**: if your plant is
+not in it, leave it empty and choose What's planted for typical starting values. A plant picked from the list
+gives the weekly water; What's planted still sets the crop factor, deep soak and growth ramp. The same list is
+on the screen for a crop in a greenhouse.
 
 - A suggestion is only that. Nothing changes until you press **Apply**, which sets
   the **normal week** to the middle of the range and moves the **hot** and **cool**

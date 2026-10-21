@@ -728,12 +728,12 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_PARENT_ZONE, default=greenhouses[0].entry_id if greenhouses else ""
                     ): _greenhouse_selector(greenhouses, with_none=False),
                     vol.Required(CONF_ZONE_NAME, default=self._zone_name or ""): str,
-                    vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
-                        selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
-                    ),
                     vol.Optional(
                         CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search or None}
                     ): await self._plant_search_field(),
+                    vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=PLANT_OPTIONS, translation_key="plant")
+                    ),
                 }
             ),
             errors=errors,
@@ -870,6 +870,12 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_ZONE_NAME, default=self._zone_name or ""): str,
+                    # Optional: look the plant up first ("cucumber"): its usual weekly amount of water becomes the
+                    # starting weekly target. What's planted below is the fallback for a plant that is not found, and
+                    # still gives the crop factor, deep soak and growth ramp.
+                    vol.Optional(
+                        CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search or None}
+                    ): await self._plant_search_field(),
                     # What's planted: pre-fills targets, crop factor,
                     # pulses, deep soak and growth ramp (PLANT_PRESETS).
                     vol.Required(CONF_PLANT, default=self._plant): selector.SelectSelector(
@@ -877,10 +883,6 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     ),
                     # Where it grows: outdoor is how ZoneFlow has always
                     # worked; greenhouse and indoor zones add climate control.
-                    # Optional: type a plant ("cucumber") to start from its usual weekly amount of water.
-                    vol.Optional(
-                        CONF_PLANT_SEARCH, description={"suggested_value": self._plant_search or None}
-                    ): await self._plant_search_field(),
                     vol.Required(CONF_ZONE_TYPE, default=self._zone_type): selector.SelectSelector(
                         selector.SelectSelectorConfig(options=ZONE_TYPE_OPTIONS, translation_key="zone_type")
                     ),

@@ -15,12 +15,12 @@
         },
         "data_description": {
           "zone_name": "Blir enhetsnavnet til sonen og starten på entitetsnavnene, og vises i telefonvarsler. F.eks. \"Tomatbed\", \"Plenen foran\".",
-          "plant": "Fyller inn fornuftige startverdier for denne planten: ukentlige vannmål, avlingsfaktor, dypvanning og vekstopptrapping. \"Noe annet\" starter med generelle verdier. Du kan endre alt senere på sonens enhetsside.",
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. Use it when your plant was not found in the list above; if you picked one there, its weekly water is used instead and this still sets the crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "Utendørs er slik ZoneFlow alltid har fungert. Drivhus og innendørssoner legger til klimastyring (vifter, lufting, tåkelegging, varmeovn), kan fungere uten ventil, og har hverken regnmåler eller værvarsel på grunn av taket.",
           "start_from": "Start fra en kopi av en annen zones vanningsinnstillinger eller en lagret forhåndsinnstilling i stedet for plantetypens. Ventil, sensorer og gjennomstrømning kopieres aldri.",
           "location": "Området denne sonen er i, hvis noe. Den bruker da områdets regnmåler, temperatursensor, vær og telefon, med mindre du gir den egne.",
           "quick_setup": "Spør bare om ventilen og hvordan vannet leveres, og fyller ut resten fra plantetypen og sensorene ZoneFlow fant. Du kan endre alt senere under Konfigurer. Fjern haken for å se alle innstillinger nå.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "entities": {
@@ -234,8 +234,8 @@
         "data_description": {
           "greenhouse_entry_id": "Drivhuset eller innendørssonen med klimaerhetene.",
           "zone_name": "Blir navnet på kulturen sin enhet og starten på enhetsnavnene, f.eks. «Tomater».",
-          "plant": "Fyller inn fornuftige startverdier for denne kulturen.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, its weekly water is used instead and this still sets the rest.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "crop_valve": {

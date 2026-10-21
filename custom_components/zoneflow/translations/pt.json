@@ -15,12 +15,12 @@
         },
         "data_description": {
           "zone_name": "Passa a ser o nome do dispositivo da zona e o início dos nomes das suas entidades, e aparece nas mensagens do telefone. Ex.: \"Canteiro de tomates\", \"Jardim da frente\".",
-          "plant": "Preenche valores iniciais sensatos para esta cultura: metas semanais de água, coeficiente cultural, rega profunda e rampa de crescimento. \"Outra coisa\" começa com valores gerais. Pode alterar tudo mais tarde na página do dispositivo da zona.",
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. Use it when your plant was not found in the list above; if you picked one there, its weekly water is used instead and this still sets the crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "O modo exterior é como o ZoneFlow sempre funcionou. As zonas de estufa e interior adicionam controlo de clima (ventiladores, janelas de aberturas, nebulização, aquecedor), podem funcionar sem válvula e não têm medidor de chuva nem previsão devido ao teto.",
           "start_from": "Comece a partir de uma cópia das definições de rega de outra zona ou de uma pré-definição guardada em vez das do tipo de planta. A válvula, os sensores e o fluxo nunca são copiados.",
           "location": "A área em que esta zona se encontra, se houver. Passa a usar o pluviómetro, o sensor de temperatura, o tempo e o telemóvel da área, a não ser que lhe dê os seus próprios.",
           "quick_setup": "Pergunta só pela válvula e como a água chega, e preenche o resto pelo tipo de planta e pelos sensores que o ZoneFlow encontrou. Pode alterar tudo mais tarde em Configurar. Desmarque para ver todas as definições agora.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "entities": {
@@ -234,8 +234,8 @@
         "data_description": {
           "greenhouse_entry_id": "A estufa ou zona interior com os dispositivos de clima.",
           "zone_name": "Torna-se o nome do dispositivo da cultura e o início dos nomes das suas entidades, ex.: \"Tomates\".",
-          "plant": "Preenche valores iniciais adequados para esta cultura.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, its weekly water is used instead and this still sets the rest.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "crop_valve": {

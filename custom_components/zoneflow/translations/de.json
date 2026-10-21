@@ -15,12 +15,12 @@
         },
         "data_description": {
           "zone_name": "Wird zum Gerätenamen der Zone und zum Anfang ihrer Entitätsnamen und erscheint in Handy-Nachrichten. Z. B. „Tomatenbeet“, „Rasen vorne“.",
-          "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern.",
+          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. Use it when your plant was not found in the list above; if you picked one there, its weekly water is used instead and this still sets the crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "Außenbereich ist die bisherige Funktionsweise von ZoneFlow. Gewächshaus- und Innenraumbereiche fügen eine Klimasteuerung hinzu (Lüfter, Belüftung, Vernebelung, Heizung), können ohne Ventil arbeiten und haben aufgrund des Dachs keinen Regensensor oder Wetterbericht.",
           "start_from": "Starten Sie mit einer Kopie der Bewässerungseinstellungen einer anderen Zone oder einer gespeicherten Voreinstellung statt der des Pflanzentyps. Ventil, Sensoren und Durchflussrate werden niemals kopiert.",
           "location": "Der Bereich, in dem sich diese Zone befindet, falls vorhanden. Sie nutzt dann Regenmesser, Temperatursensor, Wetter und Handy des Bereichs, solange du ihr keine eigenen gibst.",
           "quick_setup": "Fragt nur nach dem Ventil und der Art der Bewässerung und ergänzt den Rest aus der Pflanzenart und den gefundenen Sensoren. Alles lässt sich später unter Konfigurieren ändern. Haken entfernen, um alle Einstellungen jetzt zu sehen.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "entities": {
@@ -234,8 +234,8 @@
         "data_description": {
           "greenhouse_entry_id": "Das Gewächshaus oder die Innenzone mit den Klimageräten.",
           "zone_name": "Wird zum Gerätenamen der Kultur und zum Anfang ihrer Entitätsnamen, z. B. „Tomaten“.",
-          "plant": "Füllt sinnvolle Startwerte für diese Kultur ein.",
-          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Leave it empty to keep the starting values."
+          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, its weekly water is used instead and this still sets the rest.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows the weekly amount of water the Plant Variety Database (Wind River Greens, CC BY 4.0) gives for it, and that becomes the zone's starting weekly target. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below for typical starting values."
         }
       },
       "crop_valve": {

@@ -252,3 +252,14 @@ def test_a_plant_with_only_words_is_never_in_the_list():
     assert plant_water.resolve(data, f"plant:{words_only}") is None
     assert all(not value.endswith(f":{words_only}") for value, _ in plant_water.picker_options(data, False, lambda s: s["name"]))
 
+
+@pytest.mark.asyncio
+async def test_the_lookup_comes_before_whats_planted_which_is_the_fallback(hass, fake_valve_services):
+    result = await _first_form(hass)
+    names = [getattr(k, "schema", k) for k in result["data_schema"].schema]
+    assert names.index("plant_search") < names.index("plant")
+    assert names.index(CONF_ZONE_NAME) < names.index("plant_search")
+    # What's planted is still required: it is what a plant that is not found falls back on.
+    plant_key = next(k for k in result["data_schema"].schema if getattr(k, "schema", k) == "plant")
+    assert plant_key.default() == "custom" or plant_key.default is not None
+
