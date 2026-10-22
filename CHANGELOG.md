@@ -4,10 +4,11 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
-## [Unreleased]
+## [1.7.6] — Look up your plant, crop factors, Rain Ignored Below
 
 ### Added
 
+- **All the new texts are translated** into every language ZoneFlow has.
 - **Watering tips: what your plant usually wants per week.** A new button on the zone card (administrators) looks your plant up in the [Plant Variety Database](https://github.com/bripatch/plant-variety-database) (Wind River Greens, CC BY 4.0) and shows its usual weekly amount in your units. A kind of plant (pepper, basil, rose) gives the middle of all its varieties first. **Apply** sets the normal week to the middle of the range and moves the hot and cool weeks in proportion; nothing changes until you press it. Plants whose entry only has words (no weekly amount) are shown without an Apply. Only the weekly amounts are bundled (about 300 KB, read when you open the popup), with credit in the README and on the popup.
 - **Look up your plant when you set up a zone.** The first setup screen (and the screen for a crop in a greenhouse) has an optional "Look up your plant" field. It is a list that filters as you type, each plant with its usual weekly amount in your units (the middle of a whole kind first, such as all cucumbers, then single varieties). Pick one and that amount becomes the zone's starting weekly targets right there (the hot and cool weeks keep their proportion to the normal one). Text that is not in the list is searched for on a second screen. The list comes before What's planted, which stays the fallback for a plant that is not in it; a pick also chooses the plant type that fits (deep soak, growth ramp) when What's planted is left on Something else, and a type you choose yourself is kept. Left empty, nothing changes and no screen is added.
 - **The lookup also gives the crop factor (Kc), from FAO paper 56.** Crop coefficients typed in from Table 12 of Allen, Pereira, Raes and Smith (1998) (48 crops: vegetables, berries, fruit and nut trees, turf) are shown next to the weekly amount, in Watering tips and in the setup list, and **Apply** (or picking the plant at setup) sets the Crop Factor setting. Crops the plant database has no weekly amount for, such as avocado, olive, citrus and potato, can be picked for their crop factor alone. Credit is in the README, in `data/ATTRIBUTION.md` and on the popup.
