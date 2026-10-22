@@ -964,9 +964,12 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if not self._plant_search:
             return await next_step()
         data = await plant_water.async_get_data(self.hass)
+        # The labels carry the amounts in the units shown; a crop's zone may use other units than the form
+        # was shown with (the greenhouse's), so a label of either unit system is matched.
         by_label: dict[str, str] = {}
-        for value, label in plant_water.picker_options(data, self._imperial(), self._lookup_texts()):
-            by_label.setdefault(label, value)
+        for imperial in (self._imperial(), not self._imperial()):
+            for value, label in plant_water.picker_options(data, imperial, self._lookup_texts()):
+                by_label.setdefault(label, value)
         if (item := plant_water.resolve(data, by_label.get(self._plant_search, self._plant_search))) is not None:
             # Picked from the list on the first screen: its amounts are the starting values.
             self._apply_lookup(item)

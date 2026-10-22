@@ -262,7 +262,8 @@ async def test_the_list_is_in_inches_for_imperial(hass, fake_valve_services):
     assert weekly and all(" in" in o["label"] and " mm" not in o["label"] for o in weekly)
 
 
-@pytest.mark.parametrize("value", ["", "cucumber", "plant:", "plant:abc", "plant:999999", "plant:-1", "kind:nothing", "kind:", "x:1"])
+@pytest.mark.parametrize("value", ["", "cucumber", "plant:", "plant:abc", "plant:999999", "plant:-1", "kind:nothing", "kind:", "x:1",
+                                   "plant:²", "plant:٣", "plant:１"])  # digits that int() cannot read
 def test_odd_values_are_not_a_pick(value):
     data = plant_water._load()
     assert plant_water.resolve(data, value) is None
@@ -371,3 +372,33 @@ async def test_the_first_list_names_the_source_of_a_crop(hass, fake_valve_servic
     assert any(l.startswith("Avocado") and "(FAO-56)" in l for l in labels)
     assert any(l.startswith("Basil") and "(study)" in l for l in labels)
 
+
+@pytest.mark.asyncio
+async def test_a_pick_in_a_crop_whose_greenhouse_uses_other_units_than_home_assistant_is_kept(hass, fake_valve_services):
+    """The list is shown in Home Assistant's units, but the crop's zone takes the greenhouse's: the labels carry
+    the amounts, so a label of either unit system must still be a pick."""
+    from custom_components.zoneflow.const import CONF_PARENT_ZONE, CONF_UNIT_SYSTEM
+    from custom_components.zoneflow.units import UNIT_SYSTEM_IMPERIAL
+
+    from .test_greenhouse_crops import _climate_only_entry, _load, _seed_all
+
+    await _seed_all(hass)
+    house = _climate_only_entry(hass)
+    hass.config_entries.async_update_entry(house, data={**house.data, CONF_UNIT_SYSTEM: UNIT_SYSTEM_IMPERIAL})
+    await _load(hass, house)
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "crop"})
+    label = next(o["label"] for o in _field(result).config["options"] if o["label"].startswith("Jalape") and "Craig" in o["label"])
+    assert " mm" in label  # shown in the metric units of Home Assistant
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_PARENT_ZONE: house.entry_id, CONF_ZONE_NAME: "Chilis", "plant": "custom", "plant_search": label},
+    )
+    assert result["step_id"] == "crop_valve"  # the pick was understood, not searched for as text
+
+
+@pytest.mark.asyncio
+async def test_odd_digits_typed_in_the_lookup_do_not_break_the_setup(hass, fake_valve_services):
+    _house(hass)
+    result = await _first(hass, "plant:²")
+    assert result["step_id"] == "plant_pick"  # searched for as text, nothing found

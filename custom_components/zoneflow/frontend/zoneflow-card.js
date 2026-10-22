@@ -6166,7 +6166,7 @@ class ZoneFlowCard extends HTMLElement {
       this._popups.water_tips = {
         icon: "mdi:book-search-outline", custom: "water_tips", parts: [], label: t(hass, "water_tips.title"),
         // The plant's own name without its variety ("Tomatoes 'Roma'" -> "Tomatoes").
-        plant: String(mainPlant?.name || "").replace(/['"\u2018\u2019].*$/, "").trim(),
+        plant: String(mainPlant?.name || "").replace(/\s['"\u2018\u2019].*$/, "").trim(),
         targets: {
           normal: visible["number.target_weekly_mm"]?.entity_id,
           hot: visible["number.target_weekly_hot_mm"]?.entity_id,
@@ -6459,7 +6459,7 @@ class ZoneFlowCard extends HTMLElement {
       if (text !== undefined) el.textContent = text;
       return el;
     };
-    const stateOf = (entityId) => hass.states?.[entityId];
+    const stateOf = (entityId) => this._hass.states?.[entityId]; // always the current states, not those at opening
     const unit = stateOf(popup.targets.normal)?.attributes?.unit_of_measurement === "in" ? "in" : "mm";
     const show = (mm) => {
       const value = unit === "in" ? mm / 25.4 : mm;
@@ -6535,13 +6535,13 @@ class ZoneFlowCard extends HTMLElement {
     const search = async () => {
       const mine = ++latest;
       proposal.textContent = "";
-      const query = input.value.trim();
+      const query = input.value.trim().slice(0, 60); // the most the server takes
       if (!query) { list.textContent = ""; return; }
       let data;
       try {
         data = await hass.callWS({ type: "zoneflow/plant_water", query });
       } catch (err) {
-        list.textContent = err?.message || String(err);
+        if (mine === latest) list.textContent = err?.message || String(err);
         return;
       }
       if (mine !== latest) return; // a newer search is on its way

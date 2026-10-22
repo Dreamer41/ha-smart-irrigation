@@ -301,7 +301,7 @@ def resolve(data: dict[str, Any], value: str) -> dict[str, Any] | None:
     if kind == "crop":
         crop = next((c for c in data["crops"] if c["id"] == key), None)
         return _crop_item(crop, data["derived"]["mm_per_kc"]) if crop else None
-    if kind == "plant" and key.isdigit() and int(key) < len(plants) and plants[int(key)]["low_mm"] is not None:
+    if kind == "plant" and key.isascii() and key.isdigit() and int(key) < len(plants) and plants[int(key)]["low_mm"] is not None:
         return _public(plants[int(key)])
     return None
 
