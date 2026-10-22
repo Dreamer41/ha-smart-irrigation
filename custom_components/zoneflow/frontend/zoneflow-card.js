@@ -104,7 +104,12 @@ const I18N = {
       "needs_a_look": "Needs a look",
       "water_30d": "Water used, 30 days",
       "pause_house": "Pause the greenhouse (stops watering its crops)",
-      "snooze_house": "Skip today's watering of the greenhouse crops"
+      "snooze_house": "Skip today's watering of the greenhouse crops",
+      "headline_attention": "{names}: needs a look",
+      "headline_watering": "Watering now: {names}",
+      "headline_covered": "Nothing needs water right now. Rain and soil have it covered.",
+      "headline_ok": "Your garden is doing well.",
+      "headline_paused": "Watering is paused."
     },
     "tips": {
       "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
@@ -986,7 +991,12 @@ const I18N = {
       "water_30d": "Veden käyttö, 30 päivää",
       "pause_house": "Aseta kasvihuone tauolle (pysäyttää sen kasvien kastelun)",
       "snooze_house": "Ohita kasvihuoneen kasvien tämän päivän kastelu",
-      "add_area": "Lisää alue"
+      "add_area": "Lisää alue",
+      "headline_attention": "{names}: tarvitsee huomiota",
+      "headline_watering": "Kastelu käynnissä: {names}",
+      "headline_covered": "Vettä ei tarvita juuri nyt. Sade ja maan kosteus riittävät.",
+      "headline_ok": "Puutarhalla menee hyvin.",
+      "headline_paused": "Kastelu on tauolla."
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -7308,6 +7318,12 @@ const CLIMATE_STATUS = {
   climate_idle: ["mdi:check-circle-outline", false],
 };
 
+// Zones that skipped or wait because the rain, the forecast or the soil has the water covered.
+const COVERED_BY_WEATHER = new Set([
+  "skipped_forecast", "skipped_rain_credit", "skipped_wet_fortnight", "cancelled_rain",
+  "skipped_soil_wet", "waiting_soil_wet", "skipped_drydown", "waiting_drydown",
+]);
+
 const STATUS_LABELS = {
   watering: ["watering", "mdi:water", false],
   service_run: ["service_run", "mdi:wrench-clock", false],
@@ -7659,6 +7675,13 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .garden-summary:empty { display: none; }
       .chip { display: inline-flex; align-items: center; gap: 4px; }
       .chip ha-icon { --mdc-icon-size: 16px; }
+      .garden-headline { display: flex; align-items: center; gap: 8px; padding: 0 16px 8px; font-size: 1.05em; font-weight: 500;
+        color: var(--primary-text-color); }
+      .garden-headline:empty { display: none; }
+      .garden-headline ha-icon { --mdc-icon-size: 22px; flex: none; }
+      .garden-headline.ok ha-icon { color: var(--success-color, #43a047); }
+      .garden-headline.active ha-icon { color: var(--primary-color); }
+      .garden-headline.warn ha-icon { color: var(--warning-color, #ffa600); }
       .area-title { margin: 14px 12px 6px; font-size: 0.85em; font-weight: 500; letter-spacing: 0.04em;
         text-transform: uppercase; color: var(--secondary-text-color); display: flex; align-items: center; gap: 4px; }
       .area-title span { flex: 1; }
@@ -7688,6 +7711,11 @@ class ZoneFlowOverviewCard extends HTMLElement {
     title.className = "title";
     title.textContent = this._config.title || tr("title");
     card.appendChild(title);
+    // One plain sentence on how the garden is (filled in by _update).
+    this._headlineEl = document.createElement("div");
+    this._headlineEl.className = "garden-headline";
+    this._headlineSignature = undefined; // a new, empty line: fill it again
+    if (!this._config.embedded && zones.length) card.appendChild(this._headlineEl);
     // My Garden: today at a glance (filled in by _update).
     this._summaryEl = document.createElement("div");
     this._summaryEl.className = "garden-summary";
@@ -8046,6 +8074,21 @@ class ZoneFlowOverviewCard extends HTMLElement {
     details.append(inner);
   }
 
+  _headline(zones) {
+    // One plain sentence on how the garden is: [tone, icon, text], or null when there is nothing to say.
+    const hass = this._hass;
+    const tr = (key) => t(hass, `overview.${key}`);
+    const names = (list) => list.map((z) => z.name).join(", ");
+    const warnings = zones.filter((z) => (CLIMATE_STATUS[z.code] ? CLIMATE_STATUS[z.code][1] : STATUS_LABELS[z.code]?.[2]));
+    if (warnings.length) return ["warn", "mdi:alert-outline", tr("headline_attention").replace("{names}", () => names(warnings))];
+    const watering = zones.filter((z) => z.code === "watering" || z.code === "service_run");
+    if (watering.length) return ["active", "mdi:water", tr("headline_watering").replace("{names}", () => names(watering))];
+    const active = zones.filter((z) => z.code !== "paused");
+    if (!active.length) return zones.length ? ["ok", "mdi:pause-circle-outline", tr("headline_paused")] : null;
+    if (active.every((z) => COVERED_BY_WEATHER.has(z.code))) return ["ok", "mdi:weather-rainy", tr("headline_covered")];
+    return ["ok", "mdi:check-circle-outline", tr("headline_ok")];
+  }
+
   _summary(zones) {
     // [icon, text] chips: what is watering, what is next, rain, warnings, water used.
     const hass = this._hass;
@@ -8088,6 +8131,20 @@ class ZoneFlowOverviewCard extends HTMLElement {
 
   _update(zones) {
     const hass = this._hass;
+    if (this._headlineEl) {
+      const headline = this._headline(zones);
+      const signature = JSON.stringify(headline);
+      if (signature !== this._headlineSignature) {
+        this._headlineSignature = signature;
+        this._headlineEl.textContent = "";
+        this._headlineEl.className = `garden-headline ${headline ? headline[0] : ""}`.trim();
+        if (headline) {
+          const icon = document.createElement("ha-icon");
+          icon.setAttribute("icon", headline[1]);
+          this._headlineEl.append(icon, document.createTextNode(headline[2]));
+        }
+      }
+    }
     if (this._summaryEl) {
       const chips = this._summary(zones);
       const signature = JSON.stringify(chips);

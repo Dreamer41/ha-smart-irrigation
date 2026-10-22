@@ -410,6 +410,11 @@ def check_overview(pw, check, args) -> None:
     check(rows[0]["last"] == "8.0 mm · 18 L" and rows[2]["last"] == "12.0 mm", "overview: measured litres, else the estimate")
     check("Mon" in rows[2]["next"] or "Tue" in rows[2]["next"], "overview: next as weekday and time")
 
+    def headline():
+        return page.evaluate("() => { const h = window._ov.shadowRoot.querySelector('.garden-headline'); return [h.textContent, h.className]; }")
+
+    check(headline() == ["Your garden is doing well.", "garden-headline ok"], "overview: a plain sentence says the garden is fine")
+
     page.evaluate("() => { window._ov.setConfig({sort: 'next', icons: {chi: 'mdi:chili-hot'}}); window._ov.hass = window._ovHass; }")
     page.wait_for_timeout(100)
     rows = page.evaluate(JS_OVERVIEW)
@@ -429,6 +434,24 @@ def check_overview(pw, check, args) -> None:
     page.wait_for_timeout(100)
     rows = page.evaluate(JS_OVERVIEW)
     check(rows[0]["open"] and rows[0]["status"] == "Watering now", "overview: stays open and follows changes")
+
+    def set_codes(**codes):
+        page.evaluate(
+            """(codes) => { const h = JSON.parse(JSON.stringify(window._ovHass)); h.callService = window._ovHass.callService;
+                for (const [dev, code] of Object.entries(codes)) h.states[`sensor.${dev}_status`].attributes.code = code;
+                window._ovHass = h; window._ov.hass = h; }""",
+            codes,
+        )
+        page.wait_for_timeout(100)
+
+    check(headline() == ["Watering now: Chilis", "garden-headline active"], "overview: the sentence says what is watering")
+    set_codes(chi="interrupted")
+    check(headline() == ["Chilis: needs a look", "garden-headline warn"], "overview: a stopped zone is an amber sentence")
+    set_codes(chi="skipped_rain_credit", tom="skipped_soil_wet")
+    check(headline() == ["Nothing needs water right now. Rain and soil have it covered.", "garden-headline ok"],
+          "overview: rain and wet soil have it covered")
+    set_codes(chi="paused", tom="paused")
+    check(headline() == ["Watering is paused.", "garden-headline ok"], "overview: everything paused")
     has_add = page.evaluate("() => !!window._ov.shadowRoot.querySelector('.add')")
     check(not has_add, "overview: no Add zone button for non-admin users")
     page.evaluate("() => { const h = JSON.parse(JSON.stringify(window._ovHass)); h.user = {is_admin: true}; h.callService = window._ovHass.callService; window._ov.hass = h; }")
