@@ -1,5 +1,9 @@
 # ZoneFlow Irrigation
 
+[![HACS](https://img.shields.io/badge/HACS-Default-41BDF5)](https://hacs.xyz)
+[![Release](https://img.shields.io/github/v/release/Dreamer41/ha-smart-irrigation?label=release)](https://github.com/Dreamer41/ha-smart-irrigation/releases/latest)
+[![License](https://img.shields.io/github/license/Dreamer41/ha-smart-irrigation)](https://github.com/Dreamer41/ha-smart-irrigation/blob/main/LICENSE)
+
 **ZoneFlow turns Home Assistant into the irrigation controller.** Use the valves, pumps, sensors and weather hardware you already have — from simple Zigbee relays to more advanced flow and soil sensors.
 
 Full documentation: **[zoneflowirrigation.com](https://zoneflowirrigation.com/)**
