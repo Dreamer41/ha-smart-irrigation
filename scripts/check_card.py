@@ -146,7 +146,7 @@ def main() -> int:
         now, controls, service = (shown["sections"].get(k, []) for k in ("Now", "Controls", "Service & checks (not counted as watering)"))
         popups = page.evaluate(JS_POPUPS)
         print(json.dumps(popups, indent=1))
-        check(shown["buttons"] == ["Plant journal", "Settings", "Check my setup", "Calibrate the flow rate", "Diagnostics"], "journal, settings and diagnostics as buttons")
+        check(shown["buttons"] == ["Plant journal", "Settings", "Check my setup", "Calibrate the flow rate", "Recent activity", "Diagnostics"], "journal, settings and diagnostics as buttons")
         check(all(p["modal"] for p in popups.values()), "they open as popups")
         settings = popups["Settings"]["rows"]
         # (each group's name is followed by its "?" help link)
@@ -474,6 +474,7 @@ def check_overview(pw, check, args) -> None:
         print(f"screenshot: {shot}")
     check_loader(browser, check)
     check_water_tips(browser, check)
+    check_activity(browser, check)
     browser.close()
 
 
@@ -672,6 +673,77 @@ def check_water_tips(browser, check) -> None:
         )
         check(only["calls"] == expected_crop_calls and "Crop factor: 0.8" in only["proposal"],
               f"water tips ({unit}): a crop's weekly amount is worked out from its crop factor, and both are applied")
+        page.close()
+
+
+def check_activity(browser, check) -> None:
+    """The Recent activity popup: one line per decision from the status sensor's history, newest first, with the
+    runs and skips and their reasons; the "next watering" and waiting states are left out."""
+    for empty in (False, True):
+        page = browser.new_page()
+        page.route("http://card.test/", lambda route: route.fulfill(body=HARNESS, content_type="text/html"))
+        page.route("http://card.test/card.js", lambda route: route.fulfill(path=str(CARD), content_type="text/javascript"))
+        page.goto("http://card.test/")
+        hass = fake_hass()
+        page.evaluate(
+            """([hass, device, empty]) => {
+                window._asked = [];
+                hass.callWS = async (msg) => {
+                    window._asked.push(msg);
+                    const now = Date.now();
+                    const iso = (hoursAgo) => new Date(now - hoursAgo * 3600000).toISOString();
+                    const lu = (hoursAgo) => (now - hoursAgo * 3600000) / 1000;
+                    const st = (state, code, decided, hoursAgo, cycle) => ({s: state, a: {code, decided_at: decided, cycle}, lu: lu(hoursAgo)});
+                    return {'sensor.chilis_status': empty ? [] : [
+                        st('Routine done at 05:30: 13 mm in 8 min — next Fri 05:30', 'done', iso(72), 72, 'routine'),
+                        st('Routine done at 05:30: 13 mm in 8 min — next Sat 05:30', 'done', iso(72), 71, 'routine'),
+                        st('Next watering Fri 05:30, estimated 13 mm', 'next', null, 70, null),
+                        st('Waiting for the soil to dry (45%)', 'waiting_soil_wet', iso(60), 60, 'routine'),
+                        st('Routine skipped at 05:30: recent rain (4.2 mm) covers the 13 mm needed', 'skipped_rain_credit', iso(48), 48, 'routine'),
+                        st('Routine stopped at 05:34 before finishing', 'interrupted', iso(24), 24, 'routine'),
+                        st('Watering now: Routine', 'watering', null, 1, null),
+                    ]};
+                };
+                const card = document.createElement('zoneflow-card');
+                card.setConfig({device_id: device});
+                card.hass = hass;
+                document.body.appendChild(card);
+                window._card = card;
+            }""",
+            [hass, DEVICE, empty],
+        )
+        page.wait_for_timeout(200)
+        opened = page.evaluate(
+            """async () => {
+                const root = window._card.shadowRoot;
+                const button = [...root.querySelectorAll('.more button')].find((b) => b.textContent === 'Recent activity');
+                if (!button) return null;
+                button.click();
+                await new Promise((r) => setTimeout(r, 300));
+                const dialog = root.querySelector('dialog');
+                return {
+                    rows: [...dialog.querySelectorAll('.activity-row')].map((r) => [r.children[1].children[0].textContent, r.className]),
+                    list: dialog.querySelector('.activity-list').textContent,
+                    asked: window._asked.map((m) => [m.type, m.entity_ids]),
+                };
+            }"""
+        )
+        check(opened is not None, "activity: the button is on the zone card")
+        if opened is None:
+            page.close()
+            continue
+        check(opened["asked"] == [["history/history_during_period", ["sensor.chilis_status"]]], "activity: asks the history of the zone's status")
+        if empty:
+            check(opened["rows"] == [] and "Nothing yet" in opened["list"], "activity: a friendly line when there is nothing yet")
+        else:
+            texts = [r[0] for r in opened["rows"]]
+            check(texts == ["Watering now: Routine", "Routine stopped at 05:34 before finishing",
+                            "Routine skipped at 05:30: recent rain (4.2 mm) covers the 13 mm needed",
+                            "Routine done at 05:30: 13 mm in 8 min — next Fri 05:30"],
+                  "activity: one line per decision, newest first, without the next watering and waiting lines")
+            classes = [r[1] for r in opened["rows"]]
+            check("ran" in classes[0] and "warn" in classes[1] and "ran" in classes[3] and "warn" not in classes[2],
+                  "activity: runs are marked, a stopped run is amber")
         page.close()
 
 

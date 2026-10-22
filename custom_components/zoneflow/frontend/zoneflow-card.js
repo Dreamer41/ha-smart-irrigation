@@ -227,6 +227,12 @@ const I18N = {
       "cancel": "Cancel",
       "moved": "{plant} moved to {to}"
     },
+    "activity": {
+      "title": "Recent activity",
+      "intro": "What ZoneFlow ran, skipped and stopped in the last 10 days, and why. It comes from Home Assistant's history of this zone's status, so it only goes back as far as your history is kept.",
+      "none": "Nothing yet. Runs and skips appear here as they happen.",
+      "loading": "Loading…"
+    },
     "water_tips": {
       "title": "Watering tips",
       "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
@@ -1113,6 +1119,12 @@ const I18N = {
       "move_record_only": "Siinä vyöhykkeessä ei ole venttiiliä, joten kasvi liittyy siihen vain tietueena.",
       "cancel": "Peruuta",
       "moved": "{plant} siirretty vyöhykkeelle {to}"
+    },
+    "activity": {
+      "title": "Viimeaikainen toiminta",
+      "intro": "Mitä ZoneFlow kasteli, jätti väliin ja pysäytti viimeisen 10 päivän aikana, ja miksi. Tiedot tulevat Home Assistantin historiasta, joten ne ulottuvat vain niin pitkälle kuin historiaa säilytetään.",
+      "none": "Ei vielä mitään. Kastelut ja väliin jätetyt kerrat näkyvät tässä, kun niitä tapahtuu.",
+      "loading": "Ladataan…"
     },
     "water_tips": {
       "title": "Kastelun vinkit",
@@ -5951,6 +5963,10 @@ class ZoneFlowCard extends HTMLElement {
       .plant-badge.main { color: var(--primary-color); font-weight: 500; }
       .plant-actions, .plant-form, .plant-noterow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
       .tips-row { padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
+      .activity-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
+      .activity-row ha-icon { --mdc-icon-size: 20px; flex: none; margin-top: 2px; color: var(--secondary-text-color); }
+      .activity-row.ran ha-icon { color: var(--primary-color); }
+      .activity-row.warn ha-icon { color: var(--warning-color, #ffa600); }
       .tips-name { font-weight: 500; }
       .tips-amount { color: var(--secondary-text-color); margin-bottom: 4px; }
       .tips-proposal { margin-top: 12px; }
@@ -6170,6 +6186,14 @@ class ZoneFlowCard extends HTMLElement {
     if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
     }
+    // Recent activity: what the zone ran, skipped and stopped lately, with the reasons, read from the history
+    // of its status sensor (nothing extra is stored).
+    if (this._config.show_settings && valve && visible["sensor.status"]) {
+      this._popups.activity = {
+        icon: "mdi:history", custom: "activity", parts: [], label: t(hass, "activity.title"),
+        status: visible["sensor.status"].entity_id,
+      };
+    }
     // Watering tips: what the plant usually wants per week, from a plant database (administrators).
     if (this._config.show_settings && valve && hass.user?.is_admin && visible["number.target_weekly_mm"]) {
       const mainPlant = (statusAttrs.plants || []).find((plant) => plant.main) || (statusAttrs.plants || [])[0];
@@ -6311,6 +6335,7 @@ class ZoneFlowCard extends HTMLElement {
     if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     if (popup.custom === "water_tips") this._waterTipsBody(body, popup);
+    if (popup.custom === "activity") this._activityBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       // A group of settings that are all "advanced" is hidden with them.
       const advGroup = everyday && confs.every((conf) => conf._adv);
@@ -6459,6 +6484,69 @@ class ZoneFlowCard extends HTMLElement {
     const again = make("button", "plant-button", t(hass, "check.again"));
     again.addEventListener("click", () => this._checkBody(body));
     body.appendChild(again);
+  }
+
+  _activityBody(body, popup) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "activity.intro")));
+    const list = make("div", "activity-list", t(hass, "activity.loading"));
+    body.appendChild(list);
+    const lang = hass.locale?.language || hass.language || "en";
+    const when = (ms) => new Date(ms).toLocaleString(lang, {
+      weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit",
+    });
+    (async () => {
+      const end = new Date();
+      let data;
+      try {
+        data = await hass.callWS({
+          type: "history/history_during_period",
+          start_time: new Date(end.getTime() - 10 * 86400000).toISOString(),
+          end_time: end.toISOString(),
+          entity_ids: [popup.status],
+          include_start_time_state: true,
+          significant_changes_only: false,
+          minimal_response: false,
+          no_attributes: false,
+        });
+      } catch (err) {
+        list.textContent = err?.message || String(err);
+        return;
+      }
+      // One line per decision: the status sensor repeats the same decision with a new "next watering" tail.
+      const seen = new Map();
+      for (const item of data?.[popup.status] || []) {
+        const attrs = item.a ?? item.attributes ?? {};
+        const code = attrs.code;
+        if (!code || code.startsWith("waiting")) continue;
+        const decided = attrs.decided_at ? Date.parse(attrs.decided_at) : NaN;
+        if (Number.isNaN(decided) && !ACTIVITY_WITHOUT_TIME.has(code)) continue;
+        const changed = item.lu != null ? item.lu * 1000 : Date.parse(item.last_updated);
+        const at = Number.isNaN(decided) ? changed : decided;
+        const key = `${code}|${Number.isNaN(decided) ? "" : decided}|${attrs.cycle || ""}`;
+        if (!seen.has(key)) seen.set(key, { code, at, text: item.s ?? item.state ?? "" });
+      }
+      const rows = [...seen.values()].filter((r) => r.text && !Number.isNaN(r.at)).sort((a, b) => b.at - a.at).slice(0, 40);
+      list.textContent = "";
+      if (!rows.length) list.textContent = t(hass, "activity.none");
+      for (const row of rows) {
+        const look = STATUS_LABELS[row.code];
+        const line = make("div", `activity-row${look?.[2] ? " warn" : ""}${["done", "watered_by_rain", "watering"].includes(row.code) ? " ran" : ""}`);
+        const icon = document.createElement("ha-icon");
+        icon.setAttribute("icon", row.code === "watered_by_rain" ? "mdi:weather-rainy" : look?.[1] || "mdi:circle-small");
+        const text = make("div");
+        text.append(make("div", "", row.text), make("div", "group-note", when(row.at)));
+        line.append(icon, text);
+        list.appendChild(line);
+      }
+    })();
   }
 
   _waterTipsBody(body, popup) {
@@ -7323,6 +7411,9 @@ const COVERED_BY_WEATHER = new Set([
   "skipped_forecast", "skipped_rain_credit", "skipped_wet_fortnight", "cancelled_rain",
   "skipped_soil_wet", "waiting_soil_wet", "skipped_drydown", "waiting_drydown",
 ]);
+
+// Status codes that are not dated by a decision but still belong in the recent activity.
+const ACTIVITY_WITHOUT_TIME = new Set(["watering", "service_run", "lock_held", "snoozed"]);
 
 const STATUS_LABELS = {
   watering: ["watering", "mdi:water", false],
