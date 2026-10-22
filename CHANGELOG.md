@@ -10,6 +10,11 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 - **A plain sentence on the garden overview.** Above the chips the overview now says in words how the garden is: "Your garden is doing well.", "Watering now: Chilis", "Chilis: needs a look" (amber), "Nothing needs water right now. Rain and soil have it covered." or "Watering is paused." It only restates what the zones' statuses already say; nothing is decided differently.
 - **Recent activity on the zone card.** A new button opens a list of what the zone ran, skipped and stopped in the last 10 days, with the reason and the time of each ("Routine skipped at 05:30: recent rain (4.2 mm) covers the 13 mm needed"). It reads Home Assistant's own history of the zone's status, so nothing new is stored and it goes back as far as your history is kept.
+- **Show details on the zone card.** The technical numbers of the Now section (litres of the last cycle, the weekly target, the 3-day peak temperature, water used over 30 days and the year, the growth ramp) now sit behind a "Show details" press, so the card starts with the valve, the next watering, the soil and the rain. Nothing was removed.
+
+### Fixed
+
+- **Two Polish card texts had Russian words in them** ("Wszystko wygląda w porządku" and "Widok prosty").
 
 ## [1.7.6] — Look up your plant, crop factors, Rain Ignored Below
 

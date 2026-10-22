@@ -475,6 +475,7 @@ def check_overview(pw, check, args) -> None:
     check_loader(browser, check)
     check_water_tips(browser, check)
     check_activity(browser, check)
+    check_details(browser, check)
     browser.close()
 
 
@@ -745,6 +746,47 @@ def check_activity(browser, check) -> None:
             check("ran" in classes[0] and "warn" in classes[1] and "ran" in classes[3] and "warn" not in classes[2],
                   "activity: runs are marked, a stopped run is amber")
         page.close()
+
+def check_details(browser, check) -> None:
+    """The technical numbers of the Now section start folded behind Show details."""
+    page = browser.new_page()
+    page.route("http://card.test/", lambda route: route.fulfill(body=HARNESS, content_type="text/html"))
+    page.route("http://card.test/card.js", lambda route: route.fulfill(path=str(CARD), content_type="text/javascript"))
+    page.goto("http://card.test/")
+    hass = fake_hass()
+    for key, value in (("routine_weekly_target", "30"), ("avg_peak_temp_3d", "31.5")):
+        entity_id = f"sensor.chilis_{key}"
+        hass["entities"][entity_id] = {
+            "entity_id": entity_id, "device_id": DEVICE, "platform": "zoneflow", "translation_key": key,
+            "entity_category": None, "hidden": False,
+        }
+        hass["states"][entity_id] = {"entity_id": entity_id, "state": value, "attributes": {"friendly_name": key}}
+    page.evaluate(
+        """([hass, device]) => {
+            const card = document.createElement('zoneflow-card');
+            card.setConfig({device_id: device});
+            card.hass = hass;
+            document.body.appendChild(card);
+            window._card = card;
+        }""",
+        [hass, DEVICE],
+    )
+    page.wait_for_timeout(300)
+    probe = """() => {
+        const now = [...window._card.shadowRoot.querySelectorAll('.section')].find((s) => s.querySelector('.section-title').textContent === 'Now');
+        const toggle = now.querySelector('.details-toggle');
+        const lists = now.querySelectorAll('.rows');
+        return {toggle: toggle && toggle.textContent, hidden: lists[1] && lists[1].hidden, folded: lists[1] ? lists[1].querySelectorAll('.row').length : -1,
+                shown: lists[0].querySelectorAll('.row').length};
+    }"""
+    first = page.evaluate(probe)
+    check(first["toggle"] == "Show details" and first["hidden"] is True and first["folded"] == 2,
+          "details: the technical numbers start folded behind Show details")
+    check(first["shown"] >= 1, "details: the rest of the Now section stays visible")
+    page.evaluate("() => window._card.shadowRoot.querySelector('.details-toggle').click()")
+    opened = page.evaluate(probe)
+    check(opened["toggle"] == "Hide details" and opened["hidden"] is False, "details: one press shows them")
+    page.close()
 
 
 if __name__ == "__main__":

@@ -293,6 +293,8 @@ const I18N = {
     },
     "advanced": "Advanced settings",
     "hide_advanced": "Hide advanced settings",
+    "show_details": "Show details",
+    "hide_details": "Hide details",
     "simple": "Simple view",
     "help": "Help",
     "why": {
@@ -1186,6 +1188,8 @@ const I18N = {
     },
     "advanced": "Lisäasetukset",
     "hide_advanced": "Piilota lisäasetukset",
+    "show_details": "Näytä lisätiedot",
+    "hide_details": "Piilota lisätiedot",
     "simple": "Yksinkertainen näkymä",
     "help": "Ohje",
     "why": {
@@ -2331,7 +2335,7 @@ const I18N = {
     "check": {
       "title": "Sprawdź moją konfigurację",
       "loading": "Sprawdzanie…",
-      "all_good": "Wszystko wygląda w порядке.",
+      "all_good": "Wszystko wygląda w porządku.",
       "needs_fixing": "Coś wymaga naprawy.",
       "needs_a_look": "Kilka rzeczy do sprawdzenia.",
       "calibrate": "Skalibruj",
@@ -2362,7 +2366,7 @@ const I18N = {
     },
     "advanced": "Zaawansowane ustawienia",
     "hide_advanced": "Ukryj zaawansowane ustawienia",
-    "simple": "Widok простой",
+    "simple": "Widok prosty",
     "help": "Pomoc",
     "why": {
       "button": "Dlaczego?",
@@ -5661,6 +5665,11 @@ const ONLY_WHEN = {
   // Once a first feed is recorded.
   "sensor.next_fertilizing": (state) => state && !["unknown", "unavailable"].includes(state.state),
 };
+// The numbers behind the decisions: in the Now section they sit behind "Show details".
+const NOW_DETAILS = [
+  "sensor.last_cycle_water_liters", "sensor.routine_weekly_target", "sensor.avg_peak_temp_3d",
+  "sensor.water_used_30d", "sensor.water_used_year", "sensor.growth_ramp_pct",
+];
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
@@ -5934,6 +5943,8 @@ class ZoneFlowCard extends HTMLElement {
       .area-label { flex: 1; min-width: 0; }
       .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
         border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
+      .details-toggle { display: block; margin: 0 8px 4px; padding: 4px 8px; font: inherit; font-size: 0.9em; color: var(--primary-color);
+        background: none; border: none; cursor: pointer; }
       .advanced-toggle { display: block; margin: 4px 16px 14px; padding: 6px 12px; font: inherit; color: var(--primary-color);
         background: none; border: none; cursor: pointer; }
       .help-row { display: flex; align-items: center; }
@@ -6111,7 +6122,8 @@ class ZoneFlowCard extends HTMLElement {
     // Now: the valve and what the zone is looking at.
     const now = [];
     if (valve && hass.states[valve]) now.push({ entity: valve, name: t(hass, "valve") });
-    now.push(...rows(NOW));
+    now.push(...rows(NOW.filter((key) => !NOW_DETAILS.includes(key))));
+    const nowDetails = rows(NOW_DETAILS);
     // Controls: run now, snooze, pause.
     const controls = [
       ...buttons([
@@ -6156,8 +6168,8 @@ class ZoneFlowCard extends HTMLElement {
     }
     groups.push(["more", more]);
 
-    const section = (titleKey, confs) => {
-      if (!confs.length) return;
+    const section = (titleKey, confs, detailConfs = []) => {
+      if (!confs.length && !detailConfs.length) return;
       const el = document.createElement("div");
       el.className = "section";
       const heading = document.createElement("div");
@@ -6168,6 +6180,23 @@ class ZoneFlowCard extends HTMLElement {
       el.append(heading, list);
       card.appendChild(el);
       this._addRows(list, confs);
+      if (detailConfs.length) {
+        // The technical numbers, folded away until asked for (the choice is kept while the card lives).
+        const details = document.createElement("div");
+        details.className = "rows";
+        details.hidden = !this._showDetails;
+        const toggle = document.createElement("button");
+        toggle.className = "details-toggle";
+        const label = () => t(hass, details.hidden ? "show_details" : "hide_details");
+        toggle.textContent = label();
+        toggle.addEventListener("click", () => {
+          details.hidden = !details.hidden;
+          this._showDetails = !details.hidden;
+          toggle.textContent = label();
+        });
+        el.append(toggle, details);
+        this._addRows(details, detailConfs);
+      }
     };
     // Journal, settings and diagnostics: buttons that open a popup, like
     // Home Assistant's own entity dialogs.
@@ -6226,7 +6255,7 @@ class ZoneFlowCard extends HTMLElement {
     // Simple view: status and the few controls; the rest behind "Advanced settings".
     const simple = !!this._config.simple;
     const showAll = !simple || !!this._showAdvanced;
-    if (showAll) section("now", now);
+    if (showAll) section("now", now, nowDetails);
     // A greenhouse: its crops, as in the overview card (status, next and
     // last watering, Water now; tap one for its full card).
     const crops = (statusAttrs.crops || []).map((c) => c.device_id).filter(Boolean);
