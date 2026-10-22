@@ -1,0 +1,863 @@
+{
+ "sources": {
+  "fao56": {
+   "short": "FAO-56",
+   "name": "FAO Irrigation and drainage paper 56, Table 12",
+   "author": "Allen, Pereira, Raes and Smith (1998)",
+   "url": "https://www.fao.org/3/x0490E/x0490e00.htm",
+   "note": "Crop coefficients (Kc), typed in from the table. The mid-season value is the full-grown crop."
+  },
+  "ifas": {
+   "short": "UF/IFAS",
+   "name": "UF/IFAS Extension EDIS AE456, Crop coefficients of some commercial crops in Florida",
+   "author": "University of Florida / IFAS",
+   "url": "https://edis.ifas.ufl.edu/publication/AE456",
+   "note": "Monthly Kc of subtropical tree crops, which the publication takes from De Azevedo et al. (2003) for mango and Fares (2008) for guava. The highest monthly value is used as the full-grown one."
+  },
+  "basil": {
+   "short": "study",
+   "name": "Determination of water requirement and crop coefficient for basil under controlled greenhouse conditions",
+   "author": "Rahimikhoob, Sohrabi and Delshad (2019), Iranian Journal of Soil and Water Research 50(10)",
+   "url": "https://doi.org/10.22059/ijswr.2019.280405.668191",
+   "note": "A greenhouse micro-lysimeter study: Kc 0.30 initial, 0.86 mid and 0.76 end stage."
+  },
+  "papaya": {
+   "short": "study",
+   "name": "Papaya crop coefficient from a weighing lysimeter",
+   "author": "Posse et al. (2008), Engenharia Agricola",
+   "url": "https://doaj.org/article/193f95d62f5e45ea8a6379edc4f2ece3",
+   "note": "Kc rose from 0.63 to 1.05 from transplanting to 206 days. Taken from the abstract."
+  },
+  "derived": {
+   "short": "estimate",
+   "name": "Weekly amount worked out from the crop factor (1 inch a week at a crop factor of 1.0)",
+   "author": "ZoneFlow, from the Plant Variety Database's own figure for most vegetables",
+   "url": "https://github.com/Dreamer41/ha-smart-irrigation/blob/main/docs/AREAS-AND-PLANTS.md",
+   "note": "An estimate, not a measurement: it follows the crop factor, so it is only as good as that is."
+  },
+  "landscape": {
+   "short": "estimate",
+   "name": "Landscape plant factors: WUCOLS water-use classes (UC Davis) as used in California's MWELO, and the UC ANR plant factor table",
+   "author": "University of California; State of California",
+   "url": "https://ucanr.edu/site/center-landscape-urban-horticulture/plant-factor-or-crop-coefficient-whats-difference",
+   "note": "An estimate, not a measurement: the middle of the range of the plant's water-use class (low 0.1-0.3, moderate 0.4-0.6, high 0.7-1.0 of reference evapotranspiration)."
+  }
+ },
+ "classes": {
+  "values": {
+   "low": 0.2,
+   "moderate": 0.5,
+   "high": 0.8
+  },
+  "words": {
+   "low": [
+    "low",
+    "drought",
+    "dry",
+    "xeric",
+    "minimal"
+   ],
+   "moderate": [
+    "moderate",
+    "regular",
+    "medium",
+    "average"
+   ],
+   "high": [
+    "high",
+    "consistent",
+    "moist",
+    "keep",
+    "wet",
+    "bog"
+   ]
+  },
+  "skip": [
+   "succulent",
+   "houseplant",
+   "microgreen"
+  ],
+  "source": "landscape"
+ },
+ "derived": {
+  "mm_per_kc": 25.4,
+  "source": "derived"
+ },
+ "crops": [
+  {
+   "id": "tomato",
+   "name": "Tomato",
+   "kc_ini": 0.6,
+   "kc_mid": 1.15,
+   "kc_end": 0.8,
+   "categories": [
+    "tomato"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "pepper",
+   "name": "Pepper (sweet and chili)",
+   "kc_ini": 0.6,
+   "kc_mid": 1.05,
+   "kc_end": 0.9,
+   "categories": [
+    "pepper"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "eggplant",
+   "name": "Eggplant",
+   "kc_ini": 0.6,
+   "kc_mid": 1.05,
+   "kc_end": 0.9,
+   "categories": [
+    "eggplant"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "cucumber",
+   "name": "Cucumber",
+   "kc_ini": 0.6,
+   "kc_mid": 1.0,
+   "kc_end": 0.75,
+   "categories": [
+    "cucumber"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "watermelon",
+   "name": "Watermelon",
+   "kc_ini": 0.4,
+   "kc_mid": 1.0,
+   "kc_end": 0.75,
+   "categories": [
+    "melon"
+   ],
+   "words": [
+    "watermelon"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "cantaloupe",
+   "name": "Cantaloupe",
+   "kc_ini": 0.5,
+   "kc_mid": 0.85,
+   "kc_end": 0.6,
+   "categories": [
+    "melon"
+   ],
+   "words": [
+    "cantaloupe",
+    "muskmelon"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "melon",
+   "name": "Melon (sweet)",
+   "kc_ini": 0.5,
+   "kc_mid": 1.05,
+   "kc_end": 0.75,
+   "categories": [
+    "melon"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "pumpkin",
+   "name": "Pumpkin and winter squash",
+   "kc_ini": 0.5,
+   "kc_mid": 1.0,
+   "kc_end": 0.8,
+   "categories": [
+    "squash"
+   ],
+   "words": [
+    "pumpkin",
+    "winter",
+    "butternut",
+    "acorn",
+    "kabocha",
+    "hubbard"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "squash",
+   "name": "Squash and zucchini",
+   "kc_ini": 0.5,
+   "kc_mid": 0.95,
+   "kc_end": 0.75,
+   "categories": [
+    "squash"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "lettuce",
+   "name": "Lettuce",
+   "kc_ini": 0.7,
+   "kc_mid": 1.0,
+   "kc_end": 0.95,
+   "categories": [
+    "lettuce"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "spinach",
+   "name": "Spinach",
+   "kc_ini": 0.7,
+   "kc_mid": 1.0,
+   "kc_end": 0.95,
+   "categories": [
+    "lettuce",
+    "brassica",
+    "herb"
+   ],
+   "words": [
+    "spinach"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "brassica",
+   "name": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+   "kc_ini": 0.7,
+   "kc_mid": 1.05,
+   "kc_end": 0.95,
+   "categories": [
+    "brassica"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "carrot",
+   "name": "Carrot",
+   "kc_ini": 0.7,
+   "kc_mid": 1.05,
+   "kc_end": 0.95,
+   "categories": [
+    "root-vegetable"
+   ],
+   "words": [
+    "carrot"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "radish",
+   "name": "Radish",
+   "kc_ini": 0.7,
+   "kc_mid": 0.9,
+   "kc_end": 0.85,
+   "categories": [
+    "root-vegetable",
+    "brassica"
+   ],
+   "words": [
+    "radish",
+    "daikon"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "celery",
+   "name": "Celery",
+   "kc_ini": 0.7,
+   "kc_mid": 1.05,
+   "kc_end": 1.0,
+   "categories": [
+    "root-vegetable",
+    "herb"
+   ],
+   "words": [
+    "celery",
+    "celeriac"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "garlic",
+   "name": "Garlic",
+   "kc_ini": 0.7,
+   "kc_mid": 1.0,
+   "kc_end": 0.7,
+   "categories": [
+    "allium"
+   ],
+   "words": [
+    "garlic"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "onion_green",
+   "name": "Green onion",
+   "kc_ini": 0.7,
+   "kc_mid": 1.0,
+   "kc_end": 1.0,
+   "categories": [
+    "allium"
+   ],
+   "words": [
+    "green onion",
+    "scallion",
+    "bunching"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "onion",
+   "name": "Onion family",
+   "kc_ini": 0.7,
+   "kc_mid": 1.05,
+   "kc_end": 0.75,
+   "categories": [
+    "allium"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "sweet_potato",
+   "name": "Sweet potato",
+   "kc_ini": 0.5,
+   "kc_mid": 1.15,
+   "kc_end": 0.65,
+   "categories": [
+    "root-vegetable"
+   ],
+   "words": [
+    "sweet potato"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "potato",
+   "name": "Potato",
+   "kc_ini": 0.5,
+   "kc_mid": 1.15,
+   "kc_end": 0.75,
+   "categories": [
+    "root-vegetable"
+   ],
+   "words": [
+    "potato"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "beet",
+   "name": "Beet",
+   "kc_ini": 0.5,
+   "kc_mid": 1.05,
+   "kc_end": 0.95,
+   "categories": [
+    "root-vegetable"
+   ],
+   "words": [
+    "beet",
+    "beets"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "turnip",
+   "name": "Turnip and rutabaga",
+   "kc_ini": 0.5,
+   "kc_mid": 1.1,
+   "kc_end": 0.95,
+   "categories": [
+    "root-vegetable",
+    "brassica"
+   ],
+   "words": [
+    "turnip",
+    "rutabaga"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "parsnip",
+   "name": "Parsnip",
+   "kc_ini": 0.5,
+   "kc_mid": 1.05,
+   "kc_end": 0.95,
+   "categories": [
+    "root-vegetable"
+   ],
+   "words": [
+    "parsnip"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "pea",
+   "name": "Pea (fresh)",
+   "kc_ini": 0.5,
+   "kc_mid": 1.15,
+   "kc_end": 1.1,
+   "categories": [
+    "pea"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "bean",
+   "name": "Bean (green)",
+   "kc_ini": 0.5,
+   "kc_mid": 1.05,
+   "kc_end": 0.9,
+   "categories": [
+    "bean"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "sweet_corn",
+   "name": "Sweet corn",
+   "kc_ini": 0.3,
+   "kc_mid": 1.15,
+   "kc_end": 1.05,
+   "categories": [
+    "corn"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "strawberry",
+   "name": "Strawberry",
+   "kc_ini": 0.4,
+   "kc_mid": 0.85,
+   "kc_end": 0.75,
+   "categories": [
+    "berry"
+   ],
+   "words": [
+    "strawberry",
+    "strawberries"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "mint",
+   "name": "Mint",
+   "kc_ini": 0.6,
+   "kc_mid": 1.15,
+   "kc_end": 1.1,
+   "categories": [
+    "herb"
+   ],
+   "words": [
+    "mint",
+    "peppermint",
+    "spearmint"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "artichoke",
+   "name": "Artichoke",
+   "kc_ini": 0.5,
+   "kc_mid": 1.0,
+   "kc_end": 0.95,
+   "categories": [
+    "flower",
+    "herb",
+    "root-vegetable"
+   ],
+   "words": [
+    "artichoke"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "asparagus",
+   "name": "Asparagus",
+   "kc_ini": 0.5,
+   "kc_mid": 0.95,
+   "kc_end": 0.3,
+   "categories": [
+    "root-vegetable",
+    "allium",
+    "flower"
+   ],
+   "words": [
+    "asparagus"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "berries",
+   "name": "Berry bushes",
+   "kc_ini": 0.3,
+   "kc_mid": 1.05,
+   "kc_end": 0.5,
+   "categories": [
+    "berry"
+   ],
+   "words": [],
+   "source": "fao56"
+  },
+  {
+   "id": "grapes",
+   "name": "Grapes (table)",
+   "kc_ini": 0.3,
+   "kc_mid": 0.85,
+   "kc_end": 0.45,
+   "categories": [
+    "vine",
+    "fruit-tree",
+    "berry"
+   ],
+   "words": [
+    "grape",
+    "grapes"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "avocado",
+   "name": "Avocado",
+   "kc_ini": 0.6,
+   "kc_mid": 0.85,
+   "kc_end": 0.75,
+   "categories": [
+    "tropical",
+    "fruit-tree"
+   ],
+   "words": [
+    "avocado"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "citrus",
+   "name": "Citrus",
+   "kc_ini": 0.7,
+   "kc_mid": 0.65,
+   "kc_end": 0.7,
+   "categories": [
+    "fruit-tree",
+    "tropical"
+   ],
+   "words": [
+    "citrus",
+    "orange",
+    "lemon",
+    "lime",
+    "mandarin",
+    "tangerine",
+    "grapefruit",
+    "kumquat"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "olive",
+   "name": "Olive",
+   "kc_ini": 0.65,
+   "kc_mid": 0.7,
+   "kc_end": 0.7,
+   "categories": [
+    "fruit-tree",
+    "nut-tree",
+    "shade-tree",
+    "ornamental-tree"
+   ],
+   "words": [
+    "olive"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "apple",
+   "name": "Apple, pear and cherry",
+   "kc_ini": 0.6,
+   "kc_mid": 0.95,
+   "kc_end": 0.75,
+   "categories": [
+    "fruit-tree"
+   ],
+   "words": [
+    "apple",
+    "pear",
+    "cherry",
+    "quince"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "stone_fruit",
+   "name": "Peach, apricot and plum",
+   "kc_ini": 0.55,
+   "kc_mid": 0.9,
+   "kc_end": 0.65,
+   "categories": [
+    "fruit-tree"
+   ],
+   "words": [
+    "peach",
+    "apricot",
+    "plum",
+    "nectarine"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "almond",
+   "name": "Almond",
+   "kc_ini": 0.4,
+   "kc_mid": 0.9,
+   "kc_end": 0.65,
+   "categories": [
+    "nut-tree",
+    "fruit-tree"
+   ],
+   "words": [
+    "almond"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "walnut",
+   "name": "Walnut",
+   "kc_ini": 0.5,
+   "kc_mid": 1.1,
+   "kc_end": 0.65,
+   "categories": [
+    "nut-tree"
+   ],
+   "words": [
+    "walnut",
+    "pecan"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "pistachio",
+   "name": "Pistachio",
+   "kc_ini": 0.4,
+   "kc_mid": 1.1,
+   "kc_end": 0.45,
+   "categories": [
+    "nut-tree"
+   ],
+   "words": [
+    "pistachio"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "kiwi",
+   "name": "Kiwi",
+   "kc_ini": 0.4,
+   "kc_mid": 1.05,
+   "kc_end": 1.05,
+   "categories": [
+    "fruit-tree",
+    "vine",
+    "berry"
+   ],
+   "words": [
+    "kiwi",
+    "kiwifruit"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "banana",
+   "name": "Banana (second year)",
+   "kc_ini": 1.0,
+   "kc_mid": 1.2,
+   "kc_end": 1.1,
+   "categories": [
+    "tropical",
+    "fruit-tree"
+   ],
+   "words": [
+    "banana",
+    "plantain"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "palm",
+   "name": "Palm",
+   "kc_ini": 0.95,
+   "kc_mid": 1.0,
+   "kc_end": 1.0,
+   "categories": [
+    "tropical",
+    "ornamental-tree",
+    "shade-tree"
+   ],
+   "words": [
+    "palm"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "coffee",
+   "name": "Coffee",
+   "kc_ini": 0.9,
+   "kc_mid": 0.95,
+   "kc_end": 0.95,
+   "categories": [
+    "tropical",
+    "shrub"
+   ],
+   "words": [
+    "coffee"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "cacao",
+   "name": "Cacao",
+   "kc_ini": 1.0,
+   "kc_mid": 1.05,
+   "kc_end": 1.05,
+   "categories": [
+    "tropical"
+   ],
+   "words": [
+    "cacao",
+    "cocoa"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "conifer",
+   "name": "Conifer trees",
+   "kc_ini": 1.0,
+   "kc_mid": 1.0,
+   "kc_end": 1.0,
+   "categories": [
+    "shade-tree",
+    "ornamental-tree"
+   ],
+   "words": [
+    "conifer",
+    "pine",
+    "spruce",
+    "fir"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "turf_cool",
+   "name": "Lawn, cool-season grass",
+   "kc_ini": 0.9,
+   "kc_mid": 0.95,
+   "kc_end": 0.95,
+   "categories": [
+    "grass",
+    "ground-cover"
+   ],
+   "words": [
+    "ryegrass",
+    "fescue",
+    "bluegrass",
+    "lawn",
+    "turf"
+   ],
+   "source": "fao56"
+  },
+  {
+   "id": "mango",
+   "name": "Mango",
+   "kc_ini": null,
+   "kc_mid": 0.8,
+   "kc_end": null,
+   "categories": [
+    "tropical",
+    "fruit-tree"
+   ],
+   "words": [
+    "mango"
+   ],
+   "source": "ifas"
+  },
+  {
+   "id": "guava",
+   "name": "Guava",
+   "kc_ini": null,
+   "kc_mid": 1.0,
+   "kc_end": null,
+   "categories": [
+    "tropical",
+    "fruit-tree"
+   ],
+   "words": [
+    "guava"
+   ],
+   "source": "ifas"
+  },
+  {
+   "id": "papaya",
+   "name": "Papaya",
+   "kc_ini": 0.63,
+   "kc_mid": 1.05,
+   "kc_end": null,
+   "categories": [
+    "tropical",
+    "fruit-tree"
+   ],
+   "words": [
+    "papaya"
+   ],
+   "source": "papaya"
+  },
+  {
+   "id": "basil",
+   "name": "Basil",
+   "kc_ini": 0.3,
+   "kc_mid": 0.86,
+   "kc_end": 0.76,
+   "categories": [
+    "herb"
+   ],
+   "words": [
+    "basil"
+   ],
+   "source": "basil"
+  },
+  {
+   "id": "turf_warm",
+   "name": "Lawn, warm-season grass",
+   "kc_ini": 0.8,
+   "kc_mid": 0.85,
+   "kc_end": 0.85,
+   "categories": [
+    "grass",
+    "ground-cover"
+   ],
+   "words": [
+    "bermuda",
+    "zoysia",
+    "buffalo",
+    "st augustine",
+    "centipede"
+   ],
+   "source": "fao56"
+  }
+ ]
+}

@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "Steg {n} av {total}",
-    "nothing_found": "Inga sensorer hittades. Lägg till dem senare under Konfigurera."
+    "nothing_found": "Inga sensorer hittades. Lägg till dem senare under Konfigurera.",
+    "plant_keep": "Behåll startvärdena för den här växten",
+    "plant_kind": "{name}, mitten av alla {n} sorter",
+    "plant_some": "Det här hittades för ”{query}”: det vanliga veckovattnet i {unit} och växtfaktorn. Välj ett som startvärden, eller behåll startvärdena.",
+    "plant_nothing": "Inget med en veckomängd hittades för ”{query}”. Startvärdena blir kvar; fortsätt och ändra dem senare på zonkortet.",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "växtfaktor {kc}",
+    "plant_kc_estimate": "växtfaktor ungefär {kc} (uppskattning)",
+    "plant_about": "ungefär {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

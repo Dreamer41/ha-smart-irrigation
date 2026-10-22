@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "Krok {n} z {total}",
-    "nothing_found": "Nenašli sa žiadne senzory. Pridajte ich neskôr v Konfigurácii."
+    "nothing_found": "Nenašli sa žiadne senzory. Pridajte ich neskôr v Konfigurácii.",
+    "plant_keep": "Ponechať počiatočné hodnoty pre túto rastlinu",
+    "plant_kind": "{name}, stred všetkých {n} odrôd",
+    "plant_some": "Pre „{query}“ sa našlo toto: obvyklá týždenná voda v {unit} a koeficient plodiny. Vyberte jednu možnosť ako počiatočné hodnoty, alebo ponechajte počiatočné hodnoty.",
+    "plant_nothing": "Pre „{query}“ sa nenašlo nič s týždenným množstvom. Počiatočné hodnoty zostávajú; pokračujte a neskôr ich zmeňte na karte zóny.",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "koeficient plodiny {kc}",
+    "plant_kc_estimate": "koeficient plodiny asi {kc} (odhad)",
+    "plant_about": "asi {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

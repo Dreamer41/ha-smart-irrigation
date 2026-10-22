@@ -2,6 +2,56 @@
 
 ZoneFlow 1.7.0 adds areas, plants with a history of their own, presets, and a set of helpers that make a new garden quicker to set up.
 
+## Watering tips: what your plant usually wants
+
+On a zone card, **Watering tips** (administrators only) looks up your plant in the
+[Plant Variety Database](https://github.com/bripatch/plant-variety-database) (Wind River
+Greens, CC BY 4.0) and shows how much water it usually wants each week, in your
+zone's units, together with the plant's **crop factor** (Kc, from FAO paper 56: Allen et al. 1998). It starts with the zone's main plant; type another name to look
+for something else. Searching a kind of plant (*pepper*, *basil*, *rose*) gives
+the middle of all its varieties first.
+
+**When you add a zone**, the first screen has an optional **Look up your plant** list. Start typing
+(*cucumber*, *basil*) and it filters; each plant shows its usual weekly amount in your units. Pick one and that
+amount becomes the zone's starting weekly targets, with nothing more to press. Text that is not in the list
+(a misspelling, another language) is searched for on a second screen, where you pick or keep the starting
+values. Leave the field empty and nothing changes.
+
+**What's planted** comes after the list, and you answer only one of them:
+
+- **Your plant is in the list:** pick it and leave What's planted on *Something else*. The plant type that
+  fits your pick is chosen for you (tomatoes, chilis, leafy vegetables, herbs, strawberries, flowers, lawn,
+  shrubs or fruit tree), so deep soak, the growth ramp and the zone's plant type follow from it, and the
+  list's weekly water and crop factor are used. A pick with no fitting type (potatoes, cucumbers) keeps
+  *Something else*.
+- **Your plant is not in the list:** leave the list empty and choose What's planted for typical starting values.
+- **You choose a type yourself** as well: your choice is kept, and the list only supplies the weekly water and
+  crop factor.
+
+The same list is on the screen for a crop in a greenhouse.
+
+- A suggestion is only that. Nothing changes until you press **Apply**, which sets
+  the **normal week** to the middle of the range and moves the **hot** and **cool**
+  weeks in the same proportion they have to the normal week now.
+- The crop factor is the full-grown value of the FAO table. **Apply** sets the Crop Factor setting
+  too, which the ET demand model uses (the growth ramp lowers it early in the season). Crops the
+  database has no weekly amount for (avocado, olive, citrus, potato and more) are offered for
+  their crop factor alone; Apply then changes only that.
+- **Measured, worked out or estimated.** Nearly every plant gets a weekly amount and a crop factor, and each says
+  how sure it is:
+  - a weekly amount from the Plant Variety Database, or a crop factor from FAO paper 56, UF/IFAS (mango,
+    guava) or a published study (papaya, basil), is shown as it is;
+  - a weekly amount that is **about** a number was worked out from the crop factor (1 inch a week at a
+    crop factor of 1.0), because the database has none for that plant;
+  - a crop factor marked **(estimate)** comes from the plant's water-use class (low, moderate or high, as
+    landscape plant factors do), because no crop table has the plant.
+  The estimates are rougher than the measured values: look at what Apply would change, and check the result
+  with **Why?**. Plants kept in pots or trays (succulents, houseplants, microgreens) have neither, since
+  they are watered by interval, not by depth.
+- The amounts are averages from seed catalogs, and the weekly amount includes rain.
+  Your soil, slope, climate and rain decide the rest: check the result with **Why?**
+  and adjust.
+
 ## Areas
 
 <img src="screenshots/overview.png" width="520" alt="The overview card grouped by area (Backyard, Nursery), each with its own Pause and Snooze Today">

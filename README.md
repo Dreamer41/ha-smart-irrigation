@@ -72,6 +72,25 @@ Requires Home Assistant 2024.5 or newer. To install without HACS, copy `custom_c
 
 Questions and bug reports: [GitHub issues](https://github.com/Dreamer41/ha-smart-irrigation/issues).
 
+## Credits
+
+The plant lookup (**Watering tips** on the zone card, and when you add a zone) suggests:
+
+- weekly amounts of water from the
+  [Plant Variety Database](https://github.com/bripatch/plant-variety-database) by
+  Wind River Greens, licensed
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Only the weekly
+  watering amounts were taken, converted from inches to millimetres;
+- crop factors (Kc) from Allen, R. G., Pereira, L. S., Raes, D. and Smith, M. (1998),
+  [Crop evapotranspiration: guidelines for computing crop water requirements](https://www.fao.org/3/x0490E/x0490e00.htm),
+  FAO Irrigation and drainage paper 56, Table 12. The values were typed in from the table;
+- crop factors for mango and guava from
+  [UF/IFAS Extension AE456](https://edis.ifas.ufl.edu/publication/AE456), for papaya from Posse et al. (2008),
+  and for basil from Rahimikhoob, Sohrabi and Delshad (2019);
+- for plants with nothing of their own, estimates from the water-use classes of landscape plant factors
+  ([WUCOLS](https://wucols.ucdavis.edu/), University of California), and weekly amounts worked out from the
+  crop factor. These are marked as estimates wherever they are shown.
+
 ## License
 
 [MIT](LICENSE).

@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "Krok {n} z {total}",
-    "nothing_found": "Nie znaleziono czujników. Dodaj je później w Konfiguracji."
+    "nothing_found": "Nie znaleziono czujników. Dodaj je później w Konfiguracji.",
+    "plant_keep": "Zachowaj wartości początkowe dla tej rośliny",
+    "plant_kind": "{name}, środek wszystkich {n} odmian",
+    "plant_some": "Dla „{query}” znaleziono: zwykłą tygodniową ilość wody w {unit} i współczynnik roślinny. Wybierz jedną jako wartości początkowe lub zachowaj wartości początkowe.",
+    "plant_nothing": "Dla „{query}” nie znaleziono nic z ilością tygodniową. Wartości początkowe zostają; kontynuuj i zmień je później na karcie strefy.",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "współczynnik roślinny {kc}",
+    "plant_kc_estimate": "współczynnik roślinny około {kc} (szacunek)",
+    "plant_about": "około {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

@@ -450,6 +450,7 @@ def check_overview(pw, check, args) -> None:
         page.locator("#ov").screenshot(path=str(shot))
         print(f"screenshot: {shot}")
     check_loader(browser, check)
+    check_water_tips(browser, check)
     browser.close()
 
 
@@ -499,6 +500,155 @@ def check_loader(browser, check) -> None:
             check(state == [True, True, 2] and len(fetched) == 3, "loader: keeps trying while Home Assistant starts")
         else:
             check(state == [True, True, 2] and fetched == [f"http://ha.test{CARD_URL}?v=9"], "loader: a normal page loads the card once")
+        page.close()
+
+
+def check_water_tips(browser, check) -> None:
+    """The Watering tips popup: a search that asks the integration, results with their amounts in the
+    zone's units, and Apply, which sets the three weekly targets in proportion."""
+    for unit, now, expected_amounts, expected_calls, expected_crop_calls in (
+        # mm: 25.4-38.1 mm -> middle 31.75 -> normal 32 (step 0.5); hot 45 x 1.058 = 47.6 -> 47.5; cool 20 x 1.058 = 21.2 -> 21
+        ("mm", {"normal": 30, "hot": 45, "cool": 20},
+         ["25.4\u201338.1 mm per week, Crop factor 1.05", "about 21.6 mm per week, Crop factor 0.85",
+          "about 12.7 mm per week, Crop factor 0.5 (estimate)"],
+         [47.5, 21, 32, 1.05], [32.5, 14.5, 21.5, 0.85]),
+        # in: 1-1.5 in -> middle 1.25 -> normal 1.25 (step 0.05); hot 1.8 x 1.0417 = 1.875 -> 1.9; cool 0.8 x 1.0417 = 0.83 -> 0.85
+        ("in", {"normal": 1.2, "hot": 1.8, "cool": 0.8},
+         ["1\u20131.5 in per week, Crop factor 1.05", "about 0.85 in per week, Crop factor 0.85",
+          "about 0.5 in per week, Crop factor 0.5 (estimate)"],
+         [1.9, 0.85, 1.25, 1.05], [1.3, 0.55, 0.85, 0.85]),
+    ):
+        page = browser.new_page()
+        page.route("http://card.test/", lambda route: route.fulfill(body=HARNESS, content_type="text/html"))
+        page.route("http://card.test/card.js", lambda route: route.fulfill(path=str(CARD), content_type="text/javascript"))
+        page.goto("http://card.test/")
+        hass = fake_hass()
+        step, low, high = (0.5, 5, 80) if unit == "mm" else (0.05, 0.2, 3.2)
+        for key, entity_key in (("normal", "target_weekly_mm"), ("hot", "target_weekly_hot_mm"), ("cool", "target_weekly_cool_mm")):
+            entity_id = f"number.chilis_{entity_key}"
+            hass["entities"][entity_id] = {
+                "entity_id": entity_id, "device_id": DEVICE, "platform": "zoneflow", "translation_key": entity_key,
+                "entity_category": "config", "hidden": False,
+            }
+            hass["states"][entity_id] = {
+                "entity_id": entity_id, "state": str(now[key]),
+                "attributes": {"friendly_name": entity_key, "unit_of_measurement": unit, "min": low, "max": high, "step": step},
+            }
+        hass["entities"]["number.chilis_crop_coefficient"] = {
+            "entity_id": "number.chilis_crop_coefficient", "device_id": DEVICE, "platform": "zoneflow",
+            "translation_key": "crop_coefficient", "entity_category": "config", "hidden": False,
+        }
+        hass["states"]["number.chilis_crop_coefficient"] = {
+            "entity_id": "number.chilis_crop_coefficient", "state": "0.8",
+            "attributes": {"friendly_name": "crop_coefficient", "min": 0.1, "max": 1.5, "step": 0.05},
+        }
+        hass["states"]["sensor.chilis_status"]["attributes"]["plants"] = [{"id": "p1", "name": "Peppers 'Jalape\u00f1o'", "type": "chilis", "main": True}]
+        hass["user"] = {"is_admin": True}
+        page.evaluate(
+            """([hass, device]) => {
+                window._calls = [];
+                window._queries = [];
+                hass.callService = async (domain, service, data) => { window._calls.push([domain, service, data]); };
+                hass.callWS = async (msg) => {
+                    window._queries.push(msg.query);
+                    return {
+                        results: [
+                            {kind: 'category', name: 'Pepper', category: 'pepper', latin: '', low_mm: 25.4, high_mm: 38.1, kc: 1.05, note: '', count: 69},
+                            {kind: 'crop', name: 'Avocado', id: 'avocado', category: '', latin: '', low_mm: 21.6, high_mm: 21.6, mm_estimate: true,
+                             kc: 0.85, kc_source: 'fao56', note: 'Kc 0.6 / 0.85 / 0.75'},
+                            {kind: 'plant', name: 'Pink Moss', category: 'ground-cover', latin: '', low_mm: null, high_mm: null, kc: null,
+                             note: 'Moderate, regular watering'},
+                            {kind: 'plant', name: 'Yarrow', category: 'flower', latin: '', low_mm: 12.7, high_mm: 12.7, mm_estimate: true,
+                             kc: 0.5, kc_estimate: true, kc_source: 'landscape', note: 'Moderate, regular watering'},
+                        ],
+                        source: {name: 'Plant Variety Database', author: 'Wind River Greens', license: 'CC BY 4.0',
+                                 url: 'https://github.com/bripatch/plant-variety-database',
+                                 license_url: 'https://creativecommons.org/licenses/by/4.0/'},
+                        kc_sources: {
+                            fao56: {short: 'FAO-56', name: 'FAO Irrigation and drainage paper 56, Table 12',
+                                    author: 'Allen, Pereira, Raes and Smith (1998)', url: 'https://www.fao.org/3/x0490E/x0490e00.htm'},
+                            landscape: {short: 'estimate', name: 'Landscape plant factors', author: 'University of California',
+                                        url: 'https://ucanr.edu/site/center-landscape-urban-horticulture/plant-factor-or-crop-coefficient-whats-difference'},
+                            derived: {short: 'estimate', name: 'Weekly amount worked out from the crop factor', author: 'ZoneFlow',
+                                      url: 'https://github.com/Dreamer41/ha-smart-irrigation'},
+                        },
+                    };
+                };
+                const card = document.createElement('zoneflow-card');
+                card.setConfig({device_id: device});
+                card.hass = hass;
+                document.body.appendChild(card);
+                window._card = card;
+            }""",
+            [hass, DEVICE],
+        )
+        page.wait_for_timeout(200)
+        opened = page.evaluate(
+            """async () => {
+                const root = window._card.shadowRoot;
+                const button = [...root.querySelectorAll('.more button')].find((b) => b.textContent === 'Watering tips');
+                if (!button) return null;
+                button.click();
+                await new Promise((r) => setTimeout(r, 400));
+                const dialog = root.querySelector('dialog');
+                return {
+                    query: dialog.querySelector('input').value,
+                    names: [...dialog.querySelectorAll('.tips-name')].map((n) => n.textContent),
+                    amounts: [...dialog.querySelectorAll('.tips-amount')].map((n) => n.textContent),
+                    buttons: [...dialog.querySelectorAll('.tips-row .plant-button')].length,
+                    notes: [...dialog.querySelectorAll('.tips-row .group-note')].map((n) => n.textContent)
+                        .filter((text) => text.startsWith('Crop table') || text.startsWith('An estimate')),
+                    credit: [...dialog.querySelectorAll('.group-note')].pop().textContent,
+                    links: [...dialog.querySelectorAll('.group-note')].pop().querySelectorAll('a').length,
+                    asked: window._queries,
+                };
+            }"""
+        )
+        check(opened is not None, f"water tips ({unit}): the button is there for an administrator")
+        if opened is None:
+            page.close()
+            continue
+        check(opened["query"] == "Peppers" and opened["asked"] == ["Peppers"], f"water tips ({unit}): starts with the zone's plant, without its variety")
+        check(opened["names"] == ["Pepper", "Avocado", "Pink Moss", "Yarrow"], f"water tips ({unit}): the results")
+        check(opened["amounts"] == expected_amounts,
+              f"water tips ({unit}): the amounts in the zone's units, estimates marked, and the crop factor")
+        check(opened["buttons"] == 3, f"water tips ({unit}): only a result with an amount or a crop factor can be used")
+        check("CC BY 4.0" in opened["credit"] and "Allen" in opened["credit"] and "University of California" in opened["credit"]
+              and opened["links"] == 5, f"water tips ({unit}): every source and the license are shown and linked")
+        check(opened["notes"] == ["Crop table: FAO-56.",
+                                  "An estimate from the plant's water-use class (landscape plant factor), not a measured value."],
+              f"water tips ({unit}): the note says where a crop is from and when a value is an estimate")
+        result = page.evaluate(
+            """async () => {
+                const dialog = window._card.shadowRoot.querySelector('dialog');
+                dialog.querySelector('.tips-row .plant-button').click();
+                await new Promise((r) => setTimeout(r, 100));
+                const proposal = dialog.querySelector('.tips-proposal').textContent;
+                const before = window._calls.length;
+                [...dialog.querySelectorAll('.tips-proposal .plant-button')].find((b) => b.textContent === 'Apply').click();
+                await new Promise((r) => setTimeout(r, 100));
+                return {proposal, before, calls: window._calls.map((c) => [c[0], c[1], c[2].entity_id, c[2].value])};
+            }"""
+        )
+        check(result["before"] == 0, f"water tips ({unit}): nothing is changed until Apply")
+        check([c[3] for c in result["calls"]] == expected_calls, f"water tips ({unit}): the three targets in proportion, then the crop factor")
+        check(all(c[0] == "number" and c[1] == "set_value" for c in result["calls"]), f"water tips ({unit}): through number.set_value")
+        check("Suggestion: Pepper" in result["proposal"] and "Crop factor: 0.8" in result["proposal"],
+              f"water tips ({unit}): the suggestion names what it is from and shows the crop factor")
+        only = page.evaluate(
+            """async () => {
+                const dialog = window._card.shadowRoot.querySelector('dialog');
+                window._calls.length = 0;
+                dialog.querySelectorAll('.tips-row .plant-button')[1].click();
+                await new Promise((r) => setTimeout(r, 100));
+                const proposal = dialog.querySelector('.tips-proposal').textContent;
+                [...dialog.querySelectorAll('.tips-proposal .plant-button')].find((b) => b.textContent === 'Apply').click();
+                await new Promise((r) => setTimeout(r, 100));
+                return {proposal, calls: window._calls.map((c) => c[2].value)};
+            }"""
+        )
+        check(only["calls"] == expected_crop_calls and "Crop factor: 0.8" in only["proposal"],
+              f"water tips ({unit}): a crop's weekly amount is worked out from its crop factor, and both are applied")
         page.close()
 
 

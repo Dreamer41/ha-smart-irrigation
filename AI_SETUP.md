@@ -991,6 +991,20 @@ between pulses.
 - **Loam / medium drainage:** the "average" case the factory defaults were
   tuned around — no adjustment needed unless something else about the site
   is unusual.
+- **Not sure what weekly target to use:** the zone card's **Watering tips**
+  (administrators) looks the plant up in the Plant Variety Database and offers
+  its usual weekly amount; Apply sets the normal week and moves the hot and
+  cool weeks in proportion, and also sets the Crop Factor from the FAO-56 table (Allen et al. 1998).
+  Treat it as a starting point, not a setting to trust: a weekly amount marked "about" and a crop factor
+  marked "(estimate)" are worked out or estimated, not measured.
+  When adding a zone, the first screen has the same lookup as an optional
+  list (`plant_search`): the person starts typing and picks the plant; text that is not
+  in the list gets a second screen with the matches.
+- **Shallow roots or sandy soil:** light rain reaches the roots there, so
+  lower `rain_ignore_below_mm` (Rain Ignored Below, per day; default 3 mm,
+  range 0-5 mm) toward 1-2 mm and raise `rain_eff_low`. A day's rain up to
+  that amount counts as nothing toward the watering; the three Rain
+  Efficiency sliders then decide how much of the larger rain counts.
 - **Clay soil / slow drainage:** a heavy downpour runs off rather than
   soaking in, so heavy rain should get *less* credit than the factory
   default assumes — lower `rain_eff_high` (heavy rain efficiency, default

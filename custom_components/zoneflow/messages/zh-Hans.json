@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "步骤 {n} / {total}",
-    "nothing_found": "未找到传感器。之后可在“配置”中添加。"
+    "nothing_found": "未找到传感器。之后可在“配置”中添加。",
+    "plant_keep": "保留此植物的初始值",
+    "plant_kind": "{name}，全部 {n} 个品种的中间值",
+    "plant_some": "为“{query}”找到了以下内容：常见的每周用水量（{unit}）和作物系数。请选择一个作为初始值，或保留初始值。",
+    "plant_nothing": "没有为“{query}”找到带每周用水量的结果。初始值保持不变；请继续，之后可在区域卡片上更改。",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "作物系数 {kc}",
+    "plant_kc_estimate": "作物系数约 {kc}（估计）",
+    "plant_about": "约 {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

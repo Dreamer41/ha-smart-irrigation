@@ -6,19 +6,21 @@
         "description": "Give this irrigation zone a short name (e.g. \"Front Lawn\", \"Avocado Tree\"). To add more zones later, add this integration again.",
         "data": {
           "zone_name": "Zone name",
-          "plant": "What's planted",
+          "plant": "What's planted (if you didn't pick it above)",
           "zone_type": "Where it grows",
           "start_from": "Start from",
           "location": "Where is this?",
-          "quick_setup": "Quick setup (recommended)"
+          "quick_setup": "Quick setup (recommended)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "zone_name": "Becomes the zone's device name and the start of its entity names, and shows in phone messages. E.g. \"Tomato bed\", \"Front lawn\".",
-          "plant": "Fills in sensible starting values for this crop: weekly water targets, crop factor, deep soak and growth ramp. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
+          "plant": "Fills in starting values for this kind of crop: weekly water targets, crop factor, deep soak and growth ramp. If you picked your plant in the list above, leave this on \"Something else\": the type that fits your pick is chosen for you, and the list's weekly water and crop factor are used. Choose a type here when your plant is not in the list. \"Something else\" starts from general values. You can change all of them later on the zone's device page.",
           "zone_type": "Outdoor is how ZoneFlow has always worked. Greenhouse and indoor zones add climate control (fans, vents, misting, heater), can work without a valve, and have no rain gauge or forecast because of the roof.",
           "start_from": "Start from a copy of another zone's watering settings or a saved preset instead of the plant type's. Valve, sensors and flow rate are never copied.",
           "location": "The area this zone is in, if any. It then uses the area's rain gauge, temperature sensor, weather and phone unless you give it its own.",
-          "quick_setup": "Asks only for the valve and how the water is delivered, and fills in the rest from the plant type and the sensors ZoneFlow found. You can change everything later in Configure. Untick to see every setting now."
+          "quick_setup": "Asks only for the valve and how the water is delivered, and fills in the rest from the plant type and the sensors ZoneFlow found. You can change everything later in Configure. Untick to see every setting now.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Greenhouse",
           "zone_name": "Crop name",
-          "plant": "What's planted"
+          "plant": "What's planted (if you didn't pick it above)",
+          "plant_search": "Look up your plant (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "The greenhouse or indoor zone with the climate devices.",
           "zone_name": "Becomes the crop's device name and the start of its entity names, e.g. \"Tomatoes\".",
-          "plant": "Fills in sensible starting values for this crop."
+          "plant": "Fills in sensible starting values for this crop. If you picked a plant in the list above, leave this on \"Something else\": the type that fits is chosen for you.",
+          "plant_search": "Start typing a plant, for example \"cucumber\", and pick it from the list: each shows its usual weekly amount of water (Plant Variety Database, Wind River Greens, CC BY 4.0) and its crop factor (FAO-56, Allen et al. 1998). These become the zone's starting values, and the plant type below is chosen to match where there is one. Text that is not in the list is searched for on the next screen. Can't find your plant? Leave this empty and choose What's planted below."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "What the plant database says",
+        "description": "{result}\n\nSources: {source}. These are averages from seed catalogs and a textbook; your soil, climate and rain decide the rest.",
+        "data": {
+          "pick": "Starting weekly water"
+        },
+        "data_description": {
+          "pick": "Pick the plant that fits, or keep the starting values."
+        }
       }
     },
     "error": {
@@ -793,6 +807,9 @@
       },
       "target_weekly_cool_mm": {
         "name": "Routine Cool Weekly Target"
+      },
+      "rain_ignore_below_mm": {
+        "name": "Rain Ignored Below (per day)"
       },
       "rain_eff_low": {
         "name": "Rain Efficiency - Light (3-5mm)"

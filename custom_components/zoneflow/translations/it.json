@@ -6,19 +6,21 @@
         "description": "Dai a questa zona di irrigazione un nome breve (es. \"Prato davanti\", \"Avocado\"). Per aggiungere altre zone in seguito, aggiungi di nuovo questa integrazione.",
         "data": {
           "zone_name": "Nome della zona",
-          "plant": "Cosa è piantato",
+          "plant": "Cosa è piantato (se non scelto sopra)",
           "zone_type": "Dove cresce",
           "start_from": "Inizia da",
           "location": "Dove si trova?",
-          "quick_setup": "Configurazione rapida (consigliata)"
+          "quick_setup": "Configurazione rapida (consigliata)",
+          "plant_search": "Cerca la tua pianta (facoltativo)"
         },
         "data_description": {
           "zone_name": "Diventa il nome del dispositivo della zona e l'inizio dei nomi delle sue entità, e compare nei messaggi sul telefono. Es. \"Aiuola pomodori\", \"Prato davanti\".",
-          "plant": "Precompila valori di partenza adatti a questa coltura: obiettivi settimanali d'acqua, coefficiente colturale, irrigazione profonda e aumento graduale secondo la crescita. \"Altro\" parte da valori generici. Puoi cambiarli tutti in seguito nella pagina del dispositivo della zona.",
+          "plant": "Precompila valori di partenza per questo tipo di coltura: obiettivi settimanali d'acqua, coefficiente colturale, irrigazione profonda e aumento graduale secondo la crescita. Se hai scelto la tua pianta nell'elenco sopra, lascia qui «Altro»: il tipo adatto alla tua scelta viene selezionato per te e si usano l'acqua settimanale e il coefficiente colturale dell'elenco. Scegli qui un tipo quando la tua pianta non è nell'elenco. «Altro» parte da valori generici. Puoi cambiarli tutti in seguito nella pagina del dispositivo della zona.",
           "zone_type": "All’aperto è il funzionamento classico di ZoneFlow. Le zone in serra e al chiuso aggiungono il controllo climatico (ventole, aperture, nebulizzazione, riscaldamento), possono funzionare senza valvola e non hanno pluviometro o previsioni a causa del tetto.",
           "start_from": "Inizia da una copia delle impostazioni di irrigazione di un'altra zona o da una preimpostazione salvata invece che da quelle del tipo di pianta. Valvola, sensori e portata non vengono mai copiati.",
           "location": "L'area in cui si trova questa zona, se presente. Usa poi il pluviometro, il sensore di temperatura, il meteo e il telefono dell'area, a meno che tu non ne indichi di propri.",
-          "quick_setup": "Chiede solo la valvola e come arriva l'acqua, e completa il resto in base al tipo di pianta e ai sensori trovati da ZoneFlow. Può cambiare tutto più tardi in Configura. Tolga la spunta per vedere subito tutte le impostazioni."
+          "quick_setup": "Chiede solo la valvola e come arriva l'acqua, e completa il resto in base al tipo di pianta e ai sensori trovati da ZoneFlow. Può cambiare tutto più tardi in Configura. Tolga la spunta per vedere subito tutte le impostazioni.",
+          "plant_search": "Inizia a scrivere una pianta, ad esempio «cetriolo», e sceglila dall'elenco: ognuna mostra la sua quantità d'acqua settimanale abituale (Plant Variety Database, Wind River Greens, CC BY 4.0) e il suo coefficiente colturale (FAO-56, Allen et al. 1998). Diventano i valori di partenza della zona, e il tipo di pianta qui sotto viene scelto di conseguenza quando ce n'è uno. Il testo che non è nell'elenco viene cercato nella schermata successiva. Non trovi la tua pianta? Lascia vuoto e scegli Cosa è piantato qui sotto."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Serra",
           "zone_name": "Nome coltura",
-          "plant": "Cosa è piantato"
+          "plant": "Cosa è piantato (se non scelto sopra)",
+          "plant_search": "Cerca la tua pianta (facoltativo)"
         },
         "data_description": {
           "greenhouse_entry_id": "La serra o la zona interna con i dispositivi per il clima.",
           "zone_name": "Diventa il nome del dispositivo della coltura e l'inizio dei nomi delle sue entità, ad es. \"Pomodori\".",
-          "plant": "Inserisce valori iniziali adeguati per questa coltura."
+          "plant": "Inserisce valori iniziali adeguati per questa coltura. Se hai scelto una pianta nell'elenco sopra, lascia qui «Altro»: il tipo adatto viene selezionato per te.",
+          "plant_search": "Inizia a scrivere una pianta, ad esempio «cetriolo», e sceglila dall'elenco: ognuna mostra la sua quantità d'acqua settimanale abituale (Plant Variety Database, Wind River Greens, CC BY 4.0) e il suo coefficiente colturale (FAO-56, Allen et al. 1998). Diventano i valori di partenza della zona, e il tipo di pianta qui sotto viene scelto di conseguenza quando ce n'è uno. Il testo che non è nell'elenco viene cercato nella schermata successiva. Non trovi la tua pianta? Lascia vuoto e scegli Cosa è piantato qui sotto."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "Cosa dice il database delle piante",
+        "description": "{result}\n\nFonti: {source}. Sono medie da cataloghi di sementi e da un manuale; il resto lo decidono il tuo terreno, il clima e la pioggia.",
+        "data": {
+          "pick": "Acqua settimanale iniziale"
+        },
+        "data_description": {
+          "pick": "Scegli la pianta adatta oppure mantieni i valori di partenza."
+        }
       }
     },
     "error": {
@@ -793,6 +807,9 @@
       },
       "target_weekly_cool_mm": {
         "name": "Obiettivo settimanale fresco"
+      },
+      "rain_ignore_below_mm": {
+        "name": "Pioggia ignorata sotto (al giorno)"
       },
       "rain_eff_low": {
         "name": "Efficacia pioggia - leggera (3-5mm)"

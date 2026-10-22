@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "Schritt {n} von {total}",
-    "nothing_found": "Es wurden keine Sensoren gefunden. Fügen Sie sie später unter Konfigurieren hinzu."
+    "nothing_found": "Es wurden keine Sensoren gefunden. Fügen Sie sie später unter Konfigurieren hinzu.",
+    "plant_keep": "Startwerte für diese Pflanze behalten",
+    "plant_kind": "{name}, Mitte aller {n} Sorten",
+    "plant_some": "Dies wurde für „{query}“ gefunden: das übliche Wochenwasser in {unit} und der Pflanzenfaktor. Wählen Sie eines als Startwerte oder behalten Sie die Startwerte.",
+    "plant_nothing": "Für „{query}“ wurde nichts mit einer Wochenmenge gefunden. Die Startwerte bleiben; machen Sie weiter und ändern Sie sie später auf der Zonenkarte.",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "Pflanzenfaktor {kc}",
+    "plant_kc_estimate": "Pflanzenfaktor etwa {kc} (Schätzung)",
+    "plant_about": "etwa {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

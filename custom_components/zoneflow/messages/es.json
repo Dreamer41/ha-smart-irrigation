@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "Paso {n} de {total}",
-    "nothing_found": "No se encontró ningún sensor. Añádalos después en Configurar."
+    "nothing_found": "No se encontró ningún sensor. Añádalos después en Configurar.",
+    "plant_keep": "Mantener los valores iniciales para esta planta",
+    "plant_kind": "{name}, el punto medio de las {n} variedades",
+    "plant_some": "Esto se encontró para «{query}»: el agua semanal habitual en {unit} y el coeficiente de cultivo. Elige uno como valores iniciales o mantén los valores iniciales.",
+    "plant_nothing": "No se encontró nada con cantidad semanal para «{query}». Los valores iniciales se mantienen; continúa y cámbialos después en la tarjeta de la zona.",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "coeficiente de cultivo {kc}",
+    "plant_kc_estimate": "coeficiente de cultivo de unos {kc} (estimación)",
+    "plant_about": "unos {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",

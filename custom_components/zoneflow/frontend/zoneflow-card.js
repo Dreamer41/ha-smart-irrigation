@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.7.5";
+const CARD_VERSION = "1.7.6";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -115,6 +115,7 @@ const I18N = {
       "deficit_water_pct": "Share of the normal water to give while deficit mode is on. Lower stresses the plant more (encourages deep roots); higher keeps growth lush.",
       "mulch_status": "Mulched soil (or a full canopy or turf) loses little water to evaporation. Choose Not mulched for exposed soil, then use the adjustment next to it.",
       "mulch_et_adjustment_pct": "Fine-tunes the routine watering amount for your soil cover, -50% to +70%. Positive for exposed soil that dries fast, negative for water-holding soil such as heavy clay or shade. Large negative values cut watering a lot: use them only if your soil stays wet, and watch it for a week or two.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Share of light rain that actually reaches the roots. The rest runs off or evaporates.",
       "rain_eff_mid": "Share of moderate rain that actually reaches the roots. The rest runs off or evaporates.",
       "rain_eff_high": "Share of heavy rain that actually reaches the roots. The rest runs off or evaporates.",
@@ -220,6 +221,32 @@ const I18N = {
       "move_record_only": "That zone has no valve, so the plant joins it as a record only.",
       "cancel": "Cancel",
       "moved": "{plant} moved to {to}"
+    },
+    "water_tips": {
+      "title": "Watering tips",
+      "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
+      "search": "Plant or kind, e.g. cucumber",
+      "none": "Nothing found. Try the kind of plant (pepper, basil, rose) or another spelling.",
+      "kind": "the middle of all {n} varieties",
+      "per_week": "per week",
+      "no_amount": "No weekly amount given.",
+      "pick": "Use this",
+      "proposal": "Suggestion",
+      "normal": "Normal week",
+      "hot": "Hot week",
+      "cool": "Cool week",
+      "keep_shape": "Hot and cool weeks keep the same proportion to the normal week as now.",
+      "apply": "Apply",
+      "applied": "Done. The weekly targets are changed.",
+      "source": "Source: {name} by {author}, {license}.",
+      "caveat": "Averages from seed catalogs: your soil, climate and rain decide the rest. Check the result with Why?.",
+      "crop_factor": "Crop factor",
+      "kc_source": "Source: {name}, {author}.",
+      "crop_source": "Crop table: {source}.",
+      "estimate": "(estimate)",
+      "estimate_note": "An estimate from the plant's water-use class (landscape plant factor), not a measured value.",
+      "about": "about",
+      "mm_estimate_note": "The weekly amount is worked out from the crop factor (1 inch a week at a crop factor of 1.0), not measured."
     },
     "check": {
       "title": "Check my setup",
@@ -391,6 +418,7 @@ const I18N = {
       "deficit_water_pct": "Prozentualer Anteil der normalen Wassermenge im Defizitmodus. Niedrigere Werte belasten die Pflanze stärker (fördert tiefes Wurzelwachstum), höhere Werte erhalten ein üppiges Wachstum.",
       "mulch_status": "Mulchschichten, dichtes Blätterdach oder Rasen reduzieren die Verdunstung. Wählen Sie „Nicht gemulcht“ bei offenem Boden und passen Sie den Korrekturwert daneben an.",
       "mulch_et_adjustment_pct": "Feinanpassung der täglichen Bewässerungsmenge je nach Bodenbedeckung (-50 % bis +70 %). Positive Werte für schnell trocknende Böden, negative Werte für wasserspeichernde Böden (z. B. lehmig oder schattig). Starke negative Anpassungen reduzieren die Wassermenge erheblich – bitte beobachten Sie die Pflanzen in den ersten zwei Wochen gut.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Anteil leichten Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
       "rain_eff_mid": "Anteil mäßigen Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
       "rain_eff_high": "Anteil starken Regens, der die Wurzeln erreicht. Der Rest verdunstet oder fließt oberflächlich ab.",
@@ -487,6 +515,32 @@ const I18N = {
       "move_record_only": "Diese Zone hat kein Ventil, die Pflanze kommt nur als Aufzeichnung dorthin.",
       "cancel": "Abbrechen",
       "moved": "{plant} nach {to} verschoben"
+    },
+    "water_tips": {
+      "title": "Gießtipps",
+      "intro": "Suchen Sie Ihre Pflanze, um zu sehen, wie viel Wasser sie üblicherweise pro Woche braucht (Plant Variety Database) und welchen Pflanzenfaktor sie hat (FAO-56). Das ist nur ein Vorschlag: Nichts ändert sich, bis Sie auf Anwenden tippen.",
+      "search": "Pflanze oder Art, z. B. Gurke",
+      "none": "Nichts gefunden. Versuchen Sie die Art der Pflanze (Paprika, Basilikum, Rose) oder eine andere Schreibweise.",
+      "kind": "Mitte aller {n} Sorten",
+      "per_week": "pro Woche",
+      "no_amount": "Keine Wochenmenge angegeben.",
+      "pick": "Diese verwenden",
+      "proposal": "Vorschlag",
+      "normal": "Normale Woche",
+      "hot": "Heiße Woche",
+      "cool": "Kühle Woche",
+      "keep_shape": "Heiße und kühle Wochen behalten dasselbe Verhältnis zur normalen Woche wie bisher.",
+      "apply": "Anwenden",
+      "applied": "Fertig. Die Wochenziele sind geändert.",
+      "source": "Quelle: {name} von {author}, {license}.",
+      "caveat": "Durchschnittswerte aus Saatgutkatalogen: Boden, Klima und Regen bestimmen den Rest. Prüfen Sie das Ergebnis mit Warum?.",
+      "crop_factor": "Pflanzenfaktor",
+      "kc_source": "Quelle: {name}, {author}.",
+      "crop_source": "Pflanzentabelle: {source}.",
+      "estimate": "(Schätzung)",
+      "estimate_note": "Eine Schätzung aus der Wasserbedarfsklasse der Pflanze (Landschaftspflanzenfaktor), kein gemessener Wert.",
+      "about": "etwa",
+      "mm_estimate_note": "Die Wochenmenge ist aus dem Pflanzenfaktor errechnet (1 Zoll pro Woche bei Faktor 1,0), nicht gemessen."
     },
     "check": {
       "title": "Meine Einrichtung prüfen",
@@ -658,6 +712,7 @@ const I18N = {
       "deficit_water_pct": "Porcentaje de agua respecto al riego normal mientras el modo de déficit está activo. Un valor menor estresa más a la planta (estimula raíces profundas); un valor mayor mantiene un crecimiento frondoso.",
       "mulch_status": "El suelo acolchado (cubierto de mantillo, vegetación tupida o césped) pierde muy poca agua por evaporación. Seleccione 'Sin acolchado' si el suelo está expuesto y ajuste el porcentaje contiguo.",
       "mulch_et_adjustment_pct": "Ajuste fino del riego habitual según la cobertura del suelo (-50% a +70%). Los valores positivos son para suelos expuestos que se secan rápido; los negativos, para suelos que retienen humedad (arcillosos o en sombra). Ajustes negativos altos reducen bastante el riego: úselos solo si el suelo permanece húmedo y observe la evolución durante un par de semanas.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Proporción de lluvia débil que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
       "rain_eff_mid": "Proporción de lluvia moderada que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
       "rain_eff_high": "Proporción de lluvia intensa que llega realmente a las raíces. El resto se evapora o se pierde por escorrentía.",
@@ -754,6 +809,32 @@ const I18N = {
       "move_record_only": "Esa zona no tiene válvula, así que la planta se une solo como registro.",
       "cancel": "Cancelar",
       "moved": "{plant} movida a {to}"
+    },
+    "water_tips": {
+      "title": "Consejos de riego",
+      "intro": "Busca tu planta para ver cuánta agua suele necesitar cada semana (Plant Variety Database) y su coeficiente de cultivo (FAO-56). Es solo una sugerencia: nada cambia hasta que pulses Aplicar.",
+      "search": "Planta o tipo, p. ej. pepino",
+      "none": "No se encontró nada. Prueba con el tipo de planta (pimiento, albahaca, rosa) u otra ortografía.",
+      "kind": "el punto medio de las {n} variedades",
+      "per_week": "por semana",
+      "no_amount": "No se indica cantidad semanal.",
+      "pick": "Usar esta",
+      "proposal": "Sugerencia",
+      "normal": "Semana normal",
+      "hot": "Semana calurosa",
+      "cool": "Semana fresca",
+      "keep_shape": "Las semanas calurosas y frescas mantienen la misma proporción respecto a la semana normal que ahora.",
+      "apply": "Aplicar",
+      "applied": "Listo. Los objetivos semanales se han cambiado.",
+      "source": "Fuente: {name} de {author}, {license}.",
+      "caveat": "Promedios de catálogos de semillas: tu suelo, tu clima y la lluvia deciden el resto. Comprueba el resultado con ¿Por qué?.",
+      "crop_factor": "Coeficiente de cultivo",
+      "kc_source": "Fuente: {name}, {author}.",
+      "crop_source": "Tabla de cultivos: {source}.",
+      "estimate": "(estimación)",
+      "estimate_note": "Una estimación según la clase de consumo de agua de la planta (factor de planta de paisajismo), no un valor medido.",
+      "about": "unos",
+      "mm_estimate_note": "La cantidad semanal se calcula a partir del coeficiente de cultivo (1 pulgada por semana con coeficiente 1,0), no está medida."
     },
     "check": {
       "title": "Comprobar mi configuración",
@@ -925,6 +1006,7 @@ const I18N = {
       "deficit_water_pct": "Kastelumäärän osuus normaalista, kun vajaakastelu on käytössä. Pienempi arvo aiheuttaa kasville enemmän kuivuusstressiä (edistää syvää juurtumista); suurempi arvo ylläpitää rehevää kasvua.",
       "mulch_status": "Kate, tiheä lehvästö tai nurmikko vähentää veden haihtumista maaperästä. Valitse 'Ei katetta', jos maaperä on paljas, ja säädä vieressä olevaa korjausprosenttia.",
       "mulch_et_adjustment_pct": "Säätää rutiinikastelun määrää maaperän katteen mukaan (-50 % – +70 %). Positiivinen arvo sopii nopeasti kuivuvalle paljaalle maalle, negatiivinen arvo vettä pidättävälle maalle (kuten savimaalle tai varjoisalle paikalle). Suuret negatiiviset arvot leikkaavat kastelua huomattavasti: käytä niitä vain, jos maa pysyy märkänä, ja seuraa tilannetta viikko tai kaksi.",
+      "rain_ignore_below_mm": "Vuorokauden sade tähän asti ei lasketa kasteluun: pieni tihku kostuttaa vain pinnan eikä yllä juuriin. Aluksi 3 mm. Pienennä, jos kevyt sade lasketaan mukaan, esimerkiksi matalajuurisille kasveille tai hiekkamaalle.",
       "rain_eff_low": "Kevyen sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
       "rain_eff_mid": "Kohtalaisen sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
       "rain_eff_high": "Runsaan sateen osuus, joka todellisuudessa saavuttaa juuret. Loput haihtuu tai valuu pois.",
@@ -1021,6 +1103,32 @@ const I18N = {
       "move_record_only": "Siinä vyöhykkeessä ei ole venttiiliä, joten kasvi liittyy siihen vain tietueena.",
       "cancel": "Peruuta",
       "moved": "{plant} siirretty vyöhykkeelle {to}"
+    },
+    "water_tips": {
+      "title": "Kastelun vinkit",
+      "intro": "Hae kasvisi nähdäksesi, paljonko vettä se yleensä haluaa viikossa (Plant Variety Database) ja sen kasvikerroin (FAO-56). Tämä on vain ehdotus: mikään ei muutu ennen kuin painat Käytä.",
+      "search": "Kasvi tai laji, esim. kurkku",
+      "none": "Mitään ei löytynyt. Kokeile kasvin lajia (paprika, basilika, ruusu) tai toista kirjoitusasua.",
+      "kind": "kaikkien {n} lajikkeen keskiarvo",
+      "per_week": "viikossa",
+      "no_amount": "Viikkomäärää ei ole annettu.",
+      "pick": "Käytä tätä",
+      "proposal": "Ehdotus",
+      "normal": "Normaali viikko",
+      "hot": "Kuuma viikko",
+      "cool": "Viileä viikko",
+      "keep_shape": "Kuuma ja viileä viikko pysyvät samassa suhteessa normaaliin viikkoon kuin nyt.",
+      "apply": "Käytä",
+      "applied": "Valmis. Viikkotavoitteet on muutettu.",
+      "source": "Lähde: {name}, {author}, {license}.",
+      "caveat": "Siemenluetteloiden keskiarvoja: maaperäsi, ilmastosi ja sade ratkaisevat loput. Tarkista tulos Miksi?-kohdasta.",
+      "crop_factor": "Kasvikerroin",
+      "kc_source": "Lähde: {name}, {author}.",
+      "crop_source": "Kasvitaulukko: {source}.",
+      "estimate": "(arvio)",
+      "estimate_note": "Arvio kasvin vedenkulutusluokasta (maisemakasvikerroin), ei mitattu arvo.",
+      "about": "noin",
+      "mm_estimate_note": "Viikkomäärä on laskettu kasvikertoimesta (1 tuuma viikossa kasvikertoimella 1,0), ei mitattu."
     },
     "check": {
       "title": "Tarkista asennukseni",
@@ -1192,6 +1300,7 @@ const I18N = {
       "deficit_water_pct": "Pourcentage de l'apport d'eau normal en mode déficit. Une valeur faible stresse davantage la plante (incite l'enracinement profond) ; une valeur plus élevée maintient un feuillage dense.",
       "mulch_status": "Un sol paillé (ou un feuillage dense / de la pelouse) limite fortement l'évaporation. Choisissez « Non paillé » pour un sol nu, puis ajustez le pourcentage associé.",
       "mulch_et_adjustment_pct": "Ajustement précis de l'arrosage quotidien selon la couverture du sol (de -50% à +70%). Valeurs positives pour les sols nus séchant vite, négatives pour les sols retenant l'eau (argileux ou à l'ombre). Des valeurs fortement négatives réduisent nettement l'arrosage : à n'utiliser que si le sol reste très humide, en observant le résultat sur une à deux semaines.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Proportion de pluie faible atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
       "rain_eff_mid": "Proportion de pluie modérée atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
       "rain_eff_high": "Proportion de pluie forte atteignant réellement les racines. Le reste s'évapore ou ruisselle.",
@@ -1288,6 +1397,32 @@ const I18N = {
       "move_record_only": "Cette zone n'a pas de vanne : la plante la rejoint seulement comme fiche.",
       "cancel": "Annuler",
       "moved": "{plant} déplacée vers {to}"
+    },
+    "water_tips": {
+      "title": "Conseils d'arrosage",
+      "intro": "Recherchez votre plante pour voir combien d'eau elle demande en général chaque semaine (Plant Variety Database) et son coefficient cultural (FAO-56). Ce n'est qu'une suggestion : rien ne change tant que vous n'appuyez pas sur Appliquer.",
+      "search": "Plante ou type, p. ex. concombre",
+      "none": "Rien trouvé. Essayez le type de plante (poivron, basilic, rose) ou une autre orthographe.",
+      "kind": "le milieu des {n} variétés",
+      "per_week": "par semaine",
+      "no_amount": "Aucune quantité hebdomadaire indiquée.",
+      "pick": "Utiliser celle-ci",
+      "proposal": "Suggestion",
+      "normal": "Semaine normale",
+      "hot": "Semaine chaude",
+      "cool": "Semaine fraîche",
+      "keep_shape": "Les semaines chaudes et fraîches gardent la même proportion par rapport à la semaine normale qu'actuellement.",
+      "apply": "Appliquer",
+      "applied": "Terminé. Les objectifs hebdomadaires sont modifiés.",
+      "source": "Source : {name} par {author}, {license}.",
+      "caveat": "Moyennes issues de catalogues de semences : votre sol, votre climat et la pluie décident du reste. Vérifiez le résultat avec Pourquoi ?.",
+      "crop_factor": "Coefficient cultural",
+      "kc_source": "Source : {name}, {author}.",
+      "crop_source": "Tableau des cultures : {source}.",
+      "estimate": "(estimation)",
+      "estimate_note": "Une estimation d'après la classe de consommation d'eau de la plante (facteur de plante paysagère), et non une valeur mesurée.",
+      "about": "environ",
+      "mm_estimate_note": "La quantité hebdomadaire est calculée à partir du coefficient cultural (1 pouce par semaine pour un coefficient de 1,0), elle n'est pas mesurée."
     },
     "check": {
       "title": "Vérifier ma configuration",
@@ -1459,6 +1594,7 @@ const I18N = {
       "deficit_water_pct": "Percentuale rispetto al normale apporto idrico applicata durante la modalità deficit. Valori più bassi stimolano lo stress idrico (favoriscono radici profonde); valori più alti mantengono una crescita rigogliosa.",
       "mulch_status": "Il terreno pacciamato (o con fitta copertura vegetale / prato) riduce notevolmente l'evaporazione. Selezionare 'Non pacciamato' in caso di terreno esposto e impostare la correzione percentuale affianco.",
       "mulch_et_adjustment_pct": "Regolazione fine dell'irrigazione quotidiana in base alla copertura del suolo (-50% a +70%). Valori positivi per terreni esposti ad asciugatura rapida; valori negativi per terreni a forte ritenzione idrica (come argilla o zone d'ombra). Valori fortemente negativi riducono parecchio l'irrigazione: utilizzare solo se il terreno rimane molto umido e monitorare per una o due settimane.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Quota di pioggia debole che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
       "rain_eff_mid": "Quota di pioggia moderata che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
       "rain_eff_high": "Quota di pioggia intensa che raggiunge effettivamente le radici. La parte restante evapora o scivola via per ruscellamento.",
@@ -1555,6 +1691,32 @@ const I18N = {
       "move_record_only": "Quella zona non ha valvola, quindi la pianta vi entra solo come scheda.",
       "cancel": "Annulla",
       "moved": "{plant} spostata in {to}"
+    },
+    "water_tips": {
+      "title": "Consigli di irrigazione",
+      "intro": "Cerca la tua pianta per vedere quanta acqua vuole di solito ogni settimana (Plant Variety Database) e il suo coefficiente colturale (FAO-56). È solo un suggerimento: nulla cambia finché non premi Applica.",
+      "search": "Pianta o tipo, es. cetriolo",
+      "none": "Nessun risultato. Prova con il tipo di pianta (peperone, basilico, rosa) o un'altra grafia.",
+      "kind": "la media di tutte le {n} varietà",
+      "per_week": "a settimana",
+      "no_amount": "Nessuna quantità settimanale indicata.",
+      "pick": "Usa questa",
+      "proposal": "Suggerimento",
+      "normal": "Settimana normale",
+      "hot": "Settimana calda",
+      "cool": "Settimana fresca",
+      "keep_shape": "Le settimane calde e fresche mantengono la stessa proporzione rispetto alla settimana normale di adesso.",
+      "apply": "Applica",
+      "applied": "Fatto. Gli obiettivi settimanali sono cambiati.",
+      "source": "Fonte: {name} di {author}, {license}.",
+      "caveat": "Medie dai cataloghi di sementi: il resto lo decidono il tuo terreno, il clima e la pioggia. Controlla il risultato con Perché?.",
+      "crop_factor": "Coefficiente colturale",
+      "kc_source": "Fonte: {name}, {author}.",
+      "crop_source": "Tabella delle colture: {source}.",
+      "estimate": "(stima)",
+      "estimate_note": "Una stima in base alla classe di consumo d'acqua della pianta (fattore per piante da giardino), non un valore misurato.",
+      "about": "circa",
+      "mm_estimate_note": "La quantità settimanale è calcolata dal coefficiente colturale (1 pollice a settimana con coefficiente 1,0), non misurata."
     },
     "check": {
       "title": "Controlla la mia configurazione",
@@ -1726,6 +1888,7 @@ const I18N = {
       "deficit_water_pct": "Percentage van de normale hoeveelheid water dat wordt gegeven als de deficit-modus actief is. Een lagere waarde geeft meer stress (stimuleert diepe wortelgroei); een hogere waarde behoudt een volle, weelderige groei.",
       "mulch_status": "Gemulchte grond (of een dicht bladerdek of gazon) verliest weinig vocht door verdamping. Kies 'Niet gemulcht' bij onbedekte grond en stel de aanpassing ernaast in.",
       "mulch_et_adjustment_pct": "Fijnafstemming van de dagelijkse bewatering op basis van de bodembedekking (-50% tot +70%). Positief voor onbedekte grond die snel uitdroogt, negatief voor watervasthoudende grond (zoals zware klei of schaduwrijke zones). Grote negatieve waarden verminderen de bewatering sterk: gebruik dit alleen als de grond erg nat blijft en houd het een à twee weken in de gaten.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Het deel van lichte regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
       "rain_eff_mid": "Het deel van matige regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
       "rain_eff_high": "Het deel van zware regen dat daadwerkelijk de wortels bereikt. De rest verdampt of stroomt weg.",
@@ -1822,6 +1985,32 @@ const I18N = {
       "move_record_only": "Die zone heeft geen klep, dus de plant komt er alleen als registratie bij.",
       "cancel": "Annuleren",
       "moved": "{plant} verplaatst naar {to}"
+    },
+    "water_tips": {
+      "title": "Watergeeftips",
+      "intro": "Zoek je plant op om te zien hoeveel water ze meestal per week wil (Plant Variety Database) en wat haar gewasfactor is (FAO-56). Het is alleen een suggestie: er verandert niets totdat je op Toepassen drukt.",
+      "search": "Plant of soort, bijv. komkommer",
+      "none": "Niets gevonden. Probeer de soort plant (paprika, basilicum, roos) of een andere spelling.",
+      "kind": "het midden van alle {n} rassen",
+      "per_week": "per week",
+      "no_amount": "Geen weekhoeveelheid opgegeven.",
+      "pick": "Deze gebruiken",
+      "proposal": "Suggestie",
+      "normal": "Normale week",
+      "hot": "Hete week",
+      "cool": "Koele week",
+      "keep_shape": "Hete en koele weken houden dezelfde verhouding tot de normale week als nu.",
+      "apply": "Toepassen",
+      "applied": "Klaar. De weekdoelen zijn gewijzigd.",
+      "source": "Bron: {name} door {author}, {license}.",
+      "caveat": "Gemiddelden uit zaadcatalogi: je grond, klimaat en regen bepalen de rest. Controleer het resultaat met Waarom?.",
+      "crop_factor": "Gewasfactor",
+      "kc_source": "Bron: {name}, {author}.",
+      "crop_source": "Gewastabel: {source}.",
+      "estimate": "(schatting)",
+      "estimate_note": "Een schatting op basis van de waterverbruiksklasse van de plant (tuinplantenfactor), geen gemeten waarde.",
+      "about": "ongeveer",
+      "mm_estimate_note": "De weekhoeveelheid is berekend uit de gewasfactor (1 inch per week bij factor 1,0) en niet gemeten."
     },
     "check": {
       "title": "Mijn instellingen controleren",
@@ -1993,6 +2182,7 @@ const I18N = {
       "deficit_water_pct": "Procentowa część standardowej dawki wody podawana w trybie deficytowym. Niższa wartość zwiększa stres wodny (stymuluje głębszy rozwój korzeni); wyższa utrzymuje bujny wzrost.",
       "mulch_status": "Gleba pokryta ściółką (lub gęstą koroną roślin czy trawnikiem) traci niewiele wody przez parowanie. Wybierz 'Bez ściółki' dla odkrytej gleby i dostosuj współczynnik obok.",
       "mulch_et_adjustment_pct": "Precyzyjna korekta dawki nawadniania w zależności od przykrycia gleby (od -50% do +70%). Wartości dodatnie stosuj dla odsłoniętej, szybko schnącej gleby; ujemne dla gleb zatrzymujących wilgoć (np. gliniastych lub zacienionych). Znaczne wartości ujemne mocno ograniczają podlewanie – stosuj je tylko, gdy gleba długo pozostaje wilgotna i obserwuj rośliny przez 1-2 tygodnie.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Część opadów lekkiego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
       "rain_eff_mid": "Część opadów umiarkowanego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
       "rain_eff_high": "Część opadów ulewnego deszczu, która rzeczywiście dociera do strefy korzeniowej. Reszta paruje lub spływa.",
@@ -2089,6 +2279,32 @@ const I18N = {
       "move_record_only": "Ta strefa nie ma zaworu, więc roślina dołączy do niej tylko jako wpis.",
       "cancel": "Anuluj",
       "moved": "{plant} przeniesiona do {to}"
+    },
+    "water_tips": {
+      "title": "Wskazówki dotyczące podlewania",
+      "intro": "Wyszukaj swoją roślinę, aby zobaczyć, ile wody zwykle potrzebuje tygodniowo (Plant Variety Database) i jaki ma współczynnik roślinny (FAO-56). To tylko propozycja: nic się nie zmieni, dopóki nie naciśniesz Zastosuj.",
+      "search": "Roślina lub rodzaj, np. ogórek",
+      "none": "Nic nie znaleziono. Spróbuj rodzaju rośliny (papryka, bazylia, róża) lub innej pisowni.",
+      "kind": "środek wszystkich {n} odmian",
+      "per_week": "tygodniowo",
+      "no_amount": "Brak podanej ilości tygodniowej.",
+      "pick": "Użyj tej",
+      "proposal": "Propozycja",
+      "normal": "Normalny tydzień",
+      "hot": "Gorący tydzień",
+      "cool": "Chłodny tydzień",
+      "keep_shape": "Gorące i chłodne tygodnie zachowują taką samą proporcję do normalnego tygodnia jak teraz.",
+      "apply": "Zastosuj",
+      "applied": "Gotowe. Dawki tygodniowe zostały zmienione.",
+      "source": "Źródło: {name}, autor {author}, {license}.",
+      "caveat": "Średnie z katalogów nasion: resztę decydują twoja gleba, klimat i deszcz. Sprawdź wynik przyciskiem Dlaczego?.",
+      "crop_factor": "Współczynnik roślinny",
+      "kc_source": "Źródło: {name}, {author}.",
+      "crop_source": "Tabela upraw: {source}.",
+      "estimate": "(szacunek)",
+      "estimate_note": "Szacunek na podstawie klasy zużycia wody przez roślinę (współczynnik dla roślin ogrodowych), a nie wartość zmierzona.",
+      "about": "około",
+      "mm_estimate_note": "Ilość tygodniowa jest obliczona ze współczynnika roślinnego (1 cal na tydzień przy współczynniku 1,0), nie została zmierzona."
     },
     "check": {
       "title": "Sprawdź moją konfigurację",
@@ -2260,6 +2476,7 @@ const I18N = {
       "deficit_water_pct": "Percentagem da quantidade normal de água a aplicar com o modo de défice ativo. Valores mais baixos causam mais stress à planta (estimulando raízes profundas); valores mais altos mantêm um crescimento exuberante.",
       "mulch_status": "Solo com cobertura (ou copa densa / relvado) perde pouca água por evaporação. Escolha 'Sem cobertura' para solo exposto e ajuste a percentagem ao lado.",
       "mulch_et_adjustment_pct": "Ajuste fino da rega diária com base na cobertura do solo (-50% a +70%). Valores positivos destinam-se a solos expostos que secam rápido; valores negativos para solos que retêm humidade (como argilosos ou à sombra). Ajustes negativos elevados reduzem bastante a rega: utilize-os apenas se o solo se mantiver húmido e monitorize durante uma ou duas semanas.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Percentagem de chuva fraca que chega efetivamente às raízes. O restante evapora ou escorre.",
       "rain_eff_mid": "Percentagem de chuva moderada que chega efetivamente às raízes. O restante evapora ou escorre.",
       "rain_eff_high": "Percentagem de chuva forte que chega efetivamente às raízes. O restante evapora ou escorre.",
@@ -2356,6 +2573,32 @@ const I18N = {
       "move_record_only": "Essa zona não tem válvula, por isso a planta entra nela apenas como registo.",
       "cancel": "Cancelar",
       "moved": "{plant} movida para {to}"
+    },
+    "water_tips": {
+      "title": "Dicas de rega",
+      "intro": "Procure a sua planta para ver quanta água costuma querer por semana (Plant Variety Database) e o seu coeficiente cultural (FAO-56). É só uma sugestão: nada muda até carregar em Aplicar.",
+      "search": "Planta ou tipo, p. ex. pepino",
+      "none": "Nada encontrado. Experimente o tipo de planta (pimento, manjericão, rosa) ou outra grafia.",
+      "kind": "o meio de todas as {n} variedades",
+      "per_week": "por semana",
+      "no_amount": "Sem quantidade semanal indicada.",
+      "pick": "Usar esta",
+      "proposal": "Sugestão",
+      "normal": "Semana normal",
+      "hot": "Semana quente",
+      "cool": "Semana fresca",
+      "keep_shape": "As semanas quentes e frescas mantêm a mesma proporção em relação à semana normal que agora.",
+      "apply": "Aplicar",
+      "applied": "Feito. As metas semanais foram alteradas.",
+      "source": "Fonte: {name} de {author}, {license}.",
+      "caveat": "Médias de catálogos de sementes: o seu solo, clima e a chuva decidem o resto. Verifique o resultado com Porquê?.",
+      "crop_factor": "Coeficiente cultural",
+      "kc_source": "Fonte: {name}, {author}.",
+      "crop_source": "Tabela de culturas: {source}.",
+      "estimate": "(estimativa)",
+      "estimate_note": "Uma estimativa a partir da classe de consumo de água da planta (fator de plantas paisagísticas), não um valor medido.",
+      "about": "cerca de",
+      "mm_estimate_note": "A quantidade semanal é calculada a partir do coeficiente cultural (1 polegada por semana com coeficiente 1,0), não é medida."
     },
     "check": {
       "title": "Verificar a minha configuração",
@@ -2527,6 +2770,7 @@ const I18N = {
       "deficit_water_pct": "Andel av normal vattenmängd som ges när sparläget är aktivt. Lägre värde stressar växten mer (stimulerar djupa rötter); högre värde bibehåller en tät och frodig tillväxt.",
       "mulch_status": "Täckt jord (med täckmaterial, tätt bladverk eller gräsmatta) förlorar lite vatten genom avdunstning. Välj 'Ej marktäckt' för bar jord och justera procentsatsen bredvid.",
       "mulch_et_adjustment_pct": "Finjustering av den dagliga bevattningen baserat på marktäckning (-50 % till +70 %). Positiva värden för bar jord som torkar snabbt, negativa för vattenhållande jord (t.ex. styv lera eller skuggiga lägen). Stora negativa värden minskar bevattningen avsevärt: använd dem endast om jorden förblir fuktig och följ upp under en till två veckor.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Andel av lätt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
       "rain_eff_mid": "Andel av måttligt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
       "rain_eff_high": "Andel av kraftigt regn som faktiskt når rötterna. Resten dunstar eller rinner av.",
@@ -2623,6 +2867,32 @@ const I18N = {
       "move_record_only": "Den zonen har ingen ventil, så växten följer bara med som en post.",
       "cancel": "Avbryt",
       "moved": "{plant} flyttad till {to}"
+    },
+    "water_tips": {
+      "title": "Vattningstips",
+      "intro": "Slå upp din växt för att se hur mycket vatten den vanligtvis vill ha varje vecka (Plant Variety Database) och dess växtfaktor (FAO-56). Det är bara ett förslag: ingenting ändras förrän du trycker på Använd.",
+      "search": "Växt eller sort, t.ex. gurka",
+      "none": "Inget hittades. Prova typen av växt (paprika, basilika, ros) eller en annan stavning.",
+      "kind": "mitten av alla {n} sorter",
+      "per_week": "per vecka",
+      "no_amount": "Ingen veckomängd angiven.",
+      "pick": "Använd denna",
+      "proposal": "Förslag",
+      "normal": "Normal vecka",
+      "hot": "Varm vecka",
+      "cool": "Sval vecka",
+      "keep_shape": "Varma och svala veckor behåller samma förhållande till normal vecka som nu.",
+      "apply": "Använd",
+      "applied": "Klart. Veckomålen är ändrade.",
+      "source": "Källa: {name} av {author}, {license}.",
+      "caveat": "Medelvärden från fröfirmors kataloger: din jord, ditt klimat och regnet avgör resten. Kontrollera resultatet med Varför?.",
+      "crop_factor": "Växtfaktor",
+      "kc_source": "Källa: {name}, {author}.",
+      "crop_source": "Växttabell: {source}.",
+      "estimate": "(uppskattning)",
+      "estimate_note": "En uppskattning utifrån växtens vattenförbrukningsklass (växtfaktor för anläggningar), inte ett uppmätt värde.",
+      "about": "ungefär",
+      "mm_estimate_note": "Veckomängden är uträknad från växtfaktorn (1 tum per vecka vid faktor 1,0), inte uppmätt."
     },
     "check": {
       "title": "Kontrollera min installation",
@@ -2794,6 +3064,7 @@ const I18N = {
       "deficit_water_pct": "Podíl běžné dávky vody aplikovaný v deficitním režimu. Nižší hodnota rostlinu více vystavuje stresu (podporuje hlubší kořenění), vyšší hodnota udržuje bujný růst.",
       "mulch_status": "Mulčovaná půda (případně hustý zápoj rostlin nebo trávník) ztrácí odparem jen málo vody. Pro odhalenou půdu zvolte 'Bez mulče' a nastavte vedlejší korekci.",
       "mulch_et_adjustment_pct": "Jemné doladění denní závlahy podle pokryvu půdy (-50 % až +70 %). Kladné hodnoty pro odhalenou půdu, která rychle vysychá; záporné hodnoty pro půdu zadržující vodu (např. těžká jílovitá nebo ve stínu). Výrazně záporné hodnoty značně omezí zálivku: používejte je pouze v případě, že půda zůstává mokrá, a stav týden až dva sledujte.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Podíl mírného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
       "rain_eff_mid": "Podíl středně silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
       "rain_eff_high": "Podíl silného deště, který se skutečně dostane ke kořenům. Zbytek odteče nebo se odpaří.",
@@ -2890,6 +3161,32 @@ const I18N = {
       "move_record_only": "Tato zóna nemá ventil, rostlina se do ní přidá jen jako záznam.",
       "cancel": "Zrušit",
       "moved": "{plant} přesunuta do {to}"
+    },
+    "water_tips": {
+      "title": "Tipy k zálivce",
+      "intro": "Vyhledejte svou rostlinu a zjistěte, kolik vody obvykle potřebuje za týden (Plant Variety Database), a její plodinový koeficient (FAO-56). Je to jen návrh: nic se nezmění, dokud nestisknete Použít.",
+      "search": "Rostlina nebo druh, např. okurka",
+      "none": "Nic nenalezeno. Zkuste druh rostliny (paprika, bazalka, růže) nebo jiný pravopis.",
+      "kind": "střed všech {n} odrůd",
+      "per_week": "za týden",
+      "no_amount": "Týdenní množství není uvedeno.",
+      "pick": "Použít toto",
+      "proposal": "Návrh",
+      "normal": "Normální týden",
+      "hot": "Horký týden",
+      "cool": "Chladný týden",
+      "keep_shape": "Horké a chladné týdny zůstanou ve stejném poměru k normálnímu týdnu jako dosud.",
+      "apply": "Použít",
+      "applied": "Hotovo. Týdenní cíle jsou změněny.",
+      "source": "Zdroj: {name}, autor {author}, {license}.",
+      "caveat": "Průměry z katalogů semen: zbytek určuje vaše půda, podnebí a déšť. Výsledek zkontrolujte tlačítkem Proč?.",
+      "crop_factor": "Plodinový koeficient",
+      "kc_source": "Zdroj: {name}, {author}.",
+      "crop_source": "Tabulka plodin: {source}.",
+      "estimate": "(odhad)",
+      "estimate_note": "Odhad podle třídy spotřeby vody dané rostliny (koeficient pro okrasné rostliny), nikoli naměřená hodnota.",
+      "about": "asi",
+      "mm_estimate_note": "Týdenní množství je vypočteno z plodinového koeficientu (1 palec týdně při koeficientu 1,0), není naměřené."
     },
     "check": {
       "title": "Zkontrolovat mé nastavení",
@@ -3061,6 +3358,7 @@ const I18N = {
       "deficit_water_pct": "Andel af den normale vandmængde, der tilføres i sparetilstand. En lavere værdi stresser planten mere (fremmer dybe rødder); en højere værdi bevarer en frodig vækst.",
       "mulch_status": "Jord med mulch (eller et tæt løvhang eller græsplæne) mister meget lidt vand ved fordampning. Vælg 'Ikke mulchet' ved bar jord, og juster efterfølgende procenten ved siden af.",
       "mulch_et_adjustment_pct": "Finjustering af den daglige vanding baseret på jorddække (-50% til +70%). Positive værdier er til bar jord, der tørrer hurtigt ud; negative værdier er til vandholdende jord (f.eks. tung lerjord eller skyggefulde områder). Store negative værdier reducerer vandingen markant: brug dem kun, hvis jorden forbliver våd, og hold øje med det i 1-2 uger.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Andel af let regn, der reelt når rødderne. Resten fordamper eller løber af.",
       "rain_eff_mid": "Andel af moderat regn, der reelt når rødderne. Resten fordamper eller løber af.",
       "rain_eff_high": "Andel af kraftig regn, der reelt når rødderne. Resten fordamper eller løber af.",
@@ -3157,6 +3455,32 @@ const I18N = {
       "move_record_only": "Den zone har ingen ventil, så planten kommer kun med som en registrering.",
       "cancel": "Annuller",
       "moved": "{plant} flyttet til {to}"
+    },
+    "water_tips": {
+      "title": "Vandingstips",
+      "intro": "Slå din plante op for at se, hvor meget vand den som regel vil have om ugen (Plant Variety Database), og dens afgrødefaktor (FAO-56). Det er kun et forslag: intet ændres, før du trykker Anvend.",
+      "search": "Plante eller slags, fx agurk",
+      "none": "Intet fundet. Prøv plantens slags (peber, basilikum, rose) eller en anden stavemåde.",
+      "kind": "midten af alle {n} sorter",
+      "per_week": "om ugen",
+      "no_amount": "Ingen ugentlig mængde oplyst.",
+      "pick": "Brug denne",
+      "proposal": "Forslag",
+      "normal": "Normal uge",
+      "hot": "Varm uge",
+      "cool": "Kølig uge",
+      "keep_shape": "Varme og kølige uger holder samme forhold til den normale uge som nu.",
+      "apply": "Anvend",
+      "applied": "Færdig. De ugentlige mål er ændret.",
+      "source": "Kilde: {name} af {author}, {license}.",
+      "caveat": "Gennemsnit fra frøkataloger: din jord, dit klima og regnen afgør resten. Kontroller resultatet med Hvorfor?.",
+      "crop_factor": "Afgrødefaktor",
+      "kc_source": "Kilde: {name}, {author}.",
+      "crop_source": "Afgrødetabel: {source}.",
+      "estimate": "(skøn)",
+      "estimate_note": "Et skøn ud fra plantens vandforbrugsklasse (plantefaktor for haveanlæg), ikke en målt værdi.",
+      "about": "ca.",
+      "mm_estimate_note": "Den ugentlige mængde er regnet ud fra afgrødefaktoren (1 tomme om ugen ved faktor 1,0), ikke målt."
     },
     "check": {
       "title": "Tjek min opsætning",
@@ -3328,6 +3652,7 @@ const I18N = {
       "deficit_water_pct": "A normál vízmennyiség százalékos aránya hiányöntözési (csökkentett) módban. Az alacsonyabb érték jobban terheli a növényt (mélyebb gyökérzet növesztésére ösztönzi); a magasabb érték dús növekedést biztosít.",
       "mulch_status": "A mulcsozott talaj (vagy a sűrű növényzet, illetve gyep) párolgási vesztesége alacsony. Csupasz talaj esetén válassza a 'Nem takart' lehetőséget, majd állítsa be a mellette lévő korrekciót.",
       "mulch_et_adjustment_pct": "A napi öntözési mennyiség finomhangolása a talajtakarástól függően (-50% és +70% között). Pozitív érték a gyorsan kiszáradó, csupasz talajhoz; negatív érték a jó víztartó talajhoz (pl. kötött agyag vagy árnyékos terület). A nagy negatív értékek jelentősen csökkentik az öntözést: csak akkor használja, ha a talaj tartósan nedves marad, és figyelje a növényeket 1-2 hétig.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "A gyenge eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
       "rain_eff_mid": "A mérsékelt eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
       "rain_eff_high": "A heves eső azon hányada, amely valóban eléri a gyökereket. A többi elpárolog vagy elfolyik.",
@@ -3424,6 +3749,32 @@ const I18N = {
       "move_record_only": "Ennek a zónának nincs szelepe, ezért a növény csak nyilvántartásként kerül oda.",
       "cancel": "Mégse",
       "moved": "{plant} áthelyezve ide: {to}"
+    },
+    "water_tips": {
+      "title": "Öntözési tippek",
+      "intro": "Keresd meg a növényed, hogy lásd, általában mennyi vizet kér hetente (Plant Variety Database), és mekkora a növényi együtthatója (FAO-56). Ez csak javaslat: semmi sem változik, amíg nem nyomod meg az Alkalmaz gombot.",
+      "search": "Növény vagy fajta, pl. uborka",
+      "none": "Nincs találat. Próbáld a növény fajtáját (paprika, bazsalikom, rózsa) vagy más írásmódot.",
+      "kind": "mind a(z) {n} fajta középértéke",
+      "per_week": "hetente",
+      "no_amount": "Nincs megadva heti mennyiség.",
+      "pick": "Ezt használom",
+      "proposal": "Javaslat",
+      "normal": "Normál hét",
+      "hot": "Meleg hét",
+      "cool": "Hűvös hét",
+      "keep_shape": "A meleg és a hűvös hetek ugyanolyan arányban maradnak a normál héthez képest, mint most.",
+      "apply": "Alkalmaz",
+      "applied": "Kész. A heti célok megváltoztak.",
+      "source": "Forrás: {name}, szerző: {author}, {license}.",
+      "caveat": "Vetőmagkatalógusok átlagai: a többit a talajod, az éghajlatod és az eső dönti el. Ellenőrizd az eredményt a Miért? gombbal.",
+      "crop_factor": "Növényi együttható",
+      "kc_source": "Forrás: {name}, {author}.",
+      "crop_source": "Növénytáblázat: {source}.",
+      "estimate": "(becslés)",
+      "estimate_note": "A növény vízfelhasználási osztályából készült becslés (tájépítészeti növénytényező), nem mért érték.",
+      "about": "kb.",
+      "mm_estimate_note": "A heti mennyiség a növényi együtthatóból van kiszámítva (1 hüvelyk hetente 1,0-s együtthatónál), nem mért érték."
     },
     "check": {
       "title": "Beállítások ellenőrzése",
@@ -3595,6 +3946,7 @@ const I18N = {
       "deficit_water_pct": "Andel av normal vannmengde som tilføres når underskuddsvanning er aktiv. Lavere verdi stresser planten mer (fremmer dypere rotvekst); høyere verdi opprettholder frodig vekst.",
       "mulch_status": "Jord dekket med mulch (eller tett bladverk/plen) mister lite vann til fordamping. Velg 'Ikke mulchet' for bar jord, og juster deretter korreksjonsprosenten ved siden av.",
       "mulch_et_adjustment_pct": "Finjustering av den daglige vanningen basert på dekke (-50 % til +70 %). Positive verdier brukes for bar jord som tørker raskt; negative verdier for jord som holder på fuktigheten (som tung leirjord eller i skygge). Store negative verdier reduserer vanningen betraktelig: bruk dette kun dersom jorden forblir våt, og følg med i en uke eller to.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Andel av lett regn som faktisk når røttene. Resten fordamper eller renner vekk.",
       "rain_eff_mid": "Andel av moderat regn som faktisk når røttene. Resten fordamper eller renner vekk.",
       "rain_eff_high": "Andel av kraftig regn som faktisk når røttene. Resten fordamper eller renner vekk.",
@@ -3691,6 +4043,32 @@ const I18N = {
       "move_record_only": "Den sonen har ingen ventil, så planten blir med bare som en registrering.",
       "cancel": "Avbryt",
       "moved": "{plant} flyttet til {to}"
+    },
+    "water_tips": {
+      "title": "Vanningstips",
+      "intro": "Slå opp planten din for å se hvor mye vann den vanligvis vil ha hver uke (Plant Variety Database) og avlingsfaktoren (FAO-56). Det er bare et forslag: ingenting endres før du trykker Bruk.",
+      "search": "Plante eller sort, f.eks. agurk",
+      "none": "Ingenting funnet. Prøv slags plante (paprika, basilikum, rose) eller en annen stavemåte.",
+      "kind": "midten av alle {n} sortene",
+      "per_week": "per uke",
+      "no_amount": "Ingen ukentlig mengde oppgitt.",
+      "pick": "Bruk denne",
+      "proposal": "Forslag",
+      "normal": "Normal uke",
+      "hot": "Varm uke",
+      "cool": "Kjølig uke",
+      "keep_shape": "Varme og kjølige uker beholder samme forhold til normal uke som nå.",
+      "apply": "Bruk",
+      "applied": "Ferdig. De ukentlige målene er endret.",
+      "source": "Kilde: {name} av {author}, {license}.",
+      "caveat": "Gjennomsnitt fra frøkataloger: jorda, klimaet og regnet avgjør resten. Sjekk resultatet med Hvorfor?.",
+      "crop_factor": "Avlingsfaktor",
+      "kc_source": "Kilde: {name}, {author}.",
+      "crop_source": "Plantetabell: {source}.",
+      "estimate": "(anslag)",
+      "estimate_note": "Et anslag ut fra plantens vannforbruksklasse (plantefaktor for hageanlegg), ikke en målt verdi.",
+      "about": "ca.",
+      "mm_estimate_note": "Den ukentlige mengden er regnet ut fra avlingsfaktoren (1 tomme per uke ved faktor 1,0), ikke målt."
     },
     "check": {
       "title": "Sjekk mitt oppsett",
@@ -3862,6 +4240,7 @@ const I18N = {
       "deficit_water_pct": "Porcentagem da quantidade normal de água aplicada enquanto o modo de déficit estiver ativo. Valores menores estressam mais a planta (estimulam raízes profundas); valores maiores mantêm um crescimento exuberante.",
       "mulch_status": "Solo com cobertura (ou copa densa / gramado) perde pouca água por evaporação. Selecione 'Sem cobertura' para solo exposto e ajuste a porcentagem ao lado.",
       "mulch_et_adjustment_pct": "Ajuste fino da irrigação diária com base na cobertura do solo (-50% a +70%). Valores positivos são para solos expostos que secam rápido; valores negativos para solos que retêm umidade (como argilosos ou na sombra). Ajustes negativos altos reduzem bastante a irrigação: use-os apenas se o solo permanecer úmido e observe o resultado por uma ou duas semanas.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Proporção de chuva fraca que realmente atinge as raízes. O restante evapora ou escorre.",
       "rain_eff_mid": "Proporção de chuva moderada que realmente atinge as raízes. O restante evapora ou escorre.",
       "rain_eff_high": "Proporção de chuva forte que realmente atinge as raízes. O restante evapora ou escorre.",
@@ -3958,6 +4337,32 @@ const I18N = {
       "move_record_only": "Essa zona não tem válvula, então a planta entra nela só como registro.",
       "cancel": "Cancelar",
       "moved": "{plant} movida para {to}"
+    },
+    "water_tips": {
+      "title": "Dicas de rega",
+      "intro": "Procure sua planta para ver quanta água ela costuma querer por semana (Plant Variety Database) e seu coeficiente de cultura (FAO-56). É só uma sugestão: nada muda até você tocar em Aplicar.",
+      "search": "Planta ou tipo, ex.: pepino",
+      "none": "Nada encontrado. Tente o tipo de planta (pimentão, manjericão, rosa) ou outra grafia.",
+      "kind": "o meio de todas as {n} variedades",
+      "per_week": "por semana",
+      "no_amount": "Sem quantidade semanal informada.",
+      "pick": "Usar esta",
+      "proposal": "Sugestão",
+      "normal": "Semana normal",
+      "hot": "Semana quente",
+      "cool": "Semana fresca",
+      "keep_shape": "As semanas quentes e frescas mantêm a mesma proporção em relação à semana normal que agora.",
+      "apply": "Aplicar",
+      "applied": "Pronto. As metas semanais foram alteradas.",
+      "source": "Fonte: {name} de {author}, {license}.",
+      "caveat": "Médias de catálogos de sementes: seu solo, clima e a chuva decidem o resto. Confira o resultado com Por quê?.",
+      "crop_factor": "Coeficiente de cultura",
+      "kc_source": "Fonte: {name}, {author}.",
+      "crop_source": "Tabela de culturas: {source}.",
+      "estimate": "(estimativa)",
+      "estimate_note": "Uma estimativa a partir da classe de consumo de água da planta (fator de plantas paisagísticas), não um valor medido.",
+      "about": "cerca de",
+      "mm_estimate_note": "A quantidade semanal é calculada a partir do coeficiente de cultura (1 polegada por semana com coeficiente 1,0), não é medida."
     },
     "check": {
       "title": "Verificar minha configuração",
@@ -4129,6 +4534,7 @@ const I18N = {
       "deficit_water_pct": "Доля от нормы полива, подаваемая в режиме дефицита. Низкое значение сильнее подвергает растение стрессу (стимулирует рост корней вглубь); высокое — поддерживает пышный рост.",
       "mulch_status": "Замульчированная почва (или плотный покров / газон) теряет мало влаги на испарение. Выберите «Без мульчи» для открытого грунта и задайте процент коррекции рядом.",
       "mulch_et_adjustment_pct": "Точная настройка ежедневного полива в зависимости от покрытия почвы (от -50% до +70%). Положительные значения — для открытой, быстро сохнущей почвы; отрицательные — для влагоемких почв (глинистых или в тени). Сильно отрицательные значения существенно снижают полив: используйте их только если почва остается сырой, и наблюдайте за состоянием в течение 1-2 недель.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Доля слабого дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
       "rain_eff_mid": "Доля умеренного дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
       "rain_eff_high": "Доля сильного дождя, которая реально доходит до корней. Остальное испаряется или стекает.",
@@ -4225,6 +4631,32 @@ const I18N = {
       "move_record_only": "В этой зоне нет клапана, поэтому растение попадёт туда только как запись.",
       "cancel": "Отмена",
       "moved": "{plant} перемещено в {to}"
+    },
+    "water_tips": {
+      "title": "Советы по поливу",
+      "intro": "Найдите своё растение, чтобы увидеть, сколько воды ему обычно нужно в неделю (Plant Variety Database), и его коэффициент культуры (FAO-56). Это только предложение: ничего не изменится, пока вы не нажмёте «Применить».",
+      "search": "Растение или вид, напр. огурец",
+      "none": "Ничего не найдено. Попробуйте вид растения (перец, базилик, роза) или другое написание.",
+      "kind": "середина всех {n} сортов",
+      "per_week": "в неделю",
+      "no_amount": "Недельное количество не указано.",
+      "pick": "Использовать это",
+      "proposal": "Предложение",
+      "normal": "Обычная неделя",
+      "hot": "Жаркая неделя",
+      "cool": "Прохладная неделя",
+      "keep_shape": "Жаркие и прохладные недели сохраняют ту же пропорцию к обычной неделе, что и сейчас.",
+      "apply": "Применить",
+      "applied": "Готово. Недельные нормы изменены.",
+      "source": "Источник: {name}, автор {author}, {license}.",
+      "caveat": "Средние значения из каталогов семян: остальное определяют ваша почва, климат и дождь. Проверьте результат кнопкой «Почему?».",
+      "crop_factor": "Коэффициент культуры",
+      "kc_source": "Источник: {name}, {author}.",
+      "crop_source": "Таблица культур: {source}.",
+      "estimate": "(оценка)",
+      "estimate_note": "Оценка по классу водопотребления растения (коэффициент для ландшафтных растений), а не измеренное значение.",
+      "about": "около",
+      "mm_estimate_note": "Недельное количество рассчитано по коэффициенту культуры (1 дюйм в неделю при коэффициенте 1,0), а не измерено."
     },
     "check": {
       "title": "Проверить настройки",
@@ -4396,6 +4828,7 @@ const I18N = {
       "deficit_water_pct": "Podiel bežnej dávky vody aplikovaný v deficitnom režime. Nižšia hodnota vystavuje rastlinu väčšiemu stresu (podporuje hlbšie zakorenenie); vyššia udržiava bujný rast.",
       "mulch_status": "Mulčovaná pôda (prípadne hustý porast alebo trávnik) stráca odparovaním len málo vody. Pre odhalenú pôdu zvoľte 'Bez mulča' a nastavte vedľajšiu korekciu.",
       "mulch_et_adjustment_pct": "Jemné doladenie dennej závlahy podľa pokrytia pôdy (-50 % až +70 %). Kladné hodnoty pre odhalenú pôdu, ktorá rýchlo schne; záporné hodnoty pre pôdu zadržiavajúcu vodu (napr. ťažká ílovitá alebo v tieni). Výrazne záporné hodnoty značne obmedzia zálievku: používajte ich len vtedy, ak pôda zostáva mokrá, a stav týždeň až dva sledujte.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Podiel mierneho dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
       "rain_eff_mid": "Podiel stredne silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
       "rain_eff_high": "Podiel silného dažďa, ktorý sa skutočne dostane ku koreňom. Zvyšok odtečie alebo sa odparí.",
@@ -4492,6 +4925,32 @@ const I18N = {
       "move_record_only": "Táto zóna nemá ventil, rastlina sa do nej pridá len ako záznam.",
       "cancel": "Zrušiť",
       "moved": "{plant} presunutá do {to}"
+    },
+    "water_tips": {
+      "title": "Tipy na zálievku",
+      "intro": "Vyhľadajte svoju rastlinu a zistite, koľko vody zvyčajne potrebuje za týždeň (Plant Variety Database), a jej koeficient plodiny (FAO-56). Je to len návrh: nič sa nezmení, kým nestlačíte Použiť.",
+      "search": "Rastlina alebo druh, napr. uhorka",
+      "none": "Nič sa nenašlo. Skúste druh rastliny (paprika, bazalka, ruža) alebo iný pravopis.",
+      "kind": "stred všetkých {n} odrôd",
+      "per_week": "za týždeň",
+      "no_amount": "Týždenné množstvo nie je uvedené.",
+      "pick": "Použiť toto",
+      "proposal": "Návrh",
+      "normal": "Normálny týždeň",
+      "hot": "Horúci týždeň",
+      "cool": "Chladný týždeň",
+      "keep_shape": "Horúce a chladné týždne zostanú v rovnakom pomere k normálnemu týždňu ako doteraz.",
+      "apply": "Použiť",
+      "applied": "Hotovo. Týždenné ciele sú zmenené.",
+      "source": "Zdroj: {name}, autor {author}, {license}.",
+      "caveat": "Priemery z katalógov semien: zvyšok určuje vaša pôda, podnebie a dážď. Výsledok skontrolujte tlačidlom Prečo?.",
+      "crop_factor": "Koeficient plodiny",
+      "kc_source": "Zdroj: {name}, {author}.",
+      "crop_source": "Tabuľka plodín: {source}.",
+      "estimate": "(odhad)",
+      "estimate_note": "Odhad podľa triedy spotreby vody danej rastliny (koeficient pre okrasné rastliny), nie nameraná hodnota.",
+      "about": "asi",
+      "mm_estimate_note": "Týždenné množstvo je vypočítané z koeficientu plodiny (1 palec týždenne pri koeficiente 1,0), nie je namerané."
     },
     "check": {
       "title": "Skontrolovať moje nastavenie",
@@ -4663,6 +5122,7 @@ const I18N = {
       "deficit_water_pct": "Частка від норми води під час увімкненого дефіцитного режиму. Нижчий відсоток сильніше піддає рослину стресу (стимулює розвиток глибокого коріння); вищий — підтримує пишний ріст.",
       "mulch_status": "Замульчований ґрунт (або щільний насадження / газон) втрачає мало води через випаровування. Виберіть «Без мульчі» для відкритого ґрунту та налаштуйте відсоток коригування поруч.",
       "mulch_et_adjustment_pct": "Точне налаштування щоденного поливу залежно від покриття ґрунту (від -50% до +70%). Додатні значення — для відкритого ґрунту, що швидко висихає; від'ємні — для ґрунту, що добре утримує вологу (наприклад, глинистого або в тіні). Значні від'ємні значення суттєво зменшують полив: використовуйте їх лише якщо ґрунт залишається вологим, і спостерігайте протягом 1-2 тижнів.",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "Частка слабкого дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
       "rain_eff_mid": "Частка помірного дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
       "rain_eff_high": "Частка сильного дощу, яка дійсно досягає коріння. Решта випаровується або стікає.",
@@ -4759,6 +5219,32 @@ const I18N = {
       "move_record_only": "У цій зоні немає клапана, тому рослина потрапить туди лише як запис.",
       "cancel": "Скасувати",
       "moved": "{plant} переміщено до {to}"
+    },
+    "water_tips": {
+      "title": "Поради щодо поливу",
+      "intro": "Знайдіть свою рослину, щоб побачити, скільки води їй зазвичай потрібно на тиждень (Plant Variety Database), та її коефіцієнт культури (FAO-56). Це лише пропозиція: нічого не зміниться, доки ви не натиснете «Застосувати».",
+      "search": "Рослина або вид, напр. огірок",
+      "none": "Нічого не знайдено. Спробуйте вид рослини (перець, базилік, троянда) або інше написання.",
+      "kind": "середина всіх {n} сортів",
+      "per_week": "на тиждень",
+      "no_amount": "Тижневу кількість не вказано.",
+      "pick": "Використати це",
+      "proposal": "Пропозиція",
+      "normal": "Звичайний тиждень",
+      "hot": "Спекотний тиждень",
+      "cool": "Прохолодний тиждень",
+      "keep_shape": "Спекотні й прохолодні тижні зберігають ту саму пропорцію до звичайного тижня, що й зараз.",
+      "apply": "Застосувати",
+      "applied": "Готово. Тижневі норми змінено.",
+      "source": "Джерело: {name}, автор {author}, {license}.",
+      "caveat": "Середні значення з каталогів насіння: решту визначають ваш ґрунт, клімат і дощ. Перевірте результат кнопкою «Чому?».",
+      "crop_factor": "Коефіцієнт культури",
+      "kc_source": "Джерело: {name}, {author}.",
+      "crop_source": "Таблиця культур: {source}.",
+      "estimate": "(оцінка)",
+      "estimate_note": "Оцінка за класом водоспоживання рослини (коефіцієнт для ландшафтних рослин), а не виміряне значення.",
+      "about": "приблизно",
+      "mm_estimate_note": "Тижневу кількість розраховано за коефіцієнтом культури (1 дюйм на тиждень за коефіцієнта 1,0), її не виміряно."
     },
     "check": {
       "title": "Перевірити мої налаштування",
@@ -4930,6 +5416,7 @@ const I18N = {
       "deficit_water_pct": "赤字灌溉模式下提供正常水量的百分比。设定较低值会让植物承受一定水分胁迫（有助于促进根系深扎）；较高值则可保持生长繁茂。",
       "mulch_status": "覆盖有机物（或具有密集的树冠、草坪）的土壤水分蒸发量极低。若为裸露土壤请选择“未覆盖”，并调整旁边的修正百分比。",
       "mulch_et_adjustment_pct": "根据土壤覆盖情况微调日常灌水量（-50% 至 +70%）。正值适用于干燥快的裸露土壤，负值适用于保水性强的土壤（如重黏土或阴凉区域）。较大的负值会大幅减少灌水量：仅建议在土壤持续湿润时使用，并观察一至两周。",
+      "rain_ignore_below_mm": "A day's rain up to this counts as nothing toward the watering: a little drizzle only wets the surface and never reaches the roots. 3 mm to start with. Lower it to count light rain too, for shallow roots or sandy soil.",
       "rain_eff_low": "小雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
       "rain_eff_mid": "中雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
       "rain_eff_high": "大雨中实际渗透至根系有效吸收层的比例，其余部分会蒸发或形成地表径流。",
@@ -5026,6 +5513,32 @@ const I18N = {
       "move_record_only": "该区域没有阀门,植物只会作为记录加入。",
       "cancel": "取消",
       "moved": "{plant} 已移到 {to}"
+    },
+    "water_tips": {
+      "title": "浇水提示",
+      "intro": "查找你的植物，了解它通常每周需要多少水（Plant Variety Database）及其作物系数（FAO-56）。这只是建议：在你点按“应用”之前不会有任何改变。",
+      "search": "植物或种类，例如黄瓜",
+      "none": "未找到。请试试植物的种类（辣椒、罗勒、玫瑰）或其他写法。",
+      "kind": "全部 {n} 个品种的中间值",
+      "per_week": "每周",
+      "no_amount": "未给出每周用水量。",
+      "pick": "使用此项",
+      "proposal": "建议",
+      "normal": "正常周",
+      "hot": "炎热周",
+      "cool": "凉爽周",
+      "keep_shape": "炎热周和凉爽周与正常周保持与现在相同的比例。",
+      "apply": "应用",
+      "applied": "完成。每周目标已更改。",
+      "source": "来源：{name}，作者 {author}，{license}。",
+      "caveat": "数据为种子目录中的平均值：其余由你的土壤、气候和降雨决定。请用“为什么？”检查结果。",
+      "crop_factor": "作物系数",
+      "kc_source": "来源：{name}，{author}。",
+      "crop_source": "作物表：{source}。",
+      "estimate": "（估计）",
+      "estimate_note": "根据该植物的需水等级（园林植物系数）估计，并非实测值。",
+      "about": "约",
+      "mm_estimate_note": "每周用水量由作物系数推算（系数为 1.0 时每周 1 英寸），并非实测。"
     },
     "check": {
       "title": "检查我的设置",
@@ -5187,7 +5700,7 @@ const SETTINGS_GROUPS = [
     "number.rain_mm_per_tip", "number.preirrigation_rain_threshold_mm",
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
     "number.forecast_dry_override_days", "number.frost_guard_temp",
-    "number.rain_eff_low", "number.rain_eff_mid", "number.rain_eff_high",
+    "number.rain_ignore_below_mm", "number.rain_eff_low", "number.rain_eff_mid", "number.rain_eff_high",
   ]],
   ["deep_soak", [
     "switch.deep_soak_enabled", "number.deep_soak_target_mm", "number.deep_soak_interval_days",
@@ -5427,6 +5940,10 @@ class ZoneFlowCard extends HTMLElement {
       .plant-badge { font-size: 0.75em; color: var(--secondary-text-color); }
       .plant-badge.main { color: var(--primary-color); font-weight: 500; }
       .plant-actions, .plant-form, .plant-noterow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+      .tips-row { padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
+      .tips-name { font-weight: 500; }
+      .tips-amount { color: var(--secondary-text-color); margin-bottom: 4px; }
+      .tips-proposal { margin-top: 12px; }
       .plant-button { font: inherit; color: var(--primary-color); background: none; border: 1px solid var(--divider-color);
         border-radius: 16px; padding: 4px 12px; cursor: pointer; }
       .plant-button:hover { background: var(--secondary-background-color); }
@@ -5643,6 +6160,21 @@ class ZoneFlowCard extends HTMLElement {
     if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
     }
+    // Watering tips: what the plant usually wants per week, from a plant database (administrators).
+    if (this._config.show_settings && valve && hass.user?.is_admin && visible["number.target_weekly_mm"]) {
+      const mainPlant = (statusAttrs.plants || []).find((plant) => plant.main) || (statusAttrs.plants || [])[0];
+      this._popups.water_tips = {
+        icon: "mdi:book-search-outline", custom: "water_tips", parts: [], label: t(hass, "water_tips.title"),
+        // The plant's own name without its variety ("Tomatoes 'Roma'" -> "Tomatoes").
+        plant: String(mainPlant?.name || "").replace(/\s['"\u2018\u2019].*$/, "").trim(),
+        targets: {
+          normal: visible["number.target_weekly_mm"]?.entity_id,
+          hot: visible["number.target_weekly_hot_mm"]?.entity_id,
+          cool: visible["number.target_weekly_cool_mm"]?.entity_id,
+          kc: visible["number.crop_coefficient"]?.entity_id,
+        },
+      };
+    }
     // When the routine watering and the deep soak start (a zone that waters).
     if (this._config.show_settings && valve && statusAttrs.schedule && hass.user?.is_admin) {
       this._popups.schedule = {
@@ -5768,6 +6300,7 @@ class ZoneFlowCard extends HTMLElement {
     if (popup.custom === "check") this._checkBody(body);
     if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
+    if (popup.custom === "water_tips") this._waterTipsBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       // A group of settings that are all "advanced" is hidden with them.
       const advGroup = everyday && confs.every((conf) => conf._adv);
@@ -5916,6 +6449,151 @@ class ZoneFlowCard extends HTMLElement {
     const again = make("button", "plant-button", t(hass, "check.again"));
     again.addEventListener("click", () => this._checkBody(body));
     body.appendChild(again);
+  }
+
+  _waterTipsBody(body, popup) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    const stateOf = (entityId) => this._hass.states?.[entityId]; // always the current states, not those at opening
+    const unit = stateOf(popup.targets.normal)?.attributes?.unit_of_measurement === "in" ? "in" : "mm";
+    const show = (mm) => {
+      const value = unit === "in" ? mm / 25.4 : mm;
+      return String(Number(value.toFixed(unit === "in" ? 2 : 1)));
+    };
+    const amount = (item) => {
+      const parts = [];
+      if (item.low_mm != null) {
+        const [low, high] = [show(item.low_mm), show(item.high_mm)];
+        const weekly = `${low === high ? low : `${low}\u2013${high}`} ${unit} ${t(hass, "water_tips.per_week")}`;
+        parts.push(item.mm_estimate ? `${t(hass, "water_tips.about")} ${weekly}` : weekly);
+      }
+      if (item.kc != null) parts.push(`${t(hass, "water_tips.crop_factor")} ${item.kc}${item.kc_estimate ? ` ${t(hass, "water_tips.estimate")}` : ""}`);
+      return parts.join(", ");
+    };
+    const usable = (item) => item.low_mm != null || item.kc != null;
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "water_tips.intro")));
+    const input = make("input", "area-input");
+    input.type = "search";
+    input.placeholder = t(hass, "water_tips.search");
+    input.value = popup.plant || "";
+    const list = make("div", "tips-list");
+    const proposal = make("div", "tips-proposal");
+    const credit = make("div", "group-note");
+    body.append(input, list, proposal, credit);
+
+    // What applying would do: the normal week gets the middle of the range, and the hot and
+    // cool weeks keep the proportion they have to it now.
+    const propose = (item) => {
+      proposal.textContent = "";
+      const now = Object.fromEntries(Object.entries(popup.targets).map(([key, id]) => [key, Number(stateOf(id)?.state)]));
+      const next = {};
+      const fit = (key, wanted) => {
+        const entity = stateOf(popup.targets[key]);
+        if (!entity || !Number.isFinite(now[key])) return;
+        const { min, max, step } = entity.attributes;
+        const value = Math.round(wanted / (step || 0.1)) * (step || 0.1);
+        next[key] = Number(Math.min(Math.max(value, min ?? value), max ?? value).toFixed(unit === "in" && key !== "kc" ? 3 : 2));
+      };
+      if (item.low_mm != null) {
+        const middle = (item.low_mm + item.high_mm) / 2 / (unit === "in" ? 25.4 : 1);
+        const factor = now.normal > 0 ? middle / now.normal : 1;
+        fit("normal", middle);
+        fit("hot", now.hot * factor);
+        fit("cool", now.cool * factor);
+      }
+      if (item.kc != null) fit("kc", item.kc);
+      proposal.appendChild(make("div", "group-title", `${t(hass, "water_tips.proposal")}: ${item.name}`));
+      for (const key of ["normal", "hot", "cool", "kc"]) {
+        if (next[key] === undefined) continue;
+        const line = `${t(hass, `water_tips.${key === "kc" ? "crop_factor" : key}`)}: ${now[key]} \u2192 ${next[key]}${key === "kc" ? "" : ` ${unit}`}`;
+        proposal.appendChild(make("div", "", line));
+      }
+      if (item.low_mm != null) proposal.appendChild(make("div", "group-note", t(hass, "water_tips.keep_shape")));
+      const done = make("div", "group-note");
+      const apply = make("button", "plant-button", t(hass, "water_tips.apply"));
+      apply.addEventListener("click", async () => {
+        try {
+          // The hot and cool weeks first: the normal one last, so the sliders never cross on the way.
+          for (const key of ["hot", "cool", "normal", "kc"]) {
+            if (next[key] !== undefined) await hass.callService("number", "set_value", { entity_id: popup.targets[key], value: next[key] });
+          }
+          done.textContent = t(hass, "water_tips.applied");
+        } catch (err) {
+          done.textContent = err?.message || String(err);
+        }
+      });
+      proposal.append(apply, done, make("div", "group-note", t(hass, "water_tips.caveat")));
+    };
+
+    let latest = 0;
+    const search = async () => {
+      const mine = ++latest;
+      proposal.textContent = "";
+      const query = input.value.trim().slice(0, 60); // the most the server takes
+      if (!query) { list.textContent = ""; return; }
+      let data;
+      try {
+        data = await hass.callWS({ type: "zoneflow/plant_water", query });
+      } catch (err) {
+        if (mine === latest) list.textContent = err?.message || String(err);
+        return;
+      }
+      if (mine !== latest) return; // a newer search is on its way
+      list.textContent = "";
+      if (!data.results.length) list.appendChild(make("div", "group-note", t(hass, "water_tips.none")));
+      for (const item of data.results) {
+        const row = make("div", "tips-row");
+        row.appendChild(make("div", "tips-name", item.name));
+        if (usable(item)) row.appendChild(make("div", "tips-amount", amount(item)));
+        const short = data.kc_sources?.[item.kc_source]?.short || "";
+        const sub = item.kind === "category"
+          ? t(hass, "water_tips.kind").replace("{n}", item.count)
+          : (item.kind === "crop" ? t(hass, "water_tips.crop_source").replace("{source}", short)
+            : (item.kc_estimate ? t(hass, "water_tips.estimate_note")
+              : (item.mm_estimate ? t(hass, "water_tips.mm_estimate_note") : (item.low_mm != null ? "" : item.note))));
+        if (sub) row.appendChild(make("div", "group-note", sub));
+        if (usable(item)) {
+          const use = make("button", "plant-button", t(hass, "water_tips.pick"));
+          use.addEventListener("click", () => propose(item));
+          row.appendChild(use);
+        } else {
+          row.appendChild(make("div", "group-note", t(hass, "water_tips.no_amount")));
+        }
+        list.appendChild(row);
+      }
+      const src = data.source || {};
+      credit.textContent = t(hass, "water_tips.source").replace("{name}", src.name).replace("{author}", src.author).replace("{license}", src.license) + " ";
+      for (const [label, url] of [["GitHub", src.url], [src.license, src.license_url]]) {
+        if (!url) continue;
+        const link = make("a", "", label);
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        credit.append(link, document.createTextNode(" "));
+      }
+      // The sources of the crop factors in these results, each with a link.
+      for (const kcSrc of Object.values(data.kc_sources || {})) {
+        credit.appendChild(document.createElement("br"));
+        credit.appendChild(document.createTextNode(
+          t(hass, "water_tips.kc_source").replace("{name}", kcSrc.name).replace("{author}", kcSrc.author) + " "));
+        if (kcSrc.url) {
+          const link = make("a", "", kcSrc.short || "link");
+          link.href = kcSrc.url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          credit.appendChild(link);
+        }
+      }
+    };
+    let timer;
+    input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(search, 300); });
+    if (input.value) search();
   }
 
   _calibrateBody(body, popup) {

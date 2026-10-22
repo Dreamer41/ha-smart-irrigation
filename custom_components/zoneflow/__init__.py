@@ -97,6 +97,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     (frontend.py has the rest)."""
     await frontend.async_register(hass)
     websocket_api.async_register_command(hass, plant_api.ws_plants)
+    websocket_api.async_register_command(hass, plant_api.ws_plant_water)
     websocket_api.async_register_command(hass, plant_api.ws_check)
     websocket_api.async_register_command(hass, plant_api.ws_check_ignore)
     websocket_api.async_register_command(hass, plant_api.ws_why)

@@ -24,6 +24,7 @@ DEPTH_KEYS = {
     "drydown_rain_4d_mm",
     "drydown_rain_7d_mm",
     "forecast_rain_threshold_mm",
+    "rain_ignore_below_mm",
     "manual_rain_mm",
 }
 # Emitter application rate: mm/min <-> in/h (the usual drip rating in the US).

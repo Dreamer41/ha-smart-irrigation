@@ -6,19 +6,21 @@
         "description": "Gib dieser Bewässerungszone einen kurzen Namen (z. B. „Rasen vorne“, „Avocadobaum“). Für weitere Zonen füge diese Integration später einfach erneut hinzu.",
         "data": {
           "zone_name": "Zonenname",
-          "plant": "Was hier wächst",
+          "plant": "Was hier wächst (falls oben nicht gewählt)",
           "zone_type": "Anbauort",
           "start_from": "Starten von",
           "location": "Wo befindet sich dies?",
-          "quick_setup": "Schnelleinrichtung (empfohlen)"
+          "quick_setup": "Schnelleinrichtung (empfohlen)",
+          "plant_search": "Pflanze suchen (optional)"
         },
         "data_description": {
           "zone_name": "Wird zum Gerätenamen der Zone und zum Anfang ihrer Entitätsnamen und erscheint in Handy-Nachrichten. Z. B. „Tomatenbeet“, „Rasen vorne“.",
-          "plant": "Füllt sinnvolle Startwerte für diese Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern.",
+          "plant": "Füllt Startwerte für diese Art von Pflanze ein: Wochenziele für Wasser, Pflanzenfaktor, Tiefenbewässerung und Wachstumskurve. Wenn Sie Ihre Pflanze oben in der Liste gewählt haben, lassen Sie dies auf „Etwas anderes“: Der passende Typ wird für Sie gewählt, und Wochenwasser und Pflanzenfaktor aus der Liste werden verwendet. Wählen Sie hier einen Typ, wenn Ihre Pflanze nicht in der Liste steht. „Etwas anderes“ startet mit allgemeinen Werten. Alles lässt sich später auf der Geräteseite der Zone ändern.",
           "zone_type": "Außenbereich ist die bisherige Funktionsweise von ZoneFlow. Gewächshaus- und Innenraumbereiche fügen eine Klimasteuerung hinzu (Lüfter, Belüftung, Vernebelung, Heizung), können ohne Ventil arbeiten und haben aufgrund des Dachs keinen Regensensor oder Wetterbericht.",
           "start_from": "Starten Sie mit einer Kopie der Bewässerungseinstellungen einer anderen Zone oder einer gespeicherten Voreinstellung statt der des Pflanzentyps. Ventil, Sensoren und Durchflussrate werden niemals kopiert.",
           "location": "Der Bereich, in dem sich diese Zone befindet, falls vorhanden. Sie nutzt dann Regenmesser, Temperatursensor, Wetter und Handy des Bereichs, solange du ihr keine eigenen gibst.",
-          "quick_setup": "Fragt nur nach dem Ventil und der Art der Bewässerung und ergänzt den Rest aus der Pflanzenart und den gefundenen Sensoren. Alles lässt sich später unter Konfigurieren ändern. Haken entfernen, um alle Einstellungen jetzt zu sehen."
+          "quick_setup": "Fragt nur nach dem Ventil und der Art der Bewässerung und ergänzt den Rest aus der Pflanzenart und den gefundenen Sensoren. Alles lässt sich später unter Konfigurieren ändern. Haken entfernen, um alle Einstellungen jetzt zu sehen.",
+          "plant_search": "Tippen Sie eine Pflanze ein, z. B. „Gurke“, und wählen Sie sie aus der Liste: Jede zeigt ihre übliche Wassermenge pro Woche (Plant Variety Database, Wind River Greens, CC BY 4.0) und ihren Pflanzenfaktor (FAO-56, Allen et al. 1998). Diese werden zu den Startwerten der Zone, und der Pflanzentyp unten wird passend gewählt, wo es einen gibt. Text, der nicht in der Liste steht, wird auf dem nächsten Bildschirm gesucht. Pflanze nicht gefunden? Lassen Sie das Feld leer und wählen Sie unten Was hier wächst."
         }
       },
       "entities": {
@@ -226,12 +228,14 @@
         "data": {
           "greenhouse_entry_id": "Gewächshaus",
           "zone_name": "Kulturname",
-          "plant": "Was gepflanzt ist"
+          "plant": "Was gepflanzt ist (falls oben nicht gewählt)",
+          "plant_search": "Pflanze suchen (optional)"
         },
         "data_description": {
           "greenhouse_entry_id": "Das Gewächshaus oder die Innenzone mit den Klimageräten.",
           "zone_name": "Wird zum Gerätenamen der Kultur und zum Anfang ihrer Entitätsnamen, z. B. „Tomaten“.",
-          "plant": "Füllt sinnvolle Startwerte für diese Kultur ein."
+          "plant": "Füllt sinnvolle Startwerte für diese Kultur ein. Wenn Sie oben in der Liste eine Pflanze gewählt haben, lassen Sie dies auf „Etwas anderes“: Der passende Typ wird für Sie gewählt.",
+          "plant_search": "Tippen Sie eine Pflanze ein, z. B. „Gurke“, und wählen Sie sie aus der Liste: Jede zeigt ihre übliche Wassermenge pro Woche (Plant Variety Database, Wind River Greens, CC BY 4.0) und ihren Pflanzenfaktor (FAO-56, Allen et al. 1998). Diese werden zu den Startwerten der Zone, und der Pflanzentyp unten wird passend gewählt, wo es einen gibt. Text, der nicht in der Liste steht, wird auf dem nächsten Bildschirm gesucht. Pflanze nicht gefunden? Lassen Sie das Feld leer und wählen Sie unten Was hier wächst."
         }
       },
       "crop_valve": {
@@ -297,6 +301,16 @@
       "valve_result": {
         "title": "Valve test",
         "description": "{result}"
+      },
+      "plant_pick": {
+        "title": "Was die Pflanzendatenbank sagt",
+        "description": "{result}\n\nQuellen: {source}. Das sind Durchschnittswerte aus Saatgutkatalogen und einem Lehrbuch; Boden, Klima und Regen bestimmen den Rest.",
+        "data": {
+          "pick": "Wochenwasser zum Start"
+        },
+        "data_description": {
+          "pick": "Wählen Sie die passende Pflanze oder behalten Sie die Startwerte."
+        }
       }
     },
     "error": {
@@ -793,6 +807,9 @@
       },
       "target_weekly_cool_mm": {
         "name": "Routine: Wochenziel kühl"
+      },
+      "rain_ignore_below_mm": {
+        "name": "Regen ignoriert unter (pro Tag)"
       },
       "rain_eff_low": {
         "name": "Regenwirksamkeit – leicht (3-5mm)"

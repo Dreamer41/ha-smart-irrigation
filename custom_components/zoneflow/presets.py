@@ -43,7 +43,7 @@ NAME_MAX_LENGTH = 40
 COPY_NUMBER_KEYS = (
     "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm", "crop_coefficient",
     "hot_temp_threshold", "cool_temp_threshold", "frost_guard_temp",
-    "rain_eff_low", "rain_eff_mid", "rain_eff_high",
+    "rain_ignore_below_mm", "rain_eff_low", "rain_eff_mid", "rain_eff_high",
     "deep_soak_target_mm", "deep_soak_max_runtime_minutes", "deep_soak_drydown_days",
     "deep_soak_interval_days", "deep_soak_rain_threshold",
     "max_runtime_minutes", "max_daily_runtime_minutes", "routine_drydown_days",

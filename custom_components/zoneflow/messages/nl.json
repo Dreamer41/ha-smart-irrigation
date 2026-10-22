@@ -414,7 +414,15 @@
   },
   "setup": {
     "progress": "Stap {n} van {total}",
-    "nothing_found": "Er zijn geen sensoren gevonden. Voeg ze later toe bij Configureren."
+    "nothing_found": "Er zijn geen sensoren gevonden. Voeg ze later toe bij Configureren.",
+    "plant_keep": "De beginwaarden voor deze plant behouden",
+    "plant_kind": "{name}, het midden van alle {n} rassen",
+    "plant_some": "Dit is gevonden voor “{query}”: het gebruikelijke weekwater in {unit} en de gewasfactor. Kies er een als beginwaarden, of behoud de beginwaarden.",
+    "plant_nothing": "Voor “{query}” is niets met een weekhoeveelheid gevonden. De beginwaarden blijven; ga verder en pas ze later aan op de zonekaart.",
+    "plant_crop": "{name} ({source})",
+    "plant_kc": "gewasfactor {kc}",
+    "plant_kc_estimate": "gewasfactor ongeveer {kc} (schatting)",
+    "plant_about": "ongeveer {amount}"
   },
   "valve_test": {
     "ok": "The valve answered: it opened and closed again.",
