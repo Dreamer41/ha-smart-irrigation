@@ -1,5 +1,6 @@
 """Watering suggestions from the Plant Variety Database (CC BY 4.0): the numbers read
 from its text, the search, and the websocket command the card asks."""
+import asyncio
 import importlib.util
 import json
 from pathlib import Path
@@ -145,7 +146,12 @@ async def test_the_websocket_command_answers_with_results_and_the_source(hass):
     # Through the command's real schema, as Home Assistant checks it.
     message = plant_api.ws_plant_water._ws_schema({"id": 3, "type": "zoneflow/plant_water", "query": "cucumber"})
     plant_api.ws_plant_water(hass, connection, message)
-    await hass.async_block_till_done()
+    # The command answers from a background task, which newer Home Assistant does not wait for in
+    # async_block_till_done: wait for the answer itself.
+    for _ in range(200):
+        if connection.sent:
+            break
+        await asyncio.sleep(0.05)
     msg_id, result = connection.sent[0]
     assert msg_id == 3 and result["results"][0]["kind"] == "category"
     assert result["source"]["license"] == "CC BY 4.0"
