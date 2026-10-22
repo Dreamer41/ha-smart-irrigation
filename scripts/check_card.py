@@ -696,8 +696,8 @@ def check_activity(browser, check) -> None:
                     const lu = (hoursAgo) => (now - hoursAgo * 3600000) / 1000;
                     const st = (state, code, decided, hoursAgo, cycle) => ({s: state, a: {code, decided_at: decided, cycle}, lu: lu(hoursAgo)});
                     return {'sensor.chilis_status': empty ? [] : [
-                        st('Routine done at 05:30: 13 mm in 8 min — next Fri 05:30', 'done', iso(72), 72, 'routine'),
-                        st('Routine done at 05:30: 13 mm in 8 min — next Sat 05:30', 'done', iso(72), 71, 'routine'),
+                        st('Routine done at 05:30: 13 mm in 8 min · next Fri 05:30', 'done', iso(72), 72, 'routine'),
+                        st('Routine done at 05:30: 13 mm in 8 min · next Sat 05:30', 'done', iso(72), 71, 'routine'),
                         st('Next watering Fri 05:30, estimated 13 mm', 'next', null, 70, null),
                         st('Waiting for the soil to dry (45%)', 'waiting_soil_wet', iso(60), 60, 'routine'),
                         st('Routine skipped at 05:30: recent rain (4.2 mm) covers the 13 mm needed', 'skipped_rain_credit', iso(48), 48, 'routine'),
@@ -740,7 +740,7 @@ def check_activity(browser, check) -> None:
             texts = [r[0] for r in opened["rows"]]
             check(texts == ["Watering now: Routine", "Routine stopped at 05:34 before finishing",
                             "Routine skipped at 05:30: recent rain (4.2 mm) covers the 13 mm needed",
-                            "Routine done at 05:30: 13 mm in 8 min — next Fri 05:30"],
+                            "Routine done at 05:30: 13 mm in 8 min"],
                   "activity: one line per decision, newest first, without the next watering and waiting lines")
             classes = [r[1] for r in opened["rows"]]
             check("ran" in classes[0] and "warn" in classes[1] and "ran" in classes[3] and "warn" not in classes[2],
