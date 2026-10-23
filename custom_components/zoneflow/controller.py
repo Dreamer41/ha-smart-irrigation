@@ -5280,7 +5280,10 @@ class ZoneFlowController:
             return result
         drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
         if state.last_significant_rain_ts is not None and drydown_end > now_ts:
-            result.update(code="waiting_drydown", text=self._msg("status.waiting_drydown", until=self._when(drydown_end)))
+            result.update(
+                code="waiting_drydown",
+                text=with_next(self._msg("status.waiting_drydown", until=self._when(drydown_end))),
+            )
             return result
         amount = estimate(next_cycle) if next_ts is not None else None
         if state.last_routine_ts is None and next_ts is not None:
