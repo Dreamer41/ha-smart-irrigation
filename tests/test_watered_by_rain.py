@@ -10,6 +10,7 @@ from unittest.mock import AsyncMock
 import homeassistant.util.dt as dt_util
 import pytest
 
+from custom_components.zoneflow import calculations as calc
 from custom_components.zoneflow.const import DOMAIN
 
 from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry
@@ -102,6 +103,7 @@ async def test_the_offset_ends_when_the_window_has_passed(hass, fake_valve_servi
     c = await _zone(hass, rain_today=60.0)
     await c._on_rain_credit_check()
     c.store.state.rain_credit_spent_ts -= 9 * DAY
+    c.store.state.rain_credit_marks = [[t - 9 * DAY, m] for t, m in c.store.state.rain_credit_marks]
     c.store.state.last_routine_ts = c.store.state.rain_credit_spent_ts
     assert c.rain_offset_mm() == 0.0
 
@@ -377,3 +379,95 @@ async def test_a_rain_decision_does_not_hide_the_dry_down(hass, fake_valve_servi
     assert status["text"].startswith("Deep soak counted as done")
     assert " · Drying out after rain until " in status["text"] and " · next " in status["text"]
     assert status["text"].index("Drying out") < status["text"].index(" · next ")
+
+
+# --- the rain credit rolls (1.7.7) ---------------------------------------------
+
+
+def _age(c, seconds):
+    """Everything a rain mark wrote happened `seconds` earlier."""
+    state = c.store.state
+    state.rain_credit_marks = [[t - seconds, m] for t, m in state.rain_credit_marks]
+    state.rain_credit_spent_ts -= seconds
+    state.last_routine_ts -= seconds
+
+
+@pytest.mark.asyncio
+async def test_a_rain_mark_keeps_the_days_of_rain_before_it_in_the_credit(hass, fake_valve_services):
+    """Oct 22: 21 mm, Oct 23: 45 mm. The mark takes one dose off; the credit still counts both days."""
+    c = await _zone(hass, rain_today=45.0)
+    real_watering = dt_util.utcnow().timestamp() - 3.5 * DAY
+    c.store.state.last_routine_ts = real_watering
+    c.store.state.rain_day_history_mm = [21.3] + [0.0] * 9
+    dose = c._routine_plan().interval_target_mm
+    high = c.number("rain_eff_high")
+
+    await c._on_rain_credit_check()
+
+    assert c.store.state.rain_window_base_ts == real_watering  # the window still starts at the real watering
+    assert c.store.state.last_routine_ts > real_watering  # the interval starts again all the same
+    plan = c._routine_plan()
+    assert plan.eff_rain_mm == pytest.approx(45.0 * high + 21.3 * high - dose, abs=0.1)  # both days, less one dose
+    assert plan.needed_mm == 0.0  # the next routine has nothing to add
+
+
+@pytest.mark.asyncio
+async def test_the_old_mark_did_not_count_rain_before_it(hass, fake_valve_services):
+    """A mark written before 1.7.7 (no window start) is read the old way."""
+    c = await _zone(hass, rain_today=0.0)
+    now_ts = dt_util.utcnow().timestamp()
+    c.store.state.last_routine_ts = now_ts - 3600
+    c.store.state.rain_credit_spent_ts = now_ts - 3600
+    c.store.state.rain_credit_spent_mm = 12.57
+    c.store.state.rain_day_history_mm = [21.3] + [0.0] * 9
+    assert c.store.state.rain_window_base_ts is None and c._chain_marks() == []
+    assert c._routine_plan().eff_rain_mm == 0.0  # yesterday is before the mark: not counted, as it was
+
+
+@pytest.mark.asyncio
+async def test_a_second_mark_in_the_same_spell_takes_a_second_dose(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=70.0)
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 3.5 * DAY
+    dose = c._routine_plan().interval_target_mm
+    await c._on_rain_credit_check()
+    base = c.store.state.rain_window_base_ts
+    _age(c, 4 * DAY + 1)  # a whole interval later, still raining
+    c.store.state.rain_window_base_ts = base - (4 * DAY + 1)  # (the real watering moves back with it)
+    c.today_rain_mm = lambda: 40.0
+    c.store.state.rain_day_history_mm = [70.0] + [0.0] * 9
+    await c._on_rain_credit_check()
+
+    assert len(c.store.state.rain_credit_marks) == 2
+    assert c.rain_offset_mm() == pytest.approx(2 * dose, abs=0.05)
+
+
+@pytest.mark.asyncio
+async def test_a_dose_leaves_with_the_day_it_was_taken_on(hass, fake_valve_services):
+    """Five days on, the rain of the mark day is out of the window and so is the dose taken for it."""
+    c = await _zone(hass, rain_today=60.0)
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 3.5 * DAY
+    await c._on_rain_credit_check()
+    assert c.rain_offset_mm() > 0
+    _age(c, 5.2 * DAY)
+    c.store.state.rain_window_base_ts -= 5.2 * DAY
+    c.today_rain_mm = lambda: 6.0
+    c.store.state.rain_day_history_mm = [0.0, 0.0, 0.0, 0.0, 60.0] + [0.0] * 5
+    assert c.rain_offset_mm() == 0.0
+    eff = calc.rain_efficiency(
+        6.0, c.number("rain_eff_low"), c.number("rain_eff_mid"), c.number("rain_eff_high"), c.number("rain_ignore_below_mm")
+    )
+    assert c._routine_plan().eff_rain_mm == pytest.approx(6.0 * eff, abs=0.05)  # only today's rain: the 60 mm is out
+
+
+@pytest.mark.asyncio
+async def test_a_real_watering_after_a_mark_starts_the_credit_again(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=60.0)
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 3.5 * DAY
+    c.store.state.rain_day_history_mm = [30.0] + [0.0] * 9
+    await c._on_rain_credit_check()
+    assert c._chain_marks()
+    c.store.state.last_routine_ts += 3600  # the valve ran after the mark
+    assert c._chain_marks() == [] and c.rain_offset_mm() == 0.0
+    assert c._rain_pool_elapsed() == pytest.approx(
+        dt_util.utcnow().timestamp() - c.store.state.last_routine_ts, abs=5
+    )  # the window starts at that watering again

@@ -232,6 +232,11 @@ class IrrigationState:
     # rain"), so the same rain is not credited again to the next one.
     rain_credit_spent_mm: float = 0.0
     rain_credit_spent_ts: float | None = None
+    # 1.7.7: the rain credit rolls. A rain mark does not wipe the days before it: the
+    # window keeps starting at the last real watering (`rain_window_base_ts`) and each
+    # mark only takes one dose off it. `rain_credit_marks` is [[time, mm], ...] since then.
+    rain_window_base_ts: float | None = None
+    rain_credit_marks: list = field(default_factory=list)
     self_tune_skip_streak: int = 0
 
     # --- 1.6 greenhouse / indoor climate (greenhouse.py) ---
