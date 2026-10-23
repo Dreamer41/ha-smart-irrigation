@@ -4418,7 +4418,8 @@ class ZoneFlowController:
                 continue
         # The chain is only as long as the last watering is its own latest mark: a real watering
         # after it, or a Last Routine time set back before it, starts the credit over.
-        if not marks or abs((state.last_routine_ts or 0.0) - marks[-1][0]) > 1:
+        # A mark dated in the future (the clock was stepped back) cannot be placed: no chain.
+        if not marks or abs((state.last_routine_ts or 0.0) - marks[-1][0]) > 1 or marks[-1][0] > dt_util.utcnow().timestamp() + 60:
             return []
         return marks
 
@@ -4440,7 +4441,7 @@ class ZoneFlowController:
         newest = None  # the age in days of the newest mark still in the window
         for ts, mm in self._chain_marks():
             age = (today - dt_util.as_local(dt_util.utc_from_timestamp(ts)).date()).days
-            if age <= days:
+            if 0 <= age <= days:
                 total += mm
                 newest = age if newest is None else min(newest, age)
         if newest is None:

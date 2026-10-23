@@ -574,3 +574,16 @@ async def test_a_mark_across_the_clock_change_still_ages_by_local_days(hass, fak
         assert dt_util.now().date().isoformat() == "2026-10-25"
         assert c._chain_offset(2 * DAY + 3600) <= 10.0  # counted, never negative or doubled
         assert c._chain_offset(2 * DAY + 3600) >= 0.0
+
+
+@pytest.mark.asyncio
+async def test_a_mark_dated_in_the_future_never_breaks_the_plan(hass, fake_valve_services):
+    """The clock was stepped back after a mark was written: the chain is dropped, nothing raises."""
+    c = await _zone(hass, rain_today=6.0)
+    future = dt_util.utcnow().timestamp() + 12 * DAY
+    c.store.state.last_routine_ts = future
+    c.store.state.rain_window_base_ts = future - 3 * DAY
+    c.store.state.rain_credit_marks = [[future, 17.0]]
+    assert c._chain_marks() == []
+    c._routine_plan()
+    c.rain_offset_mm()

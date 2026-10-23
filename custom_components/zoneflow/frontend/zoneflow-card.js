@@ -6795,7 +6795,8 @@ class ZoneFlowCard extends HTMLElement {
         // (" · next Fri 05:30" at the end of a decision was true only when it was said: leave it out of a history)
         if (!seen.has(key)) seen.set(key, { code, at, text: String(item.s ?? item.state ?? "").split(" · ")[0] });
       }
-      const rows = [...seen.values()].filter((r) => r.text && !Number.isNaN(r.at)).sort((a, b) => b.at - a.at).slice(0, 40);
+      const oldest = end.getTime() - 10 * 86400000;
+      const rows = [...seen.values()].filter((r) => r.text && !Number.isNaN(r.at) && r.at >= oldest).sort((a, b) => b.at - a.at).slice(0, 40);
       list.textContent = "";
       if (!rows.length) list.textContent = t(hass, "activity.none");
       for (const row of rows) {
