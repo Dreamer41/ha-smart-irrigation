@@ -388,6 +388,7 @@
     "target": "Týždenný cieľ: {target}.",
     "scale": "Tento cieľ je upravený na {pct} % podľa fázy rastu, režimu deficitu a mulču.",
     "rain": "Započítaný dážď od poslednej zálievky: {credit} (dážď za posledných 7 dní: {rain}).",
+    "rain_used": "Zápočet dažďa: {credit}. Započítaný dážď: {gross}, z toho {used} už bolo využité, keď sa dážď počítal ako zálievka {when}. Dážď za posledných 7 dní: {rain}.",
     "needed": "Pri zalievaní teraz: potreba pridať {needed}, cca {minutes} min.",
     "forecast": "Bol predpovedaný dážď, preto bolo preskočených posledných {n} zálievok v rade.",
     "soil": "Vlhkosť pôdy {pct} % ({status}).",

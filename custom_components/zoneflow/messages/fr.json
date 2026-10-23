@@ -388,6 +388,7 @@
     "target": "Objectif hebdomadaire : {target}.",
     "scale": "Cet objectif est ajusté à {pct} % selon le stade de croissance, le mode déficit et le paillis.",
     "rain": "Crédit de pluie depuis le dernier arrosage : {credit} (pluie ces 7 derniers jours : {rain}).",
+    "rain_used": "Crédit de pluie : {credit}. Pluie comptée : {gross}, dont {used} déjà utilisés quand la pluie a compté comme un arrosage {when}. Pluie ces 7 derniers jours : {rain}.",
     "needed": "Si arrosage maintenant : {needed} à ajouter, env. {minutes} min.",
     "forecast": "De la pluie était prévue, les {n} derniers arrosages d'affilée ont donc été annulés.",
     "soil": "Humidité du sol {pct} % ({status}).",

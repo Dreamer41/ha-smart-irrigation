@@ -388,6 +388,7 @@
     "target": "Dawka tygodniowa: {target}.",
     "scale": "Dawka skalowana do {pct} % przez fazę wzrostu, tryb deficytu i ściółkowanie.",
     "rain": "Kredyt deszczowy od ostatniego podlewania: {credit} (deszcz w ostatnich 7 dniach: {rain}).",
+    "rain_used": "Kredyt deszczowy: {credit}. Policzony deszcz: {gross}, z czego {used} już wykorzystano, gdy deszcz zaliczono jako podlewanie {when}. Deszcz w ostatnich 7 dniach: {rain}.",
     "needed": "Gdyby podlać teraz: {needed} do dodania, ok. {minutes} min.",
     "forecast": "Prognozowano deszcz, więc pominięto ostatnie {n} podlewań z rzędu.",
     "soil": "Wilgotność gleby {pct} % ({status}).",

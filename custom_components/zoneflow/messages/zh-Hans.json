@@ -388,6 +388,7 @@
     "target": "每周目标：{target}。",
     "scale": "该目标已根据生长阶段、赤字模式和覆盖物按比例缩放至 {pct} %。",
     "rain": "自上次浇水以来的降雨抵扣：{credit}（过去 7 天降雨：{rain}）。",
+    "rain_used": "降雨抵扣：{credit}。已计入的降雨：{gross}，其中 {used} 已在降雨被算作浇水（{when}）时用掉。过去 7 天降雨：{rain}。",
     "needed": "如果现在浇水：需补充 {needed}，约 {minutes} 分钟。",
     "forecast": "预报有雨，因此连续跳过了最近 {n} 次浇水。",
     "soil": "土壤湿度 {pct} %（{status}）。",

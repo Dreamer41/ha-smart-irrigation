@@ -388,6 +388,7 @@
     "target": "Heti cél: {target}.",
     "scale": "A cél érték {pct} %-ra módosult a növekedési fázis, hiány mód és talajtakaró alapján.",
     "rain": "Esőbeszámítás az utolsó öntözés óta: {credit} (eső az elmúlt 7 napban: {rain}).",
+    "rain_used": "Esőbeszámítás: {credit}. Figyelembe vett eső: {gross}, ebből {used} már felhasználódott, amikor az eső öntözésnek számított {when}. Eső az elmúlt 7 napban: {rain}.",
     "needed": "Ha most öntözne: {needed} hiányzik, kb. {minutes} perc.",
     "forecast": "Eső volt várható, így az utolsó {n} öntözés egymás után ki lett hagyva.",
     "soil": "Talajnedvesség: {pct} % ({status}).",

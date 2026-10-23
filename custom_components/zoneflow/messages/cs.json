@@ -388,6 +388,7 @@
     "target": "Týdenní cíl: {target}.",
     "scale": "Tento cíl je opraven na {pct} % podle fáze růstu, režimu deficitu a mulče.",
     "rain": "Započítaný déšť od poslední zálivky: {credit} (déšť za posledních 7 dní: {rain}).",
+    "rain_used": "Zápočet deště: {credit}. Počítaný déšť: {gross}, z toho {used} už bylo využito, když déšť platil jako zálivka {when}. Déšť za posledních 7 dní: {rain}.",
     "needed": "Při zalévání nyní: potřeba přidat {needed}, cca {minutes} min.",
     "forecast": "Byl předpovězen déšť, proto bylo přeskočeno posledních {n} zálivek v řadě.",
     "soil": "Vlhkost půdy {pct} % ({status}).",

@@ -4486,6 +4486,25 @@ class ZoneFlowController:
             **self._routine_interval_settings(),
         )
 
+    def rain_credit_breakdown(self, plan: calc.RoutinePlan) -> tuple[float, float, float | None]:
+        """(rain counted, of which already used up, when that was) for the Why?
+        panel: the credit `plan` ended with is the first minus the second. What
+        was used up is the dose of the last watering rain counted as."""
+        state = self.store.state
+        elapsed = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
+        gross = calc.rain_deduction_mm(
+            self.today_rain_mm(),
+            state.rain_day_history_mm,
+            int(elapsed / 86400),
+            self.number("rain_eff_low"),
+            self.number("rain_eff_mid"),
+            self.number("rain_eff_high"),
+            max_lookback_days=plan.interval_days,
+            ignore_below_mm=self.number("rain_ignore_below_mm"),
+        )
+        used = max(gross - plan.eff_rain_mm, 0.0)
+        return gross, used, (state.rain_credit_spent_ts if used >= 0.05 else None)
+
     async def _on_rain_credit_check(self, now=None) -> None:
         """Once an hour: if the rain since the last watering is already more
         than the next routine watering would give, the rain was the watering:
