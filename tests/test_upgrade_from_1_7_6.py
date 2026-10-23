@@ -78,3 +78,24 @@ async def test_the_first_mark_after_the_upgrade_starts_a_rolling_chain(hass, fak
     high = zone.number("rain_eff_high")
     dose = zone._routine_plan().interval_target_mm
     assert zone._routine_plan().eff_rain_mm == pytest.approx(45.0 * high + 21.0 * high - dose, abs=0.1)
+
+
+@pytest.mark.asyncio
+async def test_a_restart_keeps_a_rolling_chain_as_it_was(hass, fake_valve_services, hass_storage, tmp_path):
+    """HA stopped and started again (also over midnight): a saved chain loads and counts the same."""
+    import homeassistant.util.dt as dt_util
+
+    now = dt_util.utcnow().timestamp()
+    mark = now - 2 * 86400
+    zone = await _boot(
+        hass, hass_storage, tmp_path,
+        last_routine_ts=mark,
+        rain_window_base_ts=now - 6 * 86400,
+        rain_credit_marks=[[mark, 10.0]],
+        rain_credit_spent_mm=10.0,
+        rain_credit_spent_ts=mark,
+        rain_day_history_mm=[0.0, 30.0] + [0.0] * 8,
+    )
+    assert zone._chain_marks() == [(mark, 10.0)]
+    assert 0.0 < zone.rain_offset_mm() <= 10.0
+    assert zone.status()["text"]

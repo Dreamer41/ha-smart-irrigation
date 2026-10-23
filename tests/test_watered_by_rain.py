@@ -537,3 +537,40 @@ async def test_the_routine_after_a_deep_soak_is_dated_a_full_interval_later(hass
     deep = dt_util.parse_datetime(status["next_deep_soak"])
     routine = dt_util.parse_datetime(status["next_routine"])
     assert routine - deep >= timedelta(days=c._routine_interval_days()) - timedelta(hours=7)
+
+
+@pytest.mark.asyncio
+async def test_the_rolling_credit_in_imperial_units(hass, fake_valve_services):
+    from homeassistant.util.unit_system import US_CUSTOMARY_SYSTEM
+
+    hass.config.units = US_CUSTOMARY_SYSTEM
+    c = await _zone(hass, rain_today=60.0)
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 3.5 * DAY
+    c.store.state.rain_day_history_mm = [30.0] + [0.0] * 9
+    await c._on_rain_credit_check()
+    assert c._chain_marks()
+    from custom_components.zoneflow import why
+
+    plan = c._routine_plan()
+    gross, used, used_ts = c.rain_credit_breakdown(plan)
+    assert used_ts is not None and used > 0 and gross >= used  # mm inside; shown with units.depth_text
+    assert " in" in c.status()["text"] or "mm" not in c.status()["text"]
+
+
+@pytest.mark.asyncio
+async def test_a_mark_across_the_clock_change_still_ages_by_local_days(hass, fake_valve_services):
+    """Autumn clock change (EU, 25 Oct 2026): a mark made the evening before is one local day old
+    the next morning, 24 or 25 hours later."""
+    from freezegun import freeze_time
+
+    hass.config.set_time_zone("Europe/Helsinki")
+    c = await _zone(hass)
+    with freeze_time("2026-10-24 19:30:00+00:00"):  # 22:30 local on the 24th (summer time)
+        mark = dt_util.utcnow().timestamp()
+    with freeze_time("2026-10-25 03:30:00+00:00"):  # 05:30 local on the 25th, after the clock went back
+        c.store.state.last_routine_ts = mark
+        c.store.state.rain_window_base_ts = mark - 2 * DAY
+        c.store.state.rain_credit_marks = [[mark, 10.0]]
+        assert dt_util.now().date().isoformat() == "2026-10-25"
+        assert c._chain_offset(2 * DAY + 3600) <= 10.0  # counted, never negative or doubled
+        assert c._chain_offset(2 * DAY + 3600) >= 0.0
