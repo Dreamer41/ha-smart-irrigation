@@ -492,3 +492,48 @@ async def test_a_dose_does_not_eat_new_rain_once_the_rain_that_paid_for_it_has_l
     )
     assert c.rain_offset_mm() == 0.0
     assert c._routine_plan().eff_rain_mm == pytest.approx(6.0 * eff, abs=0.05)
+
+
+@pytest.mark.asyncio
+async def test_a_last_routine_time_set_back_before_the_mark_ends_the_chain(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=60.0)
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 3.5 * DAY
+    c.store.state.rain_day_history_mm = [30.0] + [0.0] * 9
+    await c._on_rain_credit_check()
+    assert c._chain_marks()
+    c.store.state.last_routine_ts = dt_util.utcnow().timestamp() - 10 * DAY  # edited back in time
+    assert c._chain_marks() == []
+
+
+@pytest.mark.asyncio
+async def test_a_second_rain_mark_waits_a_full_interval_even_with_no_credit_left(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=60.0)
+    await c._on_rain_credit_check()
+    first = c.store.state.last_routine_ts
+    c.store.state.rain_day_history_mm = [0.0] * 10
+    c.number = lambda key, _n=c.number: 0.0 if key.startswith("rain_eff_") else _n(key)
+    await c._on_rain_credit_check()
+    assert c.store.state.last_routine_ts == first
+
+
+@pytest.mark.asyncio
+async def test_a_paused_zone_advertises_no_next_dates(hass, fake_valve_services):
+    c = await _zone(hass)
+    await c.set_paused(True)
+    status = c.status()
+    assert status["code"] == "paused"
+    assert status["next_routine"] is None and status["next_deep_soak"] is None
+
+
+@pytest.mark.asyncio
+async def test_the_routine_after_a_deep_soak_is_dated_a_full_interval_later(hass, fake_valve_services):
+    c = await _zone(hass)
+    now_ts = dt_util.utcnow().timestamp()
+    c.store.state.last_routine_ts = now_ts - 2 * DAY
+    c.store.state.last_deep_soak_ts = now_ts - 14 * DAY
+    c._scheduled_next = lambda not_before: (now_ts + 3600 * 1.5, now_ts + 3600)  # deep soak first, routine just after
+    status = c.status()
+    assert status["next_cycle"] == "deep_soak"
+    deep = dt_util.parse_datetime(status["next_deep_soak"])
+    routine = dt_util.parse_datetime(status["next_routine"])
+    assert routine - deep >= timedelta(days=c._routine_interval_days()) - timedelta(hours=7)

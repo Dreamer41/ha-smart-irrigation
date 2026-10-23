@@ -56,7 +56,11 @@ def explain(controller: Any) -> list[dict[str, str]]:
         if abs(scale - 1.0) > 0.005:
             add("scale", "scale", pct=f"{scale * 100:.0f}")
         rain_7d = units.depth_text(controller.rain_windows().get("7d", 0.0), imperial)
-        gross, used, used_ts = controller.rain_credit_breakdown(plan)
+        try:
+            gross, used, used_ts = controller.rain_credit_breakdown(plan)
+        except Exception:  # noqa: BLE001 - an explanation must never raise
+            gross = used = 0.0
+            used_ts = None
         if used_ts is not None:
             # Rain counted as a watering already used up part of what fell: say so, so the
             # credit is not read as all the rain of the last days.

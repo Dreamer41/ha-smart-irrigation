@@ -4416,7 +4416,9 @@ class ZoneFlowController:
                 marks.append((float(item[0]), float(item[1])))
             except (TypeError, ValueError, IndexError):
                 continue
-        if not marks or (state.last_routine_ts or 0.0) > marks[-1][0] + 1:
+        # The chain is only as long as the last watering is its own latest mark: a real watering
+        # after it, or a Last Routine time set back before it, starts the credit over.
+        if not marks or abs((state.last_routine_ts or 0.0) - marks[-1][0]) > 1:
             return []
         return marks
 
@@ -4607,10 +4609,13 @@ class ZoneFlowController:
         plan = self._routine_plan()
         if plan.interval_target_mm <= 0 or plan.eff_rain_mm < plan.interval_target_mm:
             return
-        offset = self.rain_offset_mm()
         now_ts = dt_util.utcnow().timestamp()
         interval_days = self._routine_interval_days()
-        if offset > 0 and now_ts - (state.rain_credit_spent_ts or 0.0) < interval_days * 86400:
+        spent_ts = state.rain_credit_spent_ts or 0.0
+        if (
+            now_ts - spent_ts < interval_days * 86400
+            and (state.last_routine_ts or 0.0) <= spent_ts + 1  # no real watering since that mark
+        ):
             return  # already counted this interval; what is left over waits for the next one
         applied = self._rain_offset_in_window(self._rain_pool_elapsed())
         # Only one dose counts as used: what the rain gave beyond it stays credited to the next watering.
@@ -5263,6 +5268,13 @@ class ZoneFlowController:
             tomorrow = dt_util.start_of_local_day() + timedelta(days=1)
             not_before = max(now_ts, dt_util.as_utc(tomorrow).timestamp())
         routine_next, deep_next = self._scheduled_next(not_before)
+        if routine_next is not None and deep_next is not None and deep_next <= routine_next:
+            # A completed deep soak counts as the routine watering too, so the routine
+            # that follows it is a full interval after the soak, not the slot beside it.
+            routine_next = self.next_slot(
+                "routine",
+                max(routine_next, deep_next + self._routine_interval_days() * 86400 - self._routine_buffer()),
+            )
         next_ts, next_cycle = routine_next, "routine"
         if deep_next is not None and (routine_next is None or deep_next < routine_next):
             next_ts, next_cycle = deep_next, "deep_soak"
@@ -5347,6 +5359,8 @@ class ZoneFlowController:
                 code="paused",
                 next_watering=None,
                 next_cycle=None,
+                next_routine=None,
+                next_deep_soak=None,
                 text=(
                     self._msg("status.paused_until", until=self._when(until, "datetime"))
                     if until is not None

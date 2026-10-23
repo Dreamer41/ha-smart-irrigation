@@ -6772,6 +6772,7 @@ class ZoneFlowCard extends HTMLElement {
       }
       // One line per decision: the status sensor repeats the same decision with a new "next watering" tail.
       const seen = new Map();
+      let lastUntimed = null; // consecutive states with no decision time are one event
       for (const item of data?.[popup.status] || []) {
         const attrs = item.a ?? item.attributes ?? {};
         const code = attrs.code;
@@ -6780,7 +6781,17 @@ class ZoneFlowCard extends HTMLElement {
         if (Number.isNaN(decided) && !ACTIVITY_WITHOUT_TIME.has(code)) continue;
         const changed = item.lu != null ? item.lu * 1000 : Date.parse(item.last_updated);
         const at = Number.isNaN(decided) ? changed : decided;
-        const key = `${code}|${Number.isNaN(decided) ? "" : decided}|${attrs.cycle || ""}`;
+        let key = `${code}|${Number.isNaN(decided) ? "" : decided}|${attrs.cycle || ""}`;
+        if (Number.isNaN(decided)) {
+          // no decision time to tell two events apart: a new run of this code is a new event
+          if (lastUntimed?.base === key) key = lastUntimed.full;
+          else {
+            lastUntimed = { base: key, full: `${key}|${changed}` };
+            key = lastUntimed.full;
+          }
+        } else {
+          lastUntimed = null;
+        }
         // (" · next Fri 05:30" at the end of a decision was true only when it was said: leave it out of a history)
         if (!seen.has(key)) seen.set(key, { code, at, text: String(item.s ?? item.state ?? "").split(" · ")[0] });
       }
@@ -8421,7 +8432,8 @@ class ZoneFlowOverviewCard extends HTMLElement {
     const hass = this._hass;
     const tr = (key) => t(hass, `overview.${key}`);
     const names = (list) => list.map((z) => z.name).join(", ");
-    const warnings = zones.filter((z) => (CLIMATE_STATUS[z.code] ? CLIMATE_STATUS[z.code][1] : STATUS_LABELS[z.code]?.[2]));
+    // a zone whose status is missing (unavailable, not loaded) is not "doing well" either
+    const warnings = zones.filter((z) => !z.code || z.code === "climate_" || (CLIMATE_STATUS[z.code] ? CLIMATE_STATUS[z.code][1] : STATUS_LABELS[z.code]?.[2]));
     if (warnings.length) return ["warn", "mdi:alert-outline", tr("headline_attention").replace("{names}", () => names(warnings))];
     const watering = zones.filter((z) => z.code === "watering" || z.code === "service_run");
     if (watering.length) return ["active", "mdi:water", tr("headline_watering").replace("{names}", () => names(watering))];
