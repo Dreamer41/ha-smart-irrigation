@@ -471,3 +471,24 @@ async def test_a_real_watering_after_a_mark_starts_the_credit_again(hass, fake_v
     assert c._rain_pool_elapsed() == pytest.approx(
         dt_util.utcnow().timestamp() - c.store.state.last_routine_ts, abs=5
     )  # the window starts at that watering again
+
+
+@pytest.mark.asyncio
+async def test_a_dose_does_not_eat_new_rain_once_the_rain_that_paid_for_it_has_left(hass, fake_valve_services):
+    """The mark was paid for by a big day that has since left the window: the rain of the days
+    after the mark is credited in full, not reduced by that dose."""
+    c = await _zone(hass, rain_today=6.0)
+    now_ts = dt_util.utcnow().timestamp()
+    mark = now_ts - 3 * DAY
+    c.store.state.last_routine_ts = mark
+    c.store.state.rain_window_base_ts = now_ts - 8 * DAY
+    c.store.state.rain_credit_marks = [[mark, 17.0]]
+    c.store.state.rain_credit_spent_mm = 17.0
+    c.store.state.rain_credit_spent_ts = mark
+    # the big day (60 mm) was 5 days ago: out of the 4-day window; the mark day and after were dry
+    c.store.state.rain_day_history_mm = [0.0, 0.0, 0.0, 0.0, 60.0] + [0.0] * 5
+    eff = calc.rain_efficiency(
+        6.0, c.number("rain_eff_low"), c.number("rain_eff_mid"), c.number("rain_eff_high"), c.number("rain_ignore_below_mm")
+    )
+    assert c.rain_offset_mm() == 0.0
+    assert c._routine_plan().eff_rain_mm == pytest.approx(6.0 * eff, abs=0.05)

@@ -4435,11 +4435,26 @@ class ZoneFlowController:
         today = dt_util.now().date()
         days = min(int(elapsed_seconds / 86400), self._routine_interval_days())
         total = 0.0
+        newest = None  # the age in days of the newest mark still in the window
         for ts, mm in self._chain_marks():
             age = (today - dt_util.as_local(dt_util.utc_from_timestamp(ts)).date()).days
             if age <= days:
                 total += mm
-        return round(total, 2)
+                newest = age if newest is None else min(newest, age)
+        if newest is None:
+            return 0.0
+        # The doses were paid for by rain up to the newest mark's day. Once that rain has
+        # left the window the doses must not eat the rain that fell since: take off no
+        # more than what is left of the rain up to that day.
+        history = self.store.state.rain_day_history_mm
+        paid_for = 0.0
+        for age in range(newest, days + 1):
+            mm = self.today_rain_mm() if age == 0 else (history[age - 1] if age - 1 < len(history) else 0.0)
+            paid_for += mm * calc.rain_efficiency(
+                mm, self.number("rain_eff_low"), self.number("rain_eff_mid"), self.number("rain_eff_high"),
+                self.number("rain_ignore_below_mm"),
+            )
+        return round(min(total, paid_for), 2)
 
     def rain_offset_mm(self) -> float:
         """Rain that has already counted as a watering, still inside the rain
