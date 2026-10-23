@@ -563,7 +563,10 @@ async def test_a_mark_across_the_clock_change_still_ages_by_local_days(hass, fak
     the next morning, 24 or 25 hours later."""
     from freezegun import freeze_time
 
-    hass.config.set_time_zone("Europe/Helsinki")
+    if hasattr(hass.config, "async_set_time_zone"):  # newer Home Assistant forbids the sync call
+        await hass.config.async_set_time_zone("Europe/Helsinki")
+    else:
+        hass.config.set_time_zone("Europe/Helsinki")
     c = await _zone(hass)
     with freeze_time("2026-10-24 19:30:00+00:00"):  # 22:30 local on the 24th (summer time)
         mark = dt_util.utcnow().timestamp()
