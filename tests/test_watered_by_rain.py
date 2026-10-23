@@ -360,3 +360,20 @@ async def test_the_ignore_level_is_a_setting_that_starts_at_three_mm(hass, fake_
     await c.numbers["rain_ignore_below_mm"].async_set_native_value(0.0)
     assert c._routine_plan().eff_rain_mm > 0.0
 
+
+
+@pytest.mark.asyncio
+async def test_a_rain_decision_does_not_hide_the_dry_down(hass, fake_valve_services):
+    """Counted by rain while the dry-down holds: the sentence says both, and the decision stays first."""
+    c = await _zone(hass, rain_today=5.0)
+    now = dt_util.utcnow().timestamp()
+    c.store.state.last_deep_soak_ts = now - 3 * DAY
+    c.store.state.last_significant_rain_ts = now - 3600
+    _rain_after(c, c.number("deep_soak_target_mm") + 5)
+    await c._on_rain_credit_check()
+
+    status = c.status()
+    assert status["code"] == "watered_by_rain" and status["decided_at"] is not None
+    assert status["text"].startswith("Deep soak counted as done")
+    assert " · Drying out after rain until " in status["text"] and " · next " in status["text"]
+    assert status["text"].index("Drying out") < status["text"].index(" · next ")

@@ -5191,6 +5191,16 @@ class ZoneFlowController:
             mm = self.next_amount_mm(cycle)
             return units.depth_text(mm, self.imperial) if mm is not None and mm >= 0.5 else None
 
+        drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
+        drydown_on = state.last_significant_rain_ts is not None and drydown_end > now_ts
+
+        def with_drydown(text: str) -> str:
+            """The rain dry-down holds the routine watering until it ends: say so beside
+            whatever else happened, so a later event never hides why it is waiting."""
+            if not drydown_on:
+                return text
+            return f"{text} · {self._msg('status.waiting_drydown', until=self._when(drydown_end))}"
+
         def other_next(text: str) -> str:
             """Both cycles are dated: the later one follows the first, so the
             routine and the deep soak are never mistaken for each other."""
@@ -5269,7 +5279,9 @@ class ZoneFlowController:
                 cycle=cycle,
                 decided_at=dt_util.utc_from_timestamp(decision["ts"]).isoformat(),
                 # (a frost re-check comes before any scheduled time)
-                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(text),
+                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(
+                    text if code == "skipped_drydown" else with_drydown(text)
+                ),
             )
             return result
 
@@ -5277,11 +5289,10 @@ class ZoneFlowController:
             raw = self.soil_moisture_raw()
             result.update(
                 code="waiting_soil_wet",
-                text=with_next(self._msg("status.waiting_soil_wet", pct=f"{raw:.0f}" if raw is not None else "?")),
+                text=with_next(with_drydown(self._msg("status.waiting_soil_wet", pct=f"{raw:.0f}" if raw is not None else "?"))),
             )
             return result
-        drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
-        if state.last_significant_rain_ts is not None and drydown_end > now_ts:
+        if drydown_on:
             result.update(
                 code="waiting_drydown",
                 text=with_next(self._msg("status.waiting_drydown", until=self._when(drydown_end))),
