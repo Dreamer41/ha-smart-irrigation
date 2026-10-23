@@ -312,7 +312,7 @@ async def test_the_next_watering_says_the_amount_it_expects_to_give(hass, fake_v
     state = await _refresh(hass, controller)
     expected = controller.next_amount_mm(state.attributes["next_cycle"])
     assert expected is not None and expected > 0.5
-    assert ", estimated " in state.state and state.state.endswith(" mm")
+    assert ", estimated " in state.state and " mm" in state.state
 
     # Rain that already covers the dose: nothing to estimate, so the plain sentence.
     monkeypatch.setattr(type(controller), "next_amount_mm", lambda self, cycle: 0.0)
@@ -327,4 +327,24 @@ async def test_the_estimate_follows_the_zones_units(hass, fake_valve_services, m
     monkeypatch.setattr(type(controller), "next_amount_mm", lambda self, cycle: 25.4)
     monkeypatch.setattr(type(controller), "imperial", property(lambda self: True))
     state = await _refresh(hass, controller)
-    assert state.state.endswith(", estimated 1.00 in") or state.state.endswith(", estimated 1.0 in")
+    assert ", estimated 1.00 in" in state.state or ", estimated 1.0 in" in state.state
+
+
+@pytest.mark.asyncio
+async def test_status_names_both_the_next_routine_and_the_next_deep_soak(hass, fake_valve_services, monkeypatch, tmp_path):
+    """The next routine is days away, the deep soak a fortnight: the sentence
+    gives both, each named, and the attributes carry both dates."""
+    controller = await _zone(hass, monkeypatch, tmp_path)
+    _history(controller, last_routine_days_ago=1, last_deep_days_ago=1, peaks=(30.5, 30.5, 30.5))
+    state = await _refresh(hass, controller)
+
+    assert state.attributes["next_cycle"] == "routine"
+    assert state.attributes["next_routine"] is not None and state.attributes["next_deep_soak"] is not None
+    assert state.attributes["next_routine"] < state.attributes["next_deep_soak"]
+    assert state.state.startswith("Next watering ") and " · deep soak " in state.state
+
+    # Deep soak off: only the routine is named.
+    monkeypatch.setattr(type(controller), "deep_soak_enabled", property(lambda self: False))
+    state = await _refresh(hass, controller)
+    assert state.attributes["next_deep_soak"] is None
+    assert " · deep soak " not in state.state

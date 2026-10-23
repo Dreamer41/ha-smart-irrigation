@@ -5180,6 +5180,8 @@ class ZoneFlowController:
             "decided_at": None,
             "next_watering": dt_util.utc_from_timestamp(next_ts).isoformat() if next_ts is not None else None,
             "next_cycle": next_cycle if next_ts is not None else None,
+            "next_routine": dt_util.utc_from_timestamp(routine_next).isoformat() if routine_next is not None else None,
+            "next_deep_soak": dt_util.utc_from_timestamp(deep_next).isoformat() if deep_next is not None else None,
         }
 
         def estimate(cycle: str | None) -> str | None:
@@ -5187,11 +5189,20 @@ class ZoneFlowController:
             mm = self.next_amount_mm(cycle)
             return units.depth_text(mm, self.imperial) if mm is not None and mm >= 0.5 else None
 
+        def other_next(text: str) -> str:
+            """Both cycles are dated: the later one follows the first, so the
+            routine and the deep soak are never mistaken for each other."""
+            if routine_next is None or deep_next is None:
+                return text
+            if next_cycle == "deep_soak":
+                return self._msg("status.with_next", status=text, when=self._when(routine_next))
+            return self._msg("status.with_next_deep_soak", status=text, when=self._when(deep_next))
+
         def with_next(text: str) -> str:
             if next_ts is None:
                 return text
             key = "with_next_deep_soak" if next_cycle == "deep_soak" else "with_next"
-            return self._msg(f"status.{key}", status=text, when=self._when(next_ts))
+            return other_next(self._msg(f"status.{key}", status=text, when=self._when(next_ts)))
 
         if self._service_active and self._service_counted:
             result.update(
@@ -5280,7 +5291,8 @@ class ZoneFlowController:
         if next_ts is not None:
             key = "next_deep_soak" if next_cycle == "deep_soak" else "next"
             text_key = f"{key}_amount" if amount else key
-            result.update(code=key, text=self._msg(f"status.{text_key}", when=self._when(next_ts), amount=amount))
+            text = self._msg(f"status.{text_key}", when=self._when(next_ts), amount=amount)
+            result.update(code=key, text=other_next(text))
             return result
         result.update(code="idle", text=self._msg("status.idle"))
         return result
