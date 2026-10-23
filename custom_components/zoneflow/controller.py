@@ -4551,7 +4551,7 @@ class ZoneFlowController:
     async def _deep_soak_by_rain(self, now_ts: float) -> bool:
         """The rain since the last deep soak is more than the deep soak target
         within 24 hours, or more than the target plus 5 mm within 72 hours:
-        the rain was the deep soak. Counts as a completed deep soak (and as
+        the rain was the deep soak. At most once a calendar day. Counts as a completed deep soak (and as
         the routine watering, as a deep soak does); nothing runs and no litres
         are counted."""
         state = self.store.state
@@ -4561,6 +4561,8 @@ class ZoneFlowController:
         if target <= 0:
             return False
         last = state.last_deep_soak_ts or 0.0
+        if last and dt_util.as_local(dt_util.utc_from_timestamp(last)).date() == dt_util.now().date():
+            return False  # counted (or soaked) today already: more rain the same day moves the next one no further
         rain = self.rain_since(max(last, now_ts - 86400.0))
         if rain < target:
             rain = self.rain_since(max(last, now_ts - 3 * 86400.0))

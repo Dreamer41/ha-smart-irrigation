@@ -179,6 +179,28 @@ async def test_rain_over_the_deep_soak_target_counts_as_the_deep_soak(hass, fake
 
 
 @pytest.mark.asyncio
+async def test_the_deep_soak_is_counted_by_rain_once_a_day(hass, fake_valve_services):
+    c = await _zone(hass, rain_today=5.0)
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 3 * DAY
+    target = c.number("deep_soak_target_mm")
+    _rain_after(c, target + 5)
+    await c._on_rain_credit_check()
+    first = c.store.state.last_deep_soak_ts
+
+    # An hour later another deep soak's worth of rain has fallen, the same day: no second count.
+    start = dt_util.utcnow().timestamp() - 60
+    c.rain_since = lambda since_ts: target + 10 if since_ts < start else 0.0
+    await c._on_rain_credit_check()
+    assert c.store.state.last_deep_soak_ts == first
+
+    # Next day the same rain counts again.
+    c.store.state.last_deep_soak_ts = dt_util.utcnow().timestamp() - 1.2 * DAY
+    c.rain_since = lambda since_ts: target + 10
+    await c._on_rain_credit_check()
+    assert c.store.state.last_deep_soak_ts > dt_util.utcnow().timestamp() - 60
+
+
+@pytest.mark.asyncio
 async def test_rain_under_the_deep_soak_target_does_not(hass, fake_valve_services):
     c = await _zone(hass, rain_today=5.0)
     before = c.store.state.last_deep_soak_ts
