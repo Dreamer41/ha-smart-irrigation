@@ -3734,7 +3734,7 @@ class ZoneFlowController:
         # flood the zone with a full dose every morning.
         interval_fraction = 1.0 if interval_due else calc.early_run_fraction(elapsed_seconds, interval_days)
         # The same plan the rain check and the Status estimate use (_routine_plan).
-        plan = self._routine_plan(interval_fraction=interval_fraction, elapsed_seconds=elapsed_seconds)
+        plan = self._routine_plan(interval_fraction=interval_fraction)
 
         # Only a zone that HAS watered before can be overdue -- a brand-new
         # one would otherwise measure its gap from 1970 (~20,000 days).
@@ -4403,10 +4403,68 @@ class ZoneFlowController:
             phone_msg="",
         )
 
+    def _chain_marks(self) -> list[tuple[float, float]]:
+        """The doses rain took since the last real watering, oldest first (1.7.7: the
+        rain credit rolls). Empty for a zone with no such marks, one that was watered
+        since, or one whose marks were written before 1.7.7 (it keeps the old way)."""
+        state = self.store.state
+        if state.rain_window_base_ts is None:
+            return []
+        marks = []
+        for item in state.rain_credit_marks or []:
+            try:
+                marks.append((float(item[0]), float(item[1])))
+            except (TypeError, ValueError, IndexError):
+                continue
+        # The chain is only as long as the last watering is its own latest mark: a real watering
+        # after it, or a Last Routine time set back before it, starts the credit over.
+        # A mark dated in the future (the clock was stepped back) cannot be placed: no chain.
+        if not marks or abs((state.last_routine_ts or 0.0) - marks[-1][0]) > 1 or marks[-1][0] > dt_util.utcnow().timestamp() + 60:
+            return []
+        return marks
+
+    def _rain_pool_elapsed(self) -> float:
+        """How far back the rain credit looks, in seconds: since the last real watering,
+        which a rain mark does not move."""
+        state = self.store.state
+        now_ts = dt_util.utcnow().timestamp()
+        if self._chain_marks():
+            return now_ts - (state.rain_window_base_ts or 0.0)
+        return now_ts - (state.last_routine_ts or 0.0)
+
+    def _chain_offset(self, elapsed_seconds: float) -> float:
+        """The doses rain took that are still in the window: a dose leaves when the day
+        it was taken on is no longer one of the days the credit counts."""
+        today = dt_util.now().date()
+        days = min(int(elapsed_seconds / 86400), self._routine_interval_days())
+        total = 0.0
+        newest = None  # the age in days of the newest mark still in the window
+        for ts, mm in self._chain_marks():
+            age = (today - dt_util.as_local(dt_util.utc_from_timestamp(ts)).date()).days
+            if 0 <= age <= days:
+                total += mm
+                newest = age if newest is None else min(newest, age)
+        if newest is None:
+            return 0.0
+        # The doses were paid for by rain up to the newest mark's day. Once that rain has
+        # left the window the doses must not eat the rain that fell since: take off no
+        # more than what is left of the rain up to that day.
+        history = self.store.state.rain_day_history_mm
+        paid_for = 0.0
+        for age in range(newest, days + 1):
+            mm = self.today_rain_mm() if age == 0 else (history[age - 1] if age - 1 < len(history) else 0.0)
+            paid_for += mm * calc.rain_efficiency(
+                mm, self.number("rain_eff_low"), self.number("rain_eff_mid"), self.number("rain_eff_high"),
+                self.number("rain_ignore_below_mm"),
+            )
+        return round(min(total, paid_for), 2)
+
     def rain_offset_mm(self) -> float:
         """Rain that has already counted as a watering, still inside the rain
         credit's window and not followed by any other watering."""
         state = self.store.state
+        if self._chain_marks():
+            return self._chain_offset(self._rain_pool_elapsed())
         spent_ts = state.rain_credit_spent_ts
         if not spent_ts or state.rain_credit_spent_mm <= 0:
             return 0.0
@@ -4423,6 +4481,8 @@ class ZoneFlowController:
         mark (the day of the mark at the latest), and the credit window only
         reaches back as far as the days since the mark. Rain that fell after
         the mark is new and is never taken off, however big the offset is."""
+        if self._chain_marks():
+            return self._chain_offset(self._rain_pool_elapsed())
         offset = self.rain_offset_mm()
         if offset <= 0:
             return 0.0
@@ -4461,7 +4521,7 @@ class ZoneFlowController:
         scale = self.routine_target_scale()
         et_weekly = self.et_weekly_target_mm()
         if elapsed_seconds is None:
-            elapsed_seconds = dt_util.utcnow().timestamp() - (state.last_routine_ts or 0.0)
+            elapsed_seconds = self._rain_pool_elapsed()
         return calc.plan_routine_irrigation(
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
@@ -4486,6 +4546,53 @@ class ZoneFlowController:
             **self._routine_interval_settings(),
         )
 
+    def rain_credit_breakdown(self, plan: calc.RoutinePlan) -> tuple[float, float, float | None]:
+        """(rain counted, of which already used up, when that was) for the Why?
+        panel: the credit `plan` ended with is the first minus the second. What
+        was used up is the dose of the last watering rain counted as."""
+        state = self.store.state
+        elapsed = self._rain_pool_elapsed()
+        gross = calc.rain_deduction_mm(
+            self.today_rain_mm(),
+            state.rain_day_history_mm,
+            int(elapsed / 86400),
+            self.number("rain_eff_low"),
+            self.number("rain_eff_mid"),
+            self.number("rain_eff_high"),
+            max_lookback_days=plan.interval_days,
+            ignore_below_mm=self.number("rain_ignore_below_mm"),
+        )
+        used = max(gross - plan.eff_rain_mm, 0.0)
+        return gross, used, (state.rain_credit_spent_ts if used >= 0.05 else None)
+
+    def _record_rain_mark(self, now_ts: float, applied: float, dose_mm: float) -> None:
+        """Rain counted as a routine watering at `now_ts`: the zone is watered as far as the
+        interval goes, and one dose is taken off the rain credit. A mark keeps looking back
+        to the last real watering, so the days of rain before it stay in the credit
+        (1.7.7); a zone still carrying a mark written before that keeps the old way until
+        that mark ends. `applied` is what was already taken off before this mark."""
+        state = self.store.state
+        chain = self._chain_marks()
+        legacy = not chain and applied > 0
+        if chain:
+            base = state.rain_window_base_ts
+            marks = chain[-7:]
+        elif legacy:
+            base, marks = None, []
+        else:
+            base, marks = state.last_routine_ts or 0.0, []
+        state.last_routine_ts = now_ts
+        if base is None:
+            state.rain_credit_marks = []
+            state.rain_window_base_ts = None
+            state.rain_credit_spent_mm = round(applied + dose_mm, 2)
+        else:
+            marks.append((now_ts, round(dose_mm, 2)))
+            state.rain_credit_marks = [[t, m] for t, m in marks]
+            state.rain_window_base_ts = base
+            state.rain_credit_spent_mm = round(sum(m for _t, m in marks), 2)
+        state.rain_credit_spent_ts = now_ts
+
     async def _on_rain_credit_check(self, now=None) -> None:
         """Once an hour: if the rain since the last watering is already more
         than the next routine watering would give, the rain was the watering:
@@ -4503,16 +4610,17 @@ class ZoneFlowController:
         plan = self._routine_plan()
         if plan.interval_target_mm <= 0 or plan.eff_rain_mm < plan.interval_target_mm:
             return
-        offset = self.rain_offset_mm()
         now_ts = dt_util.utcnow().timestamp()
         interval_days = self._routine_interval_days()
-        if offset > 0 and now_ts - (state.rain_credit_spent_ts or 0.0) < interval_days * 86400:
+        spent_ts = state.rain_credit_spent_ts or 0.0
+        if (
+            now_ts - spent_ts < interval_days * 86400
+            and (state.last_routine_ts or 0.0) <= spent_ts + 1  # no real watering since that mark
+        ):
             return  # already counted this interval; what is left over waits for the next one
-        applied = self._rain_offset_in_window(now_ts - (state.last_routine_ts or 0.0))
-        state.last_routine_ts = now_ts
+        applied = self._rain_offset_in_window(self._rain_pool_elapsed())
         # Only one dose counts as used: what the rain gave beyond it stays credited to the next watering.
-        state.rain_credit_spent_mm = round(applied + plan.interval_target_mm, 2)
-        state.rain_credit_spent_ts = now_ts
+        self._record_rain_mark(now_ts, applied, plan.interval_target_mm)
         await self._decide(
             "routine", "watered_by_rain",
             rain_mm=round(plan.eff_rain_mm + applied, 1), target_mm=round(plan.interval_target_mm, 1),
@@ -4551,7 +4659,7 @@ class ZoneFlowController:
     async def _deep_soak_by_rain(self, now_ts: float) -> bool:
         """The rain since the last deep soak is more than the deep soak target
         within 24 hours, or more than the target plus 5 mm within 72 hours:
-        the rain was the deep soak. Counts as a completed deep soak (and as
+        the rain was the deep soak. At most once a calendar day. Counts as a completed deep soak (and as
         the routine watering, as a deep soak does); nothing runs and no litres
         are counted."""
         state = self.store.state
@@ -4561,18 +4669,17 @@ class ZoneFlowController:
         if target <= 0:
             return False
         last = state.last_deep_soak_ts or 0.0
+        if last and dt_util.as_local(dt_util.utc_from_timestamp(last)).date() == dt_util.now().date():
+            return False  # counted (or soaked) today already: more rain the same day moves the next one no further
         rain = self.rain_since(max(last, now_ts - 86400.0))
         if rain < target:
             rain = self.rain_since(max(last, now_ts - 3 * 86400.0))
             if rain < target + DEEP_SOAK_RAIN_72H_EXTRA_MM:
                 return False
-        applied = self._rain_offset_in_window(now_ts - (state.last_routine_ts or 0.0))
+        applied = self._rain_offset_in_window(self._rain_pool_elapsed())
         state.last_deep_soak_ts = now_ts
-        state.last_routine_ts = now_ts
         # The routine's rain credit used one dose of this rain: not credited a second time.
-        routine = self._routine_plan()
-        state.rain_credit_spent_mm = round(applied + routine.interval_target_mm, 2)
-        state.rain_credit_spent_ts = now_ts
+        self._record_rain_mark(now_ts, applied, self._routine_plan().interval_target_mm)
         await self._decide("deep_soak", "watered_by_rain", rain_mm=round(rain, 1), target_mm=round(target, 1))
         await self._log_event(
             event_type="Deep Soak By Rain",
@@ -5162,6 +5269,13 @@ class ZoneFlowController:
             tomorrow = dt_util.start_of_local_day() + timedelta(days=1)
             not_before = max(now_ts, dt_util.as_utc(tomorrow).timestamp())
         routine_next, deep_next = self._scheduled_next(not_before)
+        if routine_next is not None and deep_next is not None and deep_next <= routine_next:
+            # A completed deep soak counts as the routine watering too, so the routine
+            # that follows it is a full interval after the soak, not the slot beside it.
+            routine_next = self.next_slot(
+                "routine",
+                max(routine_next, deep_next + self._routine_interval_days() * 86400 - self._routine_buffer()),
+            )
         next_ts, next_cycle = routine_next, "routine"
         if deep_next is not None and (routine_next is None or deep_next < routine_next):
             next_ts, next_cycle = deep_next, "deep_soak"
@@ -5180,6 +5294,8 @@ class ZoneFlowController:
             "decided_at": None,
             "next_watering": dt_util.utc_from_timestamp(next_ts).isoformat() if next_ts is not None else None,
             "next_cycle": next_cycle if next_ts is not None else None,
+            "next_routine": dt_util.utc_from_timestamp(routine_next).isoformat() if routine_next is not None else None,
+            "next_deep_soak": dt_util.utc_from_timestamp(deep_next).isoformat() if deep_next is not None else None,
         }
 
         def estimate(cycle: str | None) -> str | None:
@@ -5187,11 +5303,30 @@ class ZoneFlowController:
             mm = self.next_amount_mm(cycle)
             return units.depth_text(mm, self.imperial) if mm is not None and mm >= 0.5 else None
 
+        drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
+        drydown_on = state.last_significant_rain_ts is not None and drydown_end > now_ts
+
+        def with_drydown(text: str) -> str:
+            """The rain dry-down holds the routine watering until it ends: say so beside
+            whatever else happened, so a later event never hides why it is waiting."""
+            if not drydown_on:
+                return text
+            return f"{text} · {self._msg('status.waiting_drydown', until=self._when(drydown_end))}"
+
+        def other_next(text: str) -> str:
+            """Both cycles are dated: the later one follows the first, so the
+            routine and the deep soak are never mistaken for each other."""
+            if routine_next is None or deep_next is None:
+                return text
+            if next_cycle == "deep_soak":
+                return self._msg("status.with_next", status=text, when=self._when(routine_next))
+            return self._msg("status.with_next_deep_soak", status=text, when=self._when(deep_next))
+
         def with_next(text: str) -> str:
             if next_ts is None:
                 return text
             key = "with_next_deep_soak" if next_cycle == "deep_soak" else "with_next"
-            return self._msg(f"status.{key}", status=text, when=self._when(next_ts))
+            return other_next(self._msg(f"status.{key}", status=text, when=self._when(next_ts)))
 
         if self._service_active and self._service_counted:
             result.update(
@@ -5225,6 +5360,8 @@ class ZoneFlowController:
                 code="paused",
                 next_watering=None,
                 next_cycle=None,
+                next_routine=None,
+                next_deep_soak=None,
                 text=(
                     self._msg("status.paused_until", until=self._when(until, "datetime"))
                     if until is not None
@@ -5256,7 +5393,9 @@ class ZoneFlowController:
                 cycle=cycle,
                 decided_at=dt_util.utc_from_timestamp(decision["ts"]).isoformat(),
                 # (a frost re-check comes before any scheduled time)
-                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(text),
+                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(
+                    text if code == "skipped_drydown" else with_drydown(text)
+                ),
             )
             return result
 
@@ -5264,12 +5403,14 @@ class ZoneFlowController:
             raw = self.soil_moisture_raw()
             result.update(
                 code="waiting_soil_wet",
-                text=with_next(self._msg("status.waiting_soil_wet", pct=f"{raw:.0f}" if raw is not None else "?")),
+                text=with_next(with_drydown(self._msg("status.waiting_soil_wet", pct=f"{raw:.0f}" if raw is not None else "?"))),
             )
             return result
-        drydown_end = (state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400
-        if state.last_significant_rain_ts is not None and drydown_end > now_ts:
-            result.update(code="waiting_drydown", text=self._msg("status.waiting_drydown", until=self._when(drydown_end)))
+        if drydown_on:
+            result.update(
+                code="waiting_drydown",
+                text=with_next(self._msg("status.waiting_drydown", until=self._when(drydown_end))),
+            )
             return result
         amount = estimate(next_cycle) if next_ts is not None else None
         if state.last_routine_ts is None and next_ts is not None:
@@ -5280,7 +5421,8 @@ class ZoneFlowController:
         if next_ts is not None:
             key = "next_deep_soak" if next_cycle == "deep_soak" else "next"
             text_key = f"{key}_amount" if amount else key
-            result.update(code=key, text=self._msg(f"status.{text_key}", when=self._when(next_ts), amount=amount))
+            text = self._msg(f"status.{text_key}", when=self._when(next_ts), amount=amount)
+            result.update(code=key, text=other_next(text))
             return result
         result.update(code="idle", text=self._msg("status.idle"))
         return result

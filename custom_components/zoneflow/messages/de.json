@@ -388,6 +388,7 @@
     "target": "Wochenziel: {target}.",
     "scale": "Zielwert durch Wachstumsphase, Defizitmodus und Mulch auf {pct} % angepasst.",
     "rain": "Regengutschrift seit der letzten Bewässerung: {credit} (Regen in den letzten 7 Tagen: {rain}).",
+    "rain_used": "Regengutschrift: {credit}. Angerechneter Regen: {gross}, davon {used} schon verbraucht, als Regen als Bewässerung galt ({when}). Regen in den letzten 7 Tagen: {rain}.",
     "needed": "Bei Bewässerung jetzt: {needed} hinzuzufügen, ca. {minutes} Min.",
     "forecast": "Es war Regen vorhersagt, daher wurden die letzten {n} Bewässerungen hintereinander ausgelassen.",
     "soil": "Bodenfeuchte {pct} % ({status}).",

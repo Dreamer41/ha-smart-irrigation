@@ -388,6 +388,7 @@
     "target": "Weekdoel: {target}.",
     "scale": "Doel aangepast naar {pct} % door groeifase, tekortmodus en mulch.",
     "rain": "Regenvoordeel sinds laatste sproeibeurt: {credit} (regen afgelopen 7 dagen: {rain}).",
+    "rain_used": "Regenvoordeel: {credit}. Meegeteld regen: {gross}, waarvan {used} al gebruikt toen regen als sproeibeurt telde {when}. Regen afgelopen 7 dagen: {rain}.",
     "needed": "Als er nu gesproeid wordt: {needed} toevoegen, ca. {minutes} min.",
     "forecast": "Er werd regen voorspeld, dus de laatste {n} sproeibeurten op rij zijn overgeslagen.",
     "soil": "Bodemvocht {pct} % ({status}).",

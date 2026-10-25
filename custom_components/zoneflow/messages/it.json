@@ -388,6 +388,7 @@
     "target": "Obiettivo settimanale: {target}.",
     "scale": "L'obiettivo è scalato al {pct} % in base a fase di crescita, modalità deficit e pacciamatura.",
     "rain": "Credito pioggia dall'ultima irrigazione: {credit} (pioggia negli ultimi 7 giorni: {rain}).",
+    "rain_used": "Credito pioggia: {credit}. Pioggia conteggiata: {gross}, di cui {used} già usati quando la pioggia è valsa come irrigazione {when}. Pioggia negli ultimi 7 giorni: {rain}.",
     "needed": "Se si irrigasse ora: {needed} da aggiungere, circa {minutes} min.",
     "forecast": "Era prevista pioggia, quindi le ultime {n} irrigazioni di fila sono state saltate.",
     "soil": "Umidità del terreno {pct} % ({status}).",

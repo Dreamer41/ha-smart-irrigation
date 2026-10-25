@@ -13,7 +13,7 @@
  * Also here: zoneflow-overview-card, every zone in one table (further down),
  * and a dashboard strategy that builds a whole dashboard from the zones.
  */
-const CARD_VERSION = "1.7.6";
+const CARD_VERSION = "1.7.7";
 
 // Card texts per language (English is the fallback for anything missing).
 const I18N = {
@@ -104,7 +104,12 @@ const I18N = {
       "needs_a_look": "Needs a look",
       "water_30d": "Water used, 30 days",
       "pause_house": "Pause the greenhouse (stops watering its crops)",
-      "snooze_house": "Skip today's watering of the greenhouse crops"
+      "snooze_house": "Skip today's watering of the greenhouse crops",
+      "headline_attention": "{names}: needs a look",
+      "headline_watering": "Watering now: {names}",
+      "headline_covered": "Nothing needs water right now. Rain and soil have it covered.",
+      "headline_ok": "Your garden is doing well.",
+      "headline_paused": "Watering is paused."
     },
     "tips": {
       "crop_coefficient": "How thirsty this plant is compared with reference evapotranspiration (ET0). Higher = more water, lower = less.",
@@ -222,6 +227,12 @@ const I18N = {
       "cancel": "Cancel",
       "moved": "{plant} moved to {to}"
     },
+    "activity": {
+      "title": "Recent activity",
+      "intro": "What ZoneFlow ran, skipped and stopped in the last 10 days, and why. It comes from Home Assistant's history of this zone's status, so it only goes back as far as your history is kept.",
+      "none": "Nothing yet. Runs and skips appear here as they happen.",
+      "loading": "Loading…"
+    },
     "water_tips": {
       "title": "Watering tips",
       "intro": "Look up your plant to see how much water it usually wants each week (Plant Variety Database) and its crop factor (FAO-56). It is only a suggestion: nothing changes until you press Apply.",
@@ -282,6 +293,8 @@ const I18N = {
     },
     "advanced": "Advanced settings",
     "hide_advanced": "Hide advanced settings",
+    "show_details": "Show details",
+    "hide_details": "Hide details",
     "simple": "Simple view",
     "help": "Help",
     "why": {
@@ -398,7 +411,12 @@ const I18N = {
       "water_30d": "Verbrauchtes Wasser, 30 Tage",
       "pause_house": "Gewächshaus pausieren (stoppt die Bewässerung seiner Kulturen)",
       "snooze_house": "Heutige Bewässerung der Gewächshauskulturen aussetzen",
-      "add_area": "Bereich hinzufügen"
+      "add_area": "Bereich hinzufügen",
+      "headline_attention": "{names}: Prüfung erforderlich",
+      "headline_watering": "Bewässert jetzt: {names}",
+      "headline_covered": "Im Moment braucht nichts Wasser. Regen und Boden sind versorgt.",
+      "headline_ok": "Dem Garten geht es gut.",
+      "headline_paused": "Die Bewässerung ist pausiert."
     },
     "close": "Schließen",
     "device_page": "Geräteseite öffnen",
@@ -516,6 +534,12 @@ const I18N = {
       "cancel": "Abbrechen",
       "moved": "{plant} nach {to} verschoben"
     },
+    "activity": {
+      "title": "Letzte Aktivität",
+      "intro": "Was ZoneFlow in den letzten 10 Tagen bewässert, übersprungen und gestoppt hat, und warum. Die Angaben stammen aus dem Verlauf des Zonenstatus in Home Assistant und reichen so weit zurück, wie Ihr Verlauf aufbewahrt wird.",
+      "none": "Noch nichts. Bewässerungen und Auslassungen erscheinen hier, sobald sie passieren.",
+      "loading": "Wird geladen…"
+    },
     "water_tips": {
       "title": "Gießtipps",
       "intro": "Suchen Sie Ihre Pflanze, um zu sehen, wie viel Wasser sie üblicherweise pro Woche braucht (Plant Variety Database) und welchen Pflanzenfaktor sie hat (FAO-56). Das ist nur ein Vorschlag: Nichts ändert sich, bis Sie auf Anwenden tippen.",
@@ -576,6 +600,8 @@ const I18N = {
     },
     "advanced": "Erweiterte Einstellungen",
     "hide_advanced": "Erweiterte Einstellungen ausblenden",
+    "show_details": "Details anzeigen",
+    "hide_details": "Details ausblenden",
     "simple": "Einfache Ansicht",
     "help": "Hilfe",
     "why": {
@@ -692,7 +718,12 @@ const I18N = {
       "water_30d": "Agua usada, 30 días",
       "pause_house": "Pausar el invernadero (detiene el riego de sus cultivos)",
       "snooze_house": "Omitir el riego de hoy de los cultivos del invernadero",
-      "add_area": "Añadir área"
+      "add_area": "Añadir área",
+      "headline_attention": "{names}: requiere revisión",
+      "headline_watering": "Regando ahora: {names}",
+      "headline_covered": "Nada necesita agua ahora mismo. La lluvia y el suelo lo tienen cubierto.",
+      "headline_ok": "Tu jardín va bien.",
+      "headline_paused": "El riego está en pausa."
     },
     "close": "Cerrar",
     "device_page": "Abrir la página del dispositivo",
@@ -810,6 +841,12 @@ const I18N = {
       "cancel": "Cancelar",
       "moved": "{plant} movida a {to}"
     },
+    "activity": {
+      "title": "Actividad reciente",
+      "intro": "Lo que ZoneFlow regó, omitió y detuvo en los últimos 10 días, y por qué. Viene del historial del estado de esta zona en Home Assistant, así que solo llega hasta donde se conserve tu historial.",
+      "none": "Todavía nada. Los riegos y las omisiones aparecerán aquí a medida que ocurran.",
+      "loading": "Cargando…"
+    },
     "water_tips": {
       "title": "Consejos de riego",
       "intro": "Busca tu planta para ver cuánta agua suele necesitar cada semana (Plant Variety Database) y su coeficiente de cultivo (FAO-56). Es solo una sugerencia: nada cambia hasta que pulses Aplicar.",
@@ -870,6 +907,8 @@ const I18N = {
     },
     "advanced": "Ajustes avanzados",
     "hide_advanced": "Ocultar ajustes avanzados",
+    "show_details": "Mostrar detalles",
+    "hide_details": "Ocultar detalles",
     "simple": "Vista simple",
     "help": "Ayuda",
     "why": {
@@ -986,7 +1025,12 @@ const I18N = {
       "water_30d": "Veden käyttö, 30 päivää",
       "pause_house": "Aseta kasvihuone tauolle (pysäyttää sen kasvien kastelun)",
       "snooze_house": "Ohita kasvihuoneen kasvien tämän päivän kastelu",
-      "add_area": "Lisää alue"
+      "add_area": "Lisää alue",
+      "headline_attention": "{names}: tarvitsee huomiota",
+      "headline_watering": "Kastelu käynnissä: {names}",
+      "headline_covered": "Vettä ei tarvita juuri nyt. Sade ja maan kosteus riittävät.",
+      "headline_ok": "Puutarhalla menee hyvin.",
+      "headline_paused": "Kastelu on tauolla."
     },
     "close": "Sulje",
     "device_page": "Avaa laitesivu",
@@ -1104,6 +1148,12 @@ const I18N = {
       "cancel": "Peruuta",
       "moved": "{plant} siirretty vyöhykkeelle {to}"
     },
+    "activity": {
+      "title": "Viimeaikainen toiminta",
+      "intro": "Mitä ZoneFlow kasteli, jätti väliin ja pysäytti viimeisen 10 päivän aikana, ja miksi. Tiedot tulevat Home Assistantin historiasta, joten ne ulottuvat vain niin pitkälle kuin historiaa säilytetään.",
+      "none": "Ei vielä mitään. Kastelut ja väliin jätetyt kerrat näkyvät tässä, kun niitä tapahtuu.",
+      "loading": "Ladataan…"
+    },
     "water_tips": {
       "title": "Kastelun vinkit",
       "intro": "Hae kasvisi nähdäksesi, paljonko vettä se yleensä haluaa viikossa (Plant Variety Database) ja sen kasvikerroin (FAO-56). Tämä on vain ehdotus: mikään ei muutu ennen kuin painat Käytä.",
@@ -1164,6 +1214,8 @@ const I18N = {
     },
     "advanced": "Lisäasetukset",
     "hide_advanced": "Piilota lisäasetukset",
+    "show_details": "Näytä lisätiedot",
+    "hide_details": "Piilota lisätiedot",
     "simple": "Yksinkertainen näkymä",
     "help": "Ohje",
     "why": {
@@ -1280,7 +1332,12 @@ const I18N = {
       "water_30d": "Eau utilisée, 30 jours",
       "pause_house": "Mettre la serre en pause (arrête l'arrosage de ses cultures)",
       "snooze_house": "Sauter l'arrosage d'aujourd'hui pour les cultures de la serre",
-      "add_area": "Ajouter un secteur"
+      "add_area": "Ajouter un secteur",
+      "headline_attention": "{names} : à vérifier",
+      "headline_watering": "Arrosage en cours : {names}",
+      "headline_covered": "Rien n’a besoin d’eau pour le moment. La pluie et le sol suffisent.",
+      "headline_ok": "Votre jardin va bien.",
+      "headline_paused": "L’arrosage est en pause."
     },
     "close": "Fermer",
     "device_page": "Ouvrir la page de l'appareil",
@@ -1398,6 +1455,12 @@ const I18N = {
       "cancel": "Annuler",
       "moved": "{plant} déplacée vers {to}"
     },
+    "activity": {
+      "title": "Activité récente",
+      "intro": "Ce que ZoneFlow a arrosé, ignoré et arrêté ces 10 derniers jours, et pourquoi. Cela vient de l’historique de l’état de cette zone dans Home Assistant : il ne remonte donc que jusqu’où votre historique est conservé.",
+      "none": "Rien pour l’instant. Les arrosages et les arrêts apparaîtront ici au fur et à mesure.",
+      "loading": "Chargement…"
+    },
     "water_tips": {
       "title": "Conseils d'arrosage",
       "intro": "Recherchez votre plante pour voir combien d'eau elle demande en général chaque semaine (Plant Variety Database) et son coefficient cultural (FAO-56). Ce n'est qu'une suggestion : rien ne change tant que vous n'appuyez pas sur Appliquer.",
@@ -1458,6 +1521,8 @@ const I18N = {
     },
     "advanced": "Paramètres avancés",
     "hide_advanced": "Masquer les paramètres avancés",
+    "show_details": "Afficher les détails",
+    "hide_details": "Masquer les détails",
     "simple": "Vue simple",
     "help": "Aide",
     "why": {
@@ -1574,7 +1639,12 @@ const I18N = {
       "water_30d": "Acqua utilizzata, 30 giorni",
       "pause_house": "Metti in pausa la serra (interrompe l'irrigazione delle sue colture)",
       "snooze_house": "Salta l'irrigazione di oggi delle colture della serra",
-      "add_area": "Aggiungi area"
+      "add_area": "Aggiungi area",
+      "headline_attention": "{names}: richiede un controllo",
+      "headline_watering": "In irrigazione: {names}",
+      "headline_covered": "Al momento niente ha bisogno d’acqua. Pioggia e terreno bastano.",
+      "headline_ok": "Il tuo giardino sta bene.",
+      "headline_paused": "L’irrigazione è in pausa."
     },
     "close": "Chiudi",
     "device_page": "Apri la pagina del dispositivo",
@@ -1692,6 +1762,12 @@ const I18N = {
       "cancel": "Annulla",
       "moved": "{plant} spostata in {to}"
     },
+    "activity": {
+      "title": "Attività recente",
+      "intro": "Cosa ha irrigato, saltato e fermato ZoneFlow negli ultimi 10 giorni, e perché. Viene dalla cronologia dello stato di questa zona in Home Assistant, quindi risale solo fin dove la cronologia viene conservata.",
+      "none": "Ancora niente. Irrigazioni e salti compariranno qui man mano che accadono.",
+      "loading": "Caricamento…"
+    },
     "water_tips": {
       "title": "Consigli di irrigazione",
       "intro": "Cerca la tua pianta per vedere quanta acqua vuole di solito ogni settimana (Plant Variety Database) e il suo coefficiente colturale (FAO-56). È solo un suggerimento: nulla cambia finché non premi Applica.",
@@ -1752,6 +1828,8 @@ const I18N = {
     },
     "advanced": "Impostazioni avanzate",
     "hide_advanced": "Nascondi impostazioni avanzate",
+    "show_details": "Mostra i dettagli",
+    "hide_details": "Nascondi i dettagli",
     "simple": "Vista semplice",
     "help": "Guida",
     "why": {
@@ -1868,7 +1946,12 @@ const I18N = {
       "water_30d": "Gebruikt water, 30 dagen",
       "pause_house": "Pauzeer de kas (stopt de watergift van de gewassen)",
       "snooze_house": "Sproeibeurt van vandaag voor kasteelten overslaan",
-      "add_area": "Gebied toevoegen"
+      "add_area": "Gebied toevoegen",
+      "headline_attention": "{names}: aandacht nodig",
+      "headline_watering": "Nu aan het sproeien: {names}",
+      "headline_covered": "Op dit moment heeft niets water nodig. Regen en bodem zorgen ervoor.",
+      "headline_ok": "Het gaat goed met je tuin.",
+      "headline_paused": "Het sproeien is gepauzeerd."
     },
     "close": "Sluiten",
     "device_page": "Apparaatpagina openen",
@@ -1986,6 +2069,12 @@ const I18N = {
       "cancel": "Annuleren",
       "moved": "{plant} verplaatst naar {to}"
     },
+    "activity": {
+      "title": "Recente activiteit",
+      "intro": "Wat ZoneFlow de afgelopen 10 dagen heeft gesproeid, overgeslagen en gestopt, en waarom. Het komt uit de geschiedenis van de status van deze zone in Home Assistant en gaat dus alleen terug zo ver als je geschiedenis wordt bewaard.",
+      "none": "Nog niets. Sproeibeurten en overgeslagen beurten verschijnen hier zodra ze gebeuren.",
+      "loading": "Laden…"
+    },
     "water_tips": {
       "title": "Watergeeftips",
       "intro": "Zoek je plant op om te zien hoeveel water ze meestal per week wil (Plant Variety Database) en wat haar gewasfactor is (FAO-56). Het is alleen een suggestie: er verandert niets totdat je op Toepassen drukt.",
@@ -2046,6 +2135,8 @@ const I18N = {
     },
     "advanced": "Geavanceerde instellingen",
     "hide_advanced": "Geavanceerde instellingen verbergen",
+    "show_details": "Details tonen",
+    "hide_details": "Details verbergen",
     "simple": "Eenvoudige weergave",
     "help": "Help",
     "why": {
@@ -2162,7 +2253,12 @@ const I18N = {
       "water_30d": "Zużyta woda, 30 dni",
       "pause_house": "Wstrzymaj szklarnię (zatrzymuje podlewanie jej upraw)",
       "snooze_house": "Pomiń dzisiejsze podlewanie upraw w szklarni",
-      "add_area": "Dodaj obszar"
+      "add_area": "Dodaj obszar",
+      "headline_attention": "{names}: wymaga sprawdzenia",
+      "headline_watering": "Podlewanie w toku: {names}",
+      "headline_covered": "Teraz nic nie potrzebuje wody. Deszcz i gleba wystarczają.",
+      "headline_ok": "Twojemu ogrodowi dobrze się wiedzie.",
+      "headline_paused": "Podlewanie jest wstrzymane."
     },
     "close": "Zamknij",
     "device_page": "Otwórz stronę urządzenia",
@@ -2280,6 +2376,12 @@ const I18N = {
       "cancel": "Anuluj",
       "moved": "{plant} przeniesiona do {to}"
     },
+    "activity": {
+      "title": "Ostatnia aktywność",
+      "intro": "Co ZoneFlow podlał, pominął i zatrzymał w ciągu ostatnich 10 dni, i dlaczego. Dane pochodzą z historii stanu tej strefy w Home Assistant, więc sięgają tak daleko wstecz, jak przechowywana jest historia.",
+      "none": "Na razie nic. Podlewania i pominięcia pojawią się tutaj, gdy nastąpią.",
+      "loading": "Wczytywanie…"
+    },
     "water_tips": {
       "title": "Wskazówki dotyczące podlewania",
       "intro": "Wyszukaj swoją roślinę, aby zobaczyć, ile wody zwykle potrzebuje tygodniowo (Plant Variety Database) i jaki ma współczynnik roślinny (FAO-56). To tylko propozycja: nic się nie zmieni, dopóki nie naciśniesz Zastosuj.",
@@ -2309,7 +2411,7 @@ const I18N = {
     "check": {
       "title": "Sprawdź moją konfigurację",
       "loading": "Sprawdzanie…",
-      "all_good": "Wszystko wygląda w порядке.",
+      "all_good": "Wszystko wygląda w porządku.",
       "needs_fixing": "Coś wymaga naprawy.",
       "needs_a_look": "Kilka rzeczy do sprawdzenia.",
       "calibrate": "Skalibruj",
@@ -2340,7 +2442,9 @@ const I18N = {
     },
     "advanced": "Zaawansowane ustawienia",
     "hide_advanced": "Ukryj zaawansowane ustawienia",
-    "simple": "Widok простой",
+    "show_details": "Pokaż szczegóły",
+    "hide_details": "Ukryj szczegóły",
+    "simple": "Widok prosty",
     "help": "Pomoc",
     "why": {
       "button": "Dlaczego?",
@@ -2456,7 +2560,12 @@ const I18N = {
       "water_30d": "Água utilizada, 30 dias",
       "pause_house": "Pausar a estufa (pára a rega das suas culturas)",
       "snooze_house": "Não regar hoje as culturas da estufa",
-      "add_area": "Adicionar área"
+      "add_area": "Adicionar área",
+      "headline_attention": "{names}: precisa de atenção",
+      "headline_watering": "A regar agora: {names}",
+      "headline_covered": "Neste momento nada precisa de água. A chuva e o solo chegam.",
+      "headline_ok": "O seu jardim está bem.",
+      "headline_paused": "A rega está em pausa."
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -2574,6 +2683,12 @@ const I18N = {
       "cancel": "Cancelar",
       "moved": "{plant} movida para {to}"
     },
+    "activity": {
+      "title": "Atividade recente",
+      "intro": "O que o ZoneFlow regou, saltou e parou nos últimos 10 dias, e porquê. Vem do histórico do estado desta zona no Home Assistant, por isso só recua até onde o seu histórico é guardado.",
+      "none": "Ainda nada. As regas e os saltos aparecem aqui à medida que acontecem.",
+      "loading": "A carregar…"
+    },
     "water_tips": {
       "title": "Dicas de rega",
       "intro": "Procure a sua planta para ver quanta água costuma querer por semana (Plant Variety Database) e o seu coeficiente cultural (FAO-56). É só uma sugestão: nada muda até carregar em Aplicar.",
@@ -2634,6 +2749,8 @@ const I18N = {
     },
     "advanced": "Definições avançadas",
     "hide_advanced": "Ocultar definições avançadas",
+    "show_details": "Mostrar detalhes",
+    "hide_details": "Ocultar detalhes",
     "simple": "Vista simples",
     "help": "Ajuda",
     "why": {
@@ -2750,7 +2867,12 @@ const I18N = {
       "water_30d": "Använt vatten, 30 dagar",
       "pause_house": "Pausa växthuset (stoppar vattning av dess grödor)",
       "snooze_house": "Hoppa över dagens vattning av växthusgrödorna",
-      "add_area": "Lägg till område"
+      "add_area": "Lägg till område",
+      "headline_attention": "{names}: behöver en titt",
+      "headline_watering": "Vattnar nu: {names}",
+      "headline_covered": "Inget behöver vatten just nu. Regnet och jorden räcker.",
+      "headline_ok": "Din trädgård mår bra.",
+      "headline_paused": "Bevattningen är pausad."
     },
     "close": "Stäng",
     "device_page": "Öppna enhetssidan",
@@ -2868,6 +2990,12 @@ const I18N = {
       "cancel": "Avbryt",
       "moved": "{plant} flyttad till {to}"
     },
+    "activity": {
+      "title": "Senaste aktivitet",
+      "intro": "Vad ZoneFlow har vattnat, hoppat över och stoppat de senaste 10 dagarna, och varför. Det kommer från Home Assistants historik över zonens status och går därför bara så långt tillbaka som din historik sparas.",
+      "none": "Inget ännu. Vattningar och överhoppningar visas här när de sker.",
+      "loading": "Läser in…"
+    },
     "water_tips": {
       "title": "Vattningstips",
       "intro": "Slå upp din växt för att se hur mycket vatten den vanligtvis vill ha varje vecka (Plant Variety Database) och dess växtfaktor (FAO-56). Det är bara ett förslag: ingenting ändras förrän du trycker på Använd.",
@@ -2928,6 +3056,8 @@ const I18N = {
     },
     "advanced": "Avancerade inställningar",
     "hide_advanced": "Dölj avancerade inställningar",
+    "show_details": "Visa detaljer",
+    "hide_details": "Dölj detaljer",
     "simple": "Enkel vy",
     "help": "Hjälp",
     "why": {
@@ -3044,7 +3174,12 @@ const I18N = {
       "water_30d": "Spotřebovaná voda za 30 dní",
       "pause_house": "Pozastavit skleník (zastaví zalévání jeho plodin)",
       "snooze_house": "Vynechat dnešní zálivku plodin ve skleníku",
-      "add_area": "Přidat oblast"
+      "add_area": "Přidat oblast",
+      "headline_attention": "{names}: vyžaduje kontrolu",
+      "headline_watering": "Právě zalévá: {names}",
+      "headline_covered": "Právě teď nic nepotřebuje vodu. Déšť a půda to pokrývají.",
+      "headline_ok": "Vaší zahradě se daří.",
+      "headline_paused": "Zalévání je pozastaveno."
     },
     "close": "Zavřít",
     "device_page": "Otevřít stránku zařízení",
@@ -3162,6 +3297,12 @@ const I18N = {
       "cancel": "Zrušit",
       "moved": "{plant} přesunuta do {to}"
     },
+    "activity": {
+      "title": "Nedávná aktivita",
+      "intro": "Co ZoneFlow za posledních 10 dní zalil, přeskočil a zastavil, a proč. Údaje pocházejí z historie stavu této zóny v Home Assistantu, takže sahají jen tak daleko, jak se historie uchovává.",
+      "none": "Zatím nic. Zálivky a přeskočení se zde objeví, jakmile nastanou.",
+      "loading": "Načítání…"
+    },
     "water_tips": {
       "title": "Tipy k zálivce",
       "intro": "Vyhledejte svou rostlinu a zjistěte, kolik vody obvykle potřebuje za týden (Plant Variety Database), a její plodinový koeficient (FAO-56). Je to jen návrh: nic se nezmění, dokud nestisknete Použít.",
@@ -3222,6 +3363,8 @@ const I18N = {
     },
     "advanced": "Pokročilá nastavení",
     "hide_advanced": "Skrýt pokročilá nastavení",
+    "show_details": "Zobrazit podrobnosti",
+    "hide_details": "Skrýt podrobnosti",
     "simple": "Jednoduché zobrazení",
     "help": "Nápověda",
     "why": {
@@ -3338,7 +3481,12 @@ const I18N = {
       "water_30d": "Brugt vand, 30 dage",
       "pause_house": "Sæt drivhuset på pause (stopper vanding af dets afgrøder)",
       "snooze_house": "Spring dagens vanding af drivhusafgrøderne over",
-      "add_area": "Tilføj område"
+      "add_area": "Tilføj område",
+      "headline_attention": "{names}: kræver et kig",
+      "headline_watering": "Vander nu: {names}",
+      "headline_covered": "Intet har brug for vand lige nu. Regn og jord klarer det.",
+      "headline_ok": "Din have har det godt.",
+      "headline_paused": "Vandingen er på pause."
     },
     "close": "Luk",
     "device_page": "Åbn enhedssiden",
@@ -3456,6 +3604,12 @@ const I18N = {
       "cancel": "Annuller",
       "moved": "{plant} flyttet til {to}"
     },
+    "activity": {
+      "title": "Seneste aktivitet",
+      "intro": "Hvad ZoneFlow har vandet, sprunget over og stoppet de seneste 10 dage, og hvorfor. Det kommer fra Home Assistants historik over zonens status og rækker derfor kun så langt tilbage, som din historik gemmes.",
+      "none": "Intet endnu. Vandinger og overspringelser vises her, når de sker.",
+      "loading": "Indlæser…"
+    },
     "water_tips": {
       "title": "Vandingstips",
       "intro": "Slå din plante op for at se, hvor meget vand den som regel vil have om ugen (Plant Variety Database), og dens afgrødefaktor (FAO-56). Det er kun et forslag: intet ændres, før du trykker Anvend.",
@@ -3516,6 +3670,8 @@ const I18N = {
     },
     "advanced": "Avancerede indstillinger",
     "hide_advanced": "Skjul avancerede indstillinger",
+    "show_details": "Vis detaljer",
+    "hide_details": "Skjul detaljer",
     "simple": "Enkel visning",
     "help": "Hjælp",
     "why": {
@@ -3632,7 +3788,12 @@ const I18N = {
       "water_30d": "Felhasznált víz, 30 nap",
       "pause_house": "Üvegház szüneteltetése (leállítja a növények öntözését)",
       "snooze_house": "Kasvihuoneen növényeinek mai öntözésének kihagyása",
-      "add_area": "Terület hozzáadása"
+      "add_area": "Terület hozzáadása",
+      "headline_attention": "{names}: ellenőrzést igényel",
+      "headline_watering": "Öntözés folyamatban: {names}",
+      "headline_covered": "Jelenleg semmi sem igényel vizet. Az eső és a talaj fedezi.",
+      "headline_ok": "A kerted jól van.",
+      "headline_paused": "Az öntözés szünetel."
     },
     "close": "Bezárás",
     "device_page": "Eszközoldal megnyitása",
@@ -3750,6 +3911,12 @@ const I18N = {
       "cancel": "Mégse",
       "moved": "{plant} áthelyezve ide: {to}"
     },
+    "activity": {
+      "title": "Legutóbbi tevékenység",
+      "intro": "Mit öntözött, hagyott ki és állított le a ZoneFlow az elmúlt 10 napban, és miért. Az adatok a zóna állapotának Home Assistant-előzményeiből származnak, ezért csak addig nyúlnak vissza, ameddig az előzményeket megőrzi a rendszer.",
+      "none": "Még semmi. Az öntözések és a kihagyások itt jelennek meg, amint megtörténnek.",
+      "loading": "Betöltés…"
+    },
     "water_tips": {
       "title": "Öntözési tippek",
       "intro": "Keresd meg a növényed, hogy lásd, általában mennyi vizet kér hetente (Plant Variety Database), és mekkora a növényi együtthatója (FAO-56). Ez csak javaslat: semmi sem változik, amíg nem nyomod meg az Alkalmaz gombot.",
@@ -3810,6 +3977,8 @@ const I18N = {
     },
     "advanced": "Fejlett beállítások",
     "hide_advanced": "Fejlett beállítások elrejtése",
+    "show_details": "Részletek megjelenítése",
+    "hide_details": "Részletek elrejtése",
     "simple": "Egyszerű nézet",
     "help": "Súgó",
     "why": {
@@ -3926,7 +4095,12 @@ const I18N = {
       "water_30d": "Brukt vann, 30 dager",
       "pause_house": "Sett drivhuset på pause (stopper vanning av kulturene)",
       "snooze_house": "Hopp over dagens vanning av drivhuskulturene",
-      "add_area": "Legg til område"
+      "add_area": "Legg til område",
+      "headline_attention": "{names}: krever en sjekk",
+      "headline_watering": "Vanner nå: {names}",
+      "headline_covered": "Ingenting trenger vann akkurat nå. Regn og jord dekker det.",
+      "headline_ok": "Hagen har det bra.",
+      "headline_paused": "Vanningen er satt på pause."
     },
     "close": "Lukk",
     "device_page": "Åpne enhetssiden",
@@ -4044,6 +4218,12 @@ const I18N = {
       "cancel": "Avbryt",
       "moved": "{plant} flyttet til {to}"
     },
+    "activity": {
+      "title": "Siste aktivitet",
+      "intro": "Hva ZoneFlow har vannet, hoppet over og stoppet de siste 10 dagene, og hvorfor. Det kommer fra Home Assistants historikk over sonens status og går derfor bare så langt tilbake som historikken din lagres.",
+      "none": "Ingenting ennå. Vanninger og overhoppinger vises her når de skjer.",
+      "loading": "Laster…"
+    },
     "water_tips": {
       "title": "Vanningstips",
       "intro": "Slå opp planten din for å se hvor mye vann den vanligvis vil ha hver uke (Plant Variety Database) og avlingsfaktoren (FAO-56). Det er bare et forslag: ingenting endres før du trykker Bruk.",
@@ -4104,6 +4284,8 @@ const I18N = {
     },
     "advanced": "Avanserte innstillinger",
     "hide_advanced": "Skjul avanserte innstillinger",
+    "show_details": "Vis detaljer",
+    "hide_details": "Skjul detaljer",
     "simple": "Enkel visning",
     "help": "Hjelp",
     "why": {
@@ -4220,7 +4402,12 @@ const I18N = {
       "water_30d": "Água utilizada, 30 dias",
       "pause_house": "Pausar a estufa (para a irrigação de suas culturas)",
       "snooze_house": "Não irrigar hoje as culturas da estufa",
-      "add_area": "Adicionar área"
+      "add_area": "Adicionar área",
+      "headline_attention": "{names}: precisa de atenção",
+      "headline_watering": "Irrigando agora: {names}",
+      "headline_covered": "No momento nada precisa de água. A chuva e o solo bastam.",
+      "headline_ok": "Seu jardim está bem.",
+      "headline_paused": "A irrigação está em pausa."
     },
     "close": "Fechar",
     "device_page": "Abrir a página do dispositivo",
@@ -4338,6 +4525,12 @@ const I18N = {
       "cancel": "Cancelar",
       "moved": "{plant} movida para {to}"
     },
+    "activity": {
+      "title": "Atividade recente",
+      "intro": "O que o ZoneFlow irrigou, pulou e parou nos últimos 10 dias, e por quê. Vem do histórico do estado desta zona no Home Assistant, então só volta até onde o seu histórico é guardado.",
+      "none": "Ainda nada. As irrigações e os saltos aparecem aqui conforme acontecem.",
+      "loading": "Carregando…"
+    },
     "water_tips": {
       "title": "Dicas de rega",
       "intro": "Procure sua planta para ver quanta água ela costuma querer por semana (Plant Variety Database) e seu coeficiente de cultura (FAO-56). É só uma sugestão: nada muda até você tocar em Aplicar.",
@@ -4398,6 +4591,8 @@ const I18N = {
     },
     "advanced": "Configurações avançadas",
     "hide_advanced": "Ocultar configurações avançadas",
+    "show_details": "Mostrar detalhes",
+    "hide_details": "Ocultar detalhes",
     "simple": "Visualização simples",
     "help": "Ajuda",
     "why": {
@@ -4514,7 +4709,12 @@ const I18N = {
       "water_30d": "Расход воды, 30 дней",
       "pause_house": "Поставить теплицу на паузу (останавливает полив культур)",
       "snooze_house": "Пропустить сегодняшнее поливание культур в теплице",
-      "add_area": "Добавить область"
+      "add_area": "Добавить область",
+      "headline_attention": "{names}: требует внимания",
+      "headline_watering": "Полив сейчас: {names}",
+      "headline_covered": "Сейчас ничему не нужна вода. Дождь и почва справляются.",
+      "headline_ok": "В вашем саду всё хорошо.",
+      "headline_paused": "Полив на паузе."
     },
     "close": "Закрыть",
     "device_page": "Открыть страницу устройства",
@@ -4632,6 +4832,12 @@ const I18N = {
       "cancel": "Отмена",
       "moved": "{plant} перемещено в {to}"
     },
+    "activity": {
+      "title": "Недавняя активность",
+      "intro": "Что ZoneFlow полил, пропустил и остановил за последние 10 дней, и почему. Данные берутся из истории состояния этой зоны в Home Assistant, поэтому они уходят в прошлое лишь настолько, насколько хранится ваша история.",
+      "none": "Пока ничего. Поливы и пропуски появятся здесь, когда произойдут.",
+      "loading": "Загрузка…"
+    },
     "water_tips": {
       "title": "Советы по поливу",
       "intro": "Найдите своё растение, чтобы увидеть, сколько воды ему обычно нужно в неделю (Plant Variety Database), и его коэффициент культуры (FAO-56). Это только предложение: ничего не изменится, пока вы не нажмёте «Применить».",
@@ -4692,6 +4898,8 @@ const I18N = {
     },
     "advanced": "Расширенные настройки",
     "hide_advanced": "Скрыть расширенные настройки",
+    "show_details": "Показать подробности",
+    "hide_details": "Скрыть подробности",
     "simple": "Простой вид",
     "help": "Справка",
     "why": {
@@ -4808,7 +5016,12 @@ const I18N = {
       "water_30d": "Spotrebovaná voda, 30 dní",
       "pause_house": "Pozastaviť skleník (zastaví zalievanie jeho plodín)",
       "snooze_house": "Vynechať dnešnú zálievku plodín v skleníku",
-      "add_area": "Pridať oblasť"
+      "add_area": "Pridať oblasť",
+      "headline_attention": "{names}: vyžaduje kontrolu",
+      "headline_watering": "Práve zalieva: {names}",
+      "headline_covered": "Práve teraz nič nepotrebuje vodu. Dážď a pôda to pokrývajú.",
+      "headline_ok": "Vašej záhrade sa darí.",
+      "headline_paused": "Zálievka je pozastavená."
     },
     "close": "Zavrieť",
     "device_page": "Otvoriť stránku zariadenia",
@@ -4926,6 +5139,12 @@ const I18N = {
       "cancel": "Zrušiť",
       "moved": "{plant} presunutá do {to}"
     },
+    "activity": {
+      "title": "Nedávna aktivita",
+      "intro": "Čo ZoneFlow za posledných 10 dní zaliala, preskočila a zastavila, a prečo. Údaje pochádzajú z histórie stavu tejto zóny v Home Assistant, takže siahajú len tak ďaleko, ako sa história uchováva.",
+      "none": "Zatiaľ nič. Zálievky a preskočenia sa tu objavia, len čo nastanú.",
+      "loading": "Načítava sa…"
+    },
     "water_tips": {
       "title": "Tipy na zálievku",
       "intro": "Vyhľadajte svoju rastlinu a zistite, koľko vody zvyčajne potrebuje za týždeň (Plant Variety Database), a jej koeficient plodiny (FAO-56). Je to len návrh: nič sa nezmení, kým nestlačíte Použiť.",
@@ -4986,6 +5205,8 @@ const I18N = {
     },
     "advanced": "Pokročilé nastavenia",
     "hide_advanced": "Skryť pokročilé nastavenia",
+    "show_details": "Zobraziť podrobnosti",
+    "hide_details": "Skryť podrobnosti",
     "simple": "Jednoduché zobrazenie",
     "help": "Pomocník",
     "why": {
@@ -5102,7 +5323,12 @@ const I18N = {
       "water_30d": "Використана вода, 30 днів",
       "pause_house": "Поставити теплицю на паузу (зупиняє полив культур)",
       "snooze_house": "Пропустити сьогоднішній полив культур у теплиці",
-      "add_area": "Додати область"
+      "add_area": "Додати область",
+      "headline_attention": "{names}: потребує уваги",
+      "headline_watering": "Полив зараз: {names}",
+      "headline_covered": "Наразі нічому не потрібна вода. Дощ і ґрунт справляються.",
+      "headline_ok": "У вашому саду все добре.",
+      "headline_paused": "Полив призупинено."
     },
     "close": "Закрити",
     "device_page": "Відкрити сторінку пристрою",
@@ -5220,6 +5446,12 @@ const I18N = {
       "cancel": "Скасувати",
       "moved": "{plant} переміщено до {to}"
     },
+    "activity": {
+      "title": "Нещодавня активність",
+      "intro": "Що ZoneFlow полив, пропустив і зупинив за останні 10 днів, і чому. Дані беруться з історії стану цієї зони в Home Assistant, тому вони сягають лише настільки далеко, наскільки зберігається ваша історія.",
+      "none": "Поки що нічого. Поливи та пропуски з’являться тут, коли відбудуться.",
+      "loading": "Завантаження…"
+    },
     "water_tips": {
       "title": "Поради щодо поливу",
       "intro": "Знайдіть свою рослину, щоб побачити, скільки води їй зазвичай потрібно на тиждень (Plant Variety Database), та її коефіцієнт культури (FAO-56). Це лише пропозиція: нічого не зміниться, доки ви не натиснете «Застосувати».",
@@ -5280,6 +5512,8 @@ const I18N = {
     },
     "advanced": "Розширені налаштування",
     "hide_advanced": "Сховати розширені налаштування",
+    "show_details": "Показати подробиці",
+    "hide_details": "Сховати подробиці",
     "simple": "Простий вигляд",
     "help": "Довідка",
     "why": {
@@ -5396,7 +5630,12 @@ const I18N = {
       "water_30d": "30 天用水量",
       "pause_house": "暂停温室（停止为其作物浇水）",
       "snooze_house": "跳过温室作物今天的浇水",
-      "add_area": "添加区域"
+      "add_area": "添加区域",
+      "headline_attention": "{names}：需要检查",
+      "headline_watering": "正在浇水：{names}",
+      "headline_covered": "目前没有需要浇水的地方。降雨和土壤已经够了。",
+      "headline_ok": "你的花园状态良好。",
+      "headline_paused": "浇水已暂停。"
     },
     "close": "关闭",
     "device_page": "打开设备页面",
@@ -5514,6 +5753,12 @@ const I18N = {
       "cancel": "取消",
       "moved": "{plant} 已移到 {to}"
     },
+    "activity": {
+      "title": "最近活动",
+      "intro": "过去 10 天 ZoneFlow 浇了什么、跳过了什么、停止了什么，以及原因。数据来自 Home Assistant 中该区域状态的历史记录，因此只能追溯到你的历史记录保留的时间。",
+      "none": "暂时没有。浇水和跳过的记录会在发生时显示在这里。",
+      "loading": "正在加载…"
+    },
     "water_tips": {
       "title": "浇水提示",
       "intro": "查找你的植物，了解它通常每周需要多少水（Plant Variety Database）及其作物系数（FAO-56）。这只是建议：在你点按“应用”之前不会有任何改变。",
@@ -5574,6 +5819,8 @@ const I18N = {
     },
     "advanced": "高级设置",
     "hide_advanced": "隐藏高级设置",
+    "show_details": "显示详情",
+    "hide_details": "隐藏详情",
     "simple": "简单视图",
     "help": "帮助",
     "why": {
@@ -5639,6 +5886,11 @@ const ONLY_WHEN = {
   // Once a first feed is recorded.
   "sensor.next_fertilizing": (state) => state && !["unknown", "unavailable"].includes(state.state),
 };
+// The numbers behind the decisions: in the Now section they sit behind "Show details".
+const NOW_DETAILS = [
+  "sensor.last_cycle_water_liters", "sensor.routine_weekly_target", "sensor.avg_peak_temp_3d",
+  "sensor.water_used_30d", "sensor.water_used_year", "sensor.growth_ramp_pct",
+];
 const CONTROLS = ["switch.greenhouse_control", "switch.pause", "datetime.paused_until", "switch.deficit_mode"];
 const JOURNAL = ["select.health_status", "text.health_notes", "datetime.last_fertilizing", "select.fertilizing_interval"];
 const PLANT_TYPES = ["custom", "tomatoes", "chilis", "leafy_vegetables", "herbs", "strawberries", "flowers", "lawn", "shrubs", "young_tree", "fruit_tree"];
@@ -5912,6 +6164,8 @@ class ZoneFlowCard extends HTMLElement {
       .area-label { flex: 1; min-width: 0; }
       .area-select, .area-input { font: inherit; color: var(--primary-text-color); background: var(--secondary-background-color);
         border: 1px solid var(--divider-color); border-radius: 6px; padding: 6px 8px; max-width: 55%; min-width: 0; }
+      .details-toggle { display: block; margin: 0 8px 4px; padding: 4px 8px; font: inherit; font-size: 0.9em; color: var(--primary-color);
+        background: none; border: none; cursor: pointer; }
       .advanced-toggle { display: block; margin: 4px 16px 14px; padding: 6px 12px; font: inherit; color: var(--primary-color);
         background: none; border: none; cursor: pointer; }
       .help-row { display: flex; align-items: center; }
@@ -5941,6 +6195,10 @@ class ZoneFlowCard extends HTMLElement {
       .plant-badge.main { color: var(--primary-color); font-weight: 500; }
       .plant-actions, .plant-form, .plant-noterow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
       .tips-row { padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
+      .activity-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
+      .activity-row ha-icon { --mdc-icon-size: 20px; flex: none; margin-top: 2px; color: var(--secondary-text-color); }
+      .activity-row.ran ha-icon { color: var(--primary-color); }
+      .activity-row.warn ha-icon { color: var(--warning-color, #ffa600); }
       .tips-name { font-weight: 500; }
       .tips-amount { color: var(--secondary-text-color); margin-bottom: 4px; }
       .tips-proposal { margin-top: 12px; }
@@ -6085,7 +6343,8 @@ class ZoneFlowCard extends HTMLElement {
     // Now: the valve and what the zone is looking at.
     const now = [];
     if (valve && hass.states[valve]) now.push({ entity: valve, name: t(hass, "valve") });
-    now.push(...rows(NOW));
+    now.push(...rows(NOW.filter((key) => !NOW_DETAILS.includes(key))));
+    const nowDetails = rows(NOW_DETAILS);
     // Controls: run now, snooze, pause.
     const controls = [
       ...buttons([
@@ -6130,8 +6389,8 @@ class ZoneFlowCard extends HTMLElement {
     }
     groups.push(["more", more]);
 
-    const section = (titleKey, confs) => {
-      if (!confs.length) return;
+    const section = (titleKey, confs, detailConfs = []) => {
+      if (!confs.length && !detailConfs.length) return;
       const el = document.createElement("div");
       el.className = "section";
       const heading = document.createElement("div");
@@ -6142,6 +6401,23 @@ class ZoneFlowCard extends HTMLElement {
       el.append(heading, list);
       card.appendChild(el);
       this._addRows(list, confs);
+      if (detailConfs.length) {
+        // The technical numbers, folded away until asked for (the choice is kept while the card lives).
+        const details = document.createElement("div");
+        details.className = "rows";
+        details.hidden = !this._showDetails;
+        const toggle = document.createElement("button");
+        toggle.className = "details-toggle";
+        const label = () => t(hass, details.hidden ? "show_details" : "hide_details");
+        toggle.textContent = label();
+        toggle.addEventListener("click", () => {
+          details.hidden = !details.hidden;
+          this._showDetails = !details.hidden;
+          toggle.textContent = label();
+        });
+        el.append(toggle, details);
+        this._addRows(details, detailConfs);
+      }
     };
     // Journal, settings and diagnostics: buttons that open a popup, like
     // Home Assistant's own entity dialogs.
@@ -6159,6 +6435,14 @@ class ZoneFlowCard extends HTMLElement {
     // The plants in this zone (a zone that waters has at least its main plant).
     if (this._config.show_settings && Array.isArray(statusAttrs.plants) && valve) {
       this._popups.plants = { icon: "mdi:sprout-outline", custom: "plants", parts: [], label: t(hass, "plants.title") };
+    }
+    // Recent activity: what the zone ran, skipped and stopped lately, with the reasons, read from the history
+    // of its status sensor (nothing extra is stored).
+    if (this._config.show_settings && valve && visible["sensor.status"]) {
+      this._popups.activity = {
+        icon: "mdi:history", custom: "activity", parts: [], label: t(hass, "activity.title"),
+        status: visible["sensor.status"].entity_id,
+      };
     }
     // Watering tips: what the plant usually wants per week, from a plant database (administrators).
     if (this._config.show_settings && valve && hass.user?.is_admin && visible["number.target_weekly_mm"]) {
@@ -6192,7 +6476,7 @@ class ZoneFlowCard extends HTMLElement {
     // Simple view: status and the few controls; the rest behind "Advanced settings".
     const simple = !!this._config.simple;
     const showAll = !simple || !!this._showAdvanced;
-    if (showAll) section("now", now);
+    if (showAll) section("now", now, nowDetails);
     // A greenhouse: its crops, as in the overview card (status, next and
     // last watering, Water now; tap one for its full card).
     const crops = (statusAttrs.crops || []).map((c) => c.device_id).filter(Boolean);
@@ -6301,6 +6585,7 @@ class ZoneFlowCard extends HTMLElement {
     if (popup.custom === "schedule") this._scheduleBody(body, popup);
     if (popup.custom === "calibrate") this._calibrateBody(body, popup);
     if (popup.custom === "water_tips") this._waterTipsBody(body, popup);
+    if (popup.custom === "activity") this._activityBody(body, popup);
     for (const [groupKey, confs] of popup.parts) {
       // A group of settings that are all "advanced" is hidden with them.
       const advGroup = everyday && confs.every((conf) => conf._adv);
@@ -6449,6 +6734,82 @@ class ZoneFlowCard extends HTMLElement {
     const again = make("button", "plant-button", t(hass, "check.again"));
     again.addEventListener("click", () => this._checkBody(body));
     body.appendChild(again);
+  }
+
+  _activityBody(body, popup) {
+    const hass = this._hass;
+    const make = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    };
+    body.textContent = "";
+    body.appendChild(make("div", "group-note", t(hass, "activity.intro")));
+    const list = make("div", "activity-list", t(hass, "activity.loading"));
+    body.appendChild(list);
+    const lang = hass.locale?.language || hass.language || "en";
+    const when = (ms) => new Date(ms).toLocaleString(lang, {
+      weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit",
+    });
+    (async () => {
+      const end = new Date();
+      let data;
+      try {
+        data = await hass.callWS({
+          type: "history/history_during_period",
+          start_time: new Date(end.getTime() - 10 * 86400000).toISOString(),
+          end_time: end.toISOString(),
+          entity_ids: [popup.status],
+          include_start_time_state: true,
+          significant_changes_only: false,
+          minimal_response: false,
+          no_attributes: false,
+        });
+      } catch (err) {
+        list.textContent = err?.message || String(err);
+        return;
+      }
+      // One line per decision: the status sensor repeats the same decision with a new "next watering" tail.
+      const seen = new Map();
+      let lastUntimed = null; // consecutive states with no decision time are one event
+      for (const item of data?.[popup.status] || []) {
+        const attrs = item.a ?? item.attributes ?? {};
+        const code = attrs.code;
+        if (!code || code.startsWith("waiting")) continue;
+        const decided = attrs.decided_at ? Date.parse(attrs.decided_at) : NaN;
+        if (Number.isNaN(decided) && !ACTIVITY_WITHOUT_TIME.has(code)) continue;
+        const changed = item.lu != null ? item.lu * 1000 : Date.parse(item.last_updated);
+        const at = Number.isNaN(decided) ? changed : decided;
+        let key = `${code}|${Number.isNaN(decided) ? "" : decided}|${attrs.cycle || ""}`;
+        if (Number.isNaN(decided)) {
+          // no decision time to tell two events apart: a new run of this code is a new event
+          if (lastUntimed?.base === key) key = lastUntimed.full;
+          else {
+            lastUntimed = { base: key, full: `${key}|${changed}` };
+            key = lastUntimed.full;
+          }
+        } else {
+          lastUntimed = null;
+        }
+        // (" · next Fri 05:30" at the end of a decision was true only when it was said: leave it out of a history)
+        if (!seen.has(key)) seen.set(key, { code, at, text: String(item.s ?? item.state ?? "").split(" · ")[0] });
+      }
+      const oldest = end.getTime() - 10 * 86400000;
+      const rows = [...seen.values()].filter((r) => r.text && !Number.isNaN(r.at) && r.at >= oldest).sort((a, b) => b.at - a.at).slice(0, 40);
+      list.textContent = "";
+      if (!rows.length) list.textContent = t(hass, "activity.none");
+      for (const row of rows) {
+        const look = STATUS_LABELS[row.code];
+        const line = make("div", `activity-row${look?.[2] ? " warn" : ""}${["done", "watered_by_rain", "watering"].includes(row.code) ? " ran" : ""}`);
+        const icon = document.createElement("ha-icon");
+        icon.setAttribute("icon", row.code === "watered_by_rain" ? "mdi:weather-rainy" : look?.[1] || "mdi:circle-small");
+        const text = make("div");
+        text.append(make("div", "", row.text), make("div", "group-note", when(row.at)));
+        line.append(icon, text);
+        list.appendChild(line);
+      }
+    })();
   }
 
   _waterTipsBody(body, popup) {
@@ -7308,6 +7669,15 @@ const CLIMATE_STATUS = {
   climate_idle: ["mdi:check-circle-outline", false],
 };
 
+// Zones that skipped or wait because the rain, the forecast or the soil has the water covered.
+const COVERED_BY_WEATHER = new Set([
+  "skipped_forecast", "skipped_rain_credit", "skipped_wet_fortnight", "cancelled_rain",
+  "skipped_soil_wet", "waiting_soil_wet", "skipped_drydown", "waiting_drydown",
+]);
+
+// Status codes that are not dated by a decision but still belong in the recent activity.
+const ACTIVITY_WITHOUT_TIME = new Set(["watering", "service_run", "lock_held", "snoozed"]);
+
 const STATUS_LABELS = {
   watering: ["watering", "mdi:water", false],
   service_run: ["service_run", "mdi:wrench-clock", false],
@@ -7659,6 +8029,13 @@ class ZoneFlowOverviewCard extends HTMLElement {
       .garden-summary:empty { display: none; }
       .chip { display: inline-flex; align-items: center; gap: 4px; }
       .chip ha-icon { --mdc-icon-size: 16px; }
+      .garden-headline { display: flex; align-items: center; gap: 8px; padding: 0 16px 8px; font-size: 1.05em; font-weight: 500;
+        color: var(--primary-text-color); }
+      .garden-headline:empty { display: none; }
+      .garden-headline ha-icon { --mdc-icon-size: 22px; flex: none; }
+      .garden-headline.ok ha-icon { color: var(--success-color, #43a047); }
+      .garden-headline.active ha-icon { color: var(--primary-color); }
+      .garden-headline.warn ha-icon { color: var(--warning-color, #ffa600); }
       .area-title { margin: 14px 12px 6px; font-size: 0.85em; font-weight: 500; letter-spacing: 0.04em;
         text-transform: uppercase; color: var(--secondary-text-color); display: flex; align-items: center; gap: 4px; }
       .area-title span { flex: 1; }
@@ -7688,6 +8065,11 @@ class ZoneFlowOverviewCard extends HTMLElement {
     title.className = "title";
     title.textContent = this._config.title || tr("title");
     card.appendChild(title);
+    // One plain sentence on how the garden is (filled in by _update).
+    this._headlineEl = document.createElement("div");
+    this._headlineEl.className = "garden-headline";
+    this._headlineSignature = undefined; // a new, empty line: fill it again
+    if (!this._config.embedded && zones.length) card.appendChild(this._headlineEl);
     // My Garden: today at a glance (filled in by _update).
     this._summaryEl = document.createElement("div");
     this._summaryEl.className = "garden-summary";
@@ -8046,6 +8428,22 @@ class ZoneFlowOverviewCard extends HTMLElement {
     details.append(inner);
   }
 
+  _headline(zones) {
+    // One plain sentence on how the garden is: [tone, icon, text], or null when there is nothing to say.
+    const hass = this._hass;
+    const tr = (key) => t(hass, `overview.${key}`);
+    const names = (list) => list.map((z) => z.name).join(", ");
+    // a zone whose status is missing (unavailable, not loaded) is not "doing well" either
+    const warnings = zones.filter((z) => !z.code || z.code === "climate_" || (CLIMATE_STATUS[z.code] ? CLIMATE_STATUS[z.code][1] : STATUS_LABELS[z.code]?.[2]));
+    if (warnings.length) return ["warn", "mdi:alert-outline", tr("headline_attention").replace("{names}", () => names(warnings))];
+    const watering = zones.filter((z) => z.code === "watering" || z.code === "service_run");
+    if (watering.length) return ["active", "mdi:water", tr("headline_watering").replace("{names}", () => names(watering))];
+    const active = zones.filter((z) => z.code !== "paused");
+    if (!active.length) return zones.length ? ["ok", "mdi:pause-circle-outline", tr("headline_paused")] : null;
+    if (active.every((z) => COVERED_BY_WEATHER.has(z.code))) return ["ok", "mdi:weather-rainy", tr("headline_covered")];
+    return ["ok", "mdi:check-circle-outline", tr("headline_ok")];
+  }
+
   _summary(zones) {
     // [icon, text] chips: what is watering, what is next, rain, warnings, water used.
     const hass = this._hass;
@@ -8088,6 +8486,20 @@ class ZoneFlowOverviewCard extends HTMLElement {
 
   _update(zones) {
     const hass = this._hass;
+    if (this._headlineEl) {
+      const headline = this._headline(zones);
+      const signature = JSON.stringify(headline);
+      if (signature !== this._headlineSignature) {
+        this._headlineSignature = signature;
+        this._headlineEl.textContent = "";
+        this._headlineEl.className = `garden-headline ${headline ? headline[0] : ""}`.trim();
+        if (headline) {
+          const icon = document.createElement("ha-icon");
+          icon.setAttribute("icon", headline[1]);
+          this._headlineEl.append(icon, document.createTextNode(headline[2]));
+        }
+      }
+    }
     if (this._summaryEl) {
       const chips = this._summary(zones);
       const signature = JSON.stringify(chips);

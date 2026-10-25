@@ -74,7 +74,11 @@ async def test_the_next_watering_waits_for_the_6_days(hass, fake_valve_services)
     rain_ts = c.store.state.last_significant_rain_ts
     routine_next, _deep = c.next_watering()
     assert routine_next >= rain_ts + 6 * DAY - 60  # not before the holdoff ends
-    assert c.status()["code"] == "waiting_drydown"
+    status = c.status()
+    assert status["code"] == "waiting_drydown"
+    # The sentence says when it will really water, not only when the drying ends.
+    assert " · next " in status["text"]
+    assert status["next_routine"] is not None
 
 
 @pytest.mark.asyncio

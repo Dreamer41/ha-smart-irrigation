@@ -55,11 +55,22 @@ def explain(controller: Any) -> list[dict[str, str]]:
         add("target", "target", target=units.depth_text(plan.target_weekly_mm, imperial))
         if abs(scale - 1.0) > 0.005:
             add("scale", "scale", pct=f"{scale * 100:.0f}")
-        add(
-            "rain", "rain",
-            credit=units.depth_text(plan.eff_rain_mm, imperial),
-            rain=units.depth_text(controller.rain_windows().get("7d", 0.0), imperial),
-        )
+        rain_7d = units.depth_text(controller.rain_windows().get("7d", 0.0), imperial)
+        try:
+            gross, used, used_ts = controller.rain_credit_breakdown(plan)
+        except Exception:  # noqa: BLE001 - an explanation must never raise
+            gross = used = 0.0
+            used_ts = None
+        if used_ts is not None:
+            # Rain counted as a watering already used up part of what fell: say so, so the
+            # credit is not read as all the rain of the last days.
+            add(
+                "rain", "rain_used",
+                credit=units.depth_text(plan.eff_rain_mm, imperial), gross=units.depth_text(gross, imperial),
+                used=units.depth_text(used, imperial), when=controller._when(used_ts), rain=rain_7d,
+            )
+        else:
+            add("rain", "rain", credit=units.depth_text(plan.eff_rain_mm, imperial), rain=rain_7d)
         add("needed", "needed", needed=units.depth_text(max(plan.needed_mm, 0.0), imperial), minutes=plan.calc_runtime_minutes)
 
         # What would run now: the pulses, the soak and the longest the valve is open at once.

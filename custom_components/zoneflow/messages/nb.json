@@ -388,6 +388,7 @@
     "target": "Ukemål: {target}.",
     "scale": "Målet skalerers til {pct} % av vekststadium, underskuddsmodus og dekke.",
     "rain": "Regnkreditt siden siste vanning: {credit} (regn de siste 7 dager: {rain}).",
+    "rain_used": "Regnkreditt: {credit}. Regn som er regnet med: {gross}, hvorav {used} allerede er brukt da regnet ble talt som en vanning {when}. Regn de siste 7 dagene: {rain}.",
     "needed": "Hvis det vannet nå: {needed} må tilføres, ca. {minutes} min.",
     "forecast": "Det var meldt regn, så de siste {n} vanningene på rad ble hoppet over.",
     "soil": "Jordfuktighet {pct} % ({status}).",

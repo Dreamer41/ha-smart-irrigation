@@ -388,6 +388,7 @@
     "target": "Weekly target: {target}.",
     "scale": "That target is scaled to {pct} % by the growth stage, deficit mode and mulch.",
     "rain": "Rain credit since the last watering: {credit} (rain in the last 7 days: {rain}).",
+    "rain_used": "Rain credit: {credit}. Rain counted: {gross}, of which {used} was already used up when rain counted as a watering {when}. Rain in the last 7 days: {rain}.",
     "needed": "If it watered now: {needed} to add, about {minutes} min.",
     "forecast": "Rain was forecast, so the last {n} waterings in a row were skipped.",
     "soil": "Soil moisture {pct} % ({status}).",

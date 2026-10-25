@@ -388,6 +388,7 @@
     "target": "Ugentligt mål: {target}.",
     "scale": "Målet er skaleret til {pct} % af vækststadie, underskudstilstand og jorddække.",
     "rain": "Regnkredit siden seneste vanding: {credit} (regn de seneste 7 dage: {rain}).",
+    "rain_used": "Regnkredit: {credit}. Regn der er talt med: {gross}, hvoraf {used} allerede er brugt, da regnen blev talt som en vanding {when}. Regn de seneste 7 dage: {rain}.",
     "needed": "Hvis der vandedes nu: {needed} skal tilsættes, cirka {minutes} min.",
     "forecast": "Der var lovet regn, så de seneste {n} vandinger i træk blev sprunget over.",
     "soil": "Jordfugtighed {pct} % ({status}).",

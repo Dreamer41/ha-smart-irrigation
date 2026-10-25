@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [Unreleased]
+
+## [1.7.7] — A plainer card, and a rain credit that rolls
+
+### Added
+
+- **A plain sentence on the garden overview.** Above the chips the overview now says in words how the garden is: "Your garden is doing well.", "Watering now: Chilis", "Chilis: needs a look" (amber), "Nothing needs water right now. Rain and soil have it covered." or "Watering is paused." It only restates what the zones' statuses already say; nothing is decided differently.
+- **Recent activity on the zone card.** A new button opens a list of what the zone ran, skipped and stopped in the last 10 days, with the reason and the time of each ("Routine skipped at 05:30: recent rain (4.2 mm) covers the 13 mm needed"). It reads Home Assistant's own history of the zone's status, so nothing new is stored and it goes back as far as your history is kept.
+- **Show details on the zone card.** The technical numbers of the Now section (litres of the last cycle, the weekly target, the 3-day peak temperature, water used over 30 days and the year, the growth ramp) now sit behind a "Show details" press, so the card starts with the valve, the next watering, the soil and the rain. Nothing was removed.
+- **Status shows both the next routine and the next deep soak.** The status sentence names the next routine watering and the next deep soak, and the status sensor gets two new attributes, `next_routine` and `next_deep_soak`.
+- **Drying out after rain stays visible.** While the drying hold lasts, the status sentence keeps saying so, with when watering resumes, beside later decisions (such as "rain counted as a watering") instead of being replaced by them.
+- **Why? shows rain that already counted.** When rain counted as a watering, the rain line says how much rain was counted and how much of it that watering already used up.
+
+### Fixed
+
+- **The rain credit rolls.** Rain that counted as a watering takes one dose off the credit but no longer wipes the days of rain before it: the window keeps starting at the last real watering, a dose leaves with its day, and a real watering starts the credit over. Days of heavy rain no longer show as "full amount needed" the moment rain is counted. The credit and the watering amount share one calculation, so after heavy rain the zone skips more. A zone already carrying a mark from 1.7.6 keeps the old way until that mark ends.
+- **Rain-counted deep soaks count at most once per calendar day**, so a second rainy hour the same day does not move the next deep soak again.
+- **Two Polish card texts had Russian words in them** ("Wszystko wygląda w porządku" and "Widok prosty").
+
 ## [1.7.6] — Look up your plant, crop factors, Rain Ignored Below
 
 ### Added

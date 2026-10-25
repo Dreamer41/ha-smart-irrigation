@@ -388,6 +388,7 @@
     "target": "Meta semanal: {target}.",
     "scale": "A meta é ajustada para {pct} % pela fase de crescimento, modo de défice e mulching.",
     "rain": "Crédito de chuva desde a última rega: {credit} (chuva nos últimos 7 dias: {rain}).",
+    "rain_used": "Crédito de chuva: {credit}. Chuva contada: {gross}, da qual {used} já foi usada quando a chuva valeu como rega {when}. Chuva nos últimos 7 dias: {rain}.",
     "needed": "Se regasse agora: {needed} a adicionar, cerca de {minutes} min.",
     "forecast": "Havia previsão de chuva, pelo que as últimas {n} regas seguidas foram canceladas.",
     "soil": "Humidade do solo {pct} % ({status}).",

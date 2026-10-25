@@ -97,3 +97,27 @@ async def test_the_card_can_ask_why(hass, fake_valve_services):
     plant_api.ws_why(hass, bad, {"id": 2, "type": "zoneflow/why", "device_id": "nope"})
     await hass.async_block_till_done()
     assert {i["id"] for i in ok.result["items"]} >= {"method", "target", "last"} and bad.error == "not_found"
+
+
+@pytest.mark.asyncio
+async def test_rain_that_counted_as_a_watering_is_shown_as_used_up(hass, fake_valve_services):
+    """After rain counted as a watering, Why? says how much rain is counted and how much of it
+    that watering already used, so the credit is not read as all the rain of the last days."""
+    import homeassistant.util.dt as dt_util
+
+    zone = _zone(hass, valve=VALVE)
+    await _boot(hass, zone)
+    c = _ctl(hass, zone)
+    now = dt_util.utcnow().timestamp()
+    c.store.state.last_routine_ts = now - 3600
+    c.store.state.rain_credit_spent_mm = 10.0
+    c.store.state.rain_credit_spent_ts = now - 3600
+    c.today_rain_mm = lambda: 22.0  # over 20 mm: all of it counts
+
+    items = {i["id"]: i["text"] for i in why.explain(c)}
+    assert items["rain"].startswith("Rain credit: 12.0 mm. Rain counted: 22.0 mm, of which 10.0 mm was already used up")
+    assert "Rain in the last 7 days:" in items["rain"]
+
+    c.store.state.rain_credit_spent_ts = None  # no such watering: the plain sentence
+    items = {i["id"]: i["text"] for i in why.explain(c)}
+    assert items["rain"].startswith("Rain credit since the last watering: ")

@@ -388,6 +388,7 @@
     "target": "Viikkotavoite: {target}.",
     "scale": "Tavoite on suhteutettu tasolle {pct} % kasvuvaiheen, vaje-tilan ja katteen mukaan.",
     "rain": "Sadehyvitys viimeisimmästä kastelusta: {credit} (sade viimeisen 7 päivän aikana: {rain}).",
+    "rain_used": "Sadehyvitys: {credit}. Huomioitu sade: {gross}, josta {used} on jo käytetty, kun sade laskettiin kasteluksi {when}. Sade viimeisen 7 päivän aikana: {rain}.",
     "needed": "Jos kasteltaisiin nyt: lisättävää {needed}, noin {minutes} min.",
     "forecast": "Sademäärä oli ennustettu, joten viimeiset {n} kastelua peräkkäin ohitettiin.",
     "soil": "Maankosteus {pct} % ({status}).",
