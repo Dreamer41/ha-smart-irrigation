@@ -99,3 +99,18 @@ async def test_a_restart_keeps_a_rolling_chain_as_it_was(hass, fake_valve_servic
     assert zone._chain_marks() == [(mark, 10.0)]
     assert 0.0 < zone.rain_offset_mm() <= 10.0
     assert zone.status()["text"]
+
+
+@pytest.mark.asyncio
+async def test_a_1_7_6_mark_is_not_adopted_when_last_routine_is_not_the_mark(hass, fake_valve_services, hass_storage, tmp_path):
+    import homeassistant.util.dt as dt_util
+
+    now = dt_util.utcnow().timestamp()
+    zone = await _boot(
+        hass, hass_storage, tmp_path,
+        last_routine_ts=now - 3 * 86400,  # set back by hand, earlier than the mark
+        rain_credit_spent_mm=12.57,
+        rain_credit_spent_ts=now - 3600,
+    )
+    assert zone._chain_marks() == []
+    assert zone.store.state.rain_window_base_ts is None and zone.store.state.rain_credit_marks == []

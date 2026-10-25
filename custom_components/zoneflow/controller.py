@@ -4436,8 +4436,8 @@ class ZoneFlowController:
             return
         now_ts = dt_util.utcnow().timestamp()
         interval = self._routine_interval_days() * 86400
-        if (state.last_routine_ts or 0.0) > spent_ts + 1 or spent_ts > now_ts + 60 or now_ts - spent_ts >= interval:
-            return  # a real watering since, a mark from the future, or one already out of the window
+        if abs((state.last_routine_ts or 0.0) - spent_ts) > 1 or spent_ts > now_ts + 60 or now_ts - spent_ts >= interval:
+            return  # Last Routine is not the mark (a real watering since, or set by hand), a mark from the future, or out of the window
         state.rain_window_base_ts = spent_ts - interval
         state.rain_credit_marks = [[spent_ts, round(state.rain_credit_spent_mm, 2)]]
 
