@@ -48,10 +48,10 @@ async def test_a_1_7_6_zone_upgrades_cleanly(hass, fake_valve_services, hass_sto
     assert state.rain_day_history_mm[:3] == [21.3, 21.6, 5.9]
     assert state.rain_credit_spent_mm == 12.57 and state.rain_credit_spent_ts == now - 3600
 
-    # the old mark still counts, the old way: the days before it are not credited again
-    assert zone._chain_marks() == []
-    assert zone.rain_offset_mm() == 12.57
-    assert zone._routine_plan().eff_rain_mm == 0.0  # nothing fell since the mark, yesterday is before it
+    # the old mark is adopted into the rolling credit: the rain before it counts again, less its dose
+    assert zone._chain_marks() == [(now - 3600, 12.57)]
+    assert zone.rain_offset_mm() == pytest.approx(12.57, abs=0.01)
+    assert zone._routine_plan().eff_rain_mm > 0.0
 
     # the drying hold is still on, and the status still says so
     status = zone.status()
@@ -99,3 +99,18 @@ async def test_a_restart_keeps_a_rolling_chain_as_it_was(hass, fake_valve_servic
     assert zone._chain_marks() == [(mark, 10.0)]
     assert 0.0 < zone.rain_offset_mm() <= 10.0
     assert zone.status()["text"]
+
+
+@pytest.mark.asyncio
+async def test_a_1_7_6_mark_is_not_adopted_when_last_routine_is_not_the_mark(hass, fake_valve_services, hass_storage, tmp_path):
+    import homeassistant.util.dt as dt_util
+
+    now = dt_util.utcnow().timestamp()
+    zone = await _boot(
+        hass, hass_storage, tmp_path,
+        last_routine_ts=now - 3 * 86400,  # set back by hand, earlier than the mark
+        rain_credit_spent_mm=12.57,
+        rain_credit_spent_ts=now - 3600,
+    )
+    assert zone._chain_marks() == []
+    assert zone.store.state.rain_window_base_ts is None and zone.store.state.rain_credit_marks == []

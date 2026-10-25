@@ -6,6 +6,12 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.8] — Rolling rain credit for zones updated from 1.7.6, HACS downloads
+
+### Fixed
+
+- **A rain mark saved by 1.7.6 now rolls at once.** After updating to 1.7.7 a zone that already carried a rain mark kept the old way until that mark ended, so the rain credit read 0.0 mm and "if it watered now" showed a full dose in the middle of a wet spell. Such a mark is now adopted into the rolling credit the first time it is read: the days of rain before it count again, less the one dose it took.
+
 ## [1.7.7] — A plainer card, and a rain credit that rolls
 
 ### Added
