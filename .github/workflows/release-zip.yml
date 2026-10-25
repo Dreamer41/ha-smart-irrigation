@@ -1,0 +1,55 @@
+name: Attach zoneflow.zip to the release
+
+# HACS shows a Downloads number only for repositories that publish their
+# integration as a zip attached to the GitHub release (hacs.json has
+# "zip_release": true and "filename": "zoneflow.zip"), and installs from that
+# zip. This builds it: the contents of custom_components/zoneflow at the root
+# of the zip, as HACS expects, checked before it is attached.
+#
+# Runs when a release is published. To attach (or rebuild) the zip for a
+# release that already exists, run it by hand with that release's tag.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to attach the zip to (for example v1.7.7)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+
+      - name: Build zoneflow.zip
+        run: |
+          cd custom_components/zoneflow
+          zip -r -q ../../zoneflow.zip . -x "__pycache__/*" "*/__pycache__/*" "*.pyc"
+
+      - name: Check the zip before it is attached
+        run: |
+          python - <<'PY'
+          import json, os, zipfile
+          z = zipfile.ZipFile("zoneflow.zip")
+          assert z.testzip() is None, "corrupt zip"
+          names = z.namelist()
+          assert "manifest.json" in names and "__init__.py" in names, "integration files must be at the zip root"
+          assert not any(n.startswith("custom_components/") for n in names), "no custom_components/ folder inside the zip"
+          version = json.loads(z.read("manifest.json"))["version"]
+          tag = os.environ["TAG"].lstrip("v")
+          assert version == tag, f"manifest version {version} does not match the tag {tag}"
+          print(f"ok: {len(names)} files, version {version}")
+          PY
+
+      - name: Attach to the release
+        run: gh release upload "$TAG" zoneflow.zip --clobber --repo "$GITHUB_REPOSITORY"
