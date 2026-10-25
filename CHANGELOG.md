@@ -6,6 +6,8 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.7] — A plainer card, and a rain credit that rolls
+
 ### Added
 
 - **A plain sentence on the garden overview.** Above the chips the overview now says in words how the garden is: "Your garden is doing well.", "Watering now: Chilis", "Chilis: needs a look" (amber), "Nothing needs water right now. Rain and soil have it covered." or "Watering is paused." It only restates what the zones' statuses already say; nothing is decided differently.
