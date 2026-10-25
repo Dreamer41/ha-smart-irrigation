@@ -36,5 +36,11 @@ Checklist for every release (GitHub release titled "ZoneFlow X.Y.Z", tag
      to update the dashboard for this version.
    If a release adds nothing for the dashboard, the section says so in one
    line ("No dashboard changes needed").
+   **The release zip.** HACS installs from `zoneflow.zip`, attached to each
+   release by `.github/workflows/release-zip.yml` when the release is published
+   (`hacs.json` has `zip_release` and `filename`). After clicking Release, check
+   that the Actions run is green and the release shows `zoneflow.zip`; if not,
+   run the workflow by hand with the tag. Never leave a published release
+   without the zip: HACS would fail to install it.
 6. Release notes also say whether anything needs doing after the update
    (usually "nothing — just restart Home Assistant").

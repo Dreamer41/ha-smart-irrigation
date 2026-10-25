@@ -1,5 +1,7 @@
 {
   "name": "ZoneFlow Irrigation",
   "render_readme": true,
-  "homeassistant": "2024.5.0"
+  "homeassistant": "2024.5.0",
+  "zip_release": true,
+  "filename": "zoneflow.zip"
 }
