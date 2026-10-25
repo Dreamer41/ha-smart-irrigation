@@ -412,16 +412,20 @@ async def test_a_rain_mark_keeps_the_days_of_rain_before_it_in_the_credit(hass, 
 
 
 @pytest.mark.asyncio
-async def test_the_old_mark_did_not_count_rain_before_it(hass, fake_valve_services):
-    """A mark written before 1.7.7 (no window start) is read the old way."""
+async def test_a_mark_written_before_1_7_7_is_adopted_into_the_rolling_credit(hass, fake_valve_services):
+    """A mark with no window start (saved by 1.7.6) rolls too: the rain before it counts again at once,
+    less the one dose it took."""
     c = await _zone(hass, rain_today=0.0)
     now_ts = dt_util.utcnow().timestamp()
     c.store.state.last_routine_ts = now_ts - 3600
     c.store.state.rain_credit_spent_ts = now_ts - 3600
     c.store.state.rain_credit_spent_mm = 12.57
     c.store.state.rain_day_history_mm = [21.3] + [0.0] * 9
-    assert c.store.state.rain_window_base_ts is None and c._chain_marks() == []
-    assert c._routine_plan().eff_rain_mm == 0.0  # yesterday is before the mark: not counted, as it was
+    assert c._chain_marks() == [(now_ts - 3600, 12.57)]
+    eff = calc.rain_efficiency(
+        21.3, c.number("rain_eff_low"), c.number("rain_eff_mid"), c.number("rain_eff_high"), c.number("rain_ignore_below_mm")
+    )
+    assert c._routine_plan().eff_rain_mm == pytest.approx(21.3 * eff - 12.57, abs=0.1)  # yesterday counts again
 
 
 @pytest.mark.asyncio

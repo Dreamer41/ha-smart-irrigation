@@ -48,10 +48,10 @@ async def test_a_1_7_6_zone_upgrades_cleanly(hass, fake_valve_services, hass_sto
     assert state.rain_day_history_mm[:3] == [21.3, 21.6, 5.9]
     assert state.rain_credit_spent_mm == 12.57 and state.rain_credit_spent_ts == now - 3600
 
-    # the old mark still counts, the old way: the days before it are not credited again
-    assert zone._chain_marks() == []
-    assert zone.rain_offset_mm() == 12.57
-    assert zone._routine_plan().eff_rain_mm == 0.0  # nothing fell since the mark, yesterday is before it
+    # the old mark is adopted into the rolling credit: the rain before it counts again, less its dose
+    assert zone._chain_marks() == [(now - 3600, 12.57)]
+    assert zone.rain_offset_mm() == pytest.approx(12.57, abs=0.01)
+    assert zone._routine_plan().eff_rain_mm > 0.0
 
     # the drying hold is still on, and the status still says so
     status = zone.status()

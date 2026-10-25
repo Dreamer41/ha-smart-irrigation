@@ -4408,6 +4408,7 @@ class ZoneFlowController:
         rain credit rolls). Empty for a zone with no such marks, one that was watered
         since, or one whose marks were written before 1.7.7 (it keeps the old way)."""
         state = self.store.state
+        self._adopt_legacy_mark()
         if state.rain_window_base_ts is None:
             return []
         marks = []
@@ -4422,6 +4423,23 @@ class ZoneFlowController:
         if not marks or abs((state.last_routine_ts or 0.0) - marks[-1][0]) > 1 or marks[-1][0] > dt_util.utcnow().timestamp() + 60:
             return []
         return marks
+
+    def _adopt_legacy_mark(self) -> None:
+        """A zone saved by 1.7.6 carries its rain mark as `rain_credit_spent_*` only. While that
+        mark is still inside the window, turn it into a rolling-credit chain so the days of rain
+        before it count again at once. 1.7.6 never saved the watering before the mark, so the
+        window is taken to start one interval before the mark (the credit reaches back no
+        further than one interval anyway)."""
+        state = self.store.state
+        spent_ts = state.rain_credit_spent_ts
+        if state.rain_window_base_ts is not None or state.rain_credit_marks or not spent_ts or state.rain_credit_spent_mm <= 0:
+            return
+        now_ts = dt_util.utcnow().timestamp()
+        interval = self._routine_interval_days() * 86400
+        if (state.last_routine_ts or 0.0) > spent_ts + 1 or spent_ts > now_ts + 60 or now_ts - spent_ts >= interval:
+            return  # a real watering since, a mark from the future, or one already out of the window
+        state.rain_window_base_ts = spent_ts - interval
+        state.rain_credit_marks = [[spent_ts, round(state.rain_credit_spent_mm, 2)]]
 
     def _rain_pool_elapsed(self) -> float:
         """How far back the rain credit looks, in seconds: since the last real watering,
