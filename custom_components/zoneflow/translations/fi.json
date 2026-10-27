@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Kuivumistauon sadeaste (7 vrk)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Kuivumisaika alkaa alusta lisäsateesta"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpun esikäynti (lämmittelyviive)"
       },

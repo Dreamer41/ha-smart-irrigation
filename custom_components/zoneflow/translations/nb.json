@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Regngrense for opptørking (7 dager)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Uttørking starter på nytt ved mer regn"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpe: forsinkelse før start"
       },

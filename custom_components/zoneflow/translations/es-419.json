@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Umbral de lluvia para secado (7 días)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "El secado se reinicia con más lluvia"
+      },
       "pump_preamble_seconds": {
         "name": "Bomba: espera previa (arranque)"
       },

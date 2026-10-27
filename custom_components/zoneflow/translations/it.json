@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Soglia di pioggia per asciugatura (7 giorni)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "L'asciugatura riparte con altra pioggia"
+      },
       "pump_preamble_seconds": {
         "name": "Pompa: attesa iniziale (avviamento)"
       },

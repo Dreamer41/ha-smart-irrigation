@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Seuil de pluie pour ressuyage (7 jours)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Le séchage repart après davantage de pluie"
+      },
       "pump_preamble_seconds": {
         "name": "Pompe : délai de mise en route"
       },

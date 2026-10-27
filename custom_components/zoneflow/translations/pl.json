@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Próg deszczu dla przesychania (7 dni)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Przesychanie zaczyna się od nowa po kolejnym deszczu"
+      },
       "pump_preamble_seconds": {
         "name": "Pompa: opóźnienie przed startem"
       },

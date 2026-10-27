@@ -6,6 +6,10 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Added
+
+- **More rain restarts the dry-down.** New setting **Dry-Down Restarts After More Rain** (Rain group, 10 mm to start with, 0 turns it off). While a dry-down is on, if at least that much rain falls within 24 hours after it started, it starts over from that moment, so watering waits for the soil to dry again. Before, only a new crossing of the heavy-rain thresholds restarted it, so 10 mm more on top of an earlier storm changed nothing. After a restart the count starts again from zero. It restarts quietly: no alert, and the Status and Why? show the new end. Copied with Copy settings and presets; shown in inches with imperial units; translated into every language.
+
 ## [1.7.8] — Rolling rain credit for zones updated from 1.7.6, HACS downloads
 
 ### Fixed

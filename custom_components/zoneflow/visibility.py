@@ -27,6 +27,7 @@ RAIN_GAUGE = {
     ("number", "rain_mm_per_tip"),
     ("number", "drydown_rain_24h_mm"),
     ("number", "drydown_rain_4d_mm"),
+    ("number", "drydown_restart_rain_mm"),
     ("number", "drydown_rain_7d_mm"),
     ("number", "preirrigation_rain_threshold_mm"),
     ("number", "deep_soak_rain_threshold"),

@@ -428,6 +428,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "drydown_rain_24h_mm": ("Dry-Down Rain Threshold (24h)", 5.0, 200.0, 1.0, "mm"),
     "drydown_rain_4d_mm": ("Dry-Down Rain Threshold (4 days)", 10.0, 300.0, 1.0, "mm"),
     "drydown_rain_7d_mm": ("Dry-Down Rain Threshold (7 days)", 10.0, 500.0, 5.0, "mm"),
+    # 1.7.9: more rain than this within 24 hours after a dry-down started starts it again (0 = off).
+    "drydown_restart_rain_mm": ("Dry-Down Restarts After More Rain", 0.0, 50.0, 1.0, "mm"),
     # Manual rain (1.6.1): the amount the "Add Manual Rain" button adds,
     # back to 0 after each press (controller.add_manual_rain_from_number).
     "manual_rain_mm": ("Manual Rain", 0.0, 200.0, 0.5, "mm"),
@@ -586,6 +588,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "preirrigation_rain_threshold_mm": 3.0,
     "drydown_rain_24h_mm": SIGNIFICANT_RAIN_24H_MM,
     "drydown_rain_4d_mm": SIGNIFICANT_RAIN_4D_MM,
+    "drydown_restart_rain_mm": 10.0,
     "drydown_rain_7d_mm": SIGNIFICANT_RAIN_7D_MM,
     "manual_rain_mm": 0.0,
     "zone_flow_l_min": 0.0,

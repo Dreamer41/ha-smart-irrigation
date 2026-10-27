@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Regenschwelle für Abtrocknung (7 Tage)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Abtrocknen startet bei mehr Regen neu"
+      },
       "pump_preamble_seconds": {
         "name": "Pumpen-Vorlauf (Anlaufzeit)"
       },

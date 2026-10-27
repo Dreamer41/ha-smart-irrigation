@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Regngräns för upptorkning (7 dagar)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Torkning börjar om vid mer regn"
+      },
       "pump_preamble_seconds": {
         "name": "Pump: förkörning (startfördröjning)"
       },

@@ -84,6 +84,7 @@ async def test_one_storm_sends_one_heavy_rain_alert_but_every_crossing_restarts_
     to log and phone-alert twice. Now: one alert, while each crossing still
     moves the drydown holdoff to that moment."""
     controller, _, events = await _zone(hass, monkeypatch, tmp_path)
+    await controller.numbers["drydown_restart_rain_mm"].async_set_metric_value(0.0)  # only the crossings (1.7.9: off)
     stamps = []
     for tips in range(100, 200, 10):  # 30 mm -> 57 mm
         hass.states.async_set(RAIN_COUNTER, str(tips))
@@ -91,6 +92,20 @@ async def test_one_storm_sends_one_heavy_rain_alert_but_every_crossing_restarts_
         stamps.append(controller.store.state.last_significant_rain_ts)
     assert events.count("Significant Rain") == 1
     assert len({t for t in stamps if t is not None}) == 2
+
+
+@pytest.mark.asyncio
+async def test_more_rain_in_the_same_storm_restarts_the_holdoff_quietly(hass, fake_valve_services, monkeypatch, tmp_path):
+    """1.7.9: with the default 10 mm, each further 10 mm after the dry-down started starts it
+    over, and still only one alert is sent for the storm."""
+    controller, _, events = await _zone(hass, monkeypatch, tmp_path)
+    stamps = []
+    for tips in range(100, 200, 10):  # 30 mm -> 57 mm
+        hass.states.async_set(RAIN_COUNTER, str(tips))
+        await hass.async_block_till_done()
+        stamps.append(controller.store.state.last_significant_rain_ts)
+    assert events.count("Significant Rain") == 1
+    assert len({t for t in stamps if t is not None}) >= 3
 
 
 @pytest.mark.asyncio

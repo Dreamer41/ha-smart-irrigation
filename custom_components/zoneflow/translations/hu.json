@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Kiszáradási esőküszöb (7 nap)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "A kiszáradás újraindul további esőnél"
+      },
       "pump_preamble_seconds": {
         "name": "Szivattyú előfutása (indítási késleltetés)"
       },
