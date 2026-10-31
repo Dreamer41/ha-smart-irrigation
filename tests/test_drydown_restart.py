@@ -111,3 +111,14 @@ async def test_the_rain_check_itself_restarts_it_and_sends_no_alert(hass):
     await hass.async_block_till_done()
     assert c.store.state.last_significant_rain_ts >= now
     assert alerts == []
+
+
+@pytest.mark.asyncio
+async def test_rain_after_the_routine_dry_down_ended_does_not_block_routine_watering(hass):
+    c = await _zone(hass)
+    now = dt_util.utcnow().timestamp()
+    started = now - 6 * 86400  # routine hold (4 d) over, deep soak hold (8 d) still on
+    c.store.state.last_significant_rain_ts = started
+    c.rain_since = lambda since: 12.0
+    assert c._restart_drydown_on_more_rain(now) is False
+    assert c.store.state.last_significant_rain_ts == started
