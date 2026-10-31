@@ -1312,7 +1312,7 @@ class ZoneFlowController:
             return False
         if now_ts - started >= self.number("routine_drydown_days") * 86400 or started > now_ts:
             return False  # no dry-down on
-        fallen = self.rain_since(max(started, now_ts - 86400.0))
+        fallen = self.rain_since(max(started, now_ts - 86400.0, self.store.state.drydown_counted_from_ts or 0.0))
         if fallen < mm:
             return False
         self.store.state.last_significant_rain_ts = now_ts

@@ -122,3 +122,25 @@ async def test_rain_after_the_routine_dry_down_ended_does_not_block_routine_wate
     c.rain_since = lambda since: 12.0
     assert c._restart_drydown_on_more_rain(now) is False
     assert c.store.state.last_significant_rain_ts == started
+
+
+@pytest.mark.asyncio
+async def test_a_hand_edit_of_last_significant_rain_is_honored(hass):
+    """Setting the date back must not let the storm before the edit restart the dry-down again."""
+    from homeassistant.helpers import entity_registry as er
+
+    c = await _zone(hass)
+    now = dt_util.utcnow().timestamp()
+    reg = er.async_get(hass)
+    ent = next(e.entity_id for e in reg.entities.values()
+               if e.config_entry_id == c.entry.entry_id and e.entity_id.startswith("datetime.") and e.entity_id.endswith("last_significant_rain"))
+    await hass.services.async_call(
+        "datetime", "set_value",
+        {"entity_id": ent, "datetime": dt_util.utc_from_timestamp(now - 30 * HOUR).isoformat()}, blocking=True,
+    )
+    assert c.store.state.last_significant_rain_ts == pytest.approx(now - 30 * HOUR, abs=1)
+    assert c.store.state.drydown_counted_from_ts >= now - 5
+    seen = []
+    c.rain_since = lambda since: seen.append(since) or 0.0
+    c._restart_drydown_on_more_rain(dt_util.utcnow().timestamp())
+    assert seen and seen[0] >= now - 5
