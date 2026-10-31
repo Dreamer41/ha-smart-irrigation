@@ -1301,6 +1301,24 @@ class ZoneFlowController:
             state.rain_threshold_flags[key] = value > threshold
         self.hass.async_create_task(self.store.async_save())
 
+    def _restart_drydown_on_more_rain(self, now_ts: float) -> bool:
+        """1.7.9: the routine dry-down is on and at least "Dry-Down Restarts After More Rain" has
+        fallen within the last 24 hours since it started (or restarted): the soil got wet
+        again, so the holdoff starts over from now. Quiet: no alert, the Status and Why?
+        show the new end. Counting restarts from now, so it takes that much again."""
+        mm = self.number("drydown_restart_rain_mm")
+        started = self.store.state.last_significant_rain_ts
+        if mm <= 0 or started is None:
+            return False
+        if now_ts - started >= self.number("routine_drydown_days") * 86400 or started > now_ts:
+            return False  # no dry-down on
+        fallen = self.rain_since(max(started, now_ts - 86400.0, self.store.state.drydown_counted_from_ts or 0.0))
+        if fallen < mm:
+            return False
+        self.store.state.last_significant_rain_ts = now_ts
+        _LOGGER.info("%s: %.1f mm more rain while drying out; the dry-down starts over", self.entry.title, fallen)
+        return True
+
     def _check_significant_rain(self) -> None:
         """Port of avocado_significant_rain_logger (edge-triggered). Reads
         the combined rain (gauge and manual), so heavy rain entered by hand
@@ -1315,6 +1333,9 @@ class ZoneFlowController:
             state.rain_threshold_flags[key] = is_above
             if is_above and not was_above:
                 fired = True
+        if not fired and self._restart_drydown_on_more_rain(now_ts):
+            self.hass.async_create_task(self.store.async_save())
+            return
         if fired:
             # Every threshold crossing restarts the drydown holdoff from now,
             # but one storm crossing several thresholds (24h, then 4-day,

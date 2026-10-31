@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Limite de chuva para secagem (7 dias)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "A secagem recomeça com mais chuva"
+      },
       "pump_preamble_seconds": {
         "name": "Bomba: atraso inicial (aquecimento)"
       },

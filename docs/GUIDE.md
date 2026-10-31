@@ -309,7 +309,8 @@ figure if you want the timer to cover it.
   waterings (4 in normal and cool weather, 3 in hot weather to start with),
   dry-down days and the rain
   that starts the dry-down (Dry-Down Rain Threshold: 35 mm in 24 h, 50 mm in
-  4 days, 100 mm in 7 days to start with), deep-soak
+  4 days, 100 mm in 7 days to start with) and the rain that starts it over
+  (Dry-Down Restarts After More Rain: 10 mm within any 24 hours, 0 turns it off), deep-soak
   interval and depth, rain efficiency, forecast thresholds, runtime caps.
 - **Climate at setup**: pick tropical, hot summers, temperate or cool
   summers, and the hot/cool thresholds and fallback temperature are

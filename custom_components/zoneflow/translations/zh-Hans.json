@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "晾干雨量阈值（7 天）"
       },
+      "drydown_restart_rain_mm": {
+        "name": "再降雨时重新开始晾干"
+      },
       "pump_preamble_seconds": {
         "name": "水泵预启动（预热延时）"
       },

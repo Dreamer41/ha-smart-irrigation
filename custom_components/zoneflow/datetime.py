@@ -111,6 +111,9 @@ class ZoneFlowLastEventDateTime(DateTimeEntity):
                 translation_key="date_in_future",
             )
         setattr(self._controller.store.state, self._state_field, ts)
+        if self._state_field == "last_significant_rain_ts":
+            # A hand edit is honored: rain that fell before it must not restart the dry-down again.
+            self._controller.store.state.drydown_counted_from_ts = dt_util.utcnow().timestamp()
         await self._controller.store.async_save()
         self.async_write_ha_state()
         if self._state_field == "last_fertilizing_ts":

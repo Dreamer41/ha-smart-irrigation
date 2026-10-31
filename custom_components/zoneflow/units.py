@@ -22,6 +22,7 @@ DEPTH_KEYS = {
     "preirrigation_rain_threshold_mm",
     "drydown_rain_24h_mm",
     "drydown_rain_4d_mm",
+    "drydown_restart_rain_mm",
     "drydown_rain_7d_mm",
     "forecast_rain_threshold_mm",
     "rain_ignore_below_mm",

@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Práh deště pro vysychání (7 dní)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Vysychání začne znovu při dalším dešti"
+      },
       "pump_preamble_seconds": {
         "name": "Náběh čerpadla (zpoždění před zálivkou)"
       },

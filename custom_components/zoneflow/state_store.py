@@ -25,6 +25,8 @@ class IrrigationState:
     last_significant_rain_ts: float | None = None
     # When the last heavy-rain alert was actually sent (one per storm).
     last_significant_rain_alert_ts: float | None = None
+    # 1.7.9: set when Last Significant Rain is edited by hand; rain before it no longer counts toward a dry-down restart.
+    drydown_counted_from_ts: float | None = None
 
     # rain_day_1 (yesterday) .. rain_day_10, shifted at 23:59:50
     rain_day_history_mm: list[float] = field(default_factory=lambda: [0.0] * RAIN_HISTORY_DEPTH_DAYS)

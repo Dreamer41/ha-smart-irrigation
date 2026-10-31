@@ -862,6 +862,9 @@
       "drydown_rain_7d_mm": {
         "name": "Dry-Down Rain Threshold (7 days)"
       },
+      "drydown_restart_rain_mm": {
+        "name": "Dry-Down Restarts After More Rain"
+      },
       "pump_preamble_seconds": {
         "name": "Pump Preamble (Warm-Up Delay)"
       },
