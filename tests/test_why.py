@@ -109,9 +109,9 @@ async def test_rain_that_counted_as_a_watering_is_shown_as_used_up(hass, fake_va
     await _boot(hass, zone)
     c = _ctl(hass, zone)
     now = dt_util.utcnow().timestamp()
-    c.store.state.last_routine_ts = now - 3600
+    c.store.state.last_routine_ts = now - 30
     c.store.state.rain_credit_spent_mm = 10.0
-    c.store.state.rain_credit_spent_ts = now - 3600
+    c.store.state.rain_credit_spent_ts = now - 30
     c.today_rain_mm = lambda: 22.0  # over 20 mm: all of it counts
 
     items = {i["id"]: i["text"] for i in why.explain(c)}

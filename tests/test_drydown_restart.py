@@ -51,14 +51,20 @@ async def test_less_rain_changes_nothing(hass):
 
 
 @pytest.mark.asyncio
-async def test_it_counts_only_rain_after_the_start_and_within_24_hours(hass):
+async def test_it_counts_rain_since_the_start_in_the_first_24_hours_only(hass):
     c = await _zone(hass)
     now = dt_util.utcnow().timestamp()
-    c.store.state.last_significant_rain_ts = now - 3 * 86400  # started 3 days ago
     seen = []
-    c.rain_since = lambda since: seen.append(since) or 0.0
-    c._restart_drydown_on_more_rain(now)
-    assert seen == [now - 86400.0]  # the last 24 hours, not the rain since the start 3 days ago
+    c.rain_since = lambda since: seen.append(since) or 50.0
+    c.store.state.last_significant_rain_ts = now - 20 * HOUR  # started 20 hours ago: rain since then counts
+    assert c._restart_drydown_on_more_rain(now) is True
+    assert seen == [now - 20 * HOUR]
+    # started 3 days ago (its first 24 hours are over): even a lot of rain now does nothing
+    started = now - 3 * 86400
+    c.store.state.last_significant_rain_ts = started
+    seen.clear()
+    assert c._restart_drydown_on_more_rain(now) is False
+    assert seen == [] and c.store.state.last_significant_rain_ts == started
 
 
 @pytest.mark.asyncio
@@ -136,9 +142,9 @@ async def test_a_hand_edit_of_last_significant_rain_is_honored(hass):
                if e.config_entry_id == c.entry.entry_id and e.entity_id.startswith("datetime.") and e.entity_id.endswith("last_significant_rain"))
     await hass.services.async_call(
         "datetime", "set_value",
-        {"entity_id": ent, "datetime": dt_util.utc_from_timestamp(now - 30 * HOUR).isoformat()}, blocking=True,
+        {"entity_id": ent, "datetime": dt_util.utc_from_timestamp(now - 10 * HOUR).isoformat()}, blocking=True,
     )
-    assert c.store.state.last_significant_rain_ts == pytest.approx(now - 30 * HOUR, abs=1)
+    assert c.store.state.last_significant_rain_ts == pytest.approx(now - 10 * HOUR, abs=1)
     assert c.store.state.drydown_counted_from_ts >= now - 5
     seen = []
     c.rain_since = lambda since: seen.append(since) or 0.0

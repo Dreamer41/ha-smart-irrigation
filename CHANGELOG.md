@@ -6,6 +6,12 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+## [1.7.10] — Dry-down restart counts the first 24 hours only
+
+### Fixed
+
+- **More rain restarts the dry-down only in the first 24 hours.** In 1.7.9 the setting Dry-Down Restarts After More Rain looked at any 24 hours while a dry-down was on, so ordinary rain several days after a storm could restart it. It now counts only rain that falls within 24 hours after the dry-down started (or restarted), as the setting's text says. A restart gives a new 24 hours, so a storm that keeps going keeps the dry-down on.
+
 ## [1.7.9] — More rain restarts the dry-down
 
 ### Added

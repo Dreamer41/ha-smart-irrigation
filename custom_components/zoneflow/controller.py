@@ -1302,17 +1302,19 @@ class ZoneFlowController:
         self.hass.async_create_task(self.store.async_save())
 
     def _restart_drydown_on_more_rain(self, now_ts: float) -> bool:
-        """1.7.9: the routine dry-down is on and at least "Dry-Down Restarts After More Rain" has
-        fallen within the last 24 hours since it started (or restarted): the soil got wet
-        again, so the holdoff starts over from now. Quiet: no alert, the Status and Why?
-        show the new end. Counting restarts from now, so it takes that much again."""
+        """1.7.9: at least "Dry-Down Restarts After More Rain" has fallen within 24 hours after
+        the dry-down started (or restarted): the soil got wet again, so the holdoff starts over
+        from now. Quiet: no alert, the Status and Why? show the new end. Counting restarts
+        from now, so it takes that much again. Later rain, once those 24 hours and the routine
+        hold are over, does not bring a dry-down back."""
         mm = self.number("drydown_restart_rain_mm")
         started = self.store.state.last_significant_rain_ts
         if mm <= 0 or started is None:
             return False
-        if now_ts - started >= self.number("routine_drydown_days") * 86400 or started > now_ts:
-            return False  # no dry-down on
-        fallen = self.rain_since(max(started, now_ts - 86400.0, self.store.state.drydown_counted_from_ts or 0.0))
+        window = min(86400.0, self.number("routine_drydown_days") * 86400)
+        if not 0 <= now_ts - started <= window:
+            return False
+        fallen = self.rain_since(max(started, self.store.state.drydown_counted_from_ts or 0.0))
         if fallen < mm:
             return False
         self.store.state.last_significant_rain_ts = now_ts
