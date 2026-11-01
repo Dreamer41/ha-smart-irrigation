@@ -332,6 +332,7 @@ class IrrigationStateStore:
         # Set when the zone unloads: a reloaded zone has its own store, and a
         # leftover task of the old one must never overwrite what it loaded.
         self.closed = False
+        self._save_asked_at: float | None = None
 
     async def async_load(self) -> IrrigationState:
         raw = await self._store.async_load()
@@ -352,6 +353,7 @@ class IrrigationStateStore:
     async def async_save(self) -> None:
         if self.closed:
             return
+        self._save_asked_at = None  # this write takes the place of a delayed one
         await self._store.async_save(asdict(self.state))
 
     def schedule_save(self, delay: float = SCHEDULED_SAVE_DELAY_SECONDS) -> None:
@@ -360,4 +362,17 @@ class IrrigationStateStore:
         change) supersedes it, and Home Assistant writes it out when it stops."""
         if self.closed:
             return
-        self._store.async_delay_save(lambda: asdict(self.state), delay)
+        # Home Assistant moves a delayed save's deadline back every time it is asked again, so a
+        # sensor that reports every few seconds would keep it from ever writing. Ask once; the
+        # write then comes `delay` seconds after the first change. A flag that outlived its write
+        # (an `async_save` took its place) expires after a few delays.
+        now = self._store.hass.loop.time()
+        if self._save_asked_at is not None and now - self._save_asked_at < delay * 3:
+            return
+        self._save_asked_at = now
+
+        def data() -> dict:
+            self._save_asked_at = None
+            return asdict(self.state)
+
+        self._store.async_delay_save(data, delay)

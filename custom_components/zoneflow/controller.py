@@ -226,6 +226,8 @@ _LOGGER = logging.getLogger(__name__)
 
 # Longest a phone notification may hold up the watering logic that logs it.
 NOTIFY_TIMEOUT_SECONDS = 20
+# How long a valve entity that reports "closing" is given to finish before it counts as unconfirmed.
+VALVE_CLOSING_CONFIRM_SECONDS = 60
 
 
 # hass.data key: pump lock key -> {"zones": entry ids that were waiting, "until": time the
@@ -307,6 +309,13 @@ def _tracked_run(func):
     return wrapper
 
 
+MAX_PLAUSIBLE_WIND_M_S = 75.0  # above a hurricane: a sentinel such as 6553.5 or "inf", not wind
+
+
+def _plausible_wind(value: float) -> float | None:
+    return value if math.isfinite(value) and 0 <= value <= MAX_PLAUSIBLE_WIND_M_S else None
+
+
 class ZoneFlowController:
     """Owns all scheduling, safety watchdogs, and irrigation state."""
 
@@ -317,6 +326,7 @@ class ZoneFlowController:
         self.numbers: dict[str, Any] = {}  # key -> NumberEntity, registered at platform setup
         self._unsubs: list[Any] = []
         self._valve_stuck_cancel = None
+        self._valve_open_since = None  # when the valve first opened (or began to), for the stuck-valve watchdog
         self._power_loss_cancel = None
         self._lock_stale_cancel = None
         self._abort_event = asyncio.Event()
@@ -1509,13 +1519,13 @@ class ZoneFlowController:
             if key == "weather_wind":
                 speed = float(state.attributes["wind_speed"])
                 unit = state.attributes.get("wind_speed_unit") or "km/h"
-                return SpeedConverter.convert(speed, unit, "m/s") if speed >= 0 else None
+                return _plausible_wind(SpeedConverter.convert(speed, unit, "m/s")) if speed >= 0 else None
             value = float(state.state)
             unit = state.attributes.get("unit_of_measurement")
             if key == "humidity":
                 return value if 0 <= value <= 100 else None
             if key == "wind":
-                return SpeedConverter.convert(value, unit or "m/s", "m/s") if value >= 0 else None
+                return _plausible_wind(SpeedConverter.convert(value, unit or "m/s", "m/s")) if value >= 0 else None
             if key == "solar":
                 if unit in ("lx", "lux"):
                     value /= fao56.LUX_PER_W_M2  # daylight; grow lights are rougher
@@ -1599,7 +1609,7 @@ class ZoneFlowController:
         t_min = state.today_min_temp_c if has_record else None
         t_max = state.today_peak_temp_c if has_record else None
         entry: dict[str, Any] = {"date": day.isoformat(), "et0": None, "sources": {}}
-        if t_min is not None and t_max is not None:
+        if calc.plausible_temp(t_min) and calc.plausible_temp(t_max):  # a glitch (85 C) must not set the dose
             settings = self._fao56_settings()
             rh_min = rh_max = rh_mean = wind = rs = None
             humidity_source = wind_source = None
@@ -1617,7 +1627,7 @@ class ZoneFlowController:
                 wind, wind_source = fao56.wind_to_2m(weather_win.mean, 10.0), "weather"  # weather services: 10 m
             sol = summaries.get("solar")
             if sol is not None and sol.usable:
-                rs = sol.integral / 1e6  # J/m2 -> MJ/m2
+                rs = sol.mean * 86400 / 1e6  # W/m2 over the whole day -> MJ/m2 (a gap in the readings is not dark)
             result = fao56.et0_daily(
                 fao56.DayInputs(t_min, t_max, rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean, wind_2m=wind, rs_mj=rs),
                 latitude_deg=self.hass.config.latitude,
@@ -1628,7 +1638,13 @@ class ZoneFlowController:
                 krs=settings["krs"],
                 solar_factor=settings["solar_factor"],
             )
-            sources = dict(result.sources)
+            if not math.isfinite(result.et0_mm):
+                result = None
+            sources = dict(result.sources) if result is not None else {}
+            if result is None:
+                history = [e for e in state.et0_day_history if isinstance(e, dict) and e.get("date") != entry["date"]]
+                state.et0_day_history = [entry, *history][:ET0_HISTORY_DAYS]
+                return
             if humidity_source:
                 sources["humidity"] = humidity_source
             if wind_source:
@@ -2400,9 +2416,13 @@ class ZoneFlowController:
         # that gap silently steal minutes from the watchdog window.
         if zone_valve.is_open(new_state):
             # A valve entity reports opening, then open: time it from when it first began to open.
-            started = old_state.last_changed if zone_valve.is_open(old_state) else new_state.last_changed
-            self._arm_valve_stuck_watchdog(started)
-        elif new_state.state == "unavailable":
+            # open -> closing -> open must not restart the clock: count from the first opening.
+            if not zone_valve.is_open(old_state) or self._valve_open_since is None:
+                self._valve_open_since = new_state.last_changed
+            self._arm_valve_stuck_watchdog(self._valve_open_since)
+        else:
+            self._valve_open_since = None
+        if not zone_valve.is_open(new_state) and new_state.state == "unavailable":
             fire_at = new_state.last_changed + timedelta(minutes=POWER_LOSS_GRACE_MINUTES)
             self._power_loss_cancel = async_track_point_in_time(self.hass, self._on_power_loss, fire_at)
 
@@ -3340,13 +3360,17 @@ class ZoneFlowController:
         it -- some devices take a few seconds to confirm. A valve that reports
         unavailable or unknown is not confirmed: it may still be open, so its
         lock stays for the power-loss and stale-lock watchdogs."""
-        for _ in range(int(seconds * 2)):
+        waited = 0.0
+        while True:
             state = self.hass.states.get(valve)
             if state is None or zone_valve.is_closed(state):
                 return True
+            # A motorised valve reports "closing" for up to half a minute: it is still on its way.
+            limit = max(seconds, VALVE_CLOSING_CONFIRM_SECONDS) if state.state == "closing" else seconds
+            if waited >= limit:
+                return False
             await asyncio.sleep(0.5)
-        state = self.hass.states.get(valve)
-        return state is None or zone_valve.is_closed(state)
+            waited += 0.5
 
     async def _wait_for_state_change(self, entity_id: str | None, seconds: float) -> None:
         """Until `entity_id` reports a new state, or `seconds` pass."""
