@@ -52,14 +52,14 @@ async def _get_json(hass: HomeAssistant, url: str, params: dict[str, str]) -> di
     session = async_get_clientsession(hass)
     try:
         async with asyncio.timeout(REQUEST_TIMEOUT_SECONDS):
-            response = await session.get(url, params=params)
-            if response.status in (401, 403):
-                raise InvalidKey
-            if response.status in (204, 404):
-                return None
-            if response.status != 200:
-                raise CannotConnect(f"HTTP {response.status}")
-            return await response.json(content_type=None)
+            async with session.get(url, params=params) as response:
+                if response.status in (401, 403):
+                    raise InvalidKey
+                if response.status in (204, 404):
+                    return None
+                if response.status != 200:
+                    raise CannotConnect(f"HTTP {response.status}")
+                return await response.json(content_type=None)
     except (aiohttp.ClientError, TimeoutError, ValueError) as err:
         raise CannotConnect(type(err).__name__) from err
 
@@ -80,9 +80,9 @@ async def async_nearby_stations(hass: HomeAssistant, api_key: str) -> list[dict[
         return value if isinstance(value, list) else []
 
     stations = []
-    for sid, name, s_lat, s_lon in zip(
-        _list("stationId"), _list("stationName") or [None] * 10, _list("latitude"), _list("longitude")
-    ):
+    ids = _list("stationId")
+    names = _list("stationName") or [None] * len(ids)
+    for sid, name, s_lat, s_lon in zip(ids, names, _list("latitude"), _list("longitude")):
         try:
             s_lat, s_lon = float(s_lat), float(s_lon)
             if sid is None or not (math.isfinite(s_lat) and math.isfinite(s_lon)):

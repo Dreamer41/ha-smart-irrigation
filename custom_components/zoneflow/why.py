@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
 from . import messages, units

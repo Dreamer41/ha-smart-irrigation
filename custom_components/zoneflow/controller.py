@@ -224,6 +224,9 @@ def _weather_temp_c(state: State | None) -> float | None:
 
 _LOGGER = logging.getLogger(__name__)
 
+# Longest a phone notification may hold up the watering logic that logs it.
+NOTIFY_TIMEOUT_SECONDS = 20
+
 
 # hass.data key: pump lock key -> {"zones": entry ids that were waiting, "until": time the
 # handing-over zone closes} while it keeps its own valve open for the next one (valve overlap).
@@ -3992,8 +3995,6 @@ class ZoneFlowController:
         # effective_avg_peak_temp() (not avg_peak_temp()) drives this: real
         # recorded days when there are any, otherwise the Fallback / Manual
         # Temperature slider -- see watering_temp.
-        avg_peak_temp = self.effective_avg_peak_temp()
-        hot_threshold = self.number("hot_temp_threshold")
         interval_days = self._routine_interval_days()
         interval_due = calc.routine_due(elapsed_seconds, interval_days, self._routine_buffer())
 
@@ -5296,34 +5297,42 @@ class ZoneFlowController:
 
         if notify_phone and self.notify_entity and (always_notify or self._notify_allowed(level)):
             try:
-                verbs = notification_actions.ACTIONS_FOR_MESSAGE.get(message or "", ())
-                legacy = notification_actions.legacy_service(self.hass, self.notify_entity) if verbs else None
-                if legacy is not None:
-                    # The companion app's service takes action buttons.
-                    await self.hass.services.async_call(
-                        "notify",
-                        legacy,
-                        {
-                            "title": phone_title,
-                            "message": phone_msg,
-                            "data": {
-                                "tag": f"zoneflow_{self.entry.entry_id}",
-                                "actions": notification_actions.build(self.hass, self.entry.entry_id, verbs),
-                            },
-                        },
-                        blocking=True,
-                    )
-                else:
-                    await self.hass.services.async_call(
-                        "notify",
-                        "send_message",
-                        {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
-                        blocking=True,
-                    )
+                # A notify service that hangs must not hold a valve open (this
+                # runs mid-run), so the call is bounded.
+                async with asyncio.timeout(NOTIFY_TIMEOUT_SECONDS):
+                    await self._send_phone_notification(message, phone_title, phone_msg)
+            except TimeoutError:
+                _LOGGER.warning("The phone notification for %s did not finish in %s s; moving on", event_type, NOTIFY_TIMEOUT_SECONDS)
             except Exception:  # noqa: BLE001 - never let a notify failure break irrigation logic
                 _LOGGER.exception("Failed to send phone notification for %s", event_type)
 
         self.hass.bus.async_fire(EVENT_LOG, {"event_type": event_type, "status": status})
+
+    async def _send_phone_notification(self, message: str | None, phone_title: str, phone_msg: str) -> None:
+        verbs = notification_actions.ACTIONS_FOR_MESSAGE.get(message or "", ())
+        legacy = notification_actions.legacy_service(self.hass, self.notify_entity) if verbs else None
+        if legacy is not None:
+            # The companion app's service takes action buttons.
+            await self.hass.services.async_call(
+                "notify",
+                legacy,
+                {
+                    "title": phone_title,
+                    "message": phone_msg,
+                    "data": {
+                        "tag": f"zoneflow_{self.entry.entry_id}",
+                        "actions": notification_actions.build(self.hass, self.entry.entry_id, verbs),
+                    },
+                },
+                blocking=True,
+            )
+        else:
+            await self.hass.services.async_call(
+                "notify",
+                "send_message",
+                {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
+                blocking=True,
+            )
 
     def _notify_allowed(self, level: str) -> bool:
         """The zone's Notifications setting: all, warnings only, or none."""

@@ -9,6 +9,7 @@ event; its action id says which zone and what to do.
 from __future__ import annotations
 
 import logging
+import time
 from typing import Any
 
 from homeassistant.core import Event, HomeAssistant, callback
@@ -20,6 +21,9 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 PREFIX = "ZONEFLOW"
 WATER_MINUTES = 10
+# A "Water" button on a phone message only works for this long: tapping one days
+# later would start a run nobody is expecting. Older messages (no stamp) still work.
+WATER_BUTTON_MAX_AGE_SECONDS = 6 * 3600
 LISTENER_KEY = "zoneflow_notification_actions"
 
 # Which message offers which buttons.
@@ -31,6 +35,8 @@ ACTIONS_FOR_MESSAGE: dict[str, tuple[str, ...]] = {
 
 
 def action_id(entry_id: str, verb: str) -> str:
+    if verb == "water":
+        return f"{PREFIX}|{entry_id}|{verb}|{int(time.time())}"
     return f"{PREFIX}|{entry_id}|{verb}"
 
 
@@ -55,9 +61,17 @@ def legacy_service(hass: HomeAssistant, notify_entity: str | None) -> str | None
 async def _handle(hass: HomeAssistant, event: Event) -> None:
     action = str(event.data.get("action") or "")
     parts = action.split("|")
-    if len(parts) != 3 or parts[0] != PREFIX:
+    if len(parts) not in (3, 4) or parts[0] != PREFIX:
         return
-    _, entry_id, verb = parts
+    entry_id, verb = parts[1], parts[2]
+    if len(parts) == 4:
+        try:
+            age = time.time() - int(parts[3])
+        except ValueError:
+            return
+        if verb == "water" and age > WATER_BUTTON_MAX_AGE_SECONDS:
+            _LOGGER.info("Ignored a Water button from a phone message more than %s hours old", WATER_BUTTON_MAX_AGE_SECONDS // 3600)
+            return
     controller = hass.data.get(DOMAIN, {}).get(entry_id)
     if controller is None:
         return

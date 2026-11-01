@@ -472,8 +472,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             result = await hass.config_entries.flow.async_init(
                 DOMAIN, context={"source": "area_create"}, data=data
             )
+            created = result.get("result") if result.get("type") == "create_entry" else None
+            if created is None:
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="area_name_exists")
             if zone is not None:
-                await location.async_set(hass, zone.entry, location.AREA_PREFIX + result["result"].entry_id)
+                await location.async_set(hass, zone.entry, location.AREA_PREFIX + created.entry_id)
 
         hass.services.async_register(DOMAIN, SERVICE_CREATE_AREA, _handle_create_area, schema=CREATE_AREA_SCHEMA)
 

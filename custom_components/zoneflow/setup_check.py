@@ -160,8 +160,6 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("last", "info", "last.never")
         else:
             days = (dt_util.utcnow().timestamp() - last) / 86400
-            from . import calculations as calc
-
             interval = controller._routine_interval_days()
             when = dt_util.as_local(dt_util.utc_from_timestamp(last)).strftime("%Y-%m-%d %H:%M")
             if days > interval * OVERDUE_FACTOR and not controller.paused:
