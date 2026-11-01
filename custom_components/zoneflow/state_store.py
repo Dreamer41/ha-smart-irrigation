@@ -311,6 +311,9 @@ class IrrigationState:
         self.manual_rain_samples = tracker.as_persisted()
 
 
+SCHEDULED_SAVE_DELAY_SECONDS = 10.0
+
+
 class IrrigationStateStore:
     """Thin async wrapper around HA's Store for IrrigationState."""
 
@@ -337,3 +340,11 @@ class IrrigationStateStore:
         if self.closed:
             return
         await self._store.async_save(asdict(self.state))
+
+    def schedule_save(self, delay: float = SCHEDULED_SAVE_DELAY_SECONDS) -> None:
+        """Save in a few seconds, once, for state that changes often (a rain sample, a temperature
+        reading): many events in a row make one write. A later `async_save` (an unload, a safety
+        change) supersedes it, and Home Assistant writes it out when it stops."""
+        if self.closed:
+            return
+        self._store.async_delay_save(lambda: asdict(self.state), delay)

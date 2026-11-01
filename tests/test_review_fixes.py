@@ -79,3 +79,39 @@ async def test_the_deep_soak_switch_is_refused_while_the_zone_waters(hass):
         await hass.services.async_call("switch", "turn_off" if before else "turn_on", {"entity_id": ent}, blocking=True)
     c.store.state.lock_on = False
     assert c.deep_soak_enabled == before
+
+
+@pytest.mark.asyncio
+async def test_a_repeated_rain_total_adds_no_sample_and_no_write(hass):
+    c = await _zone(hass)
+    c._record_rain_sample(seed_only=False)  # make sure there is a first sample
+    n = len(c.store.state.rain_samples)
+    saves = []
+    c.store.schedule_save = lambda *a, **k: saves.append(1)
+    c._record_rain_sample(seed_only=False)
+    c._record_rain_sample(seed_only=False)
+    assert len(c.store.state.rain_samples) == n and saves == []
+    c.store.state.rain_counter_total_tips = (c.store.state.rain_counter_total_tips or 0.0) + 5
+    c._record_rain_sample(seed_only=False)
+    assert len(c.store.state.rain_samples) == n + 1 and saves == [1]
+
+
+@pytest.mark.asyncio
+async def test_an_offline_valve_is_not_confirmed_closed(hass):
+    c = await _zone(hass)
+    valve = c.valve_entity
+    for state, expected in (("off", True), ("unavailable", False), ("unknown", False), ("on", False)):
+        hass.states.async_set(valve, state)
+        assert await c._valve_confirmed_closed(valve, seconds=0.5) is expected, state
+    hass.states.async_remove(valve)
+    assert await c._valve_confirmed_closed(valve, seconds=0.5) is True  # no such entity: nothing to hold
+
+
+@pytest.mark.asyncio
+async def test_frequent_saves_are_delayed_and_an_unload_still_writes_everything(hass, hass_storage):
+    c = await _zone(hass)
+    c.store.state.today_peak_temp_c = 41.5
+    c.store.schedule_save()
+    await c.async_unload() if hasattr(c, "async_unload") else await c.async_shutdown()
+    saved = next(v for k, v in hass_storage.items() if k.startswith(f"{DOMAIN}_") and "plants" not in k and "presets" not in k)
+    assert saved["data"]["today_peak_temp_c"] == 41.5

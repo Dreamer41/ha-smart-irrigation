@@ -1239,11 +1239,13 @@ class ZoneFlowController:
         tracker = state.rain_tracker()
         first_sample = not tracker.samples
         if not seed_only:
-            tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
-            state.save_rain_tracker(tracker)
-            if first_sample:
-                state.rain_midnight_baseline_mm = cumulative_mm
-            self.hass.async_create_task(self.store.async_save())
+            if first_sample or cumulative_mm != tracker.latest_cumulative():
+                # A repeated report of the same total adds no information: no sample, no write.
+                tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
+                state.save_rain_tracker(tracker)
+                if first_sample:
+                    state.rain_midnight_baseline_mm = cumulative_mm
+                self.store.schedule_save()
             self._check_significant_rain()
         elif first_sample:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
@@ -1427,7 +1429,7 @@ class ZoneFlowController:
             elif state.today_peak_temp_c is None:
                 state.today_min_temp_c = temp
             state.today_peak_temp_c = max(temp, state.today_peak_temp_c) if state.today_peak_temp_c is not None else temp
-        self.hass.async_create_task(self.store.async_save())
+        self.store.schedule_save()
 
     @callback
     def _on_daily_shift(self, now) -> None:
@@ -3039,14 +3041,16 @@ class ZoneFlowController:
 
     async def _valve_confirmed_closed(self, valve: str, seconds: float = VALVE_CLOSE_CONFIRM_SECONDS) -> bool:
         """Waits briefly for a valve that was just told to close to report
-        it -- some devices take a few seconds to confirm."""
+        it -- some devices take a few seconds to confirm. A valve that reports
+        unavailable or unknown is not confirmed: it may still be open, so its
+        lock stays for the power-loss and stale-lock watchdogs."""
         for _ in range(int(seconds * 2)):
             state = self.hass.states.get(valve)
-            if state is None or state.state != "on":
+            if state is None or state.state not in ("on", "unavailable", "unknown"):
                 return True
             await asyncio.sleep(0.5)
         state = self.hass.states.get(valve)
-        return state is None or state.state != "on"
+        return state is None or state.state not in ("on", "unavailable", "unknown")
 
     async def _wait_for_state_change(self, entity_id: str | None, seconds: float) -> None:
         """Until `entity_id` reports a new state, or `seconds` pass."""
