@@ -84,3 +84,45 @@ async def test_the_stuck_valve_clock_runs_from_the_first_opening(hass):
     hass.states.async_set(VALVE, "closed")
     await hass.async_block_till_done()
     assert c._valve_open_since is None
+
+
+@pytest.mark.asyncio
+async def test_a_closing_valve_does_not_fire_the_stuck_watchdog_again(hass):
+    c = await _zone(hass)
+    fired = []
+    c._fire_valve_stuck = lambda: fired.append(1) or asyncio.sleep(0)
+    hass.states.async_set(VALVE, "open")
+    await hass.async_block_till_done()
+    assert c._valve_stuck_cancel is not None
+    armed = c._valve_stuck_cancel
+    hass.states.async_set(VALVE, "closing")  # a normal close
+    await hass.async_block_till_done()
+    assert c._valve_stuck_cancel is armed  # the clock was not re-armed
+    armed()  # (the real timer is replaced by firing it by hand)
+    c._on_valve_stuck(dt_util.utcnow())  # it fires once
+    await hass.async_block_till_done()
+    hass.states.async_set(VALVE, "open")
+    hass.states.async_set(VALVE, "closing")  # the close it sent: must not arm a second firing
+    await hass.async_block_till_done()
+    assert c._valve_stuck_cancel is None and len(fired) == 1
+    hass.states.async_set(VALVE, "closed")
+    await hass.async_block_till_done()
+    assert c._valve_stuck_fired is False
+
+
+@pytest.mark.asyncio
+async def test_a_climate_reading_does_not_write_the_whole_state(hass, monkeypatch):
+    from custom_components.zoneflow.const import CONF_HUMIDITY_ENTITY
+
+    await _seed_source_entities(hass)
+    hass.states.async_set("sensor.hum", "60", {"unit_of_measurement": "%"})
+    entry = make_entry(hass, **{CONF_HUMIDITY_ENTITY: "sensor.hum"})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    c = hass.data[DOMAIN][entry.entry_id]
+    saves = []
+    monkeypatch.setattr(c.store, "schedule_save", lambda *a, **k: saves.append(1))
+    for v in range(50, 60):
+        hass.states.async_set("sensor.hum", str(v), {"unit_of_measurement": "%"})
+    await hass.async_block_till_done()
+    assert saves == []

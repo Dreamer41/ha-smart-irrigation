@@ -326,6 +326,7 @@ class ZoneFlowController:
         self.numbers: dict[str, Any] = {}  # key -> NumberEntity, registered at platform setup
         self._unsubs: list[Any] = []
         self._valve_stuck_cancel = None
+        self._valve_stuck_fired = False  # the watchdog fired and the valve has not reported closed since
         self._valve_open_since = None  # when the valve first opened (or began to), for the stuck-valve watchdog
         self._power_loss_cancel = None
         self._lock_stale_cancel = None
@@ -1548,7 +1549,9 @@ class ZoneFlowController:
             agg = self._aggregate(key)
             agg.add(ts, self._et0_reading(key, new_state))
             self._put_aggregate(key, agg)
-        self.store.schedule_save()
+        # No save here: a station reporting every few seconds would write the whole state each
+        # time. The 10-minute heartbeat saves the aggregates, and coverage after a crash ends at
+        # the last heartbeat anyway.
 
     def _pause_et0_inputs(self, ts: float) -> None:
         """Readings stop holding at `ts`: Home Assistant stopped, or crashed after its last heartbeat."""
@@ -2402,6 +2405,11 @@ class ZoneFlowController:
         if new_state is None:
             return
 
+        if zone_valve.is_open(new_state) and zone_valve.is_open(old_state):
+            # Open -> closing (or an attribute change) while the clock runs, or after it already
+            # fired: keep it. Re-arming would put the deadline in the past and fire it again.
+            if self._valve_stuck_cancel is not None or self._valve_stuck_fired:
+                return
         if self._valve_stuck_cancel:
             self._valve_stuck_cancel()
             self._valve_stuck_cancel = None
@@ -2422,6 +2430,7 @@ class ZoneFlowController:
             self._arm_valve_stuck_watchdog(self._valve_open_since)
         else:
             self._valve_open_since = None
+            self._valve_stuck_fired = False
         if not zone_valve.is_open(new_state) and new_state.state == "unavailable":
             fire_at = new_state.last_changed + timedelta(minutes=POWER_LOSS_GRACE_MINUTES)
             self._power_loss_cancel = async_track_point_in_time(self.hass, self._on_power_loss, fire_at)
@@ -2446,6 +2455,8 @@ class ZoneFlowController:
     @callback
     def _on_valve_stuck(self, now) -> None:
         """Port of avocado_valve_safety_watchdog (150min stuck ON)."""
+        self._valve_stuck_cancel = None
+        self._valve_stuck_fired = True
         self.hass.async_create_task(self._fire_valve_stuck())
 
     async def _fire_valve_stuck(self) -> None:
