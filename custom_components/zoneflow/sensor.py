@@ -210,9 +210,10 @@ class ZoneFlowReferenceEt0Sensor(_Base):
     _unit_kind = "rate"
     _attr_device_class = "precipitation_intensity"
     """3-day average reference evapotranspiration (Hargreaves-Samani, see
-    calculations.py). Display-only for now: nothing in the watering math
-    reads it yet. Shows "unknown" until at least one full day of daily
-    min/max temperature has been recorded."""
+    calculations.py): the ET curve demand model waters by it. Shows
+    "unknown" until at least one full day of daily min/max temperature has
+    been recorded. Its attributes also carry the FAO-56 Penman-Monteith
+    days (1.8), whichever model the zone uses, so the two can be compared."""
 
     _attr_native_unit_of_measurement = "mm/d"
     _attr_icon = "mdi:water-thermometer-outline"
@@ -240,6 +241,20 @@ class ZoneFlowReferenceEt0Sensor(_Base):
             "today_min_temp_c": state.today_min_temp_c,
             "today_max_temp_c": state.today_peak_temp_c,
             "today_et0_so_far_mm": round(today, 2) if today is not None else None,
+            **self._fao56_attributes(),
+        }
+
+    def _fao56_attributes(self) -> dict:
+        history = [e for e in self._controller.store.state.et0_day_history if isinstance(e, dict)]
+        latest = self._controller.fao56_latest_day()
+        return {
+            "fao56_et0_mm": latest.get("et0") if latest else None,
+            "fao56_date": latest.get("date") if latest else None,
+            "fao56_sources": dict(latest.get("sources") or {}) if latest else {},
+            "fao56_inputs": (
+                {k: latest.get(k) for k in ("t_min", "t_max", "rh_min", "rh_max", "rh_mean", "u2", "rs")} if latest else {}
+            ),
+            "fao56_daily_et0_mm": [e.get("et0") for e in history[:7]],
         }
 
 
@@ -286,6 +301,12 @@ class ZoneFlowWeeklyTargetSensor(_Base):
             "deficit_pct": round(self._controller.deficit()[0] * 100, 0),
             "avg_et0_mm_per_day": round(et0, 2) if et0 is not None else None,
             "crop_coefficient": self._controller.number("crop_coefficient"),
+            # 1.8: what each model would give right now, whichever this zone uses (before the
+            # growth ramp, deficit and mulch), so a switch to FAO-56 can be judged first.
+            "tier_weekly_target_mm": round(self._controller.tier_weekly_target_mm(), 2),
+            "fao56_weekly_target_mm": (
+                round(daily * 7.0, 2) if (daily := self._controller.fao56_daily_demand_mm()) is not None else None
+            ),
             "mulch_status": self._controller.mulch_status,
             "mulch_factor": round(self._controller.mulch_factor(), 3),
         }

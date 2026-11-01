@@ -37,6 +37,15 @@ def explain(controller: Any) -> list[dict[str, str]]:
     model = controller.store.state.demand_model
     method = {DEMAND_MODEL_ET: "et", DEMAND_MODEL_FAO56: "fao56"}.get(model, "temperature")
     add("method", "method", method=messages.text(hass, f"why.method_{method}"))
+    if model == DEMAND_MODEL_FAO56 and (latest := controller.fao56_latest_day()) is not None:
+        sources = latest.get("sources") or {}
+        add(
+            "fao56_inputs", "fao56_inputs",
+            et0=units.depth_text(float(latest["et0"]), imperial),
+            humidity=messages.text(hass, f"why.fao56_source.{sources.get('humidity', 'estimated')}"),
+            wind=messages.text(hass, f"why.fao56_source.{sources.get('wind', 'default')}"),
+            solar=messages.text(hass, f"why.fao56_source.{sources.get('solar', 'estimated')}"),
+        )
 
     temp, source = controller.watering_temp()
     tier = calc.temperature_tier(temp, controller.number("hot_temp_threshold"), controller.number("cool_temp_threshold"))

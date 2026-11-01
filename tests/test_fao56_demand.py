@@ -99,3 +99,39 @@ async def test_why_names_the_fao56_method(hass):
     c.store.state.et0_day_history = _history([5.0] * 7)
     items = {i["id"]: i["text"] for i in why.explain(c)}
     assert "FAO-56" in items["method"]
+
+
+@pytest.mark.asyncio
+async def test_why_says_where_each_fao56_input_came_from(hass):
+    c = await _zone(hass)
+    c.store.state.et0_day_history = [
+        {"date": (dt_util.now().date() - timedelta(days=1)).isoformat(), "et0": 4.2,
+         "sources": {"humidity": "rh_min_max", "wind": "default", "solar": "estimated"}},
+    ]
+    text = {i["id"]: i["text"] for i in why.explain(c)}["fao56_inputs"]
+    assert "4.2" in text and "your sensor" in text and "the zone's setting" in text and "estimated" in text
+    c.store.state.demand_model = DEMAND_MODEL_TIERS
+    assert "fao56_inputs" not in {i["id"] for i in why.explain(c)}
+
+
+@pytest.mark.asyncio
+async def test_the_sensors_show_the_fao56_figures_for_comparison_on_any_zone(hass):
+    from homeassistant.helpers import entity_registry as er
+
+    c = await _zone(hass, model=DEMAND_MODEL_TIERS)
+    c.store.state.et0_day_history = _history([5.0] * 7)
+    c.store.state.et0_day_history[0]["sources"] = {"humidity": "weather", "wind": "default", "solar": "estimated"}
+    _watered_days_ago(c, 3)
+    reg = er.async_get(hass)
+    ids = {e.unique_id: e.entity_id for e in reg.entities.values() if e.config_entry_id == c.entry.entry_id}
+    et0 = next(v for k, v in ids.items() if k.endswith("_reference_et0_3d"))
+    weekly = next(v for k, v in ids.items() if k.endswith("_routine_weekly_target"))
+    from homeassistant.helpers.entity_component import async_update_entity
+    await async_update_entity(hass, et0)
+    await async_update_entity(hass, weekly)
+    a = hass.states.get(et0).attributes
+    assert a["fao56_et0_mm"] == 5.0 and a["fao56_sources"]["humidity"] == "weather" and len(a["fao56_daily_et0_mm"]) == 7
+    w = hass.states.get(weekly).attributes
+    assert w["source"] == "temperature_tiers"
+    assert w["fao56_weekly_target_mm"] == pytest.approx(35.0 * c.number("crop_coefficient"), abs=0.01)
+    assert w["tier_weekly_target_mm"] == pytest.approx(c.tier_weekly_target_mm(), abs=0.01)

@@ -1808,6 +1808,13 @@ class ZoneFlowController:
             if isinstance(e, dict) and e.get("date") in wanted and e.get("et0") is not None
         ]
 
+    def fao56_latest_day(self) -> dict | None:
+        """The newest closed day that has an FAO-56 ET0, or None."""
+        for entry in self.store.state.et0_day_history:
+            if isinstance(entry, dict) and entry.get("et0") is not None:
+                return entry
+        return None
+
     def fao56_daily_demand_mm(self) -> float | None:
         """The plant's daily water use by FAO-56: the average ET0 x Kc over the completed days
         since the last real watering (the same window the rain credit looks back over), at
