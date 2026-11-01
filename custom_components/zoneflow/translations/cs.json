@@ -52,7 +52,14 @@
           "deep_soak_sun_offset_minutes": "Posun hloubkové zálivky vůči slunci (minuty)",
           "routine_sun_mode": "Spuštění běžné zálivky",
           "routine_sun_offset_minutes": "Posun běžné zálivky vůči slunci (minuty)",
-          "unit_system": "Jednotky"
+          "unit_system": "Jednotky",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "Spínač, který otevírá ventil této zóny (nebo spouští její čerpadlo). Jediné, bez čeho ZoneFlow nefunguje: zapíná ho a vypíná a vždy hlídá, aby nakonec zůstal vypnutý.",
@@ -80,7 +87,14 @@
           "deep_soak_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Při pevném čase se nepoužívá.",
           "routine_sun_mode": "Spustit běžnou zálivku v pevný čas výše, nebo před či po východu nebo západu slunce, aby se posouvala s ročním obdobím.",
           "routine_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Při pevném čase se nepoužívá.",
-          "unit_system": "Co tato zóna zobrazuje: podle Home Assistant, nebo vždy metrické (mm, °C, litry) či imperiální jednotky (palce, °F, galony). Mění jen to, co vidíte, nikdy množství vody."
+          "unit_system": "Co tato zóna zobrazuje: podle Home Assistant, nebo vždy metrické (mm, °C, litry) či imperiální jednotky (palce, °F, galony). Mění jen to, co vidíte, nikdy množství vody.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "climate": {
@@ -258,7 +272,10 @@
           "area_rain_mm_per_tip": "Srážkoměr: mm na překlopení",
           "outdoor_temp_entity": "Snímač venkovní teploty",
           "weather_entity": "Entita počasí (předpověď)",
-          "notify_entity": "Telefon pro upozornění"
+          "notify_entity": "Telefon pro upozornění",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Volitelné. Zóny této oblasti z něj čtou srážky, pokud zóna nemá vlastní srážkoměr.",
@@ -267,7 +284,10 @@
           "weather_entity": "Volitelné. Umožňuje zónám této oblasti přeskočit zálivku, pokud je předpovězen déšť.",
           "notify_entity": "Volitelné. Kam zóny této oblasti odesílají zprávy na telefon.",
           "area_name": "Jak se oblast jmenuje, například Zadní zahrada nebo Předzahrádka.",
-          "rain_source_type": "Co hlásí snímač srážkoměru: počítadlo překlopení, celkové srážky, intenzitu deště nebo srážky od posledního odečtu."
+          "rain_source_type": "Co hlásí snímač srážkoměru: počítadlo překlopení, celkové srážky, intenzitu deště nebo srážky od posledního odečtu.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "quick": {
@@ -380,7 +400,14 @@
           "deep_soak_sun_offset_minutes": "Posun hloubkové zálivky vůči slunci (minuty)",
           "routine_sun_mode": "Spuštění běžné zálivky",
           "routine_sun_offset_minutes": "Posun běžné zálivky vůči slunci (minuty)",
-          "unit_system": "Jednotky"
+          "unit_system": "Jednotky",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "Spínač, který otevírá ventil této zóny (nebo spouští její čerpadlo). Jediné, bez čeho ZoneFlow nefunguje: zapíná ho a vypíná a vždy hlídá, aby nakonec zůstal vypnutý.",
@@ -408,7 +435,14 @@
           "deep_soak_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Při pevném čase se nepoužívá.",
           "routine_sun_mode": "Spustit běžnou zálivku v pevný čas výše, nebo před či po východu nebo západu slunce, aby se posouvala s ročním obdobím.",
           "routine_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Při pevném čase se nepoužívá.",
-          "unit_system": "Co tato zóna zobrazuje: podle Home Assistant, nebo vždy metrické (mm, °C, litry) či imperiální jednotky (palce, °F, galony). Mění jen to, co vidíte, nikdy množství vody."
+          "unit_system": "Co tato zóna zobrazuje: podle Home Assistant, nebo vždy metrické (mm, °C, litry) či imperiální jednotky (palce, °F, galony). Mění jen to, co vidíte, nikdy množství vody.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "flow_rate": {
@@ -608,13 +642,19 @@
           "rain_counter_entity": "Použít srážkoměr oblasti",
           "outdoor_temp_entity": "Použít venkovní teplotu oblasti",
           "weather_entity": "Použít entitu počasí oblasti",
-          "notify_entity": "Použít telefon oblasti"
+          "notify_entity": "Použít telefon oblasti",
+          "humidity_entity": "Use the area's humidity sensor",
+          "wind_entity": "Use the area's wind sensor",
+          "solar_entity": "Use the area's solar sensor"
         },
         "data_description": {
           "rain_counter_entity": "Zaškrtněte pro použití srážkoměru oblasti namísto vlastního srážkoměru této zóny.",
           "outdoor_temp_entity": "Zaškrtněte pro použití snímače venkovní teploty oblasti namísto vlastního snímače této zóny.",
           "weather_entity": "Zaškrtněte pro použití entity počasí oblasti namísto vlastní entity počasí této zóny.",
-          "notify_entity": "Zaškrtněte pro odesílání na telefon oblasti namísto vlastního telefonu této zóny."
+          "notify_entity": "Zaškrtněte pro odesílání na telefon oblasti namísto vlastního telefonu této zóny.",
+          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
+          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
+          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
         }
       },
       "new_area": {
@@ -627,7 +667,10 @@
           "area_rain_mm_per_tip": "Srážkoměr: mm na překlopení",
           "outdoor_temp_entity": "Snímač venkovní teploty",
           "weather_entity": "Entita počasí (předpověď)",
-          "notify_entity": "Telefon pro upozornění"
+          "notify_entity": "Telefon pro upozornění",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Volitelné. Zóny této oblasti z něj čtou srážky, pokud zóna nemá vlastní srážkoměr.",
@@ -636,7 +679,10 @@
           "weather_entity": "Volitelné. Umožňuje zónám této oblasti přeskočit zálivku, pokud je předpovězen déšť.",
           "notify_entity": "Volitelné. Kam zóny této oblasti odesílají zprávy na telefon.",
           "area_name": "Jak se oblast jmenuje, například Zadní zahrada nebo Předzahrádka.",
-          "rain_source_type": "Co hlásí snímač srážkoměru: počítadlo překlopení, celkové srážky, intenzitu deště nebo srážky od posledního odečtu."
+          "rain_source_type": "Co hlásí snímač srážkoměru: počítadlo překlopení, celkové srážky, intenzitu deště nebo srážky od posledního odečtu.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "area_settings": {
@@ -649,7 +695,10 @@
           "area_rain_mm_per_tip": "Srážkoměr: mm na překlopení",
           "outdoor_temp_entity": "Snímač venkovní teploty",
           "weather_entity": "Entita počasí (předpověď)",
-          "notify_entity": "Telefon pro upozornění"
+          "notify_entity": "Telefon pro upozornění",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Volitelné. Zóny této oblasti z něj čtou srážky, pokud zóna nemá vlastní srážkoměr.",
@@ -658,7 +707,10 @@
           "weather_entity": "Volitelné. Umožňuje zónám této oblasti přeskočit zálivku, pokud je předpovězen déšť.",
           "notify_entity": "Volitelné. Kam zóny této oblasti odesílají zprávy na telefon.",
           "area_name": "Jak se oblast jmenuje, například Zadní zahrada nebo Předzahrádka.",
-          "rain_source_type": "Co hlásí snímač srážkoměru: počítadlo překlopení, celkové srážky, intenzitu deště nebo srážky od posledního odečtu."
+          "rain_source_type": "Co hlásí snímač srážkoměru: počítadlo překlopení, celkové srážky, intenzitu deště nebo srážky od posledního odečtu.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       }
     },
@@ -788,6 +840,19 @@
         "total_mm": "Úhrn srážek (mm nebo in; celkový, denní nebo týdenní)",
         "rate_mm_h": "Intenzita deště (mm/h)",
         "amount_mm": "Déšť na jedno čtení (mm nebo in; např. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Sheltered (walls, hedges)",
+        "open": "Open",
+        "exposed": "Exposed (hilltop, coast, roof)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Humid",
+        "dry": "Dry (arid or semi-arid)"
       }
     }
   },

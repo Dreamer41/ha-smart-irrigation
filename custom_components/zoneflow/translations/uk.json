@@ -52,7 +52,14 @@
           "deep_soak_sun_offset_minutes": "Глибокий полив: зсув від сонця (хвилини)",
           "routine_sun_mode": "Запуск регулярного поливу",
           "routine_sun_offset_minutes": "Регулярний полив: зсув від сонця (хвилини)",
-          "unit_system": "Одиниці"
+          "unit_system": "Одиниці",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "Перемикач, що відкриває клапан цієї зони (або вмикає її насос). Єдине, без чого ZoneFlow не працює: він вмикає й вимикає його і завжди стежить, щоб наприкінці той був вимкнений.",
@@ -80,7 +87,14 @@
           "deep_soak_sun_offset_minutes": "Скільки хвилин до або після сходу чи заходу сонця. Не використовується з фіксованим часом.",
           "routine_sun_mode": "Запускати регулярний полив у фіксований час вище або до чи після сходу чи заходу сонця, щоб він зміщувався разом із порами року.",
           "routine_sun_offset_minutes": "Скільки хвилин до або після сходу чи заходу сонця. Не використовується з фіксованим часом.",
-          "unit_system": "Що показує ця зона: як у Home Assistant, або завжди метричні (mm, °C, літри) чи імперські (дюйми, °F, галони) одиниці. Змінює лише відображення, а не кількість води."
+          "unit_system": "Що показує ця зона: як у Home Assistant, або завжди метричні (mm, °C, літри) чи імперські (дюйми, °F, галони) одиниці. Змінює лише відображення, а не кількість води.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "climate": {
@@ -258,7 +272,10 @@
           "area_rain_mm_per_tip": "Дощомір: mm на перекидання",
           "outdoor_temp_entity": "Датчик вуличної температури",
           "weather_entity": "Сутність погоди (прогноз)",
-          "notify_entity": "Телефон для сповіщень"
+          "notify_entity": "Телефон для сповіщень",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Необов'язково. Зони цієї області зчитують дощ звідси, якщо зона не має власного дощоміра.",
@@ -267,7 +284,10 @@
           "weather_entity": "Необов'язково. Дозволяє зонам цієї області пропустити полив при прогнозі дощу.",
           "notify_entity": "Необов'язково. Куди зони цієї області надсилають повідомлення на телефон.",
           "area_name": "Як називається область, наприклад Задній двір чи Передній сад.",
-          "rain_source_type": "Що передає датчик дощоміра: лічильник перекидань, загальний рівень опадів, інтенсивність дощу або опади з останнього показання."
+          "rain_source_type": "Що передає датчик дощоміра: лічильник перекидань, загальний рівень опадів, інтенсивність дощу або опади з останнього показання.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "quick": {
@@ -380,7 +400,14 @@
           "deep_soak_sun_offset_minutes": "Глибокий полив: зсув від сонця (хвилини)",
           "routine_sun_mode": "Запуск регулярного поливу",
           "routine_sun_offset_minutes": "Регулярний полив: зсув від сонця (хвилини)",
-          "unit_system": "Одиниці"
+          "unit_system": "Одиниці",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "Перемикач, що відкриває клапан цієї зони (або вмикає її насос). Єдине, без чого ZoneFlow не працює: він вмикає й вимикає його і завжди стежить, щоб наприкінці той був вимкнений.",
@@ -408,7 +435,14 @@
           "deep_soak_sun_offset_minutes": "Скільки хвилин до або після сходу чи заходу сонця. Не використовується з фіксованим часом.",
           "routine_sun_mode": "Запускати регулярний полив у фіксований час вище або до чи після сходу чи заходу сонця, щоб він зміщувався разом із порами року.",
           "routine_sun_offset_minutes": "Скільки хвилин до або після сходу чи заходу сонця. Не використовується з фіксованим часом.",
-          "unit_system": "Що показує ця зона: як у Home Assistant, або завжди метричні (mm, °C, літри) чи імперські (дюйми, °F, галони) одиниці. Змінює лише відображення, а не кількість води."
+          "unit_system": "Що показує ця зона: як у Home Assistant, або завжди метричні (mm, °C, літри) чи імперські (дюйми, °F, галони) одиниці. Змінює лише відображення, а не кількість води.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "flow_rate": {
@@ -608,13 +642,19 @@
           "rain_counter_entity": "Використовувати дощомір області",
           "outdoor_temp_entity": "Використовувати вуличну температуру області",
           "weather_entity": "Використовувати сутність погоди області",
-          "notify_entity": "Використовувати телефон області"
+          "notify_entity": "Використовувати телефон області",
+          "humidity_entity": "Use the area's humidity sensor",
+          "wind_entity": "Use the area's wind sensor",
+          "solar_entity": "Use the area's solar sensor"
         },
         "data_description": {
           "rain_counter_entity": "Позначте, щоб використовувати дощомір області замість власного дощоміра цієї зони.",
           "outdoor_temp_entity": "Позначте, щоб використовувати датчик вуличної температури області замість власного датчика цієї зони.",
           "weather_entity": "Позначте, щоб використовувати сутність погоди області замість власної сутності погоди цієї зони.",
-          "notify_entity": "Позначте, щоб надсилати на телефон області замість власного телефону цієї зони."
+          "notify_entity": "Позначте, щоб надсилати на телефон області замість власного телефону цієї зони.",
+          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
+          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
+          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
         }
       },
       "new_area": {
@@ -627,7 +667,10 @@
           "area_rain_mm_per_tip": "Дощомір: mm на перекидання",
           "outdoor_temp_entity": "Датчик вуличної температури",
           "weather_entity": "Сутність погоди (прогноз)",
-          "notify_entity": "Телефон для сповіщень"
+          "notify_entity": "Телефон для сповіщень",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Необов'язково. Зони цієї області зчитують дощ звідси, якщо зона не має власного дощоміра.",
@@ -636,7 +679,10 @@
           "weather_entity": "Необов'язково. Дозволяє зонам цієї області пропустити полив при прогнозі дощу.",
           "notify_entity": "Необов'язково. Куди зони цієї області надсилають повідомлення на телефон.",
           "area_name": "Як називається область, наприклад Задній двір чи Передній сад.",
-          "rain_source_type": "Що передає датчик дощоміра: лічильник перекидань, загальний рівень опадів, інтенсивність дощу або опади з останнього показання."
+          "rain_source_type": "Що передає датчик дощоміра: лічильник перекидань, загальний рівень опадів, інтенсивність дощу або опади з останнього показання.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "area_settings": {
@@ -649,7 +695,10 @@
           "area_rain_mm_per_tip": "Дощомір: mm на перекидання",
           "outdoor_temp_entity": "Датчик вуличної температури",
           "weather_entity": "Сутність погоди (прогноз)",
-          "notify_entity": "Телефон для сповіщень"
+          "notify_entity": "Телефон для сповіщень",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Необов'язково. Зони цієї області зчитують дощ звідси, якщо зона не має власного дощоміра.",
@@ -658,7 +707,10 @@
           "weather_entity": "Необов'язково. Дозволяє зонам цієї області пропустити полив при прогнозі дощу.",
           "notify_entity": "Необов'язково. Куди зони цієї області надсилають повідомлення на телефон.",
           "area_name": "Як називається область, наприклад Задній двір чи Передній сад.",
-          "rain_source_type": "Що передає датчик дощоміра: лічильник перекидань, загальний рівень опадів, інтенсивність дощу або опади з останнього показання."
+          "rain_source_type": "Що передає датчик дощоміра: лічильник перекидань, загальний рівень опадів, інтенсивність дощу або опади з останнього показання.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       }
     },
@@ -788,6 +840,19 @@
         "total_mm": "Сума опадів (мм або дюйми; загальна, за день або за тиждень)",
         "rate_mm_h": "Інтенсивність дощу (мм/год)",
         "amount_mm": "Дощ за одне вимірювання (мм або дюйми; напр. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Sheltered (walls, hedges)",
+        "open": "Open",
+        "exposed": "Exposed (hilltop, coast, roof)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Humid",
+        "dry": "Dry (arid or semi-arid)"
       }
     }
   },

@@ -29,6 +29,19 @@ from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 from .const import (
     CONF_PARENT_ZONE,
     VALVE_DOMAINS,
+    CONF_CLIMATE_DRYNESS,
+    CONF_COASTAL,
+    CONF_HUMIDITY_ENTITY,
+    CONF_SOLAR_ENTITY,
+    CONF_WIND_ENTITY,
+    CONF_WIND_EXPOSURE,
+    CONF_WIND_SENSOR_HEIGHT_M,
+    CLIMATE_DRYNESS_OPTIONS,
+    DEFAULT_CLIMATE_DRYNESS,
+    DEFAULT_COASTAL,
+    DEFAULT_WIND_EXPOSURE,
+    DEFAULT_WIND_SENSOR_HEIGHT_M,
+    WIND_EXPOSURE_OPTIONS,
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,
@@ -129,6 +142,9 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_NOTIFY_ENTITY,
     CONF_WEATHER_ENTITY,
+    CONF_HUMIDITY_ENTITY,
+    CONF_WIND_ENTITY,
+    CONF_SOLAR_ENTITY,
 )
 
 
@@ -220,6 +236,9 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     outdoor_temp_key = _optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)
     flow_meter_key = _optional_entity_key(defaults, CONF_FLOW_METER_ENTITY)
     soil_moisture_key = _optional_entity_key(defaults, CONF_SOIL_MOISTURE_ENTITY)
+    humidity_key = _optional_entity_key(defaults, CONF_HUMIDITY_ENTITY)
+    wind_key = _optional_entity_key(defaults, CONF_WIND_ENTITY)
+    solar_key = _optional_entity_key(defaults, CONF_SOLAR_ENTITY)
 
     return vol.Schema(
         {
@@ -244,6 +263,22 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             soil_moisture_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
             notify_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="notify")),
             weather_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="weather")),
+            # FAO-56 (1.8): the climate readings, each optional, and what each falls back on.
+            humidity_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="humidity")),
+            wind_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="wind_speed")),
+            solar_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="irradiance")),
+            vol.Optional(CONF_WIND_EXPOSURE, default=defaults.get(CONF_WIND_EXPOSURE, DEFAULT_WIND_EXPOSURE)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=WIND_EXPOSURE_OPTIONS, translation_key="wind_exposure")
+            ),
+            vol.Optional(CONF_CLIMATE_DRYNESS, default=defaults.get(CONF_CLIMATE_DRYNESS, DEFAULT_CLIMATE_DRYNESS)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=CLIMATE_DRYNESS_OPTIONS, translation_key="climate_dryness")
+            ),
+            vol.Optional(CONF_COASTAL, default=defaults.get(CONF_COASTAL, DEFAULT_COASTAL)): selector.BooleanSelector(),
+            vol.Optional(
+                CONF_WIND_SENSOR_HEIGHT_M, default=defaults.get(CONF_WIND_SENSOR_HEIGHT_M, DEFAULT_WIND_SENSOR_HEIGHT_M)
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(min=0.5, max=20.0, step=0.5, unit_of_measurement="m", mode=selector.NumberSelectorMode.BOX)
+            ),
             # Descriptive soil/site metadata -- see const.py's comment on
             # CONF_SOIL_TYPE for why these never drive scheduler logic
             # directly. "unknown"/"flat"/"drip" are always valid answers,
@@ -368,6 +403,13 @@ _WATERING_LEAVES_OUT = {
     CONF_NOTIFY_ENTITY,
     CONF_UNIT_SYSTEM,
     CONF_CSV_PATH,
+    CONF_HUMIDITY_ENTITY,
+    CONF_WIND_ENTITY,
+    CONF_SOLAR_ENTITY,
+    CONF_WIND_EXPOSURE,
+    CONF_CLIMATE_DRYNESS,
+    CONF_COASTAL,
+    CONF_WIND_SENSOR_HEIGHT_M,
 }
 
 
@@ -546,6 +588,15 @@ def _area_schema(defaults: dict[str, Any], *, with_name: bool = True) -> vol.Sch
     )
     fields[_optional_entity_key(defaults, CONF_WEATHER_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="weather")
+    )
+    fields[_optional_entity_key(defaults, CONF_HUMIDITY_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="humidity")
+    )
+    fields[_optional_entity_key(defaults, CONF_WIND_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="wind_speed")
+    )
+    fields[_optional_entity_key(defaults, CONF_SOLAR_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="irradiance")
     )
     fields[_optional_entity_key(defaults, CONF_NOTIFY_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="notify")

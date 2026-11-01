@@ -52,7 +52,14 @@
           "deep_soak_sun_offset_minutes": "Irrigazione profonda: scarto da alba/tramonto (minuti)",
           "routine_sun_mode": "Avvio dell'irrigazione ordinaria",
           "routine_sun_offset_minutes": "Irrigazione ordinaria: scarto da alba/tramonto (minuti)",
-          "unit_system": "Unità di misura"
+          "unit_system": "Unità di misura",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
@@ -80,7 +87,14 @@
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
           "routine_sun_mode": "Avvia l'irrigazione ordinaria all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
           "routine_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
-          "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà."
+          "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "climate": {
@@ -258,7 +272,10 @@
           "area_rain_mm_per_tip": "Pluviometro: mm per scatto",
           "outdoor_temp_entity": "Sensore di temperatura esterna",
           "weather_entity": "Entità meteo (previsioni)",
-          "notify_entity": "Telefono per notifiche"
+          "notify_entity": "Telefono per notifiche",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Opzionale. Le zone di quest'area leggono la pioggia da qui, a meno che una zona non abbia un proprio pluviometro.",
@@ -267,7 +284,10 @@
           "weather_entity": "Opzionale. Consente alle zone di quest'area di saltare l'irrigazione quando è prevista pioggia.",
           "notify_entity": "Opzionale. Dove le zone di quest'area inviano i messaggi telefonici.",
           "area_name": "Come viene chiamata l'area, ad esempio Giardino retro o Giardino fronte.",
-          "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura."
+          "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "quick": {
@@ -380,7 +400,14 @@
           "deep_soak_sun_offset_minutes": "Irrigazione profonda: scarto da alba/tramonto (minuti)",
           "routine_sun_mode": "Avvio dell'irrigazione ordinaria",
           "routine_sun_offset_minutes": "Irrigazione ordinaria: scarto da alba/tramonto (minuti)",
-          "unit_system": "Unità di misura"
+          "unit_system": "Unità di misura",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
@@ -408,7 +435,14 @@
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
           "routine_sun_mode": "Avvia l'irrigazione ordinaria all'orario fisso indicato sopra, oppure prima o dopo l'alba o il tramonto, così segue le stagioni.",
           "routine_sun_offset_minutes": "Quanti minuti prima o dopo l'alba o il tramonto. Non si usa con l'orario fisso.",
-          "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà."
+          "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "flow_rate": {
@@ -608,13 +642,19 @@
           "rain_counter_entity": "Usa il pluviometro dell'area",
           "outdoor_temp_entity": "Usa la temperatura esterna dell'area",
           "weather_entity": "Usa l'entità meteo dell'area",
-          "notify_entity": "Usa il telefono dell'area"
+          "notify_entity": "Usa il telefono dell'area",
+          "humidity_entity": "Use the area's humidity sensor",
+          "wind_entity": "Use the area's wind sensor",
+          "solar_entity": "Use the area's solar sensor"
         },
         "data_description": {
           "rain_counter_entity": "Spunta per usare il pluviometro dell'area invece di quello proprio di questa zona.",
           "outdoor_temp_entity": "Spunta per usare il sensore di temperatura esterna dell'area invece di quello proprio di questa zona.",
           "weather_entity": "Spunta per usare l'entità meteo dell'area invece di quella propria di questa zona.",
-          "notify_entity": "Spunta per inviare al telefono dell'area invece che a quello proprio di questa zona."
+          "notify_entity": "Spunta per inviare al telefono dell'area invece che a quello proprio di questa zona.",
+          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
+          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
+          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
         }
       },
       "new_area": {
@@ -627,7 +667,10 @@
           "area_rain_mm_per_tip": "Pluviometro: mm per scatto",
           "outdoor_temp_entity": "Sensore di temperatura esterna",
           "weather_entity": "Entità meteo (previsioni)",
-          "notify_entity": "Telefono per notifiche"
+          "notify_entity": "Telefono per notifiche",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Opzionale. Le zone di quest'area leggono la pioggia da qui, a meno che una zona non abbia un proprio pluviometro.",
@@ -636,7 +679,10 @@
           "weather_entity": "Opzionale. Consente alle zone di quest'area di saltare l'irrigazione quando è prevista pioggia.",
           "notify_entity": "Opzionale. Dove le zone di quest'area inviano i messaggi telefonici.",
           "area_name": "Come viene chiamata l'area, ad esempio Giardino retro o Giardino fronte.",
-          "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura."
+          "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "area_settings": {
@@ -649,7 +695,10 @@
           "area_rain_mm_per_tip": "Pluviometro: mm per scatto",
           "outdoor_temp_entity": "Sensore di temperatura esterna",
           "weather_entity": "Entità meteo (previsioni)",
-          "notify_entity": "Telefono per notifiche"
+          "notify_entity": "Telefono per notifiche",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Opzionale. Le zone di quest'area leggono la pioggia da qui, a meno che una zona non abbia un proprio pluviometro.",
@@ -658,7 +707,10 @@
           "weather_entity": "Opzionale. Consente alle zone di quest'area di saltare l'irrigazione quando è prevista pioggia.",
           "notify_entity": "Opzionale. Dove le zone di quest'area inviano i messaggi telefonici.",
           "area_name": "Come viene chiamata l'area, ad esempio Giardino retro o Giardino fronte.",
-          "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura."
+          "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       }
     },
@@ -788,6 +840,19 @@
         "total_mm": "Totale di pioggia (mm o in; complessivo, giornaliero o settimanale)",
         "rate_mm_h": "Intensità di pioggia (mm/h)",
         "amount_mm": "Pioggia per lettura (mm o in; es. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Sheltered (walls, hedges)",
+        "open": "Open",
+        "exposed": "Exposed (hilltop, coast, roof)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Humid",
+        "dry": "Dry (arid or semi-arid)"
       }
     }
   },

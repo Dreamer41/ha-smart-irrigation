@@ -52,7 +52,14 @@
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "unit_system": "Units"
+          "unit_system": "Units",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -80,7 +87,14 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
-          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters."
+          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "climate": {
@@ -258,7 +272,10 @@
           "area_rain_mm_per_tip": "Rain gauge mm per tip",
           "outdoor_temp_entity": "Outdoor temperature sensor",
           "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "notify_entity": "Phone to notify",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
@@ -267,7 +284,10 @@
           "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "quick": {
@@ -397,7 +417,14 @@
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "unit_system": "Units"
+          "unit_system": "Units",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -425,7 +452,14 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
-          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters."
+          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
         }
       },
       "flow_rate": {
@@ -625,13 +659,19 @@
           "rain_counter_entity": "Use the area's rain gauge",
           "outdoor_temp_entity": "Use the area's outdoor temperature",
           "weather_entity": "Use the area's weather entity",
-          "notify_entity": "Use the area's phone"
+          "notify_entity": "Use the area's phone",
+          "humidity_entity": "Use the area's humidity sensor",
+          "wind_entity": "Use the area's wind sensor",
+          "solar_entity": "Use the area's solar sensor"
         },
         "data_description": {
           "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
           "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
           "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
-          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own.",
+          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
+          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
+          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
         }
       },
       "new_area": {
@@ -644,7 +684,10 @@
           "area_rain_mm_per_tip": "Rain gauge mm per tip",
           "outdoor_temp_entity": "Outdoor temperature sensor",
           "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "notify_entity": "Phone to notify",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
@@ -653,7 +696,10 @@
           "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "area_settings": {
@@ -666,7 +712,10 @@
           "area_rain_mm_per_tip": "Rain gauge mm per tip",
           "outdoor_temp_entity": "Outdoor temperature sensor",
           "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "notify_entity": "Phone to notify",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
@@ -675,7 +724,10 @@
           "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       }
     },
@@ -788,6 +840,19 @@
         "total_mm": "Rain total (mm or in; lifetime, daily or weekly)",
         "rate_mm_h": "Rain rate (mm/h)",
         "amount_mm": "Rain per reading (mm or in; e.g. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Sheltered (walls, hedges)",
+        "open": "Open",
+        "exposed": "Exposed (hilltop, coast, roof)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Humid",
+        "dry": "Dry (arid or semi-arid)"
       }
     }
   },

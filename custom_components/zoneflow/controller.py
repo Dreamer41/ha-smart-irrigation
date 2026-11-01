@@ -57,6 +57,13 @@ from .const import (
     CONF_SOLAR_ENTITY,
     CONF_WIND_ENTITY,
     ET0_HISTORY_DAYS,
+    CONF_CLIMATE_DRYNESS,
+    CONF_COASTAL,
+    CONF_WIND_EXPOSURE,
+    CONF_WIND_SENSOR_HEIGHT_M,
+    DEFAULT_WIND_EXPOSURE,
+    DEFAULT_WIND_SENSOR_HEIGHT_M,
+    WIND_EXPOSURE_M_S,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
     FLOW_MEASURE_MIN_MINUTES,
@@ -1552,12 +1559,18 @@ class ZoneFlowController:
             self._put_aggregate(key, agg)
 
     def _fao56_settings(self) -> dict[str, float]:
-        """The fallbacks for inputs without a sensor (settings come with the settings phase)."""
+        """What an input without a sensor falls back on: the zone's site options."""
+        options = {**self.entry.data, **self.entry.options}
+        exposure = options.get(CONF_WIND_EXPOSURE) or DEFAULT_WIND_EXPOSURE
+        try:
+            height = float(options.get(CONF_WIND_SENSOR_HEIGHT_M) or DEFAULT_WIND_SENSOR_HEIGHT_M)
+        except (TypeError, ValueError):
+            height = DEFAULT_WIND_SENSOR_HEIGHT_M
         return {
-            "default_wind": fao56.DEFAULT_WIND_2M,
-            "k0": fao56.K0_HUMID,
-            "krs": fao56.KRS_INLAND,
-            "wind_height_m": 2.0,
+            "default_wind": WIND_EXPOSURE_M_S.get(exposure, fao56.DEFAULT_WIND_2M),
+            "k0": fao56.K0_DRY if options.get(CONF_CLIMATE_DRYNESS) == "dry" else fao56.K0_HUMID,
+            "krs": fao56.KRS_COASTAL if options.get(CONF_COASTAL) else fao56.KRS_INLAND,
+            "wind_height_m": height,
         }
 
     def _close_et0_day(self, day, end_ts: float, *, has_record: bool = True) -> None:

@@ -110,7 +110,19 @@ CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
 CONF_HUMIDITY_ENTITY = "humidity_entity"  # 1.8, optional: outdoor relative humidity (%) for FAO-56
 CONF_WIND_ENTITY = "wind_entity"  # 1.8, optional: wind speed for FAO-56
 CONF_SOLAR_ENTITY = "solar_entity"  # 1.8, optional: solar irradiance (W/m2) for FAO-56
-CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
+CONF_WEATHER_ENTITY = "weather_entity"
+# FAO-56 site options (1.8): what an input without a sensor falls back on. Set once with the zone.
+CONF_WIND_EXPOSURE = "wind_exposure"  # no wind reading: the typical wind at 2 m
+WIND_EXPOSURE_M_S = {"sheltered": 1.0, "open": 2.0, "exposed": 3.5}
+WIND_EXPOSURE_OPTIONS = list(WIND_EXPOSURE_M_S)
+DEFAULT_WIND_EXPOSURE = "open"  # 2 m/s, FAO-56's own default
+CONF_CLIMATE_DRYNESS = "climate_dryness"  # no humidity reading: dew point = Tmin (humid) or Tmin - 2 C (dry)
+CLIMATE_DRYNESS_OPTIONS = ["humid", "dry"]
+DEFAULT_CLIMATE_DRYNESS = "humid"
+CONF_COASTAL = "coastal"  # no solar reading: Hargreaves radiation coefficient 0.19 by the sea, else 0.16
+DEFAULT_COASTAL = False
+CONF_WIND_SENSOR_HEIGHT_M = "wind_sensor_height_m"  # how high the wind sensor sits (home stations ~2 m)
+DEFAULT_WIND_SENSOR_HEIGHT_M = 2.0  # weather.* entity, optional -- enables the forecast gate
 CONF_CSV_PATH = "csv_path"
 CONF_UNIT_SYSTEM = "unit_system"  # "auto" (follow Home Assistant) / "metric" / "imperial" -- display only, see units.py
 # Off-switch for the whole deep-soak cycle -- some plants/setups (shallow-
