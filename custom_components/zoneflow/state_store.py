@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass, field
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import DEFAULT_DEMAND_MODEL, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DEFAULT_MULCH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
+from .const import DEFAULT_DEMAND_MODEL, DEMAND_MODEL_FAO56, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DEFAULT_MULCH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
 from .rain_tracker import RainWindowTracker
 
 
@@ -343,6 +343,10 @@ class IrrigationStateStore:
             merged = asdict(IrrigationState())
             merged.update({k: v for k, v in raw.items() if k in merged})
             self.state = IrrigationState(**merged)
+        else:
+            # A brand-new zone (nothing saved yet) starts on FAO-56 (1.8). A saved zone keeps its
+            # model, even one saved before the model was stored: it is offered the switch instead.
+            self.state.demand_model = DEMAND_MODEL_FAO56
         return self.state
 
     async def async_save(self) -> None:

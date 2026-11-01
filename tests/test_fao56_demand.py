@@ -168,3 +168,24 @@ async def test_two_weeks_of_fao56_days_raise_the_switch_offer_and_the_fix_switch
 
     issues.async_check(c)  # on FAO-56 now: no offer
     assert registry.async_get_issue(DOMAIN, issue_id) is None
+
+
+@pytest.mark.asyncio
+async def test_a_new_zone_starts_on_fao56_and_a_saved_zone_keeps_its_model(hass, hass_storage, tmp_path):
+    from dataclasses import asdict
+
+    from custom_components.zoneflow.const import STORAGE_VERSION
+    from custom_components.zoneflow.state_store import IrrigationState
+
+    await _seed_source_entities(hass)
+    new = make_entry(hass, csv_path=str(tmp_path / "new.csv"))
+    assert await hass.config_entries.async_setup(new.entry_id)
+    await hass.async_block_till_done()
+    assert hass.data[DOMAIN][new.entry_id].demand_model == DEMAND_MODEL_FAO56
+
+    saved = make_entry(hass, csv_path=str(tmp_path / "saved.csv"))
+    old = {k: v for k, v in asdict(IrrigationState()).items() if k != "demand_model"}  # saved before the model was stored
+    hass_storage[f"{DOMAIN}_{saved.entry_id}"] = {"version": STORAGE_VERSION, "key": f"{DOMAIN}_{saved.entry_id}", "data": old}
+    assert await hass.config_entries.async_setup(saved.entry_id)
+    await hass.async_block_till_done()
+    assert hass.data[DOMAIN][saved.entry_id].demand_model == DEMAND_MODEL_TIERS

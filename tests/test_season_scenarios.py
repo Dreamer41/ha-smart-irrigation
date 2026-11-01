@@ -14,7 +14,7 @@ from datetime import date
 import pytest
 
 from custom_components.zoneflow import calculations as calc
-from custom_components.zoneflow.const import DEMAND_MODEL_ET, DOMAIN
+from custom_components.zoneflow.const import DEMAND_MODEL_ET, DEMAND_MODEL_TIERS, DOMAIN
 
 from .season_sim import Day, SeasonSim
 from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry
@@ -40,6 +40,7 @@ async def _season(hass, monkeypatch, tmp_path, *, temp_unit="°C", seed=NORMAL, 
     sim = SeasonSim(hass, c, monkeypatch, valve=VALVE, temp_entity=OUTDOOR_TEMP, rain_entity=RAIN_COUNTER, temp_unit=temp_unit)
     start = sim.vdt.t.timestamp()
     s = c.store.state
+    s.demand_model = DEMAND_MODEL_TIERS  # an established zone: the model it was saved with (new zones start on FAO-56)
     # An established zone: watered 4 days ago, deep-soaked 14 days ago,
     # three days of this weather already on record.
     s.last_routine_ts = start - 4 * DAY + 5.5 * 3600

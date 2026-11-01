@@ -10,7 +10,7 @@ import pytest
 
 from custom_components.zoneflow import calculations as calc
 from custom_components.zoneflow import setup_check
-from custom_components.zoneflow.const import CONF_VALVE_ENTITY, DOMAIN
+from custom_components.zoneflow.const import CONF_VALVE_ENTITY, DEMAND_MODEL_TIERS, DOMAIN
 
 from .test_scenarios_cycles import _history, _set, _zone
 from .test_smoke_setup import VALVE, _seed_source_entities, force_entry, make_entry
@@ -68,6 +68,7 @@ async def _ready(hass, monkeypatch, tmp_path):
     # Sandy soil takes 30 mm per pulse, so the pulse count is the zone's own setting
     # and the settings below show in the number (heavy soil caps a pulse by itself).
     controller.store.state.soil_type_override = "sandy"
+    controller.store.state.demand_model = DEMAND_MODEL_TIERS  # the tier doses bound it (FAO-56, like the ET curve: the cap)
     return controller, clock, events
 
 

@@ -1836,8 +1836,8 @@ class ZoneFlowController:
         least one day and at most two weeks. With no FAO-56 day in that window, the last seven
         days; with none at all, None (the zone then uses its tier target, as the ET curve does).
         Today is left out: it isn't over yet, the same as rain."""
-        if not self.outdoor_temp_entity:
-            return None
+        if not self.outdoor_temp_entity or not self.fao56_latest_day():
+            return None  # nothing to average (and nothing else is read: no side effects)
         base_ts = dt_util.utcnow().timestamp() - self._rain_pool_elapsed()
         base_day = dt_util.as_local(dt_util.utc_from_timestamp(base_ts)).date()
         days = min(max((dt_util.now().date() - base_day).days, 1), ET0_HISTORY_DAYS)
