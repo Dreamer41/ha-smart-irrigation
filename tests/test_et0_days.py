@@ -32,6 +32,12 @@ async def _zone(hass, **entities):
     return hass.data[DOMAIN][entry.entry_id]
 
 
+def full_temperature(state, day) -> None:
+    """Readings of the temperature through the whole of `day`: the coverage rule is met."""
+    start = dt_util.start_of_local_day(day).timestamp()
+    state.day_aggregates["temperature"] = _day(start, [(0, 15.0)], 0)
+
+
 def _day(start: float, readings: list[tuple[float, float | None]], end: float) -> dict:
     a = DayAggregate()
     a.reset(start)
@@ -139,6 +145,7 @@ async def test_a_missed_shift_closes_the_open_day_and_marks_whole_missed_days_em
     s.last_shift_date_iso = None
     s.today_min_temp_c, s.today_peak_temp_c = 14.0, 27.0
     s.et0_day_history = []
+    full_temperature(s, today - timedelta(days=2))
     c._start_new_day()
     dates = [e["date"] for e in s.et0_day_history]
     assert dates == [(today - timedelta(days=1)).isoformat(), (today - timedelta(days=2)).isoformat()]
@@ -187,7 +194,7 @@ async def test_a_greenhouse_uses_its_inside_sensors_still_air_and_sunshine_throu
     })
     assert c.humidity_entity == "sensor.gh_humidity" and c.solar_entity == "sensor.gh_light"
     assert c.wind_entity is None and c.weather_entity is None
-    assert set(c._et0_inputs()) == {"sensor.gh_humidity", "sensor.gh_light"}
+    assert set(c._et0_inputs()) == {"sensor.gh_humidity", "sensor.gh_light", "sensor.gh_temperature"}
     settings = c._fao56_settings()
     assert settings["default_wind"] == 0.5 and settings["solar_factor"] == 0.7
 
@@ -195,6 +202,7 @@ async def test_a_greenhouse_uses_its_inside_sensors_still_air_and_sunshine_throu
     day = dt_util.now().date() - timedelta(days=1)
     start = dt_util.start_of_local_day(day).timestamp()
     s.day_aggregates = {"humidity": _day(start, [(0, 90.0), (12 * H, 60.0)], 0)}
+    full_temperature(s, day)
     s.today_min_temp_c, s.today_peak_temp_c = 20.0, 34.0
     c._close_et0_day(day, start + 24 * H)
     e = s.et0_day_history[0]

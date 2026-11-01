@@ -17,6 +17,7 @@ zones and keep its history. A removed zone's plants are archived, not lost.
 from __future__ import annotations
 
 import asyncio
+import logging
 import uuid
 from typing import Any
 
@@ -27,6 +28,8 @@ import homeassistant.util.dt as dt_util
 from datetime import timedelta
 
 from .const import CONF_DEEP_SOAK_ENABLED, CONF_PLANT, DOMAIN, PLANT_CUSTOM, PLANT_READY_DAYS
+
+_LOGGER = logging.getLogger(__name__)
 
 BOOK_KEY = "zoneflow_plant_book"
 STORE_VERSION = 1
@@ -313,7 +316,9 @@ class ZonePlants:
         await c.store.async_save()
         self._last = self.values()
         wanted = snapshot.get("deep_soak_enabled") if watering else None
-        if wanted is not None and bool(wanted) != c.deep_soak_enabled:
+        if wanted is not None and bool(wanted) != c.deep_soak_enabled and c.run_in_progress:
+            _LOGGER.warning("%s: the plant's deep soak setting was not applied: a watering is running", c.entry.title)
+        elif wanted is not None and bool(wanted) != c.deep_soak_enabled:
             # Deep soak on/off is kept in the zone's settings: changing it restarts the zone.
             c.hass.config_entries.async_update_entry(
                 c.entry, options={**c.entry.options, CONF_DEEP_SOAK_ENABLED: bool(wanted)}

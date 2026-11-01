@@ -1958,7 +1958,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Tato zóna již neexistuje."
+          "zone_gone": "Tato zóna již neexistuje.",
+          "zone_busy": "Zóna je zaneprázdněna. Zkuste to za chvíli znovu."
         }
       }
     },
@@ -1978,7 +1979,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Tato zóna již neexistuje."
+          "zone_gone": "Tato zóna již neexistuje.",
+          "zone_busy": "Zóna je zaneprázdněna. Zkuste to za chvíli znovu."
         }
       }
     },

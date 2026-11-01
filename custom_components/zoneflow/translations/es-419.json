@@ -1958,7 +1958,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Esta zona ya no existe."
+          "zone_gone": "Esta zona ya no existe.",
+          "zone_busy": "La zona está ocupada. Inténtalo de nuevo en un momento."
         }
       }
     },
@@ -1978,7 +1979,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Esta zona ya no existe."
+          "zone_gone": "Esta zona ya no existe.",
+          "zone_busy": "La zona está ocupada. Inténtalo de nuevo en un momento."
         }
       }
     },

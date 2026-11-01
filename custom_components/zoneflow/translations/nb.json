@@ -1958,7 +1958,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Denne sonen finnes ikke lenger."
+          "zone_gone": "Denne sonen finnes ikke lenger.",
+          "zone_busy": "Sonen er opptatt. Prøv igjen om et øyeblikk."
         }
       }
     },
@@ -1978,7 +1979,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Denne sonen finnes ikke lenger."
+          "zone_gone": "Denne sonen finnes ikke lenger.",
+          "zone_busy": "Sonen er opptatt. Prøv igjen om et øyeblikk."
         }
       }
     },

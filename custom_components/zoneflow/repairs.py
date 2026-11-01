@@ -75,6 +75,8 @@ class NotifyFix(_Fix):
         if entry is None:
             return self._gone()
         if user_input is not None:
+            if self._controller is not None and self._controller.run_in_progress:
+                return self.async_abort(reason="zone_busy")  # the change would restart the zone mid-run
             target = self._owner_of(entry, CONF_NOTIFY_ENTITY)  # an area's phone is fixed on the area
             self.hass.config_entries.async_update_entry(
                 target, options={**target.options, CONF_NOTIFY_ENTITY: user_input.get(CONF_NOTIFY_ENTITY) or None}
@@ -102,6 +104,8 @@ class SensorFix(_Fix):
         if role == "temperature" and controller is not None and not controller.is_outdoor:
             key = CONF_INSIDE_TEMP_ENTITY  # a greenhouse waters by its inside sensor: that is the one that went
         if user_input is not None:
+            if controller is not None and controller.run_in_progress:
+                return self.async_abort(reason="zone_busy")  # the change would restart the zone mid-run
             target = self._owner_of(entry, key)
             replacement = user_input.get("replacement") or None
             self.hass.config_entries.async_update_entry(target, options={**target.options, key: replacement})

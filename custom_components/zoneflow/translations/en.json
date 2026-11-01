@@ -1962,7 +1962,8 @@
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
         }
       }
     },
@@ -1982,7 +1983,8 @@
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
         }
       }
     },

@@ -1958,7 +1958,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Ez a zóna már nem létezik."
+          "zone_gone": "Ez a zóna már nem létezik.",
+          "zone_busy": "A zóna elfoglalt. Próbálja újra egy pillanat múlva."
         }
       }
     },
@@ -1978,7 +1979,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Ez a zóna már nem létezik."
+          "zone_gone": "Ez a zóna már nem létezik.",
+          "zone_busy": "A zóna elfoglalt. Próbálja újra egy pillanat múlva."
         }
       }
     },

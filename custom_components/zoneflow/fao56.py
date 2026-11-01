@@ -94,6 +94,14 @@ def extraterrestrial_radiation_mj(latitude_deg: float, day_of_year: int) -> floa
     return max(ra, 0.0)
 
 
+def daylight_hours(latitude_deg: float, day_of_year: int) -> float:
+    """Hours of daylight (eq. 34)."""
+    phi = math.radians(latitude_deg)
+    delta = 0.409 * math.sin(2.0 * math.pi * day_of_year / 365.0 - 1.39)
+    ws = math.acos(max(-1.0, min(1.0, -math.tan(phi) * math.tan(delta))))
+    return 24.0 / math.pi * ws
+
+
 def clear_sky_radiation_mj(ra_mj: float, elevation_m: float) -> float:
     """Rso, MJ m-2 day-1 (eq. 37)."""
     return (0.75 + 2e-5 * elevation_m) * ra_mj

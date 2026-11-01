@@ -21,6 +21,7 @@ from custom_components.zoneflow.const import (
     DOMAIN,
 )
 
+from .test_et0_days import full_temperature
 from .test_smoke_setup import _seed_source_entities, make_entry
 
 SENSORS = (CONF_HUMIDITY_ENTITY, CONF_WIND_ENTITY, CONF_SOLAR_ENTITY)
@@ -67,6 +68,7 @@ async def test_the_site_options_change_the_fallbacks_and_the_estimate(hass):
     s = c.store.state
     s.today_min_temp_c, s.today_peak_temp_c = 14.0, 27.0
     day = dt_util.now().date() - timedelta(days=1)
+    full_temperature(s, day)
     c._close_et0_day(day, dt_util.utcnow().timestamp())
     exposed = s.et0_day_history[0]
     assert exposed["u2"] == 3.5 and exposed["sources"]["wind"] == "default"
@@ -74,6 +76,7 @@ async def test_the_site_options_change_the_fallbacks_and_the_estimate(hass):
     plain = await _zone(hass)
     ps = plain.store.state
     ps.today_min_temp_c, ps.today_peak_temp_c = 14.0, 27.0
+    full_temperature(ps, day)
     plain._close_et0_day(day, dt_util.utcnow().timestamp())
     assert exposed["et0"] > ps.et0_day_history[0]["et0"]  # windier, drier, sunnier: more water
 

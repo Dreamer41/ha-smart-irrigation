@@ -47,7 +47,7 @@ from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, zone_valve
-from .day_aggregate import DayAggregate
+from .day_aggregate import MIN_COVERAGE_SECONDS, DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
@@ -1497,6 +1497,8 @@ class ZoneFlowController:
                 inputs.setdefault(entity, []).append(key)
         if self.weather_entity:
             inputs.setdefault(self.weather_entity, []).extend(["weather_humidity", "weather_wind"])
+        if self.outdoor_temp_entity:
+            inputs.setdefault(self.outdoor_temp_entity, []).append("temperature")  # for the coverage rule only
         return inputs
 
     def _aggregate(self, key: str) -> DayAggregate:
@@ -1513,6 +1515,9 @@ class ZoneFlowController:
         """A reading in FAO-56's units (%, m/s, W/m2), or None when it can't be read."""
         if state is None or state.state in ("unavailable", "unknown"):
             return None
+        if key == "temperature":
+            temp = _state_temp_c(state)
+            return temp if calc.plausible_temp(temp) else None
         try:
             if key == "weather_humidity":
                 value = float(state.attributes["humidity"])
@@ -1611,6 +1616,9 @@ class ZoneFlowController:
                 self._put_aggregate(key, agg)
         t_min = state.today_min_temp_c if has_record else None
         t_max = state.today_peak_temp_c if has_record else None
+        temperature = summaries.get("temperature")
+        if temperature is not None and not temperature.usable:
+            t_min = t_max = None  # a day with hours of readings missing has a too-narrow range: no ET0
         entry: dict[str, Any] = {"date": day.isoformat(), "et0": None, "sources": {}}
         if calc.plausible_temp(t_min) and calc.plausible_temp(t_max):  # a glitch (85 C) must not set the dose
             settings = self._fao56_settings()
@@ -1629,12 +1637,15 @@ class ZoneFlowController:
             elif weather_win is not None and weather_win.usable:
                 wind, wind_source = fao56.wind_to_2m(weather_win.mean, 10.0), "weather"  # weather services: 10 m
             sol = summaries.get("solar")
-            if sol is not None and sol.usable:
-                rs = sol.mean * 86400 / 1e6  # W/m2 over the whole day -> MJ/m2 (a gap in the readings is not dark)
+            day_of_year = day.timetuple().tm_yday
+            daylight_s = fao56.daylight_hours(self.hass.config.latitude, day_of_year) * 3600
+            # A sensor that goes offline at night is fine: it needs to cover the daylight, not 18 h.
+            if sol is not None and sol.covered_seconds >= max(1800.0, min(MIN_COVERAGE_SECONDS, 0.9 * daylight_s)) and sol.mean is not None:
+                rs = sol.integral / 1e6  # J/m2 -> MJ/m2 (night and short gaps count as dark)
             result = fao56.et0_daily(
                 fao56.DayInputs(t_min, t_max, rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean, wind_2m=wind, rs_mj=rs),
                 latitude_deg=self.hass.config.latitude,
-                day_of_year=day.timetuple().tm_yday,
+                day_of_year=day_of_year,
                 elevation_m=float(self.hass.config.elevation or 0),
                 default_wind=settings["default_wind"],
                 k0=settings["k0"],

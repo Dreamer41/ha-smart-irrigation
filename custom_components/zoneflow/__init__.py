@@ -468,6 +468,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             zone = _resolve_controller(hass, call) if (
                 call.data.get(ATTR_DEVICE_ID) or call.data.get(ATTR_ENTITY_ID)
             ) else None
+            if zone is not None and zone.run_in_progress:
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")  # moving a zone reloads it
             data = {"name": name, **(location.area_defaults(zone) if zone is not None else {})}
             result = await hass.config_entries.flow.async_init(
                 DOMAIN, context={"source": "area_create"}, data=data

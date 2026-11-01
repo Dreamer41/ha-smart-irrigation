@@ -1958,7 +1958,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Deze zone bestaat niet meer."
+          "zone_gone": "Deze zone bestaat niet meer.",
+          "zone_busy": "De zone is bezig. Probeer het zo opnieuw."
         }
       }
     },
@@ -1978,7 +1979,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Deze zone bestaat niet meer."
+          "zone_gone": "Deze zone bestaat niet meer.",
+          "zone_busy": "De zone is bezig. Probeer het zo opnieuw."
         }
       }
     },

@@ -126,3 +126,63 @@ async def test_a_climate_reading_does_not_write_the_whole_state(hass, monkeypatc
         hass.states.async_set("sensor.hum", str(v), {"unit_of_measurement": "%"})
     await hass.async_block_till_done()
     assert saves == []
+
+
+@pytest.mark.asyncio
+async def test_a_day_with_hours_of_temperature_missing_gives_no_et0(hass):
+    from .test_et0_days import _day, full_temperature
+
+    c = await _zone(hass)
+    s = c.store.state
+    day = dt_util.now().date() - timedelta(days=1)
+    start = dt_util.start_of_local_day(day).timestamp()
+    s.today_min_temp_c, s.today_peak_temp_c = 14.0, 27.0
+    s.day_aggregates["temperature"] = _day(start, [(10 * 3600.0, 20.0)], 0)  # only the last 14 h
+    c._close_et0_day(day, start + 86400)
+    assert s.et0_day_history[0]["et0"] is None
+    full_temperature(s, day)
+    c._close_et0_day(day, start + 86400)
+    assert s.et0_day_history[0]["et0"] > 0
+
+
+@pytest.mark.asyncio
+async def test_a_solar_sensor_that_is_offline_at_night_is_used_and_a_midday_gap_is_not(hass):
+    from custom_components.zoneflow.const import CONF_SOLAR_ENTITY
+
+    from .test_et0_days import _day, full_temperature
+
+    await _seed_source_entities(hass)
+    hass.states.async_set("sensor.sun", "300", {"unit_of_measurement": "W/m²"})
+    entry = make_entry(hass, **{CONF_SOLAR_ENTITY: "sensor.sun"})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    c = hass.data[DOMAIN][entry.entry_id]
+    s = c.store.state
+    day = dt_util.now().date() - timedelta(days=1)
+    start = dt_util.start_of_local_day(day).timestamp()
+    H = 3600.0
+    s.today_min_temp_c, s.today_peak_temp_c = 14.0, 27.0
+    full_temperature(s, day)
+    # reports 06:00-18:00 only, offline (None) before and after
+    s.day_aggregates["solar"] = _day(start, [(0, None), (6 * H, 400.0), (18 * H, None)], 0)
+    c._close_et0_day(day, start + 86400)
+    assert s.et0_day_history[0]["sources"]["solar"] == "measured"
+    assert s.et0_day_history[0]["rs"] == pytest.approx(400 * 12 * H / 1e6, abs=0.05)
+    # a 6 h gap in the middle of the day: not measured
+    s.day_aggregates["solar"] = _day(start, [(6 * H, 400.0), (9 * H, None), (15 * H, 400.0), (18 * H, None)], 0)
+    c._close_et0_day(day, start + 86400)
+    assert s.et0_day_history[0]["sources"]["solar"] == "estimated"
+
+
+@pytest.mark.asyncio
+async def test_a_zone_that_is_watering_is_not_reloaded_by_the_other_writes(hass, fake_valve_services):
+    from homeassistant.exceptions import ServiceValidationError
+
+    c = await _zone(hass)
+    c.store.state.lock_on = True  # a run is on
+    assert c.run_in_progress
+    with pytest.raises(ServiceValidationError) as err:
+        await hass.services.async_call(
+            DOMAIN, "create_area", {"name": "Busy beds", "entity_id": "select.test_zone_water_demand_model"}, blocking=True
+        )
+    assert err.value.translation_key == "zone_busy"
