@@ -1364,7 +1364,8 @@
         "name": "Model zapotrzebowania na wodę",
         "state": {
           "temperature_tiers": "Progi temperatury",
-          "et_curve": "Krzywa ET (Hargreaves)"
+          "et_curve": "Krzywa ET (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

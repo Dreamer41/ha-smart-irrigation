@@ -1364,7 +1364,8 @@
         "name": "Wasserbedarfsmodell",
         "state": {
           "temperature_tiers": "Temperaturstufen",
-          "et_curve": "ET-Kurve (Hargreaves)"
+          "et_curve": "ET-Kurve (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

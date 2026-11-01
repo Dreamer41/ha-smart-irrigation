@@ -1364,7 +1364,8 @@
         "name": "Modelo de demanda de água",
         "state": {
           "temperature_tiers": "Faixas de temperatura",
-          "et_curve": "Curva ET (Hargreaves)"
+          "et_curve": "Curva ET (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

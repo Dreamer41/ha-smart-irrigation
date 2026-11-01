@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DEMAND_MODEL_FAO56, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 from .devices import zone_device
 from .entity_cleanup import remove_entities
 
@@ -262,10 +262,11 @@ class ZoneFlowWeeklyTargetSensor(_Base):
 
     def _source(self) -> tuple[float, str]:
         et_weekly = self._controller.et_weekly_target_mm()
+        model = self._controller.demand_model
         if et_weekly is not None:
-            return et_weekly, "et_curve"
+            return et_weekly, ("fao56" if model == DEMAND_MODEL_FAO56 else "et_curve")
         tier = self._controller.tier_weekly_target_mm()
-        if self._controller.demand_model == DEMAND_MODEL_ET:
+        if model in (DEMAND_MODEL_ET, DEMAND_MODEL_FAO56):
             return tier, "temperature_tiers_fallback"
         return tier, "temperature_tiers"
 

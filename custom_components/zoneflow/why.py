@@ -12,7 +12,7 @@ import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
 from . import messages, units
-from .const import DEMAND_MODEL_ET
+from .const import DEMAND_MODEL_ET, DEMAND_MODEL_FAO56
 
 
 def _preview(controller: Any):
@@ -35,7 +35,8 @@ def explain(controller: Any) -> list[dict[str, str]]:
         return items
 
     model = controller.store.state.demand_model
-    add("method", "method", method=messages.text(hass, f"why.method_{'et' if model == DEMAND_MODEL_ET else 'temperature'}"))
+    method = {DEMAND_MODEL_ET: "et", DEMAND_MODEL_FAO56: "fao56"}.get(model, "temperature")
+    add("method", "method", method=messages.text(hass, f"why.method_{method}"))
 
     temp, source = controller.watering_temp()
     tier = calc.temperature_tier(temp, controller.number("hot_temp_threshold"), controller.number("cool_temp_threshold"))

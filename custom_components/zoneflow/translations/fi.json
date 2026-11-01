@@ -1364,7 +1364,8 @@
         "name": "Vedentarvemalli",
         "state": {
           "temperature_tiers": "Lämpötilaportaat",
-          "et_curve": "ET-käyrä (Hargreaves)"
+          "et_curve": "ET-käyrä (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

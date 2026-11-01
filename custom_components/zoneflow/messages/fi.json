@@ -397,7 +397,8 @@
     "soil_ok": "siltä väliltä",
     "preview": "Jos kastelu ajettaisiin nyt: {minutes} min {pulses} jaksossa, noin {each} min kerrallaan, välissä {soak} min imeytystauko. Venttiili on auki enintään {longest} min kerrallaan.",
     "preview_one": "Jos kastelu ajettaisiin nyt: {minutes} min yhdellä kertaa. Venttiili on auki enintään {longest} min kerrallaan.",
-    "preview_none": "Jos kastelu ajettaisiin nyt: ei mitään, sade kattaa jo tarpeen."
+    "preview_none": "Jos kastelu ajettaisiin nyt: ei mitään, sade kattaa jo tarpeen.",
+    "method_fao56": "evapotranspiration by FAO-56 (from the temperature, and the humidity, wind and sunshine where they are measured)"
   },
   "suggest": {
     "heading": "Todennäköisimmät löydökset Home Assistantissasi:",

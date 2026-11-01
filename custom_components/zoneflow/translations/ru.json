@@ -1364,7 +1364,8 @@
         "name": "Модель потребности в воде",
         "state": {
           "temperature_tiers": "Температурные уровни",
-          "et_curve": "Кривая ET (Hargreaves)"
+          "et_curve": "Кривая ET (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

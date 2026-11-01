@@ -1364,7 +1364,8 @@
         "name": "需水量模型",
         "state": {
           "temperature_tiers": "温度分档",
-          "et_curve": "ET 曲线（Hargreaves）"
+          "et_curve": "ET 曲线（Hargreaves）",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

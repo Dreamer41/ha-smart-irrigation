@@ -1364,7 +1364,8 @@
         "name": "Waterbehoeftemodel",
         "state": {
           "temperature_tiers": "Temperatuurtrappen",
-          "et_curve": "ET-curve (Hargreaves)"
+          "et_curve": "ET-curve (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

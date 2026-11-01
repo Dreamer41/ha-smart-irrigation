@@ -194,7 +194,10 @@ FERTILIZE_REMINDER_HOUR = 9
 # unavailable) the zone falls back to the tier target for that cycle.
 DEMAND_MODEL_TIERS = "temperature_tiers"
 DEMAND_MODEL_ET = "et_curve"
-DEMAND_MODEL_OPTIONS = [DEMAND_MODEL_TIERS, DEMAND_MODEL_ET]
+# 1.8: FAO-56 Penman-Monteith from every climate reading the zone has (fao56.py), the weekly
+# target = the average daily ET0 x Kc since the last real watering, x 7.
+DEMAND_MODEL_FAO56 = "fao56"
+DEMAND_MODEL_OPTIONS = [DEMAND_MODEL_TIERS, DEMAND_MODEL_ET, DEMAND_MODEL_FAO56]
 DEFAULT_DEMAND_MODEL = DEMAND_MODEL_TIERS
 
 # Mulch: whether this zone's bare soil is covered (mulch, or a full canopy/

@@ -136,6 +136,7 @@ from .const import (
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
     DEMAND_MODEL_ET,
+    DEMAND_MODEL_FAO56,
     MULCH_STATUS_NOT_MULCHED,
     CONF_USE_WU,
     CONF_PARENT_ZONE,
@@ -1787,12 +1788,41 @@ class ZoneFlowController:
         growth ramp), or None when this zone uses temperature tiers, or
         uses the ET curve but ET0 isn't available right now -- None always
         means "use the tier target", see const.py's DEMAND_MODEL_*."""
+        if self.demand_model == DEMAND_MODEL_FAO56:
+            daily = self.fao56_daily_demand_mm()
+            return daily * 7.0 if daily is not None else None
         if self.demand_model != DEMAND_MODEL_ET:
             return None
         et0 = self.effective_avg_et0()
         if et0 is None:
             return None
         return calc.et_weekly_target_mm(et0, self.number("crop_coefficient"))
+
+    def fao56_et0_days(self, days: int) -> list[float]:
+        """FAO-56 ET0 of the last `days` completed days that have one (newest first)."""
+        today = dt_util.now().date()
+        wanted = {(today - timedelta(days=i + 1)).isoformat() for i in range(max(days, 0))}
+        return [
+            float(e["et0"])
+            for e in self.store.state.et0_day_history
+            if isinstance(e, dict) and e.get("date") in wanted and e.get("et0") is not None
+        ]
+
+    def fao56_daily_demand_mm(self) -> float | None:
+        """The plant's daily water use by FAO-56: the average ET0 x Kc over the completed days
+        since the last real watering (the same window the rain credit looks back over), at
+        least one day and at most two weeks. With no FAO-56 day in that window, the last seven
+        days; with none at all, None (the zone then uses its tier target, as the ET curve does).
+        Today is left out: it isn't over yet, the same as rain."""
+        if not self.outdoor_temp_entity:
+            return None
+        base_ts = dt_util.utcnow().timestamp() - self._rain_pool_elapsed()
+        base_day = dt_util.as_local(dt_util.utc_from_timestamp(base_ts)).date()
+        days = min(max((dt_util.now().date() - base_day).days, 1), ET0_HISTORY_DAYS)
+        values = self.fao56_et0_days(days) or self.fao56_et0_days(7)
+        if not values:
+            return None
+        return sum(values) / len(values) * self.number("crop_coefficient")
 
     def tier_weekly_target_mm(self) -> float:
         """The original temperature-tier weekly target (before the growth
@@ -4489,7 +4519,7 @@ class ZoneFlowController:
             ),
             interval_days=(normal_gap, hot_gap, normal_gap),
             scale=self.mulch_factor(),
-            demand_model_et=self.demand_model == DEMAND_MODEL_ET,
+            demand_model_et=self.demand_model in (DEMAND_MODEL_ET, DEMAND_MODEL_FAO56),
         )
         routine_count = max(int(round(self.number("routine_pulse_count"))), 1)
         routine = calc.longest_pulse_minutes(routine_total, flow, routine_count, self._routine_min_pulse(), self.site)

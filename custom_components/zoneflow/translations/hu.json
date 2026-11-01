@@ -1364,7 +1364,8 @@
         "name": "Vízigény-modell",
         "state": {
           "temperature_tiers": "Hőmérsékleti sávok",
-          "et_curve": "ET-görbe (Hargreaves)"
+          "et_curve": "ET-görbe (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {

@@ -1364,7 +1364,8 @@
         "name": "Model potreby vody",
         "state": {
           "temperature_tiers": "Teplotné pásma",
-          "et_curve": "Krivka ET (Hargreaves)"
+          "et_curve": "Krivka ET (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
