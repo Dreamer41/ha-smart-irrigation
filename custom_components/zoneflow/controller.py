@@ -46,7 +46,7 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, notification_actions, units, visibility
+from . import calculations as calc, issues, messages, notification_actions, units, visibility, zone_valve
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
@@ -1016,7 +1016,7 @@ class ZoneFlowController:
             # the listener above to see, so arm the stuck-valve watchdog for it
             # here, from when it actually turned on.
             valve_now = self.hass.states.get(self.valve_entity)
-            if valve_now is not None and valve_now.state == "on":
+            if zone_valve.is_open(valve_now):
                 self._arm_valve_stuck_watchdog(valve_now.last_changed)
         if self.rain_counter_entity:
             self._unsubs.append(
@@ -2134,8 +2134,10 @@ class ZoneFlowController:
         # after the state actually changed (event-loop scheduling, or a
         # slow test/CI run), and anchoring to "now" at execution time lets
         # that gap silently steal minutes from the watchdog window.
-        if new_state.state == "on":
-            self._arm_valve_stuck_watchdog(new_state.last_changed)
+        if zone_valve.is_open(new_state):
+            # A valve entity reports opening, then open: time it from when it first began to open.
+            started = old_state.last_changed if zone_valve.is_open(old_state) else new_state.last_changed
+            self._arm_valve_stuck_watchdog(started)
         elif new_state.state == "unavailable":
             fire_at = new_state.last_changed + timedelta(minutes=POWER_LOSS_GRACE_MINUTES)
             self._power_loss_cancel = async_track_point_in_time(self.hass, self._on_power_loss, fire_at)
@@ -2165,9 +2167,7 @@ class ZoneFlowController:
     async def _fire_valve_stuck(self) -> None:
         limit = getattr(self, "_valve_stuck_limit_armed", VALVE_STUCK_ON_MINUTES)
         try:
-            await self.hass.services.async_call(
-                "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-            )
+            await zone_valve.async_close(self.hass, self.valve_entity)
         except Exception:  # noqa: BLE001 - a device may raise anything; the abort and the alert still go out
             _LOGGER.exception("%s: the stuck-valve close command failed", self.entry.title)
         await self._set_abort(True)
@@ -2208,10 +2208,8 @@ class ZoneFlowController:
 
     async def _on_power_restore(self, new_state: State) -> None:
         """Port of avocado_power_restore_check."""
-        if new_state.state == "on":
-            await self.hass.services.async_call(
-                "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-            )
+        if zone_valve.is_open(new_state):
+            await zone_valve.async_close(self.hass, self.valve_entity)
             await self._log_event(
                 event_type="Power Restore Anomaly",
                 status="CRITICAL",
@@ -2245,10 +2243,8 @@ class ZoneFlowController:
         # may no longer name, and the zone's current valve.
         for valve in dict.fromkeys(v for v in (lock_valve, self.valve_entity) if v):
             valve_state = self.hass.states.get(valve)
-            if valve_state is not None and valve_state.state not in ("unavailable", "off"):
-                await self.hass.services.async_call(
-                    "switch", "turn_off", {"entity_id": valve}, blocking=True
-                )
+            if valve_state is not None and valve_state.state not in ("unavailable", *zone_valve.CLOSED_STATES):
+                await zone_valve.async_close(self.hass, valve)
         await self._log_event(
             event_type="Stale Lock Cleared On Startup",
             status="ABORTED",
@@ -2851,7 +2847,7 @@ class ZoneFlowController:
                 return _PAUSED
             self._expected_pulse_minutes = pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
-            await self.hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_open(self.hass, valve)
 
             # The pump-power audit only makes sense when a pump-power
             # sensor is actually configured -- without one, _pump_watts()
@@ -2927,7 +2923,7 @@ class ZoneFlowController:
 
             self._expected_pulse_minutes = None
             overlap = await self._overlap_with_next_zone(kind) if index == count else 0.0
-            await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_close(self.hass, valve)
             self._end_pulse(pulse_minutes, full=True)
             self._open_seconds += overlap
 
@@ -3069,7 +3065,7 @@ class ZoneFlowController:
         if state is None or state.state == "unavailable":
             return state is None
         try:
-            await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_close(self.hass, valve)
         except Exception:  # noqa: BLE001 - last line of defence, must not raise
             _LOGGER.exception("%s: could not close valve %s", self.entry.title, valve)
             return False
@@ -3082,11 +3078,11 @@ class ZoneFlowController:
         lock stays for the power-loss and stale-lock watchdogs."""
         for _ in range(int(seconds * 2)):
             state = self.hass.states.get(valve)
-            if state is None or state.state not in ("on", "unavailable", "unknown"):
+            if state is None or zone_valve.is_closed(state):
                 return True
             await asyncio.sleep(0.5)
         state = self.hass.states.get(valve)
-        return state is None or state.state not in ("on", "unavailable", "unknown")
+        return state is None or zone_valve.is_closed(state)
 
     async def _wait_for_state_change(self, entity_id: str | None, seconds: float) -> None:
         """Until `entity_id` reports a new state, or `seconds` pass."""

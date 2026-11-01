@@ -23,11 +23,12 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic
+from . import calculations as calc, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic, zone_valve
 from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
     CONF_PARENT_ZONE,
+    VALVE_DOMAINS,
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,
@@ -141,38 +142,38 @@ async def _test_valve(hass, valve: str) -> str:
     closed again, it never reported open, or it did not report closed. Always ends
     by telling the valve to close."""
     state = hass.states.get(valve)
-    if state is None or state.state in ("unavailable", "unknown"):
+    if state is None or zone_valve.is_offline(state):
         return messages.text(hass, "valve_test.unavailable", valve=valve)
-    if state.state == "on":
+    if zone_valve.is_open(state):
         # Someone is watering by hand: leave it exactly as it is.
         return messages.text(hass, "valve_test.already_open", valve=valve)
 
-    async def _reaches(target: str) -> bool:
+    async def _reaches(check) -> bool:
         for _ in range(int(VALVE_TEST_WAIT_SECONDS / 0.25)):
-            current = hass.states.get(valve)
-            if current is not None and current.state == target:
+            if check(hass.states.get(valve)):
                 return True
             await asyncio.sleep(0.25)
         return False
 
     try:
-        await hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
-        opened = await _reaches("on")
+        await zone_valve.async_open(hass, valve)
+        # A valve entity is open once it reports open (not while still opening).
+        opened = await _reaches(lambda s: s is not None and s.state in ("on", "open"))
         if opened:
             await asyncio.sleep(VALVE_TEST_HOLD_SECONDS)
     except asyncio.CancelledError:
         # The flow was cut short (Home Assistant stopping) with the valve open: close it anyway.
-        hass.async_create_task(hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True))
+        hass.async_create_task(zone_valve.async_close(hass, valve))
         raise
     except Exception:  # noqa: BLE001 - a device may raise anything on a lost answer; the valve is closed below
         opened = False
     closed = False
     for _ in range(2):  # told twice before it is called stuck open
         try:
-            await hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_close(hass, valve)
         except Exception:  # noqa: BLE001
             continue
-        if await _reaches("off"):
+        if await _reaches(zone_valve.is_closed):
             closed = True
             break
     if not closed:
@@ -223,7 +224,7 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     return vol.Schema(
         {
             vol.Required(CONF_VALVE_ENTITY, default=defaults.get(CONF_VALVE_ENTITY)): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="switch")
+                selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
             ),
             pump_power_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
             # Plain text, not an entity selector -- this identifies the
@@ -389,7 +390,7 @@ def _devices_schema(defaults: dict[str, Any], *, with_valve: bool) -> vol.Schema
     fields: dict[Any, Any] = {}
     if with_valve:
         fields[_optional_entity_key(defaults, CONF_VALVE_ENTITY)] = selector.EntitySelector(
-            selector.EntitySelectorConfig(domain="switch")
+            selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
         )
     fields[_optional_entity_key(defaults, CONF_INSIDE_TEMP_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
@@ -750,7 +751,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="crop_valve",
             data_schema=vol.Schema(
-                {vol.Required(CONF_VALVE_ENTITY): selector.EntitySelector(selector.EntitySelectorConfig(domain="switch"))}
+                {vol.Required(CONF_VALVE_ENTITY): selector.EntitySelector(selector.EntitySelectorConfig(domain=VALVE_DOMAINS))}
             ),
             errors=errors,
         )
@@ -1091,7 +1092,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_VALVE_ENTITY, description={"suggested_value": valve_default}): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="switch")
+                        selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
                     ),
                     vol.Required(
                         CONF_IRRIGATION_METHOD, default=defaults.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
@@ -1236,7 +1237,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     _optional_entity_key({}, CONF_VALVE_ENTITY): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="switch")
+                        selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
                     )
                 }
             ),
@@ -1510,7 +1511,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_VALVE_ENTITY, default=self._merged().get(CONF_VALVE_ENTITY)): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="switch")
+                        selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
                     )
                 }
             ),

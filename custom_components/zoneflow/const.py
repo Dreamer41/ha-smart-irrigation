@@ -654,6 +654,8 @@ EVENT_LOG = f"{DOMAIN}_log_event"
 CYCLE_STOP_TIMEOUT_SECONDS = 30
 # How long to wait for a valve told to close to report "off".
 VALVE_CLOSE_CONFIRM_SECONDS = 10
+# Entity kinds a zone valve can be (1.8: valve entities too, opened with open_valve / close_valve).
+VALVE_DOMAINS = ["switch", "valve"]
 # Home Assistant gives shutdown jobs 20 s in all; stay well inside it.
 SHUTDOWN_STOP_TIMEOUT_SECONDS = 12
 SHUTDOWN_CONFIRM_SECONDS = 3
