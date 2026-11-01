@@ -53,13 +53,13 @@
           "routine_sun_mode": "Início da rega de rotina",
           "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol",
           "unit_system": "Unidades",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "solar_entity": "Sensor de radiação solar (opcional)",
+          "wind_exposure": "Vento neste local (sem sensor de vento)",
+          "climate_dryness": "Clima (sem sensor de humidade)",
+          "coastal": "Junto ao mar (sem sensor solar)",
+          "wind_sensor_height_m": "Altura do sensor de vento"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
           "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia.",
+          "wind_exposure": "Usado quando não há sensor de vento nem vento da meteorologia: abrigado, aberto ou exposto.",
+          "climate_dryness": "Usado quando não há leitura de humidade: húmido ou seco (zonas áridas e semiáridas).",
+          "coastal": "Usado quando não há leitura solar: junto à costa o sol é estimado um pouco mais alto.",
+          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Sensor de temperatura exterior",
           "weather_entity": "Entidade meteorológica (previsão)",
           "notify_entity": "Telemóvel para notificações",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "solar_entity": "Sensor de radiação solar (opcional)"
         },
         "data_description": {
           "rain_counter_entity": "Opcional. As zonas desta área lêem a chuva a partir daqui, a menos que uma zona tenha o seu próprio medidor.",
@@ -285,9 +285,9 @@
           "notify_entity": "Opcional. Para onde as zonas desta área enviam as suas mensagens de telemóvel.",
           "area_name": "Como se chama a área, por exemplo Quintal ou Jardim da frente.",
           "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Início da rega de rotina",
           "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol",
           "unit_system": "Unidades",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "solar_entity": "Sensor de radiação solar (opcional)",
+          "wind_exposure": "Vento neste local (sem sensor de vento)",
+          "climate_dryness": "Clima (sem sensor de humidade)",
+          "coastal": "Junto ao mar (sem sensor solar)",
+          "wind_sensor_height_m": "Altura do sensor de vento"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
           "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia.",
+          "wind_exposure": "Usado quando não há sensor de vento nem vento da meteorologia: abrigado, aberto ou exposto.",
+          "climate_dryness": "Usado quando não há leitura de humidade: húmido ou seco (zonas áridas e semiáridas).",
+          "coastal": "Usado quando não há leitura solar: junto à costa o sol é estimado um pouco mais alto.",
+          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "Usar a temperatura exterior da área",
           "weather_entity": "Usar a entidade meteorológica da área",
           "notify_entity": "Usar o telemóvel da área",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "Usar o sensor de humidade da área",
+          "wind_entity": "Usar o sensor de vento da área",
+          "solar_entity": "Usar o sensor solar da área"
         },
         "data_description": {
           "rain_counter_entity": "Marque para usar o medidor de chuva da área em vez do próprio desta zona.",
           "outdoor_temp_entity": "Marque para usar o sensor de temperatura exterior da área em vez do próprio desta zona.",
           "weather_entity": "Marque para usar a entidade meteorológica da área em vez da própria desta zona.",
           "notify_entity": "Marque para enviar para o telemóvel da área em vez do próprio desta zona.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Marque para usar o sensor de humidade da área em vez do próprio desta zona.",
+          "wind_entity": "Marque para usar o sensor de vento da área em vez do próprio desta zona.",
+          "solar_entity": "Marque para usar o sensor solar da área em vez do próprio desta zona."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Sensor de temperatura exterior",
           "weather_entity": "Entidade meteorológica (previsão)",
           "notify_entity": "Telemóvel para notificações",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "solar_entity": "Sensor de radiação solar (opcional)"
         },
         "data_description": {
           "rain_counter_entity": "Opcional. As zonas desta área lêem a chuva a partir daqui, a menos que uma zona tenha o seu próprio medidor.",
@@ -680,9 +680,9 @@
           "notify_entity": "Opcional. Para onde as zonas desta área enviam as suas mensagens de telemóvel.",
           "area_name": "Como se chama a área, por exemplo Quintal ou Jardim da frente.",
           "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Sensor de temperatura exterior",
           "weather_entity": "Entidade meteorológica (previsão)",
           "notify_entity": "Telemóvel para notificações",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "solar_entity": "Sensor de radiação solar (opcional)"
         },
         "data_description": {
           "rain_counter_entity": "Opcional. As zonas desta área lêem a chuva a partir daqui, a menos que uma zona tenha o seu próprio medidor.",
@@ -708,9 +708,9 @@
           "notify_entity": "Opcional. Para onde as zonas desta área enviam as suas mensagens de telemóvel.",
           "area_name": "Como se chama a área, por exemplo Quintal ou Jardim da frente.",
           "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "Abrigado (muros, sebes)",
+        "open": "Aberto",
+        "exposed": "Exposto (cume, costa, telhado)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Húmido",
+        "dry": "Seco (árido ou semiárido)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "A área {area} foi eliminada, pelo que {zone} usa agora uma cópia dos sensores que obteve dela. Para a colocar noutra área, use Configurar -> Onde fica isto? da zona."
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: passar para a estimativa de água FAO-56?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "Passar {zone} para FAO-56",
+            "description": "{zone} tem duas semanas de dias FAO-56 registados. Neste momento rega {current} por semana com o seu modelo atual; o FAO-56 dá {fao56} por semana nas mesmas duas semanas (temperatura e, onde existirem, humidade, vento e sol). O FAO-56 costuma dar menos com tempo húmido e mais em dias secos e ventosos. Passar esta zona para FAO-56? Pode voltar atrás quando quiser em «Modelo de necessidade de água»."
           }
         }
       }

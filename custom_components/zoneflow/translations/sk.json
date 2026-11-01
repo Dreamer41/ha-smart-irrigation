@@ -53,13 +53,13 @@
           "routine_sun_mode": "Spúšťač bežnej zálievky",
           "routine_sun_offset_minutes": "Posun bežnej zálievky voči slnku (minúty)",
           "unit_system": "Jednotky",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
+          "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "solar_entity": "Senzor slnečného žiarenia (voliteľný)",
+          "wind_exposure": "Vietor na tomto mieste (bez senzora vetra)",
+          "climate_dryness": "Klíma (bez senzora vlhkosti)",
+          "coastal": "Pri mori (bez senzora slnka)",
+          "wind_sensor_height_m": "Výška senzora vetra"
         },
         "data_description": {
           "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "Spustiť bežnú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
           "routine_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
           "unit_system": "Čo táto zóna zobrazuje: podľa Home Assistant, alebo vždy metrické (mm, °C, litre) či imperiálne (palce, °F, galóny). Mení len zobrazenie, nikdy nie množstvo vody.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
+          "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt.",
+          "wind_exposure": "Použije sa, keď nie je senzor vetra ani vietor z predpovede: závetrie, otvorené alebo vystavené.",
+          "climate_dryness": "Použije sa, keď nie je údaj o vlhkosti: vlhké, alebo suché (aridné a semiaridné oblasti).",
+          "coastal": "Použije sa, keď nie je údaj o slnku: pri pobreží sa slnko odhaduje o niečo vyššie.",
+          "wind_sensor_height_m": "Ako vysoko je senzor vetra. Domáce meteostanice bývajú asi v 2 m."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Snímač vonkajšej teploty",
           "weather_entity": "Entita počasia (predpoveď)",
           "notify_entity": "Telefón na upozornenia",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
+          "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "solar_entity": "Senzor slnečného žiarenia (voliteľný)"
         },
         "data_description": {
           "rain_counter_entity": "Voliteľné. Zóny tejto oblasti z neho čítajú zrážky, kým zóna nemá vlastný zrážkomer.",
@@ -285,9 +285,9 @@
           "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
           "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
+          "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Spúšťač bežnej zálievky",
           "routine_sun_offset_minutes": "Posun bežnej zálievky voči slnku (minúty)",
           "unit_system": "Jednotky",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
+          "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "solar_entity": "Senzor slnečného žiarenia (voliteľný)",
+          "wind_exposure": "Vietor na tomto mieste (bez senzora vetra)",
+          "climate_dryness": "Klíma (bez senzora vlhkosti)",
+          "coastal": "Pri mori (bez senzora slnka)",
+          "wind_sensor_height_m": "Výška senzora vetra"
         },
         "data_description": {
           "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "Spustiť bežnú zálievku v pevnom čase vyššie, alebo pred či po východe alebo západe slnka, aby sa posúvala s ročnými obdobiami.",
           "routine_sun_offset_minutes": "Koľko minút pred alebo po východe či západe slnka. Pri pevnom čase sa nepoužíva.",
           "unit_system": "Čo táto zóna zobrazuje: podľa Home Assistant, alebo vždy metrické (mm, °C, litre) či imperiálne (palce, °F, galóny). Mení len zobrazenie, nikdy nie množstvo vody.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
+          "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt.",
+          "wind_exposure": "Použije sa, keď nie je senzor vetra ani vietor z predpovede: závetrie, otvorené alebo vystavené.",
+          "climate_dryness": "Použije sa, keď nie je údaj o vlhkosti: vlhké, alebo suché (aridné a semiaridné oblasti).",
+          "coastal": "Použije sa, keď nie je údaj o slnku: pri pobreží sa slnko odhaduje o niečo vyššie.",
+          "wind_sensor_height_m": "Ako vysoko je senzor vetra. Domáce meteostanice bývajú asi v 2 m."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "Použiť vonkajšiu teplotu oblasti",
           "weather_entity": "Použiť entitu počasia oblasti",
           "notify_entity": "Použiť telefón oblasti",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "Použiť senzor vlhkosti oblasti",
+          "wind_entity": "Použiť senzor vetra oblasti",
+          "solar_entity": "Použiť senzor slnka oblasti"
         },
         "data_description": {
           "rain_counter_entity": "Zaškrtnite pre použitie zrážkomera oblasti namiesto vlastného zrážkomera tejto zóny.",
           "outdoor_temp_entity": "Zaškrtnite pre použitie snímača vonkajšej teploty oblasti namiesto vlastného snímača tejto zóny.",
           "weather_entity": "Zaškrtnite pre použitie entity počasia oblasti namiesto vlastnej entity počasia tejto zóny.",
           "notify_entity": "Zaškrtnite pre odosielanie na telefón oblasti namiesto vlastného telefónu tejto zóny.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Zaškrtnite, ak chcete použiť senzor vlhkosti oblasti namiesto vlastného senzora tejto zóny.",
+          "wind_entity": "Zaškrtnite, ak chcete použiť senzor vetra oblasti namiesto vlastného senzora tejto zóny.",
+          "solar_entity": "Zaškrtnite, ak chcete použiť senzor slnka oblasti namiesto vlastného senzora tejto zóny."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Snímač vonkajšej teploty",
           "weather_entity": "Entita počasia (predpoveď)",
           "notify_entity": "Telefón na upozornenia",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
+          "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "solar_entity": "Senzor slnečného žiarenia (voliteľný)"
         },
         "data_description": {
           "rain_counter_entity": "Voliteľné. Zóny tejto oblasti z neho čítajú zrážky, kým zóna nemá vlastný zrážkomer.",
@@ -680,9 +680,9 @@
           "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
           "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
+          "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Snímač vonkajšej teploty",
           "weather_entity": "Entita počasia (predpoveď)",
           "notify_entity": "Telefón na upozornenia",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
+          "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "solar_entity": "Senzor slnečného žiarenia (voliteľný)"
         },
         "data_description": {
           "rain_counter_entity": "Voliteľné. Zóny tejto oblasti z neho čítajú zrážky, kým zóna nemá vlastný zrážkomer.",
@@ -708,9 +708,9 @@
           "notify_entity": "Voliteľné. Kam zóny tejto oblasti odosielajú správy na telefón.",
           "area_name": "Ako sa oblasť volá, napríklad Zadná záhrada alebo Predzáhradka.",
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
+          "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "Závetrie (múry, živé ploty)",
+        "open": "Otvorené",
+        "exposed": "Vystavené (vrchol kopca, pobrežie, strecha)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Vlhké",
+        "dry": "Suché (aridné alebo semiaridné)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "Oblasť {area} bola zmazaná, takže {zone} teraz používa kópiu snímačov, ktoré z nej získala. Ak ju chcete umiestniť do inej oblasti, použite Konfigurovať -> Kde to je? danej zóny."
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: prepnúť na odhad vody FAO-56?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "Prepnúť {zone} na FAO-56",
+            "description": "Zóna {zone} má zaznamenané dva týždne dní FAO-56. Teraz polieva podľa svojho súčasného modelu {current} týždenne; FAO-56 dáva z tých istých dvoch týždňov {fao56} týždenne (teplota a tam, kde ich máte, vlhkosť, vietor a slnko). FAO-56 zvyčajne dáva menej vo vlhkom počasí a viac v suchých, veterných dňoch. Prepnúť túto zónu na FAO-56? Kedykoľvek sa môžete vrátiť cez Model potreby vody."
           }
         }
       }

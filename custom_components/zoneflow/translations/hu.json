@@ -53,13 +53,13 @@
           "routine_sun_mode": "Rendszeres öntözés indítása",
           "routine_sun_offset_minutes": "Rendszeres öntözés eltolása a naphoz (perc)",
           "unit_system": "Mértékegységek",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)",
+          "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
+          "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
+          "coastal": "Tengerparton (napsugárzás-érzékelő nélkül)",
+          "wind_sensor_height_m": "A szélérzékelő magassága"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
           "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
           "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli.",
+          "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
+          "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
+          "coastal": "Akkor használja, ha nincs napsugárzás-adat: a tengerpart közelében a napsütést kicsit magasabbra becsüli.",
+          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
           "weather_entity": "Időjárás-entitás (előrejelzés)",
           "notify_entity": "Értesítendő telefon",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
           "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
@@ -285,9 +285,9 @@
           "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
           "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
           "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Rendszeres öntözés indítása",
           "routine_sun_offset_minutes": "Rendszeres öntözés eltolása a naphoz (perc)",
           "unit_system": "Mértékegységek",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)",
+          "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
+          "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
+          "coastal": "Tengerparton (napsugárzás-érzékelő nélkül)",
+          "wind_sensor_height_m": "A szélérzékelő magassága"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
           "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
           "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli.",
+          "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
+          "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
+          "coastal": "Akkor használja, ha nincs napsugárzás-adat: a tengerpart közelében a napsütést kicsit magasabbra becsüli.",
+          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "A terület külső hőmérsékletének használata",
           "weather_entity": "A terület időjárás-entitásának használata",
           "notify_entity": "A terület telefonjának használata",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "A terület páratartalom-érzékelőjének használata",
+          "wind_entity": "A terület szélérzékelőjének használata",
+          "solar_entity": "A terület napsugárzás-érzékelőjének használata"
         },
         "data_description": {
           "rain_counter_entity": "Jelölje be, ha a terület esőmérőjét szeretné használni a zóna sajátja helyett.",
           "outdoor_temp_entity": "Jelölje be, ha a terület külső hőmérséklet-érzékelőjét szeretné használni a zóna sajátja helyett.",
           "weather_entity": "Jelölje be, ha a terület időjárás-entitását szeretné használni a zóna sajátja helyett.",
           "notify_entity": "Jelölje be, ha a terület telefonjára szeretne küldeni a zóna sajátja helyett.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület páratartalom-érzékelőjét szeretné használni.",
+          "wind_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület szélérzékelőjét szeretné használni.",
+          "solar_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület napsugárzás-érzékelőjét szeretné használni."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
           "weather_entity": "Időjárás-entitás (előrejelzés)",
           "notify_entity": "Értesítendő telefon",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
           "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
@@ -680,9 +680,9 @@
           "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
           "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
           "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
           "weather_entity": "Időjárás-entitás (előrejelzés)",
           "notify_entity": "Értesítendő telefon",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
           "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
@@ -708,9 +708,9 @@
           "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
           "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
           "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "Védett (falak, sövények)",
+        "open": "Nyílt",
+        "exposed": "Kitett (dombtető, tengerpart, tető)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Párás",
+        "dry": "Száraz (száraz vagy félszáraz)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "A(z) {area} terület törölve lett, így a(z) {zone} zóna most az onnan kapott érzékelők másolatát használja. Másik területre való áthelyezéshez használja a zóna Konfigurálás -> Hol van ez? lehetőségét."
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: átáll az FAO-56 vízbecslésre?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "{zone} átállítása FAO-56-ra",
+            "description": "A(z) {zone} zónáról két hétnyi FAO-56 nap van feljegyezve. Jelenleg a mostani modellje szerint heti {current} vizet ad; az FAO-56 ugyanerre a két hétre heti {fao56} adna (a hőmérséklet, valamint a páratartalom, a szél és a napsütés, ahol van ilyen adat). Az FAO-56 párás időben általában kevesebbet, száraz, szeles napokon többet ad. Átállítja ezt a zónát FAO-56-ra? Bármikor visszaállhat a Vízigény-modell beállítással."
           }
         }
       }

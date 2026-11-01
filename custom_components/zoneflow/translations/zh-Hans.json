@@ -53,13 +53,13 @@
           "routine_sun_mode": "常规浇水触发方式",
           "routine_sun_offset_minutes": "常规浇水日出日落偏移（分钟）",
           "unit_system": "单位",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "solar_entity": "太阳辐射传感器（可选）",
+          "wind_exposure": "此处的风力（无风速传感器时）",
+          "climate_dryness": "气候（无湿度传感器时）",
+          "coastal": "靠海（无太阳辐射传感器时）",
+          "wind_sensor_height_m": "风速传感器高度"
         },
         "data_description": {
           "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
           "routine_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
           "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。",
+          "wind_exposure": "在没有风速传感器也没有天气服务风速时使用：避风、开阔或暴露。",
+          "climate_dryness": "在没有湿度读数时使用：潮湿或干燥（干旱和半干旱地区）。",
+          "coastal": "在没有太阳辐射读数时使用：靠近海岸时日照估算会略高一些。",
+          "wind_sensor_height_m": "风速传感器安装的高度。家用气象站通常约在 2 米高处。"
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "室外温度传感器",
           "weather_entity": "天气实体（预报）",
           "notify_entity": "接收通知的手机",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
           "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
@@ -285,9 +285,9 @@
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "常规浇水触发方式",
           "routine_sun_offset_minutes": "常规浇水日出日落偏移（分钟）",
           "unit_system": "单位",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "solar_entity": "太阳辐射传感器（可选）",
+          "wind_exposure": "此处的风力（无风速传感器时）",
+          "climate_dryness": "气候（无湿度传感器时）",
+          "coastal": "靠海（无太阳辐射传感器时）",
+          "wind_sensor_height_m": "风速传感器高度"
         },
         "data_description": {
           "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
           "routine_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
           "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。",
+          "wind_exposure": "在没有风速传感器也没有天气服务风速时使用：避风、开阔或暴露。",
+          "climate_dryness": "在没有湿度读数时使用：潮湿或干燥（干旱和半干旱地区）。",
+          "coastal": "在没有太阳辐射读数时使用：靠近海岸时日照估算会略高一些。",
+          "wind_sensor_height_m": "风速传感器安装的高度。家用气象站通常约在 2 米高处。"
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "使用区域的室外温度",
           "weather_entity": "使用区域的天气实体",
           "notify_entity": "使用区域的手机",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "使用区域的湿度传感器",
+          "wind_entity": "使用区域的风速传感器",
+          "solar_entity": "使用区域的太阳辐射传感器"
         },
         "data_description": {
           "rain_counter_entity": "勾选此项以使用区域的雨量计，而非当前区域独立的雨量计。",
           "outdoor_temp_entity": "勾选此项以使用区域的室外温度传感器，而非当前区域独立的传感器。",
           "weather_entity": "勾选此项以使用区域的天气实体，而非当前区域独立的天气实体。",
           "notify_entity": "勾选此项以将消息发送至区域的手机，而非当前区域独立的手机。",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "勾选后使用区域的湿度传感器，而不是本分区自己的传感器。",
+          "wind_entity": "勾选后使用区域的风速传感器，而不是本分区自己的传感器。",
+          "solar_entity": "勾选后使用区域的太阳辐射传感器，而不是本分区自己的传感器。"
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "室外温度传感器",
           "weather_entity": "天气实体（预报）",
           "notify_entity": "接收通知的手机",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
           "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
@@ -680,9 +680,9 @@
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "室外温度传感器",
           "weather_entity": "天气实体（预报）",
           "notify_entity": "接收通知的手机",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
           "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
@@ -708,9 +708,9 @@
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "避风（墙、树篱）",
+        "open": "开阔",
+        "exposed": "暴露（山顶、海岸、屋顶）"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "潮湿",
+        "dry": "干燥（干旱或半干旱）"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "区域 {area} 已被删除，因此 {zone} 目前使用的是继承自该区域的传感器副本。若要将其放入其他区域，请使用该区域的“配置 -> 这在哪里？”。"
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}：切换到 FAO-56 用水估算？",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "将 {zone} 切换到 FAO-56",
+            "description": "{zone} 已记录两周的 FAO-56 日数据。目前它按当前模型每周浇水 {current}；用同样这两周的数据，FAO-56 每周给出 {fao56}（温度，以及你有的湿度、风速和日照）。FAO-56 在潮湿天气通常给出更少，在干燥多风的日子给出更多。要把此分区切换到 FAO-56 吗？你随时可以通过“需水量模型”切换回来。"
           }
         }
       }

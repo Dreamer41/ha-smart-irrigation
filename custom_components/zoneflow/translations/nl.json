@@ -53,13 +53,13 @@
           "routine_sun_mode": "Start routinewatergift",
           "routine_sun_offset_minutes": "Routinewatergift: verschuiving t.o.v. zon (minuten)",
           "unit_system": "Eenheden",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "solar_entity": "Zonnestralingssensor (optioneel)",
+          "wind_exposure": "Wind op deze plek (zonder windsensor)",
+          "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
+          "coastal": "Aan zee (zonder zonnesensor)",
+          "wind_sensor_height_m": "Hoogte van de windsensor"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
           "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
           "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag.",
+          "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
+          "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
+          "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
+          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Buitentemperatuursensor",
           "weather_entity": "Weer-entiteit (voorspelling)",
           "notify_entity": "Telefoon voor meldingen",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
           "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
@@ -285,9 +285,9 @@
           "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Start routinewatergift",
           "routine_sun_offset_minutes": "Routinewatergift: verschuiving t.o.v. zon (minuten)",
           "unit_system": "Eenheden",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "solar_entity": "Zonnestralingssensor (optioneel)",
+          "wind_exposure": "Wind op deze plek (zonder windsensor)",
+          "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
+          "coastal": "Aan zee (zonder zonnesensor)",
+          "wind_sensor_height_m": "Hoogte van de windsensor"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
           "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
           "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag.",
+          "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
+          "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
+          "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
+          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "Gebruik de buitentemperatuur van het gebied",
           "weather_entity": "Gebruik de weer-entiteit van het gebied",
           "notify_entity": "Gebruik de telefoon van het gebied",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "Vochtigheidssensor van het gebied gebruiken",
+          "wind_entity": "Windsensor van het gebied gebruiken",
+          "solar_entity": "Zonnesensor van het gebied gebruiken"
         },
         "data_description": {
           "rain_counter_entity": "Vink aan om de regenmeter van het gebied te gebruiken in plaats van die van deze zone.",
           "outdoor_temp_entity": "Vink aan om de buitentemperatuursensor van het gebied te gebruiken in plaats van die van deze zone.",
           "weather_entity": "Vink aan om de weer-entiteit van het gebied te gebruiken in plaats van die van deze zone.",
           "notify_entity": "Vink aan om naar de telefoon van het gebied te sturen in plaats van de eigen telefoon van deze zone.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Vink aan om de vochtigheidssensor van het gebied te gebruiken in plaats van die van deze zone.",
+          "wind_entity": "Vink aan om de windsensor van het gebied te gebruiken in plaats van die van deze zone.",
+          "solar_entity": "Vink aan om de zonnesensor van het gebied te gebruiken in plaats van die van deze zone."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Buitentemperatuursensor",
           "weather_entity": "Weer-entiteit (voorspelling)",
           "notify_entity": "Telefoon voor meldingen",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
           "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
@@ -680,9 +680,9 @@
           "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Buitentemperatuursensor",
           "weather_entity": "Weer-entiteit (voorspelling)",
           "notify_entity": "Telefoon voor meldingen",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
           "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
@@ -708,9 +708,9 @@
           "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
+        "sheltered": "Beschut (muren, hagen)",
         "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "exposed": "Blootgesteld (heuveltop, kust, dak)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Vochtig",
+        "dry": "Droog (dor of halfdor)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "Het gebied {area} is verwijderd, dus {zone} gebruikt nu een kopie van de sensoren die daarvan afkomstig waren. Om deze in een ander gebied te plaatsen, gebruik Zonering -> Waar is dit?"
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: overstappen op de FAO-56-waterschatting?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "{zone} omzetten naar FAO-56",
+            "description": "{zone} heeft twee weken FAO-56-dagen vastgelegd. Nu geeft de zone volgens het huidige model {current} per week; FAO-56 geeft op dezelfde twee weken {fao56} per week (temperatuur, plus vochtigheid, wind en zon waar je die hebt). FAO-56 geeft bij vochtig weer meestal minder en op droge, winderige dagen meer. Deze zone overzetten op FAO-56? Je kunt altijd terug met 'Waterbehoeftemodel'."
           }
         }
       }

@@ -53,13 +53,13 @@
           "routine_sun_mode": "Peruskastelun ajoitus",
           "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
           "unit_system": "Yksiköt",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)",
+          "wind_exposure": "Tuuli tässä paikassa (ei tuuliantureita)",
+          "climate_dryness": "Ilmasto (ei kosteusanturia)",
+          "coastal": "Meren rannalla (ei aurinkoanturia)",
+          "wind_sensor_height_m": "Tuuliantureen korkeus"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
           "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta.",
+          "wind_exposure": "Käytetään, kun ei ole tuuliantureita eikä sääpalvelun tuulta: suojaisa, avoin tai alttiina.",
+          "climate_dryness": "Käytetään, kun kosteuslukemaa ei ole: kostea tai kuiva (kuivat ja puolikuivat alueet).",
+          "coastal": "Käytetään, kun aurinkolukemaa ei ole: rannikon lähellä auringonpaiste arvioidaan hieman korkeammaksi.",
+          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Ulkolämpötila-anturi",
           "weather_entity": "Sääentiteetti (ennuste)",
           "notify_entity": "Ilmoituspuhelin",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)"
         },
         "data_description": {
           "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
@@ -285,9 +285,9 @@
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
           "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Peruskastelun ajoitus",
           "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
           "unit_system": "Yksiköt",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)",
+          "wind_exposure": "Tuuli tässä paikassa (ei tuuliantureita)",
+          "climate_dryness": "Ilmasto (ei kosteusanturia)",
+          "coastal": "Meren rannalla (ei aurinkoanturia)",
+          "wind_sensor_height_m": "Tuuliantureen korkeus"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
           "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta.",
+          "wind_exposure": "Käytetään, kun ei ole tuuliantureita eikä sääpalvelun tuulta: suojaisa, avoin tai alttiina.",
+          "climate_dryness": "Käytetään, kun kosteuslukemaa ei ole: kostea tai kuiva (kuivat ja puolikuivat alueet).",
+          "coastal": "Käytetään, kun aurinkolukemaa ei ole: rannikon lähellä auringonpaiste arvioidaan hieman korkeammaksi.",
+          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "Käytä alueen ulkolämpötilaa",
           "weather_entity": "Käytä alueen sääentiteettiä",
           "notify_entity": "Käytä alueen puhelinta",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "Käytä alueen kosteusanturia",
+          "wind_entity": "Käytä alueen tuuliantureita",
+          "solar_entity": "Käytä alueen aurinkoanturia"
         },
         "data_description": {
           "rain_counter_entity": "Rastita käyttääksesi alueen sademittaria tämän vyöhykkeen oman sijaan.",
           "outdoor_temp_entity": "Rastita käyttääksesi alueen ulkolämpötila-anturia tämän vyöhykkeen oman sijaan.",
           "weather_entity": "Rastita käyttääksesi alueen sääentiteettiä tämän vyöhykkeen oman sijaan.",
           "notify_entity": "Rastita lähettääksesi alueen puhelimeen tämän vyöhykkeen oman sijaan.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Valitse, jos haluat käyttää alueen kosteusanturia tämän vyöhykkeen omansa sijaan.",
+          "wind_entity": "Valitse, jos haluat käyttää alueen tuuliantureita tämän vyöhykkeen omansa sijaan.",
+          "solar_entity": "Valitse, jos haluat käyttää alueen aurinkoanturia tämän vyöhykkeen omansa sijaan."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Ulkolämpötila-anturi",
           "weather_entity": "Sääentiteetti (ennuste)",
           "notify_entity": "Ilmoituspuhelin",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)"
         },
         "data_description": {
           "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
@@ -680,9 +680,9 @@
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
           "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Ulkolämpötila-anturi",
           "weather_entity": "Sääentiteetti (ennuste)",
           "notify_entity": "Ilmoituspuhelin",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)"
         },
         "data_description": {
           "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
@@ -708,9 +708,9 @@
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
           "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "Suojaisa (muurit, pensasaidat)",
+        "open": "Avoin",
+        "exposed": "Alttiina (kukkulan laki, rannikko, katto)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Kostea",
+        "dry": "Kuiva (kuiva tai puolikuiva)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "Alue {area} poistettiin, joten {zone} käyttää nyt sen antureiden kopiota. Voit sijoittaa sen toiselle alueelle valitsemalla vyöhykkeen Määritä -> Missä tämä on?"
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: vaihdetaanko FAO-56-vesiarvioon?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "Vaihda {zone} FAO-56:een",
+            "description": "Vyöhykkeellä {zone} on kahden viikon FAO-56-päivät tallessa. Nyt se kastelee nykyisen mallinsa mukaan {current} viikossa; FAO-56 antaa samoista kahdesta viikosta {fao56} viikossa (lämpötila sekä kosteus, tuuli ja aurinko, kun ne ovat käytössä). FAO-56 antaa yleensä vähemmän kosteassa säässä ja enemmän kuivina, tuulisina päivinä. Vaihdetaanko tämä vyöhyke FAO-56:een? Voit vaihtaa takaisin milloin tahansa asetuksella Vedentarvemalli."
           }
         }
       }

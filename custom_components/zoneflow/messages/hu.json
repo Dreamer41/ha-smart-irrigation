@@ -398,16 +398,16 @@
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
     "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
-    "method_fao56": "evapotranspiration by FAO-56 (from the temperature, and the humidity, wind and sunshine where they are measured)",
-    "fao56_inputs": "Yesterday's FAO-56 reference evaporation: {et0} a day. Humidity: {humidity}; wind: {wind}; sunshine: {solar}.",
+    "method_fao56": "evapotranspiráció az FAO-56 szerint (a hőmérsékletből, valamint a páratartalomból, szélből és napsütésből, ahol mérik őket)",
+    "fao56_inputs": "A tegnapi FAO-56 referencia-párolgás: {et0} naponta. Páratartalom: {humidity}; szél: {wind}; napsütés: {solar}.",
     "fao56_source": {
-      "rh_min_max": "your sensor",
-      "rh_max": "your sensor",
-      "rh_mean": "your sensor",
-      "measured": "your sensor",
-      "weather": "the weather service",
-      "default": "the zone's setting",
-      "estimated": "estimated from the temperature"
+      "rh_min_max": "az Ön érzékelője",
+      "rh_max": "az Ön érzékelője",
+      "rh_mean": "az Ön érzékelője",
+      "measured": "az Ön érzékelője",
+      "weather": "az időjárás-szolgáltatás",
+      "default": "a zóna beállítása",
+      "estimated": "a hőmérsékletből becsülve"
     }
   },
   "suggest": {

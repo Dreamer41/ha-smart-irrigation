@@ -398,16 +398,16 @@
     "preview": "Jos kastelu ajettaisiin nyt: {minutes} min {pulses} jaksossa, noin {each} min kerrallaan, välissä {soak} min imeytystauko. Venttiili on auki enintään {longest} min kerrallaan.",
     "preview_one": "Jos kastelu ajettaisiin nyt: {minutes} min yhdellä kertaa. Venttiili on auki enintään {longest} min kerrallaan.",
     "preview_none": "Jos kastelu ajettaisiin nyt: ei mitään, sade kattaa jo tarpeen.",
-    "method_fao56": "evapotranspiration by FAO-56 (from the temperature, and the humidity, wind and sunshine where they are measured)",
-    "fao56_inputs": "Yesterday's FAO-56 reference evaporation: {et0} a day. Humidity: {humidity}; wind: {wind}; sunshine: {solar}.",
+    "method_fao56": "haihdunta FAO-56:n mukaan (lämpötilasta sekä kosteudesta, tuulesta ja auringosta, kun ne mitataan)",
+    "fao56_inputs": "Eilisen FAO-56-vertailuhaihdunta: {et0} päivässä. Kosteus: {humidity}; tuuli: {wind}; aurinko: {solar}.",
     "fao56_source": {
-      "rh_min_max": "your sensor",
-      "rh_max": "your sensor",
-      "rh_mean": "your sensor",
-      "measured": "your sensor",
-      "weather": "the weather service",
-      "default": "the zone's setting",
-      "estimated": "estimated from the temperature"
+      "rh_min_max": "anturisi",
+      "rh_max": "anturisi",
+      "rh_mean": "anturisi",
+      "measured": "anturisi",
+      "weather": "sääpalvelu",
+      "default": "vyöhykkeen asetus",
+      "estimated": "arvioitu lämpötilasta"
     }
   },
   "suggest": {

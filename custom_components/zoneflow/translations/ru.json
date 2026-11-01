@@ -53,13 +53,13 @@
           "routine_sun_mode": "Запуск регулярного полива",
           "routine_sun_offset_minutes": "Смещение регулярного полива от солнца (минуты)",
           "unit_system": "Единицы измерения",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Датчик влажности на улице (необязательно)",
+          "wind_entity": "Датчик скорости ветра (необязательно)",
+          "solar_entity": "Датчик солнечной радиации (необязательно)",
+          "wind_exposure": "Ветер в этом месте (без датчика ветра)",
+          "climate_dryness": "Климат (без датчика влажности)",
+          "coastal": "У моря (без датчика солнца)",
+          "wind_sensor_height_m": "Высота датчика ветра"
         },
         "data_description": {
           "valve_entity": "Выключатель, который открывает клапан этой зоны (или запускает её насос). Единственное, без чего ZoneFlow не работает: он включает и выключает его и всегда следит, чтобы в итоге тот был выключен.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "Запускать регулярный полив в фиксированное время выше или до/после восхода или заката, чтобы время сдвигалось вместе с сезоном.",
           "routine_sun_offset_minutes": "На сколько минут до или после восхода или заката. При фиксированном времени не используется.",
           "unit_system": "Что показывает эта зона: как в Home Assistant, всегда метрические (mm, °C, литры) или имперские (дюймы, °F, галлоны) единицы. Меняется только отображение, но не количество воды.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Относительная влажность на улице. Позволяет оценке FAO-56 учитывать сухие и влажные дни.",
+          "wind_entity": "Скорость ветра на улице. В ветреные дни растения сохнут быстрее; без датчика берётся типичный для места ветер.",
+          "solar_entity": "Солнечный свет в Вт/м². Без датчика солнечное сияние оценивается по суточному перепаду температуры.",
+          "wind_exposure": "Используется, если нет ни датчика ветра, ни ветра из прогноза погоды: защищённое, открытое или продуваемое место.",
+          "climate_dryness": "Используется, если нет показаний влажности: влажный или сухой (засушливые и полузасушливые места).",
+          "coastal": "Используется, если нет показаний солнца: у побережья солнечное сияние оценивается немного выше.",
+          "wind_sensor_height_m": "На какой высоте стоит датчик ветра. Домашние метеостанции обычно стоят примерно на высоте 2 м."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Датчик уличной температуры",
           "weather_entity": "Сущность погоды (прогноз)",
           "notify_entity": "Телефон для уведомлений",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Датчик влажности на улице (необязательно)",
+          "wind_entity": "Датчик скорости ветра (необязательно)",
+          "solar_entity": "Датчик солнечной радиации (необязательно)"
         },
         "data_description": {
           "rain_counter_entity": "Необязательно. Зоны этой области считывают дождь отсюда, если у зоны нет своего дождемера.",
@@ -285,9 +285,9 @@
           "notify_entity": "Необязательно. Куда зоны этой области отправляют сообщения на телефон.",
           "area_name": "Как называется область, например Задний двор или Передний сад.",
           "rain_source_type": "Что передаёт датчик дождемера: счётчик опрокидываний, общий уровень осадков, интенсивность дождя или осадки с последнего показания.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Относительная влажность на улице. Позволяет оценке FAO-56 учитывать сухие и влажные дни.",
+          "wind_entity": "Скорость ветра на улице. В ветреные дни растения сохнут быстрее; без датчика берётся типичный для места ветер.",
+          "solar_entity": "Солнечный свет в Вт/м². Без датчика солнечное сияние оценивается по суточному перепаду температуры."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Запуск регулярного полива",
           "routine_sun_offset_minutes": "Смещение регулярного полива от солнца (минуты)",
           "unit_system": "Единицы измерения",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Датчик влажности на улице (необязательно)",
+          "wind_entity": "Датчик скорости ветра (необязательно)",
+          "solar_entity": "Датчик солнечной радиации (необязательно)",
+          "wind_exposure": "Ветер в этом месте (без датчика ветра)",
+          "climate_dryness": "Климат (без датчика влажности)",
+          "coastal": "У моря (без датчика солнца)",
+          "wind_sensor_height_m": "Высота датчика ветра"
         },
         "data_description": {
           "valve_entity": "Выключатель, который открывает клапан этой зоны (или запускает её насос). Единственное, без чего ZoneFlow не работает: он включает и выключает его и всегда следит, чтобы в итоге тот был выключен.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "Запускать регулярный полив в фиксированное время выше или до/после восхода или заката, чтобы время сдвигалось вместе с сезоном.",
           "routine_sun_offset_minutes": "На сколько минут до или после восхода или заката. При фиксированном времени не используется.",
           "unit_system": "Что показывает эта зона: как в Home Assistant, всегда метрические (mm, °C, литры) или имперские (дюймы, °F, галлоны) единицы. Меняется только отображение, но не количество воды.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Относительная влажность на улице. Позволяет оценке FAO-56 учитывать сухие и влажные дни.",
+          "wind_entity": "Скорость ветра на улице. В ветреные дни растения сохнут быстрее; без датчика берётся типичный для места ветер.",
+          "solar_entity": "Солнечный свет в Вт/м². Без датчика солнечное сияние оценивается по суточному перепаду температуры.",
+          "wind_exposure": "Используется, если нет ни датчика ветра, ни ветра из прогноза погоды: защищённое, открытое или продуваемое место.",
+          "climate_dryness": "Используется, если нет показаний влажности: влажный или сухой (засушливые и полузасушливые места).",
+          "coastal": "Используется, если нет показаний солнца: у побережья солнечное сияние оценивается немного выше.",
+          "wind_sensor_height_m": "На какой высоте стоит датчик ветра. Домашние метеостанции обычно стоят примерно на высоте 2 м."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "Использовать уличную температуру области",
           "weather_entity": "Использовать сущность погоды области",
           "notify_entity": "Использовать телефон области",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "Использовать датчик влажности участка",
+          "wind_entity": "Использовать датчик ветра участка",
+          "solar_entity": "Использовать датчик солнца участка"
         },
         "data_description": {
           "rain_counter_entity": "Отметьте, чтобы использовать дождемер области вместо собственного дождемера этой зоны.",
           "outdoor_temp_entity": "Отметьте, чтобы использовать датчик уличной температуры области вместо собственного датчика этой зоны.",
           "weather_entity": "Отметьте, чтобы использовать сущность погоды области вместо собственной сущности погоды этой зоны.",
           "notify_entity": "Отметьте, чтобы отправлять на телефон области вместо собственного телефона этой зоны.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Отметьте, чтобы использовать датчик влажности участка вместо собственного датчика этой зоны.",
+          "wind_entity": "Отметьте, чтобы использовать датчик ветра участка вместо собственного датчика этой зоны.",
+          "solar_entity": "Отметьте, чтобы использовать датчик солнца участка вместо собственного датчика этой зоны."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Датчик уличной температуры",
           "weather_entity": "Сущность погоды (прогноз)",
           "notify_entity": "Телефон для уведомлений",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Датчик влажности на улице (необязательно)",
+          "wind_entity": "Датчик скорости ветра (необязательно)",
+          "solar_entity": "Датчик солнечной радиации (необязательно)"
         },
         "data_description": {
           "rain_counter_entity": "Необязательно. Зоны этой области считывают дождь отсюда, если у зоны нет своего дождемера.",
@@ -680,9 +680,9 @@
           "notify_entity": "Необязательно. Куда зоны этой области отправляют сообщения на телефон.",
           "area_name": "Как называется область, например Задний двор или Передний сад.",
           "rain_source_type": "Что передаёт датчик дождемера: счётчик опрокидываний, общий уровень осадков, интенсивность дождя или осадки с последнего показания.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Относительная влажность на улице. Позволяет оценке FAO-56 учитывать сухие и влажные дни.",
+          "wind_entity": "Скорость ветра на улице. В ветреные дни растения сохнут быстрее; без датчика берётся типичный для места ветер.",
+          "solar_entity": "Солнечный свет в Вт/м². Без датчика солнечное сияние оценивается по суточному перепаду температуры."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Датчик уличной температуры",
           "weather_entity": "Сущность погоды (прогноз)",
           "notify_entity": "Телефон для уведомлений",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Датчик влажности на улице (необязательно)",
+          "wind_entity": "Датчик скорости ветра (необязательно)",
+          "solar_entity": "Датчик солнечной радиации (необязательно)"
         },
         "data_description": {
           "rain_counter_entity": "Необязательно. Зоны этой области считывают дождь отсюда, если у зоны нет своего дождемера.",
@@ -708,9 +708,9 @@
           "notify_entity": "Необязательно. Куда зоны этой области отправляют сообщения на телефон.",
           "area_name": "Как называется область, например Задний двор или Передний сад.",
           "rain_source_type": "Что передаёт датчик дождемера: счётчик опрокидываний, общий уровень осадков, интенсивность дождя или осадки с последнего показания.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Относительная влажность на улице. Позволяет оценке FAO-56 учитывать сухие и влажные дни.",
+          "wind_entity": "Скорость ветра на улице. В ветреные дни растения сохнут быстрее; без датчика берётся типичный для места ветер.",
+          "solar_entity": "Солнечный свет в Вт/м². Без датчика солнечное сияние оценивается по суточному перепаду температуры."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "Защищённое (стены, живые изгороди)",
+        "open": "Открытое",
+        "exposed": "Продуваемое (вершина холма, побережье, крыша)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Влажный",
+        "dry": "Сухой (засушливый или полузасушливый)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "Область {area} была удалена, поэтому {zone} теперь использует копию полученных из неё датчиков. Чтобы поместить её в другую область, используйте «Настроить» -> «Где это находится?» для этой зоны."
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: перейти на оценку воды FAO-56?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "Перевести {zone} на FAO-56",
+            "description": "У зоны {zone} записаны две недели дней FAO-56. Сейчас по текущей модели она поливает {current} в неделю; FAO-56 даёт за те же две недели {fao56} в неделю (температура, а также влажность, ветер и солнце, где они есть). FAO-56 обычно даёт меньше в сырую погоду и больше в сухие, ветреные дни. Перевести эту зону на FAO-56? Вернуться можно в любой момент через «Модель потребности в воде»."
           }
         }
       }

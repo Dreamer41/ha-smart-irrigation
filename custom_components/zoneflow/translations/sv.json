@@ -53,13 +53,13 @@
           "routine_sun_mode": "Start för rutinvattning",
           "routine_sun_offset_minutes": "Rutinvattning: förskjutning mot solen (minuter)",
           "unit_system": "Enheter",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "solar_entity": "Sensor för solstrålning (valfri)",
+          "wind_exposure": "Vind på platsen (utan vindsensor)",
+          "climate_dryness": "Klimat (utan fuktsensor)",
+          "coastal": "Vid havet (utan solsensor)",
+          "wind_sensor_height_m": "Vindsensorns höjd"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
@@ -88,13 +88,13 @@
           "routine_sun_mode": "Starta rutinvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
           "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
           "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann.",
+          "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
+          "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
+          "coastal": "Används när det inte finns något solvärde: nära kusten uppskattas solen något högre.",
+          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp."
         }
       },
       "climate": {
@@ -273,9 +273,9 @@
           "outdoor_temp_entity": "Utomhustemperatursensor",
           "weather_entity": "Väderentitet (prognos)",
           "notify_entity": "Telefon för avisering",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
           "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
@@ -285,9 +285,9 @@
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       },
       "quick": {
@@ -401,13 +401,13 @@
           "routine_sun_mode": "Start för rutinvattning",
           "routine_sun_offset_minutes": "Rutinvattning: förskjutning mot solen (minuter)",
           "unit_system": "Enheter",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)",
-          "wind_exposure": "Wind at this spot (no wind sensor)",
-          "climate_dryness": "Climate (no humidity sensor)",
-          "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "solar_entity": "Sensor för solstrålning (valfri)",
+          "wind_exposure": "Vind på platsen (utan vindsensor)",
+          "climate_dryness": "Klimat (utan fuktsensor)",
+          "coastal": "Vid havet (utan solsensor)",
+          "wind_sensor_height_m": "Vindsensorns höjd"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
@@ -436,13 +436,13 @@
           "routine_sun_mode": "Starta rutinvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
           "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
           "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
-          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
-          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
-          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann.",
+          "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
+          "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
+          "coastal": "Används när det inte finns något solvärde: nära kusten uppskattas solen något högre.",
+          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp."
         }
       },
       "flow_rate": {
@@ -643,18 +643,18 @@
           "outdoor_temp_entity": "Använd områdets utomhustemperatur",
           "weather_entity": "Använd områdets väderentitet",
           "notify_entity": "Använd områdets telefon",
-          "humidity_entity": "Use the area's humidity sensor",
-          "wind_entity": "Use the area's wind sensor",
-          "solar_entity": "Use the area's solar sensor"
+          "humidity_entity": "Använd områdets fuktsensor",
+          "wind_entity": "Använd områdets vindsensor",
+          "solar_entity": "Använd områdets solsensor"
         },
         "data_description": {
           "rain_counter_entity": "Markera för att använda områdets regnmätare istället för den här zonens egna.",
           "outdoor_temp_entity": "Markera för att använda områdets utomhustemperatursensor istället för den här zonens egna.",
           "weather_entity": "Markera för att använda områdets väderentitet istället för den här zonens egna.",
           "notify_entity": "Markera för att skicka till områdets telefon istället för den här zonens egna.",
-          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
-          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
-          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
+          "humidity_entity": "Kryssa i för att använda områdets fuktsensor i stället för zonens egen.",
+          "wind_entity": "Kryssa i för att använda områdets vindsensor i stället för zonens egen.",
+          "solar_entity": "Kryssa i för att använda områdets solsensor i stället för zonens egen."
         }
       },
       "new_area": {
@@ -668,9 +668,9 @@
           "outdoor_temp_entity": "Utomhustemperatursensor",
           "weather_entity": "Väderentitet (prognos)",
           "notify_entity": "Telefon för avisering",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
           "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
@@ -680,9 +680,9 @@
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       },
       "area_settings": {
@@ -696,9 +696,9 @@
           "outdoor_temp_entity": "Utomhustemperatursensor",
           "weather_entity": "Väderentitet (prognos)",
           "notify_entity": "Telefon för avisering",
-          "humidity_entity": "Outdoor humidity sensor (optional)",
-          "wind_entity": "Wind speed sensor (optional)",
-          "solar_entity": "Solar radiation sensor (optional)"
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
           "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
@@ -708,9 +708,9 @@
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
-          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
-          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
-          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       }
     },
@@ -844,15 +844,15 @@
     },
     "wind_exposure": {
       "options": {
-        "sheltered": "Sheltered (walls, hedges)",
-        "open": "Open",
-        "exposed": "Exposed (hilltop, coast, roof)"
+        "sheltered": "Skyddat (murar, häckar)",
+        "open": "Öppet",
+        "exposed": "Utsatt (bergstopp, kust, tak)"
       }
     },
     "climate_dryness": {
       "options": {
-        "humid": "Humid",
-        "dry": "Dry (arid or semi-arid)"
+        "humid": "Fuktigt",
+        "dry": "Torrt (torrt eller halvtorrt)"
       }
     }
   },
@@ -2061,12 +2061,12 @@
       "description": "Området {area} togs bort, så {zone} använder nu en kopia av sensorerna den fick därifrån. För att placera den i ett annat område, använd zonens Konfigurera -> Var är detta?"
     },
     "fao56_offer": {
-      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "title": "{zone}: byta till FAO-56-vattenuppskattningen?",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Switch {zone} to FAO-56",
-            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+            "title": "Byt {zone} till FAO-56",
+            "description": "{zone} har två veckors FAO-56-dagar registrerade. Just nu vattnar den {current} i veckan enligt sin nuvarande modell; FAO-56 ger {fao56} i veckan utifrån samma två veckor (temperatur, plus fuktighet, vind och sol där du har dem). FAO-56 ger oftast mindre i fuktigt väder och mer på torra, blåsiga dagar. Byta den här zonen till FAO-56? Du kan byta tillbaka när som helst med Modell för vattenbehov."
           }
         }
       }

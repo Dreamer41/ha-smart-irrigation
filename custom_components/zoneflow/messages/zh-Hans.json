@@ -398,16 +398,16 @@
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
     "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
-    "method_fao56": "evapotranspiration by FAO-56 (from the temperature, and the humidity, wind and sunshine where they are measured)",
-    "fao56_inputs": "Yesterday's FAO-56 reference evaporation: {et0} a day. Humidity: {humidity}; wind: {wind}; sunshine: {solar}.",
+    "method_fao56": "按 FAO-56 计算蒸散量（根据温度，以及有测量的湿度、风速和日照）",
+    "fao56_inputs": "昨天的 FAO-56 参考蒸发量：每天 {et0}。湿度：{humidity}；风：{wind}；日照：{solar}。",
     "fao56_source": {
-      "rh_min_max": "your sensor",
-      "rh_max": "your sensor",
-      "rh_mean": "your sensor",
-      "measured": "your sensor",
-      "weather": "the weather service",
-      "default": "the zone's setting",
-      "estimated": "estimated from the temperature"
+      "rh_min_max": "你的传感器",
+      "rh_max": "你的传感器",
+      "rh_mean": "你的传感器",
+      "measured": "你的传感器",
+      "weather": "天气服务",
+      "default": "分区的设置",
+      "estimated": "根据温度估算"
     }
   },
   "suggest": {

@@ -398,16 +398,16 @@
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
     "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
-    "method_fao56": "evapotranspiration by FAO-56 (from the temperature, and the humidity, wind and sunshine where they are measured)",
-    "fao56_inputs": "Yesterday's FAO-56 reference evaporation: {et0} a day. Humidity: {humidity}; wind: {wind}; sunshine: {solar}.",
+    "method_fao56": "evapotranspiración según FAO-56 (a partir de la temperatura, y de la humedad, el viento y el sol donde se miden)",
+    "fao56_inputs": "Evaporación de referencia FAO-56 de ayer: {et0} al día. Humedad: {humidity}; viento: {wind}; sol: {solar}.",
     "fao56_source": {
-      "rh_min_max": "your sensor",
-      "rh_max": "your sensor",
-      "rh_mean": "your sensor",
-      "measured": "your sensor",
-      "weather": "the weather service",
-      "default": "the zone's setting",
-      "estimated": "estimated from the temperature"
+      "rh_min_max": "tu sensor",
+      "rh_max": "tu sensor",
+      "rh_mean": "tu sensor",
+      "measured": "tu sensor",
+      "weather": "el servicio meteorológico",
+      "default": "el ajuste de la zona",
+      "estimated": "estimado a partir de la temperatura"
     }
   },
   "suggest": {
