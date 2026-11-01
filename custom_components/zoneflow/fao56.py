@@ -25,6 +25,9 @@ SIGMA_MJ = 4.903e-9  # Stefan-Boltzmann constant, MJ K-4 m-2 day-1
 ALBEDO = 0.23  # the hypothetical grass reference crop
 DEFAULT_WIND_2M = 2.0  # m/s: FAO-56's global default when no wind data exist
 MIN_WIND_2M = 0.5  # m/s: FAO-56 advises not to go below this (wind is never quite still at 2 m)
+INDOOR_WIND_2M = MIN_WIND_2M  # under a roof: near still air
+GLAZING_TRANSMISSION = 0.7  # typical share of sunshine through greenhouse glass or plastic
+LUX_PER_W_M2 = 120.0  # daylight: about 120 lx per W/m2 of solar irradiance
 KRS_INLAND = 0.16  # eq. 50 adjustment coefficient, interior locations
 KRS_COASTAL = 0.19  # coastal locations
 K0_HUMID = 0.0  # eq. 48: Tdew ~ Tmin in humid climates and where it is irrigated
@@ -129,8 +132,11 @@ def et0_daily(
     default_wind: float = DEFAULT_WIND_2M,
     k0: float = K0_HUMID,
     krs: float = KRS_INLAND,
+    solar_factor: float = 1.0,
 ) -> Et0Result:
-    """Daily ET0 (mm/day) with FAO-56 Penman-Monteith (eq. 6), soil heat flux G = 0 for a day."""
+    """Daily ET0 (mm/day) with FAO-56 Penman-Monteith (eq. 6), soil heat flux G = 0 for a day.
+    `solar_factor` scales estimated sunshine only (a measured reading under a roof is already
+    what gets through)."""
     t_min, t_max = min(d.t_min, d.t_max), max(d.t_min, d.t_max)
     d = DayInputs(t_min, t_max, d.rh_min, d.rh_max, d.rh_mean, d.wind_2m, d.rs_mj)
     t_mean = (t_min + t_max) / 2.0
@@ -148,7 +154,8 @@ def et0_daily(
     if d.rs_mj is not None:
         rs, solar_source = max(d.rs_mj, 0.0), SOURCE_MEASURED
     else:
-        rs, solar_source = min(krs * math.sqrt(t_max - t_min) * ra, rso), SOURCE_ESTIMATED  # eq. 50
+        # eq. 50; `solar_factor` is the share that gets through glass or plastic under a roof
+        rs, solar_source = min(krs * math.sqrt(t_max - t_min) * ra, rso) * solar_factor, SOURCE_ESTIMATED
     rns = (1.0 - ALBEDO) * rs  # eq. 38
     ratio = min(rs / rso, 1.0) if rso > 0 else 0.5  # polar night: no sun to compare with
     rnl = (

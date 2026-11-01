@@ -114,3 +114,14 @@ def test_kc_follows_the_stage_curve():
     assert fao56.kc_on_day(tomato, 400) == 0.8
     instant = KcStages(0.5, 1.0, 0.7, 0, 0, 10, 0)
     assert fao56.kc_on_day(instant, 5) == 1.0 and fao56.kc_on_day(instant, 11) == 0.7
+
+
+def test_estimated_sunshine_under_glass_is_less():
+    d = DayInputs(14.0, 30.0)
+    open_air = fao56.et0_daily(d, latitude_deg=13.7, day_of_year=100)
+    glass = fao56.et0_daily(d, latitude_deg=13.7, day_of_year=100, solar_factor=fao56.GLAZING_TRANSMISSION)
+    assert glass.rs_mj == pytest.approx(open_air.rs_mj * 0.7) and glass.et0_mm < open_air.et0_mm
+    measured = DayInputs(14.0, 30.0, rs_mj=15.0)
+    a = fao56.et0_daily(measured, latitude_deg=13.7, day_of_year=100)
+    b = fao56.et0_daily(measured, latitude_deg=13.7, day_of_year=100, solar_factor=0.7)
+    assert a.et0_mm == b.et0_mm  # a reading under the roof is what gets through already

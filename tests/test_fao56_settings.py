@@ -57,13 +57,13 @@ async def _zone(hass, **options):
 @pytest.mark.asyncio
 async def test_an_old_zone_without_the_options_uses_the_fao56_defaults(hass):
     c = await _zone(hass)
-    assert c._fao56_settings() == {"default_wind": 2.0, "k0": 0.0, "krs": 0.16, "wind_height_m": 2.0}
+    assert c._fao56_settings() == {"default_wind": 2.0, "k0": 0.0, "krs": 0.16, "wind_height_m": 2.0, "solar_factor": 1.0}
 
 
 @pytest.mark.asyncio
 async def test_the_site_options_change_the_fallbacks_and_the_estimate(hass):
     c = await _zone(hass, **{CONF_WIND_EXPOSURE: "exposed", CONF_CLIMATE_DRYNESS: "dry", CONF_COASTAL: True, CONF_WIND_SENSOR_HEIGHT_M: 10})
-    assert c._fao56_settings() == {"default_wind": 3.5, "k0": 2.0, "krs": 0.19, "wind_height_m": 10.0}
+    assert c._fao56_settings() == {"default_wind": 3.5, "k0": 2.0, "krs": 0.19, "wind_height_m": 10.0, "solar_factor": 1.0}
     s = c.store.state
     s.today_min_temp_c, s.today_peak_temp_c = 14.0, 27.0
     day = dt_util.now().date() - timedelta(days=1)

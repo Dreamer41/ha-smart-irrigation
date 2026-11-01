@@ -799,15 +799,17 @@ class ZoneFlowController:
 
     @property
     def humidity_entity(self) -> str | None:
-        return self._area_value(CONF_HUMIDITY_ENTITY) if self.is_outdoor else None
+        """FAO-56 humidity: outside, the area's or zone's sensor; under a roof, the inside one."""
+        return self._area_value(CONF_HUMIDITY_ENTITY) if self.is_outdoor else self.inside_humidity_entity
 
     @property
     def wind_entity(self) -> str | None:
-        return self._area_value(CONF_WIND_ENTITY) if self.is_outdoor else None
+        return self._area_value(CONF_WIND_ENTITY) if self.is_outdoor else None  # a roof: near still air
 
     @property
     def solar_entity(self) -> str | None:
-        return self._area_value(CONF_SOLAR_ENTITY) if self.is_outdoor else None
+        """FAO-56 sunshine: outside, the solar sensor; under a roof, the light sensor (W/m2 or lux)."""
+        return self._area_value(CONF_SOLAR_ENTITY) if self.is_outdoor else self.light_entity
 
     @property
     def csv_path(self) -> str:
@@ -1512,8 +1514,10 @@ class ZoneFlowController:
             if key == "wind":
                 return SpeedConverter.convert(value, unit or "m/s", "m/s") if value >= 0 else None
             if key == "solar":
-                if unit not in (None, "W/m\u00b2", "W/m2"):
-                    return None  # lux and other units: not an irradiance
+                if unit in ("lx", "lux"):
+                    value /= fao56.LUX_PER_W_M2  # daylight; grow lights are rougher
+                elif unit not in (None, "W/m\u00b2", "W/m2"):
+                    return None  # not an irradiance
                 return value if 0 <= value <= 1500 else None
         except (KeyError, TypeError, ValueError, HomeAssistantError):
             return None
@@ -1568,11 +1572,16 @@ class ZoneFlowController:
             height = float(options.get(CONF_WIND_SENSOR_HEIGHT_M) or DEFAULT_WIND_SENSOR_HEIGHT_M)
         except (TypeError, ValueError):
             height = DEFAULT_WIND_SENSOR_HEIGHT_M
+        if not self.is_outdoor:
+            # Under a roof (FAO-56 assumes open grass): near still air, sunshine through glass.
+            return {"default_wind": fao56.INDOOR_WIND_2M, "k0": fao56.K0_HUMID, "krs": fao56.KRS_INLAND,
+                    "wind_height_m": 2.0, "solar_factor": fao56.GLAZING_TRANSMISSION}
         return {
             "default_wind": WIND_EXPOSURE_M_S.get(exposure, fao56.DEFAULT_WIND_2M),
             "k0": fao56.K0_DRY if options.get(CONF_CLIMATE_DRYNESS) == "dry" else fao56.K0_HUMID,
             "krs": fao56.KRS_COASTAL if options.get(CONF_COASTAL) else fao56.KRS_INLAND,
             "wind_height_m": height,
+            "solar_factor": 1.0,
         }
 
     def _close_et0_day(self, day, end_ts: float, *, has_record: bool = True) -> None:
@@ -1614,6 +1623,7 @@ class ZoneFlowController:
                 default_wind=settings["default_wind"],
                 k0=settings["k0"],
                 krs=settings["krs"],
+                solar_factor=settings["solar_factor"],
             )
             sources = dict(result.sources)
             if humidity_source:

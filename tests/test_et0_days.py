@@ -107,7 +107,8 @@ def test_readings_are_converted_to_fao56_units():
     assert Z._et0_reading("wind", State(WIND, "3", {"unit_of_measurement": "furlongs"})) is None
     assert Z._et0_reading("humidity", State(HUM, "120", {})) is None
     assert Z._et0_reading("humidity", State(HUM, "unavailable", {})) is None
-    assert Z._et0_reading("solar", State(SOLAR, "40000", {"unit_of_measurement": "lx"})) is None
+    assert Z._et0_reading("solar", State(SOLAR, "60000", {"unit_of_measurement": "lx"})) == pytest.approx(500.0)  # daylight
+    assert Z._et0_reading("solar", State(SOLAR, "5", {"unit_of_measurement": "kWh"})) is None
     assert Z._et0_reading("solar", State(SOLAR, "640", {"unit_of_measurement": "W/m²"})) == 640.0
     assert Z._et0_reading("weather_wind", State(WEATHER, "sunny", {"wind_speed": 10, "wind_speed_unit": "mph"})) == pytest.approx(4.4704)
     assert Z._et0_reading("weather_humidity", State(WEATHER, "sunny", {})) is None
@@ -170,3 +171,31 @@ async def test_the_history_keeps_two_weeks_and_one_entry_per_day(hass):
     c._close_et0_day(today - timedelta(days=1), dt_util.utcnow().timestamp())
     dates = [e["date"] for e in s.et0_day_history]
     assert len(dates) == 14 and len(set(dates)) == 14 and dates[0] == (today - timedelta(days=1)).isoformat()
+
+
+@pytest.mark.asyncio
+async def test_a_greenhouse_uses_its_inside_sensors_still_air_and_sunshine_through_glass(hass):
+    from custom_components.zoneflow.const import CONF_INSIDE_HUMIDITY_ENTITY, CONF_INSIDE_TEMP_ENTITY, CONF_LIGHT_ENTITY, CONF_ZONE_TYPE
+
+    hass.states.async_set("sensor.gh_temperature", "26", {"unit_of_measurement": "°C"})
+    hass.states.async_set("sensor.gh_humidity", "75", {"unit_of_measurement": "%"})
+    hass.states.async_set("sensor.gh_light", "24000", {"unit_of_measurement": "lx"})
+    c = await _zone(hass, **{
+        CONF_ZONE_TYPE: "greenhouse", CONF_INSIDE_TEMP_ENTITY: "sensor.gh_temperature",
+        CONF_INSIDE_HUMIDITY_ENTITY: "sensor.gh_humidity", CONF_LIGHT_ENTITY: "sensor.gh_light",
+        CONF_WIND_ENTITY: WIND, CONF_WEATHER_ENTITY: WEATHER, CONF_HUMIDITY_ENTITY: HUM,
+    })
+    assert c.humidity_entity == "sensor.gh_humidity" and c.solar_entity == "sensor.gh_light"
+    assert c.wind_entity is None and c.weather_entity is None
+    assert set(c._et0_inputs()) == {"sensor.gh_humidity", "sensor.gh_light"}
+    settings = c._fao56_settings()
+    assert settings["default_wind"] == 0.5 and settings["solar_factor"] == 0.7
+
+    s = c.store.state
+    day = dt_util.now().date() - timedelta(days=1)
+    start = dt_util.start_of_local_day(day).timestamp()
+    s.day_aggregates = {"humidity": _day(start, [(0, 90.0), (12 * H, 60.0)], 0)}
+    s.today_min_temp_c, s.today_peak_temp_c = 20.0, 34.0
+    c._close_et0_day(day, start + 24 * H)
+    e = s.et0_day_history[0]
+    assert e["u2"] == 0.5 and e["sources"] == {"humidity": "rh_min_max", "wind": "default", "solar": "estimated"}
