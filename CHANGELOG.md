@@ -6,6 +6,22 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ## [Unreleased]
 
+### Added
+
+- **FAO-56 water estimate.** A new Water Demand Model, **FAO-56 (Penman-Monteith)**, the standard method for how much water a plant uses. It works from the temperature alone and gets more accurate with each sensor you add: outdoor humidity, wind speed and solar radiation (new optional fields in the zone and area settings), or the humidity and wind of your weather entity. An input without a sensor falls back on a site setting (wind at this spot, humid or dry climate, by the sea) instead of switching method. Each day is summed from that day's real readings; a sensor counts for a day only when its readings cover at least 18 hours. The weekly target is the average daily water use since the last watering, so a routine watering after a normal interval gives what those days actually used, less the rain credit as before. Greenhouse and indoor zones use their inside humidity and light sensors, near-still air and sunshine through glass.
+- **New zones start on FAO-56; existing zones keep their model.** The Reference ET0 and Weekly Target sensors show the FAO-56 figures for every zone, and after two weeks of FAO-56 days a zone on temperature tiers or the ET curve gets a repair offering the switch, with both weekly amounts side by side. Nothing switches without your yes. FAO-56 usually gives less water in humid weather and more on dry, windy days.
+- **The Why? panel says where each FAO-56 input came from** (your sensor, the weather service, the zone's setting, or estimated from the temperature).
+- **Valve entities.** A zone's valve can now be a `valve.*` entity (opened with Open valve, closed with Close valve) as well as a `switch.*`. The safety checks treat a valve that is opening or closing as open and only "closed" as closed.
+
+### Fixed
+
+- **Sunrise and sunset schedules now start the watering.** A zone whose routine or deep soak was set to before/after sunrise or sunset never watered on schedule on current Home Assistant (the start ran outside Home Assistant's event loop and was refused).
+- **The stuck-valve alarm goes out even if the close command fails.** Before, an error from the valve skipped the abort, the lock release and the phone alert, in exactly the case where water may be running.
+- **A valve that is offline is no longer taken as closed.** Its lock stays until the power-loss or stale-lock watchdog releases it.
+- **Copy settings and the Deep Soak switch no longer stop a watering in progress.** Both reload the zone; while it waters they are now refused with "zone busy".
+- **A restart across 23:59:50 no longer loses a day.** The day's rain and temperatures are closed into the history at the next start.
+- **Fewer disk writes.** A rain sensor repeating the same total adds no sample and no write, and frequent rain and temperature updates are saved once every few seconds instead of on every reading.
+
 ## [1.7.10] — Dry-down restart counts the first 24 hours only
 
 ### Fixed

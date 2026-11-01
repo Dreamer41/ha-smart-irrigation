@@ -77,7 +77,14 @@ manual, goes through the same pipeline:
 2. **Demand** — how much water, how often:
    - temperature tiers (cool / normal / hot) from the 3-day average of daily
      highs, with thresholds chosen for your climate at setup;
-   - or, optionally, an **ET curve**: Hargreaves ET₀ from daily min/max
+   - or **FAO-56** (1.8, the default for new zones): Penman-Monteith ET₀
+     from each day's temperatures, and humidity, wind and sunshine where you
+     have a sensor or a weather entity for them (otherwise from the zone's
+     site settings: wind at this spot, humid or dry climate, by the sea),
+     × a crop factor; the weekly target is the average daily water use since
+     the last watering × 7. After two weeks of FAO-56 days, a zone on another
+     model is offered the switch (a repair showing both weekly amounts);
+   - or an **ET curve**: Hargreaves ET₀ from daily min/max
      temperature and your latitude × 7 × a crop factor;
    - scaled by the **growth ramp** (young plants need less) and optional
      **deficit mode** (controlled stress after fruit set, with guardrails);
@@ -105,12 +112,13 @@ manual, goes through the same pipeline:
 
 | Entity | Adds | Without it |
 |---|---|---|
-| `switch.*` valve | — | **required** |
+| `switch.*` or `valve.*` valve | — | **required** |
 | Rain gauge sensor (`counter.*`/`sensor.*`): a tip counter, or a rain total or rate from a weather station such as Ecowitt, Ambient Weather or Tempest ([guide](RAIN-GAUGES.md)) | rain credit, dry-down hold, rain stop | waters as if it never rains — or enter rain by hand (**Manual Rain** + **Add Manual Rain**, or the `zoneflow.add_rain` service), or borrow it from nearby stations ([Weather Underground rain](WEATHER-UNDERGROUND.md), experimental) |
 | Outdoor temperature sensor | automatic hot/cool tiers, ET curve, deficit heat guard, frost guard | the **Fallback / Manual Temperature** slider picks the tier — move it by hand for a heat wave or cold spell |
 | Soil-moisture probe (`sensor.*`, %) | dry soil waters early, wet soil skips | the modeled schedule alone |
 | Pump power sensor | per-pulse "is the pump really running" audit | no low-power warning |
 | Flow meter (cumulative volume) | measured water per cycle, "pump ran but no water moved" alert | no measured delivery, no no-flow check |
+| Outdoor humidity, wind speed and solar radiation sensors (1.8) | FAO-56 follows dry, humid, windy and cloudy days; a sensor counts for a day when its readings cover at least 18 hours | FAO-56 estimates that input (see the site settings) |
 | `weather.*` forecast | holds off before forecast rain, with a dry-spell override; its current temperature feeds the frost guard when there's no temperature sensor | forecast never blocks |
 | `notify.*` target | phone alerts for faults and notable events | log only |
 
