@@ -2059,6 +2059,17 @@
     "area_removed": {
       "title": "{zone}: sua área foi removida",
       "description": "A área {area} foi excluída, portanto {zone} agora usa uma cópia dos sensores que obteve dela. Para colocá-la em outra área, use Configurar -> Onde fica isto? da zona."
+    },
+    "fao56_offer": {
+      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Switch {zone} to FAO-56",
+            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+          }
+        }
+      }
     }
   }
 }

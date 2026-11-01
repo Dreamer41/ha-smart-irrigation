@@ -135,3 +135,36 @@ async def test_the_sensors_show_the_fao56_figures_for_comparison_on_any_zone(has
     assert w["source"] == "temperature_tiers"
     assert w["fao56_weekly_target_mm"] == pytest.approx(35.0 * c.number("crop_coefficient"), abs=0.01)
     assert w["tier_weekly_target_mm"] == pytest.approx(c.tier_weekly_target_mm(), abs=0.01)
+
+
+@pytest.mark.asyncio
+async def test_two_weeks_of_fao56_days_raise_the_switch_offer_and_the_fix_switches(hass):
+    from homeassistant.helpers import issue_registry as ir
+
+    from custom_components.zoneflow import issues, repairs
+
+    c = await _zone(hass, model=DEMAND_MODEL_TIERS)
+    issue_id = f"{c.entry.entry_id}_fao56_offer"
+    registry = ir.async_get(hass)
+
+    c.store.state.et0_day_history = _history([4.0] * 13)  # not two weeks yet
+    issues.async_check(c)
+    assert registry.async_get_issue(DOMAIN, issue_id) is None
+
+    c.store.state.et0_day_history = _history([4.0] * 14)
+    issues.async_check(c)
+    issue = registry.async_get_issue(DOMAIN, issue_id)
+    assert issue is not None and issue.is_fixable
+    current, fao = c.fao56_comparison()
+    assert fao == pytest.approx(28.0 * c.number("crop_coefficient") * c.routine_target_scale())
+    assert issue.translation_placeholders["fao56"] and issue.translation_placeholders["current"]
+
+    flow = await repairs.async_create_fix_flow(hass, issue_id, issue.data)
+    flow.hass = hass
+    form = await flow.async_step_init()
+    assert form["type"] == "form" and form["description_placeholders"]["zone"] == c.entry.title
+    done = await flow.async_step_init({})
+    assert done["type"] == "create_entry" and c.store.state.demand_model == DEMAND_MODEL_FAO56
+
+    issues.async_check(c)  # on FAO-56 now: no offer
+    assert registry.async_get_issue(DOMAIN, issue_id) is None

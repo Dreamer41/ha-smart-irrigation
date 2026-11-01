@@ -21,7 +21,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
 import homeassistant.util.dt as dt_util
 
+from . import units
 from .const import (
+    DEMAND_MODEL_ET,
+    DEMAND_MODEL_TIERS,
     DOMAIN,
     NUMBER_DEFAULTS,
     REPAIR_NOTIFY_MISSING_SECONDS,
@@ -41,6 +44,7 @@ ALL_KEYS = (
     "valve_unavailable",
     "notify_missing",
     "flow_rate_default",
+    "fao56_offer",
     "shared_valve",
     "greenhouse_sensor",
     "greenhouse_outside_sensor",
@@ -202,6 +206,34 @@ def async_check(controller: ZoneFlowController) -> None:
         translation_placeholders={"zone": zone},
         learn_more_url="https://zoneflowirrigation.com/docs/getting-started",
         fix={"kind": "flow_rate"},
+    )
+
+    _check_fao56_offer(controller)
+
+
+def _check_fao56_offer(controller: ZoneFlowController) -> None:
+    """1.8: a watering zone on temperature tiers or the ET curve with two weeks of FAO-56 days
+    on record is offered the switch, with both weekly amounts. Never switched without a yes."""
+    comparison = (
+        controller.fao56_comparison()
+        if controller.has_valve and controller.demand_model in (DEMAND_MODEL_TIERS, DEMAND_MODEL_ET)
+        else None
+    )
+    current, fao = comparison if comparison is not None else (0.0, 0.0)
+    imperial = controller.imperial
+    _set(
+        controller.hass,
+        controller,
+        "fao56_offer",
+        comparison is not None,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key="fao56_offer",
+        translation_placeholders={
+            "zone": controller.entry.title,
+            "current": units.depth_text(current, imperial),
+            "fao56": units.depth_text(fao, imperial),
+        },
+        fix={"kind": "fao56"},
     )
 
 

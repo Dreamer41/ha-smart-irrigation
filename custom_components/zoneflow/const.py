@@ -674,6 +674,8 @@ CYCLE_STOP_TIMEOUT_SECONDS = 30
 VALVE_CLOSE_CONFIRM_SECONDS = 10
 # FAO-56 day history (1.8): enough days for the longest interval and the 10-day rain lookback.
 ET0_HISTORY_DAYS = 14
+# 1.8: FAO-56 days on record before a zone on another model is offered the switch (a repair).
+FAO56_OFFER_DAYS = 14
 # Entity kinds a zone valve can be (1.8: valve entities too, opened with open_valve / close_valve).
 VALVE_DOMAINS = ["switch", "valve"]
 # Home Assistant gives shutdown jobs 20 s in all; stay well inside it.

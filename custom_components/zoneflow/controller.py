@@ -57,6 +57,7 @@ from .const import (
     CONF_SOLAR_ENTITY,
     CONF_WIND_ENTITY,
     ET0_HISTORY_DAYS,
+    FAO56_OFFER_DAYS,
     CONF_CLIMATE_DRYNESS,
     CONF_COASTAL,
     CONF_WIND_EXPOSURE,
@@ -1807,6 +1808,20 @@ class ZoneFlowController:
             for e in self.store.state.et0_day_history
             if isinstance(e, dict) and e.get("date") in wanted and e.get("et0") is not None
         ]
+
+    def fao56_comparison(self) -> tuple[float, float] | None:
+        """(this zone's weekly target now, FAO-56's weekly target from the average of the last
+        FAO56_OFFER_DAYS days), both as the zone would water them (growth ramp, deficit and
+        mulch included), once that many FAO-56 days are on record; else None."""
+        values = self.fao56_et0_days(FAO56_OFFER_DAYS)
+        if len(values) < FAO56_OFFER_DAYS or not self.outdoor_temp_entity:
+            return None
+        scale = self.routine_target_scale()
+        current = self.et_weekly_target_mm() if self.demand_model == DEMAND_MODEL_ET else None
+        if current is None:
+            current = self.tier_weekly_target_mm()
+        fao = sum(values) / len(values) * self.number("crop_coefficient") * 7.0
+        return current * scale, fao * scale
 
     def fao56_latest_day(self) -> dict | None:
         """The newest closed day that has an FAO-56 ET0, or None."""

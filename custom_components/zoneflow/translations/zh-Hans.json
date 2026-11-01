@@ -2059,6 +2059,17 @@
     "area_removed": {
       "title": "{zone}：所属区域已被移除",
       "description": "区域 {area} 已被删除，因此 {zone} 目前使用的是继承自该区域的传感器副本。若要将其放入其他区域，请使用该区域的“配置 -> 这在哪里？”。"
+    },
+    "fao56_offer": {
+      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Switch {zone} to FAO-56",
+            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+          }
+        }
+      }
     }
   }
 }
