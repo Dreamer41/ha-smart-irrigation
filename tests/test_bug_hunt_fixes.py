@@ -186,3 +186,54 @@ async def test_a_zone_that_is_watering_is_not_reloaded_by_the_other_writes(hass,
             DOMAIN, "create_area", {"name": "Busy beds", "entity_id": "select.test_zone_water_demand_model"}, blocking=True
         )
     assert err.value.translation_key == "zone_busy"
+
+
+@pytest.mark.asyncio
+async def test_the_settings_forms_refuse_while_the_zone_is_watering(hass, fake_valve_services):
+    c = await _zone(hass)
+    c.store.state.lock_on = True
+    result = await hass.config_entries.options.async_init(c.entry.entry_id)
+    assert result["type"] == "abort" and result["reason"] == "zone_busy"
+    c.store.state.lock_on = False
+    result = await hass.config_entries.options.async_init(c.entry.entry_id)
+    assert result["type"] != "abort"
+
+
+@pytest.mark.asyncio
+async def test_the_demand_model_select_follows_a_change_made_elsewhere(hass):
+    from custom_components.zoneflow.const import DEMAND_MODEL_FAO56
+
+    c = await _zone(hass)
+    entity_id = "select.test_zone_water_demand_model"
+    c.store.state.demand_model = "temperature_tiers"
+    c._notify_status()
+    await hass.async_block_till_done()
+    assert hass.states.get(entity_id).state == "temperature_tiers"
+    c.store.state.demand_model = DEMAND_MODEL_FAO56
+    c._notify_status()
+    await hass.async_block_till_done()
+    assert hass.states.get(entity_id).state == DEMAND_MODEL_FAO56
+
+
+@pytest.mark.asyncio
+async def test_a_daytime_solar_outage_cannot_hide_behind_the_night_zeros(hass):
+    from custom_components.zoneflow.const import CONF_SOLAR_ENTITY
+
+    from .test_et0_days import _day, full_temperature
+
+    await _seed_source_entities(hass)
+    hass.states.async_set("sensor.sun", "300", {"unit_of_measurement": "W/m²"})
+    entry = make_entry(hass, **{CONF_SOLAR_ENTITY: "sensor.sun"})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    c = hass.data[DOMAIN][entry.entry_id]
+    s = c.store.state
+    day = dt_util.now().date() - timedelta(days=1)
+    start = dt_util.start_of_local_day(day).timestamp()
+    H = 3600.0
+    s.today_min_temp_c, s.today_peak_temp_c = 14.0, 27.0
+    full_temperature(s, day)
+    # zeros all night, then offline from 10:00 to 17:00: the night alone is 12 h of "coverage"
+    s.day_aggregates["solar"] = _day(start, [(0, 0.0), (6 * H, 400.0), (10 * H, None), (17 * H, 300.0), (18 * H, 0.0)], 0)
+    c._close_et0_day(day, start + 86400)
+    assert s.et0_day_history[0]["sources"]["solar"] == "estimated"

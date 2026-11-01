@@ -380,6 +380,11 @@ class ZoneFlowDemandModelSelect(_Base):
         super().__init__(entry, controller)
         self._attr_unique_id = f"{entry.entry_id}_demand_model_select"
 
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        # The FAO-56 repair (or anything else) changes the model behind the select's back.
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
     @property
     def current_option(self) -> str:
         return self._controller.store.state.demand_model

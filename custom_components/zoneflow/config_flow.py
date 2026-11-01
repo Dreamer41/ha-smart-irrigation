@@ -1431,6 +1431,11 @@ class AreaOptionsFlow(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
         # Its own step id: "init" is the zones' Configure menu.
+        if any(
+            getattr(c, "area_entry_id", None) == self._config_entry.entry_id and c.run_in_progress
+            for c in self.hass.data.get(DOMAIN, {}).values()
+        ):
+            return self.async_abort(reason="zone_busy")  # saving reloads every zone in the area
         return await self.async_step_area_settings()
 
     async def async_step_area_settings(self, user_input: dict[str, Any] | None = None):
@@ -1527,6 +1532,9 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         return bool(parent_id and self.hass.config_entries.async_get_entry(parent_id))
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        controller = self._controller()
+        if controller is not None and controller.run_in_progress:
+            return self.async_abort(reason="zone_busy")  # saving reloads the zone and would stop the run
         outdoor = self._zone_type() == ZONE_TYPE_OUTDOOR
         has_valve = self._has_valve()
         crop = self._is_crop()

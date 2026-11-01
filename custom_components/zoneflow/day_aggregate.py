@@ -22,6 +22,7 @@ class DayAggregate:
     last_value: float | None = None  # the reading that holds now, None while offline
     weighted_sum: float = 0.0  # value x seconds
     covered_seconds: float = 0.0
+    positive_seconds: float = 0.0  # of those, the time the reading was above 0 (a solar sensor's daylight)
     minimum: float | None = None
     maximum: float | None = None
 
@@ -31,6 +32,8 @@ class DayAggregate:
             if seconds > 0:
                 self.weighted_sum += self.last_value * seconds
                 self.covered_seconds += seconds
+                if self.last_value > 0:
+                    self.positive_seconds += seconds
         self.last_ts = ts
 
     def add(self, ts: float, value: float | None) -> None:
@@ -52,7 +55,7 @@ class DayAggregate:
         """The day so far, with the held reading counted up to `end_ts`."""
         self._hold_until(end_ts)
         mean = self.weighted_sum / self.covered_seconds if self.covered_seconds > 0 else None
-        return DaySummary(mean, self.minimum, self.maximum, self.weighted_sum, self.covered_seconds)
+        return DaySummary(mean, self.minimum, self.maximum, self.weighted_sum, self.covered_seconds, self.positive_seconds)
 
     def reset(self, start_ts: float) -> None:
         """A new day starts at `start_ts`. The reading that holds carries on into it (it is
@@ -62,6 +65,7 @@ class DayAggregate:
         self.last_ts = start_ts
         self.weighted_sum = 0.0
         self.covered_seconds = 0.0
+        self.positive_seconds = 0.0
         self.minimum = self.maximum = value
 
     def as_dict(self) -> dict:
@@ -73,7 +77,7 @@ class DayAggregate:
             return cls()
         try:
             known = {k: (None if data[k] is None else float(data[k])) for k in cls.__dataclass_fields__ if k in data}
-            for k in ("start_ts", "weighted_sum", "covered_seconds"):
+            for k in ("start_ts", "weighted_sum", "covered_seconds", "positive_seconds"):
                 if known.get(k, 0.0) is None:
                     known[k] = 0.0
             return cls(**known)
@@ -88,6 +92,7 @@ class DaySummary:
     maximum: float | None
     integral: float  # value x seconds (W/m2 x s = J/m2)
     covered_seconds: float
+    positive_seconds: float = 0.0
 
     @property
     def usable(self) -> bool:

@@ -47,7 +47,7 @@ from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, zone_valve
-from .day_aggregate import MIN_COVERAGE_SECONDS, DayAggregate
+from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
@@ -1639,8 +1639,9 @@ class ZoneFlowController:
             sol = summaries.get("solar")
             day_of_year = day.timetuple().tm_yday
             daylight_s = fao56.daylight_hours(self.hass.config.latitude, day_of_year) * 3600
-            # A sensor that goes offline at night is fine: it needs to cover the daylight, not 18 h.
-            if sol is not None and sol.covered_seconds >= max(1800.0, min(MIN_COVERAGE_SECONDS, 0.9 * daylight_s)) and sol.mean is not None:
+            # A sensor that goes offline at night is fine: it needs readings above zero for most of
+            # the daylight (night zeros do not count, so a daytime outage cannot hide behind them).
+            if sol is not None and sol.mean is not None and sol.positive_seconds >= max(1800.0, 0.8 * daylight_s):
                 rs = sol.integral / 1e6  # J/m2 -> MJ/m2 (night and short gaps count as dark)
             result = fao56.et0_daily(
                 fao56.DayInputs(t_min, t_max, rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean, wind_2m=wind, rs_mj=rs),
