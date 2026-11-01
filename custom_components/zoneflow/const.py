@@ -107,6 +107,9 @@ CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume se
 # existing modeled schedule exactly as if this feature didn't exist.
 CONF_SOIL_MOISTURE_ENTITY = "soil_moisture_entity"
 CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
+CONF_HUMIDITY_ENTITY = "humidity_entity"  # 1.8, optional: outdoor relative humidity (%) for FAO-56
+CONF_WIND_ENTITY = "wind_entity"  # 1.8, optional: wind speed for FAO-56
+CONF_SOLAR_ENTITY = "solar_entity"  # 1.8, optional: solar irradiance (W/m2) for FAO-56
 CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
 CONF_CSV_PATH = "csv_path"
 CONF_UNIT_SYSTEM = "unit_system"  # "auto" (follow Home Assistant) / "metric" / "imperial" -- display only, see units.py
@@ -654,6 +657,8 @@ EVENT_LOG = f"{DOMAIN}_log_event"
 CYCLE_STOP_TIMEOUT_SECONDS = 30
 # How long to wait for a valve told to close to report "off".
 VALVE_CLOSE_CONFIRM_SECONDS = 10
+# FAO-56 day history (1.8): enough days for the longest interval and the 10-day rain lookback.
+ET0_HISTORY_DAYS = 14
 # Entity kinds a zone valve can be (1.8: valve entities too, opened with open_valve / close_valve).
 VALVE_DOMAINS = ["switch", "valve"]
 # Home Assistant gives shutdown jobs 20 s in all; stay well inside it.

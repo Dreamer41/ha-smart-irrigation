@@ -44,14 +44,19 @@ from homeassistant.helpers.sun import get_astral_event_next
 import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
-from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
+from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, notification_actions, units, visibility, zone_valve
+from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, zone_valve
+from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
     RAIN_HISTORY_DEPTH_DAYS,
+    CONF_HUMIDITY_ENTITY,
+    CONF_SOLAR_ENTITY,
+    CONF_WIND_ENTITY,
+    ET0_HISTORY_DAYS,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
     FLOW_MEASURE_MIN_MINUTES,
@@ -784,6 +789,18 @@ class ZoneFlowController:
         return self._area_value(CONF_WEATHER_ENTITY)
 
     @property
+    def humidity_entity(self) -> str | None:
+        return self._area_value(CONF_HUMIDITY_ENTITY) if self.is_outdoor else None
+
+    @property
+    def wind_entity(self) -> str | None:
+        return self._area_value(CONF_WIND_ENTITY) if self.is_outdoor else None
+
+    @property
+    def solar_entity(self) -> str | None:
+        return self._area_value(CONF_SOLAR_ENTITY) if self.is_outdoor else None
+
+    @property
     def csv_path(self) -> str:
         return self.entry.options.get(CONF_CSV_PATH, self.entry.data.get(CONF_CSV_PATH))
 
@@ -981,6 +998,11 @@ class ZoneFlowController:
             state.min_temp_day_history_c = [None, None, None]
             await self.store.async_save()
 
+        # FAO-56 readings stopped holding when Home Assistant stopped (a clean stop paused them
+        # already; after a crash, at the last heartbeat).
+        now_ts = dt_util.utcnow().timestamp()
+        self._pause_et0_inputs(min(state.last_alive_ts or now_ts, now_ts))
+
         if state.today_date_iso != dt_util.now().date().isoformat():
             self._start_new_day()
             await self.store.async_save()
@@ -1018,6 +1040,11 @@ class ZoneFlowController:
             valve_now = self.hass.states.get(self.valve_entity)
             if zone_valve.is_open(valve_now):
                 self._arm_valve_stuck_watchdog(valve_now.last_changed)
+        et0_entities = list(self._et0_inputs())
+        if et0_entities:
+            self._unsubs.append(async_track_state_change_event(self.hass, et0_entities, self._on_et0_input_change))
+            self._seed_et0_inputs()
+        self._unsubs.append(async_track_time_interval(self.hass, self._on_heartbeat, timedelta(minutes=10)))
         if self.rain_counter_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -1116,6 +1143,7 @@ class ZoneFlowController:
         if self._resume_cancel is not None:
             self._resume_cancel()
             self._resume_cancel = None
+        self._pause_et0_inputs(dt_util.utcnow().timestamp())
         # Write out anything only scheduled for saving (e.g. when a sensor
         # was first seen offline) -- once closed, a late save is dropped, and
         # the reloaded zone would load the state without it.
@@ -1125,6 +1153,8 @@ class ZoneFlowController:
         self.store.closed = True
 
     async def _on_shutdown(self) -> None:
+        self._pause_et0_inputs(dt_util.utcnow().timestamp())
+        await self.store.async_save()
         await self.greenhouse.async_shutdown()
         # Home Assistant gives shutdown jobs 20 s in all, so a tighter budget.
         await self._interrupt_cycle(
@@ -1388,6 +1418,7 @@ class ZoneFlowController:
         etc.)."""
         state = self.store.state
         self._shift_missed_days()
+        self._reset_et0_inputs(dt_util.start_of_local_day().timestamp())
         state.today_date_iso = dt_util.now().date().isoformat()
         state.today_peak_temp_c = seed_temp
         state.today_min_temp_c = seed_temp
@@ -1427,6 +1458,160 @@ class ZoneFlowController:
             state.min_temp_day_history_c = [state.today_min_temp_c if own else None, *state.min_temp_day_history_c[:2]]
             state.rain_day_history_mm = [self._rain_between_mm(start, end), *state.rain_day_history_mm[:9]]
             state.last_shift_date_iso = day.isoformat()
+            self._close_et0_day(day, end, has_record=own)
+
+    # ------------------------------------------------------------------
+    # FAO-56 inputs (1.8): each climate reading is aggregated over the local day, time-weighted,
+    # and each completed day is closed into et0_day_history with where every input came from.
+    # ------------------------------------------------------------------
+    def _et0_inputs(self) -> dict[str, list[str]]:
+        """Entity -> the day aggregates its readings go to."""
+        inputs: dict[str, list[str]] = {}
+        for key, entity in (("humidity", self.humidity_entity), ("wind", self.wind_entity), ("solar", self.solar_entity)):
+            if entity:
+                inputs.setdefault(entity, []).append(key)
+        if self.weather_entity:
+            inputs.setdefault(self.weather_entity, []).extend(["weather_humidity", "weather_wind"])
+        return inputs
+
+    def _aggregate(self, key: str) -> DayAggregate:
+        agg = DayAggregate.from_dict(self.store.state.day_aggregates.get(key))
+        if not agg.start_ts:
+            agg.reset(dt_util.start_of_local_day().timestamp())
+        return agg
+
+    def _put_aggregate(self, key: str, agg: DayAggregate) -> None:
+        self.store.state.day_aggregates[key] = agg.as_dict()
+
+    @staticmethod
+    def _et0_reading(key: str, state: State | None) -> float | None:
+        """A reading in FAO-56's units (%, m/s, W/m2), or None when it can't be read."""
+        if state is None or state.state in ("unavailable", "unknown"):
+            return None
+        try:
+            if key == "weather_humidity":
+                value = float(state.attributes["humidity"])
+                return value if 0 <= value <= 100 else None
+            if key == "weather_wind":
+                speed = float(state.attributes["wind_speed"])
+                unit = state.attributes.get("wind_speed_unit") or "km/h"
+                return SpeedConverter.convert(speed, unit, "m/s") if speed >= 0 else None
+            value = float(state.state)
+            unit = state.attributes.get("unit_of_measurement")
+            if key == "humidity":
+                return value if 0 <= value <= 100 else None
+            if key == "wind":
+                return SpeedConverter.convert(value, unit or "m/s", "m/s") if value >= 0 else None
+            if key == "solar":
+                if unit not in (None, "W/m\u00b2", "W/m2"):
+                    return None  # lux and other units: not an irradiance
+                return value if 0 <= value <= 1500 else None
+        except (KeyError, TypeError, ValueError, HomeAssistantError):
+            return None
+        return None
+
+    @callback
+    def _on_et0_input_change(self, event: Event) -> None:
+        entity_id = event.data.get("entity_id")
+        new_state: State | None = event.data.get("new_state")
+        keys = self._et0_inputs().get(entity_id, [])
+        if not keys:
+            return
+        ts = dt_util.utcnow().timestamp()
+        for key in keys:
+            agg = self._aggregate(key)
+            agg.add(ts, self._et0_reading(key, new_state))
+            self._put_aggregate(key, agg)
+        self.store.schedule_save()
+
+    def _pause_et0_inputs(self, ts: float) -> None:
+        """Readings stop holding at `ts`: Home Assistant stopped, or crashed after its last heartbeat."""
+        for key in list(self.store.state.day_aggregates):
+            agg = self._aggregate(key)
+            agg.pause(max(ts, agg.last_ts or 0.0))
+            self._put_aggregate(key, agg)
+
+    def _seed_et0_inputs(self) -> None:
+        ts = dt_util.utcnow().timestamp()
+        for entity_id, keys in self._et0_inputs().items():
+            state = self.hass.states.get(entity_id)
+            for key in keys:
+                agg = self._aggregate(key)
+                agg.add(ts, self._et0_reading(key, state))
+                self._put_aggregate(key, agg)
+
+    @callback
+    def _on_heartbeat(self, now) -> None:
+        self.store.state.last_alive_ts = dt_util.utcnow().timestamp()
+        self.store.schedule_save()
+
+    def _reset_et0_inputs(self, start_ts: float) -> None:
+        for key in list(self.store.state.day_aggregates):
+            agg = self._aggregate(key)
+            agg.reset(start_ts)
+            self._put_aggregate(key, agg)
+
+    def _fao56_settings(self) -> dict[str, float]:
+        """The fallbacks for inputs without a sensor (settings come with the settings phase)."""
+        return {
+            "default_wind": fao56.DEFAULT_WIND_2M,
+            "k0": fao56.K0_HUMID,
+            "krs": fao56.KRS_INLAND,
+            "wind_height_m": 2.0,
+        }
+
+    def _close_et0_day(self, day, end_ts: float, *, has_record: bool = True) -> None:
+        """Close `day` (a local date ending at `end_ts`) into et0_day_history."""
+        state = self.store.state
+        summaries = {}
+        if has_record:
+            for key in list(state.day_aggregates):
+                agg = self._aggregate(key)
+                summaries[key] = agg.close(end_ts)
+                self._put_aggregate(key, agg)
+        t_min = state.today_min_temp_c if has_record else None
+        t_max = state.today_peak_temp_c if has_record else None
+        entry: dict[str, Any] = {"date": day.isoformat(), "et0": None, "sources": {}}
+        if t_min is not None and t_max is not None:
+            settings = self._fao56_settings()
+            rh_min = rh_max = rh_mean = wind = rs = None
+            humidity_source = wind_source = None
+            hum = summaries.get("humidity")
+            weather_hum = summaries.get("weather_humidity")
+            if hum is not None and hum.usable:
+                rh_min, rh_max = hum.minimum, hum.maximum
+            elif weather_hum is not None and weather_hum.usable:
+                rh_mean, humidity_source = weather_hum.mean, "weather"
+            win = summaries.get("wind")
+            weather_win = summaries.get("weather_wind")
+            if win is not None and win.usable:
+                wind = fao56.wind_to_2m(win.mean, settings["wind_height_m"])
+            elif weather_win is not None and weather_win.usable:
+                wind, wind_source = fao56.wind_to_2m(weather_win.mean, 10.0), "weather"  # weather services: 10 m
+            sol = summaries.get("solar")
+            if sol is not None and sol.usable:
+                rs = sol.integral / 1e6  # J/m2 -> MJ/m2
+            result = fao56.et0_daily(
+                fao56.DayInputs(t_min, t_max, rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean, wind_2m=wind, rs_mj=rs),
+                latitude_deg=self.hass.config.latitude,
+                day_of_year=day.timetuple().tm_yday,
+                elevation_m=float(self.hass.config.elevation or 0),
+                default_wind=settings["default_wind"],
+                k0=settings["k0"],
+                krs=settings["krs"],
+            )
+            sources = dict(result.sources)
+            if humidity_source:
+                sources["humidity"] = humidity_source
+            if wind_source:
+                sources["wind"] = wind_source
+            entry.update(
+                et0=round(result.et0_mm, 2), sources=sources, t_min=t_min, t_max=t_max,
+                rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean,
+                u2=round(result.u2, 2), rs=round(result.rs_mj, 2),
+            )
+        history = [e for e in state.et0_day_history if isinstance(e, dict) and e.get("date") != entry["date"]]
+        state.et0_day_history = [entry, *history][:ET0_HISTORY_DAYS]
 
     @callback
     def _on_midnight(self, now) -> None:
@@ -1501,6 +1686,7 @@ class ZoneFlowController:
         today_rain = self.today_rain_mm()
         state.rain_day_history_mm = [today_rain, *state.rain_day_history_mm[:9]]
         state.last_shift_date_iso = dt_util.now().date().isoformat()
+        self._close_et0_day(dt_util.now().date(), dt_util.utcnow().timestamp())
         self.hass.async_create_task(self.store.async_save())
 
     def today_rain_mm(self) -> float:

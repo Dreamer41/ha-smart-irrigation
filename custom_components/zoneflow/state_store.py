@@ -43,6 +43,12 @@ class IrrigationState:
     # The day the 23:59:50 shift last closed into the day histories (1.8): a restart across that
     # moment is caught up from this, so a day's rain and temperatures are not lost.
     last_shift_date_iso: str | None = None
+    # FAO-56 (1.8): today's time-weighted climate readings, one DayAggregate dict per input
+    # ("humidity", "wind", "solar", "weather_humidity", "weather_wind"), and the closed days'
+    # ET0 with what each input came from, newest first.
+    day_aggregates: dict = field(default_factory=dict)
+    et0_day_history: list = field(default_factory=list)
+    last_alive_ts: float | None = None  # a heartbeat: where a crash's downtime begins
     today_peak_temp_c: float | None = None
     today_min_temp_c: float | None = None
     rain_midnight_baseline_mm: float = 0.0
