@@ -51,6 +51,7 @@ from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
     GREENHOUSE_NUMBERS,
+    RAIN_HISTORY_DEPTH_DAYS,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
     FLOW_MEASURE_MIN_MINUTES,
@@ -1386,12 +1387,46 @@ class ZoneFlowController:
         `async_setup` in case a midnight tick was missed (HA was restarting,
         etc.)."""
         state = self.store.state
+        self._shift_missed_days()
         state.today_date_iso = dt_util.now().date().isoformat()
         state.today_peak_temp_c = seed_temp
         state.today_min_temp_c = seed_temp
         state.rain_midnight_baseline_mm = state.rain_tracker().latest_cumulative()
         state.today_runtime_minutes = 0.0
         self.judge_skip_journal()
+
+    def _rain_between_mm(self, start_ts: float, end_ts: float) -> float:
+        """Rain between two times from every source, the higher one (as today_rain_mm)."""
+        state = self.store.state
+        gauge = state.rain_tracker().sum_between_mm(start_ts, end_ts)
+        source = self._wu()
+        manual = state.manual_rain_tracker().sum_between_mm(start_ts, end_ts) if state.manual_rain_samples else 0.0
+        wu = source.sum_between(start_ts, end_ts) if source is not None else 0.0
+        return max(gauge, manual, wu)
+
+    def _shift_missed_days(self) -> None:
+        """The day the open bucket belongs to has ended without the 23:59:50 shift (Home Assistant
+        was down then): close that day, and any whole day after it, into the day histories now, so
+        its rain and temperatures are not lost. Days with no record count as no reading, no rain."""
+        state = self.store.state
+        try:
+            first = dt_util.parse_date(state.today_date_iso or "")
+        except (TypeError, ValueError):
+            first = None
+        today = dt_util.now().date()
+        if first is None or first >= today:
+            return
+        days = [first + timedelta(days=i) for i in range((today - first).days)]
+        for day in days[-RAIN_HISTORY_DEPTH_DAYS:]:
+            if day.isoformat() == state.last_shift_date_iso:
+                continue  # that day was closed on time
+            start = dt_util.start_of_local_day(day).timestamp()
+            end = dt_util.start_of_local_day(day + timedelta(days=1)).timestamp()
+            own = day == first  # only the open bucket holds that day's temperatures
+            state.peak_temp_day_history_c = [state.today_peak_temp_c if own else None, *state.peak_temp_day_history_c[:2]]
+            state.min_temp_day_history_c = [state.today_min_temp_c if own else None, *state.min_temp_day_history_c[:2]]
+            state.rain_day_history_mm = [self._rain_between_mm(start, end), *state.rain_day_history_mm[:9]]
+            state.last_shift_date_iso = day.isoformat()
 
     @callback
     def _on_midnight(self, now) -> None:
@@ -1465,6 +1500,7 @@ class ZoneFlowController:
         # Rain day shift register (10-deep)
         today_rain = self.today_rain_mm()
         state.rain_day_history_mm = [today_rain, *state.rain_day_history_mm[:9]]
+        state.last_shift_date_iso = dt_util.now().date().isoformat()
         self.hass.async_create_task(self.store.async_save())
 
     def today_rain_mm(self) -> float:

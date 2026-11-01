@@ -40,6 +40,9 @@ class IrrigationState:
 
     # Today's in-progress bookkeeping (reset at local midnight)
     today_date_iso: str | None = None
+    # The day the 23:59:50 shift last closed into the day histories (1.8): a restart across that
+    # moment is caught up from this, so a day's rain and temperatures are not lost.
+    last_shift_date_iso: str | None = None
     today_peak_temp_c: float | None = None
     today_min_temp_c: float | None = None
     rain_midnight_baseline_mm: float = 0.0

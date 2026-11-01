@@ -115,3 +115,43 @@ async def test_frequent_saves_are_delayed_and_an_unload_still_writes_everything(
     await c.async_unload() if hasattr(c, "async_unload") else await c.async_shutdown()
     saved = next(v for k, v in hass_storage.items() if k.startswith(f"{DOMAIN}_") and "plants" not in k and "presets" not in k)
     assert saved["data"]["today_peak_temp_c"] == 41.5
+
+
+@pytest.mark.asyncio
+async def test_a_restart_across_the_daily_shift_does_not_lose_the_day(hass):
+    """HA was down at 23:59:50: the open bucket's day still lands in the histories at the next start."""
+    import homeassistant.util.dt as dt_util
+    from datetime import timedelta
+
+    c = await _zone(hass)
+    s = c.store.state
+    today = dt_util.now().date()
+    two_ago = today - timedelta(days=2)
+    midnight_two_ago = dt_util.start_of_local_day(two_ago).timestamp()
+    s.rain_samples = [[midnight_two_ago + 3600, 100.0], [midnight_two_ago + 20 * 3600, 112.0], [midnight_two_ago + 30 * 3600, 112.0], [dt_util.utcnow().timestamp() - 60, 112.0]]
+    s.today_date_iso = two_ago.isoformat()
+    s.today_peak_temp_c, s.today_min_temp_c = 33.0, 21.0
+    s.last_shift_date_iso = None
+    s.peak_temp_day_history_c, s.min_temp_day_history_c = [None, None, None], [None, None, None]
+    s.rain_day_history_mm = [0.0] * 10
+    c._start_new_day()
+    # two whole days ended (two days ago, yesterday): newest first
+    assert s.peak_temp_day_history_c[:2] == [None, 33.0] and s.min_temp_day_history_c[:2] == [None, 21.0]
+    assert s.rain_day_history_mm[1] == pytest.approx(12.0) and s.rain_day_history_mm[0] == pytest.approx(0.0)
+    assert s.today_date_iso == today.isoformat()
+
+
+@pytest.mark.asyncio
+async def test_a_day_the_shift_already_closed_is_not_shifted_twice(hass):
+    import homeassistant.util.dt as dt_util
+    from datetime import timedelta
+
+    c = await _zone(hass)
+    s = c.store.state
+    yesterday = dt_util.now().date() - timedelta(days=1)
+    s.today_date_iso = yesterday.isoformat()
+    s.last_shift_date_iso = yesterday.isoformat()  # the 23:59:50 shift ran
+    s.rain_day_history_mm = [7.0] + [0.0] * 9
+    s.peak_temp_day_history_c = [30.0, None, None]
+    c._start_new_day()
+    assert s.rain_day_history_mm[0] == 7.0 and s.peak_temp_day_history_c[0] == 30.0
