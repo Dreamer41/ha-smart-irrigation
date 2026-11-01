@@ -16,6 +16,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
@@ -149,6 +150,9 @@ class ZoneFlowDeepSoakEnabledSwitch(SwitchEntity):
         # _async_update_listener), so nothing about the reload/reconfigure
         # path needs a special case just because a switch triggered it
         # instead of the Options form.
+        if self._controller.run_in_progress and bool(self._controller.deep_soak_enabled) != value:
+            # Saving reloads the zone, which would stop the watering in progress.
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
         self.hass.config_entries.async_update_entry(
             self._entry, options={**self._entry.options, CONF_DEEP_SOAK_ENABLED: value}
         )

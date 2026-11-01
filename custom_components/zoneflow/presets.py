@@ -100,6 +100,13 @@ def capture(controller: Any) -> dict[str, Any]:
 
 async def async_apply(hass: HomeAssistant, controller: Any, bundle: dict[str, Any]) -> None:
     """Put a bundle on an existing zone."""
+    wanted = {k: v for k, v in (bundle.get("options") or {}).items() if k in COPY_OPTION_KEYS}
+    entry = controller.entry
+    current = {**entry.data, **entry.options}
+    options_changed = any(current.get(k) != v for k, v in wanted.items())
+    if options_changed and controller.run_in_progress:
+        # Those settings reload the zone, which would stop the watering in progress.
+        raise service_error("zone_busy")
     for key, value in (bundle.get("numbers") or {}).items():
         entity = controller.numbers.get(key)
         if entity is not None and value is not None:
@@ -113,10 +120,7 @@ async def async_apply(hass: HomeAssistant, controller: Any, bundle: dict[str, An
         controller.plants._last = controller.plants.values()  # not logged as edits of the plant
     controller._notify_status()
     # Settings kept in the zone's config entry restart the zone when they change.
-    wanted = {k: v for k, v in (bundle.get("options") or {}).items() if k in COPY_OPTION_KEYS}
-    entry = controller.entry
-    current = {**entry.data, **entry.options}
-    if any(current.get(k) != v for k, v in wanted.items()):
+    if options_changed:
         hass.config_entries.async_update_entry(entry, options={**entry.options, **wanted})
 
 

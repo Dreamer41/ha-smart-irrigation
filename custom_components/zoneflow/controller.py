@@ -535,6 +535,12 @@ class ZoneFlowController:
     def has_valve(self) -> bool:
         return bool(self.valve_entity)
 
+    @property
+    def run_in_progress(self) -> bool:
+        """A watering is running, or about to: saving a setting kept in the config entry would
+        reload the zone and stop it."""
+        return bool(self.store.state.lock_on or self._runs or self._service_active)
+
     def _refuse_without_valve(self) -> None:
         if not self.has_valve:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_has_no_valve")
@@ -2120,9 +2126,12 @@ class ZoneFlowController:
 
     async def _fire_valve_stuck(self) -> None:
         limit = getattr(self, "_valve_stuck_limit_armed", VALVE_STUCK_ON_MINUTES)
-        await self.hass.services.async_call(
-            "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-        )
+        try:
+            await self.hass.services.async_call(
+                "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
+            )
+        except Exception:  # noqa: BLE001 - a device may raise anything; the abort and the alert still go out
+            _LOGGER.exception("%s: the stuck-valve close command failed", self.entry.title)
         await self._set_abort(True)
         await self._set_lock(False)
         await self._log_event(
@@ -3207,7 +3216,9 @@ class ZoneFlowController:
         # unlike async_track_time_change (which passes `now`) -- adapt so
         # the same _on_deep_soak_time/_on_routine_time callbacks work either
         # way.
+        @callback
         def sun_action() -> None:
+            # A plain function would run in a worker thread, where hass.async_create_task is refused.
             action(None)
 
         if sun_mode == SUN_MODE_BEFORE_SUNRISE:
