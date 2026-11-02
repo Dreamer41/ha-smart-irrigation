@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Palauta automatiikka"
+      },
+      "master_valve_checked": {
+        "name": "Pääventtiili tarkistettu"
       }
     },
     "binary_sensor": {

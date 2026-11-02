@@ -426,7 +426,7 @@
       "latched": "A válvula mestra {valve} está fechada por segurança. {reason} Aperte Reset Lock depois de resolver.",
       "fail": "A válvula mestra {valve} não está disponível.",
       "ok": "A válvula mestra {valve} responde.",
-      "test_failed": "A válvula mestra {valve} falhou no teste mensal de {when}: com ela fechada a água continuou correndo ou a bomba funcionando.",
+      "test_failed": "A válvula mestra {valve} falhou no teste mensal de {when}: com ela fechada a água continuou correndo ou a bomba funcionando. Pressione Válvula mestra verificada depois de verificá-la; ela será testada de novo na próxima rega de rotina.",
       "test_ok": "A válvula mestra passou no teste mensal de {when}.",
       "test_pending": "A válvula mestra é testada uma vez por mês, no fim de uma rega normal.",
       "test_none": "Adicione um medidor de vazão ou um sensor de potência da bomba para testar a válvula mestra uma vez por mês."

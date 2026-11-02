@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Ripristina automatico"
+      },
+      "master_valve_checked": {
+        "name": "Valvola principale controllata"
       }
     },
     "binary_sensor": {

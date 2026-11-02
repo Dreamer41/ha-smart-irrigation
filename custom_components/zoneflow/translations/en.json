@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Resume Automatic"
+      },
+      "master_valve_checked": {
+        "name": "Master valve checked"
       }
     },
     "binary_sensor": {

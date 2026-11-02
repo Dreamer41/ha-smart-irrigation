@@ -426,7 +426,7 @@
       "latched": "La vanne maîtresse {valve} est fermée par sécurité. {reason} Appuyez sur Reset Lock une fois le problème réglé.",
       "fail": "La vanne maîtresse {valve} n'est pas disponible.",
       "ok": "La vanne maîtresse {valve} répond.",
-      "test_failed": "La vanne maîtresse {valve} a échoué au test mensuel du {when} : vanne fermée, l'eau coulait encore ou la pompe tournait.",
+      "test_failed": "La vanne maîtresse {valve} a échoué au test mensuel du {when} : vanne fermée, l'eau coulait encore ou la pompe tournait. Appuyez sur Vanne maîtresse vérifiée une fois contrôlée ; elle est testée de nouveau au prochain arrosage de routine.",
       "test_ok": "La vanne maîtresse a réussi le test mensuel du {when}.",
       "test_pending": "La vanne maîtresse est testée une fois par mois, à la fin d'un arrosage normal.",
       "test_none": "Ajoutez un débitmètre ou un capteur de puissance de pompe pour que la vanne maîtresse soit testée une fois par mois."

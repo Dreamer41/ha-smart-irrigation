@@ -323,3 +323,29 @@ async def test_no_self_test_without_a_meter_or_pump_power(hass, fake_valve_servi
     await hass.async_block_till_done()
     assert not any(e.startswith("Master Valve Test") for e in events)
     assert controller.store.state.master_test_ts is None
+
+
+@pytest.mark.asyncio
+async def test_the_checked_button_forgets_a_failed_test_so_it_runs_again(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, events = await _test_zone(hass, monkeypatch, tmp_path)  # pump power reads 999 W throughout
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert controller.store.state.master_test_ok is False
+    assert not controller._master().test_due(controller.store.state.master_test_ts + 86400)  # not for 30 days
+    await controller.master_valve_checked()
+    assert controller.store.state.master_test_ts is None and controller.store.state.master_test_ok is None
+    assert controller._master().test_due(0.0)
+    assert "Master Valve Checked" in events
+    hass.states.async_set(PUMP, "0")
+    events.clear()
+    _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert controller.store.state.master_test_ok is True
+
+
+@pytest.mark.asyncio
+async def test_the_checked_button_does_nothing_without_a_master(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
+    await controller.master_valve_checked()
+    assert "Master Valve Checked" not in events

@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Genoptag automatik"
+      },
+      "master_valve_checked": {
+        "name": "Hovedventil kontrolleret"
       }
     },
     "binary_sensor": {

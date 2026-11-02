@@ -3785,6 +3785,25 @@ class ZoneFlowController:
             return False
         return master.test_due(dt_util.utcnow().timestamp())
 
+    async def master_valve_checked(self) -> None:
+        """The "Master Valve Checked" button: the person fixed or checked the backup valve, so its
+        last self-test is forgotten and the next routine watering tests it again."""
+        master = self._master()
+        if master is None:
+            return
+        await master.async_clear_test()
+        self._notify_status()
+        await self._log_event(
+            event_type="Master Valve Checked",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
+        )
+
     async def _master_self_test(self, master: master_valve.MasterValve) -> None:
         """Close the master, open this zone's valve for half a minute and check that no water flows
         and the pump stops. The zone valve is closed again whatever happens (and confirmed closed by

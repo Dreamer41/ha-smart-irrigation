@@ -2284,7 +2284,9 @@ valve is normally open**.
   tests the master valve once a month at the end of a routine watering: it
   closes the master, opens the zone valve for about half a minute and checks
   that the water stops and the pump stops, then closes the zone valve. A failed
-  test sends a phone alert. Tell the person it happens, so a short run of the
+  test sends a phone alert and is not repeated for a month: the button **Master
+  Valve Checked** (pressed after the valve was fixed or checked) makes the next
+  routine watering test it again. Tell the person it happens, so a short run of the
   zone valve at the end of a watering is not a surprise. Without either sensor
   there is no test.
 

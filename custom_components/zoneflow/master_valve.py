@@ -129,6 +129,14 @@ class MasterValve:
                 best = (ts, zone.store.state.master_test_ok)
         return best
 
+    async def async_clear_test(self) -> None:
+        """Forget the last self-test on every zone of this master: it is tested again at the next
+        routine watering (the person says the valve was fixed or checked)."""
+        for zone in self.zones():
+            zone.store.state.master_test_ts = None
+            zone.store.state.master_test_ok = None
+            await zone.store.async_save()
+
     def test_due(self, now_ts: float) -> bool:
         ts, _passed = self.last_test
         return ts is None or now_ts - ts >= TEST_INTERVAL_DAYS * 86400

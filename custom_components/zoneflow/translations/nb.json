@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Gjenoppta automatikk"
+      },
+      "master_valve_checked": {
+        "name": "Hovedventil kontrollert"
       }
     },
     "binary_sensor": {

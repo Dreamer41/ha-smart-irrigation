@@ -426,7 +426,7 @@
       "latched": "La válvula maestra {valve} está cerrada por seguridad. {reason} Pulsa Reset Lock cuando esté arreglado.",
       "fail": "La válvula maestra {valve} no está disponible.",
       "ok": "La válvula maestra {valve} responde.",
-      "test_failed": "La válvula maestra {valve} no superó la prueba mensual del {when}: con ella cerrada el agua siguió corriendo o la bomba siguió en marcha.",
+      "test_failed": "La válvula maestra {valve} no superó la prueba mensual del {when}: con ella cerrada el agua siguió corriendo o la bomba siguió en marcha. Pulse Válvula maestra revisada cuando la haya revisado; se probará de nuevo en el próximo riego rutinario.",
       "test_ok": "La válvula maestra superó la prueba mensual del {when}.",
       "test_pending": "La válvula maestra se prueba una vez al mes, al final de un riego normal.",
       "test_none": "Añade un caudalímetro o un sensor de potencia de la bomba para probar la válvula maestra una vez al mes."

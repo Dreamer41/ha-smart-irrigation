@@ -426,7 +426,7 @@
       "latched": "La valvola principale {valve} è chiusa per sicurezza. {reason} Premi Reset Lock una volta risolto.",
       "fail": "La valvola principale {valve} non è disponibile.",
       "ok": "La valvola principale {valve} risponde.",
-      "test_failed": "La valvola principale {valve} non ha superato il test mensile del {when}: a valvola chiusa l'acqua scorreva ancora o la pompa girava.",
+      "test_failed": "La valvola principale {valve} non ha superato il test mensile del {when}: a valvola chiusa l'acqua scorreva ancora o la pompa girava. Premi Valvola principale controllata dopo averla controllata; verrà provata di nuovo alla prossima irrigazione di routine.",
       "test_ok": "La valvola principale ha superato il test mensile del {when}.",
       "test_pending": "La valvola principale viene testata una volta al mese, alla fine di un'irrigazione normale.",
       "test_none": "Aggiungi un flussometro o un sensore di potenza della pompa per testare la valvola principale una volta al mese."

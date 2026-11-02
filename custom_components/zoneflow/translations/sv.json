@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Återgå till automatik"
+      },
+      "master_valve_checked": {
+        "name": "Huvudventil kontrollerad"
       }
     },
     "binary_sensor": {

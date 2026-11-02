@@ -40,6 +40,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowButton(
                 entry, controller, "mark_deep_soak_done", "Mark Deep Soak Done", controller.mark_deep_soak_done
             ),
+            # A master valve that failed its test: fixed or checked, so it is tested again.
+            ZoneFlowButton(entry, controller, "master_valve_checked", "Master Valve Checked", controller.master_valve_checked),
             # Greenhouse / indoor: end every manual hold now.
             ZoneFlowButton(
                 entry, controller, "resume_automatic", "Resume Automatic", controller.greenhouse.async_resume_automatic

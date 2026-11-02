@@ -426,7 +426,7 @@
       "latched": "Zawór główny {valve} jest zamknięty dla bezpieczeństwa. {reason} Po naprawie naciśnij Reset Lock.",
       "fail": "Zawór główny {valve} jest niedostępny.",
       "ok": "Zawór główny {valve} odpowiada.",
-      "test_failed": "Zawór główny {valve} nie przeszedł comiesięcznego testu {when}: przy zamkniętym zaworze woda płynęła lub pompa pracowała.",
+      "test_failed": "Zawór główny {valve} nie przeszedł comiesięcznego testu {when}: przy zamkniętym zaworze woda płynęła lub pompa pracowała. Naciśnij Zawór główny sprawdzony po jego sprawdzeniu; zostanie przetestowany ponownie przy następnym podlewaniu rutynowym.",
       "test_ok": "Zawór główny przeszedł comiesięczny test {when}.",
       "test_pending": "Zawór główny jest testowany raz w miesiącu, na końcu zwykłego podlewania.",
       "test_none": "Dodaj przepływomierz lub czujnik mocy pompy, aby zawór główny był testowany raz w miesiącu."

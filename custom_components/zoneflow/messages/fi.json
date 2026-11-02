@@ -426,7 +426,7 @@
       "latched": "Pääventtiili {valve} on suljettu turvallisuussyistä. {reason} Paina Reset Lock, kun vika on korjattu.",
       "fail": "Pääventtiili {valve} ei ole käytettävissä.",
       "ok": "Pääventtiili {valve} vastaa.",
-      "test_failed": "Pääventtiili {valve} ei läpäissyt kuukausitestiä {when}: vesi virtasi tai pumppu kävi, vaikka venttiili oli kiinni.",
+      "test_failed": "Pääventtiili {valve} ei läpäissyt kuukausitestiä {when}: vesi virtasi tai pumppu kävi, vaikka venttiili oli kiinni. Paina Pääventtiili tarkistettu, kun olet tarkistanut sen; se testataan uudelleen seuraavassa rutiinikastelussa.",
       "test_ok": "Pääventtiili läpäisi kuukausitestin {when}.",
       "test_pending": "Pääventtiili testataan kerran kuukaudessa tavallisen kastelun lopussa.",
       "test_none": "Lisää virtausmittari tai pumpun tehoanturi, niin pääventtiili testataan kerran kuukaudessa."

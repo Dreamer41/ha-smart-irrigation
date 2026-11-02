@@ -426,7 +426,7 @@
       "latched": "Das Hauptventil {valve} ist zur Sicherheit geschlossen. {reason} Drücke Reset Lock, sobald es behoben ist.",
       "fail": "Das Hauptventil {valve} ist nicht verfügbar.",
       "ok": "Das Hauptventil {valve} antwortet.",
-      "test_failed": "Das Hauptventil {valve} hat den monatlichen Test am {when} nicht bestanden: bei geschlossenem Ventil floss weiter Wasser oder die Pumpe lief weiter.",
+      "test_failed": "Das Hauptventil {valve} hat den monatlichen Test am {when} nicht bestanden: bei geschlossenem Ventil floss weiter Wasser oder die Pumpe lief weiter. Drücken Sie Hauptventil geprüft, wenn Sie es angesehen haben; bei der nächsten Routine-Bewässerung wird es erneut getestet.",
       "test_ok": "Das Hauptventil hat den monatlichen Test am {when} bestanden.",
       "test_pending": "Das Hauptventil wird einmal im Monat am Ende einer normalen Bewässerung getestet.",
       "test_none": "Füge einen Durchflussmesser oder einen Pumpenleistungs-Sensor hinzu, damit das Hauptventil einmal im Monat getestet wird."

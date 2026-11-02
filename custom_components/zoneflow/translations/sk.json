@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Obnoviť automatiku"
+      },
+      "master_valve_checked": {
+        "name": "Hlavný ventil skontrolovaný"
       }
     },
     "binary_sensor": {

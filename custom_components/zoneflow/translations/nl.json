@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Automatisch hervatten"
+      },
+      "master_valve_checked": {
+        "name": "Hoofdklep gecontroleerd"
       }
     },
     "binary_sensor": {

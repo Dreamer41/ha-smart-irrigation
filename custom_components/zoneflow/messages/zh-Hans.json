@@ -426,7 +426,7 @@
       "latched": "总阀 {valve} 已出于安全关闭。{reason}修复后请按下 Reset Lock。",
       "fail": "总阀 {valve} 不可用。",
       "ok": "总阀 {valve} 有响应。",
-      "test_failed": "总阀 {valve} 未通过 {when} 的月度测试：关闭时仍有水流或水泵仍在运行。",
+      "test_failed": "总阀 {valve} 未通过 {when} 的月度测试：关闭时仍有水流或水泵仍在运行。 检查后请按“总阀已检查”；下一次例行浇水时会再次测试。",
       "test_ok": "总阀已通过 {when} 的月度测试。",
       "test_pending": "总阀每月在一次常规浇水结束时测试一次。",
       "test_none": "添加流量计或水泵功率传感器，即可每月测试一次总阀。"

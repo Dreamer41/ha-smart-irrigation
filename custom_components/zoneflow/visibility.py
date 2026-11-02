@@ -204,6 +204,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= RAIN_ESTIMATE  # a gauge or Weather Underground measures the rain
     if not controller.notify_entity:
         hidden |= NOTIFY
+    if not controller.master_valve_entity:
+        hidden.add(("button", "master_valve_checked"))
     if not controller.flow_meter_entity:
         hidden |= FLOW_METER
     elif controller.store.state.delivery_mode != DELIVERY_FLOW:

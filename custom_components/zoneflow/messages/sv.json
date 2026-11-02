@@ -426,7 +426,7 @@
       "latched": "Huvudventilen {valve} är stängd av säkerhetsskäl. {reason} Tryck Reset Lock när det är åtgärdat.",
       "fail": "Huvudventilen {valve} är inte tillgänglig.",
       "ok": "Huvudventilen {valve} svarar.",
-      "test_failed": "Huvudventilen {valve} klarade inte månadstestet {when}: när den var stängd rann vattnet fortfarande eller pumpen gick.",
+      "test_failed": "Huvudventilen {valve} klarade inte månadstestet {when}: när den var stängd rann vattnet fortfarande eller pumpen gick. Tryck på Huvudventil kontrollerad när du har tittat på den; den testas igen vid nästa rutinbevattning.",
       "test_ok": "Huvudventilen klarade månadstestet {when}.",
       "test_pending": "Huvudventilen testas en gång i månaden i slutet av en vanlig bevattning.",
       "test_none": "Lägg till en flödesmätare eller en pumpeffektsensor så testas huvudventilen en gång i månaden."

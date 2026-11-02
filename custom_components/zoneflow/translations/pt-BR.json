@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Retomar automático"
+      },
+      "master_valve_checked": {
+        "name": "Válvula mestra verificada"
       }
     },
     "binary_sensor": {

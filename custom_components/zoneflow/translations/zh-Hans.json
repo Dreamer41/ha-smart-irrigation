@@ -1222,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "恢复自动"
+      },
+      "master_valve_checked": {
+        "name": "总阀已检查"
       }
     },
     "binary_sensor": {

@@ -426,7 +426,7 @@
       "latched": "Hlavný ventil {valve} je z bezpečnostných dôvodov zatvorený. {reason} Po oprave stlačte Reset Lock.",
       "fail": "Hlavný ventil {valve} nie je dostupný.",
       "ok": "Hlavný ventil {valve} odpovedá.",
-      "test_failed": "Hlavný ventil {valve} neprešiel mesačným testom {when}: pri zatvorení voda ďalej tiekla alebo čerpadlo bežalo.",
+      "test_failed": "Hlavný ventil {valve} neprešiel mesačným testom {when}: pri zatvorení voda ďalej tiekla alebo čerpadlo bežalo. Po kontrole stlačte Hlavný ventil skontrolovaný; pri ďalšej pravidelnej zálievke sa otestuje znova.",
       "test_ok": "Hlavný ventil prešiel mesačným testom {when}.",
       "test_pending": "Hlavný ventil sa testuje raz mesačne na konci bežnej zálievky.",
       "test_none": "Pridajte prietokomer alebo snímač príkonu čerpadla, aby sa hlavný ventil testoval raz mesačne."

@@ -426,7 +426,7 @@
       "latched": "Hovedventilen {valve} er stengt av sikkerhetshensyn. {reason} Trykk Reset Lock når det er fikset.",
       "fail": "Hovedventilen {valve} er ikke tilgjengelig.",
       "ok": "Hovedventilen {valve} svarer.",
-      "test_failed": "Hovedventilen {valve} besto ikke den månedlige testen {when}: vannet rant fortsatt eller pumpen gikk mens den var stengt.",
+      "test_failed": "Hovedventilen {valve} besto ikke den månedlige testen {when}: vannet rant fortsatt eller pumpen gikk mens den var stengt. Trykk på Hovedventil kontrollert når du har sett på den; den testes på nytt ved neste rutinevanning.",
       "test_ok": "Hovedventilen besto den månedlige testen {when}.",
       "test_pending": "Hovedventilen testes en gang i måneden på slutten av en vanlig vanning.",
       "test_none": "Legg til en vannmåler eller en pumpeeffektsensor for å få hovedventilen testet en gang i måneden."
