@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
 from . import messages, units
@@ -19,6 +20,27 @@ def _preview(controller: Any):
     # The zone's own plan (controller._routine_plan): the one place the dose is
     # worked out, so this panel can never show a different amount than the run.
     return controller.routine_target_scale(), controller._routine_plan()
+
+
+def _crop_factor(controller: Any, add) -> None:
+    """The crop factor the zone waters by today and what it comes from (1.8)."""
+    hass = controller.hass
+    info = controller.kc_info(dt_util.now().date())
+    crop = controller.crop_seasons.get(info["crop"]) if info["crop"] else None
+    if info["source"] == "fixed":
+        if crop is not None:
+            add("kc_planting", "kc_needs_planting_date", crop=crop.name)
+        add("crop_factor", "crop_factor", kc=f"{info['kc']:.2f}", detail=messages.text(hass, "why.kc_fixed"))
+        return
+    stage = messages.text(hass, f"why.kc_stage.{info['stage']}")
+    detail = messages.text(hass, "why.kc_curve", crop=crop.name if crop else "", stage=stage)
+    adjustment = info["climate_adjustment"]
+    if abs(adjustment) >= 0.005:
+        detail += "; " + messages.text(hass, "why.kc_adjust_up" if adjustment > 0 else "why.kc_adjust_down", adj=f"{abs(adjustment):.2f}")
+    if abs(info["exposure_factor"] - 1.0) >= 0.005:
+        exposure = messages.text(hass, f"why.kc_exposure_name.{info['exposure']}")
+        detail += "; " + messages.text(hass, "why.kc_exposure", pct=f"{info['exposure_factor'] * 100:.0f}", exposure=exposure)
+    add("crop_factor", "crop_factor", kc=f"{info['kc']:.2f}", detail=detail)
 
 
 def explain(controller: Any) -> list[dict[str, str]]:
@@ -45,6 +67,8 @@ def explain(controller: Any) -> list[dict[str, str]]:
             wind=messages.text(hass, f"why.fao56_source.{sources.get('wind', 'default')}"),
             solar=messages.text(hass, f"why.fao56_source.{sources.get('solar', 'estimated')}"),
         )
+
+    _crop_factor(controller, add)
 
     temp, source = controller.watering_temp()
     tier = calc.temperature_tier(temp, controller.number("hot_temp_threshold"), controller.number("cool_temp_threshold"))

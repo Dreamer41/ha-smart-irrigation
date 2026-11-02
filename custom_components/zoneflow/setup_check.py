@@ -13,7 +13,7 @@ from typing import Any
 from homeassistant.core import HomeAssistant
 import homeassistant.util.dt as dt_util
 
-from . import messages
+from . import fao56, messages
 from .const import NUMBER_DEFAULTS
 from .issues import FLOW_DEFAULT_TOLERANCE, OFFLINE
 
@@ -152,6 +152,11 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("paused", "warn", "paused.house", house=controller.parent_entry.title)
         elif area is not None:
             add("paused", "warn", "paused.area", area=area.name)
+
+    # The crop curve (1.8): an annual crop needs a planting date.
+    if controller.has_valve and (crop := controller.crop_seasons.get(controller.store.state.kc_crop)) is not None:
+        if crop.season == fao56.SEASON_ANNUAL and controller.store.state.planting_date_ts is None:
+            add("kc_planting", "info", "kc.planting_date", crop=crop.name)
 
     # The last watering.
     if controller.has_valve:

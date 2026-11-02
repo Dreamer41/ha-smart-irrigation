@@ -168,6 +168,7 @@ def _public(plant: dict[str, Any]) -> dict[str, Any]:
         "kc_estimate": plant["kc_estimate"],
         "mm_estimate": plant["mm_estimate"],
         "preset": PRESET_BY_CROP.get(plant["crop_id"]) or PRESET_BY_CATEGORY.get(plant["category"]),
+        "crop_id": plant["crop_id"],
         "note": plant["note"],
     }
 
@@ -177,6 +178,7 @@ def _crop_item(crop: dict[str, Any], mm_per_kc: float = 25.4) -> dict[str, Any]:
         "kind": "crop",
         "name": crop["name"],
         "id": crop["id"],
+        "crop_id": crop["id"],
         "category": "",
         "latin": "",
         "low_mm": round(crop["kc_mid"] * mm_per_kc, 1),

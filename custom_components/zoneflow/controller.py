@@ -24,7 +24,7 @@ import csv
 import functools
 import logging
 import math
-from datetime import datetime, time as dt_time, timedelta
+from datetime import date, datetime, time as dt_time, timedelta
 from typing import Any
 
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
@@ -47,10 +47,18 @@ from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
 from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, zone_valve
+from .crop_season import CropSeason, async_crop_seasons
 from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
+    CONF_CLIMATE,
+    DEFAULT_CLIMATE,
+    DEFAULT_SUN_EXPOSURE,
+    KC_CLIMATE_DAYS,
+    KC_GREEN_UP_DOY,
+    SOUTHERN_HEMISPHERE_SHIFT_DAYS,
+    SUN_EXPOSURE_FACTORS,
     GREENHOUSE_NUMBERS,
     RAIN_HISTORY_DEPTH_DAYS,
     CONF_HUMIDITY_ENTITY,
@@ -326,6 +334,7 @@ class ZoneFlowController:
         self.numbers: dict[str, Any] = {}  # key -> NumberEntity, registered at platform setup
         self._unsubs: list[Any] = []
         self._valve_stuck_cancel = None
+        self._crop_seasons: dict[str, CropSeason] = {}  # data/crop_kc.json, loaded in async_setup
         self._valve_stuck_fired = False  # the watchdog fired and the valve has not reported closed since
         self._valve_open_since = None  # when the valve first opened (or began to), for the stuck-valve watchdog
         self._power_loss_cancel = None
@@ -973,6 +982,7 @@ class ZoneFlowController:
         # that loads later starts the zone again (__init__._async_setup_area).
         self.had_area_at_setup = self.area is not None or not self.area_entry_id
         await messages.async_setup(self.hass)
+        self._crop_seasons = await async_crop_seasons(self.hass)
         await self.store.async_load()
         state = self.store.state
         # A zone made from another zone or a preset starts with its saved-state
@@ -1667,7 +1677,7 @@ class ZoneFlowController:
             entry.update(
                 et0=round(result.et0_mm, 2), sources=sources, t_min=t_min, t_max=t_max,
                 rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean,
-                u2=round(result.u2, 2), rs=round(result.rs_mj, 2),
+                u2=round(result.u2, 2), rs=round(result.rs_mj, 2), ea=round(result.ea_kpa, 3),
             )
         history = [e for e in state.et0_day_history if isinstance(e, dict) and e.get("date") != entry["date"]]
         state.et0_day_history = [entry, *history][:ET0_HISTORY_DAYS]
@@ -1841,17 +1851,161 @@ class ZoneFlowController:
         et0 = self.effective_avg_et0()
         if et0 is None:
             return None
-        return calc.et_weekly_target_mm(et0, self.number("crop_coefficient"))
+        return calc.et_weekly_target_mm(et0, self.kc_for(dt_util.now().date()))  # a 3-day average: today's Kc is close enough
+
+    # ------------------------------------------------------------------
+    # The crop factor (Kc): decided in one place
+    # ------------------------------------------------------------------
+    def _green_up_doy(self) -> int | None:
+        """The day of the year a perennial's season starts here; None in the tropics (no dormant season)."""
+        climate = self.entry.data.get(CONF_CLIMATE, DEFAULT_CLIMATE)
+        doy = KC_GREEN_UP_DOY.get(climate, KC_GREEN_UP_DOY[DEFAULT_CLIMATE])
+        if doy is None:
+            return None
+        if self.hass.config.latitude < 0:
+            doy = (doy + SOUTHERN_HEMISPHERE_SHIFT_DAYS - 1) % 365 + 1
+        return doy
+
+    def _day_rh_min(self, entry: dict, k0: float) -> float | None:
+        """A closed day's minimum humidity for FAO-56 eq. 62: measured, else eq. 63 from the vapour
+        pressure the day's ET0 used, else the no-humidity estimate (dew point Tmin - k0)."""
+        if entry.get("rh_min") is not None:
+            return float(entry["rh_min"])
+        t_max, t_min = entry.get("t_max"), entry.get("t_min")
+        if t_max is None:
+            return None
+        es_max = fao56.sat_vapour_pressure(float(t_max))
+        if es_max <= 0:
+            return None
+        if entry.get("ea") is not None:
+            return 100.0 * float(entry["ea"]) / es_max
+        if t_min is None:
+            return None
+        return 100.0 * fao56.sat_vapour_pressure(float(t_min) - k0) / es_max
+
+    def kc_climate(self) -> dict[str, Any] | None:
+        """The average wind at 2 m and minimum humidity of the last KC_CLIMATE_DAYS completed days that
+        have an ET0 record, for FAO-56 eq. 62; None with no such day, or for a zone under a roof.
+        {"u2", "rh_min", "days", "rh_source", "wind_source"}."""
+        if not self.is_outdoor:
+            return None
+        k0 = self._fao56_settings()["k0"]
+        today = dt_util.now().date()
+        wanted = {(today - timedelta(days=i + 1)).isoformat() for i in range(KC_CLIMATE_DAYS)}
+        u2s: list[float] = []
+        rhs: list[float] = []
+        measured = 0
+        wind_sources: set[str] = set()
+        for e in self.store.state.et0_day_history:
+            if not isinstance(e, dict) or e.get("date") not in wanted or e.get("et0") is None:
+                continue
+            rh = self._day_rh_min(e, k0)
+            if e.get("u2") is None or rh is None:
+                continue
+            u2s.append(float(e["u2"]))
+            rhs.append(rh)
+            measured += e.get("rh_min") is not None
+            wind_sources.add((e.get("sources") or {}).get("wind", "default"))
+        if not u2s:
+            return None
+        return {
+            "u2": sum(u2s) / len(u2s),
+            "rh_min": sum(rhs) / len(rhs),
+            "days": len(u2s),
+            "rh_source": "measured" if measured == len(u2s) else ("estimated" if measured == 0 else "mixed"),
+            "wind_source": wind_sources.pop() if len(wind_sources) == 1 else "mixed",
+        }
+
+    def _kc_base_info(self, day: date, climate: dict[str, Any] | None) -> dict[str, Any]:
+        state = self.store.state
+        fixed = {
+            "kc": self.number("crop_coefficient"), "kc_table": self.number("crop_coefficient"), "source": "fixed",
+            "stage": None, "day": None, "crop": None, "climate_adjustment": 0.0, "climate": None,
+        }
+        crop = self._crop_seasons.get(state.kc_crop) if state.kc_crop else None
+        if crop is None:
+            return fixed
+        strength = self.number("kc_curve_pct") / 100.0
+        adjustment = 0.0
+        used_climate = None
+        if state.kc_climate_adjust and crop.height_m is not None and climate is not None:
+            adjustment = fao56.kc_climate_adjustment(climate["u2"], climate["rh_min"], crop.height_m)
+            used_climate = climate
+        stages = fao56.adjusted_stages(crop.stages, adjustment) if crop.stages is not None else None
+        base = {"source": "curve", "crop": crop.crop_id, "climate_adjustment": round(adjustment, 3), "climate": used_climate}
+        if crop.season == fao56.SEASON_FLAT or stages is None:
+            table = crop.kc_flat
+            return {**base, "kc": max(table + adjustment, 0.1) * strength, "kc_table": table, "stage": fao56.STAGE_FLAT, "day": None}
+        if crop.season == fao56.SEASON_ANNUAL:
+            planted = state.planting_date_ts
+            if planted is None:
+                return {**fixed, "crop": crop.crop_id}  # Status says: set the planting date
+            start = dt_util.as_local(dt_util.utc_from_timestamp(planted)).date()
+            d = (day - start).days
+            if d < 0:
+                return {**fixed, "crop": crop.crop_id}  # planted in the future
+            table = fao56.kc_on_day(crop.stages, d)
+            return {**base, "kc": fao56.kc_on_day(stages, d) * strength, "kc_table": table, "stage": fao56.kc_stage(stages, d), "day": d}
+        green_up = self._green_up_doy()
+        if green_up is None:  # tropical: no dormant season
+            return {**base, "kc": stages.kc_mid * strength, "kc_table": crop.stages.kc_mid, "stage": fao56.STAGE_FLAT, "day": None}
+        d = fao56.perennial_day(day.timetuple().tm_yday, green_up)
+        kc, stage = fao56.perennial_kc(stages, d)
+        table, _stage = fao56.perennial_kc(crop.stages, d)
+        return {**base, "kc": kc * strength, "kc_table": table, "stage": stage, "day": d}
+
+    @property
+    def crop_seasons(self) -> dict[str, CropSeason]:
+        return self._crop_seasons
+
+    def kc_info(self, day: date, climate: Any = ...) -> dict[str, Any]:
+        """This zone's crop factor on `day`, and where it comes from: {"kc", "kc_table", "source",
+        "stage", "day", "crop", "climate_adjustment", "climate", "exposure", "exposure_factor",
+        "kc_before_exposure"}. source "fixed" = the Crop Factor slider (no curve picked, the crop is
+        unknown, or an annual crop with no planting date yet); "curve" = the crop's FAO-56 season.
+        The one place Kc is decided. Everything that scales the water, in order: Kc table -> climate
+        adjustment (eq. 62) -> Crop Curve Strength -> Sun Exposure -> (weekly target) -> growth ramp x
+        deficit mode x mulch (routine_target_scale) -> root-zone limit. Pass `climate` (kc_climate())
+        to share one reading over several days."""
+        if climate is ...:
+            climate = self.kc_climate()
+        info = self._kc_base_info(day, climate)
+        exposure = self.store.state.sun_exposure if self.is_outdoor else DEFAULT_SUN_EXPOSURE
+        factor = SUN_EXPOSURE_FACTORS.get(exposure, 1.0)
+        return {**info, "kc_before_exposure": info["kc"], "kc": info["kc"] * factor, "exposure": exposure, "exposure_factor": factor}
+
+    def kc_for(self, day: date, climate: Any = ...) -> float:
+        return self.kc_info(day, climate)["kc"]
+
+    def kc_curve_covers_growth(self) -> bool:
+        """An annual crop curve counted from a planting date models the young plant itself."""
+        crop = self._crop_seasons.get(self.store.state.kc_crop) if self.store.state.kc_crop else None
+        if crop is None or crop.season != fao56.SEASON_ANNUAL:
+            return False
+        return self.kc_info(dt_util.now().date(), None)["source"] == "curve"
+
+    def fao56_et0_entries(self, days: int) -> list[tuple[date, float]]:
+        """(date, ET0) of the last `days` completed days that have one, newest first."""
+        today = dt_util.now().date()
+        wanted = {(today - timedelta(days=i + 1)).isoformat() for i in range(max(days, 0))}
+        entries = []
+        for e in self.store.state.et0_day_history:
+            if isinstance(e, dict) and e.get("date") in wanted and e.get("et0") is not None:
+                try:
+                    entries.append((date.fromisoformat(e["date"]), float(e["et0"])))
+                except (TypeError, ValueError):
+                    continue
+        return entries
 
     def fao56_et0_days(self, days: int) -> list[float]:
         """FAO-56 ET0 of the last `days` completed days that have one (newest first)."""
-        today = dt_util.now().date()
-        wanted = {(today - timedelta(days=i + 1)).isoformat() for i in range(max(days, 0))}
-        return [
-            float(e["et0"])
-            for e in self.store.state.et0_day_history
-            if isinstance(e, dict) and e.get("date") in wanted and e.get("et0") is not None
-        ]
+        return [et0 for _day, et0 in self.fao56_et0_entries(days)]
+
+    def _fao56_kc_sum(self, entries: list[tuple[date, float]]) -> float:
+        """The sum of each day's ET0 x that day's Kc (Kc changes through a season), with one
+        reading of the climate for every day."""
+        climate = self.kc_climate()
+        return sum(et0 * self.kc_for(d, climate) for d, et0 in entries)
 
     def fao56_comparison(self) -> tuple[float, float] | None:
         """(this zone's weekly target now, FAO-56's weekly target from the average of the last
@@ -1864,7 +2018,7 @@ class ZoneFlowController:
         current = self.et_weekly_target_mm() if self.demand_model == DEMAND_MODEL_ET else None
         if current is None:
             current = self.tier_weekly_target_mm()
-        fao = sum(values) / len(values) * self.number("crop_coefficient") * 7.0
+        fao = self._fao56_kc_sum(self.fao56_et0_entries(FAO56_OFFER_DAYS)) / len(values) * 7.0
         return current * scale, fao * scale
 
     def fao56_latest_day(self) -> dict | None:
@@ -1885,10 +2039,10 @@ class ZoneFlowController:
         base_ts = dt_util.utcnow().timestamp() - self._rain_pool_elapsed()
         base_day = dt_util.as_local(dt_util.utc_from_timestamp(base_ts)).date()
         days = min(max((dt_util.now().date() - base_day).days, 1), ET0_HISTORY_DAYS)
-        values = self.fao56_et0_days(days) or self.fao56_et0_days(7)
-        if not values:
+        entries = self.fao56_et0_entries(days) or self.fao56_et0_entries(7)
+        if not entries:
             return None
-        return sum(values) / len(values) * self.number("crop_coefficient")
+        return self._fao56_kc_sum(entries) / len(entries)
 
     def tier_weekly_target_mm(self) -> float:
         """The original temperature-tier weekly target (before the growth
@@ -2278,6 +2432,8 @@ class ZoneFlowController:
             return 1.0
         if self.store.state.growth_stage_mode != GROWTH_STAGE_MODE_AUTO:
             return max(0.0, min(1.0, self.number("growth_stage_override_pct") / 100.0))
+        if self.kc_curve_covers_growth():
+            return 1.0  # the crop's own season curve already models the young plant
         planting_ts = self.store.state.planting_date_ts
         if planting_ts is None:
             return 1.0

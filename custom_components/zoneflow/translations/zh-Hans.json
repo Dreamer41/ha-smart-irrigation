@@ -1085,6 +1085,9 @@
       },
       "valve_timer_minutes": {
         "name": "阀门自带定时器"
+      },
+      "kc_curve_pct": {
+        "name": "作物曲线强度"
       }
     },
     "datetime": {
@@ -1186,6 +1189,9 @@
       },
       "self_tuning": {
         "name": "自动调整"
+      },
+      "kc_climate_adjust": {
+        "name": "作物系数随气候调整"
       }
     },
     "sensor": {
@@ -1295,6 +1301,9 @@
       },
       "longest_valve_open": {
         "name": "阀门最长开启时间"
+      },
+      "crop_factor": {
+        "name": "今日作物系数"
       }
     },
     "select": {
@@ -1447,6 +1456,74 @@
         "state": {
           "finish": "完成浇水",
           "stop": "达到湿润水平时停止"
+        }
+      },
+      "crop_curve": {
+        "name": "作物曲线",
+        "state": {
+          "fixed": "固定（作物系数滑块）",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "日照",
+        "state": {
+          "deep_shade": "全天阴凉",
+          "morning_sun": "上午有阳光",
+          "afternoon_sun": "下午有阳光",
+          "full_sun": "全日照",
+          "reflected_heat": "反射热（墙壁或铺装）"
         }
       }
     },

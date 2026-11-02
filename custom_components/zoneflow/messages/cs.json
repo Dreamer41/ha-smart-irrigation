@@ -367,7 +367,10 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "Křivka plodiny {crop} začíná datem výsadby. Nastavte ho; do té doby platí nastavení Koeficient plodiny."
+    }
   },
   "why": {
     "method": "Způsob zalévání: {method}.",
@@ -408,7 +411,30 @@
       "weather": "meteorologická služba",
       "default": "nastavení zóny",
       "estimated": "odhadnuto z teploty"
-    }
+    },
+    "crop_factor": "Koeficient plodiny dnes: {kc} ({detail}).",
+    "kc_fixed": "nastavení Koeficient plodiny",
+    "kc_curve": "sezóna {crop}, fáze {stage}",
+    "kc_stage": {
+      "initial": "počáteční",
+      "development": "vývoj",
+      "mid": "střed sezóny",
+      "late": "konec sezóny",
+      "after_season": "po sezóně",
+      "dormant": "klidová",
+      "flat": "celý rok"
+    },
+    "kc_adjust_up": "{adj} přidáno kvůli suchému, větrnému počasí",
+    "kc_adjust_down": "{adj} ubráno kvůli klidnému, vlhkému počasí",
+    "kc_exposure": "{pct} % podle oslunění ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "stín celý den",
+      "morning_sun": "ranní slunce",
+      "afternoon_sun": "odpolední slunce",
+      "full_sun": "plné slunce",
+      "reflected_heat": "odražené teplo"
+    },
+    "kc_needs_planting_date": "Nastavte datum výsadby, aby se řídilo křivkou sezóny {crop}; do té doby platí nastavení Koeficient plodiny."
   },
   "suggest": {
     "heading": "Pravděpodobné položky nalezené v systému Home Assistant:",

@@ -1085,6 +1085,9 @@
       },
       "valve_timer_minutes": {
         "name": "Eigener Timer des Ventils"
+      },
+      "kc_curve_pct": {
+        "name": "Stärke der Pflanzenkurve"
       }
     },
     "datetime": {
@@ -1186,6 +1189,9 @@
       },
       "self_tuning": {
         "name": "Selbstanpassung"
+      },
+      "kc_climate_adjust": {
+        "name": "Pflanzenfaktor folgt dem Klima"
       }
     },
     "sensor": {
@@ -1295,6 +1301,9 @@
       },
       "longest_valve_open": {
         "name": "Längste Ventil-Öffnungszeit"
+      },
+      "crop_factor": {
+        "name": "Pflanzenfaktor heute"
       }
     },
     "select": {
@@ -1447,6 +1456,74 @@
         "state": {
           "finish": "Gießen beenden",
           "stop": "Bei Nässegrenze stoppen"
+        }
+      },
+      "crop_curve": {
+        "name": "Pflanzenkurve",
+        "state": {
+          "fixed": "Fest (Regler Pflanzenfaktor)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Sonneneinstrahlung",
+        "state": {
+          "deep_shade": "Ganztägig Schatten",
+          "morning_sun": "Morgensonne",
+          "afternoon_sun": "Nachmittagssonne",
+          "full_sun": "Volle Sonne",
+          "reflected_heat": "Reflektierte Hitze (Wand oder Pflaster)"
         }
       }
     },

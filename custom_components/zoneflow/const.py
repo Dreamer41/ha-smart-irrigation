@@ -538,6 +538,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # surface). Only read while the zone's "Water Demand Model" select is
     # set to the ET curve -- see DEMAND_MODEL_* below.
     "crop_coefficient": ("Crop Factor (Kc)", 0.1, 1.5, 0.05, None),
+    # 1.8: tunes a crop curve (a picked crop, see kc_crop) up or down for the person's own plant.
+    "kc_curve_pct": ("Crop Curve Strength", 50.0, 150.0, 5.0, "%"),
     # How much to scale the routine weekly target up while this zone's
     # "Mulch" select is "Not Mulched" -- see CONF_MULCH_STATUS above. Has no
     # effect while the select is "Mulched". Default 20% is a starting point
@@ -643,6 +645,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # Middle of the usual 0.6-1.0 range for established trees and most
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
+    "kc_curve_pct": 100.0,
     "mulch_et_adjustment_pct": 20.0,
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
@@ -702,6 +705,30 @@ CLIMATE_PRESETS: dict[str, dict[str, float]] = {
 CLIMATE_OPTIONS = list(CLIMATE_PRESETS)
 DEFAULT_CLIMATE = "temperate"
 CLIMATE_NUMBER_KEYS = ("hot_temp_threshold", "cool_temp_threshold", "fallback_temp")
+
+# 1.8: when a perennial's season starts (FAO-56 Table 11 counts perennials from green-up / leaf-out), by
+# the zone's climate, as a day of the year in the northern hemisphere. Tropical: no dormant season, so
+# perennials use their mid-season Kc all year. In the southern hemisphere the date moves half a year.
+KC_GREEN_UP_DOY: dict[str, int | None] = {"tropical": None, "hot_dry": 60, "temperate": 91, "cool": 121}
+SOUTHERN_HEMISPHERE_SHIFT_DAYS = 182
+
+# 1.8: the crop factor follows the zone's own climate (FAO-56 eq. 62 and 65): the average wind and
+# minimum humidity of this many completed days.
+KC_CLIMATE_DAYS = 7
+
+# 1.8: how much sun and reflected heat the zone gets, as a factor on its crop factor (a landscape
+# microclimate factor). Wind is not here: it is measured, or set by Wind Exposure, and the crop
+# factor's climate adjustment (eq. 62) already uses it.
+SUN_EXPOSURE_FACTORS = {
+    "deep_shade": 0.60,  # shade all day
+    "morning_sun": 0.75,  # morning sun, afternoon shade
+    "afternoon_sun": 0.85,  # morning shade, afternoon sun
+    "full_sun": 1.00,  # open, sunny (what ET0 assumes)
+    "reflected_heat": 1.20,  # against a sunny wall, or surrounded by paving
+}
+CROP_CURVE_FIXED = "fixed"  # the Crop Curve select's "no curve: use the Crop Factor slider"
+SUN_EXPOSURE_OPTIONS = list(SUN_EXPOSURE_FACTORS)
+DEFAULT_SUN_EXPOSURE = "full_sun"
 
 # A soil-moisture reading not reported for this long counts as offline: many
 # Zigbee/BLE/cloud sensors keep showing their last value for hours or days
@@ -816,6 +843,17 @@ PLANT_PRESETS: dict[str, dict] = {
     },
 }
 PLANT_OPTIONS = [PLANT_CUSTOM, *PLANT_PRESETS]
+# 1.8: the crop curve (data/crop_kc.json) a new zone of each plant type starts on. A plant picked in the
+# lookup brings its own crop; the types without an entry here start on the fixed Crop Factor.
+KC_CROP_FOR_PLANT: dict[str, str] = {
+    "tomatoes": "tomato", "chilis": "pepper", "leafy_vegetables": "lettuce", "strawberries": "strawberry",
+    "herbs": "basil", "lawn": "turf_cool", "fruit_tree": "apple", "young_tree": "apple",
+}
+# The same, where the climate changes the crop (warm-season grass, evergreen fruit).
+KC_CROP_FOR_PLANT_CLIMATE: dict[tuple[str, str], str] = {
+    ("lawn", "tropical"): "turf_warm", ("lawn", "hot_dry"): "turf_warm",
+    ("fruit_tree", "tropical"): "avocado", ("young_tree", "tropical"): "avocado",
+}
 # Plants raised from seed in a nursery are ready to move to their bed about
 # this many days after planting (1.7.1). Types that are not raised that way
 # have no figure; a plant's own number (the person's) always wins.

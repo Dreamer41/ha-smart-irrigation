@@ -22,6 +22,12 @@ several variants (with or without ground cover, a range at the end of the season
 middle of a range. Which plants of the first database each crop stands for was added. The file is rebuilt
 with `scripts/build_crop_kc.py`.
 
+`crop_kc.json` also holds, for each crop, the stage lengths of **Table 11** (initial, development, mid and late
+season, in days), the rooting depth and the allowed depletion of **Table 22** and the typical crop height of
+**Table 12** of the same paper. Whether a crop is annual, perennial or flat is set in `scripts/build_crop_kc.py` (each row says where its
+season came from); a perennial's season starts at a green-up date that follows the climate chosen in the setup. The climate adjustment of the crop
+factor follows equations 62 and 65 of the paper.
+
 Where FAO-56 has no crop, `crop_kc.json` also holds values from these sources (each row says which):
 
 - **Mango and guava:** UF/IFAS Extension EDIS publication AE456, *Crop coefficients of some commercial crops

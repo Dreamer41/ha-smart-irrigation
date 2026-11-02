@@ -41,7 +41,7 @@ PRESET_BOOK_KEY = "zoneflow_preset_book"
 NAME_MAX_LENGTH = 40
 
 COPY_NUMBER_KEYS = (
-    "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm", "crop_coefficient",
+    "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm", "crop_coefficient", "kc_curve_pct",
     "hot_temp_threshold", "cool_temp_threshold", "frost_guard_temp",
     "rain_ignore_below_mm", "rain_eff_low", "rain_eff_mid", "rain_eff_high",
     "deep_soak_target_mm", "deep_soak_max_runtime_minutes", "deep_soak_drydown_days",
@@ -60,7 +60,7 @@ COPY_NUMBER_KEYS = (
 )
 # Kept in the zone's saved state.
 COPY_STATE_KEYS = (
-    "growth_stage_mode", "demand_model", "mulch_status", "notify_level", "fertilizing_interval_months",
+    "kc_crop", "kc_climate_adjust", "sun_exposure", "growth_stage_mode", "demand_model", "mulch_status", "notify_level", "fertilizing_interval_months",
     "soil_type_override", "drainage_override", "slope_override", "growth_ramp_profile_override",
     "self_tune_enabled",
 )

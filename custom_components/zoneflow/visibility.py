@@ -61,6 +61,11 @@ TEMPERATURE = {
     ("sensor", "reference_et0_3d"),
     ("number", "crop_coefficient"),
     ("select", "demand_model"),
+    ("select", "crop_curve"),
+    ("number", "kc_curve_pct"),
+    ("sensor", "crop_factor"),
+    ("switch", "kc_climate_adjust"),
+    ("select", "sun_exposure"),
 }
 FROST = {("number", "frost_guard_temp")}
 NOTIFY = {("select", "notifications"), ("select", "weekly_summary")}
@@ -190,8 +195,12 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden.add(("button", "resume_automatic"))
     else:
         hidden |= _greenhouse_hidden(controller)
+    if controller.store.state.kc_crop in controller.crop_seasons:
+        hidden.add(("number", "crop_coefficient"))  # the curve decides, not the slider
+    else:
+        hidden |= {("number", "kc_curve_pct"), ("switch", "kc_climate_adjust")}
     profile = controller.growth_ramp_profile
-    if profile == GROWTH_RAMP_OFF:
+    if profile == GROWTH_RAMP_OFF or controller.kc_curve_covers_growth():
         hidden |= GROWTH_RAMP | CUSTOM_RAMP
     elif profile != GROWTH_RAMP_CUSTOM:
         hidden |= CUSTOM_RAMP

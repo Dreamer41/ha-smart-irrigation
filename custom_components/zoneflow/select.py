@@ -72,6 +72,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import greenhouse_logic, location, visibility
 from .entity_cleanup import remove_entities
 from .const import (
+    CROP_CURVE_FIXED,
     DEMAND_MODEL_OPTIONS,
     DOMAIN,
     FERTILIZING_INTERVAL_OPTIONS,
@@ -89,6 +90,7 @@ from .const import (
     SOIL_TYPE_OPTIONS,
     DRAINAGE_OPTIONS,
     SLOPE_OPTIONS,
+    SUN_EXPOSURE_OPTIONS,
 )
 
 
@@ -96,6 +98,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     controller = hass.data[DOMAIN][entry.entry_id]
     climate: list = []
     if controller.is_outdoor:
+        climate.append(ZoneFlowSunExposureSelect(entry, controller))
         remove_entities(hass, entry, "select", ["misting_trigger", "ventilation_failsafe", "heater_failsafe"])
     else:
         climate = [
@@ -115,6 +118,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowHealthSelect(entry, controller),
             ZoneFlowFertilizingIntervalSelect(entry, controller),
             ZoneFlowDemandModelSelect(entry, controller),
+            ZoneFlowCropCurveSelect(entry, controller),
             ZoneFlowMulchSelect(entry, controller),
             ZoneFlowSoilWetActionSelect(entry, controller),
             ZoneFlowNotificationsSelect(entry, controller),
@@ -393,6 +397,69 @@ class ZoneFlowDemandModelSelect(_Base):
         self._controller.store.state.demand_model = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
+
+
+class ZoneFlowCropCurveSelect(_Base):
+    """"Crop Curve" (1.8): follow a crop's FAO-56 season (data/crop_kc.json) instead of the fixed
+    Crop Factor slider. "fixed" (stored as "") keeps the slider. Read by controller.kc_info() each
+    cycle, so a change applies from the next one with no reload."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:sprout-outline"
+    _attr_translation_key = "crop_curve"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._entry = entry
+        self._attr_unique_id = f"{entry.entry_id}_crop_curve"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
+    @property
+    def options(self) -> list[str]:
+        return [CROP_CURVE_FIXED, *sorted(self._controller.crop_seasons)]
+
+    @property
+    def current_option(self) -> str:
+        crop = self._controller.store.state.kc_crop
+        return crop if crop in self._controller.crop_seasons else CROP_CURVE_FIXED
+
+    async def async_select_option(self, option: str) -> None:
+        if option != CROP_CURVE_FIXED and option not in self._controller.crop_seasons:
+            return
+        self._controller.store.state.kc_crop = "" if option == CROP_CURVE_FIXED else option
+        await self._controller.store.async_save()
+        await visibility.async_apply(self.hass, self._entry, self._controller)
+        self._controller._notify_status()
+
+
+class ZoneFlowSunExposureSelect(_Base):
+    """"Sun Exposure" (1.8): how much sun and reflected heat the spot gets, a factor on the crop
+    factor (const.py's SUN_EXPOSURE_FACTORS). Outdoor zones only."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:weather-sunny"
+    _attr_options = SUN_EXPOSURE_OPTIONS
+    _attr_translation_key = "sun_exposure"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_sun_exposure"
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        self.async_on_remove(self._controller.add_status_listener(self.async_write_ha_state))
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.store.state.sun_exposure
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.sun_exposure = option
+        await self._controller.store.async_save()
+        self._controller._notify_status()
 
 
 class ZoneFlowSoilWetActionSelect(_Base):

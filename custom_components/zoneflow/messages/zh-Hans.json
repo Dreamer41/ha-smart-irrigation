@@ -367,7 +367,10 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "{crop}的作物曲线从种植日期开始。请设置；在此之前使用“作物系数”设置。"
+    }
   },
   "why": {
     "method": "浇水方式：{method}。",
@@ -408,7 +411,30 @@
       "weather": "天气服务",
       "default": "分区的设置",
       "estimated": "根据温度估算"
-    }
+    },
+    "crop_factor": "今日作物系数：{kc}（{detail}）。",
+    "kc_fixed": "“作物系数”设置",
+    "kc_curve": "{crop}的生长季，{stage}阶段",
+    "kc_stage": {
+      "initial": "初期",
+      "development": "发育期",
+      "mid": "中期",
+      "late": "后期",
+      "after_season": "季后",
+      "dormant": "休眠期",
+      "flat": "全年"
+    },
+    "kc_adjust_up": "因干燥多风的天气增加 {adj}",
+    "kc_adjust_down": "因平静湿润的天气减少 {adj}",
+    "kc_exposure": "因日照（{exposure}）调整为 {pct} %",
+    "kc_exposure_name": {
+      "deep_shade": "全天阴凉",
+      "morning_sun": "上午有阳光",
+      "afternoon_sun": "下午有阳光",
+      "full_sun": "全日照",
+      "reflected_heat": "反射热"
+    },
+    "kc_needs_planting_date": "请设置种植日期，以遵循{crop}的生长季曲线；在此之前使用“作物系数”设置。"
   },
   "suggest": {
     "heading": "在您的 Home Assistant 中找到的匹配项：",

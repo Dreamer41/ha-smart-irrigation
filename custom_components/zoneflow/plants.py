@@ -45,6 +45,7 @@ PLANT_NUMBER_KEYS = (
     "target_weekly_hot_mm",
     "target_weekly_cool_mm",
     "crop_coefficient",
+    "kc_curve_pct",
     "deep_soak_target_mm",
     "deep_soak_interval_days",
     "deep_soak_drydown_days",
@@ -62,6 +63,7 @@ PLANT_NUMBER_KEYS = (
 WATERING_STATE_KEYS = ("demand_model", "deficit_enabled", "deficit_until_ts")
 # Plant settings kept in the zone's saved state (state_store.IrrigationState).
 PLANT_STATE_KEYS = (
+    "kc_crop",
     "growth_stage_mode",
     "demand_model",
     "deficit_enabled",

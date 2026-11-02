@@ -60,6 +60,8 @@ from .const import (
     FLOW_MEASURE_MINUTES,
     PLANT_CUSTOM,
     PLANT_OPTIONS,
+    KC_CROP_FOR_PLANT,
+    KC_CROP_FOR_PLANT_CLIMATE,
     PLANT_PRESETS,
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
@@ -709,6 +711,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._plant_search = ""  # what was typed to look the plant up
         self._quick = False
         self._lookup_numbers: dict[str, float] = {}  # the weekly targets picked from the lookup
+        self._lookup_crop: str | None = None  # the crop curve of the picked plant ("" = it has none)
         self._lookup_items: list[dict[str, Any]] = []
         self._lookup_next = None  # the step to go on with after the lookup
 
@@ -993,6 +996,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._plant == PLANT_CUSTOM and item.get("preset") in PLANT_PRESETS:
             self._plant = item["preset"]
         self._lookup_numbers = self._lookup_starting_numbers(item)
+        self._lookup_crop = item.get("crop_id") or ""
 
     def _lookup_starting_numbers(self, item: dict[str, Any]) -> dict[str, float]:
         """The starting values a picked plant gives: its weekly water (the hot and cool weeks in the
@@ -1013,6 +1017,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         going on (nothing is shown when the field was left empty)."""
         self._plant_search = (user_input.get(CONF_PLANT_SEARCH) or "").strip()
         self._lookup_numbers = {}
+        self._lookup_crop = None
         if not self._plant_search:
             return await next_step()
         data = await plant_water.async_get_data(self.hass)
@@ -1171,6 +1176,12 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders={"suggestions": suggest.describe(self.hass, found) or messages.text(self.hass, "setup.nothing_found")},
         )
 
+    def _start_kc_crop(self) -> str:
+        """The crop curve a new zone starts on: the picked plant's crop, else the plant type's (1.8)."""
+        if self._lookup_crop is not None:
+            return self._lookup_crop
+        return KC_CROP_FOR_PLANT_CLIMATE.get((self._plant, self._climate)) or KC_CROP_FOR_PLANT.get(self._plant, "")
+
     def _create_outdoor_entry(self, metric: dict[str, float], extra_numbers: dict[str, float] | None = None):
         """The zone, once its settings are known (`metric`: the hot / cool /
         fallback temperatures in degC; `extra_numbers`: more starting values,
@@ -1186,8 +1197,9 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 **self._lookup_numbers, **metric, **(extra_numbers or {}),
             },
         }
-        if self._bundle.get("state"):
-            data[CONF_START_STATE] = dict(self._bundle["state"])
+        start_state = {**({"kc_crop": crop} if (crop := self._start_kc_crop()) else {}), **(self._bundle.get("state") or {})}
+        if start_state:
+            data[CONF_START_STATE] = start_state
         if self._zone_type != ZONE_TYPE_OUTDOOR:
             data[CONF_ZONE_TYPE] = self._zone_type
             data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}

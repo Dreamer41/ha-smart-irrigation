@@ -19,7 +19,7 @@ estimate.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 SIGMA_MJ = 4.903e-9  # Stefan-Boltzmann constant, MJ K-4 m-2 day-1
 ALBEDO = 0.23  # the hypothetical grass reference crop
@@ -218,3 +218,57 @@ def kc_on_day(stages: KcStages, days_since_planting: float) -> float:
     if day <= s.l_late:
         return s.kc_mid + (s.kc_end - s.kc_mid) * (day / s.l_late if s.l_late > 0 else 1.0)
     return s.kc_end
+
+
+SEASON_ANNUAL = "annual"
+SEASON_PERENNIAL = "perennial"
+SEASON_FLAT = "flat"
+STAGE_INITIAL, STAGE_DEVELOPMENT, STAGE_MID, STAGE_LATE = "initial", "development", "mid", "late"
+STAGE_AFTER, STAGE_DORMANT, STAGE_FLAT = "after_season", "dormant", "flat"
+
+
+def season_length(s: KcStages) -> float:
+    return s.l_ini + s.l_dev + s.l_mid + s.l_late
+
+
+def kc_stage(s: KcStages, day: float) -> str:
+    """Which stage `day` (days since the season began) falls in."""
+    for name, length in ((STAGE_INITIAL, s.l_ini), (STAGE_DEVELOPMENT, s.l_dev), (STAGE_MID, s.l_mid), (STAGE_LATE, s.l_late)):
+        if day <= length:
+            return name
+        day -= length
+    return STAGE_AFTER
+
+
+def perennial_day(day_of_year: int, start_doy: int) -> int:
+    """Days since this cycle's green-up (0..364); a date before green-up belongs to last year's cycle."""
+    return (day_of_year - start_doy) % 365
+
+
+def perennial_kc(s: KcStages, day_in_cycle: float) -> tuple[float, str]:
+    """A perennial's Kc: the curve during the season, Kc ini (leafless or slow growth) from the
+    end of the season until the next green-up."""
+    if day_in_cycle > season_length(s):
+        return s.kc_ini, STAGE_DORMANT
+    return kc_on_day(s, day_in_cycle), kc_stage(s, day_in_cycle)
+
+
+KC_CLIMATE_REF_U2 = 2.0
+KC_CLIMATE_REF_RHMIN = 45.0
+KC_END_ADJUST_MIN = 0.45
+
+
+def kc_climate_adjustment(u2: float, rh_min: float, height_m: float) -> float:
+    """What FAO-56 eq. 62 / 65 add to a Table 12 Kc mid or Kc end for this climate (may be negative).
+    Inputs are limited to the ranges the equations were fitted for."""
+    u2 = min(max(u2, 1.0), 6.0)
+    rh_min = min(max(rh_min, 20.0), 80.0)
+    h = min(max(height_m, 0.1), 10.0)
+    return (0.04 * (u2 - KC_CLIMATE_REF_U2) - 0.004 * (rh_min - KC_CLIMATE_REF_RHMIN)) * (h / 3.0) ** 0.3
+
+
+def adjusted_stages(s: KcStages, adjustment: float) -> KcStages:
+    """The crop's stages with Kc mid, and Kc end when it is at least 0.45, adjusted (eq. 62/65). The
+    development and late stages then draw their straight lines to the adjusted values, as FAO-56 does."""
+    kc_end = s.kc_end + adjustment if s.kc_end >= KC_END_ADJUST_MIN else s.kc_end
+    return replace(s, kc_mid=max(s.kc_mid + adjustment, 0.1), kc_end=max(kc_end, 0.1))

@@ -367,7 +367,10 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "Afgrødekurven for {crop} starter fra plantedatoen. Angiv den; indtil da bruges indstillingen Afgrødefaktor."
+    }
   },
   "why": {
     "method": "Vandingsmetode: {method}.",
@@ -408,7 +411,30 @@
       "weather": "vejrtjenesten",
       "default": "zonens indstilling",
       "estimated": "skønnet ud fra temperaturen"
-    }
+    },
+    "crop_factor": "Afgrødefaktor i dag: {kc} ({detail}).",
+    "kc_fixed": "indstillingen Afgrødefaktor",
+    "kc_curve": "{crop}-sæsonen, {stage}-fasen",
+    "kc_stage": {
+      "initial": "begyndelse",
+      "development": "udvikling",
+      "mid": "midt i sæsonen",
+      "late": "sen sæson",
+      "after_season": "efter sæsonen",
+      "dormant": "hvilende",
+      "flat": "hele året"
+    },
+    "kc_adjust_up": "{adj} lagt til for tørt, blæsende vejr",
+    "kc_adjust_down": "{adj} trukket fra for roligt, fugtigt vejr",
+    "kc_exposure": "{pct} % for solpåvirkningen ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "skygge hele dagen",
+      "morning_sun": "morgensol",
+      "afternoon_sun": "eftermiddagssol",
+      "full_sun": "fuld sol",
+      "reflected_heat": "reflekteret varme"
+    },
+    "kc_needs_planting_date": "Angiv plantedatoen for at følge sæsonkurven for {crop}; indtil da bruges indstillingen Afgrødefaktor."
   },
   "suggest": {
     "heading": "Sandsynlige fundet i din Home Assistant:",

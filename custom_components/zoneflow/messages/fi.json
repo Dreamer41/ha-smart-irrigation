@@ -367,7 +367,10 @@
     },
     "backup_timer": "Aseta venttiilin oma automaattisammutusajastin vähintään {minutes} minuuttiin. Se on varmistus, jos Home Assistant pysähtyy venttiilin ollessa auki. Venttiili on pisimmillään auki {longest} min kerrallaan; lyhyempi ajastin katkaisee kastelun kesken. Kirjaa asettamasi aika kohtaan Venttiilin oma ajastin, niin ZoneFlow varoittaa, jos siitä tulee liian lyhyt.",
     "backup_timer_short": "Venttiilin oma ajastin on {timer} min, mutta venttiili voi olla auki {longest} min kerrallaan, joten ajastin katkaisee kastelun kesken. Aseta se vähintään {minutes} minuuttiin.",
-    "backup_timer_ok": "Venttiilin oma ajastin ({timer} min) riittää pisimmälle ajalle, jonka venttiili on auki ({longest} min)."
+    "backup_timer_ok": "Venttiilin oma ajastin ({timer} min) riittää pisimmälle ajalle, jonka venttiili on auki ({longest} min).",
+    "kc": {
+      "planting_date": "Kasvikäyrä ({crop}) alkaa istutuspäivästä. Aseta se; siihen asti käytetään Kasvikerroin-asetusta."
+    }
   },
   "why": {
     "method": "Kastelutapa: {method}.",
@@ -408,7 +411,30 @@
       "weather": "sääpalvelu",
       "default": "vyöhykkeen asetus",
       "estimated": "arvioitu lämpötilasta"
-    }
+    },
+    "crop_factor": "Kasvikerroin tänään: {kc} ({detail}).",
+    "kc_fixed": "Kasvikerroin-asetus",
+    "kc_curve": "{crop}-kausi, {stage}-vaihe",
+    "kc_stage": {
+      "initial": "alku",
+      "development": "kehitys",
+      "mid": "kauden keskivaihe",
+      "late": "kauden loppu",
+      "after_season": "kauden jälkeen",
+      "dormant": "lepotila",
+      "flat": "ympäri vuoden"
+    },
+    "kc_adjust_up": "{adj} lisätty kuivan ja tuulisen sään vuoksi",
+    "kc_adjust_down": "{adj} vähennetty tyynen ja kostean sään vuoksi",
+    "kc_exposure": "{pct} % auringonvalon vuoksi ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "varjossa koko päivän",
+      "morning_sun": "aamuaurinko",
+      "afternoon_sun": "iltapäiväaurinko",
+      "full_sun": "täysi aurinko",
+      "reflected_heat": "heijastuva lämpö"
+    },
+    "kc_needs_planting_date": "Aseta istutuspäivä, jotta {crop}-kasvukauden käyrää noudatetaan; siihen asti käytetään Kasvikerroin-asetusta."
   },
   "suggest": {
     "heading": "Todennäköisimmät löydökset Home Assistantissasi:",
