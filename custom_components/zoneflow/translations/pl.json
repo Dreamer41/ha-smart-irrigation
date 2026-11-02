@@ -60,7 +60,8 @@
           "climate_dryness": "Klimat (bez czujnika wilgotności)",
           "coastal": "Nad morzem (bez czujnika słońca)",
           "wind_sensor_height_m": "Wysokość czujnika wiatru",
-          "master_valve_entity": "Zawór główny (opcjonalnie)"
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Używane, gdy nie ma odczytu wilgotności: wilgotny lub suchy (obszary suche i półsuche).",
           "coastal": "Używane, gdy nie ma odczytu słońca: blisko wybrzeża nasłonecznienie szacuje się nieco wyżej.",
           "wind_sensor_height_m": "Na jakiej wysokości jest czujnik wiatru. Domowe stacje pogodowe stoją zwykle na wysokości około 2 m.",
-          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim."
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
           "routine_sun_mode": "Wyzwalacz rutynowy",
           "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)",
-          "master_valve_entity": "Zawór główny (opcjonalnie)"
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "pump_power_entity": "Czujnik poboru mocy (W) pompy, np. z inteligentnego gniazdka. Podczas każdego podawania wody ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega, jeśli tak nie jest. Pozostaw puste, jeśli nie posiadasz.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
-          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim."
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Klimat (bez czujnika wilgotności)",
           "coastal": "Nad morzem (bez czujnika słońca)",
           "wind_sensor_height_m": "Wysokość czujnika wiatru",
-          "master_valve_entity": "Zawór główny (opcjonalnie)"
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Używane, gdy nie ma odczytu wilgotności: wilgotny lub suchy (obszary suche i półsuche).",
           "coastal": "Używane, gdy nie ma odczytu słońca: blisko wybrzeża nasłonecznienie szacuje się nieco wyżej.",
           "wind_sensor_height_m": "Na jakiej wysokości jest czujnik wiatru. Domowe stacje pogodowe stoją zwykle na wysokości około 2 m.",
-          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim."
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
           "routine_sun_mode": "Wyzwalacz rutynowy",
           "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)",
-          "master_valve_entity": "Zawór główny (opcjonalnie)"
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "pump_power_entity": "Czujnik poboru mocy (W) pompy, np. z inteligentnego gniazdka. Podczas każdego podawania wody ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega, jeśli tak nie jest. Pozostaw puste, jeśli nie posiadasz.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
-          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim."
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "wu_key": {

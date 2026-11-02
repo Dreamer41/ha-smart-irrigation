@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} 打开的时间过长。",
       "flow": "所有区域阀都已关闭，但流量计仍在计数。",
       "pump_power": "所有区域阀都已关闭，但水泵仍在耗电。"
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 总阀测试失败",
+      "message": "{valve} 的月度测试发现，关闭时仍有水流或水泵仍在运行。若区域阀卡住，它可能无法截断水流：请检查。"
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "总阀 {valve} 已出于安全关闭。{reason}修复后请按下 Reset Lock。",
       "fail": "总阀 {valve} 不可用。",
-      "ok": "总阀 {valve} 有响应。"
+      "ok": "总阀 {valve} 有响应。",
+      "test_failed": "总阀 {valve} 未通过 {when} 的月度测试：关闭时仍有水流或水泵仍在运行。",
+      "test_ok": "总阀已通过 {when} 的月度测试。",
+      "test_pending": "总阀每月在一次常规浇水结束时测试一次。",
+      "test_none": "添加流量计或水泵功率传感器，即可每月测试一次总阀。"
     }
   },
   "why": {

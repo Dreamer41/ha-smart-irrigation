@@ -49,7 +49,7 @@ async def _master_zone(hass, monkeypatch, tmp_path, **extra):
 
 @pytest.mark.asyncio
 async def test_the_master_opens_before_the_zone_valve_and_closes_after_it(hass, fake_valve_services, monkeypatch, tmp_path):
-    controller, clock, events = await _master_zone(hass, monkeypatch, tmp_path)
+    controller, clock, events = await _master_zone(hass, monkeypatch, tmp_path, **{CONF_PUMP_POWER_ENTITY: None})  # no self-test
     seen = _sequence(hass)
     await controller.run_routine_irrigation()
     await hass.async_block_till_done()
@@ -234,3 +234,92 @@ async def test_the_setup_refuses_a_master_that_is_a_zone_valve(hass):
     assert _duplicate_errors(hass, {CONF_VALVE_ENTITY: VALVE, CONF_MASTER_VALVE_ENTITY: VALVE_2})[
         CONF_MASTER_VALVE_ENTITY
     ] == "master_is_zone_valve"
+
+
+# --- normally open ------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_a_normally_open_relay_is_switched_on_to_close_it(hass, fake_valve_services, monkeypatch, tmp_path):
+    from custom_components.zoneflow.const import CONF_MASTER_VALVE_NORMALLY_OPEN
+
+    controller, clock, events = await _master_zone(
+        hass, monkeypatch, tmp_path, **{CONF_MASTER_VALVE_NORMALLY_OPEN: True, CONF_PUMP_POWER_ENTITY: None}
+    )
+    hass.states.async_set(MASTER, "on")  # relay on: closed
+    seen = _sequence(hass)
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert "Routine Irrigation Completed" in events
+    assert seen[0] == (MASTER, "off") and seen[-1] == (MASTER, "on")
+    master = master_valve.get(hass, MASTER)
+    assert master.normally_open and master.is_closed(hass.states.get(MASTER))
+
+
+def test_a_valve_entity_is_never_turned_round(hass):
+    assert master_valve.MasterValve(hass, "valve.main_line").normally_open is False
+
+
+# --- monthly self-test ----------------------------------------------------------------------
+
+
+async def _test_zone(hass, monkeypatch, tmp_path, **extra):
+    controller, clock, events = await _master_zone(hass, monkeypatch, tmp_path, **extra)
+    return controller, events
+
+
+@pytest.mark.asyncio
+async def test_the_self_test_passes_when_the_master_stops_the_water(hass, fake_valve_services, monkeypatch, tmp_path):
+    hass.states.async_set(METER, "100", {"unit_of_measurement": "L"})
+    controller, events = await _test_zone(hass, monkeypatch, tmp_path, **{CONF_FLOW_METER_ENTITY: METER, CONF_PUMP_POWER_ENTITY: None})
+    seen = _sequence(hass)
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert "Master Valve Test Passed" in events and "Routine Irrigation Completed" in events
+    assert controller.store.state.master_test_ok is True and controller.store.state.master_test_ts is not None
+    # The test: master closed, then the zone valve opened and closed again with it shut.
+    tail = seen[-3:]
+    assert tail == [(VALVE, "on"), (VALVE, "off"), (MASTER, "off")] or (MASTER, "off") in seen[-4:]
+    assert hass.states.get(VALVE).state == "off" and hass.states.get(MASTER).state == "off"
+    # Not again until a month has passed.
+    events.clear()
+    _history(controller, last_routine_days_ago=4, peaks=(30.5, 30.5, 30.5))
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert not any(e.startswith("Master Valve Test") for e in events)
+
+
+@pytest.mark.asyncio
+async def test_the_self_test_fails_when_the_pump_keeps_running(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, events = await _test_zone(hass, monkeypatch, tmp_path)  # pump power reads 999 W throughout
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert "Master Valve Test Failed" in events
+    assert controller.store.state.master_test_ok is False
+    assert hass.states.get(VALVE).state == "off" and hass.states.get(MASTER).state == "off"
+    assert not controller.store.state.lock_on
+
+
+@pytest.mark.asyncio
+async def test_the_zone_valve_is_closed_even_when_the_self_test_breaks(hass, fake_valve_services, monkeypatch, tmp_path):
+    hass.states.async_set(METER, "100", {"unit_of_measurement": "L"})
+    controller, events = await _test_zone(hass, monkeypatch, tmp_path, **{CONF_FLOW_METER_ENTITY: METER, CONF_PUMP_POWER_ENTITY: None})
+
+    def broken(*_args):
+        raise RuntimeError("meter exploded")
+
+    monkeypatch.setattr(master_valve, "test_passed", broken)
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "off" and hass.states.get(MASTER).state == "off"
+    assert controller.store.state.master_test_ts is None  # no verdict recorded
+    assert controller.store.state.master_valve_latch is None
+
+
+@pytest.mark.asyncio
+async def test_no_self_test_without_a_meter_or_pump_power(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, events = await _test_zone(hass, monkeypatch, tmp_path, **{CONF_PUMP_POWER_ENTITY: None})
+    await controller.run_routine_irrigation()
+    await hass.async_block_till_done()
+    assert not any(e.startswith("Master Valve Test") for e in events)
+    assert controller.store.state.master_test_ts is None

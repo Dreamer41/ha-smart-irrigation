@@ -9,6 +9,14 @@ It also closes, and stays closed until Reset Lock is pressed on one of its zones
 
 Shared by every zone that names the same entity (hass.data[MASTER_VALVES_KEY]). The latch is kept in
 each of its zones' saved state, so it survives a restart.
+
+Normally closed (the default and the recommendation: a power cut shuts it) or normally open. A
+normally-open valve on a relay (switch) is closed by switching the relay ON, so the commands and the
+reading are turned round; a `valve` entity already reports open and closed and is never turned round.
+
+Monthly self-test (zones with a flow meter or a pump power sensor): at the end of a routine watering
+that is the last run on the master, ZoneFlow closes the master, opens the zone valve for half a minute
+and checks that no water flows and the pump stops. The zone valve is closed again whatever happens.
 """
 from __future__ import annotations
 
@@ -34,6 +42,12 @@ LEAK_LITRES = 2.0
 # A meter reporting a rate (L/min, gal/min, m³/h ...): above this is flowing.
 LEAK_RATE = 0.5
 OPEN_CONFIRM_SECONDS = 30.0
+# The self-test: how often, how long the pipe after the master may drain (and a pump take to build
+# pressure and stop), how long no water may then be counted, and how much counts as water.
+TEST_INTERVAL_DAYS = 30
+TEST_SETTLE_SECONDS = 10.0
+TEST_MEASURE_SECONDS = 20.0
+TEST_LEAK_LITRES = 0.5
 
 REASON_VALVE_NOT_CLOSED = "valve_not_closed"
 REASON_VALVE_STUCK = "valve_stuck"
@@ -72,6 +86,59 @@ class MasterValve:
         return self.hass.data.get(DOMAIN, {}).get(entry_id)
 
     @property
+    def normally_open(self) -> bool:
+        """A relay-driven valve that is open without power (only a switch can be turned round)."""
+        if zone_valve.domain_of(self.entity_id) == "valve":
+            return False
+        return any(zone.master_valve_normally_open for zone in self.zones())
+
+    def is_open(self, state) -> bool:
+        if state is None or zone_valve.is_offline(state):
+            return False
+        if self.normally_open and state.state in ("on", "off"):
+            return state.state == "off"
+        return zone_valve.is_open(state)
+
+    def is_closed(self, state) -> bool:
+        if state is None or zone_valve.is_offline(state):
+            return False
+        if self.normally_open and state.state in ("on", "off"):
+            return state.state == "on"
+        return zone_valve.is_closed(state)
+
+    async def _send_open(self) -> None:
+        if self.normally_open:
+            await zone_valve.async_close(self.hass, self.entity_id)  # relay off: the valve opens
+        else:
+            await zone_valve.async_open(self.hass, self.entity_id)
+
+    async def _send_close(self) -> None:
+        if self.normally_open:
+            await zone_valve.async_open(self.hass, self.entity_id)  # relay on: the valve closes
+        else:
+            await zone_valve.async_close(self.hass, self.entity_id)
+
+    @property
+    def last_test(self) -> tuple[float | None, bool | None]:
+        """(when, passed) of the latest self-test on any of its zones."""
+        best: tuple[float | None, bool | None] = (None, None)
+        for zone in self.zones():
+            ts = zone.store.state.master_test_ts
+            if ts is not None and (best[0] is None or ts > best[0]):
+                best = (ts, zone.store.state.master_test_ok)
+        return best
+
+    def test_due(self, now_ts: float) -> bool:
+        ts, _passed = self.last_test
+        return ts is None or now_ts - ts >= TEST_INTERVAL_DAYS * 86400
+
+    async def async_record_test(self, passed: bool, ts: float) -> None:
+        for zone in self.zones():
+            zone.store.state.master_test_ts = ts
+            zone.store.state.master_test_ok = passed
+            await zone.store.async_save()
+
+    @property
     def latched(self) -> str | None:
         """Why it was closed for safety, or None."""
         for zone in self.zones():
@@ -88,8 +155,8 @@ class MasterValve:
         first = not self.holders
         self.holders.add(controller.entry.entry_id)
         state = self.hass.states.get(self.entity_id)
-        if first or state is None or not zone_valve.is_open(state):
-            await zone_valve.async_open(self.hass, self.entity_id)
+        if first or not self.is_open(state):
+            await self._send_open()
             if not await self._confirmed(open_=True, seconds=OPEN_CONFIRM_SECONDS):
                 _LOGGER.warning("ZoneFlow: master valve %s did not report open", self.entity_id)
 
@@ -156,7 +223,7 @@ class MasterValve:
         if self.holders:
             return
         state = self.hass.states.get(self.entity_id)
-        if state is not None and not zone_valve.is_closed(state) and state.state != "unavailable":
+        if state is not None and not self.is_closed(state) and not zone_valve.is_offline(state):
             await self._close()
 
     # -- the check while every zone valve is closed ------------------------------
@@ -198,9 +265,14 @@ class MasterValve:
             self._schedule_check(CHECK_SECONDS)
 
     # -- the valve itself ----------------------------------------------------------
+    async def async_close_for_test(self) -> bool:
+        """The self-test: close it now and wait for it to report closed."""
+        await self._close()
+        return await self._confirmed(open_=False, seconds=OPEN_CONFIRM_SECONDS)
+
     async def _close(self) -> None:
         try:
-            await zone_valve.async_close(self.hass, self.entity_id)
+            await self._send_close()
         except Exception:  # noqa: BLE001 - a device may raise anything; the alert still goes out
             _LOGGER.exception("ZoneFlow: could not close master valve %s", self.entity_id)
 
@@ -208,12 +280,58 @@ class MasterValve:
         waited = 0.0
         while True:
             state = self.hass.states.get(self.entity_id)
-            if state is not None and (zone_valve.is_open(state) if open_ else zone_valve.is_closed(state)):
+            if self.is_open(state) if open_ else self.is_closed(state):
                 return True
             if waited >= seconds:
                 return False
             await asyncio.sleep(0.5)
             waited += 0.5
+
+
+def test_reading(zone: Any) -> float | None:
+    """The zone's flow meter in litres (a total meter) at the start of the self-test, or None."""
+    reading = _meter(zone)
+    if reading is None or reading[1]:
+        return None
+    return reading[0]
+
+
+def test_passed(zone: Any, start_litres: float | None) -> bool | None:
+    """The self-test's verdict with the master closed and the zone valve open: no water counted since
+    `start_litres` and the pump stopped. None when nothing can tell (no reading at all)."""
+    verdicts: list[bool] = []
+    pump = zone.pump_power_entity
+    minimum = zone.number("pump_min_watts")
+    if pump and minimum > 0:
+        state = zone.hass.states.get(pump)
+        try:
+            verdicts.append(float(state.state) < minimum)
+        except (TypeError, ValueError, AttributeError):
+            pass
+    reading = _meter(zone)
+    if reading is not None:
+        value, is_rate = reading
+        if is_rate:
+            verdicts.append(value <= LEAK_RATE)
+        elif start_litres is not None:
+            verdicts.append(value - start_litres <= TEST_LEAK_LITRES)
+    return all(verdicts) if verdicts else None
+
+
+def _meter(zone: Any) -> tuple[float, bool] | None:
+    """(the flow meter's value in litres or its rate, whether it is a rate meter), or None."""
+    meter = zone.flow_meter_entity
+    state = zone.hass.states.get(meter) if meter else None
+    try:
+        value = float(state.state) if state else None
+    except (TypeError, ValueError):
+        value = None
+    if value is None:
+        return None
+    unit = state.attributes.get("unit_of_measurement") or ""
+    if "/" in unit:
+        return value, True
+    return zone.meter_litres(value, unit), False
 
 
 def flow_while_closed(zone: Any, baseline: dict[str, float | None], first: bool) -> str | None:

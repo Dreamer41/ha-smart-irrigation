@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} stond veel te lang open.",
       "flow": "De watermeter bleef tellen terwijl alle zonekleppen dicht waren.",
       "pump_power": "De pomp bleef stroom trekken terwijl alle zonekleppen dicht waren."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test hoofdklep mislukt",
+      "message": "Bij de maandelijkse test van {valve} bleef er water stromen of bleef de pomp draaien terwijl hij dicht was. Hij houdt het water misschien niet tegen als een zoneklep blijft hangen: controleer hem."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "De hoofdklep {valve} is voor de veiligheid dicht. {reason} Druk op Reset Lock zodra het verholpen is.",
       "fail": "De hoofdklep {valve} is niet beschikbaar.",
-      "ok": "De hoofdklep {valve} reageert."
+      "ok": "De hoofdklep {valve} reageert.",
+      "test_failed": "De hoofdklep {valve} zakte voor de maandelijkse test op {when}: terwijl hij dicht was, bleef er water stromen of bleef de pomp draaien.",
+      "test_ok": "De hoofdklep slaagde voor de maandelijkse test op {when}.",
+      "test_pending": "De hoofdklep wordt eens per maand getest, aan het eind van een gewone beurt.",
+      "test_none": "Voeg een watermeter of een pompvermogenssensor toe om de hoofdklep eens per maand te laten testen."
     }
   },
   "why": {

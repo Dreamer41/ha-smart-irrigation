@@ -60,7 +60,8 @@
           "climate_dryness": "Climate (no humidity sensor)",
           "coastal": "By the sea (no solar sensor)",
           "wind_sensor_height_m": "Wind sensor height",
-          "master_valve_entity": "Master valve (optional)"
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
           "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
           "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up.",
-          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "master_valve_entity": "Master valve (optional)"
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
-          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "start": {
@@ -435,7 +439,8 @@
           "climate_dryness": "Climate (no humidity sensor)",
           "coastal": "By the sea (no solar sensor)",
           "wind_sensor_height_m": "Wind sensor height",
-          "master_valve_entity": "Master valve (optional)"
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -471,7 +476,8 @@
           "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
           "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
           "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up.",
-          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "flow_rate": {
@@ -562,7 +568,8 @@
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "master_valve_entity": "Master valve (optional)"
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
@@ -583,7 +590,8 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
-          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "wu_key": {

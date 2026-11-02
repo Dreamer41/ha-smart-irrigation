@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} est restée ouverte bien trop longtemps.",
       "flow": "Le débitmètre a continué de compter alors que toutes les vannes de zone étaient fermées.",
       "pump_power": "La pompe a continué de consommer alors que toutes les vannes de zone étaient fermées."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Échec du test de la vanne maîtresse",
+      "message": "Le test mensuel de {valve} a constaté que l'eau coulait encore ou que la pompe tournait encore, vanne fermée. Elle risque de ne pas couper l'eau si une vanne de zone reste bloquée : vérifiez-la."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "La vanne maîtresse {valve} est fermée par sécurité. {reason} Appuyez sur Reset Lock une fois le problème réglé.",
       "fail": "La vanne maîtresse {valve} n'est pas disponible.",
-      "ok": "La vanne maîtresse {valve} répond."
+      "ok": "La vanne maîtresse {valve} répond.",
+      "test_failed": "La vanne maîtresse {valve} a échoué au test mensuel du {when} : vanne fermée, l'eau coulait encore ou la pompe tournait.",
+      "test_ok": "La vanne maîtresse a réussi le test mensuel du {when}.",
+      "test_pending": "La vanne maîtresse est testée une fois par mois, à la fin d'un arrosage normal.",
+      "test_none": "Ajoutez un débitmètre ou un capteur de puissance de pompe pour que la vanne maîtresse soit testée une fois par mois."
     }
   },
   "why": {

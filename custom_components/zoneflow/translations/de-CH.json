@@ -60,7 +60,8 @@
           "climate_dryness": "Klima (ohne Feuchtesensor)",
           "coastal": "Am Meer (ohne Strahlungssensor)",
           "wind_sensor_height_m": "Höhe des Windsensors",
-          "master_valve_entity": "Hauptventil (optional)"
+          "master_valve_entity": "Hauptventil (optional)",
+          "master_valve_normally_open": "Hauptventil ist stromlos offen"
         },
         "data_description": {
           "valve_entity": "Der Schalter, der das Ventil dieser Zone öffnet (oder ihre Pumpe startet). Das Einzige, ohne das ZoneFlow nicht auskommt: ZoneFlow schaltet ihn ein und aus und sorgt immer dafür, dass er am Ende aus ist.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Wird genutzt, wenn es keinen Feuchtewert gibt: feucht oder trocken (aride und semiaride Gegenden).",
           "coastal": "Wird genutzt, wenn es keinen Strahlungswert gibt: In Küstennähe wird die Sonneneinstrahlung etwas höher geschätzt.",
           "wind_sensor_height_m": "Wie hoch der Windsensor angebracht ist. Heimwetterstationen stehen meist etwa 2 m hoch.",
-          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil."
+          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil.",
+          "master_valve_normally_open": "Aus lassen für ein stromlos geschlossenes Ventil (empfohlen: es schließt bei Stromausfall von selbst). Einschalten für ein stromlos offenes Ventil an einem Relais: ZoneFlow schaltet das Relais dann EIN, um es zu schließen. Eine Ventil-Entität meldet offen und geschlossen selbst und ignoriert dies."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Sonnenversatz für Tiefenbewässerung (Minuten)",
           "routine_sun_mode": "Auslöser für Routinebewässerung",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "master_valve_entity": "Hauptventil (optional)"
+          "master_valve_entity": "Hauptventil (optional)",
+          "master_valve_normally_open": "Hauptventil ist stromlos offen"
         },
         "data_description": {
           "pump_power_entity": "Ein Leistungssensor (W) an der Pumpe, z. B. von einer smarten Steckdose. Bei jeder Bewässerung prüft ZoneFlow, ob die Pumpe tatsächlich Strom zieht, und warnt Sie, falls nicht. Leer lassen, wenn nicht vorhanden.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
           "routine_sun_mode": "Startet die Routinebewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
           "routine_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
-          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil."
+          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil.",
+          "master_valve_normally_open": "Aus lassen für ein stromlos geschlossenes Ventil (empfohlen: es schließt bei Stromausfall von selbst). Einschalten für ein stromlos offenes Ventil an einem Relais: ZoneFlow schaltet das Relais dann EIN, um es zu schließen. Eine Ventil-Entität meldet offen und geschlossen selbst und ignoriert dies."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Klima (ohne Feuchtesensor)",
           "coastal": "Am Meer (ohne Strahlungssensor)",
           "wind_sensor_height_m": "Höhe des Windsensors",
-          "master_valve_entity": "Hauptventil (optional)"
+          "master_valve_entity": "Hauptventil (optional)",
+          "master_valve_normally_open": "Hauptventil ist stromlos offen"
         },
         "data_description": {
           "valve_entity": "Der Schalter, der das Ventil dieser Zone öffnet (oder ihre Pumpe startet). Das Einzige, ohne das ZoneFlow nicht auskommt: ZoneFlow schaltet ihn ein und aus und sorgt immer dafür, dass er am Ende aus ist.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Wird genutzt, wenn es keinen Feuchtewert gibt: feucht oder trocken (aride und semiaride Gegenden).",
           "coastal": "Wird genutzt, wenn es keinen Strahlungswert gibt: In Küstennähe wird die Sonneneinstrahlung etwas höher geschätzt.",
           "wind_sensor_height_m": "Wie hoch der Windsensor angebracht ist. Heimwetterstationen stehen meist etwa 2 m hoch.",
-          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil."
+          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil.",
+          "master_valve_normally_open": "Aus lassen für ein stromlos geschlossenes Ventil (empfohlen: es schließt bei Stromausfall von selbst). Einschalten für ein stromlos offenes Ventil an einem Relais: ZoneFlow schaltet das Relais dann EIN, um es zu schließen. Eine Ventil-Entität meldet offen und geschlossen selbst und ignoriert dies."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Sonnenversatz für Tiefenbewässerung (Minuten)",
           "routine_sun_mode": "Auslöser für Routinebewässerung",
           "routine_sun_offset_minutes": "Sonnenversatz für Routinebewässerung (Minuten)",
-          "master_valve_entity": "Hauptventil (optional)"
+          "master_valve_entity": "Hauptventil (optional)",
+          "master_valve_normally_open": "Hauptventil ist stromlos offen"
         },
         "data_description": {
           "pump_power_entity": "Ein Leistungssensor (W) an der Pumpe, z. B. von einer smarten Steckdose. Bei jeder Bewässerung prüft ZoneFlow, ob die Pumpe tatsächlich Strom zieht, und warnt Sie, falls nicht. Leer lassen, wenn nicht vorhanden.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
           "routine_sun_mode": "Startet die Routinebewässerung zur obigen festen Uhrzeit oder vor/nach Sonnenauf- bzw. -untergang, um sich den Jahreszeiten anzupassen.",
           "routine_sun_offset_minutes": "Wie viele Minuten vor oder nach Sonnenaufgang bzw. -untergang. Wird bei fester Uhrzeit nicht verwendet.",
-          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil."
+          "master_valve_entity": "Ein zusätzliches Absperrventil vor dieser Zone, zum Beispiel hinter einer Pumpe, die mehrere Zonen versorgt. Es öffnet mit jeder Bewässerung und schließt, wenn die letzte endet. Zur Sicherheit schließt es auch, bis Reset Lock, wenn ein Zonenventil offen hängen bleibt oder weiter Wasser fließt (Durchflussmesser) oder die Pumpe weiterläuft (Pumpenleistung), während alle Zonenventile zu sind. Gib allen Zonen dahinter dasselbe Ventil.",
+          "master_valve_normally_open": "Aus lassen für ein stromlos geschlossenes Ventil (empfohlen: es schließt bei Stromausfall von selbst). Einschalten für ein stromlos offenes Ventil an einem Relais: ZoneFlow schaltet das Relais dann EIN, um es zu schließen. Eine Ventil-Entität meldet offen und geschlossen selbst und ignoriert dies."
         }
       },
       "wu_key": {

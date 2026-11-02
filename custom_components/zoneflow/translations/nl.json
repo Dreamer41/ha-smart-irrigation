@@ -60,7 +60,8 @@
           "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
           "coastal": "Aan zee (zonder zonnesensor)",
           "wind_sensor_height_m": "Hoogte van de windsensor",
-          "master_valve_entity": "Hoofdklep (optioneel)"
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
           "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
           "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m.",
-          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
           "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)",
-          "master_valve_entity": "Hoofdklep (optioneel)"
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor or na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
-          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
           "coastal": "Aan zee (zonder zonnesensor)",
           "wind_sensor_height_m": "Hoogte van de windsensor",
-          "master_valve_entity": "Hoofdklep (optioneel)"
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
           "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
           "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m.",
-          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
           "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)",
-          "master_valve_entity": "Hoofdklep (optioneel)"
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor of na zonsopgang or zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
-          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "wu_key": {

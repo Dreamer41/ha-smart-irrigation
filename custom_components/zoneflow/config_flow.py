@@ -75,6 +75,7 @@ from .const import (
     CONF_FLOW_METER_ENTITY,
     CONF_GROWTH_RAMP_PROFILE,
     CONF_MASTER_VALVE_ENTITY,
+    CONF_MASTER_VALVE_NORMALLY_OPEN,
     CONF_IRRIGATION_METHOD,
     CONF_UNIT_SYSTEM,
     CONF_NOTIFY_ENTITY,
@@ -263,6 +264,9 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             vol.Optional(CONF_PUMP_ID, default=defaults.get(CONF_PUMP_ID, "")): str,
             # 1.8: a backup shut-off valve upstream, shared by the zones that name it (master_valve.py).
             master_valve_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=VALVE_DOMAINS)),
+            vol.Optional(
+                CONF_MASTER_VALVE_NORMALLY_OPEN, default=bool(defaults.get(CONF_MASTER_VALVE_NORMALLY_OPEN, False))
+            ): selector.BooleanSelector(),
             rain_counter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=["counter", "sensor"])),
             vol.Optional(CONF_RAIN_SOURCE, default=defaults.get(CONF_RAIN_SOURCE) or RAIN_SOURCE_TIPS): selector.SelectSelector(
                 selector.SelectSelectorConfig(options=RAIN_SOURCE_OPTIONS, translation_key="rain_source")

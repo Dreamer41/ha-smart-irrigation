@@ -60,7 +60,8 @@
           "climate_dryness": "Clima (senza sensore di umidità)",
           "coastal": "Vicino al mare (senza sensore solare)",
           "wind_sensor_height_m": "Altezza del sensore di vento",
-          "master_valve_entity": "Valvola principale (facoltativa)"
+          "master_valve_entity": "Valvola principale (facoltativa)",
+          "master_valve_normally_open": "La valvola principale è normalmente aperta"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Usato se non c'è una lettura di umidità: umido o secco (zone aride e semiaride).",
           "coastal": "Usato se non c'è una lettura solare: vicino alla costa il sole è stimato un po' più alto.",
           "wind_sensor_height_m": "A che altezza si trova il sensore di vento. Le stazioni meteo domestiche stanno di solito a circa 2 m.",
-          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle.",
+          "master_valve_normally_open": "Lascia disattivato per una valvola normalmente chiusa (consigliato: si chiude da sola se manca la corrente). Attiva per una valvola normalmente aperta su relè: ZoneFlow la chiude allora ACCENDENDO il relè. Un'entità valvola indica da sola aperta e chiusa e ignora questa opzione."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
           "routine_sun_mode": "Attivazione routine",
           "routine_sun_offset_minutes": "Scostamento solare routine (minuti)",
-          "master_valve_entity": "Valvola principale (facoltativa)"
+          "master_valve_entity": "Valvola principale (facoltativa)",
+          "master_valve_normally_open": "La valvola principale è normalmente aperta"
         },
         "data_description": {
           "pump_power_entity": "Un sensore di potenza (W) sulla pompa, ad es. da una presa intelligente. Durante ogni irrigazione ZoneFlow verifica che la pompa assorba effettivamente potenza e ti avvisa se non lo fa. Lascia vuoto se non ne hai uno.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
           "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
           "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
-          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle.",
+          "master_valve_normally_open": "Lascia disattivato per una valvola normalmente chiusa (consigliato: si chiude da sola se manca la corrente). Attiva per una valvola normalmente aperta su relè: ZoneFlow la chiude allora ACCENDENDO il relè. Un'entità valvola indica da sola aperta e chiusa e ignora questa opzione."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Clima (senza sensore di umidità)",
           "coastal": "Vicino al mare (senza sensore solare)",
           "wind_sensor_height_m": "Altezza del sensore di vento",
-          "master_valve_entity": "Valvola principale (facoltativa)"
+          "master_valve_entity": "Valvola principale (facoltativa)",
+          "master_valve_normally_open": "La valvola principale è normalmente aperta"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Usato se non c'è una lettura di umidità: umido o secco (zone aride e semiaride).",
           "coastal": "Usato se non c'è una lettura solare: vicino alla costa il sole è stimato un po' più alto.",
           "wind_sensor_height_m": "A che altezza si trova il sensore di vento. Le stazioni meteo domestiche stanno di solito a circa 2 m.",
-          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle.",
+          "master_valve_normally_open": "Lascia disattivato per una valvola normalmente chiusa (consigliato: si chiude da sola se manca la corrente). Attiva per una valvola normalmente aperta su relè: ZoneFlow la chiude allora ACCENDENDO il relè. Un'entità valvola indica da sola aperta e chiusa e ignora questa opzione."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
           "routine_sun_mode": "Attivazione routine",
           "routine_sun_offset_minutes": "Scostamento solare routine (minuti)",
-          "master_valve_entity": "Valvola principale (facoltativa)"
+          "master_valve_entity": "Valvola principale (facoltativa)",
+          "master_valve_normally_open": "La valvola principale è normalmente aperta"
         },
         "data_description": {
           "pump_power_entity": "Un sensore di potenza (W) sulla pompa, ad es. da una presa intelligente. Durante ogni irrigazione ZoneFlow verifica che la pompa assorba effettivamente potenza e ti avvisa se non lo fa. Lascia vuoto se non ne hai uno.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
           "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
           "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
-          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle.",
+          "master_valve_normally_open": "Lascia disattivato per una valvola normalmente chiusa (consigliato: si chiude da sola se manca la corrente). Attiva per una valvola normalmente aperta su relè: ZoneFlow la chiude allora ACCENDENDO il relè. Un'entità valvola indica da sola aperta e chiusa e ignora questa opzione."
         }
       },
       "wu_key": {

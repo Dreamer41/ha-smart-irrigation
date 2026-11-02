@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} oli auki aivan liian kauan.",
       "flow": "Virtausmittari laski yhä, vaikka kaikki vyöhykeventtiilit olivat kiinni.",
       "pump_power": "Pumppu otti yhä virtaa, vaikka kaikki vyöhykeventtiilit olivat kiinni."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Pääventtiilin testi epäonnistui",
+      "message": "Venttiilin {valve} kuukausitestissä vesi virtasi tai pumppu kävi yhä, vaikka venttiili oli kiinni. Se ei ehkä pidätä, jos vyöhykeventtiili jää auki: tarkista se."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Pääventtiili {valve} on suljettu turvallisuussyistä. {reason} Paina Reset Lock, kun vika on korjattu.",
       "fail": "Pääventtiili {valve} ei ole käytettävissä.",
-      "ok": "Pääventtiili {valve} vastaa."
+      "ok": "Pääventtiili {valve} vastaa.",
+      "test_failed": "Pääventtiili {valve} ei läpäissyt kuukausitestiä {when}: vesi virtasi tai pumppu kävi, vaikka venttiili oli kiinni.",
+      "test_ok": "Pääventtiili läpäisi kuukausitestin {when}.",
+      "test_pending": "Pääventtiili testataan kerran kuukaudessa tavallisen kastelun lopussa.",
+      "test_none": "Lisää virtausmittari tai pumpun tehoanturi, niin pääventtiili testataan kerran kuukaudessa."
     }
   },
   "why": {

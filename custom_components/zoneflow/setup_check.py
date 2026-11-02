@@ -192,6 +192,17 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("master_valve", "warn", "master_valve.fail", valve=master)
         else:
             add("master_valve", "ok", "master_valve.ok", valve=master)
+        # The monthly self-test (needs a flow meter or a pump power sensor to tell).
+        test_ts, test_ok = controller._master().last_test
+        when = dt_util.as_local(dt_util.utc_from_timestamp(test_ts)).strftime("%Y-%m-%d") if test_ts else ""
+        if test_ts is not None and test_ok is False:
+            add("master_valve_test", "warn", "master_valve.test_failed", valve=master, when=when)
+        elif test_ts is not None:
+            add("master_valve_test", "ok", "master_valve.test_ok", when=when)
+        elif controller.flow_meter_entity or controller.pump_power_entity:
+            add("master_valve_test", "info", "master_valve.test_pending")
+        else:
+            add("master_valve_test", "info", "master_valve.test_none")
 
     # The root zone (1.8).
     if controller.has_valve:

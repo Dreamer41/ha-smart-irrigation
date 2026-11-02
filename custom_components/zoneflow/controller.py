@@ -104,6 +104,7 @@ from .const import (
     CONF_DRAINAGE,
     CONF_FLOW_METER_ENTITY,
     CONF_MASTER_VALVE_ENTITY,
+    CONF_MASTER_VALVE_NORMALLY_OPEN,
     CONF_GROWTH_RAMP_PROFILE,
     CONF_IRRIGATION_METHOD,
     CONF_NOTIFY_ENTITY,
@@ -790,6 +791,11 @@ class ZoneFlowController:
         if not self.valve_entity:
             return None
         return self.entry.options.get(CONF_MASTER_VALVE_ENTITY, self.entry.data.get(CONF_MASTER_VALVE_ENTITY)) or None
+
+    @property
+    def master_valve_normally_open(self) -> bool:
+        """The master valve is open without power (a relay switched ON closes it). Default: closed."""
+        return bool(self.entry.options.get(CONF_MASTER_VALVE_NORMALLY_OPEN, self.entry.data.get(CONF_MASTER_VALVE_NORMALLY_OPEN, False)))
 
     def _master(self) -> master_valve.MasterValve | None:
         entity = self.master_valve_entity
@@ -3307,7 +3313,7 @@ class ZoneFlowController:
                 )
                 return False
         try:
-            return await self._run_pulses_behind_master(
+            completed = await self._run_pulses_behind_master(
                 preamble=0.0 if pump_running else preamble,
                 count=count,
                 pulse_minutes=pulse_minutes,
@@ -3318,11 +3324,64 @@ class ZoneFlowController:
                 deducted_mm_for_log=deducted_mm_for_log,
                 runtime_for_log=runtime_for_log,
             )
+            if master is not None and completed and kind == "Routine Irrigation" and self._master_test_wanted(master):
+                await self._master_self_test(master)
+            return completed
         finally:
             if master is not None:
                 valve = self._cycle_valve or self.store.state.lock_valve or self.valve_entity
                 closed = await self._valve_confirmed_closed(valve) if valve else True
                 await master.async_release(self, valve_closed=closed)
+
+    def _master_test_wanted(self, master: master_valve.MasterValve) -> bool:
+        """The monthly self-test runs now: a zone that can tell (flow meter or pump power), the last
+        run on the master, nothing waiting for the pump, and nothing stopping the zone."""
+        if not (self.flow_meter_entity or (self.pump_power_entity and self.number("pump_min_watts") > 0)):
+            return False
+        if master.holders != {self.entry.entry_id} or master.latched or self._pump_handed_over:
+            return False
+        if self._stopping or self.store.state.abort_on or self.paused or self._zones_waiting_on_my_pump():
+            return False
+        return master.test_due(dt_util.utcnow().timestamp())
+
+    async def _master_self_test(self, master: master_valve.MasterValve) -> None:
+        """Close the master, open this zone's valve for half a minute and check that no water flows
+        and the pump stops. The zone valve is closed again whatever happens (and confirmed closed by
+        the master's release after this)."""
+        valve = self._cycle_valve or self.valve_entity
+        passed = None
+        try:
+            if not await master.async_close_for_test():
+                _LOGGER.warning("%s: master valve self-test skipped: %s did not report closed", self.entry.title, master.entity_id)
+                return
+            await zone_valve.async_open(self.hass, valve)
+            await self._pause(master_valve.TEST_SETTLE_SECONDS)  # the pipe after it drains, the pump builds pressure
+            if self._stopping or self.store.state.abort_on:
+                return
+            start = master_valve.test_reading(self)
+            await self._pause(master_valve.TEST_MEASURE_SECONDS)
+            if self._stopping or self.store.state.abort_on:
+                return
+            passed = master_valve.test_passed(self, start)
+        except Exception:  # noqa: BLE001 - a failed test must never leave the zone valve open
+            _LOGGER.exception("%s: master valve self-test stopped by an error", self.entry.title)
+        finally:
+            await self._close_cycle_valve()
+        if passed is None:
+            return
+        await master.async_record_test(passed, dt_util.utcnow().timestamp())
+        await self._log_event(
+            event_type="Master Valve Test " + ("Passed" if passed else "Failed"),
+            status="OK" if passed else "CRITICAL",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=not passed,
+            message=None if passed else "master_valve_test_failed",
+            params={"valve": master.entity_id},
+            level=LEVEL_WARNING,
+            always_notify=not passed,  # a backup valve that doesn't hold: even with Notifications off
+        )
 
     async def _run_pulses_behind_master(
         self,
@@ -3647,8 +3706,8 @@ class ZoneFlowController:
         waiting = self._zones_waiting_on_my_pump()
         if not waiting:
             return 0.0
-        if self.flow_meter_entity and any(z.flow_meter_entity == self.flow_meter_entity for z in waiting):
-            return 0.0  # one meter for both: the overlap water would be counted in both zones
+        # One meter for both zones: the few seconds of overlap water show in both zones' litres. Too
+        # little to matter, and it is never counted as watering time (only toward the daily cap).
         pump_lock = self._get_pump_lock()
         handovers = self.hass.data.setdefault(PUMP_HANDOVER_KEY, {})
         started = dt_util.utcnow().timestamp()

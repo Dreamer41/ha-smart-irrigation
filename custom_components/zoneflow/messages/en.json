@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} stayed open far too long.",
       "flow": "The flow meter kept counting while every zone valve was closed.",
       "pump_power": "The pump kept drawing power while every zone valve was closed."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Master valve test failed",
+      "message": "The monthly test of {valve} found water still flowing or the pump still running with it closed. It may not hold if a zone valve sticks open: check it."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "The master valve {valve} is closed for safety. {reason} Press Reset Lock once it is fixed.",
       "fail": "The master valve {valve} is not available.",
-      "ok": "The master valve {valve} answers."
+      "ok": "The master valve {valve} answers.",
+      "test_failed": "The master valve {valve} failed its monthly test on {when}: water still flowed or the pump kept running with it closed.",
+      "test_ok": "The master valve passed its monthly test on {when}.",
+      "test_pending": "The master valve is tested once a month, at the end of a routine watering.",
+      "test_none": "Add a flow meter or a pump power sensor to have the master valve tested once a month."
     }
   },
   "why": {

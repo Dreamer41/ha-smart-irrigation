@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} był otwarty zdecydowanie za długo.",
       "flow": "Przepływomierz wciąż liczył, choć wszystkie zawory stref były zamknięte.",
       "pump_power": "Pompa wciąż pobierała prąd, choć wszystkie zawory stref były zamknięte."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test zaworu głównego nieudany",
+      "message": "Comiesięczny test {valve} wykazał, że przy zamkniętym zaworze woda wciąż płynęła lub pompa pracowała. Może nie odciąć wody, gdy zawór strefy się zatnie: sprawdź go."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Zawór główny {valve} jest zamknięty dla bezpieczeństwa. {reason} Po naprawie naciśnij Reset Lock.",
       "fail": "Zawór główny {valve} jest niedostępny.",
-      "ok": "Zawór główny {valve} odpowiada."
+      "ok": "Zawór główny {valve} odpowiada.",
+      "test_failed": "Zawór główny {valve} nie przeszedł comiesięcznego testu {when}: przy zamkniętym zaworze woda płynęła lub pompa pracowała.",
+      "test_ok": "Zawór główny przeszedł comiesięczny test {when}.",
+      "test_pending": "Zawór główny jest testowany raz w miesiącu, na końcu zwykłego podlewania.",
+      "test_none": "Dodaj przepływomierz lub czujnik mocy pompy, aby zawór główny był testowany raz w miesiącu."
     }
   },
   "why": {

@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} ficou aberta tempo demais.",
       "flow": "O medidor de vazão continuou contando com todas as válvulas de zona fechadas.",
       "pump_power": "A bomba continuou consumindo energia com todas as válvulas de zona fechadas."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Falhou o teste da válvula mestra",
+      "message": "O teste mensal de {valve} detectou água ainda correndo ou a bomba ainda funcionando com ela fechada. Ela pode não cortar a água se uma válvula de zona travar: verifique."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "A válvula mestra {valve} está fechada por segurança. {reason} Aperte Reset Lock depois de resolver.",
       "fail": "A válvula mestra {valve} não está disponível.",
-      "ok": "A válvula mestra {valve} responde."
+      "ok": "A válvula mestra {valve} responde.",
+      "test_failed": "A válvula mestra {valve} falhou no teste mensal de {when}: com ela fechada a água continuou correndo ou a bomba funcionando.",
+      "test_ok": "A válvula mestra passou no teste mensal de {when}.",
+      "test_pending": "A válvula mestra é testada uma vez por mês, no fim de uma rega normal.",
+      "test_none": "Adicione um medidor de vazão ou um sensor de potência da bomba para testar a válvula mestra uma vez por mês."
     }
   },
   "why": {

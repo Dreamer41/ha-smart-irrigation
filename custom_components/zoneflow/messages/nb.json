@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} sto åpen altfor lenge.",
       "flow": "Vannmåleren fortsatte å telle mens alle soneventiler var lukket.",
       "pump_power": "Pumpen fortsatte å trekke strøm mens alle soneventiler var lukket."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test av hovedventil feilet",
+      "message": "Den månedlige testen av {valve} fant at vannet fortsatt rant eller pumpen fortsatt gikk mens den var stengt. Den holder kanskje ikke hvis en soneventil henger seg opp: sjekk den."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Hovedventilen {valve} er stengt av sikkerhetshensyn. {reason} Trykk Reset Lock når det er fikset.",
       "fail": "Hovedventilen {valve} er ikke tilgjengelig.",
-      "ok": "Hovedventilen {valve} svarer."
+      "ok": "Hovedventilen {valve} svarer.",
+      "test_failed": "Hovedventilen {valve} besto ikke den månedlige testen {when}: vannet rant fortsatt eller pumpen gikk mens den var stengt.",
+      "test_ok": "Hovedventilen besto den månedlige testen {when}.",
+      "test_pending": "Hovedventilen testes en gang i måneden på slutten av en vanlig vanning.",
+      "test_none": "Legg til en vannmåler eller en pumpeeffektsensor for å få hovedventilen testet en gang i måneden."
     }
   },
   "why": {

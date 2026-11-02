@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} esteve aberta tempo demais.",
       "flow": "O contador de caudal continuou a contar com todas as válvulas de zona fechadas.",
       "pump_power": "A bomba continuou a consumir energia com todas as válvulas de zona fechadas."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Falhou o teste da válvula mestra",
+      "message": "O teste mensal de {valve} detetou água ainda a correr ou a bomba ainda a trabalhar com ela fechada. Pode não cortar a água se uma válvula de zona ficar presa: verifique-a."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "A válvula mestra {valve} está fechada por segurança. {reason} Prima Reset Lock depois de resolvido.",
       "fail": "A válvula mestra {valve} não está disponível.",
-      "ok": "A válvula mestra {valve} responde."
+      "ok": "A válvula mestra {valve} responde.",
+      "test_failed": "A válvula mestra {valve} falhou o teste mensal de {when}: com ela fechada a água continuou a correr ou a bomba a trabalhar.",
+      "test_ok": "A válvula mestra passou o teste mensal de {when}.",
+      "test_pending": "A válvula mestra é testada uma vez por mês, no fim de uma rega normal.",
+      "test_none": "Adicione um contador de caudal ou um sensor de potência da bomba para testar a válvula mestra uma vez por mês."
     }
   },
   "why": {

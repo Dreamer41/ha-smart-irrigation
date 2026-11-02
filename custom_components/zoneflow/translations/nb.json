@@ -60,7 +60,8 @@
           "climate_dryness": "Klima (uten fuktighetssensor)",
           "coastal": "Ved havet (uten solsensor)",
           "wind_sensor_height_m": "Vindsensorens høyde",
-          "master_valve_entity": "Hovedventil (valgfritt)"
+          "master_valve_entity": "Hovedventil (valgfritt)",
+          "master_valve_normally_open": "Hovedventilen er normalt åpen"
         },
         "data_description": {
           "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Brukes når det ikke finnes noen fuktighetsmåling: fuktig eller tørt (tørre og halvtørre strøk).",
           "coastal": "Brukes når det ikke finnes noen solmåling: nær kysten anslås sola litt høyere.",
           "wind_sensor_height_m": "Hvor høyt vindsensoren sitter. Hjemmeværstasjoner sitter vanligvis rundt 2 m oppe.",
-          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil.",
+          "master_valve_normally_open": "La den være av for en normalt lukket ventil (anbefalt: den stenger av seg selv ved strømbrudd). Slå på for en normalt åpen ventil på et relé: ZoneFlow stenger den da ved å slå releet PÅ. En ventilentitet melder åpen og lukket selv og ignorerer dette."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
           "routine_sun_mode": "Utløser for rutinevanning",
           "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)",
-          "master_valve_entity": "Hovedventil (valgfritt)"
+          "master_valve_entity": "Hovedventil (valgfritt)",
+          "master_valve_normally_open": "Hovedventilen er normalt åpen"
         },
         "data_description": {
           "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk bruker strøm, og advarer deg hvis den ikke gjør det. La stå tom hvis du ikke har én.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
-          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil.",
+          "master_valve_normally_open": "La den være av for en normalt lukket ventil (anbefalt: den stenger av seg selv ved strømbrudd). Slå på for en normalt åpen ventil på et relé: ZoneFlow stenger den da ved å slå releet PÅ. En ventilentitet melder åpen og lukket selv og ignorerer dette."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Klima (uten fuktighetssensor)",
           "coastal": "Ved havet (uten solsensor)",
           "wind_sensor_height_m": "Vindsensorens høyde",
-          "master_valve_entity": "Hovedventil (valgfritt)"
+          "master_valve_entity": "Hovedventil (valgfritt)",
+          "master_valve_normally_open": "Hovedventilen er normalt åpen"
         },
         "data_description": {
           "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Brukes når det ikke finnes noen fuktighetsmåling: fuktig eller tørt (tørre og halvtørre strøk).",
           "coastal": "Brukes når det ikke finnes noen solmåling: nær kysten anslås sola litt høyere.",
           "wind_sensor_height_m": "Hvor høyt vindsensoren sitter. Hjemmeværstasjoner sitter vanligvis rundt 2 m oppe.",
-          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil.",
+          "master_valve_normally_open": "La den være av for en normalt lukket ventil (anbefalt: den stenger av seg selv ved strømbrudd). Slå på for en normalt åpen ventil på et relé: ZoneFlow stenger den da ved å slå releet PÅ. En ventilentitet melder åpen og lukket selv og ignorerer dette."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
           "routine_sun_mode": "Utløser for rutinevanning",
           "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)",
-          "master_valve_entity": "Hovedventil (valgfritt)"
+          "master_valve_entity": "Hovedventil (valgfritt)",
+          "master_valve_normally_open": "Hovedventilen er normalt åpen"
         },
         "data_description": {
           "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk bruker strøm, og advarer deg hvis den ikke gjør det. La stå tom hvis du ikke har én.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
-          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil.",
+          "master_valve_normally_open": "La den være av for en normalt lukket ventil (anbefalt: den stenger av seg selv ved strømbrudd). Slå på for en normalt åpen ventil på et relé: ZoneFlow stenger den da ved å slå releet PÅ. En ventilentitet melder åpen og lukket selv og ignorerer dette."
         }
       },
       "wu_key": {

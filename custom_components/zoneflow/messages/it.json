@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} è rimasta aperta troppo a lungo.",
       "flow": "Il flussometro ha continuato a contare con tutte le valvole di zona chiuse.",
       "pump_power": "La pompa ha continuato ad assorbire corrente con tutte le valvole di zona chiuse."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test della valvola principale fallito",
+      "message": "Il test mensile di {valve} ha rilevato acqua che scorreva ancora o la pompa ancora in funzione a valvola chiusa. Potrebbe non fermare l'acqua se una valvola di zona resta bloccata: controllala."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "La valvola principale {valve} è chiusa per sicurezza. {reason} Premi Reset Lock una volta risolto.",
       "fail": "La valvola principale {valve} non è disponibile.",
-      "ok": "La valvola principale {valve} risponde."
+      "ok": "La valvola principale {valve} risponde.",
+      "test_failed": "La valvola principale {valve} non ha superato il test mensile del {when}: a valvola chiusa l'acqua scorreva ancora o la pompa girava.",
+      "test_ok": "La valvola principale ha superato il test mensile del {when}.",
+      "test_pending": "La valvola principale viene testata una volta al mese, alla fine di un'irrigazione normale.",
+      "test_none": "Aggiungi un flussometro o un sensore di potenza della pompa per testare la valvola principale una volta al mese."
     }
   },
   "why": {

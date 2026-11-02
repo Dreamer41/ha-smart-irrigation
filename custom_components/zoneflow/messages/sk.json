@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} zostal otvorený príliš dlho.",
       "flow": "Prietokomer ďalej počítal, hoci boli všetky ventily zón zatvorené.",
       "pump_power": "Čerpadlo ďalej odoberalo prúd, hoci boli všetky ventily zón zatvorené."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test hlavného ventilu zlyhal",
+      "message": "Mesačný test ventilu {valve} zistil, že pri jeho zatvorení voda ďalej tečie alebo čerpadlo ďalej beží. Ak sa ventil zóny zasekne, nemusí vodu zastaviť: skontrolujte ho."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Hlavný ventil {valve} je z bezpečnostných dôvodov zatvorený. {reason} Po oprave stlačte Reset Lock.",
       "fail": "Hlavný ventil {valve} nie je dostupný.",
-      "ok": "Hlavný ventil {valve} odpovedá."
+      "ok": "Hlavný ventil {valve} odpovedá.",
+      "test_failed": "Hlavný ventil {valve} neprešiel mesačným testom {when}: pri zatvorení voda ďalej tiekla alebo čerpadlo bežalo.",
+      "test_ok": "Hlavný ventil prešiel mesačným testom {when}.",
+      "test_pending": "Hlavný ventil sa testuje raz mesačne na konci bežnej zálievky.",
+      "test_none": "Pridajte prietokomer alebo snímač príkonu čerpadla, aby sa hlavný ventil testoval raz mesačne."
     }
   },
   "why": {

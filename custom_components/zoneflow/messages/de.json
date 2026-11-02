@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} war viel zu lange offen.",
       "flow": "Der Durchflussmesser zählte weiter, obwohl alle Zonenventile zu waren.",
       "pump_power": "Die Pumpe zog weiter Strom, obwohl alle Zonenventile zu waren."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Hauptventil-Test fehlgeschlagen",
+      "message": "Beim monatlichen Test von {valve} floss bei geschlossenem Ventil weiter Wasser oder die Pumpe lief weiter. Es hält vielleicht nicht, wenn ein Zonenventil offen hängt: bitte prüfen."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Das Hauptventil {valve} ist zur Sicherheit geschlossen. {reason} Drücke Reset Lock, sobald es behoben ist.",
       "fail": "Das Hauptventil {valve} ist nicht verfügbar.",
-      "ok": "Das Hauptventil {valve} antwortet."
+      "ok": "Das Hauptventil {valve} antwortet.",
+      "test_failed": "Das Hauptventil {valve} hat den monatlichen Test am {when} nicht bestanden: bei geschlossenem Ventil floss weiter Wasser oder die Pumpe lief weiter.",
+      "test_ok": "Das Hauptventil hat den monatlichen Test am {when} bestanden.",
+      "test_pending": "Das Hauptventil wird einmal im Monat am Ende einer normalen Bewässerung getestet.",
+      "test_none": "Füge einen Durchflussmesser oder einen Pumpenleistungs-Sensor hinzu, damit das Hauptventil einmal im Monat getestet wird."
     }
   },
   "why": {

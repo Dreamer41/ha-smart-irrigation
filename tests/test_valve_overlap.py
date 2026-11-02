@@ -122,7 +122,7 @@ async def test_the_next_zone_skips_its_warm_up_when_the_pump_is_handed_over(hass
 
 
 @pytest.mark.asyncio
-async def test_no_overlap_when_both_zones_share_one_flow_meter(hass, fake_valve_services, monkeypatch, tmp_path):
+async def test_zones_sharing_one_flow_meter_still_overlap(hass, fake_valve_services, monkeypatch, tmp_path):
     await _seed(hass)
     hass.states.async_set("sensor.meter", "0")
     entry_a = make_entry(hass, zone_name="Zone A", pump_id="P", flow_meter_entity="sensor.meter", csv_path=str(tmp_path / "a.csv"))
@@ -136,7 +136,7 @@ async def test_no_overlap_when_both_zones_share_one_flow_meter(hass, fake_valve_
         zone.numbers["valve_overlap_seconds"].metric_value = 5
     CompressedTime(hass, [VALVE, VALVE_B]).install(monkeypatch)
     events = await _run_both(hass, a, b)
-    assert not _overlapped(events), events
+    assert _overlapped(events), events  # a second or two of shared water is not worth a pump push against shut valves
 
 
 @pytest.mark.asyncio
@@ -240,7 +240,7 @@ VALVE_C = "switch.watering3"
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("order", ["ACB", "ABC"])
-async def test_three_zones_one_pump_never_have_two_valves_open_when_a_meter_is_shared(
+async def test_three_zones_one_pump_never_have_more_than_two_valves_open_when_a_meter_is_shared(
     hass, fake_valve_services, monkeypatch, tmp_path, order
 ):
     await _seed(hass)
@@ -273,9 +273,11 @@ async def test_three_zones_one_pump_never_have_two_valves_open_when_a_meter_is_s
         await hass.async_block_till_done()
     finally:
         unsub()
-    open_now, both_a_and_b = set(), False
+    # A shared meter no longer stops the overlap (a second or two of water counted twice is nothing),
+    # but a hand-over is only ever between two zones.
+    open_now, most = set(), 0
     for entity, state in events:
         (open_now.add if state == "on" else open_now.discard)(entity)
-        if {VALVE, VALVE_B} <= open_now:
-            both_a_and_b = True  # A and B share a meter: they must never overlap
-    assert not both_a_and_b, events
+        most = max(most, len(open_now))
+    assert most <= 2, events
+    assert not open_now, events

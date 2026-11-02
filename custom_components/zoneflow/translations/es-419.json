@@ -60,7 +60,8 @@
           "climate_dryness": "Clima (sin sensor de humedad)",
           "coastal": "Junto al mar (sin sensor solar)",
           "wind_sensor_height_m": "Altura del sensor de viento",
-          "master_valve_entity": "Válvula maestra (opcional)"
+          "master_valve_entity": "Válvula maestra (opcional)",
+          "master_valve_normally_open": "La válvula maestra es normalmente abierta"
         },
         "data_description": {
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Se usa cuando no hay lectura de humedad: húmedo o seco (zonas áridas y semiáridas).",
           "coastal": "Se usa cuando no hay lectura solar: cerca de la costa el sol se estima algo más alto.",
           "wind_sensor_height_m": "A qué altura está el sensor de viento. Las estaciones meteorológicas domésticas suelen estar a unos 2 m.",
-          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella."
+          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella.",
+          "master_valve_normally_open": "Déjalo desactivado para una válvula normalmente cerrada (recomendado: se cierra sola si se corta la luz). Actívalo para una válvula normalmente abierta en un relé: ZoneFlow la cierra entonces ENCENDIENDO el relé. Una entidad de válvula informa ella misma si está abierta o cerrada e ignora esto."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Desfase solar de riego profundo (minutos)",
           "routine_sun_mode": "Activador de rutina",
           "routine_sun_offset_minutes": "Desfase solar de rutina (minutos)",
-          "master_valve_entity": "Válvula maestra (opcional)"
+          "master_valve_entity": "Válvula maestra (opcional)",
+          "master_valve_normally_open": "La válvula maestra es normalmente abierta"
         },
         "data_description": {
           "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej. de un enchufe inteligente. Durante cada riego, ZoneFlow comprueba si la bomba realmente consume energía y le advierte si no es así. Déjelo vacío si no tiene uno.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija.",
           "routine_sun_mode": "Iniciar el riego de rutina a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
           "routine_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija.",
-          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella."
+          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella.",
+          "master_valve_normally_open": "Déjalo desactivado para una válvula normalmente cerrada (recomendado: se cierra sola si se corta la luz). Actívalo para una válvula normalmente abierta en un relé: ZoneFlow la cierra entonces ENCENDIENDO el relé. Una entidad de válvula informa ella misma si está abierta o cerrada e ignora esto."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Clima (sin sensor de humedad)",
           "coastal": "Junto al mar (sin sensor solar)",
           "wind_sensor_height_m": "Altura del sensor de viento",
-          "master_valve_entity": "Válvula maestra (opcional)"
+          "master_valve_entity": "Válvula maestra (opcional)",
+          "master_valve_normally_open": "La válvula maestra es normalmente abierta"
         },
         "data_description": {
           "valve_entity": "El interruptor que abre la válvula de esta zona (o arranca su bomba). Es lo único sin lo que ZoneFlow no puede funcionar: lo enciende y lo apaga, y siempre se asegura de que acabe apagado.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Se usa cuando no hay lectura de humedad: húmedo o seco (zonas áridas y semiáridas).",
           "coastal": "Se usa cuando no hay lectura solar: cerca de la costa el sol se estima algo más alto.",
           "wind_sensor_height_m": "A qué altura está el sensor de viento. Las estaciones meteorológicas domésticas suelen estar a unos 2 m.",
-          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella."
+          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella.",
+          "master_valve_normally_open": "Déjalo desactivado para una válvula normalmente cerrada (recomendado: se cierra sola si se corta la luz). Actívalo para una válvula normalmente abierta en un relé: ZoneFlow la cierra entonces ENCENDIENDO el relé. Una entidad de válvula informa ella misma si está abierta o cerrada e ignora esto."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Desfase solar de riego profundo (minutos)",
           "routine_sun_mode": "Activador de rutina",
           "routine_sun_offset_minutes": "Desfase solar de rutina (minutos)",
-          "master_valve_entity": "Válvula maestra (opcional)"
+          "master_valve_entity": "Válvula maestra (opcional)",
+          "master_valve_normally_open": "La válvula maestra es normalmente abierta"
         },
         "data_description": {
           "pump_power_entity": "Un sensor de potencia (W) en la bomba, p. ej. de un enchufe inteligente. Durante cada riego, ZoneFlow comprueba si la bomba realmente consume energía y le advierte si no es así. Déjelo vacío si no tiene uno.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija.",
           "routine_sun_mode": "Iniciar el riego de rutina a la hora fija anterior, o antes/después de la salida o puesta del sol, para adaptarse a las estaciones.",
           "routine_sun_offset_minutes": "Cuántos minutos antes o después del amanecer o atardecer. No se usa con la hora fija.",
-          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella."
+          "master_valve_entity": "Una válvula de corte de reserva antes de esta zona, por ejemplo tras una bomba que comparten varias zonas. Se abre con cada riego y se cierra cuando termina el último. También se cierra por seguridad, hasta Reset Lock, si una válvula de zona se queda abierta o el agua sigue corriendo (caudalímetro) o la bomba sigue en marcha (potencia de la bomba) con todas las válvulas de zona cerradas. Indica la misma válvula en todas las zonas que dependen de ella.",
+          "master_valve_normally_open": "Déjalo desactivado para una válvula normalmente cerrada (recomendado: se cierra sola si se corta la luz). Actívalo para una válvula normalmente abierta en un relé: ZoneFlow la cierra entonces ENCENDIENDO el relé. Una entidad de válvula informa ella misma si está abierta o cerrada e ignora esto."
         }
       },
       "wu_key": {

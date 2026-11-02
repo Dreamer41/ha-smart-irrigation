@@ -60,7 +60,8 @@
           "climate_dryness": "Klima (bez senzoru vlhkosti)",
           "coastal": "U moře (bez senzoru slunce)",
           "wind_sensor_height_m": "Výška senzoru větru",
-          "master_valve_entity": "Hlavní ventil (volitelné)"
+          "master_valve_entity": "Hlavní ventil (volitelné)",
+          "master_valve_normally_open": "Hlavní ventil je normálně otevřený"
         },
         "data_description": {
           "valve_entity": "Spínač, který otevírá ventil této zóny (nebo spouští její čerpadlo). Jediné, bez čeho ZoneFlow nefunguje: zapíná ho a vypíná a vždy hlídá, aby nakonec zůstal vypnutý.",
@@ -96,7 +97,8 @@
           "climate_dryness": "Použije se, když není údaj o vlhkosti: vlhké, nebo suché (aridní a semiaridní oblasti).",
           "coastal": "Použije se, když není údaj o slunci: u pobřeží se slunce odhaduje o něco vyšší.",
           "wind_sensor_height_m": "Jak vysoko je senzor větru. Domácí meteostanice bývají asi ve 2 m.",
-          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil."
+          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil.",
+          "master_valve_normally_open": "Nechte vypnuté pro normálně zavřený ventil (doporučeno: při výpadku proudu se sám zavře). Zapněte pro normálně otevřený ventil na relé: ZoneFlow ho pak zavírá ZAPNUTÍM relé. Entita ventilu hlásí otevřeno a zavřeno sama a toto ignoruje."
         }
       },
       "climate": {
@@ -185,7 +187,8 @@
           "deep_soak_sun_offset_minutes": "Časový posun hlubokého namáčení vůči slunci (minuty)",
           "routine_sun_mode": "Běžný spouštěč",
           "routine_sun_offset_minutes": "Časový posun běžného zavlažování vůči slunci (minuty)",
-          "master_valve_entity": "Hlavní ventil (volitelné)"
+          "master_valve_entity": "Hlavní ventil (volitelné)",
+          "master_valve_normally_open": "Hlavní ventil je normálně otevřený"
         },
         "data_description": {
           "pump_power_entity": "Snímač příkonu (W) na čerpadle, např. z chytré zásuvky. Během každého zavlažování ZoneFlow kontroluje, zda čerpadlo skutečně odebírá energii, a varuje vás, pokud tomu tak není. Ponechte prázdné, pokud nemáte.",
@@ -206,7 +209,8 @@
           "deep_soak_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase.",
           "routine_sun_mode": "Spustit běžné zavlažování v pevně stanoveném čase výše, nebo před/po východu či západu slunce, aby se přizpůsobovalo ročním obdobím.",
           "routine_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase.",
-          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil."
+          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil.",
+          "master_valve_normally_open": "Nechte vypnuté pro normálně zavřený ventil (doporučeno: při výpadku proudu se sám zavře). Zapněte pro normálně otevřený ventil na relé: ZoneFlow ho pak zavírá ZAPNUTÍM relé. Entita ventilu hlásí otevřeno a zavřeno sama a toto ignoruje."
         }
       },
       "start": {
@@ -416,7 +420,8 @@
           "climate_dryness": "Klima (bez senzoru vlhkosti)",
           "coastal": "U moře (bez senzoru slunce)",
           "wind_sensor_height_m": "Výška senzoru větru",
-          "master_valve_entity": "Hlavní ventil (volitelné)"
+          "master_valve_entity": "Hlavní ventil (volitelné)",
+          "master_valve_normally_open": "Hlavní ventil je normálně otevřený"
         },
         "data_description": {
           "valve_entity": "Spínač, který otevírá ventil této zóny (nebo spouští její čerpadlo). Jediné, bez čeho ZoneFlow nefunguje: zapíná ho a vypíná a vždy hlídá, aby nakonec zůstal vypnutý.",
@@ -452,7 +457,8 @@
           "climate_dryness": "Použije se, když není údaj o vlhkosti: vlhké, nebo suché (aridní a semiaridní oblasti).",
           "coastal": "Použije se, když není údaj o slunci: u pobřeží se slunce odhaduje o něco vyšší.",
           "wind_sensor_height_m": "Jak vysoko je senzor větru. Domácí meteostanice bývají asi ve 2 m.",
-          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil."
+          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil.",
+          "master_valve_normally_open": "Nechte vypnuté pro normálně zavřený ventil (doporučeno: při výpadku proudu se sám zavře). Zapněte pro normálně otevřený ventil na relé: ZoneFlow ho pak zavírá ZAPNUTÍM relé. Entita ventilu hlásí otevřeno a zavřeno sama a toto ignoruje."
         }
       },
       "flow_rate": {
@@ -543,7 +549,8 @@
           "deep_soak_sun_offset_minutes": "Časový posun hlubokého namáčení vůči slunci (minuty)",
           "routine_sun_mode": "Běžný spouštěč",
           "routine_sun_offset_minutes": "Časový posun běžného zavlažování vůči slunci (minuty)",
-          "master_valve_entity": "Hlavní ventil (volitelné)"
+          "master_valve_entity": "Hlavní ventil (volitelné)",
+          "master_valve_normally_open": "Hlavní ventil je normálně otevřený"
         },
         "data_description": {
           "pump_power_entity": "Snímač příkonu (W) na čerpadle, např. z chytré zásuvky. Během každého zavlažování ZoneFlow kontroluje, zda čerpadlo skutečně odebírá energii, a varuje vás, pokud tomu tak není. Ponechte prázdné, pokud nemáte.",
@@ -564,7 +571,8 @@
           "deep_soak_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase.",
           "routine_sun_mode": "Spustit běžné zavlažování v pevně stanoveném čase výše, nebo před/po východu či západu slunce, aby se přizpůsobovalo ročním obdobím.",
           "routine_sun_offset_minutes": "Kolik minut před nebo po východu či západu slunce. Nepoužívá se při pevném čase.",
-          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil."
+          "master_valve_entity": "Záložní uzavírací ventil před touto zónou, například za čerpadlem pro více zón. Otevře se s každou zálivkou a zavře se, když skončí poslední. Pro bezpečnost se také zavře, až do Reset Lock, pokud ventil zóny zůstane otevřený nebo voda dál teče (průtokoměr) či čerpadlo dál běží (příkon čerpadla), zatímco jsou všechny ventily zón zavřené. Všem zónám za ním zadejte stejný ventil.",
+          "master_valve_normally_open": "Nechte vypnuté pro normálně zavřený ventil (doporučeno: při výpadku proudu se sám zavře). Zapněte pro normálně otevřený ventil na relé: ZoneFlow ho pak zavírá ZAPNUTÍM relé. Entita ventilu hlásí otevřeno a zavřeno sama a toto ignoruje."
         }
       },
       "wu_key": {

@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} stod öppen alldeles för länge.",
       "flow": "Flödesmätaren fortsatte att räkna medan alla zonventiler var stängda.",
       "pump_power": "Pumpen fortsatte att dra ström medan alla zonventiler var stängda."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test av huvudventil misslyckades",
+      "message": "Månadstestet av {valve} visade att vattnet fortfarande rann eller pumpen fortfarande gick när den var stängd. Den kanske inte stoppar vattnet om en zonventil fastnar: kontrollera den."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Huvudventilen {valve} är stängd av säkerhetsskäl. {reason} Tryck Reset Lock när det är åtgärdat.",
       "fail": "Huvudventilen {valve} är inte tillgänglig.",
-      "ok": "Huvudventilen {valve} svarar."
+      "ok": "Huvudventilen {valve} svarar.",
+      "test_failed": "Huvudventilen {valve} klarade inte månadstestet {when}: när den var stängd rann vattnet fortfarande eller pumpen gick.",
+      "test_ok": "Huvudventilen klarade månadstestet {when}.",
+      "test_pending": "Huvudventilen testas en gång i månaden i slutet av en vanlig bevattning.",
+      "test_none": "Lägg till en flödesmätare eller en pumpeffektsensor så testas huvudventilen en gång i månaden."
     }
   },
   "why": {

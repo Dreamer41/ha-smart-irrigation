@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} túl sokáig volt nyitva.",
       "flow": "Az átfolyásmérő tovább számolt, miközben minden zónaszelep zárva volt.",
       "pump_power": "A szivattyú tovább vett fel áramot, miközben minden zónaszelep zárva volt."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 A főszelep tesztje sikertelen",
+      "message": "A(z) {valve} havi tesztjén zárt állapotban tovább folyt a víz vagy tovább járt a szivattyú. Ha egy zónaszelep beragad, lehet, hogy nem zár el: ellenőrizze."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "A(z) {valve} főszelep biztonsági okból zárva van. {reason} A javítás után nyomja meg a Reset Lock gombot.",
       "fail": "A(z) {valve} főszelep nem érhető el.",
-      "ok": "A(z) {valve} főszelep válaszol."
+      "ok": "A(z) {valve} főszelep válaszol.",
+      "test_failed": "A(z) {valve} főszelep nem ment át a havi teszten ({when}): zárva tovább folyt a víz vagy járt a szivattyú.",
+      "test_ok": "A főszelep átment a havi teszten ({when}).",
+      "test_pending": "A főszelepet havonta egyszer teszteljük, egy szokásos öntözés végén.",
+      "test_none": "Adjon hozzá átfolyásmérőt vagy szivattyúteljesítmény-érzékelőt, hogy a főszelep havonta tesztelve legyen."
     }
   },
   "why": {

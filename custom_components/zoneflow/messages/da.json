@@ -188,6 +188,10 @@
       "valve_stuck": "{valve} stod åben alt for længe.",
       "flow": "Flowmåleren blev ved med at tælle, mens alle zoneventiler var lukkede.",
       "pump_power": "Pumpen blev ved med at trække strøm, mens alle zoneventiler var lukkede."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test af hovedventil fejlede",
+      "message": "Den månedlige test af {valve} viste, at vandet stadig løb eller pumpen stadig kørte, mens den var lukket. Den holder måske ikke, hvis en zoneventil sidder fast åben: tjek den."
     }
   },
   "notes": {
@@ -394,7 +398,11 @@
     "master_valve": {
       "latched": "Hovedventilen {valve} er lukket af sikkerhedshensyn. {reason} Tryk Reset Lock, når det er udbedret.",
       "fail": "Hovedventilen {valve} er ikke tilgængelig.",
-      "ok": "Hovedventilen {valve} svarer."
+      "ok": "Hovedventilen {valve} svarer.",
+      "test_failed": "Hovedventilen {valve} bestod ikke den månedlige test {when}: vandet løb stadig, eller pumpen kørte, mens den var lukket.",
+      "test_ok": "Hovedventilen bestod den månedlige test {when}.",
+      "test_pending": "Hovedventilen testes en gang om måneden ved slutningen af en almindelig vanding.",
+      "test_none": "Tilføj en flowmåler eller en pumpeeffektsensor for at få hovedventilen testet en gang om måneden."
     }
   },
   "why": {
