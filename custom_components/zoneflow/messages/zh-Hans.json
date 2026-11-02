@@ -362,7 +362,9 @@
       "fail": "雨量计 {entity} 不可用。在恢复之前，ZoneFlow 假定未下雨。",
       "wu": "降雨数据来自 Weather Underground。",
       "manual": "手动添加降雨。",
-      "none": "未配置雨量计。ZoneFlow 假定从不下雨，除非您手动添加降雨或使用 Weather Underground。"
+      "none": "未配置雨量计。ZoneFlow 假定从不下雨，除非您手动添加降雨或使用 Weather Underground。",
+      "sensor": "根据雨量传感器 {entity} 估算降雨：读数为湿时按 {rate} 计。",
+      "sensor_no_rate": "雨量传感器 {entity} 读数为湿时会暂停浇水，但不计算降雨量。没有雨量计时，请设置“雨量传感器降雨强度”，把潮湿时间计为降雨。"
     },
     "temperature": {
       "ok": "室外温度为 {value} {unit}。",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "请设置种植日期，以遵循{crop}的生长季曲线；在此之前使用“作物系数”设置。",
     "root_zone": "根区：可容纳 {taw}；植物每天约用 {use}，在感到干旱前可用 {raw}。",
     "root_zone_interval": "因此每 {days} 天浇水一次，而不是每 {tier} 天。",
-    "root_zone_capped": "每次浇水上限为 {taw}，即根区可容纳的量（比按天数计算少 {capped}）。"
+    "root_zone_capped": "每次浇水上限为 {taw}，即根区可容纳的量（比按天数计算少 {capped}）。",
+    "rain_sensor_estimate": "没有雨量计：根据雨量传感器估算降雨，读数为湿的每小时按 {rate} 计（每天最多 {cap}）。"
   },
   "suggest": {
     "heading": "在您的 Home Assistant 中找到的匹配项：",

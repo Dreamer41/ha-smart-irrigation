@@ -362,7 +362,9 @@
       "fail": "The rain gauge {entity} is not available. Until it is back ZoneFlow assumes it does not rain.",
       "wu": "Rain comes from Weather Underground.",
       "manual": "Rain is added by hand.",
-      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground."
+      "none": "No rain gauge. ZoneFlow assumes it never rains, unless you add rain by hand or use Weather Underground.",
+      "sensor": "Rain is estimated from the rain sensor {entity}: {rate} while it reads wet.",
+      "sensor_no_rate": "The rain sensor {entity} holds watering while it reads wet, but counts no rain. With no rain gauge, set Rain Sensor Rain Rate to count its wet time as rain."
     },
     "temperature": {
       "ok": "Outdoor temperature is {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Set the planting date to follow the {crop} season curve; until then the Crop Factor setting is used.",
     "root_zone": "Root zone: holds {taw}; the plant uses about {use} a day and can use {raw} before it feels dry.",
     "root_zone_interval": "So it waters every {days} days instead of {tier}.",
-    "root_zone_capped": "A watering is capped at {taw}, what the root zone holds ({capped} less than the days call for)."
+    "root_zone_capped": "A watering is capped at {taw}, what the root zone holds ({capped} less than the days call for).",
+    "rain_sensor_estimate": "No rain gauge: rain is estimated from the rain sensor, {rate} for every hour it reads wet (at most {cap} a day)."
   },
   "suggest": {
     "heading": "Likely ones found in your Home Assistant:",

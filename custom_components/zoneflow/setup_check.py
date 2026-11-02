@@ -135,6 +135,13 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("rain", "fail", "rain.fail", entity=gauge)
     elif controller.uses_wu:
         add("rain", "ok", "rain.wu")
+    elif controller.rain_estimate_active:
+        imperial = controller.imperial
+        rate = units.to_display("rain_sensor_mm_per_hour", controller.number("rain_sensor_mm_per_hour"), imperial)
+        add("rain", "ok", "rain.sensor", entity=controller.rain_sensor_entity,
+            rate=f"{rate:.2f} in/h" if imperial else f"{rate:.1f} mm/h")
+    elif controller.is_outdoor and controller.rain_sensor_entity and not controller.store.state.manual_rain_used:
+        add("rain", "info", "rain.sensor_no_rate", entity=controller.rain_sensor_entity)
     elif controller.is_outdoor and controller.store.state.manual_rain_used:
         add("rain", "ok", "rain.manual")
     elif controller.is_outdoor:

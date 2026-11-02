@@ -362,7 +362,9 @@
       "fail": "Le pluviomètre {entity} n'est pas disponible. En son absence, ZoneFlow suppose qu'il ne pleut pas.",
       "wu": "La pluie provient de Weather Underground.",
       "manual": "La pluie est ajoutée manuellement.",
-      "none": "Aucun pluviomètre. ZoneFlow suppose qu'il ne pleut jamais, sauf si vous ajoutez la pluie manuellement ou utilisez Weather Underground."
+      "none": "Aucun pluviomètre. ZoneFlow suppose qu'il ne pleut jamais, sauf si vous ajoutez la pluie manuellement ou utilisez Weather Underground.",
+      "sensor": "La pluie est estimée par le capteur de pluie {entity} : {rate} tant qu'il indique humide.",
+      "sensor_no_rate": "Le capteur de pluie {entity} retient l'arrosage tant qu'il indique humide, mais ne compte aucune pluie. Sans pluviomètre, réglez Pluie horaire du capteur de pluie pour compter le temps humide comme de la pluie."
     },
     "temperature": {
       "ok": "La température extérieure est de {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Indiquez la date de plantation pour suivre la courbe de saison de {crop} ; d'ici là, le réglage Coefficient cultural est utilisé.",
     "root_zone": "Zone racinaire : retient {taw} ; la plante utilise environ {use} par jour et peut utiliser {raw} avant de souffrir du sec.",
     "root_zone_interval": "Elle arrose donc tous les {days} jours au lieu de tous les {tier}.",
-    "root_zone_capped": "Un arrosage est limité à {taw}, ce que retient la zone racinaire ({capped} de moins que ce que demandent les jours)."
+    "root_zone_capped": "Un arrosage est limité à {taw}, ce que retient la zone racinaire ({capped} de moins que ce que demandent les jours).",
+    "rain_sensor_estimate": "Pas de pluviomètre : la pluie est estimée par le capteur de pluie, {rate} par heure où il indique humide (au plus {cap} par jour)."
   },
   "suggest": {
     "heading": "Éléments probables trouvés dans votre Home Assistant :",

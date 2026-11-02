@@ -320,6 +320,11 @@ class IrrigationState:
     # Set by the first entry: the rain sensors are shown from then on.
     manual_rain_used: bool = False
 
+    # --- 1.8 rain estimated from a binary rain sensor (controller._count_sensor_rain) ---
+    # Cumulative mm, added as the sensor stays wet; and since when it has been counted.
+    sensor_rain_samples: list[list[float]] = field(default_factory=list)
+    rain_sensor_wet_since: float | None = None
+
     def rain_tracker(self) -> RainWindowTracker:
         return RainWindowTracker.from_persisted(self.rain_samples)
 
@@ -331,6 +336,12 @@ class IrrigationState:
 
     def save_manual_rain_tracker(self, tracker: RainWindowTracker) -> None:
         self.manual_rain_samples = tracker.as_persisted()
+
+    def sensor_rain_tracker(self) -> RainWindowTracker:
+        return RainWindowTracker.from_persisted(self.sensor_rain_samples)
+
+    def save_sensor_rain_tracker(self, tracker: RainWindowTracker) -> None:
+        self.sensor_rain_samples = tracker.as_persisted()
 
 
 SCHEDULED_SAVE_DELAY_SECONDS = 10.0

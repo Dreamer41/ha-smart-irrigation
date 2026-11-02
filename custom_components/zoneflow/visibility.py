@@ -69,6 +69,7 @@ TEMPERATURE = {
 }
 FROST = {("number", "frost_guard_temp")}
 WIND_HOLD = {("number", "wind_hold_kmh")}
+RAIN_ESTIMATE = {("number", "rain_sensor_mm_per_hour")}
 # 1.8: Root Depth is the switch and stays visible; the rest does nothing while it is 0.
 ROOT_ZONE = {
     ("number", "soil_holding_mm_per_m"),
@@ -175,7 +176,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         # the 30-minute ones too (fresh rain around a watering).
         hidden.add(("number", "rain_mm_per_tip"))
     elif not controller.rain_counter_entity:
-        hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
+        rain_shown = controller.store.state.manual_rain_used or controller.rain_estimate_active
+        hidden |= RAIN_GAUGE_ONLY if rain_shown else RAIN_GAUGE
     elif controller.rain_source_type != RAIN_SOURCE_TIPS:
         hidden.add(("number", "rain_mm_per_tip"))  # a total or rate is already in mm
     elif controller.rain_from_area:
@@ -198,6 +200,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= FROST  # nothing to read the temperature from
     if not controller.is_outdoor or controller.irrigation_method not in WIND_HOLD_SEED_KMH:
         hidden |= WIND_HOLD  # only a sprinkler's spray drifts
+    if not controller.rain_sensor_entity or controller.rain_counter_entity or controller.uses_wu:
+        hidden |= RAIN_ESTIMATE  # a gauge or Weather Underground measures the rain
     if not controller.notify_entity:
         hidden |= NOTIFY
     if not controller.flow_meter_entity:

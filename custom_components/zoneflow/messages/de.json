@@ -362,7 +362,9 @@
       "fail": "Der Regenmesser {entity} ist nicht verfügbar. Bis er zurück ist, nimmt ZoneFlow an, dass es nicht regnet.",
       "wu": "Regendaten kommen von Weather Underground.",
       "manual": "Regen wird manuell hinzugefügt.",
-      "none": "Kein Regenmesser. ZoneFlow nimmt an, dass es nie regnet, außer Sie fügen Regen manuell hinzu oder nutzen Weather Underground."
+      "none": "Kein Regenmesser. ZoneFlow nimmt an, dass es nie regnet, außer Sie fügen Regen manuell hinzu oder nutzen Weather Underground.",
+      "sensor": "Der Regen wird aus dem Regensensor {entity} geschätzt: {rate}, solange er nass meldet.",
+      "sensor_no_rate": "Der Regensensor {entity} hält die Bewässerung auf, solange er nass meldet, zählt aber keinen Regen. Ohne Regenmesser: Regenmenge des Regensensors setzen, damit die nasse Zeit als Regen zählt."
     },
     "temperature": {
       "ok": "Die Außentemperatur beträgt {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Pflanzdatum setzen, damit die Saisonkurve für {crop} gilt; bis dahin gilt die Einstellung Pflanzenfaktor.",
     "root_zone": "Wurzelraum: speichert {taw}; die Pflanze verbraucht etwa {use} am Tag und kann {raw} nutzen, bevor sie Trockenheit spürt.",
     "root_zone_interval": "Deshalb wird alle {days} Tage statt alle {tier} Tage bewässert.",
-    "root_zone_capped": "Eine Bewässerung wird auf {taw} begrenzt, so viel speichert der Wurzelraum ({capped} weniger, als die Tage verlangen)."
+    "root_zone_capped": "Eine Bewässerung wird auf {taw} begrenzt, so viel speichert der Wurzelraum ({capped} weniger, als die Tage verlangen).",
+    "rain_sensor_estimate": "Kein Regenmesser: Der Regen wird aus dem Regensensor geschätzt, {rate} für jede Stunde, in der er nass meldet (höchstens {cap} am Tag)."
   },
   "suggest": {
     "heading": "Mögliche Treffer in Ihrem Home Assistant:",

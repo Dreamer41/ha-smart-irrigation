@@ -362,7 +362,9 @@
       "fail": "Srážkoměr {entity} není k dispozici. Dokud se nevrátí, ZoneFlow předpokládá, že neprší.",
       "wu": "Údaje o dešti pocházejí ze služby Weather Underground.",
       "manual": "Déšť se přidává ručně.",
-      "none": "Bez srážkoměru. ZoneFlow předpokládá, že nikdy neprší, dokud nepřidáte déšť ručně nebo nepoužijete Weather Underground."
+      "none": "Bez srážkoměru. ZoneFlow předpokládá, že nikdy neprší, dokud nepřidáte déšť ručně nebo nepoužijete Weather Underground.",
+      "sensor": "Déšť se odhaduje ze srážkového senzoru {entity}: {rate}, dokud hlásí mokro.",
+      "sensor_no_rate": "Srážkový senzor {entity} zadržuje zálivku, dokud hlásí mokro, ale nepočítá žádný déšť. Bez srážkoměru nastavte Intenzitu deště ze srážkového senzoru, aby se doba mokra počítala jako déšť."
     },
     "temperature": {
       "ok": "Venkovní teplota je {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Nastavte datum výsadby, aby se řídilo křivkou sezóny {crop}; do té doby platí nastavení Koeficient plodiny.",
     "root_zone": "Kořenová zóna: pojme {taw}; rostlina spotřebuje asi {use} denně a může využít {raw}, než pocítí sucho.",
     "root_zone_interval": "Proto zavlažuje každé {days} dny místo {tier}.",
-    "root_zone_capped": "Zálivka je omezena na {taw}, co pojme kořenová zóna (o {capped} méně, než by odpovídalo dnům)."
+    "root_zone_capped": "Zálivka je omezena na {taw}, co pojme kořenová zóna (o {capped} méně, než by odpovídalo dnům).",
+    "rain_sensor_estimate": "Bez srážkoměru: déšť se odhaduje ze srážkového senzoru, {rate} za každou hodinu, kdy hlásí mokro (nejvýše {cap} denně)."
   },
   "suggest": {
     "heading": "Pravděpodobné položky nalezené v systému Home Assistant:",

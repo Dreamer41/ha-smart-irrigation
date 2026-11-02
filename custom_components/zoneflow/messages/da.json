@@ -362,7 +362,9 @@
       "fail": "Regnmåleren {entity} er ikke tilgængelig. Indtil den er tilbage, antager ZoneFlow, at det ikke regner.",
       "wu": "Regn kommer fra Weather Underground.",
       "manual": "Regn tilføjes manuelt.",
-      "none": "Ingen regnmåler. ZoneFlow antager, at det aldrig regner, medmindre du tilføjer regn manuelt eller bruger Weather Underground."
+      "none": "Ingen regnmåler. ZoneFlow antager, at det aldrig regner, medmindre du tilføjer regn manuelt eller bruger Weather Underground.",
+      "sensor": "Regnen anslås ud fra regnsensoren {entity}: {rate}, mens den melder vådt.",
+      "sensor_no_rate": "Regnsensoren {entity} holder vandingen tilbage, mens den melder vådt, men tæller ingen regn. Uden regnmåler: sæt Regnmængde fra regnsensor for at tælle den våde tid som regn."
     },
     "temperature": {
       "ok": "Udendørstemperaturen er {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Angiv plantedatoen for at følge sæsonkurven for {crop}; indtil da bruges indstillingen Afgrødefaktor.",
     "root_zone": "Rodzone: rummer {taw}; planten bruger omkring {use} om dagen og kan bruge {raw}, før den mærker tørke.",
     "root_zone_interval": "Derfor vander den hver {days}. dag i stedet for hver {tier}.",
-    "root_zone_capped": "En vanding begrænses til {taw}, det rodzonen rummer ({capped} mindre end dagene kræver)."
+    "root_zone_capped": "En vanding begrænses til {taw}, det rodzonen rummer ({capped} mindre end dagene kræver).",
+    "rain_sensor_estimate": "Ingen regnmåler: regnen anslås ud fra regnsensoren, {rate} for hver time den melder vådt (højst {cap} om dagen)."
   },
   "suggest": {
     "heading": "Sandsynlige fundet i din Home Assistant:",

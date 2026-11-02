@@ -362,7 +362,9 @@
       "fail": "De regenmeter {entity} is niet beschikbaar. Tot deze terug is, gaat ZoneFlow er van uit dat het niet regent.",
       "wu": "Regen komt van Weather Underground.",
       "manual": "Regen wordt handmatig toegevoegd.",
-      "none": "Geen regenmeter. ZoneFlow gaat er van uit dat het nooit regent, tenzij je handmatig regen toevoegt of Weather Underground gebruikt."
+      "none": "Geen regenmeter. ZoneFlow gaat er van uit dat het nooit regent, tenzij je handmatig regen toevoegt of Weather Underground gebruikt.",
+      "sensor": "De regen wordt geschat met de regensensor {entity}: {rate} zolang hij nat meldt.",
+      "sensor_no_rate": "De regensensor {entity} houdt beregening tegen zolang hij nat meldt, maar telt geen regen. Zonder regenmeter: stel Regen per uur van de regensensor in om de natte tijd als regen te tellen."
     },
     "temperature": {
       "ok": "Buitentemperatuur is {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Stel de plantdatum in om de seizoencurve van {crop} te volgen; tot dan geldt de instelling Gewasfactor.",
     "root_zone": "Wortelzone: houdt {taw} vast; de plant gebruikt ongeveer {use} per dag en kan {raw} gebruiken voordat hij droogte voelt.",
     "root_zone_interval": "Daarom geeft hij elke {days} dagen water in plaats van elke {tier}.",
-    "root_zone_capped": "Een beurt wordt beperkt tot {taw}, wat de wortelzone vasthoudt ({capped} minder dan de dagen vragen)."
+    "root_zone_capped": "Een beurt wordt beperkt tot {taw}, wat de wortelzone vasthoudt ({capped} minder dan de dagen vragen).",
+    "rain_sensor_estimate": "Geen regenmeter: de regen wordt geschat met de regensensor, {rate} voor elk uur dat hij nat meldt (hoogstens {cap} per dag)."
   },
   "suggest": {
     "heading": "Mogelijke entiteiten gevonden in je Home Assistant:",

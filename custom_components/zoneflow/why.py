@@ -12,7 +12,7 @@ import homeassistant.util.dt as dt_util
 
 from . import calculations as calc
 from . import messages, units
-from .const import DEMAND_MODEL_ET, DEMAND_MODEL_FAO56
+from .const import DEMAND_MODEL_ET, DEMAND_MODEL_FAO56, RAIN_SENSOR_ESTIMATE_MAX_MM_DAY
 
 
 def _preview(controller: Any):
@@ -130,6 +130,12 @@ def explain(controller: Any) -> list[dict[str, str]]:
             )
         else:
             add("rain", "rain", credit=units.depth_text(plan.eff_rain_mm, imperial), rain=rain_7d)
+        if controller.rain_estimate_active:
+            # 1.8: no gauge, so the amounts above are the rain sensor's estimate.
+            rate = controller.number("rain_sensor_mm_per_hour")
+            rate_text = f"{rate / units.MM_PER_INCH:.2f} in/h" if imperial else f"{rate:.1f} mm/h"
+            add("rain_estimate", "rain_sensor_estimate", rate=rate_text,
+                cap=units.depth_text(RAIN_SENSOR_ESTIMATE_MAX_MM_DAY, imperial))
         add("needed", "needed", needed=units.depth_text(max(plan.needed_mm, 0.0), imperial), minutes=plan.calc_runtime_minutes)
 
         # What would run now: the pulses, the soak and the longest the valve is open at once.

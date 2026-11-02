@@ -362,7 +362,9 @@
       "fail": "Deszczomierz {entity} jest niedostępny. Dopóki nie wróci, ZoneFlow zakłada, że nie pada.",
       "wu": "Dane o deszczu pochodzą z Weather Underground.",
       "manual": "Deszcz jest dodawany ręcznie.",
-      "none": "Brak deszczomierza. ZoneFlow zakłada, że nigdy nie pada, chyba że dodasz deszcz ręcznie lub użyjesz Weather Underground."
+      "none": "Brak deszczomierza. ZoneFlow zakłada, że nigdy nie pada, chyba że dodasz deszcz ręcznie lub użyjesz Weather Underground.",
+      "sensor": "Opad jest szacowany z czujnika deszczu {entity}: {rate}, dopóki pokazuje mokro.",
+      "sensor_no_rate": "Czujnik deszczu {entity} wstrzymuje podlewanie, dopóki pokazuje mokro, ale nie liczy opadu. Bez deszczomierza ustaw Opad na godzinę z czujnika deszczu, aby liczyć czas mokry jako deszcz."
     },
     "temperature": {
       "ok": "Temperatura zewnętrzna wynosi {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Ustaw datę sadzenia, aby stosować krzywą sezonu dla: {crop}; do tego czasu obowiązuje ustawienie Współczynnik uprawy.",
     "root_zone": "Strefa korzeni: mieści {taw}; roślina zużywa około {use} dziennie i może zużyć {raw}, zanim odczuje suszę.",
     "root_zone_interval": "Dlatego podlewa co {days} dni zamiast co {tier}.",
-    "root_zone_capped": "Podlewanie jest ograniczone do {taw}, tyle mieści strefa korzeni (o {capped} mniej, niż wymagają dni)."
+    "root_zone_capped": "Podlewanie jest ograniczone do {taw}, tyle mieści strefa korzeni (o {capped} mniej, niż wymagają dni).",
+    "rain_sensor_estimate": "Brak deszczomierza: opad jest szacowany z czujnika deszczu, {rate} za każdą godzinę, gdy pokazuje mokro (najwyżej {cap} na dobę)."
   },
   "suggest": {
     "heading": "Prawdopodobne encje znalezione w Home Assistant:",

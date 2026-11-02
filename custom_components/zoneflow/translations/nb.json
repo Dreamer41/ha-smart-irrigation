@@ -1155,6 +1155,9 @@
       },
       "wind_hold_kmh": {
         "name": "Vindgrense"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Regnmengde fra regnsensor"
       }
     },
     "datetime": {

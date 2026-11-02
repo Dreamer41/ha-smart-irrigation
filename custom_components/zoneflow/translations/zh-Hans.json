@@ -1155,6 +1155,9 @@
       },
       "wind_hold_kmh": {
         "name": "风速上限"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "雨量传感器降雨强度"
       }
     },
     "datetime": {

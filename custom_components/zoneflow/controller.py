@@ -67,6 +67,7 @@ from .const import (
     CONF_RAIN_SENSOR_INVERTED,
     CONF_SOLAR_ENTITY,
     CONF_WIND_ENTITY,
+    RAIN_SENSOR_ESTIMATE_MAX_MM_DAY,
     RAIN_SENSOR_STUCK_SECONDS,
     WIND_HOLD_SEED_KMH,
     WIND_MAX_AGE_SECONDS,
@@ -1229,6 +1230,12 @@ class ZoneFlowController:
             self._unsubs.append(async_track_state_change_event(self.hass, et0_entities, self._on_et0_input_change))
             self._seed_et0_inputs()
         self._unsubs.append(async_track_time_interval(self.hass, self._on_heartbeat, timedelta(minutes=10)))
+        if self.rain_sensor_entity:
+            self._unsubs.append(
+                async_track_state_change_event(self.hass, [self.rain_sensor_entity], self._on_rain_sensor_change)
+            )
+            # A wet spell over a restart: counted up to the last heartbeat, then from now.
+            self._count_sensor_rain(now_ts, until_ts=state.last_alive_ts or now_ts)
         if self.rain_counter_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -1619,7 +1626,58 @@ class ZoneFlowController:
         source = self._wu()
         manual = state.manual_rain_tracker().sum_between_mm(start_ts, end_ts) if state.manual_rain_samples else 0.0
         wu = source.sum_between(start_ts, end_ts) if source is not None else 0.0
-        return max(gauge, manual, wu)
+        estimate = self._sensor_rain()
+        sensor = estimate.sum_between_mm(start_ts, end_ts) if estimate is not None else 0.0
+        return max(gauge, manual, wu, sensor)
+
+    # ------------------------------------------------------------------
+    # Rain from the rain sensor's wet time (1.8): for a zone with no rain gauge and no Weather
+    # Underground, Rain Sensor Rain Rate x the hours it reads wet, added as it goes.
+    # ------------------------------------------------------------------
+    @property
+    def rain_estimate_active(self) -> bool:
+        return (
+            bool(self.rain_sensor_entity) and not self.rain_counter_entity and not self.uses_wu
+            and self.number("rain_sensor_mm_per_hour") > 0
+        )
+
+    def _sensor_rain(self):
+        """The estimated rain, or None while the zone doesn't estimate (a gauge or Weather
+        Underground measures it; then what was estimated before stops counting)."""
+        state = self.store.state
+        return state.sensor_rain_tracker() if state.sensor_rain_samples and self.rain_estimate_active else None
+
+    def _count_sensor_rain(self, now_ts: float, until_ts: float | None = None) -> None:
+        """Add the rain of the wet time since the last count (until `until_ts`: after a restart, the
+        last heartbeat before it, as nothing is known of the time Home Assistant was down), then
+        start counting again from now if the sensor still reads wet. Called on each change of the
+        sensor and every heartbeat, so a wet spell adds up in steps of at most ten minutes. A sensor
+        that is stuck or unreadable adds nothing; no day gets more than RAIN_SENSOR_ESTIMATE_MAX_MM_DAY."""
+        state = self.store.state
+        if not self.rain_estimate_active:
+            state.rain_sensor_wet_since = None
+            return
+        since = state.rain_sensor_wet_since
+        end = now_ts if until_ts is None else min(until_ts, now_ts)
+        added = 0.0
+        if since is not None and end > since:
+            tracker = state.sensor_rain_tracker()
+            day_start = dt_util.start_of_local_day(dt_util.as_local(dt_util.utc_from_timestamp(end))).timestamp()
+            room = max(RAIN_SENSOR_ESTIMATE_MAX_MM_DAY - tracker.sum_between_mm(day_start, end), 0.0)
+            added = min((end - since) / 3600.0 * self.number("rain_sensor_mm_per_hour"), room)
+            if added > 0:
+                if not tracker.samples or tracker.samples[-1][0] < since:
+                    tracker.record(since, tracker.latest_cumulative())  # where this rain starts
+                tracker.record(end, tracker.latest_cumulative() + added)
+                state.save_sensor_rain_tracker(tracker)
+        state.rain_sensor_wet_since = now_ts if self.rain_sensor_wet() else None
+        if added > 0:
+            self._check_significant_rain()
+        self.store.schedule_save()
+
+    @callback
+    def _on_rain_sensor_change(self, event: Event) -> None:
+        self._count_sensor_rain(dt_util.utcnow().timestamp())
 
     def _shift_missed_days(self) -> None:
         """The day the open bucket belongs to has ended without the 23:59:50 shift (Home Assistant
@@ -1741,6 +1799,8 @@ class ZoneFlowController:
     @callback
     def _on_heartbeat(self, now) -> None:
         self.store.state.last_alive_ts = dt_util.utcnow().timestamp()
+        if self.rain_sensor_entity:
+            self._count_sensor_rain(self.store.state.last_alive_ts)
         self._end_stale_wu_climate(self.store.state.last_alive_ts)
         self.store.schedule_save()
 
@@ -1935,13 +1995,15 @@ class ZoneFlowController:
         state = self.store.state
         gauge = max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
         source = self._wu()
-        if not state.manual_rain_samples and source is None:
+        estimate = self._sensor_rain()
+        if not state.manual_rain_samples and source is None and estimate is None:
             return gauge
         midnight = dt_util.start_of_local_day().timestamp()
         now_ts = dt_util.utcnow().timestamp()
         manual = state.manual_rain_tracker().sum_between_mm(midnight, now_ts)
         wu = source.sum_between(midnight, now_ts) if source is not None else 0.0
-        return max(gauge, manual, wu)
+        sensor = estimate.sum_between_mm(midnight, now_ts) if estimate is not None else 0.0
+        return max(gauge, manual, wu, sensor)
 
     def avg_peak_temp(self) -> float | None:
         """Average of the real daily peaks recorded in the last 3 days, or
@@ -2324,6 +2386,10 @@ class ZoneFlowController:
             self._notify_status()  # when the next watering is changed with it: show it at once
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
+        elif key == "rain_sensor_mm_per_hour":
+            # Counted so far at the old rate; the rain sensors show while it estimates.
+            self._count_sensor_rain(dt_util.utcnow().timestamp())
+            self.hass.async_create_task(visibility.async_apply(self.hass, self.entry, self))
         elif key in ROOT_ZONE_KEYS:
             # The interval and the dose follow at once; Root Depth 0 <-> on shows or hides the rest.
             self._notify_status()
@@ -2738,6 +2804,11 @@ class ZoneFlowController:
             for name, value in manual.items():
                 if name not in SHORT_RAIN_WINDOWS:
                     windows[name] = max(windows[name], value)
+        estimate = self._sensor_rain()
+        if estimate is not None:
+            # Counted as it falls: the "raining now" windows too.
+            for name, value in estimate.all_windows_mm(now_ts).items():
+                windows[name] = max(windows[name], value)
         source = self._wu()
         if source is not None:
             # Weather Underground: only rain that arrived fresh counts as
@@ -2758,6 +2829,9 @@ class ZoneFlowController:
         gauge = state.rain_tracker().window_sum_mm(window_minutes, now_ts)
         source = self._wu()
         wu = source.sum_between(since_ts, now_ts) if source is not None else 0.0
+        estimate = self._sensor_rain()
+        if estimate is not None:
+            wu = max(wu, estimate.sum_between_mm(since_ts, now_ts))
         if not state.manual_rain_samples:
             return max(gauge, wu)
         return max(gauge, wu, state.manual_rain_tracker().window_sum_mm(window_minutes, now_ts))
@@ -4571,6 +4645,9 @@ class ZoneFlowController:
         gauge = state.rain_tracker().sum_between_mm(start_ts, end_ts)
         source = self._wu()
         wu = source.sum_between(start_ts, end_ts) if source is not None else 0.0
+        estimate = self._sensor_rain()
+        if estimate is not None:
+            wu = max(wu, estimate.sum_between_mm(start_ts, end_ts))
         if not state.manual_rain_samples:
             return max(gauge, wu)
         return max(gauge, wu, state.manual_rain_tracker().sum_between_mm(start_ts, end_ts))
@@ -4579,7 +4656,7 @@ class ZoneFlowController:
         """Fill in the entries that are 48 h old. True when something changed."""
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
-        has_rain_data = bool(self.rain_counter_entity) or state.manual_rain_used or self.uses_wu
+        has_rain_data = bool(self.rain_counter_entity) or state.manual_rain_used or self.uses_wu or self.rain_estimate_active
         threshold = self.number("forecast_rain_threshold_mm")
         changed = False
         for entry in state.forecast_skip_journal:

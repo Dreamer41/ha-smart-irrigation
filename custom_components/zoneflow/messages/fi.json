@@ -362,7 +362,9 @@
       "fail": "Sademittari {entity} ei ole käytettävissä. Kunnes se palaa, ZoneFlow olettaa, ettei sada.",
       "wu": "Sade saadaan Weather Underground -palvelusta.",
       "manual": "Sade lisätään käsin.",
-      "none": "Ei sademittaria. ZoneFlow olettaa, ettei koskaan sada, ellet lisää sadetta käsin tai käytä Weather Undergroundia."
+      "none": "Ei sademittaria. ZoneFlow olettaa, ettei koskaan sada, ellet lisää sadetta käsin tai käytä Weather Undergroundia.",
+      "sensor": "Sade arvioidaan sadeanturista {entity}: {rate}, kun se näyttää märkää.",
+      "sensor_no_rate": "Sadeanturi {entity} pidättää kastelua, kun se näyttää märkää, mutta ei laske sadetta. Ilman sademittaria aseta Sadeanturin sademäärä, niin märkä aika lasketaan sateeksi."
     },
     "temperature": {
       "ok": "Ulkolämpötila on {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Aseta istutuspäivä, jotta {crop}-kasvukauden käyrää noudatetaan; siihen asti käytetään Kasvikerroin-asetusta.",
     "root_zone": "Juuristovyöhyke: pidättää {taw}; kasvi käyttää noin {use} päivässä ja voi käyttää {raw} ennen kuin kärsii kuivuudesta.",
     "root_zone_interval": "Siksi se kastelee {days} päivän välein {tier} päivän sijaan.",
-    "root_zone_capped": "Kastelu rajataan määrään {taw}, jonka juuristovyöhyke pidättää ({capped} vähemmän kuin päivät vaatisivat)."
+    "root_zone_capped": "Kastelu rajataan määrään {taw}, jonka juuristovyöhyke pidättää ({capped} vähemmän kuin päivät vaatisivat).",
+    "rain_sensor_estimate": "Ei sademittaria: sade arvioidaan sadeanturista, {rate} jokaista tuntia kohden, jonka se näyttää märkää (enintään {cap} päivässä)."
   },
   "suggest": {
     "heading": "Todennäköisimmät löydökset Home Assistantissasi:",

@@ -120,6 +120,9 @@ CONF_SOLAR_ENTITY = "solar_entity"  # 1.8, optional: solar irradiance (W/m2) for
 CONF_RAIN_SENSOR_ENTITY = "rain_sensor_entity"
 CONF_RAIN_SENSOR_INVERTED = "rain_sensor_inverted"
 RAIN_SENSOR_STUCK_SECONDS = 24 * 3600  # wet for a day with no change: stuck, not rain
+# A zone with no rain gauge or Weather Underground can estimate rain from the sensor's wet time
+# (Rain Sensor Rain Rate x hours wet), at most this much a day.
+RAIN_SENSOR_ESTIMATE_MAX_MM_DAY = 30.0
 # Wind hold (1.8): sprinklers only. A wind reading older than this is not trusted.
 WIND_MAX_AGE_SECONDS = 1800
 WIND_HOLD_SEED_KMH = {"sprinkler": 20.0, "micro_sprinkler": 25.0}  # a new zone's limit, by method
@@ -583,6 +586,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "frost_guard_temp": ("Frost Guard Temperature", -10.0, 10.0, 0.5, "°C"),
     # Wind hold (1.8, sprinkler zones): a due cycle waits while the wind is above this. 0 = off.
     "wind_hold_kmh": ("Wind Limit", 0.0, 60.0, 1.0, "km/h"),
+    # Rain estimate (1.8, a rain sensor and no gauge): rain per hour the sensor reads wet. 0 = off.
+    "rain_sensor_mm_per_hour": ("Rain Sensor Rain Rate", 0.0, 10.0, 0.1, "mm/h"),
     # --- 1.6 greenhouse / indoor climate (only created for those zones) ---
     "heat_temp": ("Heater On Below", 0.0, 30.0, 0.5, "°C"),
     "vent_temp": ("Vents Open At", 10.0, 40.0, 0.5, "°C"),
@@ -682,6 +687,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
     "wind_hold_kmh": 0.0,
+    "rain_sensor_mm_per_hour": 0.0,
     "heat_temp": 10.0,
     "vent_temp": 25.0,
     "fan_temp": 28.0,

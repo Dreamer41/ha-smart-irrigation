@@ -362,7 +362,9 @@
       "fail": "Il pluviometro {entity} non è disponibile. Finché non torna attivo, ZoneFlow presuppone che non piova.",
       "wu": "I dati sulla pioggia provengono da Weather Underground.",
       "manual": "La pioggia viene aggiunta manualmente.",
-      "none": "Nessun pluviometro. ZoneFlow presuppone che non piova mai, a meno che tu non aggiunga la pioggia manualmente o usi Weather Underground."
+      "none": "Nessun pluviometro. ZoneFlow presuppone che non piova mai, a meno che tu non aggiunga la pioggia manualmente o usi Weather Underground.",
+      "sensor": "La pioggia è stimata dal sensore di pioggia {entity}: {rate} finché segnala bagnato.",
+      "sensor_no_rate": "Il sensore di pioggia {entity} trattiene l'irrigazione finché segnala bagnato, ma non conta pioggia. Senza pluviometro, imposta Pioggia oraria del sensore di pioggia per contare il tempo bagnato come pioggia."
     },
     "temperature": {
       "ok": "La temperatura esterna è {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Imposta la data di impianto per seguire la curva stagionale di {crop}; fino ad allora si usa l'impostazione Coefficiente colturale.",
     "root_zone": "Zona radicale: trattiene {taw}; la pianta usa circa {use} al giorno e può usarne {raw} prima di soffrire la siccità.",
     "root_zone_interval": "Per questo irriga ogni {days} giorni invece che ogni {tier}.",
-    "root_zone_capped": "Un'irrigazione è limitata a {taw}, quanto trattiene la zona radicale ({capped} in meno di quanto chiedono i giorni)."
+    "root_zone_capped": "Un'irrigazione è limitata a {taw}, quanto trattiene la zona radicale ({capped} in meno di quanto chiedono i giorni).",
+    "rain_sensor_estimate": "Nessun pluviometro: la pioggia è stimata dal sensore di pioggia, {rate} per ogni ora in cui segnala bagnato (al massimo {cap} al giorno)."
   },
   "suggest": {
     "heading": "Elementi probabili trovati nel tuo Home Assistant:",

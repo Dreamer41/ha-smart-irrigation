@@ -1155,6 +1155,9 @@
       },
       "wind_hold_kmh": {
         "name": "Limit wiatru"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Opad na godzinę z czujnika deszczu"
       }
     },
     "datetime": {

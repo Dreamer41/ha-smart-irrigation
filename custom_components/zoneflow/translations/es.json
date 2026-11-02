@@ -1155,6 +1155,9 @@
       },
       "wind_hold_kmh": {
         "name": "Límite de viento"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Lluvia por hora del sensor de lluvia"
       }
     },
     "datetime": {

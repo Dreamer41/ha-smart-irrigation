@@ -362,7 +362,9 @@
       "fail": "O medidor de chuva {entity} não está disponível. Até voltar, o ZoneFlow assume que não chove.",
       "wu": "A chuva vem do Weather Underground.",
       "manual": "A chuva é adicionada manualmente.",
-      "none": "Nenhum medidor de chuva. O ZoneFlow assume que nunca chove, a menos que adicione chuva manualmente ou use o Weather Underground."
+      "none": "Nenhum medidor de chuva. O ZoneFlow assume que nunca chove, a menos que adicione chuva manualmente ou use o Weather Underground.",
+      "sensor": "A chuva é estimada pelo sensor de chuva {entity}: {rate} enquanto indicar molhado.",
+      "sensor_no_rate": "O sensor de chuva {entity} retém a rega enquanto indica molhado, mas não conta chuva. Sem pluviómetro, defina Chuva por hora do sensor de chuva para contar o tempo molhado como chuva."
     },
     "temperature": {
       "ok": "A temperatura exterior é {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Defina a data de plantação para seguir a curva de época de {crop}; até lá vale a definição Coeficiente da cultura.",
     "root_zone": "Zona radicular: retém {taw}; a planta usa cerca de {use} por dia e pode usar {raw} antes de sentir a secura.",
     "root_zone_interval": "Por isso rega a cada {days} dias em vez de a cada {tier}.",
-    "root_zone_capped": "Uma rega é limitada a {taw}, o que a zona radicular retém ({capped} a menos do que os dias pedem)."
+    "root_zone_capped": "Uma rega é limitada a {taw}, o que a zona radicular retém ({capped} a menos do que os dias pedem).",
+    "rain_sensor_estimate": "Sem pluviómetro: a chuva é estimada pelo sensor de chuva, {rate} por cada hora em que indica molhado (no máximo {cap} por dia)."
   },
   "suggest": {
     "heading": "Possíveis elementos encontrados no seu Home Assistant:",

@@ -362,7 +362,9 @@
       "fail": "Regnmätaren {entity} är inte tillgänglig. Tills den är tillbaka antar ZoneFlow att det inte regnar.",
       "wu": "Regn kommer från Weather Underground.",
       "manual": "Regn läggs till manuellt.",
-      "none": "Ingen regnmätare. ZoneFlow antar att det aldrig regnar, såvida du inte lägger till regn manuellt eller använder Weather Underground."
+      "none": "Ingen regnmätare. ZoneFlow antar att det aldrig regnar, såvida du inte lägger till regn manuellt eller använder Weather Underground.",
+      "sensor": "Regnet uppskattas från regnsensorn {entity}: {rate} medan den visar blött.",
+      "sensor_no_rate": "Regnsensorn {entity} håller tillbaka bevattningen medan den visar blött, men räknar inget regn. Utan regnmätare: ställ in Regnmängd från regnsensor för att räkna den blöta tiden som regn."
     },
     "temperature": {
       "ok": "Utomhustemperaturen är {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Ange planteringsdatum för att följa säsongskurvan för {crop}; tills dess gäller inställningen Grödofaktor.",
     "root_zone": "Rotzon: rymmer {taw}; växten använder omkring {use} om dagen och kan använda {raw} innan den känner torka.",
     "root_zone_interval": "Därför vattnar den var {days}:e dag i stället för var {tier}:e.",
-    "root_zone_capped": "En bevattning begränsas till {taw}, det rotzonen rymmer ({capped} mindre än dagarna kräver)."
+    "root_zone_capped": "En bevattning begränsas till {taw}, det rotzonen rymmer ({capped} mindre än dagarna kräver).",
+    "rain_sensor_estimate": "Ingen regnmätare: regnet uppskattas från regnsensorn, {rate} för varje timme den visar blött (högst {cap} per dygn)."
   },
   "suggest": {
     "heading": "Sannolika enheter funna i din Home Assistant:",

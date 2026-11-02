@@ -362,7 +362,9 @@
       "fail": "Zrážkomer {entity} nie je k dispozícii. Kým sa nevráti, ZoneFlow predpokladá, že neprší.",
       "wu": "Údaje o daždi pochádzajú zo služby Weather Underground.",
       "manual": "Dážď sa pridáva ručne.",
-      "none": "Bez zrážkomera. ZoneFlow predpokladá, že nikdy neprší, kým nepridáte dážď ručne alebo nepoužijete Weather Underground."
+      "none": "Bez zrážkomera. ZoneFlow predpokladá, že nikdy neprší, kým nepridáte dážď ručne alebo nepoužijete Weather Underground.",
+      "sensor": "Dážď sa odhaduje zo senzora dažďa {entity}: {rate}, kým hlási mokro.",
+      "sensor_no_rate": "Senzor dažďa {entity} zadržiava zálievku, kým hlási mokro, ale nepočíta žiadny dážď. Bez zrážkomera nastavte Intenzitu dažďa zo senzora dažďa, aby sa čas mokra počítal ako dážď."
     },
     "temperature": {
       "ok": "Vonkajšia teplota je {value} {unit}.",
@@ -516,7 +518,8 @@
     "kc_needs_planting_date": "Nastavte dátum výsadby, aby sa riadilo krivkou sezóny {crop}; dovtedy platí nastavenie Koeficient plodiny.",
     "root_zone": "Koreňová zóna: pojme {taw}; rastlina spotrebuje asi {use} denne a môže využiť {raw}, kým pocíti sucho.",
     "root_zone_interval": "Preto zavlažuje každé {days} dni namiesto {tier}.",
-    "root_zone_capped": "Zálievka je obmedzená na {taw}, koľko pojme koreňová zóna (o {capped} menej, než by zodpovedalo dňom)."
+    "root_zone_capped": "Zálievka je obmedzená na {taw}, koľko pojme koreňová zóna (o {capped} menej, než by zodpovedalo dňom).",
+    "rain_sensor_estimate": "Bez zrážkomera: dážď sa odhaduje zo senzora dažďa, {rate} za každú hodinu, keď hlási mokro (najviac {cap} denne)."
   },
   "suggest": {
     "heading": "Pravdepodobné položky nájdené vo vašom Home Assistant:",
