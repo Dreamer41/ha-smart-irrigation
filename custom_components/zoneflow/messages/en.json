@@ -410,7 +410,8 @@
       "measured": "your sensor",
       "weather": "the weather service",
       "default": "the zone's setting",
-      "estimated": "estimated from the temperature"
+      "estimated": "estimated from the temperature",
+      "wu": "nearby Weather Underground stations"
     },
     "crop_factor": "Crop factor today: {kc} ({detail}).",
     "kc_fixed": "the Crop Factor setting",

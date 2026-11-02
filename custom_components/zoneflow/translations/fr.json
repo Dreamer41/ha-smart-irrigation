@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Pluie Weather Underground (expérimental)",
-        "description": "Récupère les relevés de pluie des stations météo privées situées à proximité de votre jardin pour les zones extérieures SANS pluviomètre. Vous avez un pluviomètre ? Vous n'avez pas besoin de ceci.\n\n**D'abord**, vérifiez sur la carte de wunderground.com s'il existe des stations à quelques kilomètres de votre jardin qui rapportent de la pluie. S'il n'y en a pas, arrêtez-vous ici.\n\n**Ensuite**, la clé API gratuite nécessite votre propre station : enregistrez-en une sur wunderground.com et transmettez au moins la température et l'humidité extérieures (par exemple avec l'intégration ha-weather-uploader). La clé API se trouve ensuite dans votre compte Weather Underground.\n\nLes relevés servent uniquement au crédit de pluie. Ils ne sont pas précis à 100 %, et le sont d'autant moins que les stations sont éloignées de vos zones.",
+        "description": "Récupère les relevés de pluie des stations météo privées situées à proximité de votre jardin pour les zones extérieures SANS pluviomètre. Vous avez un pluviomètre ? Vous n'avez pas besoin de ceci.\n\n**D'abord**, vérifiez sur la carte de wunderground.com s'il existe des stations à quelques kilomètres de votre jardin qui rapportent de la pluie. S'il n'y en a pas, arrêtez-vous ici.\n\n**Ensuite**, la clé API gratuite nécessite votre propre station : enregistrez-en une sur wunderground.com et transmettez au moins la température et l'humidité extérieures (par exemple avec l'intégration ha-weather-uploader). La clé API se trouve ensuite dans votre compte Weather Underground.\n\nLes relevés ne sont pas exacts à 100 %, et le sont moins quand les stations sont loin de vos zones. La pluie sert au crédit de pluie ; le vent, l'humidité et l'ensoleillement seulement avec l'option ci-dessous.",
         "data": {
           "api_key": "Clé API",
-          "radius_km": "Rayon de recherche"
+          "radius_km": "Rayon de recherche",
+          "borrow_climate": "Emprunter aussi le vent, l'humidité et l'ensoleillement"
         },
         "data_description": {
           "api_key": "Depuis votre compte Weather Underground (API Keys). Stocké uniquement dans cette entrée.",
-          "radius_km": "0,5 à 2 km, le plus proche est le mieux : la pluie peut varier considérablement sur quelques km. Au-delà de 1 km, surveillez la correspondance entre les relevés et la pluie chez vous."
+          "radius_km": "0,5 à 2 km, le plus proche est le mieux : la pluie peut varier considérablement sur quelques km. Au-delà de 1 km, surveillez la correspondance entre les relevés et la pluie chez vous.",
+          "borrow_climate": "Pour l'estimation d'eau FAO-56 des zones extérieures qui n'ont ni capteur ni entité météo pour cela. Interroge toutes les 30 minutes au lieu de toutes les 2 heures. Le vent est considéré comme mesuré à la Hauteur du capteur de vent de la zone."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Pluie Weather Underground (expérimental)",
-        "description": "Récupère les relevés de pluie des stations météo privées situées à proximité de votre jardin pour les zones extérieures SANS pluviomètre. Vous avez un pluviomètre ? Vous n'avez pas besoin de ceci.\n\n**D'abord**, vérifiez sur la carte de wunderground.com s'il existe des stations à quelques kilomètres de votre jardin qui rapportent de la pluie. S'il n'y en a pas, arrêtez-vous ici.\n\n**Ensuite**, la clé API gratuite nécessite votre propre station : enregistrez-en une sur wunderground.com et transmettez au moins la température et l'humidité extérieures (par exemple avec l'intégration ha-weather-uploader). La clé API se trouve ensuite dans votre compte Weather Underground.\n\nLes relevés servent uniquement au crédit de pluie. Ils ne sont pas précis à 100 %, et le sont d'autant moins que les stations sont éloignées de vos zones.",
+        "description": "Récupère les relevés de pluie des stations météo privées situées à proximité de votre jardin pour les zones extérieures SANS pluviomètre. Vous avez un pluviomètre ? Vous n'avez pas besoin de ceci.\n\n**D'abord**, vérifiez sur la carte de wunderground.com s'il existe des stations à quelques kilomètres de votre jardin qui rapportent de la pluie. S'il n'y en a pas, arrêtez-vous ici.\n\n**Ensuite**, la clé API gratuite nécessite votre propre station : enregistrez-en une sur wunderground.com et transmettez au moins la température et l'humidité extérieures (par exemple avec l'intégration ha-weather-uploader). La clé API se trouve ensuite dans votre compte Weather Underground.\n\nLes relevés ne sont pas exacts à 100 %, et le sont moins quand les stations sont loin de vos zones. La pluie sert au crédit de pluie ; le vent, l'humidité et l'ensoleillement seulement avec l'option ci-dessous.",
         "data": {
           "api_key": "Clé API",
-          "radius_km": "Rayon de recherche"
+          "radius_km": "Rayon de recherche",
+          "borrow_climate": "Emprunter aussi le vent, l'humidité et l'ensoleillement"
         },
         "data_description": {
           "api_key": "Depuis votre compte Weather Underground (API Keys). Stocké uniquement dans cette entrée.",
-          "radius_km": "0,5 à 2 km, le plus proche est le mieux : la pluie peut varier considérablement sur quelques km. Au-delà de 1 km, surveillez la correspondance entre les relevés et la pluie chez vous."
+          "radius_km": "0,5 à 2 km, le plus proche est le mieux : la pluie peut varier considérablement sur quelques km. Au-delà de 1 km, surveillez la correspondance entre les relevés et la pluie chez vous.",
+          "borrow_climate": "Pour l'estimation d'eau FAO-56 des zones extérieures qui n'ont ni capteur ni entité météo pour cela. Interroge toutes les 30 minutes au lieu de toutes les 2 heures. Le vent est considéré comme mesuré à la Hauteur du capteur de vent de la zone."
         }
       },
       "wu_stations": {

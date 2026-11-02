@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground 降雨（实验性）",
-        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n这些读数仅用于计算降雨抵扣。数据并非 100% 准确，气象站距离您的区域越远，准确度就越低。",
+        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n读数并非 100% 准确，气象站离您的区域越远越不准确。降雨用于计算降雨抵扣；风、湿度和日照仅在开启下方选项时使用。",
         "data": {
           "api_key": "API 密钥",
-          "radius_km": "搜索半径"
+          "radius_km": "搜索半径",
+          "borrow_climate": "同时借用风、湿度和日照"
         },
         "data_description": {
           "api_key": "来自您的 Weather Underground 账户（API Keys）。仅保存在此条目中。",
-          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。"
+          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。",
+          "borrow_climate": "用于没有相应传感器和天气实体的户外区域的 FAO-56 需水估算。每 30 分钟查询一次，而不是每 2 小时。风速按该区域的“风速传感器高度”测得处理。"
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground 降雨（实验性）",
-        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n这些读数仅用于计算降雨抵扣。数据并非 100% 准确，气象站距离您的区域越远，准确度就越低。",
+        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n读数并非 100% 准确，气象站离您的区域越远越不准确。降雨用于计算降雨抵扣；风、湿度和日照仅在开启下方选项时使用。",
         "data": {
           "api_key": "API 密钥",
-          "radius_km": "搜索半径"
+          "radius_km": "搜索半径",
+          "borrow_climate": "同时借用风、湿度和日照"
         },
         "data_description": {
           "api_key": "来自您的 Weather Underground 账户（API Keys）。仅保存在此条目中。",
-          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。"
+          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。",
+          "borrow_climate": "用于没有相应传感器和天气实体的户外区域的 FAO-56 需水估算。每 30 分钟查询一次，而不是每 2 小时。风速按该区域的“风速传感器高度”测得处理。"
         }
       },
       "wu_stations": {

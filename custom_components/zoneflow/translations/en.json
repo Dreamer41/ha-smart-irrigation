@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are not 100 % accurate, and less so the further the stations are from your zones. Rain is used for rain deduction; wind, humidity and sunshine only with the option below.",
         "data": {
           "api_key": "API key",
-          "radius_km": "Search radius"
+          "radius_km": "Search radius",
+          "borrow_climate": "Also borrow wind, humidity and sunshine"
         },
         "data_description": {
           "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place.",
+          "borrow_climate": "For the FAO-56 water estimate of outdoor zones that have no sensor and no weather entity for them. Polls every 30 minutes instead of every 2 hours. The wind is taken as measured at the zone's Wind Sensor Height."
         }
       },
       "wu_stations": {
@@ -574,14 +576,16 @@
       },
       "wu_key": {
         "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are not 100 % accurate, and less so the further the stations are from your zones. Rain is used for rain deduction; wind, humidity and sunshine only with the option below.",
         "data": {
           "api_key": "API key",
-          "radius_km": "Search radius"
+          "radius_km": "Search radius",
+          "borrow_climate": "Also borrow wind, humidity and sunshine"
         },
         "data_description": {
           "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place.",
+          "borrow_climate": "For the FAO-56 water estimate of outdoor zones that have no sensor and no weather entity for them. Polls every 30 minutes instead of every 2 hours. The wind is taken as measured at the zone's Wind Sensor Height."
         }
       },
       "wu_stations": {

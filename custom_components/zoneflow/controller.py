@@ -46,7 +46,7 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, zone_valve
+from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, wu_logic, zone_valve
 from .crop_season import CropSeason, async_crop_seasons
 from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
@@ -151,6 +151,7 @@ from .const import (
     CONF_PARENT_ZONE,
     CROP_INHERITED_KEYS,
     DOMAIN,
+    WU_CLIMATE_AGGREGATES,
     WU_DATA_KEY,
     EVENT_LOG,
     GROWTH_RAMP_CURVES,
@@ -705,6 +706,35 @@ class ZoneFlowController:
         """The shared Weather Underground poller, if this zone uses it and it
         is loaded."""
         return self.hass.data.get(WU_DATA_KEY) if self.uses_wu else None
+
+    @property
+    def uses_wu_climate(self) -> bool:
+        """Wind, humidity and sunshine borrowed from the Weather Underground stations (1.8): any
+        outdoor zone, rain gauge or not, while the poller has Borrow Wind, Humidity and Sunshine on.
+        Used only where the zone's own sensor and its weather entity have nothing (_close_et0_day)."""
+        source = self.hass.data.get(WU_DATA_KEY)
+        return self.is_outdoor and source is not None and source.climate_enabled
+
+    @callback
+    def on_wu_climate(self, reading: dict[str, Any], ts: float) -> None:
+        """A poll's borrowed wind (m/s), humidity (%) and sunshine (W/m2): into the day aggregates.
+        A reading the stations did not have is a gap. Saved by the heartbeat, like the sensors."""
+        for key, field in WU_CLIMATE_AGGREGATES.items():
+            agg = self._aggregate(key)
+            agg.add(ts, reading.get(field))
+            self._put_aggregate(key, agg)
+
+    def _end_stale_wu_climate(self, now_ts: float) -> None:
+        """A borrowed reading holds CLIMATE_HOLD_SECONDS after its poll; after that (the poller stopped,
+        the setting was turned off, the zone moved under a roof) the day has a gap there."""
+        for key in WU_CLIMATE_AGGREGATES:
+            data = self.store.state.day_aggregates.get(key)
+            if not data:
+                continue
+            agg = self._aggregate(key)
+            if agg.last_value is not None and agg.last_ts is not None and now_ts - agg.last_ts > wu_logic.CLIMATE_HOLD_SECONDS:
+                agg.add(agg.last_ts + wu_logic.CLIMATE_HOLD_SECONDS, None)
+                self._put_aggregate(key, agg)
 
     def wu_watering_slots(self, now_ts: float) -> list[float]:
         """The next scheduled starts, for the poller's watering mode."""
@@ -1577,6 +1607,9 @@ class ZoneFlowController:
 
     def _seed_et0_inputs(self) -> None:
         ts = dt_util.utcnow().timestamp()
+        source = self.hass.data.get(WU_DATA_KEY)
+        if self.uses_wu_climate and (reading := source.fresh_climate(ts)) is not None:
+            self.on_wu_climate(reading, ts)  # the poller's latest, until its next poll
         for entity_id, keys in self._et0_inputs().items():
             state = self.hass.states.get(entity_id)
             for key in keys:
@@ -1587,6 +1620,7 @@ class ZoneFlowController:
     @callback
     def _on_heartbeat(self, now) -> None:
         self.store.state.last_alive_ts = dt_util.utcnow().timestamp()
+        self._end_stale_wu_climate(self.store.state.last_alive_ts)
         self.store.schedule_save()
 
     def _reset_et0_inputs(self, start_ts: float) -> None:
@@ -1636,23 +1670,37 @@ class ZoneFlowController:
             humidity_source = wind_source = None
             hum = summaries.get("humidity")
             weather_hum = summaries.get("weather_humidity")
+            # Borrowed from the Weather Underground stations (1.8): the last choice before an estimate.
+            wu_hum, wu_win, wu_sol = (summaries.get(k) for k in ("wu_humidity", "wu_wind", "wu_solar"))
+            solar_source = None
             if hum is not None and hum.usable:
                 rh_min, rh_max = hum.minimum, hum.maximum
             elif weather_hum is not None and weather_hum.usable:
                 rh_mean, humidity_source = weather_hum.mean, "weather"
+            elif wu_hum is not None and wu_hum.usable:
+                rh_min, rh_max, humidity_source = wu_hum.minimum, wu_hum.maximum, "wu"
             win = summaries.get("wind")
             weather_win = summaries.get("weather_wind")
             if win is not None and win.usable:
                 wind = fao56.wind_to_2m(win.mean, settings["wind_height_m"])
             elif weather_win is not None and weather_win.usable:
                 wind, wind_source = fao56.wind_to_2m(weather_win.mean, 10.0), "weather"  # weather services: 10 m
+            elif wu_win is not None and wu_win.usable:
+                # A station's anemometer height is not reported: the zone's Wind Sensor Height is used.
+                wind, wind_source = fao56.wind_to_2m(wu_win.mean, settings["wind_height_m"]), "wu"
             sol = summaries.get("solar")
             day_of_year = day.timetuple().tm_yday
             daylight_s = fao56.daylight_hours(self.hass.config.latitude, day_of_year) * 3600
-            # A sensor that goes offline at night is fine: it needs readings above zero for most of
-            # the daylight (night zeros do not count, so a daytime outage cannot hide behind them).
-            if sol is not None and sol.mean is not None and sol.positive_seconds >= max(1800.0, 0.8 * daylight_s):
+
+            def covers_daylight(summary) -> bool:
+                # A sensor that goes offline at night is fine: it needs readings above zero for most of
+                # the daylight (night zeros do not count, so a daytime outage cannot hide behind them).
+                return summary is not None and summary.mean is not None and summary.positive_seconds >= max(1800.0, 0.8 * daylight_s)
+
+            if covers_daylight(sol):
                 rs = sol.integral / 1e6  # J/m2 -> MJ/m2 (night and short gaps count as dark)
+            elif covers_daylight(wu_sol):
+                rs, solar_source = wu_sol.integral / 1e6, "wu"
             result = fao56.et0_daily(
                 fao56.DayInputs(t_min, t_max, rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean, wind_2m=wind, rs_mj=rs),
                 latitude_deg=self.hass.config.latitude,
@@ -1674,6 +1722,8 @@ class ZoneFlowController:
                 sources["humidity"] = humidity_source
             if wind_source:
                 sources["wind"] = wind_source
+            if solar_source:
+                sources["solar"] = solar_source
             entry.update(
                 et0=round(result.et0_mm, 2), sources=sources, t_min=t_min, t_max=t_max,
                 rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean,

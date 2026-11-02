@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Deszcz Weather Underground (eksperymentalne)",
-        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty nie są w 100 % dokładne, tym mniej, im dalej stacje są od twoich stref. Deszcz służy do kredytu deszczowego; wiatr, wilgotność i nasłonecznienie tylko z opcją poniżej.",
         "data": {
           "api_key": "Klucz API",
-          "radius_km": "Promień wyszukiwania"
+          "radius_km": "Promień wyszukiwania",
+          "borrow_climate": "Pobieraj też wiatr, wilgotność i nasłonecznienie"
         },
         "data_description": {
           "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
-          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie.",
+          "borrow_climate": "Do szacunku wody FAO-56 dla stref zewnętrznych, które nie mają do tego czujnika ani encji pogody. Odpytuje co 30 minut zamiast co 2 godziny. Wiatr jest traktowany jako mierzony na Wysokości czujnika wiatru strefy."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Deszcz Weather Underground (eksperymentalne)",
-        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty nie są w 100 % dokładne, tym mniej, im dalej stacje są od twoich stref. Deszcz służy do kredytu deszczowego; wiatr, wilgotność i nasłonecznienie tylko z opcją poniżej.",
         "data": {
           "api_key": "Klucz API",
-          "radius_km": "Promień wyszukiwania"
+          "radius_km": "Promień wyszukiwania",
+          "borrow_climate": "Pobieraj też wiatr, wilgotność i nasłonecznienie"
         },
         "data_description": {
           "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
-          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie.",
+          "borrow_climate": "Do szacunku wody FAO-56 dla stref zewnętrznych, które nie mają do tego czujnika ani encji pogody. Odpytuje co 30 minut zamiast co 2 godziny. Wiatr jest traktowany jako mierzony na Wysokości czujnika wiatru strefy."
         }
       },
       "wu_stations": {

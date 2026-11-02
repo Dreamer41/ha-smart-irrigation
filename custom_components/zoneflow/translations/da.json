@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground regn (eksperimentel)",
-        "description": "Låner regnaflæsninger fra private vejrstationer nær din have til udendørszoner UDEN en regnmåler. Har du en regnmåler? Så har du ikke brug for dette.\n\n**Tjek først** kortet på wunderground.com for stationer inden for et par km fra din have, der rapporterer regn. Hvis der ingen er, så stop her.\n\n**Dernæst** kræver den gratis API-nøgle din egen station: registrer en på wunderground.com og upload mindst udendørstemperatur og luftfugtighed (for eksempel med ha-weather-uploader-integrationen). API-nøglen findes derefter på din Weather Underground-konto.\n\nAflæsningerne bruges kun til regnkredit. De er ikke 100 % præcise, og jo længere væk stationerne er fra dine zoner, desto mindre præcise er de.",
+        "description": "Låner regnaflæsninger fra private vejrstationer nær din have til udendørszoner UDEN en regnmåler. Har du en regnmåler? Så har du ikke brug for dette.\n\n**Tjek først** kortet på wunderground.com for stationer inden for et par km fra din have, der rapporterer regn. Hvis der ingen er, så stop her.\n\n**Dernæst** kræver den gratis API-nøgle din egen station: registrer en på wunderground.com og upload mindst udendørstemperatur og luftfugtighed (for eksempel med ha-weather-uploader-integrationen). API-nøglen findes derefter på din Weather Underground-konto.\n\nMålingerne er ikke 100 % præcise, og mindre jo længere stationerne er fra dine zoner. Regn bruges til regnkredit; vind, luftfugtighed og solskin kun med valget nedenfor.",
         "data": {
           "api_key": "API-nøgle",
-          "radius_km": "Søgeradius"
+          "radius_km": "Søgeradius",
+          "borrow_climate": "Lån også vind, luftfugtighed og solskin"
         },
         "data_description": {
           "api_key": "Fra din Weather Underground-konto (API Keys). Gemmes kun i denne post.",
-          "radius_km": "0,5–2 km, tættere på er bedre: regn kan variere meget over et par km. Over 1 km skal du holde øje med, hvordan aflæsningerne passer med regnen hos dig."
+          "radius_km": "0,5–2 km, tættere på er bedre: regn kan variere meget over et par km. Over 1 km skal du holde øje med, hvordan aflæsningerne passer med regnen hos dig.",
+          "borrow_climate": "Til FAO-56-vandberegningen for udendørs zoner, der ikke har en sensor eller en vejrenhed til det. Henter hvert 30. minut i stedet for hver 2. time. Vinden regnes som målt i zonens Vindsensorhøjde."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground regn (eksperimentel)",
-        "description": "Låner regnaflæsninger fra private vejrstationer nær din have til udendørszoner UDEN en regnmåler. Har du en regnmåler? Så har du ikke brug for dette.\n\n**Tjek først** kortet på wunderground.com for stationer inden for et par km fra din have, der rapporterer regn. Hvis der ingen er, så stop her.\n\n**Dernæst** kræver den gratis API-nøgle din egen station: registrer en på wunderground.com og upload mindst udendørstemperatur og luftfugtighed (for eksempel med ha-weather-uploader-integrationen). API-nøglen findes derefter på din Weather Underground-konto.\n\nAflæsningerne bruges kun til regnkredit. De er ikke 100 % præcise, og jo længere væk stationerne er fra dine zoner, desto mindre præcise er de.",
+        "description": "Låner regnaflæsninger fra private vejrstationer nær din have til udendørszoner UDEN en regnmåler. Har du en regnmåler? Så har du ikke brug for dette.\n\n**Tjek først** kortet på wunderground.com for stationer inden for et par km fra din have, der rapporterer regn. Hvis der ingen er, så stop her.\n\n**Dernæst** kræver den gratis API-nøgle din egen station: registrer en på wunderground.com og upload mindst udendørstemperatur og luftfugtighed (for eksempel med ha-weather-uploader-integrationen). API-nøglen findes derefter på din Weather Underground-konto.\n\nMålingerne er ikke 100 % præcise, og mindre jo længere stationerne er fra dine zoner. Regn bruges til regnkredit; vind, luftfugtighed og solskin kun med valget nedenfor.",
         "data": {
           "api_key": "API-nøgle",
-          "radius_km": "Søgeradius"
+          "radius_km": "Søgeradius",
+          "borrow_climate": "Lån også vind, luftfugtighed og solskin"
         },
         "data_description": {
           "api_key": "Fra din Weather Underground-konto (API Keys). Gemmes kun i denne post.",
-          "radius_km": "0,5–2 km, tættere på er bedre: regn kan variere meget over et par km. Over 1 km skal du holde øje med, hvordan aflæsningerne passer med regnen hos dig."
+          "radius_km": "0,5–2 km, tættere på er bedre: regn kan variere meget over et par km. Over 1 km skal du holde øje med, hvordan aflæsningerne passer med regnen hos dig.",
+          "borrow_climate": "Til FAO-56-vandberegningen for udendørs zoner, der ikke har en sensor eller en vejrenhed til det. Henter hvert 30. minut i stedet for hver 2. time. Vinden regnes som målt i zonens Vindsensorhøjde."
         }
       },
       "wu_stations": {

@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Lluvia de Weather Underground (experimental)",
-        "description": "Toma lecturas de lluvia de estaciones meteorológicas privadas cercanas a tu jardín para zonas exteriores SIN pluviómetro. ¿Tienes pluviómetro? No necesitas esto.\n\n**Primero**, consulta el mapa en wunderground.com para buscar estaciones a pocos kilómetros de tu jardín que informen de lluvia. Si no hay ninguna, detente aquí.\n\n**Segundo**, la clave API gratuita requiere una estación propia: registra una en wunderground.com y envía al menos la temperatura y humedad exterior (por ejemplo, con la integración ha-weather-uploader). La clave API estará disponible en tu cuenta de Weather Underground.\n\nLas lecturas solo se usan para el crédito de lluvia. No son 100 % precisas, y lo serán menos cuanto más lejos estén las estaciones de tus zonas.",
+        "description": "Toma lecturas de lluvia de estaciones meteorológicas privadas cercanas a tu jardín para zonas exteriores SIN pluviómetro. ¿Tienes pluviómetro? No necesitas esto.\n\n**Primero**, consulta el mapa en wunderground.com para buscar estaciones a pocos kilómetros de tu jardín que informen de lluvia. Si no hay ninguna, detente aquí.\n\n**Segundo**, la clave API gratuita requiere una estación propia: registra una en wunderground.com y envía al menos la temperatura y humedad exterior (por ejemplo, con la integración ha-weather-uploader). La clave API estará disponible en tu cuenta de Weather Underground.\n\nLas lecturas no son 100 % exactas, y menos cuanto más lejos estén las estaciones de tus zonas. La lluvia se usa para el crédito de lluvia; el viento, la humedad y el sol solo con la opción de abajo.",
         "data": {
           "api_key": "Clave API",
-          "radius_km": "Radio de búsqueda"
+          "radius_km": "Radio de búsqueda",
+          "borrow_climate": "Tomar también viento, humedad y sol"
         },
         "data_description": {
           "api_key": "De tu cuenta de Weather Underground (API Keys). Se almacena solo en esta entrada.",
-          "radius_km": "0,5-2 km, cuanto más cerca mejor: la lluvia puede variar mucho en un par de km. A más de 1 km, observa cómo coinciden las lecturas con la lluvia en tu ubicación."
+          "radius_km": "0,5-2 km, cuanto más cerca mejor: la lluvia puede variar mucho en un par de km. A más de 1 km, observa cómo coinciden las lecturas con la lluvia en tu ubicación.",
+          "borrow_climate": "Para la estimación de agua FAO-56 de las zonas exteriores que no tienen sensor ni entidad del tiempo para ello. Consulta cada 30 minutos en lugar de cada 2 horas. El viento se toma como medido a la Altura del sensor de viento de la zona."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Lluvia de Weather Underground (experimental)",
-        "description": "Toma lecturas de lluvia de estaciones meteorológicas privadas cercanas a tu jardín para zonas exteriores SIN pluviómetro. ¿Tienes pluviómetro? No necesitas esto.\n\n**Primero**, consulta el mapa en wunderground.com para buscar estaciones a pocos kilómetros de tu jardín que informen de lluvia. Si no hay ninguna, detente aquí.\n\n**Segundo**, la clave API gratuita requiere una estación propia: registra una en wunderground.com y envía al menos la temperatura y humedad exterior (por ejemplo, con la integración ha-weather-uploader). La clave API estará disponible en tu cuenta de Weather Underground.\n\nLas lecturas solo se usan para el crédito de lluvia. No son 100 % precisas, y lo serán menos cuanto más lejos estén las estaciones de tus zonas.",
+        "description": "Toma lecturas de lluvia de estaciones meteorológicas privadas cercanas a tu jardín para zonas exteriores SIN pluviómetro. ¿Tienes pluviómetro? No necesitas esto.\n\n**Primero**, consulta el mapa en wunderground.com para buscar estaciones a pocos kilómetros de tu jardín que informen de lluvia. Si no hay ninguna, detente aquí.\n\n**Segundo**, la clave API gratuita requiere una estación propia: registra una en wunderground.com y envía al menos la temperatura y humedad exterior (por ejemplo, con la integración ha-weather-uploader). La clave API estará disponible en tu cuenta de Weather Underground.\n\nLas lecturas no son 100 % exactas, y menos cuanto más lejos estén las estaciones de tus zonas. La lluvia se usa para el crédito de lluvia; el viento, la humedad y el sol solo con la opción de abajo.",
         "data": {
           "api_key": "Clave API",
-          "radius_km": "Radio de búsqueda"
+          "radius_km": "Radio de búsqueda",
+          "borrow_climate": "Tomar también viento, humedad y sol"
         },
         "data_description": {
           "api_key": "De tu cuenta de Weather Underground (API Keys). Se almacena solo en esta entrada.",
-          "radius_km": "0,5-2 km, cuanto más cerca mejor: la lluvia puede variar mucho en un par de km. A más de 1 km, observa cómo coinciden las lecturas con la lluvia en tu ubicación."
+          "radius_km": "0,5-2 km, cuanto más cerca mejor: la lluvia puede variar mucho en un par de km. A más de 1 km, observa cómo coinciden las lecturas con la lluvia en tu ubicación.",
+          "borrow_climate": "Para la estimación de agua FAO-56 de las zonas exteriores que no tienen sensor ni entidad del tiempo para ello. Consulta cada 30 minutos en lugar de cada 2 horas. El viento se toma como medido a la Altura del sensor de viento de la zona."
         }
       },
       "wu_stations": {

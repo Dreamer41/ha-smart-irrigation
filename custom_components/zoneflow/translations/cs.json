@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground déšť (experimentální)",
-        "description": "Využívá údaje o dešti ze soukromých meteorologických stanic v blízkosti vaší zahrady pro venkovní zóny BEZ srážkoměru. Máte srážkoměr? Toto nepotřebujete.\n\n**Nejprve** zkontrolujte mapu na wunderground.com a vyhledejte stanice v okruhu několika km od vaší zahrady, které hlášení o dešti poskytují. Pokud žádné nejsou, zde skončete.\n\n**Za druhé**, bezplatný klíč API vyžaduje vaši vlastní stanici: zaregistrujte ji na wunderground.com a odesílejte alespoň venkovní teplotu a vlhkost (například pomocí integrace ha-weather-uploader). Klíč API pak najdete ve svém účtu Weather Underground.\n\nNaměřené hodnoty se používají pouze pro srážkový kredit. Nejso 100% přesné a čím dále jsou stanice od vašich zón, tím je přesnost nižší.",
+        "description": "Využívá údaje o dešti ze soukromých meteorologických stanic v blízkosti vaší zahrady pro venkovní zóny BEZ srážkoměru. Máte srážkoměr? Toto nepotřebujete.\n\n**Nejprve** zkontrolujte mapu na wunderground.com a vyhledejte stanice v okruhu několika km od vaší zahrady, které hlášení o dešti poskytují. Pokud žádné nejsou, zde skončete.\n\n**Za druhé**, bezplatný klíč API vyžaduje vaši vlastní stanici: zaregistrujte ji na wunderground.com a odesílejte alespoň venkovní teplotu a vlhkost (například pomocí integrace ha-weather-uploader). Klíč API pak najdete ve svém účtu Weather Underground.\n\nÚdaje nejsou 100% přesné, a tím méně, čím dál jsou stanice od vašich zón. Srážky se používají pro srážkový kredit; vítr, vlhkost a sluneční svit jen s volbou níže.",
         "data": {
           "api_key": "Klíč API",
-          "radius_km": "Rádius vyhledávání"
+          "radius_km": "Rádius vyhledávání",
+          "borrow_climate": "Převzít také vítr, vlhkost a sluneční svit"
         },
         "data_description": {
           "api_key": "Z vašeho účtu Weather Underground (API Keys). Uloženo pouze v této položce.",
-          "radius_km": "0,5–2 km, čím blíže, tím lépe: srážky se mohou na vzdálenost několika km výrazně lišit. Nad 1 km sledujte, jak naměřené hodnoty odpovídají dešti u vás."
+          "radius_km": "0,5–2 km, čím blíže, tím lépe: srážky se mohou na vzdálenost několika km výrazně lišit. Nad 1 km sledujte, jak naměřené hodnoty odpovídají dešti u vás.",
+          "borrow_climate": "Pro odhad vody FAO-56 u venkovních zón, které pro ně nemají senzor ani entitu počasí. Dotazuje se každých 30 minut místo každé 2 hodiny. Vítr se bere jako měřený ve výšce Výška senzoru větru dané zóny."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground déšť (experimentální)",
-        "description": "Využívá údaje o dešti ze soukromých meteorologických stanic v blízkosti vaší zahrady pro venkovní zóny BEZ srážkoměru. Máte srážkoměr? Toto nepotřebujete.\n\n**Nejprve** zkontrolujte mapu na wunderground.com a vyhledejte stanice v okruhu několika km od vaší zahrady, které hlášení o dešti poskytují. Pokud žádné nejsou, zde skončete.\n\n**Za druhé**, bezplatný klíč API vyžaduje vaši vlastní stanici: zaregistrujte ji na wunderground.com a odesílejte alespoň venkovní teplotu a vlhkost (například pomocí integrace ha-weather-uploader). Klíč API pak najdete ve svém účtu Weather Underground.\n\nNaměřené hodnoty se používají pouze pro srážkový kredit. Nejso 100% přesné a čím dále jsou stanice od vašich zón, tím je přesnost nižší.",
+        "description": "Využívá údaje o dešti ze soukromých meteorologických stanic v blízkosti vaší zahrady pro venkovní zóny BEZ srážkoměru. Máte srážkoměr? Toto nepotřebujete.\n\n**Nejprve** zkontrolujte mapu na wunderground.com a vyhledejte stanice v okruhu několika km od vaší zahrady, které hlášení o dešti poskytují. Pokud žádné nejsou, zde skončete.\n\n**Za druhé**, bezplatný klíč API vyžaduje vaši vlastní stanici: zaregistrujte ji na wunderground.com a odesílejte alespoň venkovní teplotu a vlhkost (například pomocí integrace ha-weather-uploader). Klíč API pak najdete ve svém účtu Weather Underground.\n\nÚdaje nejsou 100% přesné, a tím méně, čím dál jsou stanice od vašich zón. Srážky se používají pro srážkový kredit; vítr, vlhkost a sluneční svit jen s volbou níže.",
         "data": {
           "api_key": "Klíč API",
-          "radius_km": "Rádius vyhledávání"
+          "radius_km": "Rádius vyhledávání",
+          "borrow_climate": "Převzít také vítr, vlhkost a sluneční svit"
         },
         "data_description": {
           "api_key": "Z vašeho účtu Weather Underground (API Keys). Uloženo pouze v této položce.",
-          "radius_km": "0,5–2 km, čím blíže, tím lépe: srážky se mohou na vzdálenost několika km výrazně lišit. Nad 1 km sledujte, jak naměřené hodnoty odpovídají dešti u vás."
+          "radius_km": "0,5–2 km, čím blíže, tím lépe: srážky se mohou na vzdálenost několika km výrazně lišit. Nad 1 km sledujte, jak naměřené hodnoty odpovídají dešti u vás.",
+          "borrow_climate": "Pro odhad vody FAO-56 u venkovních zón, které pro ně nemají senzor ani entitu počasí. Dotazuje se každých 30 minut místo každé 2 hodiny. Vítr se bere jako měřený ve výšce Výška senzoru větru dané zóny."
         }
       },
       "wu_stations": {

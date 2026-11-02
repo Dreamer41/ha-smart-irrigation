@@ -410,7 +410,8 @@
       "measured": "az Ön érzékelője",
       "weather": "az időjárás-szolgáltatás",
       "default": "a zóna beállítása",
-      "estimated": "a hőmérsékletből becsülve"
+      "estimated": "a hőmérsékletből becsülve",
+      "wu": "közeli Weather Underground állomások"
     },
     "crop_factor": "A mai növénytényező: {kc} ({detail}).",
     "kc_fixed": "a Növénytényező beállítás",

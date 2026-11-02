@@ -410,7 +410,8 @@
       "measured": "你的传感器",
       "weather": "天气服务",
       "default": "分区的设置",
-      "estimated": "根据温度估算"
+      "estimated": "根据温度估算",
+      "wu": "附近的 Weather Underground 气象站"
     },
     "crop_factor": "今日作物系数：{kc}（{detail}）。",
     "kc_fixed": "“作物系数”设置",

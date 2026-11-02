@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground -sade (kokeellinen)",
-        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemia käytetään vain sadehyvitykseen. Ne eivät ole 100 % tarkkoja, ja sitä epätarkempia, mitä kauempana asemat ovat vyöhykkeistäsi.",
+        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemat eivät ole 100 % tarkkoja, ja sitä vähemmän mitä kauempana asemat ovat vyöhykkeistäsi. Sadetta käytetään sadehyvitykseen; tuulta, kosteutta ja auringonpaistetta vain alla olevalla valinnalla.",
         "data": {
           "api_key": "API-avain",
-          "radius_km": "Hakusäde"
+          "radius_km": "Hakusäde",
+          "borrow_climate": "Lainaa myös tuuli, kosteus ja auringonpaiste"
         },
         "data_description": {
           "api_key": "Weather Underground -tilisi API-avaimet-kohdasta. Tallennetaan vain tähän merkintään.",
-          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi."
+          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi.",
+          "borrow_climate": "FAO-56-vesiarvioon ulkovyöhykkeille, joilla ei ole niille anturia eikä sääentiteettiä. Hakee 30 minuutin välein 2 tunnin sijaan. Tuuli katsotaan mitatuksi vyöhykkeen Tuulianturin korkeudella."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground -sade (kokeellinen)",
-        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemia käytetään vain sadehyvitykseen. Ne eivät ole 100 % tarkkoja, ja sitä epätarkempia, mitä kauempana asemat ovat vyöhykkeistäsi.",
+        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemat eivät ole 100 % tarkkoja, ja sitä vähemmän mitä kauempana asemat ovat vyöhykkeistäsi. Sadetta käytetään sadehyvitykseen; tuulta, kosteutta ja auringonpaistetta vain alla olevalla valinnalla.",
         "data": {
           "api_key": "API-avain",
-          "radius_km": "Hakusäde"
+          "radius_km": "Hakusäde",
+          "borrow_climate": "Lainaa myös tuuli, kosteus ja auringonpaiste"
         },
         "data_description": {
           "api_key": "Weather Underground -tilisi API-avaimet-kohdasta. Tallennetaan vain tähän merkintään.",
-          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi."
+          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi.",
+          "borrow_climate": "FAO-56-vesiarvioon ulkovyöhykkeille, joilla ei ole niille anturia eikä sääentiteettiä. Hakee 30 minuutin välein 2 tunnin sijaan. Tuuli katsotaan mitatuksi vyöhykkeen Tuulianturin korkeudella."
         }
       },
       "wu_stations": {

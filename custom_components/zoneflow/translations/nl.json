@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground regen (experimenteel)",
-        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen worden alleen gebruikt voor regenkrediet. Ze zijn niet 100% nauwkeurig, en hoe verder de stations van je zones liggen, hoe minder nauwkeurig ze zijn.",
+        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen zijn niet 100 % nauwkeurig, en minder naarmate de stations verder van je zones staan. Regen wordt gebruikt voor regenkrediet; wind, luchtvochtigheid en zonneschijn alleen met de optie hieronder.",
         "data": {
           "api_key": "API-sleutel",
-          "radius_km": "Zoekradius"
+          "radius_km": "Zoekradius",
+          "borrow_climate": "Ook wind, luchtvochtigheid en zonneschijn lenen"
         },
         "data_description": {
           "api_key": "Uit je Weather Underground-account (API Keys). Alleen opgeslagen in deze vermelding.",
-          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis."
+          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis.",
+          "borrow_climate": "Voor de FAO-56-waterschatting van buitenzones die daar geen sensor en geen weerentiteit voor hebben. Vraagt elke 30 minuten op in plaats van elke 2 uur. De wind geldt als gemeten op de Windsensorhoogte van de zone."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground regen (experimenteel)",
-        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen worden alleen gebruikt voor regenkrediet. Ze zijn niet 100% nauwkeurig, en hoe verder de stations van je zones liggen, hoe minder nauwkeurig ze zijn.",
+        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen zijn niet 100 % nauwkeurig, en minder naarmate de stations verder van je zones staan. Regen wordt gebruikt voor regenkrediet; wind, luchtvochtigheid en zonneschijn alleen met de optie hieronder.",
         "data": {
           "api_key": "API-sleutel",
-          "radius_km": "Zoekradius"
+          "radius_km": "Zoekradius",
+          "borrow_climate": "Ook wind, luchtvochtigheid en zonneschijn lenen"
         },
         "data_description": {
           "api_key": "Uit je Weather Underground-account (API Keys). Alleen opgeslagen in deze vermelding.",
-          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis."
+          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis.",
+          "borrow_climate": "Voor de FAO-56-waterschatting van buitenzones die daar geen sensor en geen weerentiteit voor hebben. Vraagt elke 30 minuten op in plaats van elke 2 uur. De wind geldt als gemeten op de Windsensorhoogte van de zone."
         }
       },
       "wu_stations": {

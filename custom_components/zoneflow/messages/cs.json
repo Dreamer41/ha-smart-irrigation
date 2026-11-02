@@ -410,7 +410,8 @@
       "measured": "váš senzor",
       "weather": "meteorologická služba",
       "default": "nastavení zóny",
-      "estimated": "odhadnuto z teploty"
+      "estimated": "odhadnuto z teploty",
+      "wu": "okolní stanice Weather Underground"
     },
     "crop_factor": "Koeficient plodiny dnes: {kc} ({detail}).",
     "kc_fixed": "nastavení Koeficient plodiny",

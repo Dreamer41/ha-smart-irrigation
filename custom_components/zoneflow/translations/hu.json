@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground eső (kísérleti)",
-        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nA méréseket csak az esőjóváíráshoz használjuk. Nem 100%-os pontosságúak, és minél távolabb vannak az állomások a zónáktól, annál kevésbé pontosak.",
+        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nAz adatok nem 100 %-ig pontosak, és annál kevésbé, minél messzebb vannak az állomások a zónáktól. Az esőt az esőjóváíráshoz használjuk; a szelet, a páratartalmat és a napsütést csak az alábbi beállítással.",
         "data": {
           "api_key": "API-kulcs",
-          "radius_km": "Keresési sugár"
+          "radius_km": "Keresési sugár",
+          "borrow_climate": "A szél, a páratartalom és a napsütés átvétele is"
         },
         "data_description": {
           "api_key": "A Weather Underground fiókjából (API Keys). Csak ebben a bejegyzésben tárolódik.",
-          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel."
+          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel.",
+          "borrow_climate": "Az FAO-56 vízbecsléshez azoknál a kültéri zónáknál, amelyeknek nincs ehhez érzékelőjük és időjárás-entitásuk. 2 óra helyett 30 percenként kérdez le. A szelet a zóna Szélérzékelő magassága szerint mértnek veszi."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground eső (kísérleti)",
-        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nA méréseket csak az esőjóváíráshoz használjuk. Nem 100%-os pontosságúak, és minél távolabb vannak az állomások a zónáktól, annál kevésbé pontosak.",
+        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nAz adatok nem 100 %-ig pontosak, és annál kevésbé, minél messzebb vannak az állomások a zónáktól. Az esőt az esőjóváíráshoz használjuk; a szelet, a páratartalmat és a napsütést csak az alábbi beállítással.",
         "data": {
           "api_key": "API-kulcs",
-          "radius_km": "Keresési sugár"
+          "radius_km": "Keresési sugár",
+          "borrow_climate": "A szél, a páratartalom és a napsütés átvétele is"
         },
         "data_description": {
           "api_key": "A Weather Underground fiókjából (API Keys). Csak ebben a bejegyzésben tárolódik.",
-          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel."
+          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel.",
+          "borrow_climate": "Az FAO-56 vízbecsléshez azoknál a kültéri zónáknál, amelyeknek nincs ehhez érzékelőjük és időjárás-entitásuk. 2 óra helyett 30 percenként kérdez le. A szelet a zóna Szélérzékelő magassága szerint mértnek veszi."
         }
       },
       "wu_stations": {

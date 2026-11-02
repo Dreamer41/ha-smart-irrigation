@@ -43,6 +43,11 @@ RECORD_RETENTION_SECONDS = 15 * 86400
 # watering until it has finished, and at 23:55 local time for the day's last
 # rain (a station's total resets at midnight).
 QUIET_POLL_SECONDS = 2 * 3600
+# 1.8: with Borrow Wind, Humidity and Sunshine on, every 30 minutes, so each day's wind, humidity
+# and sunshine are covered (3 stations x 48 polls a day stays far below the API's daily limit).
+CLIMATE_POLL_SECONDS = 30 * 60
+# A borrowed reading holds this long after its poll; a poller that stopped leaves a gap after it.
+CLIMATE_HOLD_SECONDS = 60 * 60
 WATERING_POLL_SECONDS = 10 * 60
 WATERING_LEAD_SECONDS = 60 * 60
 DAY_END_POLL_TIME = (23, 55)
@@ -68,11 +73,15 @@ def distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 @dataclass
 class Observation:
-    """One station's current report: rain since its local midnight."""
+    """One station's current report: rain since its local midnight (None: the station has no rain
+    gauge), and (1.8) its wind, humidity and sunshine where it measures them."""
 
-    total_mm: float
+    total_mm: float | None
     obs_ts: float
     obs_day: str  # the report's local date
+    wind_ms: float | None = None
+    humidity_pct: float | None = None
+    solar_wm2: float | None = None
 
 
 @dataclass
@@ -102,7 +111,7 @@ def check_station(state: StationState, obs: Observation | None, now_ts: float, t
     """The station's usable total for `today`, or None. Updates `state`."""
     if state.first_seen_ts is None:
         state.first_seen_ts = now_ts
-    if obs is None:
+    if obs is None or obs.total_mm is None:
         state.status = "no_data"
         return None
     if now_ts - obs.obs_ts > SILENT_SECONDS or obs.obs_day != today:
@@ -262,12 +271,42 @@ class RainRecord:
         return cls(samples=[(row[0], row[1], bool(row[2])) for row in (data or [])])
 
 
-def next_poll_ts(now_ts: float, waterings: list[float], running: bool, day_end_ts: float) -> float:
+def combine_climate(observations: list[Observation], now_ts: float) -> dict[str, float | None]:
+    """The stations' wind (m/s), humidity (%) and sunshine (W/m2) as one reading each: the median
+    of the stations that report it recently and plausibly, else None."""
+    fresh = [obs for obs in observations if obs is not None and 0 <= now_ts - obs.obs_ts <= SILENT_SECONDS]
+
+    def median(values: list[float]) -> float | None:
+        if not values:
+            return None
+        ordered = sorted(values)
+        mid = len(ordered) // 2
+        return ordered[mid] if len(ordered) % 2 else (ordered[mid - 1] + ordered[mid]) / 2
+
+    def usable(name: str, low: float, high: float) -> list[float]:
+        out = []
+        for obs in fresh:
+            value = getattr(obs, name)
+            if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and low <= value <= high:
+                out.append(float(value))
+        return out
+
+    return {
+        "wind": median(usable("wind_ms", 0.0, 60.0)),
+        "humidity": median(usable("humidity_pct", 0.0, 100.0)),
+        "solar": median(usable("solar_wm2", 0.0, 1500.0)),
+    }
+
+
+def next_poll_ts(
+    now_ts: float, waterings: list[float], running: bool, day_end_ts: float, quiet_seconds: float = QUIET_POLL_SECONDS
+) -> float:
     """When to poll next. `waterings` are the next scheduled starts of the
     zones that use WU; `running` is true while one of them waters;
-    `day_end_ts` is the next 23:55 local."""
+    `day_end_ts` is the next 23:55 local; `quiet_seconds` the longest wait
+    (shorter while wind, humidity and sunshine are borrowed)."""
     if running or any(start - WATERING_LEAD_SECONDS <= now_ts <= start + WATERING_POLL_SECONDS for start in waterings):
         return now_ts + WATERING_POLL_SECONDS
-    candidates = [now_ts + QUIET_POLL_SECONDS, day_end_ts]
+    candidates = [now_ts + quiet_seconds, day_end_ts]
     candidates += [start - WATERING_LEAD_SECONDS for start in waterings if start - WATERING_LEAD_SECONDS > now_ts]
     return max(min(candidates), now_ts + 60)

@@ -45,6 +45,7 @@ from .const import (
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,
+    CONF_WU_CLIMATE,
     CONF_WU_RADIUS_KM,
     CONF_WU_STATIONS,
     ENTRY_TYPE_WU,
@@ -635,6 +636,8 @@ def _wu_key_schema(defaults: dict[str, Any]) -> vol.Schema:
                     mode=selector.NumberSelectorMode.SLIDER,
                 )
             ),
+            # 1.8: the stations' wind, humidity and sunshine for FAO-56, where a zone has none of its own.
+            vol.Optional(CONF_WU_CLIMATE, default=bool(defaults.get(CONF_WU_CLIMATE, False))): selector.BooleanSelector(),
         }
     )
 
@@ -849,6 +852,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_WU_API_KEY: self._wu[CONF_WU_API_KEY].strip(),
                         CONF_WU_RADIUS_KM: float(self._wu[CONF_WU_RADIUS_KM]),
                         CONF_WU_STATIONS: stations,
+                        CONF_WU_CLIMATE: bool(self._wu.get(CONF_WU_CLIMATE, False)),
                     },
                 )
         nearest = [s["id"] for s in self._wu_candidates[: wu_logic.MAX_STATIONS]]
@@ -1512,6 +1516,7 @@ class WeatherUndergroundOptionsFlow(config_entries.OptionsFlow):
                         CONF_WU_API_KEY: self._wu[CONF_WU_API_KEY].strip(),
                         CONF_WU_RADIUS_KM: float(self._wu[CONF_WU_RADIUS_KM]),
                         CONF_WU_STATIONS: stations,
+                        CONF_WU_CLIMATE: bool(self._wu.get(CONF_WU_CLIMATE, False)),
                     },
                 )
         current = [s["id"] for s in self._merged().get(CONF_WU_STATIONS) or []]

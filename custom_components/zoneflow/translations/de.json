@@ -216,14 +216,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground Regen (experimentell)",
-        "description": "Nutzt Regenmessungen von privaten Wetterstationen in der Nähe Ihres Gartens für Außenbereiche OHNE Regenmesser. Haben Sie einen Regenmesser? Dann benötigen Sie dies nicht.\n\n**Prüfen Sie zuerst** die Karte auf wunderground.com nach Stationen im Umkreis von wenigen Kilometern um Ihren Garten, die Regen melden. Gibt es keine, stoppen Sie hier.\n\n**Zweitens** erfordert der kostenlose API-Schlüssel eine eigene Station: Registrieren Sie eine auf wunderground.com und übertragen Sie mindestens Außentemperatur und Luftfeuchtigkeit (zum Beispiel mit der ha-weather-uploader-Integration). Der API-Schlüssel befindet sich dann in Ihrem Weather Underground-Konto.\n\nDie Messwerte werden nur für die Regengutschrift verwendet. Sie sind nicht zu 100 % genau, und je weiter die Stationen von Ihren Zonen entfernt sind, desto ungenauer werden sie.",
+        "description": "Nutzt Regenmessungen von privaten Wetterstationen in der Nähe Ihres Gartens für Außenbereiche OHNE Regenmesser. Haben Sie einen Regenmesser? Dann benötigen Sie dies nicht.\n\n**Prüfen Sie zuerst** die Karte auf wunderground.com nach Stationen im Umkreis von wenigen Kilometern um Ihren Garten, die Regen melden. Gibt es keine, stoppen Sie hier.\n\n**Zweitens** erfordert der kostenlose API-Schlüssel eine eigene Station: Registrieren Sie eine auf wunderground.com und übertragen Sie mindestens Außentemperatur und Luftfeuchtigkeit (zum Beispiel mit der ha-weather-uploader-Integration). Der API-Schlüssel befindet sich dann in Ihrem Weather Underground-Konto.\n\nDie Werte sind nicht 100 % genau, und umso weniger, je weiter die Stationen von deinen Zonen entfernt sind. Regen wird für die Regengutschrift verwendet; Wind, Luftfeuchte und Sonnenschein nur mit der Option unten.",
         "data": {
           "api_key": "API-Schlüssel",
-          "radius_km": "Suchradius"
+          "radius_km": "Suchradius",
+          "borrow_climate": "Auch Wind, Luftfeuchte und Sonnenschein übernehmen"
         },
         "data_description": {
           "api_key": "Aus Ihrem Weather Underground-Konto (API Keys). Wird nur in diesem Eintrag gespeichert.",
-          "radius_km": "0,5–2 km, näher ist besser: Der Regen kann auf ein paar km stark variieren. Über 1 km sollten Sie beobachten, wie die Messwerte mit dem Regen bei Ihnen übereinstimmen."
+          "radius_km": "0,5–2 km, näher ist besser: Der Regen kann auf ein paar km stark variieren. Über 1 km sollten Sie beobachten, wie die Messwerte mit dem Regen bei Ihnen übereinstimmen.",
+          "borrow_climate": "Für die FAO-56-Wasserschätzung von Außenzonen, die dafür keinen Sensor und keine Wetter-Entität haben. Fragt alle 30 Minuten statt alle 2 Stunden ab. Der Wind gilt als in der Windsensor-Höhe der Zone gemessen."
         }
       },
       "wu_stations": {
@@ -557,14 +559,16 @@
       },
       "wu_key": {
         "title": "Weather Underground Regen (experimentell)",
-        "description": "Nutzt Regenmessungen von privaten Wetterstationen in der Nähe Ihres Gartens für Außenbereiche OHNE Regenmesser. Haben Sie einen Regenmesser? Dann benötigen Sie dies nicht.\n\n**Prüfen Sie zuerst** die Karte auf wunderground.com nach Stationen im Umkreis von wenigen Kilometern um Ihren Garten, die Regen melden. Gibt es keine, stoppen Sie hier.\n\n**Zweitens** erfordert der kostenlose API-Schlüssel eine eigene Station: Registrieren Sie eine auf wunderground.com und übertragen Sie mindestens Außentemperatur und Luftfeuchtigkeit (zum Beispiel mit der ha-weather-uploader-Integration). Der API-Schlüssel befindet sich dann in Ihrem Weather Underground-Konto.\n\nDie Messwerte werden nur für die Regengutschrift verwendet. Sie sind nicht zu 100 % genau, und je weiter die Stationen von Ihren Zonen entfernt sind, desto ungenauer werden sie.",
+        "description": "Nutzt Regenmessungen von privaten Wetterstationen in der Nähe Ihres Gartens für Außenbereiche OHNE Regenmesser. Haben Sie einen Regenmesser? Dann benötigen Sie dies nicht.\n\n**Prüfen Sie zuerst** die Karte auf wunderground.com nach Stationen im Umkreis von wenigen Kilometern um Ihren Garten, die Regen melden. Gibt es keine, stoppen Sie hier.\n\n**Zweitens** erfordert der kostenlose API-Schlüssel eine eigene Station: Registrieren Sie eine auf wunderground.com und übertragen Sie mindestens Außentemperatur und Luftfeuchtigkeit (zum Beispiel mit der ha-weather-uploader-Integration). Der API-Schlüssel befindet sich dann in Ihrem Weather Underground-Konto.\n\nDie Werte sind nicht 100 % genau, und umso weniger, je weiter die Stationen von deinen Zonen entfernt sind. Regen wird für die Regengutschrift verwendet; Wind, Luftfeuchte und Sonnenschein nur mit der Option unten.",
         "data": {
           "api_key": "API-Schlüssel",
-          "radius_km": "Suchradius"
+          "radius_km": "Suchradius",
+          "borrow_climate": "Auch Wind, Luftfeuchte und Sonnenschein übernehmen"
         },
         "data_description": {
           "api_key": "Aus Ihrem Weather Underground-Konto (API Keys). Wird nur in diesem Eintrag gespeichert.",
-          "radius_km": "0,5–2 km, näher ist besser: Der Regen kann auf ein paar km stark variieren. Über 1 km sollten Sie beobachten, wie die Messwerte mit dem Regen bei Ihnen übereinstimmen."
+          "radius_km": "0,5–2 km, näher ist besser: Der Regen kann auf ein paar km stark variieren. Über 1 km sollten Sie beobachten, wie die Messwerte mit dem Regen bei Ihnen übereinstimmen.",
+          "borrow_climate": "Für die FAO-56-Wasserschätzung von Außenzonen, die dafür keinen Sensor und keine Wetter-Entität haben. Fragt alle 30 Minuten statt alle 2 Stunden ab. Der Wind gilt als in der Windsensor-Höhe der Zone gemessen."
         }
       },
       "wu_stations": {

@@ -410,7 +410,8 @@
       "measured": "o seu sensor",
       "weather": "o serviço meteorológico",
       "default": "a definição da zona",
-      "estimated": "estimado a partir da temperatura"
+      "estimated": "estimado a partir da temperatura",
+      "wu": "estações Weather Underground próximas"
     },
     "crop_factor": "Coeficiente da cultura de hoje: {kc} ({detail}).",
     "kc_fixed": "a definição Coeficiente da cultura",

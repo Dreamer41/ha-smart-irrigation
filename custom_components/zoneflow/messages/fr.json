@@ -410,7 +410,8 @@
       "measured": "votre capteur",
       "weather": "le service météo",
       "default": "le réglage de la zone",
-      "estimated": "estimé d'après la température"
+      "estimated": "estimé d'après la température",
+      "wu": "les stations Weather Underground proches"
     },
     "crop_factor": "Coefficient cultural du jour : {kc} ({detail}).",
     "kc_fixed": "le réglage Coefficient cultural",

@@ -410,7 +410,8 @@
       "measured": "anturisi",
       "weather": "sääpalvelu",
       "default": "vyöhykkeen asetus",
-      "estimated": "arvioitu lämpötilasta"
+      "estimated": "arvioitu lämpötilasta",
+      "wu": "lähellä olevat Weather Underground -asemat"
     },
     "crop_factor": "Kasvikerroin tänään: {kc} ({detail}).",
     "kc_fixed": "Kasvikerroin-asetus",

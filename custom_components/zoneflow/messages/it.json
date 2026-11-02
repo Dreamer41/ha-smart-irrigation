@@ -410,7 +410,8 @@
       "measured": "il tuo sensore",
       "weather": "il servizio meteo",
       "default": "l'impostazione della zona",
-      "estimated": "stimato dalla temperatura"
+      "estimated": "stimato dalla temperatura",
+      "wu": "stazioni Weather Underground vicine"
     },
     "crop_factor": "Coefficiente colturale di oggi: {kc} ({detail}).",
     "kc_fixed": "l'impostazione Coefficiente colturale",

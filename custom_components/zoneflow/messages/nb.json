@@ -410,7 +410,8 @@
       "measured": "din sensor",
       "weather": "værtjenesten",
       "default": "sonens innstilling",
-      "estimated": "anslått ut fra temperaturen"
+      "estimated": "anslått ut fra temperaturen",
+      "wu": "Weather Underground-stasjoner i nærheten"
     },
     "crop_factor": "Plantefaktor i dag: {kc} ({detail}).",
     "kc_fixed": "innstillingen Plantefaktor",

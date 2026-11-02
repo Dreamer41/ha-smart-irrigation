@@ -410,7 +410,8 @@
       "measured": "jouw sensor",
       "weather": "de weerdienst",
       "default": "de instelling van de zone",
-      "estimated": "geschat uit de temperatuur"
+      "estimated": "geschat uit de temperatuur",
+      "wu": "Weather Underground-stations in de buurt"
     },
     "crop_factor": "Gewasfactor vandaag: {kc} ({detail}).",
     "kc_fixed": "de instelling Gewasfactor",

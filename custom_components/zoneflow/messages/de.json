@@ -410,7 +410,8 @@
       "measured": "dein Sensor",
       "weather": "der Wetterdienst",
       "default": "die Einstellung der Zone",
-      "estimated": "aus der Temperatur geschätzt"
+      "estimated": "aus der Temperatur geschätzt",
+      "wu": "Weather-Underground-Stationen in der Nähe"
     },
     "crop_factor": "Pflanzenfaktor heute: {kc} ({detail}).",
     "kc_fixed": "die Einstellung Pflanzenfaktor",

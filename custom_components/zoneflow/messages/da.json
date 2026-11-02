@@ -410,7 +410,8 @@
       "measured": "din sensor",
       "weather": "vejrtjenesten",
       "default": "zonens indstilling",
-      "estimated": "skønnet ud fra temperaturen"
+      "estimated": "skønnet ud fra temperaturen",
+      "wu": "Weather Underground-stationer i nærheden"
     },
     "crop_factor": "Afgrødefaktor i dag: {kc} ({detail}).",
     "kc_fixed": "indstillingen Afgrødefaktor",

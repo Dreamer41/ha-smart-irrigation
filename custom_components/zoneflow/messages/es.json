@@ -410,7 +410,8 @@
       "measured": "tu sensor",
       "weather": "el servicio meteorológico",
       "default": "el ajuste de la zona",
-      "estimated": "estimado a partir de la temperatura"
+      "estimated": "estimado a partir de la temperatura",
+      "wu": "estaciones cercanas de Weather Underground"
     },
     "crop_factor": "Factor de cultivo de hoy: {kc} ({detail}).",
     "kc_fixed": "el ajuste Factor de cultivo",

@@ -410,7 +410,8 @@
       "measured": "din sensor",
       "weather": "vädertjänsten",
       "default": "zonens inställning",
-      "estimated": "uppskattat från temperaturen"
+      "estimated": "uppskattat från temperaturen",
+      "wu": "närliggande Weather Underground-stationer"
     },
     "crop_factor": "Grödofaktor idag: {kc} ({detail}).",
     "kc_fixed": "inställningen Grödofaktor",
