@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Styrke på plantekurven"
+      },
+      "root_depth_mm": {
+        "name": "Rotdybde"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Jordens vannlagringsevne"
+      },
+      "allowed_depletion_pct": {
+        "name": "Tillatt uttørking av jorda"
+      },
+      "wetted_area_pct": {
+        "name": "Vannet andel av sonen"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Plantefaktor i dag"
+      },
+      "root_zone": {
+        "name": "Rotsonen holder"
       }
     },
     "select": {

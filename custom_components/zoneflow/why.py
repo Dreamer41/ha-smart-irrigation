@@ -43,6 +43,31 @@ def _crop_factor(controller: Any, add) -> None:
     add("crop_factor", "crop_factor", kc=f"{info['kc']:.2f}", detail=detail)
 
 
+def _root_zone(controller: Any, add) -> None:
+    """What the root zone holds and what that does to the watering (1.8). Nothing while it is off."""
+    root_zone = controller.root_zone()
+    if root_zone is None:
+        return
+    imperial = controller.imperial
+    use = root_zone.etc_mm_day or 0.0
+    add(
+        "root_zone", "root_zone", taw=units.depth_text(root_zone.taw_mm, imperial),
+        raw=units.depth_text(root_zone.raw_mm, imperial), use=units.depth_text(use, imperial),
+    )
+    days, tier = controller._routine_interval_days(), controller._tier_interval_days()
+    if days < tier:
+        add("root_zone_interval", "root_zone_interval", days=days, tier=tier)
+    try:
+        capped = controller._routine_plan().root_zone_capped_mm
+    except Exception:  # noqa: BLE001 - an explanation must never raise
+        capped = 0.0
+    if capped >= 0.5:
+        add(
+            "root_zone_capped", "root_zone_capped",
+            taw=units.depth_text(root_zone.taw_mm, imperial), capped=units.depth_text(capped, imperial),
+        )
+
+
 def explain(controller: Any) -> list[dict[str, str]]:
     """[{id, label, text}] for the card's Why? panel."""
     hass = controller.hass
@@ -69,6 +94,7 @@ def explain(controller: Any) -> list[dict[str, str]]:
         )
 
     _crop_factor(controller, add)
+    _root_zone(controller, add)
 
     temp, source = controller.watering_temp()
     tier = calc.temperature_tier(temp, controller.number("hot_temp_threshold"), controller.number("cool_temp_threshold"))

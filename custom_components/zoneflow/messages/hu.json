@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "A(z) {crop} növénygörbéje az ültetés dátumától indul. Állítsa be; addig a Növénytényező beállítás érvényes."
+    },
+    "root_zone": {
+      "off": "Állítsa be a Gyökérmélységet, hogy egy öntözés soha ne adjon többet, mint amennyit a talaj tárolni tud.",
+      "shallow": "A gyökérzóna nagyon keveset tárol ({raw}, mielőtt a növény szárazságot érez). Még a napi öntözés mellett is kiszáradhat: ellenőrizze a Gyökérmélységet és a Nedvesített részt.",
+      "short_dose": "A gyökérzónát naponta kell öntözni, de egy napi adag ({minutes} perc) rövidebb a minimális impulzusnál ({minimum} perc), így minden öntözés többet ad, mint amennyit a talaj tárol.",
+      "deep_soak": "A mélyöntözés {taw} vizet ad, ennyit tárol a gyökérzóna, a beállított {target} helyett."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "teljes napsütés",
       "reflected_heat": "visszavert hő"
     },
-    "kc_needs_planting_date": "Állítsa be az ültetés dátumát, hogy a(z) {crop} szezongörbéjét kövesse; addig a Növénytényező beállítás érvényes."
+    "kc_needs_planting_date": "Állítsa be az ültetés dátumát, hogy a(z) {crop} szezongörbéjét kövesse; addig a Növénytényező beállítás érvényes.",
+    "root_zone": "Gyökérzóna: {taw} vizet tárol; a növény naponta kb. {use} vizet használ, és {raw} vizet használhat fel, mielőtt szárazságot érez.",
+    "root_zone_interval": "Ezért {tier} helyett {days} naponta öntöz.",
+    "root_zone_capped": "Egy öntözés legfeljebb {taw}, ennyit tárol a gyökérzóna ({capped} vízzel kevesebb, mint amit a napok kívánnának)."
   },
   "suggest": {
     "heading": "A Home Assistantban talált valószínű elemek:",

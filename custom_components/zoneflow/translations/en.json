@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Crop Curve Strength"
+      },
+      "root_depth_mm": {
+        "name": "Root Depth"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Soil Water-Holding Capacity"
+      },
+      "allowed_depletion_pct": {
+        "name": "Allowed Soil Drying"
+      },
+      "wetted_area_pct": {
+        "name": "Wetted Share of the Zone"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Crop Factor Today"
+      },
+      "root_zone": {
+        "name": "Root Zone Holds"
       }
     },
     "select": {

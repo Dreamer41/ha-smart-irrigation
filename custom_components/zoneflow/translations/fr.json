@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Intensité de la courbe de culture"
+      },
+      "root_depth_mm": {
+        "name": "Profondeur des racines"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Réserve utile du sol"
+      },
+      "allowed_depletion_pct": {
+        "name": "Dessèchement permis du sol"
+      },
+      "wetted_area_pct": {
+        "name": "Part mouillée de la zone"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Coefficient cultural du jour"
+      },
+      "root_zone": {
+        "name": "La zone racinaire retient"
       }
     },
     "select": {

@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "Die Pflanzenkurve für {crop} beginnt am Pflanzdatum. Bitte setzen; bis dahin gilt die Einstellung Pflanzenfaktor."
+    },
+    "root_zone": {
+      "off": "Wurzeltiefe einstellen, damit eine Bewässerung nie mehr gibt, als der Boden speichern kann.",
+      "shallow": "Der Wurzelraum speichert sehr wenig ({raw}, bevor die Pflanze Trockenheit spürt). Selbst tägliches Bewässern kann ihn austrocknen lassen: Wurzeltiefe und Benetzten Anteil prüfen.",
+      "short_dose": "Der Wurzelraum braucht jeden Tag Wasser, aber eine Tagesgabe ({minutes} min) ist kürzer als der Mindestpuls ({minimum} min), also gibt jede Bewässerung mehr, als der Boden speichert.",
+      "deep_soak": "Die Tiefenbewässerung gibt {taw}, so viel speichert der Wurzelraum, statt der eingestellten {target}."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "volle Sonne",
       "reflected_heat": "reflektierte Hitze"
     },
-    "kc_needs_planting_date": "Pflanzdatum setzen, damit die Saisonkurve für {crop} gilt; bis dahin gilt die Einstellung Pflanzenfaktor."
+    "kc_needs_planting_date": "Pflanzdatum setzen, damit die Saisonkurve für {crop} gilt; bis dahin gilt die Einstellung Pflanzenfaktor.",
+    "root_zone": "Wurzelraum: speichert {taw}; die Pflanze verbraucht etwa {use} am Tag und kann {raw} nutzen, bevor sie Trockenheit spürt.",
+    "root_zone_interval": "Deshalb wird alle {days} Tage statt alle {tier} Tage bewässert.",
+    "root_zone_capped": "Eine Bewässerung wird auf {taw} begrenzt, so viel speichert der Wurzelraum ({capped} weniger, als die Tage verlangen)."
   },
   "suggest": {
     "heading": "Mögliche Treffer in Ihrem Home Assistant:",

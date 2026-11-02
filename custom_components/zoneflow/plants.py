@@ -46,6 +46,8 @@ PLANT_NUMBER_KEYS = (
     "target_weekly_cool_mm",
     "crop_coefficient",
     "kc_curve_pct",
+    "root_depth_mm",
+    "allowed_depletion_pct",
     "deep_soak_target_mm",
     "deep_soak_interval_days",
     "deep_soak_drydown_days",

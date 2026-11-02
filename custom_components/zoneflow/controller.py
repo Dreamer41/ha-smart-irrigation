@@ -24,6 +24,7 @@ import csv
 import functools
 import logging
 import math
+from dataclasses import dataclass
 from datetime import date, datetime, time as dt_time, timedelta
 from typing import Any
 
@@ -144,6 +145,8 @@ from .const import (
     DEFAULT_IRRIGATION_METHOD,
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
+    SOIL_HOLDING_MM_PER_M,
+    WETTED_SHARE_BY_METHOD,
     DEMAND_MODEL_ET,
     DEMAND_MODEL_FAO56,
     MULCH_STATUS_NOT_MULCHED,
@@ -270,6 +273,8 @@ VALVE_OPEN_KEYS = frozenset({
     "service_mode_auto_off_minutes", "mulch_et_adjustment_pct",
     "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes", "valve_timer_minutes",
 })
+# 1.8: the root-zone settings (the interval and the dose follow them).
+ROOT_ZONE_KEYS = frozenset({"root_depth_mm", "soil_holding_mm_per_m", "allowed_depletion_pct", "wetted_area_pct"})
 # Home Assistant 2024.4+: a sensor that reports the same value again.
 EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
 WATER_LEDGER_DAYS = 400
@@ -323,6 +328,18 @@ MAX_PLAUSIBLE_WIND_M_S = 75.0  # above a hurricane: a sentinel such as 6553.5 or
 
 def _plausible_wind(value: float) -> float | None:
     return value if math.isfinite(value) and 0 <= value <= MAX_PLAUSIBLE_WIND_M_S else None
+
+
+@dataclass(frozen=True)
+class RootZone:
+    """The zone's root zone now (1.8): what it holds (TAW), what the plant can use before it feels
+    dry (RAW = p x TAW), the plant's daily use and the most days between waterings that allows."""
+
+    taw_mm: float
+    raw_mm: float
+    p: float
+    etc_mm_day: float | None
+    max_interval_days: int | None
 
 
 class ZoneFlowController:
@@ -814,14 +831,31 @@ class ZoneFlowController:
         (calculations.soil_pulse_count)."""
         return self.soil_type, self.drainage, self.slope
 
-    async def async_soil_changed(self) -> None:
+    async def async_soil_changed(self, soil_type: bool = False) -> None:
         """Soil type or drainage was picked or changed: the soak between
-        pulses follows it (the person can still move the sliders after)."""
+        pulses follows it, and a new soil type sets the root zone's water-holding
+        capacity (the person can still move the sliders after)."""
         minutes = calc.soak_minutes(self.soil_type, self.drainage)
         for key in ("routine_pulse_rest_minutes", "deep_soak_pulse_rest_minutes"):
             entity = self.numbers.get(key)
             if entity is not None:
                 await entity.async_set_metric_value(minutes)
+        holding = self.numbers.get("soil_holding_mm_per_m")  # 1.8: the root zone's soil
+        if soil_type and holding is not None:
+            await holding.async_set_metric_value(SOIL_HOLDING_MM_PER_M.get(self.soil_type, SOIL_HOLDING_MM_PER_M[DEFAULT_SOIL_TYPE]))
+
+    async def async_method_changed(self) -> None:
+        """At each start: when the irrigation method changed in Configure, the root zone's Wetted
+        Share follows it (1.8). A zone seen for the first time keeps what it has."""
+        state = self.store.state
+        method = self.irrigation_method
+        if state.wetted_method == method:
+            return
+        entity = self.numbers.get("wetted_area_pct")
+        if state.wetted_method is not None and entity is not None:
+            await entity.async_set_metric_value(WETTED_SHARE_BY_METHOD.get(method, 100.0))
+        state.wetted_method = method
+        await self.store.async_save()
 
     @property
     def irrigation_method(self) -> str:
@@ -2203,6 +2237,11 @@ class ZoneFlowController:
             self._notify_status()  # when the next watering is changed with it: show it at once
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
+        elif key in ROOT_ZONE_KEYS:
+            # The interval and the dose follow at once; Root Depth 0 <-> on shows or hides the rest.
+            self._notify_status()
+            if key == "root_depth_mm":
+                self.hass.async_create_task(visibility.async_apply(self.hass, self.entry, self))
         if key in VALVE_OPEN_KEYS:
             self._notify_status()  # the Longest Valve Open Time follows the change at once
 
@@ -2895,24 +2934,64 @@ class ZoneFlowController:
         if deep:
             state.last_deep_run_seconds, state.last_deep_run_for_ts = took, state.last_deep_soak_ts
 
-    def _routine_interval_settings(self) -> dict[str, int]:
-        """The two Routine Days Between Waterings settings, as the keyword
+    def _routine_interval_settings(self, root_zone: Any = ...) -> dict[str, int | None]:
+        """The two Routine Days Between Waterings settings, and the most days the
+        root zone allows (1.8, None while Root Depth is 0), as the keyword
         arguments the calculations take (one place, so the dose, the due check
-        and the Status estimate can never read them differently)."""
+        and the Status estimate can never read them differently). Pass `root_zone`
+        when it is already worked out."""
+        if root_zone is ...:
+            root_zone = self.root_zone()
         return {
             "normal_interval_days": max(int(round(self.number("routine_interval_days"))), 1),
             "hot_interval_days": max(int(round(self.number("routine_interval_hot_days"))), 1),
+            "max_interval_days": root_zone.max_interval_days if root_zone else None,
         }
 
     def _routine_interval_days(self) -> int:
-        """Days between routine waterings now: the hot gap in the hot tier, else the normal one."""
+        """Days between routine waterings now: the hot gap in the hot tier, else the normal one,
+        shortened when the root zone can't hold that many days (1.8)."""
         gaps = self._routine_interval_settings()
         return calc.routine_interval_days(
             self.effective_avg_peak_temp(),
             self.number("hot_temp_threshold"),
             gaps["normal_interval_days"],
             gaps["hot_interval_days"],
+            gaps["max_interval_days"],
         )
+
+    def _tier_interval_days(self) -> int:
+        """The Days Between Waterings setting in use, before the root-zone limit."""
+        gaps = self._routine_interval_settings()
+        return calc.routine_interval_days(
+            self.effective_avg_peak_temp(), self.number("hot_temp_threshold"),
+            gaps["normal_interval_days"], gaps["hot_interval_days"],
+        )
+
+    def daily_demand_mm(self) -> float:
+        """What the plant uses per day, as the routine will water it (any demand model)."""
+        weekly = self.et_weekly_target_mm()
+        if weekly is None:
+            weekly = self.tier_weekly_target_mm()
+        return weekly * self.routine_target_scale() / 7.0
+
+    def root_zone(self) -> RootZone | None:
+        """The root zone (1.8), or None while Root Depth is 0 (off: the zone waters as before)."""
+        taw = calc.root_zone_capacity_mm(
+            self.number("soil_holding_mm_per_m"), self.number("root_depth_mm"), self.number("wetted_area_pct")
+        )
+        if taw is None:
+            return None
+        etc = self.daily_demand_mm()
+        p = calc.allowed_depletion(self.number("allowed_depletion_pct") / 100.0, etc if etc > 0 else 5.0)
+        raw = p * taw
+        return RootZone(taw, raw, p, etc if etc > 0 else None, calc.capacity_interval_days(raw, etc))
+
+    def deep_soak_target_mm(self) -> float:
+        """The Deep Soak Target, never more than the root zone holds (1.8)."""
+        target = self.number("deep_soak_target_mm")
+        root_zone = self.root_zone()
+        return min(target, root_zone.taw_mm) if root_zone else target
 
     def _wet_hold_days(self) -> float | None:
         since = self.store.state.wet_hold_since_ts
@@ -4014,7 +4093,7 @@ class ZoneFlowController:
         if self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
             return False
         plan = calc.plan_deep_soak(
-            self.number("deep_soak_target_mm"),
+            self.deep_soak_target_mm(),
             self.number("flow_rate_mm_per_min"),
             pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
             min_pulse_minutes=self._deep_min_pulse(),
@@ -4080,7 +4159,7 @@ class ZoneFlowController:
 
         deep_soak_pulse_count = max(int(round(self.number("deep_soak_pulse_count"))), 1)
         plan = calc.plan_deep_soak(
-            self.number("deep_soak_target_mm"),
+            self.deep_soak_target_mm(),
             self.number("flow_rate_mm_per_min"),
             pulse_count=deep_soak_pulse_count,
             min_pulse_minutes=self._deep_min_pulse(),
@@ -4812,7 +4891,7 @@ class ZoneFlowController:
         deep = 0.0
         if self.deep_soak_enabled and flow > 0:
             plan = calc.plan_deep_soak(
-                self.number("deep_soak_target_mm"),
+                self.number("deep_soak_target_mm"),  # not the root-zone cap: the longest the settings allow
                 flow,
                 pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
                 min_pulse_minutes=self._deep_min_pulse(),
@@ -5125,6 +5204,8 @@ class ZoneFlowController:
         et_weekly = self.et_weekly_target_mm()
         if elapsed_seconds is None:
             elapsed_seconds = self._rain_pool_elapsed()
+        root_zone = self.root_zone()
+        gaps = self._routine_interval_settings(root_zone)
         return calc.plan_routine_irrigation(
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
@@ -5146,7 +5227,10 @@ class ZoneFlowController:
             interval_fraction=interval_fraction,
             rain_offset_mm=self._rain_offset_in_window(elapsed_seconds),
             rain_ignore_below_mm=self.number("rain_ignore_below_mm"),
-            **self._routine_interval_settings(),
+            normal_interval_days=gaps["normal_interval_days"],
+            hot_interval_days=gaps["hot_interval_days"],
+            max_interval_days=gaps["max_interval_days"],
+            root_zone_mm=root_zone.taw_mm if root_zone else None,
         )
 
     def rain_credit_breakdown(self, plan: calc.RoutinePlan) -> tuple[float, float, float | None]:
@@ -5268,7 +5352,7 @@ class ZoneFlowController:
         state = self.store.state
         if not self.deep_soak_enabled:
             return False
-        target = self.number("deep_soak_target_mm")
+        target = self.deep_soak_target_mm()
         if target <= 0:
             return False
         last = state.last_deep_soak_ts or 0.0
@@ -6046,7 +6130,7 @@ class ZoneFlowController:
         if not self.has_valve:
             return None
         if cycle == "deep_soak":
-            return self.number("deep_soak_target_mm")
+            return self.deep_soak_target_mm()
         try:
             return self._routine_plan().needed_mm
         except Exception:  # noqa: BLE001 -- only an estimate: never let it break the Status sentence

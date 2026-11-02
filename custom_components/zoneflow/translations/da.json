@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Afgrødekurvens styrke"
+      },
+      "root_depth_mm": {
+        "name": "Roddybde"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Jordens vandholdeevne"
+      },
+      "allowed_depletion_pct": {
+        "name": "Tilladt udtørring af jorden"
+      },
+      "wetted_area_pct": {
+        "name": "Vandet andel af zonen"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Afgrødefaktor i dag"
+      },
+      "root_zone": {
+        "name": "Rodzonen rummer"
       }
     },
     "select": {

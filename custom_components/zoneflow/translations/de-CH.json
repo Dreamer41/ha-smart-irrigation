@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Stärke der Pflanzenkurve"
+      },
+      "root_depth_mm": {
+        "name": "Wurzeltiefe"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Wasserspeicherfähigkeit des Bodens"
+      },
+      "allowed_depletion_pct": {
+        "name": "Erlaubtes Austrocknen des Bodens"
+      },
+      "wetted_area_pct": {
+        "name": "Benetzter Anteil der Zone"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Pflanzenfaktor heute"
+      },
+      "root_zone": {
+        "name": "Wurzelraum speichert"
       }
     },
     "select": {

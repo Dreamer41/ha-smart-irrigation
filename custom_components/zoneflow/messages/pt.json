@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "A curva da cultura de {crop} parte da data de plantação. Defina-a; até lá vale a definição Coeficiente da cultura."
+    },
+    "root_zone": {
+      "off": "Defina a Profundidade das raízes para que uma rega nunca dê mais do que o solo consegue reter.",
+      "shallow": "A zona radicular retém muito pouco ({raw} antes de a planta sentir a secura). Mesmo uma rega diária pode deixá-la secar: verifique a Profundidade das raízes e a Parte molhada.",
+      "short_dose": "A zona radicular precisa de rega todos os dias, mas a dose de um dia ({minutes} min) é mais curta do que o pulso mínimo ({minimum} min), por isso cada rega dá mais do que o solo retém.",
+      "deep_soak": "A rega profunda dá {taw}, o que a zona radicular retém, em vez dos {target} definidos."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "sol pleno",
       "reflected_heat": "calor refletido"
     },
-    "kc_needs_planting_date": "Defina a data de plantação para seguir a curva de época de {crop}; até lá vale a definição Coeficiente da cultura."
+    "kc_needs_planting_date": "Defina a data de plantação para seguir a curva de época de {crop}; até lá vale a definição Coeficiente da cultura.",
+    "root_zone": "Zona radicular: retém {taw}; a planta usa cerca de {use} por dia e pode usar {raw} antes de sentir a secura.",
+    "root_zone_interval": "Por isso rega a cada {days} dias em vez de a cada {tier}.",
+    "root_zone_capped": "Uma rega é limitada a {taw}, o que a zona radicular retém ({capped} a menos do que os dias pedem)."
   },
   "suggest": {
     "heading": "Possíveis elementos encontrados no seu Home Assistant:",

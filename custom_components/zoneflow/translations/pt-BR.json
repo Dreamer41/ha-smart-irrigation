@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Intensidade da curva da cultura"
+      },
+      "root_depth_mm": {
+        "name": "Profundidade das raízes"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Capacidade de retenção de água do solo"
+      },
+      "allowed_depletion_pct": {
+        "name": "Secagem permitida do solo"
+      },
+      "wetted_area_pct": {
+        "name": "Parte molhada da zona"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Coeficiente da cultura de hoje"
+      },
+      "root_zone": {
+        "name": "A zona radicular retém"
       }
     },
     "select": {

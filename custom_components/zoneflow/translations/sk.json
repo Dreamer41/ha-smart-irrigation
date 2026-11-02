@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Sila krivky plodiny"
+      },
+      "root_depth_mm": {
+        "name": "Hĺbka koreňov"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Vodná kapacita pôdy"
+      },
+      "allowed_depletion_pct": {
+        "name": "Povolené vysychanie pôdy"
+      },
+      "wetted_area_pct": {
+        "name": "Zavlažovaný podiel zóny"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Koeficient plodiny dnes"
+      },
+      "root_zone": {
+        "name": "Koreňová zóna pojme"
       }
     },
     "select": {

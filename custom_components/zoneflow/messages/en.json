@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "The crop curve for {crop} starts from the planting date. Set it; until then the Crop Factor setting is used."
+    },
+    "root_zone": {
+      "off": "Set Root Depth so a watering never gives more than the soil can hold.",
+      "shallow": "The root zone holds very little ({raw} before the plant feels dry). Even daily watering may let it dry out: check Root Depth and Wetted Share.",
+      "short_dose": "The root zone needs watering every day, but a day's dose ({minutes} min) is shorter than the minimum pulse ({minimum} min), so each watering gives more than the soil holds.",
+      "deep_soak": "Deep soak gives {taw}, what the root zone holds, instead of the {target} set."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "full sun",
       "reflected_heat": "reflected heat"
     },
-    "kc_needs_planting_date": "Set the planting date to follow the {crop} season curve; until then the Crop Factor setting is used."
+    "kc_needs_planting_date": "Set the planting date to follow the {crop} season curve; until then the Crop Factor setting is used.",
+    "root_zone": "Root zone: holds {taw}; the plant uses about {use} a day and can use {raw} before it feels dry.",
+    "root_zone_interval": "So it waters every {days} days instead of {tier}.",
+    "root_zone_capped": "A watering is capped at {taw}, what the root zone holds ({capped} less than the days call for)."
   },
   "suggest": {
     "heading": "Likely ones found in your Home Assistant:",

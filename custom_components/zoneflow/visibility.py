@@ -68,6 +68,13 @@ TEMPERATURE = {
     ("select", "sun_exposure"),
 }
 FROST = {("number", "frost_guard_temp")}
+# 1.8: Root Depth is the switch and stays visible; the rest does nothing while it is 0.
+ROOT_ZONE = {
+    ("number", "soil_holding_mm_per_m"),
+    ("number", "allowed_depletion_pct"),
+    ("number", "wetted_area_pct"),
+    ("sensor", "root_zone"),
+}
 NOTIFY = {("select", "notifications"), ("select", "weekly_summary")}
 FLOW_METER = {("sensor", "last_cycle_water_liters")}
 DEEP_SOAK = {
@@ -199,6 +206,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden.add(("number", "crop_coefficient"))  # the curve decides, not the slider
     else:
         hidden |= {("number", "kc_curve_pct"), ("switch", "kc_climate_adjust")}
+    if controller.root_zone() is None:
+        hidden |= ROOT_ZONE
     profile = controller.growth_ramp_profile
     if profile == GROWTH_RAMP_OFF or controller.kc_curve_covers_growth():
         hidden |= GROWTH_RAMP | CUSTOM_RAMP

@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "Křivka plodiny {crop} začíná datem výsadby. Nastavte ho; do té doby platí nastavení Koeficient plodiny."
+    },
+    "root_zone": {
+      "off": "Nastavte Hloubku kořenů, aby zálivka nikdy nedala víc, než půda pojme.",
+      "shallow": "Kořenová zóna pojme velmi málo ({raw}, než rostlina pocítí sucho). I denní zálivka ji může nechat vyschnout: zkontrolujte Hloubku kořenů a Zavlažovaný podíl.",
+      "short_dose": "Kořenová zóna potřebuje zálivku každý den, ale denní dávka ({minutes} min) je kratší než minimální pulz ({minimum} min), takže každá zálivka dá víc, než půda pojme.",
+      "deep_soak": "Hloubkové zavlažení dá {taw}, co pojme kořenová zóna, místo nastavených {target}."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "plné slunce",
       "reflected_heat": "odražené teplo"
     },
-    "kc_needs_planting_date": "Nastavte datum výsadby, aby se řídilo křivkou sezóny {crop}; do té doby platí nastavení Koeficient plodiny."
+    "kc_needs_planting_date": "Nastavte datum výsadby, aby se řídilo křivkou sezóny {crop}; do té doby platí nastavení Koeficient plodiny.",
+    "root_zone": "Kořenová zóna: pojme {taw}; rostlina spotřebuje asi {use} denně a může využít {raw}, než pocítí sucho.",
+    "root_zone_interval": "Proto zavlažuje každé {days} dny místo {tier}.",
+    "root_zone_capped": "Zálivka je omezena na {taw}, co pojme kořenová zóna (o {capped} méně, než by odpovídalo dnům)."
   },
   "suggest": {
     "heading": "Pravděpodobné položky nalezené v systému Home Assistant:",

@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "作物曲线强度"
+      },
+      "root_depth_mm": {
+        "name": "根系深度"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "土壤持水能力"
+      },
+      "allowed_depletion_pct": {
+        "name": "允许的土壤干燥程度"
+      },
+      "wetted_area_pct": {
+        "name": "区域湿润比例"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "今日作物系数"
+      },
+      "root_zone": {
+        "name": "根区可容纳水量"
       }
     },
     "select": {

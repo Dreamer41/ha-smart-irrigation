@@ -402,6 +402,32 @@ class RoutinePlan:
     calc_runtime_minutes: int
     pulse_runtime_minutes: float
     pulse_count: int = 3
+    root_zone_capped_mm: float = 0.0  # 1.8: what the root-zone limit took off the interval's dose
+
+
+# --- Root zone (1.8, FAO-56 chapter 8) ------------------------------------------------------------
+# Water beyond what the roots can hold drains past them. Off (None) while Root Depth is 0.
+
+
+def root_zone_capacity_mm(holding_mm_per_m: float, root_depth_mm: float, wetted_pct: float) -> float | None:
+    """TAW over the zone's whole area: what the roots can hold between full and wilting (FAO-56
+    eq. 82), scaled to the share of the zone the emitters wet (ZoneFlow's mm are spread over the
+    whole area). None when root depth is 0 (off)."""
+    if root_depth_mm <= 0 or holding_mm_per_m <= 0:
+        return None
+    return holding_mm_per_m * root_depth_mm / 1000.0 * min(max(wetted_pct, 5.0), 100.0) / 100.0
+
+
+def allowed_depletion(p_table: float, etc_mm_day: float) -> float:
+    """FAO-56 p adjusted for the day's demand (Table 22 note): plants feel dry sooner in hot weather."""
+    return min(max(p_table + 0.04 * (5.0 - etc_mm_day), 0.1), 0.8)
+
+
+def capacity_interval_days(raw_mm: float, etc_mm_day: float) -> int | None:
+    """The most days between waterings before the soil dries past RAW; None with no demand."""
+    if etc_mm_day <= 0:
+        return None
+    return max(int(raw_mm // etc_mm_day), 1)
 
 
 def routine_interval_days(
@@ -409,6 +435,7 @@ def routine_interval_days(
     hot_threshold: float,
     normal_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
     hot_days: int = ROUTINE_HOT_INTERVAL_DAYS,
+    max_days: int | None = None,
 ) -> int:
     """Port of `target_interval_days`: the hot gap (3 days to start with) if hot,
     else the normal one (4). Both are zone settings since 1.7.3.
@@ -417,8 +444,11 @@ def routine_interval_days(
     zone's Fallback / Manual Temperature -- ZoneFlowController.watering_temp);
     None is still accepted as an explicit "normal tier" for direct callers."""
     if avg_peak_temp is None:
-        return normal_days
-    return hot_days if avg_peak_temp >= hot_threshold else normal_days
+        days = normal_days
+    else:
+        days = hot_days if avg_peak_temp >= hot_threshold else normal_days
+    # 1.8: the root zone may only shorten it (max_interval_days, never below 1).
+    return min(days, max(max_days, 1)) if max_days else days
 
 
 def temperature_tier(avg_peak_temp: float | None, hot_threshold: float, cool_threshold: float) -> str:
@@ -478,6 +508,8 @@ def plan_routine_irrigation(
     rain_ignore_below_mm: float = RAIN_IGNORE_BELOW_MM,
     normal_interval_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
     hot_interval_days: int = ROUTINE_HOT_INTERVAL_DAYS,
+    max_interval_days: int | None = None,
+    root_zone_mm: float | None = None,
 ) -> RoutinePlan:
     """Port of the full variables block in avocado_routine_irrigation
     (interval_target_mm through pulse_runtime).
@@ -486,7 +518,9 @@ def plan_routine_irrigation(
     pulses, 1-min floor) for the same backward-compatibility reason as
     plan_deep_soak above -- a zone's real pulse_count comes from its
     "Routine Pulse Count (Split-Cycle)" number entity."""
-    interval_days = routine_interval_days(avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days)
+    interval_days = routine_interval_days(
+        avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days, max_interval_days
+    )
     # weekly_target_override_mm is the ET demand model's target (see
     # et_weekly_target_mm) when a zone uses it and ET0 is available; None
     # means the original temperature-tier target, exactly as before.
@@ -500,6 +534,11 @@ def plan_routine_irrigation(
     # last watering call for (interval_fraction < 1), so a probe that stays
     # "dry" can't turn every morning into a full interval's dose.
     interval_target_mm = (target_weekly_mm / 7.0) * interval_days * interval_fraction
+    # 1.8: never more than the root zone holds (TAW): the rest would drain past the roots.
+    root_zone_capped_mm = 0.0
+    if root_zone_mm is not None and interval_target_mm > root_zone_mm:
+        root_zone_capped_mm = interval_target_mm - root_zone_mm
+        interval_target_mm = root_zone_mm
     eff_rain = rain_deduction_mm(
         today_rain_mm,
         rain_day_history_mm,
@@ -526,6 +565,7 @@ def plan_routine_irrigation(
         calc_runtime_minutes=calc_runtime,
         pulse_runtime_minutes=pulse_runtime,
         pulse_count=count,
+        root_zone_capped_mm=root_zone_capped_mm,
     )
 
 
@@ -715,9 +755,12 @@ def estimate_next_irrigation(
     routine_drydown_days: float,
     normal_interval_days: int = ROUTINE_NORMAL_INTERVAL_DAYS,
     hot_interval_days: int = ROUTINE_HOT_INTERVAL_DAYS,
+    max_interval_days: int | None = None,
 ) -> NextIrrigationEstimate:
     """Port of `sensor.avocado_next_irrigation_estimate`."""
-    interval_days = routine_interval_days(avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days)
+    interval_days = routine_interval_days(
+        avg_peak_temp, hot_threshold, normal_interval_days, hot_interval_days, max_interval_days
+    )
     routine_next = last_routine_ts + interval_days * 86400
     rain_next = last_significant_rain_ts + routine_drydown_days * 86400
     return NextIrrigationEstimate(routine_next, rain_next, max(routine_next, rain_next))

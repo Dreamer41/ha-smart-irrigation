@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Grödokurvans styrka"
+      },
+      "root_depth_mm": {
+        "name": "Rotdjup"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Jordens vattenhållande förmåga"
+      },
+      "allowed_depletion_pct": {
+        "name": "Tillåten uttorkning av jorden"
+      },
+      "wetted_area_pct": {
+        "name": "Bevattnad andel av zonen"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Grödofaktor idag"
+      },
+      "root_zone": {
+        "name": "Rotzonen rymmer"
       }
     },
     "select": {

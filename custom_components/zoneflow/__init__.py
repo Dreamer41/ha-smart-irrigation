@@ -398,6 +398,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await controller.async_setup()
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await controller.async_method_changed()  # the sliders exist now (1.8: the wetted share)
     # Hide what this zone doesn't use (see visibility.py).
     await visibility.async_apply(hass, entry, controller)
     # The zone's plant: its record and history (plants.py).

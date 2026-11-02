@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Növénygörbe erőssége"
+      },
+      "root_depth_mm": {
+        "name": "Gyökérmélység"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "A talaj víztartó képessége"
+      },
+      "allowed_depletion_pct": {
+        "name": "Megengedett talajszáradás"
+      },
+      "wetted_area_pct": {
+        "name": "A zóna nedvesített része"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Mai növénytényező"
+      },
+      "root_zone": {
+        "name": "A gyökérzóna tárol"
       }
     },
     "select": {

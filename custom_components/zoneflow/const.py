@@ -543,6 +543,13 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     "crop_coefficient": ("Crop Factor (Kc)", 0.1, 1.5, 0.05, None),
     # 1.8: tunes a crop curve (a picked crop, see kc_crop) up or down for the person's own plant.
     "kc_curve_pct": ("Crop Curve Strength", 50.0, 150.0, 5.0, "%"),
+    # 1.8: the root zone (FAO-56 chapter 8). Root Depth 0 = off, the zone waters exactly as before.
+    # Otherwise a routine dose or a deep soak is never more than the roots hold, and the days between
+    # waterings shorten when one interval's use would dry the soil past Allowed Soil Drying.
+    "root_depth_mm": ("Root Depth", 0.0, 2000.0, 50.0, "mm"),
+    "soil_holding_mm_per_m": ("Soil Water-Holding Capacity", 40.0, 250.0, 5.0, "mm/m"),
+    "allowed_depletion_pct": ("Allowed Soil Drying", 10.0, 80.0, 5.0, "%"),
+    "wetted_area_pct": ("Wetted Share of the Zone", 5.0, 100.0, 5.0, "%"),
     # How much to scale the routine weekly target up while this zone's
     # "Mulch" select is "Not Mulched" -- see CONF_MULCH_STATUS above. Has no
     # effect while the select is "Mulched". Default 20% is a starting point
@@ -649,6 +656,10 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
     "kc_curve_pct": 100.0,
+    "root_depth_mm": 0.0,
+    "soil_holding_mm_per_m": 140.0,
+    "allowed_depletion_pct": 50.0,
+    "wetted_area_pct": 100.0,
     "mulch_et_adjustment_pct": 20.0,
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
@@ -722,6 +733,16 @@ KC_CLIMATE_DAYS = 7
 # 1.8: how much sun and reflected heat the zone gets, as a factor on its crop factor (a landscape
 # microclimate factor). Wind is not here: it is measured, or set by Wind Exposure, and the crop
 # factor's climate adjustment (eq. 62) already uses it.
+# 1.8: the root zone's starting values for a new zone (then ordinary sliders). Water held between
+# field capacity and wilting point, mm per m of soil (FAO-56 Table 19, the middle of each range).
+SOIL_HOLDING_MM_PER_M = {"sandy": 80.0, "sandy_loam": 130.0, "loam": 155.0, "clay_loam": 150.0, "clay": 160.0, "unknown": 140.0}
+# The share of the zone's area the emitters wet: ZoneFlow's mm are spread over the whole area.
+WETTED_SHARE_BY_METHOD = {"drip": 40.0, "micro_sprinkler": 70.0, "soaker_hose": 50.0, "sprinkler": 100.0, "other": 100.0}
+# Root depth (mm) for a plant type with no crop curve (a crop curve brings FAO-56 Table 22's
+# shallower rooting depth). No entry: off. Garden soil is rarely as deep as a field's: the shallow
+# end is used on purpose (too tight only waters more often).
+ROOT_DEPTH_BY_PLANT = {"herbs": 300.0, "flowers": 300.0, "shrubs": 600.0, "young_tree": 500.0, "fruit_tree": 1000.0, "lawn": 300.0}
+
 SUN_EXPOSURE_FACTORS = {
     "deep_shade": 0.60,  # shade all day
     "morning_sun": 0.75,  # morning sun, afternoon shade

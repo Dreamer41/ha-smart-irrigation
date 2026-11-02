@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Siła krzywej uprawy"
+      },
+      "root_depth_mm": {
+        "name": "Głębokość korzeni"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Pojemność wodna gleby"
+      },
+      "allowed_depletion_pct": {
+        "name": "Dopuszczalne przesychanie gleby"
+      },
+      "wetted_area_pct": {
+        "name": "Zwilżana część strefy"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Współczynnik uprawy dzisiaj"
+      },
+      "root_zone": {
+        "name": "Strefa korzeni mieści"
       }
     },
     "select": {

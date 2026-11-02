@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "Krzywa uprawy dla: {crop} zaczyna się od daty sadzenia. Ustaw ją; do tego czasu obowiązuje ustawienie Współczynnik uprawy."
+    },
+    "root_zone": {
+      "off": "Ustaw Głębokość korzeni, aby podlewanie nigdy nie dawało więcej, niż gleba może pomieścić.",
+      "shallow": "Strefa korzeni mieści bardzo mało ({raw}, zanim roślina odczuje suszę). Nawet codzienne podlewanie może pozwolić jej przeschnąć: sprawdź Głębokość korzeni i Zwilżaną część.",
+      "short_dose": "Strefa korzeni wymaga codziennego podlewania, ale dzienna dawka ({minutes} min) jest krótsza niż minimalny impuls ({minimum} min), więc każde podlewanie daje więcej, niż gleba mieści.",
+      "deep_soak": "Głębokie podlewanie daje {taw}, tyle mieści strefa korzeni, zamiast ustawionych {target}."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "pełne słońce",
       "reflected_heat": "odbite ciepło"
     },
-    "kc_needs_planting_date": "Ustaw datę sadzenia, aby stosować krzywą sezonu dla: {crop}; do tego czasu obowiązuje ustawienie Współczynnik uprawy."
+    "kc_needs_planting_date": "Ustaw datę sadzenia, aby stosować krzywą sezonu dla: {crop}; do tego czasu obowiązuje ustawienie Współczynnik uprawy.",
+    "root_zone": "Strefa korzeni: mieści {taw}; roślina zużywa około {use} dziennie i może zużyć {raw}, zanim odczuje suszę.",
+    "root_zone_interval": "Dlatego podlewa co {days} dni zamiast co {tier}.",
+    "root_zone_capped": "Podlewanie jest ograniczone do {taw}, tyle mieści strefa korzeni (o {capped} mniej, niż wymagają dni)."
   },
   "suggest": {
     "heading": "Prawdopodobne encje znalezione w Home Assistant:",

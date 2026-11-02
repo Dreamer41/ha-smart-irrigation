@@ -13,8 +13,11 @@ from typing import Any
 from homeassistant.core import HomeAssistant
 import homeassistant.util.dt as dt_util
 
-from . import fao56, messages
+from . import fao56, messages, units
 from .const import NUMBER_DEFAULTS
+
+# Less than this before the plant feels dry: even daily watering may let it dry out (1.8).
+ROOT_ZONE_SHALLOW_MM = 3.0
 from .issues import FLOW_DEFAULT_TOLERANCE, OFFLINE
 
 LEVEL_ORDER = {"fail": 0, "warn": 1, "info": 2, "ok": 3}
@@ -27,6 +30,27 @@ def _state(hass: HomeAssistant, entity_id: str | None):
 
 def _working(state) -> bool:
     return state is not None and state.state not in OFFLINE
+
+
+def _root_zone_checks(controller: Any, add) -> None:
+    root_zone = controller.root_zone()
+    if root_zone is None:
+        add("root_zone", "info", "root_zone.off")
+        return
+    imperial = controller.imperial
+    if root_zone.raw_mm < ROOT_ZONE_SHALLOW_MM:
+        add("root_zone_shallow", "warn", "root_zone.shallow", raw=units.depth_text(root_zone.raw_mm, imperial))
+    flow = controller.number("flow_rate_mm_per_min")
+    if root_zone.max_interval_days == 1 and root_zone.etc_mm_day and flow > 0:
+        minutes = root_zone.etc_mm_day / flow
+        if minutes < controller._routine_min_pulse():
+            # A day's dose is stretched to the Minimum Pulse: more than the soil holds, every day.
+            add("root_zone_short_dose", "warn", "root_zone.short_dose", minutes=f"{minutes:.1f}",
+                minimum=f"{controller._routine_min_pulse()}")
+    target = controller.number("deep_soak_target_mm")
+    if controller.deep_soak_enabled and target > root_zone.taw_mm:
+        add("root_zone_deep_soak", "info", "root_zone.deep_soak",
+            taw=units.depth_text(root_zone.taw_mm, imperial), target=units.depth_text(target, imperial))
 
 
 def run_checks(controller: Any) -> list[dict[str, Any]]:
@@ -157,6 +181,10 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
     if controller.has_valve and (crop := controller.crop_seasons.get(controller.store.state.kc_crop)) is not None:
         if crop.season == fao56.SEASON_ANNUAL and controller.store.state.planting_date_ts is None:
             add("kc_planting", "info", "kc.planting_date", crop=crop.name)
+
+    # The root zone (1.8).
+    if controller.has_valve:
+        _root_zone_checks(controller, add)
 
     # The last watering.
     if controller.has_valve:

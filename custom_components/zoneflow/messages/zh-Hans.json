@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "{crop}的作物曲线从种植日期开始。请设置；在此之前使用“作物系数”设置。"
+    },
+    "root_zone": {
+      "off": "请设置根系深度，使每次浇水不会超过土壤可容纳的量。",
+      "shallow": "根区容纳的水很少（植物感到干旱前仅 {raw}）。即使每天浇水也可能变干：请检查根系深度和区域湿润比例。",
+      "short_dose": "根区需要每天浇水，但一天的用量（{minutes} 分钟）短于最短脉冲（{minimum} 分钟），因此每次浇水都超过土壤可容纳的量。",
+      "deep_soak": "深层浇灌给水 {taw}，即根区可容纳的量，而不是设定的 {target}。"
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "全日照",
       "reflected_heat": "反射热"
     },
-    "kc_needs_planting_date": "请设置种植日期，以遵循{crop}的生长季曲线；在此之前使用“作物系数”设置。"
+    "kc_needs_planting_date": "请设置种植日期，以遵循{crop}的生长季曲线；在此之前使用“作物系数”设置。",
+    "root_zone": "根区：可容纳 {taw}；植物每天约用 {use}，在感到干旱前可用 {raw}。",
+    "root_zone_interval": "因此每 {days} 天浇水一次，而不是每 {tier} 天。",
+    "root_zone_capped": "每次浇水上限为 {taw}，即根区可容纳的量（比按天数计算少 {capped}）。"
   },
   "suggest": {
     "heading": "在您的 Home Assistant 中找到的匹配项：",

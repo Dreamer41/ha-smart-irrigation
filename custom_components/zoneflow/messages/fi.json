@@ -370,6 +370,12 @@
     "backup_timer_ok": "Venttiilin oma ajastin ({timer} min) riittää pisimmälle ajalle, jonka venttiili on auki ({longest} min).",
     "kc": {
       "planting_date": "Kasvikäyrä ({crop}) alkaa istutuspäivästä. Aseta se; siihen asti käytetään Kasvikerroin-asetusta."
+    },
+    "root_zone": {
+      "off": "Aseta Juurten syvyys, jotta kastelu ei koskaan anna enempää kuin maa pystyy pidättämään.",
+      "shallow": "Juuristovyöhyke pidättää hyvin vähän ({raw} ennen kuin kasvi kärsii kuivuudesta). Päivittäinenkin kastelu voi päästää sen kuivumaan: tarkista Juurten syvyys ja Kasteltu osuus.",
+      "short_dose": "Juuristovyöhyke tarvitsee kastelua joka päivä, mutta päivän annos ({minutes} min) on lyhyempi kuin vähimmäispulssi ({minimum} min), joten jokainen kastelu antaa enemmän kuin maa pidättää.",
+      "deep_soak": "Syväkastelu antaa {taw}, jonka juuristovyöhyke pidättää, asetetun {target} sijaan."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "täysi aurinko",
       "reflected_heat": "heijastuva lämpö"
     },
-    "kc_needs_planting_date": "Aseta istutuspäivä, jotta {crop}-kasvukauden käyrää noudatetaan; siihen asti käytetään Kasvikerroin-asetusta."
+    "kc_needs_planting_date": "Aseta istutuspäivä, jotta {crop}-kasvukauden käyrää noudatetaan; siihen asti käytetään Kasvikerroin-asetusta.",
+    "root_zone": "Juuristovyöhyke: pidättää {taw}; kasvi käyttää noin {use} päivässä ja voi käyttää {raw} ennen kuin kärsii kuivuudesta.",
+    "root_zone_interval": "Siksi se kastelee {days} päivän välein {tier} päivän sijaan.",
+    "root_zone_capped": "Kastelu rajataan määrään {taw}, jonka juuristovyöhyke pidättää ({capped} vähemmän kuin päivät vaatisivat)."
   },
   "suggest": {
     "heading": "Todennäköisimmät löydökset Home Assistantissasi:",

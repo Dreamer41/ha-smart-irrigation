@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "Grödokurvan för {crop} startar från planteringsdatumet. Ange det; tills dess gäller inställningen Grödofaktor."
+    },
+    "root_zone": {
+      "off": "Ange Rotdjup så att en bevattning aldrig ger mer än jorden kan rymma.",
+      "shallow": "Rotzonen rymmer mycket lite ({raw} innan växten känner torka). Även daglig bevattning kan låta den torka ut: kontrollera Rotdjup och Bevattnad andel.",
+      "short_dose": "Rotzonen behöver vattnas varje dag, men en dags dos ({minutes} min) är kortare än minsta puls ({minimum} min), så varje bevattning ger mer än jorden rymmer.",
+      "deep_soak": "Djupbevattning ger {taw}, det rotzonen rymmer, i stället för inställda {target}."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "full sol",
       "reflected_heat": "reflekterad värme"
     },
-    "kc_needs_planting_date": "Ange planteringsdatum för att följa säsongskurvan för {crop}; tills dess gäller inställningen Grödofaktor."
+    "kc_needs_planting_date": "Ange planteringsdatum för att följa säsongskurvan för {crop}; tills dess gäller inställningen Grödofaktor.",
+    "root_zone": "Rotzon: rymmer {taw}; växten använder omkring {use} om dagen och kan använda {raw} innan den känner torka.",
+    "root_zone_interval": "Därför vattnar den var {days}:e dag i stället för var {tier}:e.",
+    "root_zone_capped": "En bevattning begränsas till {taw}, det rotzonen rymmer ({capped} mindre än dagarna kräver)."
   },
   "suggest": {
     "heading": "Sannolika enheter funna i din Home Assistant:",

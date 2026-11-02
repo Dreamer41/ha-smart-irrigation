@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "De gewascurve voor {crop} start op de plantdatum. Stel die in; tot dan geldt de instelling Gewasfactor."
+    },
+    "root_zone": {
+      "off": "Stel de Worteldiepte in zodat een beurt nooit meer geeft dan de bodem kan vasthouden.",
+      "shallow": "De wortelzone houdt heel weinig vast ({raw} voordat de plant droogte voelt). Zelfs dagelijks water geven kan haar laten uitdrogen: controleer Worteldiepte en Natte deel.",
+      "short_dose": "De wortelzone moet elke dag water krijgen, maar een dagdosis ({minutes} min) is korter dan de minimale puls ({minimum} min), dus elke beurt geeft meer dan de bodem vasthoudt.",
+      "deep_soak": "Diep water geven geeft {taw}, wat de wortelzone vasthoudt, in plaats van de ingestelde {target}."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "volle zon",
       "reflected_heat": "teruggekaatste warmte"
     },
-    "kc_needs_planting_date": "Stel de plantdatum in om de seizoencurve van {crop} te volgen; tot dan geldt de instelling Gewasfactor."
+    "kc_needs_planting_date": "Stel de plantdatum in om de seizoencurve van {crop} te volgen; tot dan geldt de instelling Gewasfactor.",
+    "root_zone": "Wortelzone: houdt {taw} vast; de plant gebruikt ongeveer {use} per dag en kan {raw} gebruiken voordat hij droogte voelt.",
+    "root_zone_interval": "Daarom geeft hij elke {days} dagen water in plaats van elke {tier}.",
+    "root_zone_capped": "Een beurt wordt beperkt tot {taw}, wat de wortelzone vasthoudt ({capped} minder dan de dagen vragen)."
   },
   "suggest": {
     "heading": "Mogelijke entiteiten gevonden in je Home Assistant:",

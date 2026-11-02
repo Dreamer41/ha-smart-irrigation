@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "La courbe de culture de {crop} part de la date de plantation. Indiquez-la ; d'ici là, le réglage Coefficient cultural est utilisé."
+    },
+    "root_zone": {
+      "off": "Indiquez la Profondeur des racines pour qu'un arrosage ne donne jamais plus que ce que le sol peut retenir.",
+      "shallow": "La zone racinaire retient très peu ({raw} avant que la plante souffre du sec). Même un arrosage quotidien peut la laisser sécher : vérifiez la Profondeur des racines et la Part mouillée.",
+      "short_dose": "La zone racinaire doit être arrosée chaque jour, mais la dose d'un jour ({minutes} min) est plus courte que l'impulsion minimale ({minimum} min) : chaque arrosage donne plus que ce que le sol retient.",
+      "deep_soak": "L'arrosage en profondeur donne {taw}, ce que retient la zone racinaire, au lieu des {target} réglés."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "plein soleil",
       "reflected_heat": "chaleur réfléchie"
     },
-    "kc_needs_planting_date": "Indiquez la date de plantation pour suivre la courbe de saison de {crop} ; d'ici là, le réglage Coefficient cultural est utilisé."
+    "kc_needs_planting_date": "Indiquez la date de plantation pour suivre la courbe de saison de {crop} ; d'ici là, le réglage Coefficient cultural est utilisé.",
+    "root_zone": "Zone racinaire : retient {taw} ; la plante utilise environ {use} par jour et peut utiliser {raw} avant de souffrir du sec.",
+    "root_zone_interval": "Elle arrose donc tous les {days} jours au lieu de tous les {tier}.",
+    "root_zone_capped": "Un arrosage est limité à {taw}, ce que retient la zone racinaire ({capped} de moins que ce que demandent les jours)."
   },
   "suggest": {
     "heading": "Éléments probables trouvés dans votre Home Assistant :",

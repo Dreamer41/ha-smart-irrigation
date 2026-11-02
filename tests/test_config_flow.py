@@ -300,6 +300,8 @@ async def test_climate_step_seeds_the_temperature_sliders(hass):
         "deep_soak_pulse_count": 1.0,
         "routine_pulse_rest_minutes": 30.0,
         "deep_soak_pulse_rest_minutes": 30.0,
+        "soil_holding_mm_per_m": 140.0,  # 1.8: the root zone, from the soil and the method
+        "wetted_area_pct": 40.0,
     }
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]

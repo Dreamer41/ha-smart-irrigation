@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "Plantekurven for {crop} starter fra plantedatoen. Sett den; inntil da brukes innstillingen Plantefaktor."
+    },
+    "root_zone": {
+      "off": "Sett Rotdybde så en vanning aldri gir mer enn jorda kan holde.",
+      "shallow": "Rotsonen holder svært lite ({raw} før planten merker tørke). Selv daglig vanning kan la den tørke ut: sjekk Rotdybde og Vannet andel.",
+      "short_dose": "Rotsonen må vannes hver dag, men en dags dose ({minutes} min) er kortere enn minste puls ({minimum} min), så hver vanning gir mer enn jorda holder.",
+      "deep_soak": "Dypvanning gir {taw}, det rotsonen holder, i stedet for de innstilte {target}."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "full sol",
       "reflected_heat": "reflektert varme"
     },
-    "kc_needs_planting_date": "Sett plantedatoen for å følge sesongkurven for {crop}; inntil da brukes innstillingen Plantefaktor."
+    "kc_needs_planting_date": "Sett plantedatoen for å følge sesongkurven for {crop}; inntil da brukes innstillingen Plantefaktor.",
+    "root_zone": "Rotsone: holder {taw}; planten bruker omtrent {use} om dagen og kan bruke {raw} før den merker tørke.",
+    "root_zone_interval": "Derfor vanner den hver {days}. dag i stedet for hver {tier}.",
+    "root_zone_capped": "En vanning begrenses til {taw}, det rotsonen holder ({capped} mindre enn dagene krever)."
   },
   "suggest": {
     "heading": "Sannsynlige funnet i din Home Assistant:",

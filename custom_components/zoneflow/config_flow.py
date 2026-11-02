@@ -23,7 +23,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic, zone_valve
+from . import calculations as calc, crop_season, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic, zone_valve
 from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
@@ -62,6 +62,9 @@ from .const import (
     PLANT_CUSTOM,
     PLANT_OPTIONS,
     KC_CROP_FOR_PLANT,
+    ROOT_DEPTH_BY_PLANT,
+    SOIL_HOLDING_MM_PER_M,
+    WETTED_SHARE_BY_METHOD,
     KC_CROP_FOR_PLANT_CLIMATE,
     PLANT_PRESETS,
     CONF_DEEP_SOAK_ENABLED,
@@ -499,11 +502,15 @@ def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     drainage = data.get(CONF_DRAINAGE, DEFAULT_DRAINAGE)
     count = float(calc.starting_pulse_count(soil, data.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)))
     soak = calc.soak_minutes(soil, drainage)
+    method = data.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
     return {
         "routine_pulse_count": count,
         "deep_soak_pulse_count": count,
         "routine_pulse_rest_minutes": soak,
         "deep_soak_pulse_rest_minutes": soak,
+        # 1.8: the root zone's soil and wetted share.
+        "soil_holding_mm_per_m": SOIL_HOLDING_MM_PER_M.get(soil, SOIL_HOLDING_MM_PER_M[DEFAULT_SOIL_TYPE]),
+        "wetted_area_pct": WETTED_SHARE_BY_METHOD.get(method, 100.0),
     }
 
 
@@ -714,6 +721,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._plant_search = ""  # what was typed to look the plant up
         self._quick = False
         self._lookup_numbers: dict[str, float] = {}  # the weekly targets picked from the lookup
+        self._crops: dict[str, Any] = {}
         self._lookup_crop: str | None = None  # the crop curve of the picked plant ("" = it has none)
         self._lookup_items: list[dict[str, Any]] = []
         self._lookup_next = None  # the step to go on with after the lookup
@@ -890,6 +898,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return {}
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
+        self._crops = await crop_season.async_crop_seasons(self.hass)  # a new zone's root depth (1.8)
         if user_input is None and not self._menu_done and len(self._menu_options()) > 1:
             return await self.async_step_start()
         errors: dict[str, str] = {}
@@ -1186,6 +1195,18 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self._lookup_crop
         return KC_CROP_FOR_PLANT_CLIMATE.get((self._plant, self._climate)) or KC_CROP_FOR_PLANT.get(self._plant, "")
 
+    def _root_zone_numbers(self) -> dict[str, float]:
+        """A new zone's Root Depth and Allowed Soil Drying (1.8): from its crop curve (FAO-56 Table 22,
+        the shallow end of the rooting depth), else its plant type; nothing (off) for neither."""
+        crop = self._crops.get(self._start_kc_crop())
+        if crop is not None and crop.root_min_m:
+            numbers = {"root_depth_mm": round(crop.root_min_m * 1000.0 / 50.0) * 50.0}
+            if crop.p:
+                numbers["allowed_depletion_pct"] = round(crop.p * 100.0 / 5.0) * 5.0
+            return numbers
+        depth = ROOT_DEPTH_BY_PLANT.get(self._plant)
+        return {"root_depth_mm": depth} if depth else {}
+
     def _create_outdoor_entry(self, metric: dict[str, float], extra_numbers: dict[str, float] | None = None):
         """The zone, once its settings are known (`metric`: the hot / cool /
         fallback temperatures in degC; `extra_numbers`: more starting values,
@@ -1197,7 +1218,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_PLANT: self._plant,
             CONF_CLIMATE: self._climate,
             CONF_INITIAL_NUMBERS: {
-                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}),
+                **plant_numbers, **_site_numbers(self._data), **self._root_zone_numbers(),
+                **(self._bundle.get("numbers") or {}),
                 **self._lookup_numbers, **metric, **(extra_numbers or {}),
             },
         }

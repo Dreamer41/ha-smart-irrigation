@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Сила кривой культуры"
+      },
+      "root_depth_mm": {
+        "name": "Глубина корней"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Влагоёмкость почвы"
+      },
+      "allowed_depletion_pct": {
+        "name": "Допустимое подсыхание почвы"
+      },
+      "wetted_area_pct": {
+        "name": "Увлажняемая доля зоны"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Коэффициент культуры сегодня"
+      },
+      "root_zone": {
+        "name": "Корневая зона вмещает"
       }
     },
     "select": {

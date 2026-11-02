@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Intensità della curva colturale"
+      },
+      "root_depth_mm": {
+        "name": "Profondità delle radici"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Capacità di ritenzione idrica del suolo"
+      },
+      "allowed_depletion_pct": {
+        "name": "Asciugatura consentita del suolo"
+      },
+      "wetted_area_pct": {
+        "name": "Quota bagnata della zona"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Coefficiente colturale di oggi"
+      },
+      "root_zone": {
+        "name": "La zona radicale trattiene"
       }
     },
     "select": {

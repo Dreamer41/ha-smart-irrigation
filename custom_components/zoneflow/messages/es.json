@@ -370,6 +370,12 @@
     "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
     "kc": {
       "planting_date": "La curva del cultivo {crop} parte de la fecha de siembra. Indícala; hasta entonces se usa el ajuste Factor de cultivo."
+    },
+    "root_zone": {
+      "off": "Indica la Profundidad de raíces para que un riego nunca dé más de lo que el suelo puede retener.",
+      "shallow": "La zona radicular retiene muy poco ({raw} antes de que la planta note la sequía). Incluso un riego diario puede dejar que se seque: revisa la Profundidad de raíces y la Parte mojada.",
+      "short_dose": "La zona radicular necesita riego cada día, pero la dosis de un día ({minutes} min) es más corta que el pulso mínimo ({minimum} min), así que cada riego da más de lo que retiene el suelo.",
+      "deep_soak": "El riego profundo da {taw}, lo que retiene la zona radicular, en lugar de los {target} configurados."
     }
   },
   "why": {
@@ -435,7 +441,10 @@
       "full_sun": "pleno sol",
       "reflected_heat": "calor reflejado"
     },
-    "kc_needs_planting_date": "Indica la fecha de siembra para seguir la curva de temporada de {crop}; hasta entonces se usa el ajuste Factor de cultivo."
+    "kc_needs_planting_date": "Indica la fecha de siembra para seguir la curva de temporada de {crop}; hasta entonces se usa el ajuste Factor de cultivo.",
+    "root_zone": "Zona radicular: retiene {taw}; la planta usa unos {use} al día y puede usar {raw} antes de notar la sequía.",
+    "root_zone_interval": "Por eso riega cada {days} días en lugar de cada {tier}.",
+    "root_zone_capped": "Un riego se limita a {taw}, lo que retiene la zona radicular ({capped} menos de lo que piden los días)."
   },
   "suggest": {
     "heading": "Sugerencias encontradas en tu Home Assistant:",

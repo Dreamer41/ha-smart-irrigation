@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Сила кривої культури"
+      },
+      "root_depth_mm": {
+        "name": "Глибина коренів"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Вологоємність ґрунту"
+      },
+      "allowed_depletion_pct": {
+        "name": "Допустиме підсихання ґрунту"
+      },
+      "wetted_area_pct": {
+        "name": "Зволожувана частка зони"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Коефіцієнт культури сьогодні"
+      },
+      "root_zone": {
+        "name": "Коренева зона вміщує"
       }
     },
     "select": {

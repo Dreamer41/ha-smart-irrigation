@@ -50,6 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowReferenceEt0Sensor(entry, controller),
         ZoneFlowWeeklyTargetSensor(entry, controller),
         ZoneFlowCropFactorSensor(entry, controller),
+        ZoneFlowRootZoneSensor(entry, controller),
         ZoneFlowNextIrrigationSensor(entry, controller),
         ZoneFlowNextFertilizingSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
@@ -376,6 +377,57 @@ class ZoneFlowCropFactorSensor(_Base):
                 round(controller.kc_for(today + timedelta(days=i), climate), 3) for i in range(7)
             ]
         return attrs
+
+
+class ZoneFlowRootZoneSensor(_Base):
+    """What the root zone holds (TAW, 1.8) and what that does to the watering: the most days between
+    waterings and how much the limit takes off a dose. Unavailable while Root Depth is 0 (off)."""
+
+    _unit_kind = "depth"
+    _attr_device_class = "precipitation"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_native_unit_of_measurement = "mm"
+    _attr_icon = "mdi:sprout-outline"
+    _attr_suggested_display_precision = 1
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_root_zone"
+        self._attr_translation_key = "root_zone"
+
+    @property
+    def available(self) -> bool:
+        return self._controller.root_zone() is not None
+
+    def metric_native_value(self) -> float | None:
+        root_zone = self._controller.root_zone()
+        return round(root_zone.taw_mm, 1) if root_zone else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        controller = self._controller
+        root_zone = controller.root_zone()
+        if root_zone is None:
+            return {}
+        imperial = controller.imperial
+        interval = controller._routine_interval_days()
+        try:
+            capped = controller._routine_plan().root_zone_capped_mm
+        except Exception:  # noqa: BLE001 -- an attribute must never break the sensor
+            capped = 0.0
+
+        def depth(mm: float | None):
+            return round(units.sensor_value("depth", mm, imperial), 2) if mm is not None else None
+
+        return {
+            "readily_available": depth(root_zone.raw_mm),
+            "allowed_drying_pct": round(root_zone.p * 100.0),
+            "daily_use": depth(root_zone.etc_mm_day),
+            "waters_every_days": interval,
+            "interval_shortened": interval < controller._tier_interval_days(),
+            "dose_capped_by": depth(capped),
+            "deep_soak_capped": controller.deep_soak_target_mm() < controller.number("deep_soak_target_mm"),
+        }
 
 
 class ZoneFlowNextIrrigationSensor(_Base):

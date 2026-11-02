@@ -1092,6 +1092,18 @@
       },
       "kc_curve_pct": {
         "name": "Sterkte van de gewascurve"
+      },
+      "root_depth_mm": {
+        "name": "Worteldiepte"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Waterhoudend vermogen van de bodem"
+      },
+      "allowed_depletion_pct": {
+        "name": "Toegestane uitdroging van de bodem"
+      },
+      "wetted_area_pct": {
+        "name": "Natte deel van de zone"
       }
     },
     "datetime": {
@@ -1308,6 +1320,9 @@
       },
       "crop_factor": {
         "name": "Gewasfactor vandaag"
+      },
+      "root_zone": {
+        "name": "Wortelzone houdt vast"
       }
     },
     "select": {

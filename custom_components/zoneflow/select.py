@@ -202,7 +202,7 @@ class ZoneFlowSoilTypeSelect(_Base):
         self._controller.store.state.soil_type_override = option
         await self._controller.store.async_save()
         self.async_write_ha_state()
-        await self._controller.async_soil_changed()
+        await self._controller.async_soil_changed(soil_type=True)
 
 
 class ZoneFlowDrainageSelect(_Base):
