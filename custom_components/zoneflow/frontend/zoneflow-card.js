@@ -6037,10 +6037,11 @@ const SETTINGS_GROUPS = [
   ["amounts", [
     "number.flow_rate_mm_per_min", "number.target_weekly_mm", "number.target_weekly_hot_mm",
     "number.target_weekly_cool_mm", "number.routine_interval_days", "number.routine_interval_hot_days", "select.demand_model", "number.crop_coefficient",
+    "select.crop_curve", "number.kc_curve_pct", "switch.kc_climate_adjust", "select.sun_exposure",
     "number.hot_temp_threshold", "number.cool_temp_threshold", "number.fallback_temp",
     "number.routine_pulse_count", "number.routine_pulse_rest_minutes", "number.routine_min_pulse_minutes",
   ]],
-  ["water_use", ["number.zone_flow_l_min"]],
+  ["water_use", ["number.zone_flow_l_min", "select.delivery_mode", "number.zone_area_m2", "number.flow_time_allowance_pct"]],
   ["rain", [
     "number.routine_drydown_days", "switch.self_tuning", "number.self_tune_streak", "number.self_tune_step_days",
     "number.drydown_rain_24h_mm", "number.drydown_rain_4d_mm", "number.drydown_rain_7d_mm", "number.drydown_restart_rain_mm",
@@ -6048,6 +6049,7 @@ const SETTINGS_GROUPS = [
     "number.forecast_rain_threshold_mm", "number.forecast_probability_threshold_pct",
     "number.forecast_dry_override_days", "number.frost_guard_temp",
     "number.rain_ignore_below_mm", "number.rain_eff_low", "number.rain_eff_mid", "number.rain_eff_high",
+    "number.rain_sensor_mm_per_hour", "number.wind_hold_kmh",
   ]],
   ["deep_soak", [
     "switch.deep_soak_enabled", "number.deep_soak_target_mm", "number.deep_soak_interval_days",
@@ -6057,6 +6059,7 @@ const SETTINGS_GROUPS = [
   ["soil", [
     "number.soil_moisture_dry_pct", "number.soil_moisture_wet_pct", "select.soil_wet_action", "select.soil_type", "select.drainage", "select.slope",
     "select.mulch_status", "number.mulch_et_adjustment_pct",
+    "number.root_depth_mm", "number.soil_holding_mm_per_m", "number.allowed_depletion_pct", "number.wetted_area_pct",
   ]],
   ["growth", [
     "select.growth_ramp_profile", "datetime.planting_date", "select.growth_stage_mode",

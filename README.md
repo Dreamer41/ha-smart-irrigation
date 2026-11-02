@@ -18,14 +18,15 @@ ZoneFlow works out when and how much each part of your garden needs water, from 
 
 ## What it can do
 
-- **Waters by need.** A light routine watering and an occasional deep soak per zone, from temperature tiers or an evapotranspiration curve, adjusted for the plant, soil, slope and mulch.
-- **Uses the rain.** Rain credit from a rain gauge or a weather station (Ecowitt, Ambient Weather, Tempest, Davis and others), rain you enter by hand, a pause after heavy rain, a forecast skip and a frost guard.
+- **Waters by need.** A light routine watering and an occasional deep soak per zone, from temperature tiers, an evapotranspiration curve or the FAO-56 water estimate (temperature alone, better with humidity, wind and sunshine readings), adjusted for the plant, soil, slope and mulch.
+- **Follows the plant's season.** A crop curve (52 crops) waters a young plant lightly, the most at mid-season and less late; the sun the spot gets and the week's weather adjust it. A root-zone limit keeps a watering from giving more than the roots can hold.
+- **Uses the rain.** Rain credit from a rain gauge or a weather station (Ecowitt, Ambient Weather, Tempest, Davis and others), rain you enter by hand, a pause after heavy rain, a forecast skip and a frost guard. A rain sensor holds watering while it is wet, and a wind limit holds sprinklers on windy days.
 - **Says why.** A plain-language status for every zone ("Skipped: the soil is wet (72%)"), phone notifications and a weekly summary.
 - **Greenhouse and indoor zones.** Fans, vents, misters and a heater from an inside sensor, with several crops under one greenhouse.
 - **Areas and plants.** Group zones into the parts of your garden (Backyard, Front yard) that share a rain gauge, thermometer and phone, pause a whole area at once, and keep a history for each plant. Copy a bed's settings to a new one or save them as a preset.
 - **Easy setup.** A "Check my setup" checklist, a guided flow-rate calibration, likely sensors suggested in setup, a Simple view, buttons on phone messages and fix buttons in Repairs.
 - **Water use.** Litres and gallons per watering, for the last 30 days and for the year.
-- **Safe by design.** Runtime caps, a stuck-valve watchdog, pump and flow checks and power-loss handling: a cycle always ends with the valve closed.
+- **Safe by design.** Runtime caps, a stuck-valve watchdog, pump and flow checks and power-loss handling: a cycle always ends with the valve closed. An optional master (backup shut-off) valve closes behind every watering and is tested once a month. With a flow meter, a watering can end when the litres have gone through instead of after a set time.
 - **Easy to run.** Built-in dashboard cards and a ready-made dashboard, 19 languages, no YAML, and an optional AI-assisted setup.
 
 ## See it
