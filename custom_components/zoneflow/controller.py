@@ -47,7 +47,7 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, fao56, issues, messages, notification_actions, units, visibility, wu_logic, zone_valve
+from . import calculations as calc, fao56, issues, master_valve, messages, notification_actions, units, visibility, wu_logic, zone_valve
 from .crop_season import CropSeason, async_crop_seasons
 from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
@@ -103,6 +103,7 @@ from .const import (
     CONF_DEEP_SOAK_TIME,
     CONF_DRAINAGE,
     CONF_FLOW_METER_ENTITY,
+    CONF_MASTER_VALVE_ENTITY,
     CONF_GROWTH_RAMP_PROFILE,
     CONF_IRRIGATION_METHOD,
     CONF_NOTIFY_ENTITY,
@@ -784,6 +785,39 @@ class ZoneFlowController:
         return self._area_value(CONF_OUTDOOR_TEMP_ENTITY)
 
     @property
+    def master_valve_entity(self) -> str | None:
+        """The master (backup) shut-off valve upstream of this zone (1.8, master_valve.py), or None."""
+        if not self.valve_entity:
+            return None
+        return self.entry.options.get(CONF_MASTER_VALVE_ENTITY, self.entry.data.get(CONF_MASTER_VALVE_ENTITY)) or None
+
+    def _master(self) -> master_valve.MasterValve | None:
+        entity = self.master_valve_entity
+        return master_valve.get(self.hass, entity) if entity else None
+
+    async def master_valve_stopped_run(self) -> None:
+        """The master valve closed for safety while this zone's run held it: stop the run."""
+        await self._set_abort(True)
+        await self._set_lock(False)
+
+    async def log_master_valve_closed(self, reason: str, entity_id: str) -> None:
+        await self._log_event(
+            event_type="Master Valve Closed",
+            status="CRITICAL",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="master_valve_closed",
+            params={"valve": entity_id, "reason": self._master_reason_text(reason)},
+            level=LEVEL_WARNING,
+            always_notify=True,  # water may be running where it should not: even with Notifications off
+        )
+
+    def _master_reason_text(self, reason: str) -> str:
+        return self._msg(f"notify.master_valve_reason.{reason}", valve=self.valve_entity or "")
+
+    @property
     def flow_meter_entity(self) -> str | None:
         """Optional cumulative-volume sensor (e.g. a pulse flow meter).
         When set, backs the "Last Cycle Water Delivered" diagnostic and a
@@ -1222,6 +1256,8 @@ class ZoneFlowController:
         # the valve closed and the lock released, so the reloaded zone
         # starts clean instead of racing an unsupervised old cycle.
         await self._interrupt_cycle("the zone was reloaded")
+        if (master := self._master()) is not None:
+            master.forget(self)  # its run (if any) has released it above
         if self.plants is not None:
             await self.plants.async_unload()
         await self.greenhouse.async_unload()  # misters off first
@@ -2662,6 +2698,8 @@ class ZoneFlowController:
         if new_state is None:
             return
 
+        if (master := self._master()) is not None:
+            master.valve_changed(self, zone_valve.is_open(new_state))
         if zone_valve.is_open(new_state) and zone_valve.is_open(old_state):
             # Open -> closing (or an attribute change) while the clock runs, or after it already
             # fired: keep it. Re-arming would put the deadline in the past and fire it again.
@@ -2724,6 +2762,9 @@ class ZoneFlowController:
             _LOGGER.exception("%s: the stuck-valve close command failed", self.entry.title)
         await self._set_abort(True)
         await self._set_lock(False)
+        if (master := self._master()) is not None:
+            # A valve open far too long: cut the water behind it too, whether or not it obeyed.
+            await master.async_emergency_close(self, master_valve.REASON_VALVE_STUCK, stop_caller=False)
         await self._log_event(
             event_type="Valve Stuck Watchdog Fired",
             status="CRITICAL",
@@ -2780,6 +2821,8 @@ class ZoneFlowController:
         """Merged port of avocado_stale_lock_on_startup + avocado_startup_lock_reset."""
         await asyncio.sleep(STARTUP_GRACE_SECONDS)
         state = self.store.state
+        if (master := self._master()) is not None and not state.lock_on:
+            await master.async_close_if_idle()  # a run cut off by the restart may have left it open
         if not state.lock_on:
             return
         # A lock taken after startup belongs to a cycle running right now
@@ -2836,9 +2879,12 @@ class ZoneFlowController:
             return None
         if value is None:
             return None
-        # Internally litres; a meter reporting gallons, m³, ft³ etc. is
-        # converted from its own unit (no unit is taken as litres).
-        unit = state.attributes.get("unit_of_measurement")
+        return self.meter_litres(value, state.attributes.get("unit_of_measurement"))
+
+    @staticmethod
+    def meter_litres(value: float, unit: str | None) -> float:
+        """Internally litres; a meter reporting gallons, m³, ft³ etc. is
+        converted from its own unit (no unit is taken as litres)."""
         if unit and unit != UnitOfVolume.LITERS:
             try:
                 return VolumeConverter.convert(value, unit, UnitOfVolume.LITERS)
@@ -3241,7 +3287,57 @@ class ZoneFlowController:
             # The zone before is still open for a moment: the pump's power says nothing
             # about this zone's own valve until it has closed.
             self._audit_not_before = handover["until"]
-        if preamble > 0 and not pump_running:
+        master = self._master()
+        if master is not None:
+            # 1.8: the master valve opens before the pump starts and the zone valve opens.
+            try:
+                await master.async_acquire(self)
+            except master_valve.MasterValveClosed as err:
+                await self._set_lock(False)  # nothing was opened
+                await self._log_event(
+                    event_type=f"{kind} Refused (Master Valve Closed)",
+                    status="WARNING",
+                    target_mm=target_mm_for_log,
+                    deducted_mm=deducted_mm_for_log,
+                    runtime=0,
+                    notify_phone=True,
+                    message="master_valve_refused",
+                    params={"cycle": self._cycle_name(kind), "valve": master.entity_id, "reason": self._master_reason_text(str(err))},
+                    level=LEVEL_WARNING,
+                )
+                return False
+        try:
+            return await self._run_pulses_behind_master(
+                preamble=0.0 if pump_running else preamble,
+                count=count,
+                pulse_minutes=pulse_minutes,
+                rest_minutes=rest_minutes,
+                min_pump_watts=min_pump_watts,
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            )
+        finally:
+            if master is not None:
+                valve = self._cycle_valve or self.store.state.lock_valve or self.valve_entity
+                closed = await self._valve_confirmed_closed(valve) if valve else True
+                await master.async_release(self, valve_closed=closed)
+
+    async def _run_pulses_behind_master(
+        self,
+        *,
+        preamble: float,
+        count: int,
+        pulse_minutes: float,
+        rest_minutes: int,
+        min_pump_watts: float,
+        kind: str,
+        target_mm_for_log: float,
+        deducted_mm_for_log: float,
+        runtime_for_log: int,
+    ) -> bool:
+        if preamble > 0:
             await self._pause(preamble)
 
         flow_start = await self._flow_meter_reading()
@@ -5014,6 +5110,8 @@ class ZoneFlowController:
         await self.greenhouse.async_reset_mist_halt()  # a halted mister too
         await self._set_lock(False)
         await self._set_abort(False)
+        if (master := self._master()) is not None:
+            await master.async_reset()  # a master valve closed for safety may open again
         await self._log_event(
             event_type="Manual Lock Reset",
             status="WARNING",

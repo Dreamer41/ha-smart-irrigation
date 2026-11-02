@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hauptventil geschlossen",
+      "message": "{valve} wurde zur Sicherheit geschlossen. {reason} Dahinter wird nichts bewässert, bis du an einer seiner Zonen Reset Lock drückst."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: nicht gestartet",
+      "message": "Das Hauptventil {valve} ist zur Sicherheit geschlossen. {reason} Drücke an der Zone Reset Lock, sobald es behoben ist."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} hat am Ende einer Bewässerung nicht bestätigt, dass es zu ist.",
+      "valve_stuck": "{valve} war viel zu lange offen.",
+      "flow": "Der Durchflussmesser zählte weiter, obwohl alle Zonenventile zu waren.",
+      "pump_power": "Die Pumpe zog weiter Strom, obwohl alle Zonenventile zu waren."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "Der Wurzelraum speichert sehr wenig ({raw}, bevor die Pflanze Trockenheit spürt). Selbst tägliches Bewässern kann ihn austrocknen lassen: Wurzeltiefe und Benetzten Anteil prüfen.",
       "short_dose": "Der Wurzelraum braucht jeden Tag Wasser, aber eine Tagesgabe ({minutes} min) ist kürzer als der Mindestpuls ({minimum} min), also gibt jede Bewässerung mehr, als der Boden speichert.",
       "deep_soak": "Die Tiefenbewässerung gibt {taw}, so viel speichert der Wurzelraum, statt der eingestellten {target}."
+    },
+    "master_valve": {
+      "latched": "Das Hauptventil {valve} ist zur Sicherheit geschlossen. {reason} Drücke Reset Lock, sobald es behoben ist.",
+      "fail": "Das Hauptventil {valve} ist nicht verfügbar.",
+      "ok": "Das Hauptventil {valve} antwortet."
     }
   },
   "why": {

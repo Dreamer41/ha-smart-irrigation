@@ -59,7 +59,8 @@
           "wind_exposure": "Vento in questo punto (senza sensore di vento)",
           "climate_dryness": "Clima (senza sensore di umidità)",
           "coastal": "Vicino al mare (senza sensore solare)",
-          "wind_sensor_height_m": "Altezza del sensore di vento"
+          "wind_sensor_height_m": "Altezza del sensore di vento",
+          "master_valve_entity": "Valvola principale (facoltativa)"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Usato se non c'è un sensore di vento né il vento del meteo: riparato, aperto o esposto.",
           "climate_dryness": "Usato se non c'è una lettura di umidità: umido o secco (zone aride e semiaride).",
           "coastal": "Usato se non c'è una lettura solare: vicino alla costa il sole è stimato un po' più alto.",
-          "wind_sensor_height_m": "A che altezza si trova il sensore di vento. Le stazioni meteo domestiche stanno di solito a circa 2 m."
+          "wind_sensor_height_m": "A che altezza si trova il sensore di vento. Le stazioni meteo domestiche stanno di solito a circa 2 m.",
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Attivazione bagnatura profonda",
           "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
           "routine_sun_mode": "Attivazione routine",
-          "routine_sun_offset_minutes": "Scostamento solare routine (minuti)"
+          "routine_sun_offset_minutes": "Scostamento solare routine (minuti)",
+          "master_valve_entity": "Valvola principale (facoltativa)"
         },
         "data_description": {
           "pump_power_entity": "Un sensore di potenza (W) sulla pompa, ad es. da una presa intelligente. Durante ogni irrigazione ZoneFlow verifica che la pompa assorba effettivamente potenza e ti avvisa se non lo fa. Lascia vuoto se non ne hai uno.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Avvia la bagnatura profonda all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
           "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
-          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso."
+          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Scegli 1, 2 o 3 stazioni.",
       "area_name_required": "Assegna un nome all'area.",
       "area_name_exists": "Un'area con questo nome esiste già.",
-      "flow_rate_out_of_range": "Quei numeri danno una portata che questa zona non può avere. Controlli il numero di erogatori, la portata di uno e l'area."
+      "flow_rate_out_of_range": "Quei numeri danno una portata che questa zona non può avere. Controlli il numero di erogatori, la portata di uno e l'area.",
+      "master_is_zone_valve": "La valvola principale deve essere diversa dalle valvole proprie delle zone.",
+      "valve_is_a_master": "Questa valvola è la valvola principale di un'altra zona."
     },
     "abort": {
       "already_configured": "La pioggia di Weather Underground è già configurata."
@@ -409,7 +415,8 @@
           "wind_exposure": "Vento in questo punto (senza sensore di vento)",
           "climate_dryness": "Clima (senza sensore di umidità)",
           "coastal": "Vicino al mare (senza sensore solare)",
-          "wind_sensor_height_m": "Altezza del sensore di vento"
+          "wind_sensor_height_m": "Altezza del sensore di vento",
+          "master_valve_entity": "Valvola principale (facoltativa)"
         },
         "data_description": {
           "valve_entity": "L'interruttore che apre la valvola di questa zona (o avvia la sua pompa). È l'unica cosa senza cui ZoneFlow non può funzionare: lo accende e lo spegne, e si assicura sempre che alla fine resti spento.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Usato se non c'è un sensore di vento né il vento del meteo: riparato, aperto o esposto.",
           "climate_dryness": "Usato se non c'è una lettura di umidità: umido o secco (zone aride e semiaride).",
           "coastal": "Usato se non c'è una lettura solare: vicino alla costa il sole è stimato un po' più alto.",
-          "wind_sensor_height_m": "A che altezza si trova il sensore di vento. Le stazioni meteo domestiche stanno di solito a circa 2 m."
+          "wind_sensor_height_m": "A che altezza si trova il sensore di vento. Le stazioni meteo domestiche stanno di solito a circa 2 m.",
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Attivazione bagnatura profonda",
           "deep_soak_sun_offset_minutes": "Scostamento solare bagnatura profonda (minuti)",
           "routine_sun_mode": "Attivazione routine",
-          "routine_sun_offset_minutes": "Scostamento solare routine (minuti)"
+          "routine_sun_offset_minutes": "Scostamento solare routine (minuti)",
+          "master_valve_entity": "Valvola principale (facoltativa)"
         },
         "data_description": {
           "pump_power_entity": "Un sensore di potenza (W) sulla pompa, ad es. da una presa intelligente. Durante ogni irrigazione ZoneFlow verifica che la pompa assorba effettivamente potenza e ti avvisa se non lo fa. Lascia vuoto se non ne hai uno.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Avvia la bagnatura profonda all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
           "deep_soak_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
           "routine_sun_mode": "Avvia l’irrigazione di routine all’orario fisso indicato sopra, oppure prima/dopo l’alba o il tramonto, per adattarsi alle stagioni.",
-          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso."
+          "routine_sun_offset_minutes": "Quanti minuti prima o dopo l’alba o il tramonto. Non utilizzato con l’orario fisso.",
+          "master_valve_entity": "Una valvola di intercettazione di riserva a monte di questa zona, per esempio dopo una pompa condivisa da più zone. Si apre a ogni irrigazione e si chiude quando termina l'ultima. Si chiude anche per sicurezza, fino a Reset Lock, se una valvola di zona resta bloccata aperta o l'acqua continua a scorrere (flussometro) o la pompa continua a girare (potenza della pompa) mentre tutte le valvole di zona sono chiuse. Indica la stessa valvola per tutte le zone a valle."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Scegli 1, 2 o 3 stazioni.",
       "greenhouse_has_crops": "Questa serra contiene colture. Spostale in un'altra serra o rimuovile prima (Configura -> Serra di ciascuna coltura).",
       "area_name_required": "Assegna un nome all'area.",
-      "area_name_exists": "Un'area con questo nome esiste già."
+      "area_name_exists": "Un'area con questo nome esiste già.",
+      "master_is_zone_valve": "La valvola principale deve essere diversa dalle valvole proprie delle zone.",
+      "valve_is_a_master": "Questa valvola è la valvola principale di un'altra zona."
     }
   },
   "selector": {

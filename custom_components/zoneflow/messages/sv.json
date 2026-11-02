@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Huvudventil stängd",
+      "message": "{valve} stängdes av säkerhetsskäl. {reason} Inget bakom den vattnas förrän du trycker Reset Lock på en av dess zoner."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: inte startad",
+      "message": "Huvudventilen {valve} är stängd av säkerhetsskäl. {reason} Tryck Reset Lock på zonen när det är åtgärdat."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} bekräftade inte att den stängde i slutet av en bevattning.",
+      "valve_stuck": "{valve} stod öppen alldeles för länge.",
+      "flow": "Flödesmätaren fortsatte att räkna medan alla zonventiler var stängda.",
+      "pump_power": "Pumpen fortsatte att dra ström medan alla zonventiler var stängda."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "Rotzonen rymmer mycket lite ({raw} innan växten känner torka). Även daglig bevattning kan låta den torka ut: kontrollera Rotdjup och Bevattnad andel.",
       "short_dose": "Rotzonen behöver vattnas varje dag, men en dags dos ({minutes} min) är kortare än minsta puls ({minimum} min), så varje bevattning ger mer än jorden rymmer.",
       "deep_soak": "Djupbevattning ger {taw}, det rotzonen rymmer, i stället för inställda {target}."
+    },
+    "master_valve": {
+      "latched": "Huvudventilen {valve} är stängd av säkerhetsskäl. {reason} Tryck Reset Lock när det är åtgärdat.",
+      "fail": "Huvudventilen {valve} är inte tillgänglig.",
+      "ok": "Huvudventilen {valve} svarar."
     }
   },
   "why": {

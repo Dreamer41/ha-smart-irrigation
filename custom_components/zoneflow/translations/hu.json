@@ -59,7 +59,8 @@
           "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
           "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
           "coastal": "Tengerparton (napsugárzás-érzékelő nélkül)",
-          "wind_sensor_height_m": "A szélérzékelő magassága"
+          "wind_sensor_height_m": "A szélérzékelő magassága",
+          "master_valve_entity": "Főszelep (nem kötelező)"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
           "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
           "coastal": "Akkor használja, ha nincs napsugárzás-adat: a tengerpart közelében a napsütést kicsit magasabbra becsüli.",
-          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak."
+          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
-          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)"
+          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)",
+          "master_valve_entity": "Főszelep (nem kötelező)"
         },
         "data_description": {
           "pump_power_entity": "Egy teljesítményérzékelő (W) a szivattyún, pl. egy okoskonnektorból. Minden öntözés során a ZoneFlow ellenőrzi, hogy a szivattyú valóban vesz-e fel áramot, és figyelmeztet, ha nem. Hagyja üresen, ha nincs ilyenje.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
           "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
-          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos."
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
       "area_name_required": "Nevezze el a területet.",
       "area_name_exists": "Már létezik egy terület ezzel a névvel.",
-      "flow_rate_out_of_range": "Ezekből a számokból olyan térfogatáram jön ki, amilyen ennek a zónának nem lehet. Ellenőrizze a kibocsátók számát, egy kibocsátó hozamát és a területet."
+      "flow_rate_out_of_range": "Ezekből a számokból olyan térfogatáram jön ki, amilyen ennek a zónának nem lehet. Ellenőrizze a kibocsátók számát, egy kibocsátó hozamát és a területet.",
+      "master_is_zone_valve": "A főszelepnek más szelepnek kell lennie, mint a zónák saját szelepei.",
+      "valve_is_a_master": "Ez a szelep egy másik zóna főszelepe."
     },
     "abort": {
       "already_configured": "A Weather Underground eső már be van állítva."
@@ -409,7 +415,8 @@
           "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
           "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
           "coastal": "Tengerparton (napsugárzás-érzékelő nélkül)",
-          "wind_sensor_height_m": "A szélérzékelő magassága"
+          "wind_sensor_height_m": "A szélérzékelő magassága",
+          "master_valve_entity": "Főszelep (nem kötelező)"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
           "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
           "coastal": "Akkor használja, ha nincs napsugárzás-adat: a tengerpart közelében a napsütést kicsit magasabbra becsüli.",
-          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak."
+          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
-          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)"
+          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)",
+          "master_valve_entity": "Főszelep (nem kötelező)"
         },
         "data_description": {
           "pump_power_entity": "Egy teljesítményérzékelő (W) a szivattyún, pl. egy okoskonnektorból. Minden öntözés során a ZoneFlow ellenőrzi, hogy a szivattyú valóban vesz-e fel áramot, és figyelmeztet, ha nem. Hagyja üresen, ha nincs ilyenje.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
           "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
-          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos."
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
       "greenhouse_has_crops": "Ez az üvegház növényeket tartalmaz. Először helyezze át őket egy másik üvegházba, vagy távolítsa el őket (minden növény Beállítás -> Üvegház menüpontjában).",
       "area_name_required": "Nevezze el a területet.",
-      "area_name_exists": "Már létezik egy terület ezzel a névvel."
+      "area_name_exists": "Már létezik egy terület ezzel a névvel.",
+      "master_is_zone_valve": "A főszelepnek más szelepnek kell lennie, mint a zónák saját szelepei.",
+      "valve_is_a_master": "Ez a szelep egy másik zóna főszelepe."
     }
   },
   "selector": {

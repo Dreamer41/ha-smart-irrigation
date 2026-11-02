@@ -59,7 +59,8 @@
           "wind_exposure": "Vietor na tomto mieste (bez senzora vetra)",
           "climate_dryness": "Klíma (bez senzora vlhkosti)",
           "coastal": "Pri mori (bez senzora slnka)",
-          "wind_sensor_height_m": "Výška senzora vetra"
+          "wind_sensor_height_m": "Výška senzora vetra",
+          "master_valve_entity": "Hlavný ventil (voliteľné)"
         },
         "data_description": {
           "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Použije sa, keď nie je senzor vetra ani vietor z predpovede: závetrie, otvorené alebo vystavené.",
           "climate_dryness": "Použije sa, keď nie je údaj o vlhkosti: vlhké, alebo suché (aridné a semiaridné oblasti).",
           "coastal": "Použije sa, keď nie je údaj o slnku: pri pobreží sa slnko odhaduje o niečo vyššie.",
-          "wind_sensor_height_m": "Ako vysoko je senzor vetra. Domáce meteostanice bývajú asi v 2 m."
+          "wind_sensor_height_m": "Ako vysoko je senzor vetra. Domáce meteostanice bývajú asi v 2 m.",
+          "master_valve_entity": "Záložný uzatvárací ventil pred touto zónou, napríklad za čerpadlom pre viac zón. Otvorí sa s každou zálievkou a zatvorí sa, keď skončí posledná. Pre bezpečnosť sa tiež zatvorí, až do Reset Lock, ak ventil zóny zostane otvorený alebo voda ďalej tečie (prietokomer) či čerpadlo ďalej beží (príkon čerpadla), kým sú všetky ventily zón zatvorené. Všetkým zónam za ním zadajte rovnaký ventil."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Spúšťač hĺbkového premočenia",
           "deep_soak_sun_offset_minutes": "Posun hĺbkového premočenia voči slnku (minúty)",
           "routine_sun_mode": "Spúšťač bežného zavlažovania",
-          "routine_sun_offset_minutes": "Posun podľa slnka pre rutinné zavlažovanie (minúty)"
+          "routine_sun_offset_minutes": "Posun podľa slnka pre rutinné zavlažovanie (minúty)",
+          "master_valve_entity": "Hlavný ventil (voliteľné)"
         },
         "data_description": {
           "pump_power_entity": "Senzor príkonu (W) na čerpadle, napr. zo smart zásuvky. Počas každého zavlažovania ZoneFlow kontroluje, či čerpadlo skutočne odoberá energiu, a varuje vás, ak to tak nie je. Ak žiadny nemáte, nechajte prázdne.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Spustite hĺbkové premočenie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
           "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase.",
           "routine_sun_mode": "Spustite bežné zavlažovanie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
-          "routine_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase."
+          "routine_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase.",
+          "master_valve_entity": "Záložný uzatvárací ventil pred touto zónou, napríklad za čerpadlom pre viac zón. Otvorí sa s každou zálievkou a zatvorí sa, keď skončí posledná. Pre bezpečnosť sa tiež zatvorí, až do Reset Lock, ak ventil zóny zostane otvorený alebo voda ďalej tečie (prietokomer) či čerpadlo ďalej beží (príkon čerpadla), kým sú všetky ventily zón zatvorené. Všetkým zónam za ním zadajte rovnaký ventil."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice.",
       "area_name_required": "Pomenujte oblasť.",
       "area_name_exists": "Oblasť s týmto názvom už existuje.",
-      "flow_rate_out_of_range": "Z týchto čísel vychádza prietok, aký táto zóna mať nemôže. Skontrolujte počet výtokov, prietok jedného výtoku a plochu."
+      "flow_rate_out_of_range": "Z týchto čísel vychádza prietok, aký táto zóna mať nemôže. Skontrolujte počet výtokov, prietok jedného výtoku a plochu.",
+      "master_is_zone_valve": "Hlavný ventil musí byť iný ako vlastné ventily zón.",
+      "valve_is_a_master": "Tento ventil je hlavným ventilom inej zóny."
     },
     "abort": {
       "already_configured": "Dážď Weather Underground je už nastavený."
@@ -409,7 +415,8 @@
           "wind_exposure": "Vietor na tomto mieste (bez senzora vetra)",
           "climate_dryness": "Klíma (bez senzora vlhkosti)",
           "coastal": "Pri mori (bez senzora slnka)",
-          "wind_sensor_height_m": "Výška senzora vetra"
+          "wind_sensor_height_m": "Výška senzora vetra",
+          "master_valve_entity": "Hlavný ventil (voliteľné)"
         },
         "data_description": {
           "valve_entity": "Spínač, ktorý otvára ventil tejto zóny (alebo spúšťa jej čerpadlo). Jediné, bez čoho ZoneFlow nefunguje: zapína ho a vypína a vždy dohliadne, aby zostal vypnutý.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Použije sa, keď nie je senzor vetra ani vietor z predpovede: závetrie, otvorené alebo vystavené.",
           "climate_dryness": "Použije sa, keď nie je údaj o vlhkosti: vlhké, alebo suché (aridné a semiaridné oblasti).",
           "coastal": "Použije sa, keď nie je údaj o slnku: pri pobreží sa slnko odhaduje o niečo vyššie.",
-          "wind_sensor_height_m": "Ako vysoko je senzor vetra. Domáce meteostanice bývajú asi v 2 m."
+          "wind_sensor_height_m": "Ako vysoko je senzor vetra. Domáce meteostanice bývajú asi v 2 m.",
+          "master_valve_entity": "Záložný uzatvárací ventil pred touto zónou, napríklad za čerpadlom pre viac zón. Otvorí sa s každou zálievkou a zatvorí sa, keď skončí posledná. Pre bezpečnosť sa tiež zatvorí, až do Reset Lock, ak ventil zóny zostane otvorený alebo voda ďalej tečie (prietokomer) či čerpadlo ďalej beží (príkon čerpadla), kým sú všetky ventily zón zatvorené. Všetkým zónam za ním zadajte rovnaký ventil."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Spúšťač hĺbkového premočenia",
           "deep_soak_sun_offset_minutes": "Posun hĺbkového premočenia voči slnku (minúty)",
           "routine_sun_mode": "Spúšťač bežného zavlažovania",
-          "routine_sun_offset_minutes": "Posun bežného zavlažovania voči slnku (minúty)"
+          "routine_sun_offset_minutes": "Posun bežného zavlažovania voči slnku (minúty)",
+          "master_valve_entity": "Hlavný ventil (voliteľné)"
         },
         "data_description": {
           "pump_power_entity": "Senzor príkonu (W) na čerpadle, napr. zo smart zásuvky. Počas každého zavlažovania ZoneFlow kontroluje, či čerpadlo skutočne odoberá energiu, a varuje vás, ak to tak nie je. Ak žiadny nemáte, nechajte prázdne.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Spustite hĺbkové premočenie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
           "deep_soak_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase.",
           "routine_sun_mode": "Spustite bežné zavlažovanie v pevnom čase uvedenom vyššie, alebo pred/po východe alebo západe slnka, aby sa prispôsobovalo ročným obdobiam.",
-          "routine_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase."
+          "routine_sun_offset_minutes": "Koľko minút pred alebo po východe/západe slnka. Nepoužíva sa pri pevnom čase.",
+          "master_valve_entity": "Záložný uzatvárací ventil pred touto zónou, napríklad za čerpadlom pre viac zón. Otvorí sa s každou zálievkou a zatvorí sa, keď skončí posledná. Pre bezpečnosť sa tiež zatvorí, až do Reset Lock, ak ventil zóny zostane otvorený alebo voda ďalej tečie (prietokomer) či čerpadlo ďalej beží (príkon čerpadla), kým sú všetky ventily zón zatvorené. Všetkým zónam za ním zadajte rovnaký ventil."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Vyberte 1, 2 alebo 3 stanice.",
       "greenhouse_has_crops": "Tento skleník obsahuje plodiny. Najprv ich presuňte do iného skleníka alebo ich odstráňte (Nakonfigurovať -> Skleník pri každej plodine).",
       "area_name_required": "Pomenujte oblasť.",
-      "area_name_exists": "Oblasť s týmto názvom už existuje."
+      "area_name_exists": "Oblasť s týmto názvom už existuje.",
+      "master_is_zone_valve": "Hlavný ventil musí byť iný ako vlastné ventily zón.",
+      "valve_is_a_master": "Tento ventil je hlavným ventilom inej zóny."
     }
   },
   "selector": {

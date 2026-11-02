@@ -59,7 +59,8 @@
           "wind_exposure": "Vent à cet endroit (sans capteur de vent)",
           "climate_dryness": "Climat (sans capteur d'humidité)",
           "coastal": "En bord de mer (sans capteur solaire)",
-          "wind_sensor_height_m": "Hauteur du capteur de vent"
+          "wind_sensor_height_m": "Hauteur du capteur de vent",
+          "master_valve_entity": "Vanne maîtresse (facultatif)"
         },
         "data_description": {
           "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Utilisé s'il n'y a ni capteur de vent ni vent de la météo : abrité, ouvert ou exposé.",
           "climate_dryness": "Utilisé s'il n'y a pas de mesure d'humidité : humide ou sec (régions arides et semi-arides).",
           "coastal": "Utilisé s'il n'y a pas de mesure solaire : l'ensoleillement est estimé un peu plus élevé près de la côte.",
-          "wind_sensor_height_m": "Hauteur du capteur de vent. Les stations météo domestiques sont en général à environ 2 m."
+          "wind_sensor_height_m": "Hauteur du capteur de vent. Les stations météo domestiques sont en général à environ 2 m.",
+          "master_valve_entity": "Une vanne d'arrêt de secours en amont de cette zone, par exemple après une pompe partagée par plusieurs zones. Elle s'ouvre à chaque arrosage et se ferme quand le dernier se termine. Elle se ferme aussi par sécurité, jusqu'à Reset Lock, si une vanne de zone reste bloquée ouverte, ou si l'eau continue de couler (débitmètre) ou la pompe de tourner (puissance de la pompe) alors que toutes les vannes de zone sont fermées. Indiquez la même vanne pour toutes les zones derrière elle."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Déclencheur d'arrosage en profondeur",
           "deep_soak_sun_offset_minutes": "Décalage solaire d'arrosage en profondeur (minutes)",
           "routine_sun_mode": "Déclencheur de routine",
-          "routine_sun_offset_minutes": "Décalage solaire de routine (minutes)"
+          "routine_sun_offset_minutes": "Décalage solaire de routine (minutes)",
+          "master_valve_entity": "Vanne maîtresse (facultatif)"
         },
         "data_description": {
           "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. depuis une prise connectée. À chaque arrosage, ZoneFlow vérifie si la pompe consomme réellement du courant et vous alerte si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Démarrer l'arrosage en profondeur à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
           "deep_soak_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
           "routine_sun_mode": "Démarrer l'arrosage de routine à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
-          "routine_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe."
+          "routine_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "master_valve_entity": "Une vanne d'arrêt de secours en amont de cette zone, par exemple après une pompe partagée par plusieurs zones. Elle s'ouvre à chaque arrosage et se ferme quand le dernier se termine. Elle se ferme aussi par sécurité, jusqu'à Reset Lock, si une vanne de zone reste bloquée ouverte, ou si l'eau continue de couler (débitmètre) ou la pompe de tourner (puissance de la pompe) alors que toutes les vannes de zone sont fermées. Indiquez la même vanne pour toutes les zones derrière elle."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Choisissez 1, 2 ou 3 stations.",
       "area_name_required": "Nommez la zone.",
       "area_name_exists": "Une zone portant ce nom existe déjà.",
-      "flow_rate_out_of_range": "Ces nombres donnent un débit que cette zone ne peut pas avoir. Vérifiez le nombre d'émetteurs, le débit d'un émetteur et la surface."
+      "flow_rate_out_of_range": "Ces nombres donnent un débit que cette zone ne peut pas avoir. Vérifiez le nombre d'émetteurs, le débit d'un émetteur et la surface.",
+      "master_is_zone_valve": "La vanne maîtresse doit être différente des vannes propres aux zones.",
+      "valve_is_a_master": "Cette vanne est la vanne maîtresse d'une autre zone."
     },
     "abort": {
       "already_configured": "La pluie Weather Underground est déjà configurée."
@@ -409,7 +415,8 @@
           "wind_exposure": "Vent à cet endroit (sans capteur de vent)",
           "climate_dryness": "Climat (sans capteur d'humidité)",
           "coastal": "En bord de mer (sans capteur solaire)",
-          "wind_sensor_height_m": "Hauteur du capteur de vent"
+          "wind_sensor_height_m": "Hauteur du capteur de vent",
+          "master_valve_entity": "Vanne maîtresse (facultatif)"
         },
         "data_description": {
           "valve_entity": "L'interrupteur qui ouvre la vanne de cette zone (ou démarre sa pompe). C'est le seul élément indispensable à ZoneFlow : il l'allume et l'éteint, et s'assure toujours qu'il finit bien éteint.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Utilisé s'il n'y a ni capteur de vent ni vent de la météo : abrité, ouvert ou exposé.",
           "climate_dryness": "Utilisé s'il n'y a pas de mesure d'humidité : humide ou sec (régions arides et semi-arides).",
           "coastal": "Utilisé s'il n'y a pas de mesure solaire : l'ensoleillement est estimé un peu plus élevé près de la côte.",
-          "wind_sensor_height_m": "Hauteur du capteur de vent. Les stations météo domestiques sont en général à environ 2 m."
+          "wind_sensor_height_m": "Hauteur du capteur de vent. Les stations météo domestiques sont en général à environ 2 m.",
+          "master_valve_entity": "Une vanne d'arrêt de secours en amont de cette zone, par exemple après une pompe partagée par plusieurs zones. Elle s'ouvre à chaque arrosage et se ferme quand le dernier se termine. Elle se ferme aussi par sécurité, jusqu'à Reset Lock, si une vanne de zone reste bloquée ouverte, ou si l'eau continue de couler (débitmètre) ou la pompe de tourner (puissance de la pompe) alors que toutes les vannes de zone sont fermées. Indiquez la même vanne pour toutes les zones derrière elle."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Déclencheur d'arrosage en profondeur",
           "deep_soak_sun_offset_minutes": "Décalage solaire d'arrosage en profondeur (minutes)",
           "routine_sun_mode": "Déclencheur de routine",
-          "routine_sun_offset_minutes": "Décalage solaire de routine (minutes)"
+          "routine_sun_offset_minutes": "Décalage solaire de routine (minutes)",
+          "master_valve_entity": "Vanne maîtresse (facultatif)"
         },
         "data_description": {
           "pump_power_entity": "Un capteur de puissance (W) sur la pompe, ex. depuis une prise connectée. À chaque arrosage, ZoneFlow vérifie si la pompe consomme réellement du courant et vous alerte si ce n'est pas le cas. Laissez vide si vous n'en avez pas.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Démarrer l'arrosage en profondeur à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
           "deep_soak_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
           "routine_sun_mode": "Démarrer l'arrosage de routine à l'heure fixe ci-dessus, ou avant/après le lever ou le coucher du soleil pour s'adapter au fil des saisons.",
-          "routine_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe."
+          "routine_sun_offset_minutes": "Nombre de minutes avant ou après le lever ou le coucher du soleil. Non utilisé avec l'heure fixe.",
+          "master_valve_entity": "Une vanne d'arrêt de secours en amont de cette zone, par exemple après une pompe partagée par plusieurs zones. Elle s'ouvre à chaque arrosage et se ferme quand le dernier se termine. Elle se ferme aussi par sécurité, jusqu'à Reset Lock, si une vanne de zone reste bloquée ouverte, ou si l'eau continue de couler (débitmètre) ou la pompe de tourner (puissance de la pompe) alors que toutes les vannes de zone sont fermées. Indiquez la même vanne pour toutes les zones derrière elle."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Choisissez 1, 2 ou 3 stations.",
       "greenhouse_has_crops": "Cette serre contient des cultures. Déplacez-les vers une autre serre ou supprimez-les d'abord (Configurer -> Serre de chaque culture).",
       "area_name_required": "Nommez la zone.",
-      "area_name_exists": "Une zone portant ce nom existe déjà."
+      "area_name_exists": "Une zone portant ce nom existe déjà.",
+      "master_is_zone_valve": "La vanne maîtresse doit être différente des vannes propres aux zones.",
+      "valve_is_a_master": "Cette vanne est la vanne maîtresse d'une autre zone."
     }
   },
   "selector": {

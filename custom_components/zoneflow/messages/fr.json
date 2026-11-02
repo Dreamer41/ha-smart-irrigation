@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Vanne maîtresse fermée",
+      "message": "{valve} a été fermée par sécurité. {reason} Rien derrière elle n'est arrosé tant que vous n'appuyez pas sur Reset Lock dans l'une de ses zones."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle} : non lancé",
+      "message": "La vanne maîtresse {valve} est fermée par sécurité. {reason} Appuyez sur Reset Lock dans la zone une fois le problème réglé."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} n'a pas confirmé sa fermeture à la fin d'un arrosage.",
+      "valve_stuck": "{valve} est restée ouverte bien trop longtemps.",
+      "flow": "Le débitmètre a continué de compter alors que toutes les vannes de zone étaient fermées.",
+      "pump_power": "La pompe a continué de consommer alors que toutes les vannes de zone étaient fermées."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "La zone racinaire retient très peu ({raw} avant que la plante souffre du sec). Même un arrosage quotidien peut la laisser sécher : vérifiez la Profondeur des racines et la Part mouillée.",
       "short_dose": "La zone racinaire doit être arrosée chaque jour, mais la dose d'un jour ({minutes} min) est plus courte que l'impulsion minimale ({minimum} min) : chaque arrosage donne plus que ce que le sol retient.",
       "deep_soak": "L'arrosage en profondeur donne {taw}, ce que retient la zone racinaire, au lieu des {target} réglés."
+    },
+    "master_valve": {
+      "latched": "La vanne maîtresse {valve} est fermée par sécurité. {reason} Appuyez sur Reset Lock une fois le problème réglé.",
+      "fail": "La vanne maîtresse {valve} n'est pas disponible.",
+      "ok": "La vanne maîtresse {valve} répond."
     }
   },
   "why": {

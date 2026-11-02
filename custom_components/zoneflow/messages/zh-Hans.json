@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 总阀已关闭",
+      "message": "{valve} 已出于安全关闭。{reason}在其任一区域按下 Reset Lock 之前，其后的区域都不会浇水。"
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}：未开始",
+      "message": "总阀 {valve} 已出于安全关闭。{reason}修复后请在该区域按下 Reset Lock。"
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} 在浇水结束时未确认已关闭。",
+      "valve_stuck": "{valve} 打开的时间过长。",
+      "flow": "所有区域阀都已关闭，但流量计仍在计数。",
+      "pump_power": "所有区域阀都已关闭，但水泵仍在耗电。"
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "根区容纳的水很少（植物感到干旱前仅 {raw}）。即使每天浇水也可能变干：请检查根系深度和区域湿润比例。",
       "short_dose": "根区需要每天浇水，但一天的用量（{minutes} 分钟）短于最短脉冲（{minimum} 分钟），因此每次浇水都超过土壤可容纳的量。",
       "deep_soak": "深层浇灌给水 {taw}，即根区可容纳的量，而不是设定的 {target}。"
+    },
+    "master_valve": {
+      "latched": "总阀 {valve} 已出于安全关闭。{reason}修复后请按下 Reset Lock。",
+      "fail": "总阀 {valve} 不可用。",
+      "ok": "总阀 {valve} 有响应。"
     }
   },
   "why": {

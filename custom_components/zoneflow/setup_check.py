@@ -182,6 +182,17 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         if crop.season == fao56.SEASON_ANNUAL and controller.store.state.planting_date_ts is None:
             add("kc_planting", "info", "kc.planting_date", crop=crop.name)
 
+    # The master valve (1.8): closed for safety, nothing behind it waters until Reset Lock.
+    if (master := controller.master_valve_entity) is not None:
+        reason = controller.store.state.master_valve_latch
+        if reason:
+            add("master_valve", "warn", "master_valve.latched", valve=master,
+                reason=messages.text(hass, f"notify.master_valve_reason.{reason}", valve=controller.valve_entity or ""))
+        elif _state(hass, master) is None or not _working(_state(hass, master)):
+            add("master_valve", "warn", "master_valve.fail", valve=master)
+        else:
+            add("master_valve", "ok", "master_valve.ok", valve=master)
+
     # The root zone (1.8).
     if controller.has_valve:
         _root_zone_checks(controller, add)

@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Válvula maestra cerrada",
+      "message": "{valve} se cerró por seguridad. {reason} No se riega nada detrás de ella hasta que pulses Reset Lock en una de sus zonas."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: no iniciado",
+      "message": "La válvula maestra {valve} está cerrada por seguridad. {reason} Pulsa Reset Lock en la zona cuando esté arreglado."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} no confirmó que se cerró al final de un riego.",
+      "valve_stuck": "{valve} estuvo abierta demasiado tiempo.",
+      "flow": "El caudalímetro siguió contando con todas las válvulas de zona cerradas.",
+      "pump_power": "La bomba siguió consumiendo con todas las válvulas de zona cerradas."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "La zona radicular retiene muy poco ({raw} antes de que la planta note la sequía). Incluso un riego diario puede dejar que se seque: revisa la Profundidad de raíces y la Parte mojada.",
       "short_dose": "La zona radicular necesita riego cada día, pero la dosis de un día ({minutes} min) es más corta que el pulso mínimo ({minimum} min), así que cada riego da más de lo que retiene el suelo.",
       "deep_soak": "El riego profundo da {taw}, lo que retiene la zona radicular, en lugar de los {target} configurados."
+    },
+    "master_valve": {
+      "latched": "La válvula maestra {valve} está cerrada por seguridad. {reason} Pulsa Reset Lock cuando esté arreglado.",
+      "fail": "La válvula maestra {valve} no está disponible.",
+      "ok": "La válvula maestra {valve} responde."
     }
   },
   "why": {

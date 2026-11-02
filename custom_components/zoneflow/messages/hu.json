@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Főszelep elzárva",
+      "message": "{valve} biztonsági okból elzárva. {reason} Mögötte semmi sem öntöz, amíg valamelyik zónájában meg nem nyomja a Reset Lock gombot."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: nem indult el",
+      "message": "A(z) {valve} főszelep biztonsági okból zárva van. {reason} A javítás után nyomja meg a zóna Reset Lock gombját."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} egy öntözés végén nem jelezte, hogy bezárt.",
+      "valve_stuck": "{valve} túl sokáig volt nyitva.",
+      "flow": "Az átfolyásmérő tovább számolt, miközben minden zónaszelep zárva volt.",
+      "pump_power": "A szivattyú tovább vett fel áramot, miközben minden zónaszelep zárva volt."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "A gyökérzóna nagyon keveset tárol ({raw}, mielőtt a növény szárazságot érez). Még a napi öntözés mellett is kiszáradhat: ellenőrizze a Gyökérmélységet és a Nedvesített részt.",
       "short_dose": "A gyökérzónát naponta kell öntözni, de egy napi adag ({minutes} perc) rövidebb a minimális impulzusnál ({minimum} perc), így minden öntözés többet ad, mint amennyit a talaj tárol.",
       "deep_soak": "A mélyöntözés {taw} vizet ad, ennyit tárol a gyökérzóna, a beállított {target} helyett."
+    },
+    "master_valve": {
+      "latched": "A(z) {valve} főszelep biztonsági okból zárva van. {reason} A javítás után nyomja meg a Reset Lock gombot.",
+      "fail": "A(z) {valve} főszelep nem érhető el.",
+      "ok": "A(z) {valve} főszelep válaszol."
     }
   },
   "why": {

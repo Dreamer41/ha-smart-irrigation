@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Master valve closed",
+      "message": "{valve} was closed for safety. {reason} Nothing behind it waters until you press Reset Lock on one of its zones."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: not started",
+      "message": "The master valve {valve} is closed for safety. {reason} Press Reset Lock on the zone once it is fixed."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} did not confirm it closed at the end of a watering.",
+      "valve_stuck": "{valve} stayed open far too long.",
+      "flow": "The flow meter kept counting while every zone valve was closed.",
+      "pump_power": "The pump kept drawing power while every zone valve was closed."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "The root zone holds very little ({raw} before the plant feels dry). Even daily watering may let it dry out: check Root Depth and Wetted Share.",
       "short_dose": "The root zone needs watering every day, but a day's dose ({minutes} min) is shorter than the minimum pulse ({minimum} min), so each watering gives more than the soil holds.",
       "deep_soak": "Deep soak gives {taw}, what the root zone holds, instead of the {target} set."
+    },
+    "master_valve": {
+      "latched": "The master valve {valve} is closed for safety. {reason} Press Reset Lock once it is fixed.",
+      "fail": "The master valve {valve} is not available.",
+      "ok": "The master valve {valve} answers."
     }
   },
   "why": {

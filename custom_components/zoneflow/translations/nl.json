@@ -59,7 +59,8 @@
           "wind_exposure": "Wind op deze plek (zonder windsensor)",
           "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
           "coastal": "Aan zee (zonder zonnesensor)",
-          "wind_sensor_height_m": "Hoogte van de windsensor"
+          "wind_sensor_height_m": "Hoogte van de windsensor",
+          "master_valve_entity": "Hoofdklep (optioneel)"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
           "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
           "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
-          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m."
+          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Trigger diepe bewatering",
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
-          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)"
+          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)",
+          "master_valve_entity": "Hoofdklep (optioneel)"
         },
         "data_description": {
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor or na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
-          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd."
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
       "area_name_required": "Geef het gebied een naam.",
       "area_name_exists": "Er bestaat al een gebied met deze naam.",
-      "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte."
+      "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte.",
+      "master_is_zone_valve": "De hoofdklep moet een andere klep zijn dan de eigen kleppen van de zones.",
+      "valve_is_a_master": "Deze klep is de hoofdklep van een andere zone."
     },
     "abort": {
       "already_configured": "Weather Underground-regen is al ingesteld."
@@ -409,7 +415,8 @@
           "wind_exposure": "Wind op deze plek (zonder windsensor)",
           "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
           "coastal": "Aan zee (zonder zonnesensor)",
-          "wind_sensor_height_m": "Hoogte van de windsensor"
+          "wind_sensor_height_m": "Hoogte van de windsensor",
+          "master_valve_entity": "Hoofdklep (optioneel)"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
           "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
           "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
-          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m."
+          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Trigger diepe bewatering",
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
-          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)"
+          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)",
+          "master_valve_entity": "Hoofdklep (optioneel)"
         },
         "data_description": {
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor of na zonsopgang or zonsondergang, zodat deze meebeweegt met de seizoenen.",
-          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd."
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
       "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas).",
       "area_name_required": "Geef het gebied een naam.",
-      "area_name_exists": "Er bestaat al een gebied met deze naam."
+      "area_name_exists": "Er bestaat al een gebied met deze naam.",
+      "master_is_zone_valve": "De hoofdklep moet een andere klep zijn dan de eigen kleppen van de zones.",
+      "valve_is_a_master": "Deze klep is de hoofdklep van een andere zone."
     }
   },
   "selector": {

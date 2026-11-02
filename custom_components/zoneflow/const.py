@@ -54,6 +54,7 @@ ENTRY_TYPE_WU = "weather_underground"
 CONF_WU_API_KEY = "api_key"
 CONF_WU_RADIUS_KM = "radius_km"
 CONF_WU_STATIONS = "stations"
+CONF_MASTER_VALVE_ENTITY = "master_valve_entity"  # 1.8: a backup shut-off valve upstream (master_valve.py)
 CONF_WU_CLIMATE = "borrow_climate"  # 1.8: also borrow wind, humidity and sunshine (off by default)
 # The zone day aggregates the borrowed readings go to, and the field of the poller's reading each takes.
 WU_CLIMATE_AGGREGATES = {"wu_humidity": "humidity", "wu_wind": "wind", "wu_solar": "solar"}

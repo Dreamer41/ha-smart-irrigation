@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Valvola principale chiusa",
+      "message": "{valve} è stata chiusa per sicurezza. {reason} Nulla a valle viene irrigato finché non premi Reset Lock in una delle sue zone."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: non avviato",
+      "message": "La valvola principale {valve} è chiusa per sicurezza. {reason} Premi Reset Lock nella zona una volta risolto."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} non ha confermato la chiusura alla fine di un'irrigazione.",
+      "valve_stuck": "{valve} è rimasta aperta troppo a lungo.",
+      "flow": "Il flussometro ha continuato a contare con tutte le valvole di zona chiuse.",
+      "pump_power": "La pompa ha continuato ad assorbire corrente con tutte le valvole di zona chiuse."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "La zona radicale trattiene pochissimo ({raw} prima che la pianta soffra la siccità). Anche un'irrigazione giornaliera può lasciarla asciugare: controlla la Profondità delle radici e la Quota bagnata.",
       "short_dose": "La zona radicale va irrigata ogni giorno, ma la dose di un giorno ({minutes} min) è più breve dell'impulso minimo ({minimum} min), quindi ogni irrigazione dà più di quanto trattiene il suolo.",
       "deep_soak": "L'irrigazione profonda dà {taw}, quanto trattiene la zona radicale, invece dei {target} impostati."
+    },
+    "master_valve": {
+      "latched": "La valvola principale {valve} è chiusa per sicurezza. {reason} Premi Reset Lock una volta risolto.",
+      "fail": "La valvola principale {valve} non è disponibile.",
+      "ok": "La valvola principale {valve} risponde."
     }
   },
   "why": {

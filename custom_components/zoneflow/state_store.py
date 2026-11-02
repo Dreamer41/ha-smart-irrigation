@@ -170,6 +170,7 @@ class IrrigationState:
     # 1.8: the crop whose FAO-56 season curve gives this zone's crop factor (an id of data/crop_kc.json);
     # empty = the fixed Crop Factor slider. An id that no longer exists reads as empty.
     kc_crop: str = ""
+    master_valve_latch: str | None = None  # 1.8: why the master valve was closed for safety (until Reset Lock)
     wetted_method: str | None = None  # 1.8: the irrigation method the Wetted Share was last set from
     kc_climate_adjust: bool = True  # FAO-56 eq. 62: follow the zone's measured wind and humidity
     sun_exposure: str = DEFAULT_SUN_EXPOSURE

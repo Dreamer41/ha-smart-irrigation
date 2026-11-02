@@ -59,7 +59,8 @@
           "wind_exposure": "Wind at this spot (no wind sensor)",
           "climate_dryness": "Climate (no humidity sensor)",
           "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "wind_sensor_height_m": "Wind sensor height",
+          "master_valve_entity": "Master valve (optional)"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
           "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
           "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
-          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)",
+          "master_valve_entity": "Master valve (optional)"
         },
         "data_description": {
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
-          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
       "area_name_required": "Give the area a name.",
       "area_name_exists": "An area with this name already exists.",
-      "flow_rate_out_of_range": "Those numbers give a flow rate this zone cannot have. Check the number of emitters, the flow of one emitter and the area."
+      "flow_rate_out_of_range": "Those numbers give a flow rate this zone cannot have. Check the number of emitters, the flow of one emitter and the area.",
+      "master_is_zone_valve": "The master valve must be a different valve from the zones' own valves.",
+      "valve_is_a_master": "This valve is another zone's master valve."
     },
     "abort": {
       "already_configured": "Weather Underground rain is already set up."
@@ -373,7 +379,9 @@
       "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
       "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse).",
       "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_exists": "An area with this name already exists.",
+      "master_is_zone_valve": "The master valve must be a different valve from the zones' own valves.",
+      "valve_is_a_master": "This valve is another zone's master valve."
     },
     "step": {
       "init": {
@@ -426,7 +434,8 @@
           "wind_exposure": "Wind at this spot (no wind sensor)",
           "climate_dryness": "Climate (no humidity sensor)",
           "coastal": "By the sea (no solar sensor)",
-          "wind_sensor_height_m": "Wind sensor height"
+          "wind_sensor_height_m": "Wind sensor height",
+          "master_valve_entity": "Master valve (optional)"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -461,7 +470,8 @@
           "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
           "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
           "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
-          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up."
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
         }
       },
       "flow_rate": {
@@ -551,7 +561,8 @@
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
-          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)",
+          "master_valve_entity": "Master valve (optional)"
         },
         "data_description": {
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
@@ -571,7 +582,8 @@
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
-          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve."
         }
       },
       "wu_key": {

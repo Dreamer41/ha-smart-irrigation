@@ -59,7 +59,8 @@
           "wind_exposure": "Tuuli tässä paikassa (ei tuuliantureita)",
           "climate_dryness": "Ilmasto (ei kosteusanturia)",
           "coastal": "Meren rannalla (ei aurinkoanturia)",
-          "wind_sensor_height_m": "Tuuliantureen korkeus"
+          "wind_sensor_height_m": "Tuuliantureen korkeus",
+          "master_valve_entity": "Pääventtiili (valinnainen)"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Käytetään, kun ei ole tuuliantureita eikä sääpalvelun tuulta: suojaisa, avoin tai alttiina.",
           "climate_dryness": "Käytetään, kun kosteuslukemaa ei ole: kostea tai kuiva (kuivat ja puolikuivat alueet).",
           "coastal": "Käytetään, kun aurinkolukemaa ei ole: rannikon lähellä auringonpaiste arvioidaan hieman korkeammaksi.",
-          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella."
+          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Syväkastelun käynnistys",
           "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
           "routine_sun_mode": "Rutiinikastelun käynnistys",
-          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)"
+          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)",
+          "master_valve_entity": "Pääventtiili (valinnainen)"
         },
         "data_description": {
           "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, ottaako pumppu todella virtaa, ja varoittaa, jos se ei ota. Jätä tyhjäksi, jos sellaista ei ole.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
-          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
       "area_name_required": "Anna alueelle nimi.",
       "area_name_exists": "Alue tällä nimellä on jo olemassa.",
-      "flow_rate_out_of_range": "Näillä luvuilla virtaama on sellainen, jota tällä vyöhykkeellä ei voi olla. Tarkista suuttimien määrä, yhden suuttimen virtaama ja ala."
+      "flow_rate_out_of_range": "Näillä luvuilla virtaama on sellainen, jota tällä vyöhykkeellä ei voi olla. Tarkista suuttimien määrä, yhden suuttimen virtaama ja ala.",
+      "master_is_zone_valve": "Pääventtiilin on oltava eri venttiili kuin vyöhykkeiden omat venttiilit.",
+      "valve_is_a_master": "Tämä venttiili on toisen vyöhykkeen pääventtiili."
     },
     "abort": {
       "already_configured": "Weather Underground -sade on jo otettu käyttöön."
@@ -409,7 +415,8 @@
           "wind_exposure": "Tuuli tässä paikassa (ei tuuliantureita)",
           "climate_dryness": "Ilmasto (ei kosteusanturia)",
           "coastal": "Meren rannalla (ei aurinkoanturia)",
-          "wind_sensor_height_m": "Tuuliantureen korkeus"
+          "wind_sensor_height_m": "Tuuliantureen korkeus",
+          "master_valve_entity": "Pääventtiili (valinnainen)"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Käytetään, kun ei ole tuuliantureita eikä sääpalvelun tuulta: suojaisa, avoin tai alttiina.",
           "climate_dryness": "Käytetään, kun kosteuslukemaa ei ole: kostea tai kuiva (kuivat ja puolikuivat alueet).",
           "coastal": "Käytetään, kun aurinkolukemaa ei ole: rannikon lähellä auringonpaiste arvioidaan hieman korkeammaksi.",
-          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella."
+          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Syväkastelun käynnistys",
           "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
           "routine_sun_mode": "Rutiinikastelun käynnistys",
-          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)"
+          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)",
+          "master_valve_entity": "Pääventtiili (valinnainen)"
         },
         "data_description": {
           "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, ottaako pumppu todella virtaa, ja varoittaa, jos se ei ota. Jätä tyhjäksi, jos sellaista ei ole.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
-          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
       "greenhouse_has_crops": "Tässä kasvihuoneessa on kasveja. Siirrä ne toiseen kasvihuoneeseen tai poista ne ensin (kunkin kasvin Määritä -> Kasvihuone).",
       "area_name_required": "Anna alueelle nimi.",
-      "area_name_exists": "Alue tällä nimellä on jo olemassa."
+      "area_name_exists": "Alue tällä nimellä on jo olemassa.",
+      "master_is_zone_valve": "Pääventtiilin on oltava eri venttiili kuin vyöhykkeiden omat venttiilit.",
+      "valve_is_a_master": "Tämä venttiili on toisen vyöhykkeen pääventtiili."
     }
   },
   "selector": {

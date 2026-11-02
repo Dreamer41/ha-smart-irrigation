@@ -59,7 +59,8 @@
           "wind_exposure": "Vind på platsen (utan vindsensor)",
           "climate_dryness": "Klimat (utan fuktsensor)",
           "coastal": "Vid havet (utan solsensor)",
-          "wind_sensor_height_m": "Vindsensorns höjd"
+          "wind_sensor_height_m": "Vindsensorns höjd",
+          "master_valve_entity": "Huvudventil (valfritt)"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
           "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
           "coastal": "Används när det inte finns något solvärde: nära kusten uppskattas solen något högre.",
-          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp."
+          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Utlösare för djupvattning",
           "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
           "routine_sun_mode": "Utlösare för rutinbevattning",
-          "routine_sun_offset_minutes": "Solförskjutning för rutinbevattning (minuter)"
+          "routine_sun_offset_minutes": "Solförskjutning för rutinbevattning (minuter)",
+          "master_valve_entity": "Huvudventil (valfritt)"
         },
         "data_description": {
           "pump_power_entity": "En effektgivare (W) på pumpen, t.ex. från en smart plug. Under varje bevattning kontrollerar ZoneFlow att pumpen faktiskt drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
           "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång so att den följer årstiderna.",
-          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid."
+          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
       "area_name_required": "Ge området ett namn.",
       "area_name_exists": "Ett område med detta namn finns redan.",
-      "flow_rate_out_of_range": "De siffrorna ger ett flöde som zonen inte kan ha. Kontrollera antalet droppare, flödet från en droppare och ytan."
+      "flow_rate_out_of_range": "De siffrorna ger ett flöde som zonen inte kan ha. Kontrollera antalet droppare, flödet från en droppare och ytan.",
+      "master_is_zone_valve": "Huvudventilen måste vara en annan ventil än zonernas egna ventiler.",
+      "valve_is_a_master": "Den här ventilen är en annan zons huvudventil."
     },
     "abort": {
       "already_configured": "Weather Underground-regn är redan inställt."
@@ -409,7 +415,8 @@
           "wind_exposure": "Vind på platsen (utan vindsensor)",
           "climate_dryness": "Klimat (utan fuktsensor)",
           "coastal": "Vid havet (utan solsensor)",
-          "wind_sensor_height_m": "Vindsensorns höjd"
+          "wind_sensor_height_m": "Vindsensorns höjd",
+          "master_valve_entity": "Huvudventil (valfritt)"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
           "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
           "coastal": "Används när det inte finns något solvärde: nära kusten uppskattas solen något högre.",
-          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp."
+          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Utlösare för djupvattning",
           "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
           "routine_sun_mode": "Utlösare för rutinbevattning",
-          "routine_sun_offset_minutes": "Soltidsförskjutning för rutinbevattning (minuter)"
+          "routine_sun_offset_minutes": "Soltidsförskjutning för rutinbevattning (minuter)",
+          "master_valve_entity": "Huvudventil (valfritt)"
         },
         "data_description": {
           "pump_power_entity": "En effektgivare (W) på pumpen, t.ex. från en smart plug. Under varje bevattning kontrollerar ZoneFlow att pumpen faktiskt drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
           "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
-          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid."
+          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
       "greenhouse_has_crops": "Det här växthuset har grödor. Flytta dem till ett annat växthus eller ta bort dem först (varje grödas Konfigurera -> Växthus).",
       "area_name_required": "Ge området ett namn.",
-      "area_name_exists": "Ett område med detta namn finns redan."
+      "area_name_exists": "Ett område med detta namn finns redan.",
+      "master_is_zone_valve": "Huvudventilen måste vara en annan ventil än zonernas egna ventiler.",
+      "valve_is_a_master": "Den här ventilen är en annan zons huvudventil."
     }
   },
   "selector": {

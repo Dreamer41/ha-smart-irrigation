@@ -59,7 +59,8 @@
           "wind_exposure": "Vento neste local (sem sensor de vento)",
           "climate_dryness": "Clima (sem sensor de humidade)",
           "coastal": "Junto ao mar (sem sensor solar)",
-          "wind_sensor_height_m": "Altura do sensor de vento"
+          "wind_sensor_height_m": "Altura do sensor de vento",
+          "master_valve_entity": "Válvula mestra (opcional)"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Usado quando não há sensor de vento nem vento da meteorologia: abrigado, aberto ou exposto.",
           "climate_dryness": "Usado quando não há leitura de humidade: húmido ou seco (zonas áridas e semiáridas).",
           "coastal": "Usado quando não há leitura solar: junto à costa o sol é estimado um pouco mais alto.",
-          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m."
+          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Gatilho da rega profunda",
           "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
-          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)"
+          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)",
+          "master_valve_entity": "Válvula mestra (opcional)"
         },
         "data_description": {
           "pump_power_entity": "Um sensor de potência (W) na bomba, ex.: de uma tomada inteligente. Durante cada rega, o ZoneFlow verifica se a bomba consome energia e avisa se tal não acontecer. Deixe em branco se não tiver um.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
-          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa."
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
       "area_name_required": "Dê um nome à área.",
       "area_name_exists": "Já existe uma área com este nome.",
-      "flow_rate_out_of_range": "Esses números dão um caudal que esta zona não pode ter. Verifique o número de emissores, o caudal de um emissor e a área."
+      "flow_rate_out_of_range": "Esses números dão um caudal que esta zona não pode ter. Verifique o número de emissores, o caudal de um emissor e a área.",
+      "master_is_zone_valve": "A válvula mestra tem de ser diferente das válvulas próprias das zonas.",
+      "valve_is_a_master": "Esta válvula é a válvula mestra de outra zona."
     },
     "abort": {
       "already_configured": "A chuva do Weather Underground já está configurada."
@@ -409,7 +415,8 @@
           "wind_exposure": "Vento neste local (sem sensor de vento)",
           "climate_dryness": "Clima (sem sensor de humidade)",
           "coastal": "Junto ao mar (sem sensor solar)",
-          "wind_sensor_height_m": "Altura do sensor de vento"
+          "wind_sensor_height_m": "Altura do sensor de vento",
+          "master_valve_entity": "Válvula mestra (opcional)"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Usado quando não há sensor de vento nem vento da meteorologia: abrigado, aberto ou exposto.",
           "climate_dryness": "Usado quando não há leitura de humidade: húmido ou seco (zonas áridas e semiáridas).",
           "coastal": "Usado quando não há leitura solar: junto à costa o sol é estimado um pouco mais alto.",
-          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m."
+          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Gatilho da rega profunda",
           "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
-          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)"
+          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)",
+          "master_valve_entity": "Válvula mestra (opcional)"
         },
         "data_description": {
           "pump_power_entity": "Um sensor de potência (W) na bomba, ex.: de uma tomada inteligente. Durante cada rega, o ZoneFlow verifica se a bomba consome energia e avisa se tal não acontecer. Deixe em branco se não tiver um.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
-          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa."
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
       "greenhouse_has_crops": "Esta estufa tem culturas. Mova-as para outra estufa ou remova-as primeiro (Configurar -> Estufa de cada cultura).",
       "area_name_required": "Dê um nome à área.",
-      "area_name_exists": "Já existe uma área com este nome."
+      "area_name_exists": "Já existe uma área com este nome.",
+      "master_is_zone_valve": "A válvula mestra tem de ser diferente das válvulas próprias das zonas.",
+      "valve_is_a_master": "Esta válvula é a válvula mestra de outra zona."
     }
   },
   "selector": {

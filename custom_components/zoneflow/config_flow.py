@@ -74,6 +74,7 @@ from .const import (
     CONF_DRAINAGE,
     CONF_FLOW_METER_ENTITY,
     CONF_GROWTH_RAMP_PROFILE,
+    CONF_MASTER_VALVE_ENTITY,
     CONF_IRRIGATION_METHOD,
     CONF_UNIT_SYSTEM,
     CONF_NOTIFY_ENTITY,
@@ -151,6 +152,7 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_HUMIDITY_ENTITY,
     CONF_WIND_ENTITY,
     CONF_SOLAR_ENTITY,
+    CONF_MASTER_VALVE_ENTITY,
 )
 
 
@@ -241,6 +243,7 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     rain_counter_key = _optional_entity_key(defaults, CONF_RAIN_COUNTER_ENTITY)
     outdoor_temp_key = _optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)
     flow_meter_key = _optional_entity_key(defaults, CONF_FLOW_METER_ENTITY)
+    master_valve_key = _optional_entity_key(defaults, CONF_MASTER_VALVE_ENTITY)
     soil_moisture_key = _optional_entity_key(defaults, CONF_SOIL_MOISTURE_ENTITY)
     humidity_key = _optional_entity_key(defaults, CONF_HUMIDITY_ENTITY)
     wind_key = _optional_entity_key(defaults, CONF_WIND_ENTITY)
@@ -258,6 +261,8 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             # comment. Blank is a valid, common answer (single-pump/
             # independent-pump setups never need this).
             vol.Optional(CONF_PUMP_ID, default=defaults.get(CONF_PUMP_ID, "")): str,
+            # 1.8: a backup shut-off valve upstream, shared by the zones that name it (master_valve.py).
+            master_valve_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=VALVE_DOMAINS)),
             rain_counter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=["counter", "sensor"])),
             vol.Optional(CONF_RAIN_SOURCE, default=defaults.get(CONF_RAIN_SOURCE) or RAIN_SOURCE_TIPS): selector.SelectSelector(
                 selector.SelectSelectorConfig(options=RAIN_SOURCE_OPTIONS, translation_key="rain_source")
@@ -385,12 +390,19 @@ def _duplicate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | Non
     errors: dict[str, str] = {}
     valve = data.get(CONF_VALVE_ENTITY)
     csv_path = data.get(CONF_CSV_PATH)
+    master = data.get(CONF_MASTER_VALVE_ENTITY)
+    if master and master == valve:
+        errors[CONF_MASTER_VALVE_ENTITY] = "master_is_zone_valve"
     for entry in hass.config_entries.async_entries(DOMAIN):
         if entry.entry_id == exclude_entry_id:
             continue
         other = {**entry.data, **entry.options}
         if valve and CONF_VALVE_ENTITY not in errors and other.get(CONF_VALVE_ENTITY) == valve:
             errors[CONF_VALVE_ENTITY] = "valve_already_used"
+        if valve and CONF_VALVE_ENTITY not in errors and other.get(CONF_MASTER_VALVE_ENTITY) == valve:
+            errors[CONF_VALVE_ENTITY] = "valve_is_a_master"  # another zone's master valve
+        if master and CONF_MASTER_VALVE_ENTITY not in errors and other.get(CONF_VALVE_ENTITY) == master:
+            errors[CONF_MASTER_VALVE_ENTITY] = "master_is_zone_valve"
         if csv_path and CONF_CSV_PATH not in errors and other.get(CONF_CSV_PATH) == csv_path:
             errors[CONF_CSV_PATH] = "csv_path_already_used"
     return errors

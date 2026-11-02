@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hovedventil stengt",
+      "message": "{valve} ble stengt av sikkerhetshensyn. {reason} Ingenting bak den vannes før du trykker Reset Lock på en av sonene."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: ikke startet",
+      "message": "Hovedventilen {valve} er stengt av sikkerhetshensyn. {reason} Trykk Reset Lock på sonen når det er fikset."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} bekreftet ikke at den stengte på slutten av en vanning.",
+      "valve_stuck": "{valve} sto åpen altfor lenge.",
+      "flow": "Vannmåleren fortsatte å telle mens alle soneventiler var lukket.",
+      "pump_power": "Pumpen fortsatte å trekke strøm mens alle soneventiler var lukket."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "Rotsonen holder svært lite ({raw} før planten merker tørke). Selv daglig vanning kan la den tørke ut: sjekk Rotdybde og Vannet andel.",
       "short_dose": "Rotsonen må vannes hver dag, men en dags dose ({minutes} min) er kortere enn minste puls ({minimum} min), så hver vanning gir mer enn jorda holder.",
       "deep_soak": "Dypvanning gir {taw}, det rotsonen holder, i stedet for de innstilte {target}."
+    },
+    "master_valve": {
+      "latched": "Hovedventilen {valve} er stengt av sikkerhetshensyn. {reason} Trykk Reset Lock når det er fikset.",
+      "fail": "Hovedventilen {valve} er ikke tilgjengelig.",
+      "ok": "Hovedventilen {valve} svarer."
     }
   },
   "why": {

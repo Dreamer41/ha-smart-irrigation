@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hovedventil lukket",
+      "message": "{valve} blev lukket af sikkerhedshensyn. {reason} Intet bag den vandes, før du trykker Reset Lock på en af dens zoner."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: ikke startet",
+      "message": "Hovedventilen {valve} er lukket af sikkerhedshensyn. {reason} Tryk Reset Lock på zonen, når det er udbedret."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} bekræftede ikke, at den lukkede ved slutningen af en vanding.",
+      "valve_stuck": "{valve} stod åben alt for længe.",
+      "flow": "Flowmåleren blev ved med at tælle, mens alle zoneventiler var lukkede.",
+      "pump_power": "Pumpen blev ved med at trække strøm, mens alle zoneventiler var lukkede."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "Rodzonen rummer meget lidt ({raw}, før planten mærker tørke). Selv daglig vanding kan lade den tørre ud: tjek Roddybde og Vandet andel.",
       "short_dose": "Rodzonen skal vandes hver dag, men en dags dosis ({minutes} min) er kortere end mindste puls ({minimum} min), så hver vanding giver mere, end jorden rummer.",
       "deep_soak": "Dybdevanding giver {taw}, det rodzonen rummer, i stedet for de indstillede {target}."
+    },
+    "master_valve": {
+      "latched": "Hovedventilen {valve} er lukket af sikkerhedshensyn. {reason} Tryk Reset Lock, når det er udbedret.",
+      "fail": "Hovedventilen {valve} er ikke tilgængelig.",
+      "ok": "Hovedventilen {valve} svarer."
     }
   },
   "why": {

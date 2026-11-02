@@ -59,7 +59,8 @@
           "wind_exposure": "Vind på dette stedet (uten vindsensor)",
           "climate_dryness": "Klima (uten fuktighetssensor)",
           "coastal": "Ved havet (uten solsensor)",
-          "wind_sensor_height_m": "Vindsensorens høyde"
+          "wind_sensor_height_m": "Vindsensorens høyde",
+          "master_valve_entity": "Hovedventil (valgfritt)"
         },
         "data_description": {
           "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
@@ -94,7 +95,8 @@
           "wind_exposure": "Brukes når det verken er vindsensor eller vindverdi fra værtjenesten: skjermet, åpent eller utsatt.",
           "climate_dryness": "Brukes når det ikke finnes noen fuktighetsmåling: fuktig eller tørt (tørre og halvtørre strøk).",
           "coastal": "Brukes når det ikke finnes noen solmåling: nær kysten anslås sola litt høyere.",
-          "wind_sensor_height_m": "Hvor høyt vindsensoren sitter. Hjemmeværstasjoner sitter vanligvis rundt 2 m oppe."
+          "wind_sensor_height_m": "Hvor høyt vindsensoren sitter. Hjemmeværstasjoner sitter vanligvis rundt 2 m oppe.",
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
         }
       },
       "climate": {
@@ -182,7 +184,8 @@
           "deep_soak_sun_mode": "Utløser for dypvanning",
           "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
           "routine_sun_mode": "Utløser for rutinevanning",
-          "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)"
+          "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)",
+          "master_valve_entity": "Hovedventil (valgfritt)"
         },
         "data_description": {
           "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk bruker strøm, og advarer deg hvis den ikke gjør det. La stå tom hvis du ikke har én.",
@@ -202,7 +205,8 @@
           "deep_soak_sun_mode": "Start dypvanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
-          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt."
+          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
         }
       },
       "start": {
@@ -351,7 +355,9 @@
       "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner.",
       "area_name_required": "Gi området et navn.",
       "area_name_exists": "Et område med dette navnet finnes allerede.",
-      "flow_rate_out_of_range": "Disse tallene gir en vannmengde sonen ikke kan ha. Sjekk antall dryppere, vannmengden fra én dypper og arealet."
+      "flow_rate_out_of_range": "Disse tallene gir en vannmengde sonen ikke kan ha. Sjekk antall dryppere, vannmengden fra én dypper og arealet.",
+      "master_is_zone_valve": "Hovedventilen må være en annen ventil enn sonenes egne ventiler.",
+      "valve_is_a_master": "Denne ventilen er en annen sones hovedventil."
     },
     "abort": {
       "already_configured": "Weather Underground-regn er allerede satt opp."
@@ -409,7 +415,8 @@
           "wind_exposure": "Vind på dette stedet (uten vindsensor)",
           "climate_dryness": "Klima (uten fuktighetssensor)",
           "coastal": "Ved havet (uten solsensor)",
-          "wind_sensor_height_m": "Vindsensorens høyde"
+          "wind_sensor_height_m": "Vindsensorens høyde",
+          "master_valve_entity": "Hovedventil (valgfritt)"
         },
         "data_description": {
           "valve_entity": "Bryteren som åpner ventilen i denne sonen (eller starter pumpen). Det eneste ZoneFlow ikke klarer seg uten: den slår bryteren av og på, og sørger alltid for at den ender avslått.",
@@ -444,7 +451,8 @@
           "wind_exposure": "Brukes når det verken er vindsensor eller vindverdi fra værtjenesten: skjermet, åpent eller utsatt.",
           "climate_dryness": "Brukes når det ikke finnes noen fuktighetsmåling: fuktig eller tørt (tørre og halvtørre strøk).",
           "coastal": "Brukes når det ikke finnes noen solmåling: nær kysten anslås sola litt høyere.",
-          "wind_sensor_height_m": "Hvor høyt vindsensoren sitter. Hjemmeværstasjoner sitter vanligvis rundt 2 m oppe."
+          "wind_sensor_height_m": "Hvor høyt vindsensoren sitter. Hjemmeværstasjoner sitter vanligvis rundt 2 m oppe.",
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
         }
       },
       "flow_rate": {
@@ -534,7 +542,8 @@
           "deep_soak_sun_mode": "Utløser for dypvanning",
           "deep_soak_sun_offset_minutes": "Solforskyvning for dypvanning (minutter)",
           "routine_sun_mode": "Utløser for rutinevanning",
-          "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)"
+          "routine_sun_offset_minutes": "Solforskyvning for rutinevanning (minutter)",
+          "master_valve_entity": "Hovedventil (valgfritt)"
         },
         "data_description": {
           "pump_power_entity": "En effektsensor (W) på pumpen, f.eks. fra en smartplugg. Under hver vanning sjekker ZoneFlow at pumpen faktisk bruker strøm, og advarer deg hvis den ikke gjør det. La stå tom hvis du ikke har én.",
@@ -554,7 +563,8 @@
           "deep_soak_sun_mode": "Start dypvanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
           "deep_soak_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
           "routine_sun_mode": "Start rutinevanning på det faste tidspunktet ovenfor, eller før eller etter iz- og solnedgang, slik at det følger årstidene.",
-          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt."
+          "routine_sun_offset_minutes": "Hvor mange minutter før eller etter iz- og solnedgang. Brukes ikke med fast tidspunkt.",
+          "master_valve_entity": "En reserve-stengeventil før denne sonen, for eksempel etter en pumpe som flere soner deler. Den åpner med hver vanning og lukker når den siste slutter. Den lukker også for sikkerhets skyld, til Reset Lock, hvis en soneventil henger seg opp åpen eller vannet fortsetter å renne (vannmåler) eller pumpen fortsetter å gå (pumpeeffekt) mens alle soneventiler er lukket. Gi alle soner bak den samme ventil."
         }
       },
       "wu_key": {
@@ -744,7 +754,9 @@
       "wu_pick_1_to_3": "Velg 1, 2 eller 3 stasjoner.",
       "greenhouse_has_crops": "Dette drivhuset har kulturer. Flytt dem til et annet drivhus eller fjern dem først (hver kulturs Konfigurer -> Drivhus).",
       "area_name_required": "Gi området et navn.",
-      "area_name_exists": "Et område med dette navnet finnes allerede."
+      "area_name_exists": "Et område med dette navnet finnes allerede.",
+      "master_is_zone_valve": "Hovedventilen må være en annen ventil enn sonenes egne ventiler.",
+      "valve_is_a_master": "Denne ventilen er en annen sones hovedventil."
     }
   },
   "selector": {

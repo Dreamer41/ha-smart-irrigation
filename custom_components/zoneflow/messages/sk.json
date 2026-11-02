@@ -174,6 +174,20 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hlavný ventil zatvorený",
+      "message": "{valve} bol z bezpečnostných dôvodov zatvorený. {reason} Nič za ním nezavlažuje, kým na niektorej z jeho zón nestlačíte Reset Lock."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: nespustené",
+      "message": "Hlavný ventil {valve} je z bezpečnostných dôvodov zatvorený. {reason} Po oprave stlačte na zóne Reset Lock."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} na konci zálievky nepotvrdil zatvorenie.",
+      "valve_stuck": "{valve} zostal otvorený príliš dlho.",
+      "flow": "Prietokomer ďalej počítal, hoci boli všetky ventily zón zatvorené.",
+      "pump_power": "Čerpadlo ďalej odoberalo prúd, hoci boli všetky ventily zón zatvorené."
     }
   },
   "notes": {
@@ -376,6 +390,11 @@
       "shallow": "Koreňová zóna pojme veľmi málo ({raw}, kým rastlina pocíti sucho). Aj denná zálievka ju môže nechať vyschnúť: skontrolujte Hĺbku koreňov a Zavlažovaný podiel.",
       "short_dose": "Koreňová zóna potrebuje zálievku každý deň, ale denná dávka ({minutes} min) je kratšia než minimálny pulz ({minimum} min), takže každá zálievka dá viac, než pôda pojme.",
       "deep_soak": "Hĺbkové zavlaženie dá {taw}, koľko pojme koreňová zóna, namiesto nastavených {target}."
+    },
+    "master_valve": {
+      "latched": "Hlavný ventil {valve} je z bezpečnostných dôvodov zatvorený. {reason} Po oprave stlačte Reset Lock.",
+      "fail": "Hlavný ventil {valve} nie je dostupný.",
+      "ok": "Hlavný ventil {valve} odpovedá."
     }
   },
   "why": {
