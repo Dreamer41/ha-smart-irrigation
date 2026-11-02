@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle} : le débitmètre ne compte pas",
       "message": "{meter} n'a rien compté vanne ouverte, l'arrosage s'est donc fait au temps. Vérifiez le compteur."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} en attente : pluie",
+      "message": "{sensor} indique humide. Nouvelle vérification toutes les heures pendant {hours} heures au plus, puis attente du prochain horaire prévu."
+    },
+    "wind": {
+      "title": "💨 {cycle} en attente : vent",
+      "message": "Le vent est à {wind}, au-dessus de la limite de {limit}. Nouvelle vérification toutes les heures pendant {hours} heures au plus, puis attente du prochain horaire prévu."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} en attente depuis {time} : l'arrosage profond passe d'abord dès qu'il fait assez chaud",
     "paused_until": "En pause jusqu'au {until}",
     "paused_area": "En pause : aucun arrosage tant que {area} est en pause",
-    "paused_house": "En pause : aucun arrosage tant que la serre {house} est en pause"
+    "paused_house": "En pause : aucun arrosage tant que la serre {house} est en pause",
+    "waiting_rain": "{cycle} en attente depuis {time} : {sensor} indique humide ; nouvelle vérification toutes les heures",
+    "skipped_rain": "{cycle} sauté à {time} : {sensor} indiquait encore humide après {hours} vérifications",
+    "waiting_wind": "{cycle} en attente depuis {time} : vent {wind}, au-dessus de la limite ({limit}) ; nouvelle vérification toutes les heures",
+    "skipped_wind": "{cycle} sauté à {time} : vent encore au-dessus de {limit} après {hours} vérifications"
   },
   "summary": {
     "title": "💧 ZoneFlow : votre semaine",

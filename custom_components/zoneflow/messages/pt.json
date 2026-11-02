@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: contador de caudal não conta",
       "message": "{meter} não contou nada com a válvula aberta, por isso a rega foi feita por tempo. Verifique o contador."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} em espera: chuva",
+      "message": "{sensor} indica molhado. Verifica a cada hora durante até {hours} horas e depois espera pela próxima hora agendada."
+    },
+    "wind": {
+      "title": "💨 {cycle} em espera: vento",
+      "message": "O vento está a {wind}, acima do limite de {limit}. Verifica a cada hora durante até {hours} horas e depois espera pela próxima hora agendada."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} em espera desde as {time}: a rega profunda vai primeiro, quando aquecer o suficiente",
     "paused_until": "Em pausa até {until}",
     "paused_area": "Em pausa: sem rega enquanto {area} estiver em pausa",
-    "paused_house": "Em pausa: sem rega enquanto a estufa {house} estiver em pausa"
+    "paused_house": "Em pausa: sem rega enquanto a estufa {house} estiver em pausa",
+    "waiting_rain": "{cycle} em espera desde as {time}: {sensor} indica molhado; nova verificação a cada hora",
+    "skipped_rain": "{cycle} ignorada às {time}: {sensor} ainda indicava molhado após {hours} verificações",
+    "waiting_wind": "{cycle} em espera desde as {time}: vento {wind}, acima do limite ({limit}); nova verificação a cada hora",
+    "skipped_wind": "{cycle} ignorada às {time}: vento ainda acima de {limit} após {hours} verificações"
   },
   "summary": {
     "title": "💧 ZoneFlow: a sua semana",

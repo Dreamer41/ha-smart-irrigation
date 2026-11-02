@@ -204,6 +204,14 @@ def depth_text(mm: float, imperial: bool) -> str:
     return f"{mm / MM_PER_INCH:.2f} in" if imperial else f"{mm:.1f} mm"
 
 
+KMH_PER_MPH = 1.609344
+
+
+def speed_text(kmh: float, imperial: bool) -> str:
+    """A wind speed for phone and status text, in the zone's units."""
+    return f"{kmh / KMH_PER_MPH:.0f} mph" if imperial else f"{kmh:.0f} km/h"
+
+
 def volume_text(liters: float, imperial: bool) -> str:
     """A measured volume for phone text, in the zone's units."""
     return f"{liters / LITERS_PER_GALLON:.1f} gal" if imperial else f"{liters:.0f} L"

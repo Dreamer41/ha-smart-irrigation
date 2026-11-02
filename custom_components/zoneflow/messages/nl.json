@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: watermeter telt niet",
       "message": "{meter} telde niets terwijl de klep open was, dus de beurt ging op tijd. Controleer de meter."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} wacht: regen",
+      "message": "{sensor} meldt nat. Er wordt tot {hours} uur lang elk uur opnieuw gekeken, daarna wacht hij op zijn volgende geplande tijd."
+    },
+    "wind": {
+      "title": "💨 {cycle} wacht: wind",
+      "message": "De wind is {wind}, boven de grens van {limit}. Er wordt tot {hours} uur lang elk uur opnieuw gekeken, daarna wacht hij op zijn volgende geplande tijd."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} wacht sinds {time}: de diepe watergift gaat voor zodra het warm genoeg is",
     "paused_until": "Gepauzeerd tot {until}",
     "paused_area": "Gepauzeerd: geen water zolang {area} gepauzeerd is",
-    "paused_house": "Gepauzeerd: geen water zolang de kas {house} gepauzeerd is"
+    "paused_house": "Gepauzeerd: geen water zolang de kas {house} gepauzeerd is",
+    "waiting_rain": "{cycle} wacht sinds {time}: {sensor} meldt nat; elk uur opnieuw gecontroleerd",
+    "skipped_rain": "{cycle} overgeslagen om {time}: {sensor} meldde na {hours} controles nog nat",
+    "waiting_wind": "{cycle} wacht sinds {time}: wind {wind}, boven de grens ({limit}); elk uur opnieuw gecontroleerd",
+    "skipped_wind": "{cycle} overgeslagen om {time}: wind na {hours} controles nog boven {limit}"
   },
   "summary": {
     "title": "💧 ZoneFlow: je week",

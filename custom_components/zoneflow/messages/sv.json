@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: flödesmätaren räknar inte",
       "message": "{meter} räknade ingenting medan ventilen var öppen, så bevattningen gick på tid i stället. Kontrollera mätaren."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} väntar: regn",
+      "message": "{sensor} visar vått. Den kontrolleras varje timme i upp till {hours} timmar och väntar sedan på nästa schemalagda tid."
+    },
+    "wind": {
+      "title": "💨 {cycle} väntar: vind",
+      "message": "Vinden är {wind}, över gränsen {limit}. Den kontrolleras varje timme i upp till {hours} timmar och väntar sedan på nästa schemalagda tid."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} väntar sedan {time}: djupvattningen går först när det är varmt nog",
     "paused_until": "Pausad till {until}",
     "paused_area": "Pausad: ingen vattning medan {area} är pausat",
-    "paused_house": "Pausad: ingen vattning medan växthuset {house} är pausat"
+    "paused_house": "Pausad: ingen vattning medan växthuset {house} är pausat",
+    "waiting_rain": "{cycle} väntar sedan {time}: {sensor} visar vått; kontrollerar igen varje timme",
+    "skipped_rain": "{cycle} överhoppad kl. {time}: {sensor} visade fortfarande vått efter {hours} kontroller",
+    "waiting_wind": "{cycle} väntar sedan {time}: vind {wind}, över gränsen ({limit}); kontrollerar igen varje timme",
+    "skipped_wind": "{cycle} överhoppad kl. {time}: vinden fortfarande över {limit} efter {hours} kontroller"
   },
   "summary": {
     "title": "💧 ZoneFlow: din vecka",

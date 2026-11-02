@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: prietokomer nepočíta",
       "message": "{meter} pri otvorenom ventile nič nenapočítal, a tak zálievka prebehla podľa času. Skontrolujte prietokomer."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} čaká: dážď",
+      "message": "{sensor} hlási mokro. Kontroluje sa každú hodinu najviac {hours} hodín, potom sa čaká na ďalší plánovaný čas."
+    },
+    "wind": {
+      "title": "💨 {cycle} čaká: vietor",
+      "message": "Vietor má {wind}, nad limitom {limit}. Kontroluje sa každú hodinu najviac {hours} hodín, potom sa čaká na ďalší plánovaný čas."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle}: čaká od {time}, keď sa oteplí, má prednosť hĺbková zálievka",
     "paused_until": "Pozastavené do {until}",
     "paused_area": "Pozastavené: nepolieva sa, kým je oblasť {area} pozastavená",
-    "paused_house": "Pozastavené: nepolieva sa, kým je skleník {house} pozastavený"
+    "paused_house": "Pozastavené: nepolieva sa, kým je skleník {house} pozastavený",
+    "waiting_rain": "{cycle} čaká od {time}: {sensor} hlási mokro; kontrola každú hodinu",
+    "skipped_rain": "{cycle} vynechané o {time}: {sensor} hlásil mokro aj po {hours} kontrolách",
+    "waiting_wind": "{cycle} čaká od {time}: vietor {wind}, nad limitom ({limit}); kontrola každú hodinu",
+    "skipped_wind": "{cycle} vynechané o {time}: vietor stále nad {limit} po {hours} kontrolách"
   },
   "summary": {
     "title": "💧 ZoneFlow: váš týždeň",

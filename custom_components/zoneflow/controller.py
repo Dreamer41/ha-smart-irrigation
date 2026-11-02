@@ -85,8 +85,9 @@ from .const import (
     REPAIR_FIRST_CHECK_SECONDS,
     FROST_TEMP_MAX_AGE_SECONDS,
     FROST_TEMP_MIN_PLAUSIBLE_C,
-    FROST_RETRY_COUNT,
-    FROST_RETRY_SECONDS,
+    HOLD_RETRY_COUNT,
+    HOLD_RETRY_SECONDS,
+    WAITING_HOLD_CODES,
     LEVEL_INFO,
     LEVEL_WARNING,
     NOTIFY_NONE,
@@ -438,11 +439,11 @@ class ZoneFlowController:
         # always re-checked before the routine), the pending hourly
         # re-check, how many re-checks this wait has had, whether one is
         # running now, and which cycles have already sent their message.
-        self._frost_held: set[str] = set()
-        self._frost_retry_cancel: Any = None
-        self._frost_rechecks = 0
-        self._frost_rechecking = False
-        self._frost_notified: set[str] = set()
+        self._hold_held: set[str] = set()
+        self._hold_retry_cancel: Any = None
+        self._hold_rechecks = 0
+        self._hold_rechecking = False
+        self._hold_notified: set[tuple[str, str]] = set()  # (cycle, reason) already told by phone
         self._service_counted = False
         # Greenhouse / indoor climate control (1.6). Does nothing for a zone
         # with no climate devices.
@@ -580,7 +581,7 @@ class ZoneFlowController:
     async def on_area_paused(self) -> None:
         """The area was paused: stop what this zone is doing, as its own Pause does."""
         self._paused_event.set()
-        self._cancel_frost_wait()
+        self._cancel_hold_wait()
 
     async def on_area_resumed(self) -> None:
         """An area or greenhouse stopped pausing this zone: free it unless
@@ -1136,7 +1137,7 @@ class ZoneFlowController:
         # ...and once a few minutes after a start, so a restart does not leave rain that fell meanwhile waiting an hour.
         self._unsubs.append(async_call_later(self.hass, RAIN_CREDIT_FIRST_CHECK_SECONDS, self._on_rain_credit_check))
         issues.async_prune(self)  # e.g. a sensor just removed from the zone
-        self._resume_frost_wait()
+        self._resume_hold_wait()
 
         # Seed the rain window baseline from the counter's current value
         # *before* anything else touches the tracker, so a fresh install (or
@@ -1302,7 +1303,7 @@ class ZoneFlowController:
             self._power_loss_cancel()
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
-        self._cancel_frost_wait()
+        self._cancel_hold_wait()
         if self._resume_cancel is not None:
             self._resume_cancel()
             self._resume_cancel = None
@@ -2263,7 +2264,7 @@ class ZoneFlowController:
             # Stops a cycle that's running or queued for the pump (at once,
             # valve closed and confirmed); a frost wait ends too.
             self._paused_event.set()
-            self._cancel_frost_wait()
+            self._cancel_hold_wait()
         else:
             state.paused_since_ts = None
             state.pause_ended_ts = now_ts
@@ -2395,106 +2396,136 @@ class ZoneFlowController:
             return None
         return temp
 
-    async def _frost_blocks(self, cycle: str) -> bool:
-        """Water freezing in the lines or on leaves does more harm than a
-        missed watering: a due cycle waits while the outdoor temperature is
-        below the frost guard. Cycles usually run early in the morning, the
-        coldest time of day, so the zone checks again every hour, up to
-        FROST_RETRY_COUNT times, before leaving it to the next scheduled
-        time. While the deep soak waits, the routine waits for it too (a
-        finished deep soak counts as the routine watering)."""
+    def _hold_reason(self) -> tuple[str, dict[str, Any]] | None:
+        """The first weather reason that holds a cycle right now, with its numbers, or None. Frost
+        (water freezing in the lines or on leaves does more harm than a missed watering), then rain
+        and wind (1.8), which never hold a press of Run Now: the person is looking at the garden.
+        A reading that can't be trusted never holds anything."""
         limit = self.frost_guard_c()
         temp = self._frost_temp_c() if limit is not None else None
-        cold = temp is not None and limit is not None and temp < limit
-        if not cold:
-            self._frost_held.discard(cycle)
-            if cycle == "routine" and "deep_soak" in self._frost_held:
-                self._frost_held.add(cycle)
+        if temp is not None and limit is not None and temp < limit:
+            return "frost", {"temp_c": round(temp, 1), "limit_c": round(limit, 1)}
+        if not self._manual_press:
+            rain = self._rain_sensor_hold()
+            if rain is not None:
+                return "rain", rain
+            wind = self._wind_hold()
+            if wind is not None:
+                return "wind", wind
+        return None
+
+    def _rain_sensor_hold(self) -> dict[str, Any] | None:
+        """A binary rain sensor reads wet (Part R). None: no hold."""
+        return None
+
+    def _wind_hold(self) -> dict[str, Any] | None:
+        """A sprinkler zone in too much wind (Part W). None: no hold."""
+        return None
+
+    def _hold_phone_params(self, reason: str, numbers: dict[str, Any]) -> dict[str, Any]:
+        if reason == "frost":
+            return {"temp": units.temp_text(numbers["temp_c"], self.imperial), "limit": units.temp_text(numbers["limit_c"], self.imperial)}
+        if reason == "wind":
+            return {"wind": units.speed_text(numbers["wind_kmh"], self.imperial), "limit": units.speed_text(numbers["limit_kmh"], self.imperial)}
+        return {"sensor": numbers.get("sensor", "")}
+
+    async def _weather_blocks(self, cycle: str) -> bool:
+        """A due cycle waits while the weather is against it (_hold_reason): frost, a rain sensor that
+        reads wet, or wind on a sprinkler zone. Cycles usually run early in the morning, so the zone
+        checks again every hour, up to HOLD_RETRY_COUNT times, before leaving it to the next scheduled
+        time. While the deep soak waits, the routine waits for it too (a finished deep soak counts as
+        the routine watering)."""
+        hold = self._hold_reason()
+        if hold is None:
+            self._hold_held.discard(cycle)
+            if cycle == "routine" and "deep_soak" in self._hold_held:
+                self._hold_held.add(cycle)
                 await self._decide(cycle, "waiting_deep_soak")
                 return True
-            if not self._frost_held:
-                self._cancel_frost_wait()
+            if not self._hold_held:
+                self._cancel_hold_wait()
             return False
 
-        if not self._frost_held and self._frost_retry_cancel is None and not self._frost_rechecking:
-            # A new frost wait (not a re-check of the current one).
-            self._frost_rechecks = 0
-            self._frost_notified = set()
-        self._frost_held.add(cycle)
-        if self._frost_retry_cancel is None and not self._frost_rechecking and self._frost_rechecks < FROST_RETRY_COUNT:
-            self._schedule_frost_recheck()
-        waiting = self._frost_retry_cancel is not None or (
-            self._frost_rechecking and self._frost_rechecks < FROST_RETRY_COUNT
+        reason, numbers = hold
+        if not self._hold_held and self._hold_retry_cancel is None and not self._hold_rechecking:
+            # A new hold (not a re-check of the current one).
+            self._hold_rechecks = 0
+            self._hold_notified = set()
+        self._hold_held.add(cycle)
+        if self._hold_retry_cancel is None and not self._hold_rechecking and self._hold_rechecks < HOLD_RETRY_COUNT:
+            self._schedule_hold_recheck()
+        waiting = self._hold_retry_cancel is not None or (
+            self._hold_rechecking and self._hold_rechecks < HOLD_RETRY_COUNT
         )
         if not waiting:
-            self._frost_held.discard(cycle)
+            self._hold_held.discard(cycle)
         await self._decide(
             cycle,
-            "waiting_frost" if waiting else "skipped_frost",
-            temp_c=round(temp, 1),
-            limit_c=round(limit, 1),
-            rechecks=self._frost_rechecks,  # so a restart doesn't start the count over
+            f"waiting_{reason}" if waiting else f"skipped_{reason}",
+            **numbers,
+            hours=HOLD_RETRY_COUNT,
+            rechecks=self._hold_rechecks,  # so a restart doesn't start the count over
         )
-        first = cycle not in self._frost_notified
-        self._frost_notified.add(cycle)
+        # One phone message per cycle and reason, not one per re-check (a hold that changes reason,
+        # frost cleared and now raining, tells the new one).
+        first = (cycle, reason) not in self._hold_notified
+        self._hold_notified.add((cycle, reason))
         kind = "Deep Soak" if cycle == "deep_soak" else "Routine Irrigation"
         await self._log_event(
-            event_type=f"{kind} Skipped (Frost)",
+            event_type=f"{kind} Skipped ({reason.title()})",
             status="Skipped",
             target_mm=0.0,
             deducted_mm=0.0,
             runtime=0,
-            # One phone message per cycle and frost wait, not one per re-check.
             notify_phone=first,
-            message="frost",
-            params={
-                "cycle": self._cycle_name(kind),
-                "temp": units.temp_text(temp, self.imperial),
-                "limit": units.temp_text(limit, self.imperial),
-                "hours": FROST_RETRY_COUNT,
-            },
+            message="frost" if reason == "frost" else "rain" if reason == "rain" else "wind",  # (literal keys: checked by a test)
+            params={"cycle": self._cycle_name(kind), "hours": HOLD_RETRY_COUNT, **self._hold_phone_params(reason, numbers)},
             extra_log=(
-                f"Outdoor temperature {temp:.1f} C is below the frost guard ({limit:.1f} C); "
+                {
+                    "frost": f"Outdoor temperature {numbers.get('temp_c')} C is below the frost guard ({numbers.get('limit_c')} C); ",
+                    "rain": f"The rain sensor {numbers.get('sensor')} reads wet; ",
+                    "wind": f"Wind {numbers.get('wind_kmh')} km/h is above the wind hold ({numbers.get('limit_kmh')} km/h); ",
+                }[reason]
                 + (
                     "no re-checks left."
                     if not waiting
-                    else f"re-check {self._frost_rechecks} of {FROST_RETRY_COUNT}."
-                    if self._frost_rechecking
+                    else f"re-check {self._hold_rechecks} of {HOLD_RETRY_COUNT}."
+                    if self._hold_rechecking
                     else "checking again in an hour."
                 )
             ),
         )
         return True
 
-    def _schedule_frost_recheck(self) -> None:
+    def _schedule_hold_recheck(self) -> None:
         @callback
         def _due(_now) -> None:
-            self._frost_retry_cancel = None
+            self._hold_retry_cancel = None
             if self._stopping:
                 return
-            self._frost_rechecks += 1
-            self.hass.async_create_task(self._frost_recheck())
+            self._hold_rechecks += 1
+            self.hass.async_create_task(self._hold_recheck())
 
-        self._frost_retry_cancel = async_call_later(self.hass, FROST_RETRY_SECONDS, _due)
+        self._hold_retry_cancel = async_call_later(self.hass, HOLD_RETRY_SECONDS, _due)
 
-    async def _frost_recheck(self) -> None:
+    async def _hold_recheck(self) -> None:
         """One hourly frost re-check: the waiting cycles, deep soak first,
         through all their usual gates."""
-        cycles = [c for c in ("deep_soak", "routine") if c in self._frost_held]
-        self._frost_held.clear()
-        self._frost_rechecking = True
+        cycles = [c for c in ("deep_soak", "routine") if c in self._hold_held]
+        self._hold_held.clear()
+        self._hold_rechecking = True
         try:
             for cycle in cycles:
                 await (self.run_deep_soak() if cycle == "deep_soak" else self.run_routine_irrigation())
         finally:
-            self._frost_rechecking = False
-        if self._frost_held and not self._stopping and self._frost_rechecks < FROST_RETRY_COUNT:
-            self._schedule_frost_recheck()
+            self._hold_rechecking = False
+        if self._hold_held and not self._stopping and self._hold_rechecks < HOLD_RETRY_COUNT:
+            self._schedule_hold_recheck()
         else:
-            self._frost_held.clear()
+            self._hold_held.clear()
         self._notify_status()
 
-    def _resume_frost_wait(self) -> None:
+    def _resume_hold_wait(self) -> None:
         """After a restart or reload: a frost wait from earlier today picks
         up again (without a second phone message)."""
         latest = self._today_decision()
@@ -2504,7 +2535,7 @@ class ZoneFlowController:
             for cycle, decision in decisions.items()
             if cycle in ("routine", "deep_soak")
             and isinstance(decision, dict)
-            and decision.get("code") in ("waiting_frost", "waiting_deep_soak")
+            and decision.get("code") in WAITING_HOLD_CODES
             and latest is not None
             and isinstance(decision.get("ts"), (int, float))
             and dt_util.as_local(dt_util.utc_from_timestamp(decision["ts"])).date() == dt_util.now().date()
@@ -2518,18 +2549,22 @@ class ZoneFlowController:
             ),
             default=0,
         )
-        if not held or self.paused or not isinstance(rechecks, int) or rechecks >= FROST_RETRY_COUNT:
+        if not held or self.paused or not isinstance(rechecks, int) or rechecks >= HOLD_RETRY_COUNT:
             return
-        self._frost_rechecks = rechecks
-        self._frost_held = held
-        self._frost_notified = set(held)
-        self._schedule_frost_recheck()
+        self._hold_rechecks = rechecks
+        self._hold_held = held
+        # Told already before the restart: no second phone message for the same reason.
+        self._hold_notified = {
+            (cycle, decisions[cycle]["code"][len("waiting_"):]) for cycle in held
+            if decisions[cycle]["code"] != "waiting_deep_soak"
+        }
+        self._schedule_hold_recheck()
 
-    def _cancel_frost_wait(self) -> None:
-        if self._frost_retry_cancel is not None:
-            self._frost_retry_cancel()
-            self._frost_retry_cancel = None
-        self._frost_held.clear()
+    def _cancel_hold_wait(self) -> None:
+        if self._hold_retry_cancel is not None:
+            self._hold_retry_cancel()
+            self._hold_retry_cancel = None
+        self._hold_held.clear()
 
     def watering_temp(self) -> tuple[float | None, str]:
         """The temperature that picks the hot/cool/normal tier, and where it
@@ -4604,7 +4639,7 @@ class ZoneFlowController:
         if rain_14d >= self.number("deep_soak_rain_threshold"):
             await self._decide("deep_soak", "skipped_wet_fortnight", rain_mm=round(rain_14d, 1))
             return
-        if await self._frost_blocks("deep_soak"):
+        if await self._weather_blocks("deep_soak"):
             return
         if not await self._forecast_gate_allows_run("deep_soak"):
             return
@@ -4837,7 +4872,7 @@ class ZoneFlowController:
                 until_ts=(state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400,
             )
             return
-        if await self._frost_blocks("routine"):
+        if await self._weather_blocks("routine"):
             return
         if not manual and not await self._forecast_gate_allows_run("routine"):
             return
@@ -6353,6 +6388,8 @@ class ZoneFlowController:
                 params[key[:-3]] = self._when(value)
             elif key.endswith("_c") and isinstance(value, (int, float)):
                 params[key[:-2]] = units.temp_text(value, self.imperial)
+            elif key.endswith("_kmh") and isinstance(value, (int, float)):
+                params[key[:-4]] = units.speed_text(value, self.imperial)
             else:
                 params[key] = value
         params["cycle"] = self._msg(f"cycle.{cycle}")
@@ -6537,9 +6574,9 @@ class ZoneFlowController:
         if latest is not None:
             cycle, decision = latest
             code = decision["code"]
-            if code in ("waiting_frost", "waiting_deep_soak") and cycle not in self._frost_held:
+            if code in WAITING_HOLD_CODES and cycle not in self._hold_held:
                 # No re-check pending any more (it ended, or after a restart).
-                code = "skipped_frost" if code == "waiting_frost" else None
+                code = None if code == "waiting_deep_soak" else "skipped_" + code[len("waiting_"):]
             if code is None:
                 latest = None
         if latest is not None:
@@ -6549,7 +6586,7 @@ class ZoneFlowController:
                 cycle=cycle,
                 decided_at=dt_util.utc_from_timestamp(decision["ts"]).isoformat(),
                 # (a frost re-check comes before any scheduled time)
-                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(
+                text=text if code in WAITING_HOLD_CODES else with_next(
                     text if code == "skipped_drydown" else with_drydown(text)
                 ),
             )

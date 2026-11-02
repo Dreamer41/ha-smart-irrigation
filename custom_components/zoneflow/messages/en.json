@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: flow meter not counting",
       "message": "{meter} counted nothing while the valve was open, so the watering went by time instead. Check the meter."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} waiting: rain",
+      "message": "{sensor} reads wet. It checks again every hour for up to {hours} hours, then waits for its next scheduled time."
+    },
+    "wind": {
+      "title": "💨 {cycle} waiting: wind",
+      "message": "The wind is {wind}, above the limit of {limit}. It checks again every hour for up to {hours} hours, then waits for its next scheduled time."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} waiting since {time}: the deep soak goes first once it's warm enough",
     "paused_until": "Paused until {until}",
     "paused_area": "Paused: no watering while {area} is paused",
-    "paused_house": "Paused: no watering while the greenhouse {house} is paused"
+    "paused_house": "Paused: no watering while the greenhouse {house} is paused",
+    "waiting_rain": "{cycle} waiting since {time}: {sensor} reads wet; checking again every hour",
+    "skipped_rain": "{cycle} skipped at {time}: {sensor} still read wet after {hours} hourly checks",
+    "waiting_wind": "{cycle} waiting since {time}: wind {wind}, above the limit ({limit}); checking again every hour",
+    "skipped_wind": "{cycle} skipped at {time}: wind still above {limit} after {hours} hourly checks"
   },
   "summary": {
     "title": "💧 ZoneFlow: your week",

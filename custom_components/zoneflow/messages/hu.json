@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: az átfolyásmérő nem számol",
       "message": "{meter} semmit sem számolt nyitott szelepnél, ezért az öntözés idő szerint ment. Ellenőrizze a mérőt."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} vár: eső",
+      "message": "{sensor} nedveset jelez. Legfeljebb {hours} órán át óránként újra ellenőrzi, utána a következő ütemezett időpontot várja."
+    },
+    "wind": {
+      "title": "💨 {cycle} vár: szél",
+      "message": "A szél {wind}, a(z) {limit} határ felett. Legfeljebb {hours} órán át óránként újra ellenőrzi, utána a következő ütemezett időpontot várja."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} vár ({time} óta): előbb a mélyöntözés jön, amint elég meleg lesz",
     "paused_until": "Szüneteltetve, eddig: {until}",
     "paused_area": "Szüneteltetve: nincs öntözés, amíg a(z) {area} szünetel",
-    "paused_house": "Szüneteltetve: nincs öntözés, amíg a(z) {house} üvegház szünetel"
+    "paused_house": "Szüneteltetve: nincs öntözés, amíg a(z) {house} üvegház szünetel",
+    "waiting_rain": "{cycle} {time} óta vár: {sensor} nedveset jelez; óránként újra ellenőrzi",
+    "skipped_rain": "{cycle} kihagyva {time}-kor: {sensor} {hours} ellenőrzés után is nedveset jelzett",
+    "waiting_wind": "{cycle} {time} óta vár: szél {wind}, a határ ({limit}) felett; óránként újra ellenőrzi",
+    "skipped_wind": "{cycle} kihagyva {time}-kor: a szél {hours} ellenőrzés után is {limit} felett volt"
   },
   "summary": {
     "title": "💧 ZoneFlow: a heted",

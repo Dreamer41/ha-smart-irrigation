@@ -809,10 +809,15 @@ NOTIFY_WARNINGS = "warnings"
 NOTIFY_NONE = "none"
 NOTIFY_LEVEL_OPTIONS = [NOTIFY_ALL, NOTIFY_WARNINGS, NOTIFY_NONE]
 
-# Frost guard (controller._frost_blocks): a cycle skipped for frost checks
-# again this often, this many times that day.
-FROST_RETRY_SECONDS = 3600
-FROST_RETRY_COUNT = 6
+# Weather hold (controller._weather_blocks, 1.8; the frost guard before): a cycle held for frost,
+# rain or wind checks again this often, this many times that day, then waits for its next time.
+HOLD_RETRY_SECONDS = 3600
+HOLD_RETRY_COUNT = 6
+FROST_RETRY_SECONDS = HOLD_RETRY_SECONDS  # the 1.7 names, kept for one release
+FROST_RETRY_COUNT = HOLD_RETRY_COUNT
+# The reasons, most harmful first, and the decision codes of a cycle that waits for one.
+HOLD_REASONS = ("frost", "rain", "wind")
+WAITING_HOLD_CODES = ("waiting_frost", "waiting_rain", "waiting_wind", "waiting_deep_soak")
 # A temperature reading older than this, or below this, is not trusted to
 # hold watering back (a sensor stuck on a cold reading, an error value).
 FROST_TEMP_MAX_AGE_SECONDS = 6 * 3600

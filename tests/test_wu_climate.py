@@ -222,6 +222,10 @@ async def test_too_few_borrowed_hours_are_not_used(hass, stations):
 async def test_a_reading_stops_holding_an_hour_after_the_last_poll(hass, stations):
     c, source = await _setup(hass)
     now = dt_util.utcnow().timestamp()
+    for key in ("wu_humidity", "wu_wind", "wu_solar"):  # a day that began before the reading, whatever the hour
+        agg = c._aggregate(key)
+        agg.reset(now - 4 * H)
+        c._put_aggregate(key, agg)
     c.on_wu_climate({"wind": 3.0, "humidity": 50.0, "solar": 0.0}, now - 3 * H)
     c._end_stale_wu_climate(now)
     agg = c._aggregate("wu_wind")

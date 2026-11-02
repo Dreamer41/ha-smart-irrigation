@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: flowmåler tæller ikke",
       "message": "{meter} talte intet, mens ventilen var åben, så vandingen gik efter tid i stedet. Tjek måleren."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} venter: regn",
+      "message": "{sensor} melder vådt. Der tjekkes hver time i op til {hours} timer, derefter venter den på næste planlagte tid."
+    },
+    "wind": {
+      "title": "💨 {cycle} venter: vind",
+      "message": "Vinden er {wind}, over grænsen på {limit}. Der tjekkes hver time i op til {hours} timer, derefter venter den på næste planlagte tid."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} venter siden {time}: dybdevandingen kører først, når det er varmt nok",
     "paused_until": "På pause indtil {until}",
     "paused_area": "På pause: ingen vanding, mens {area} er på pause",
-    "paused_house": "På pause: ingen vanding, mens drivhuset {house} er på pause"
+    "paused_house": "På pause: ingen vanding, mens drivhuset {house} er på pause",
+    "waiting_rain": "{cycle} venter siden {time}: {sensor} melder vådt; tjekker igen hver time",
+    "skipped_rain": "{cycle} sprunget over kl. {time}: {sensor} meldte stadig vådt efter {hours} tjek",
+    "waiting_wind": "{cycle} venter siden {time}: vind {wind}, over grænsen ({limit}); tjekker igen hver time",
+    "skipped_wind": "{cycle} sprunget over kl. {time}: vinden stadig over {limit} efter {hours} tjek"
   },
   "summary": {
     "title": "💧 ZoneFlow: din uge",

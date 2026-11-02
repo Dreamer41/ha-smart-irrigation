@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: il flussometro non conta",
       "message": "{meter} non ha contato nulla a valvola aperta, quindi l'irrigazione è andata a tempo. Controlla il contatore."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} in attesa: pioggia",
+      "message": "{sensor} segnala bagnato. Ricontrolla ogni ora fino a {hours} ore, poi attende il prossimo orario previsto."
+    },
+    "wind": {
+      "title": "💨 {cycle} in attesa: vento",
+      "message": "Il vento è a {wind}, sopra il limite di {limit}. Ricontrolla ogni ora fino a {hours} ore, poi attende il prossimo orario previsto."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} in attesa dalle {time}: prima tocca all'irrigazione profonda, appena fa abbastanza caldo",
     "paused_until": "In pausa fino a {until}",
     "paused_area": "In pausa: nessuna irrigazione mentre {area} è in pausa",
-    "paused_house": "In pausa: nessuna irrigazione mentre la serra {house} è in pausa"
+    "paused_house": "In pausa: nessuna irrigazione mentre la serra {house} è in pausa",
+    "waiting_rain": "{cycle} in attesa dalle {time}: {sensor} segnala bagnato; nuovo controllo ogni ora",
+    "skipped_rain": "{cycle} saltata alle {time}: {sensor} segnalava ancora bagnato dopo {hours} controlli",
+    "waiting_wind": "{cycle} in attesa dalle {time}: vento {wind}, sopra il limite ({limit}); nuovo controllo ogni ora",
+    "skipped_wind": "{cycle} saltata alle {time}: vento ancora sopra {limit} dopo {hours} controlli"
   },
   "summary": {
     "title": "💧 ZoneFlow: la tua settimana",

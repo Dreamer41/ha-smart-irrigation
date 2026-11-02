@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: przepływomierz nie liczy",
       "message": "{meter} nic nie naliczył przy otwartym zaworze, więc podlewanie poszło według czasu. Sprawdź licznik."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} czeka: deszcz",
+      "message": "{sensor} wskazuje mokro. Sprawdzanie co godzinę przez maks. {hours} godzin, potem czeka na następny zaplanowany termin."
+    },
+    "wind": {
+      "title": "💨 {cycle} czeka: wiatr",
+      "message": "Wiatr ma {wind}, powyżej limitu {limit}. Sprawdzanie co godzinę przez maks. {hours} godzin, potem czeka na następny zaplanowany termin."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle}: czeka od {time} – najpierw głębokie podlewanie, gdy zrobi się dość ciepło",
     "paused_until": "Wstrzymane do {until}",
     "paused_area": "Wstrzymane: brak podlewania, gdy obszar {area} jest wstrzymany",
-    "paused_house": "Wstrzymane: brak podlewania, gdy szklarnia {house} jest wstrzymana"
+    "paused_house": "Wstrzymane: brak podlewania, gdy szklarnia {house} jest wstrzymana",
+    "waiting_rain": "{cycle} czeka od {time}: {sensor} wskazuje mokro; sprawdzanie co godzinę",
+    "skipped_rain": "{cycle} pominięte o {time}: {sensor} wciąż wskazywał mokro po {hours} sprawdzeniach",
+    "waiting_wind": "{cycle} czeka od {time}: wiatr {wind}, powyżej limitu ({limit}); sprawdzanie co godzinę",
+    "skipped_wind": "{cycle} pominięte o {time}: wiatr wciąż powyżej {limit} po {hours} sprawdzeniach"
   },
   "summary": {
     "title": "💧 ZoneFlow: Twój tydzień",

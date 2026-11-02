@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: el caudalímetro no cuenta",
       "message": "{meter} no contó nada con la válvula abierta, así que el riego fue por tiempo. Revisa el contador."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} en espera: lluvia",
+      "message": "{sensor} indica mojado. Se comprueba cada hora durante hasta {hours} horas; después espera a su próxima hora programada."
+    },
+    "wind": {
+      "title": "💨 {cycle} en espera: viento",
+      "message": "El viento es de {wind}, por encima del límite de {limit}. Se comprueba cada hora durante hasta {hours} horas; después espera a su próxima hora programada."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} en espera desde las {time}: primero va el riego profundo, cuando haga suficiente calor",
     "paused_until": "En pausa hasta {until}",
     "paused_area": "En pausa: no se riega mientras {area} esté en pausa",
-    "paused_house": "En pausa: no se riega mientras el invernadero {house} esté en pausa"
+    "paused_house": "En pausa: no se riega mientras el invernadero {house} esté en pausa",
+    "waiting_rain": "{cycle} en espera desde las {time}: {sensor} indica mojado; se comprueba cada hora",
+    "skipped_rain": "{cycle} omitido a las {time}: {sensor} seguía indicando mojado tras {hours} comprobaciones",
+    "waiting_wind": "{cycle} en espera desde las {time}: viento {wind}, por encima del límite ({limit}); se comprueba cada hora",
+    "skipped_wind": "{cycle} omitido a las {time}: el viento seguía por encima de {limit} tras {hours} comprobaciones"
   },
   "summary": {
     "title": "💧 ZoneFlow: tu semana",

@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: virtausmittari ei laske",
       "message": "{meter} ei laskenut mitään venttiilin ollessa auki, joten kastelu tehtiin ajan mukaan. Tarkista mittari."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} odottaa: sade",
+      "message": "{sensor} näyttää märkää. Tarkistetaan tunnin välein enintään {hours} tunnin ajan, sitten odotetaan seuraavaa ajastettua aikaa."
+    },
+    "wind": {
+      "title": "💨 {cycle} odottaa: tuuli",
+      "message": "Tuuli on {wind}, yli rajan {limit}. Tarkistetaan tunnin välein enintään {hours} tunnin ajan, sitten odotetaan seuraavaa ajastettua aikaa."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} odottaa klo {time} alkaen: syväkastelu ajetaan ensin, kun on tarpeeksi lämmintä",
     "paused_until": "Tauolla {until} asti",
     "paused_area": "Tauolla: ei kastelua, kun alue {area} on tauolla",
-    "paused_house": "Tauolla: ei kastelua, kun kasvihuone {house} on tauolla"
+    "paused_house": "Tauolla: ei kastelua, kun kasvihuone {house} on tauolla",
+    "waiting_rain": "{cycle} odottaa klo {time} alkaen: {sensor} näyttää märkää; tarkistetaan uudelleen tunnin välein",
+    "skipped_rain": "{cycle} ohitettu klo {time}: {sensor} näytti yhä märkää {hours} tarkistuksen jälkeen",
+    "waiting_wind": "{cycle} odottaa klo {time} alkaen: tuuli {wind}, yli rajan ({limit}); tarkistetaan uudelleen tunnin välein",
+    "skipped_wind": "{cycle} ohitettu klo {time}: tuuli yhä yli {limit} {hours} tarkistuksen jälkeen"
   },
   "summary": {
     "title": "💧 ZoneFlow: viikkosi",

@@ -205,6 +205,14 @@
     "meter_not_counting": {
       "title": "⚠️ {cycle}: Durchflussmesser zählt nicht",
       "message": "{meter} hat bei offenem Ventil nichts gezählt, deshalb lief die Bewässerung nach Zeit. Bitte den Zähler prüfen."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} wartet: Regen",
+      "message": "{sensor} meldet nass. Bis zu {hours} Stunden wird stündlich neu geprüft, danach wartet der Lauf auf seinen nächsten geplanten Termin."
+    },
+    "wind": {
+      "title": "💨 {cycle} wartet: Wind",
+      "message": "Der Wind hat {wind}, über der Grenze von {limit}. Bis zu {hours} Stunden wird stündlich neu geprüft, danach wartet der Lauf auf seinen nächsten geplanten Termin."
     }
   },
   "notes": {
@@ -253,7 +261,11 @@
     "waiting_deep_soak": "{cycle} wartet seit {time}: Die Tiefenbewässerung kommt zuerst, sobald es warm genug ist",
     "paused_until": "Pausiert bis {until}",
     "paused_area": "Pausiert: keine Bewässerung, während {area} pausiert ist",
-    "paused_house": "Pausiert: keine Bewässerung, während das Gewächshaus {house} pausiert ist"
+    "paused_house": "Pausiert: keine Bewässerung, während das Gewächshaus {house} pausiert ist",
+    "waiting_rain": "{cycle} wartet seit {time}: {sensor} meldet nass; stündliche Neuprüfung",
+    "skipped_rain": "{cycle} um {time} übersprungen: {sensor} meldete nach {hours} stündlichen Prüfungen noch nass",
+    "waiting_wind": "{cycle} wartet seit {time}: Wind {wind}, über der Grenze ({limit}); stündliche Neuprüfung",
+    "skipped_wind": "{cycle} um {time} übersprungen: Wind nach {hours} stündlichen Prüfungen noch über {limit}"
   },
   "summary": {
     "title": "💧 ZoneFlow: deine Woche",
