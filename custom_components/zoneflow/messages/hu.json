@@ -439,6 +439,15 @@
       "unknown_unit": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a mértékegysége nem olvasható vízként: a zóna idő szerint öntöz.",
       "no_area": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a zóna területe nem ismert: állítsa be A zóna területét (vagy a Zóna átfolyást), hogy a millimétert literre lehessen váltani.",
       "shared_meter": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a mérőt egy másik szivattyúhoz tartozó zóna is használja, amely egyszerre öntözhet: a zóna idő szerint öntöz."
+    },
+    "wind_hold": {
+      "no_source": "A szélhatár be van állítva, de nincs szélérzékelő vagy időjárás-entitás, amelyből a szél leolvasható, így sosem tart vissza semmit. Adjon hozzá egyet a Beállításokban.",
+      "off": "Van szélforrás, de a Szélhatár ki van kapcsolva (0). Állítson be határt, hogy a szórófej erős szélben várjon."
+    },
+    "rain_sensor": {
+      "ok": "A(z) {entity} esőérzékelő jelentkezik.",
+      "fail": "A(z) {entity} esőérzékelő nem érhető el. Amíg vissza nem tér, semmit sem tart vissza.",
+      "stuck": "A(z) {entity} esőérzékelő több mint egy napja változatlanul nedveset jelez, ezért a ZoneFlow figyelmen kívül hagyja. Ellenőrizze az érzékelőt."
     }
   },
   "why": {

@@ -439,6 +439,15 @@
       "unknown_unit": "El riego termina por caudalímetro, pero su unidad no se puede leer como agua: la zona riega por tiempo.",
       "no_area": "El riego termina por caudalímetro, pero no se conoce la superficie de la zona: indica la Superficie de la zona (o el Caudal de la zona) para pasar milímetros a litros.",
       "shared_meter": "El riego termina por caudalímetro, pero lo comparte una zona de otra bomba que puede regar a la vez: la zona riega por tiempo."
+    },
+    "wind_hold": {
+      "no_source": "El límite de viento está definido, pero no hay sensor de viento ni entidad meteorológica de la que leerlo, así que nunca retiene nada. Añada uno en Configurar.",
+      "off": "Hay una fuente de viento, pero el Límite de viento está desactivado (0). Defina un límite para que el aspersor espere con viento fuerte."
+    },
+    "rain_sensor": {
+      "ok": "El sensor de lluvia {entity} informa.",
+      "fail": "El sensor de lluvia {entity} no está disponible. Hasta que vuelva, no retiene nada.",
+      "stuck": "El sensor de lluvia {entity} lleva más de un día indicando mojado sin cambios, así que ZoneFlow lo ignora. Revise el sensor."
     }
   },
   "why": {

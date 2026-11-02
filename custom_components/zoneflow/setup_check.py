@@ -58,6 +58,29 @@ def _flow_meter_checks(controller: Any, add, hass: HomeAssistant) -> None:
             setting=f"{units.to_display('flow_rate_mm_per_min', setting, imperial):.2f} {unit}")
 
 
+def _weather_hold_checks(controller: Any, add, hass: HomeAssistant) -> None:
+    """The weather holds (1.8): a wind limit with nothing to read the wind from, a rain sensor that
+    is offline or stuck."""
+    from .const import WIND_HOLD_SEED_KMH
+
+    if controller.irrigation_method in WIND_HOLD_SEED_KMH:
+        source = controller.wind_entity or controller.weather_entity
+        limit = controller.number("wind_hold_kmh")
+        if limit > 0 and not source:
+            add("wind_hold", "warn", "wind_hold.no_source")
+        elif limit <= 0 and source:
+            add("wind_hold", "info", "wind_hold.off")
+    sensor = controller.rain_sensor_entity
+    if sensor:
+        state = _state(hass, sensor)
+        if not _working(state):
+            add("rain_sensor", "warn", "rain_sensor.fail", entity=sensor)
+        elif controller.rain_sensor_stuck():
+            add("rain_sensor", "warn", "rain_sensor.stuck", entity=sensor)
+        else:
+            add("rain_sensor", "ok", "rain_sensor.ok", entity=sensor)
+
+
 def _root_zone_checks(controller: Any, add) -> None:
     root_zone = controller.root_zone()
     if root_zone is None:
@@ -177,6 +200,7 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         else:
             add("volume", "info", "volume.none", action="calibrate")
         _flow_meter_checks(controller, add, hass)
+        _weather_hold_checks(controller, add, hass)
 
     # The probe and the pump sensor, if there are any.
     probe = controller.soil_moisture_entity

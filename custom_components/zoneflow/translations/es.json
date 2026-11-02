@@ -55,6 +55,8 @@
           "unit_system": "Unidades",
           "humidity_entity": "Sensor de humedad exterior (opcional)",
           "wind_entity": "Sensor de velocidad del viento (opcional)",
+          "rain_sensor_entity": "Sensor de lluvia (opcional)",
+          "rain_sensor_inverted": "El sensor está encendido cuando está seco",
           "solar_entity": "Sensor de radiación solar (opcional)",
           "wind_exposure": "Viento en este lugar (sin sensor de viento)",
           "climate_dryness": "Clima (sin sensor de humedad)",
@@ -92,6 +94,8 @@
           "unit_system": "Lo que muestra esta zona: igual que Home Assistant, o siempre métrico (mm, °C, litros) o imperial (pulgadas, °F, galones). Solo cambia lo que ves, nunca cuánto riega.",
           "humidity_entity": "Humedad relativa exterior. Hace que la estimación FAO-56 siga los días secos y húmedos.",
           "wind_entity": "Velocidad del viento exterior. Los días ventosos secan las plantas más rápido; sin sensor se usa un viento típico del lugar.",
+          "rain_sensor_entity": "Un sensor mojado/seco (encendido = mojado). Mientras indique mojado, un riego pendiente espera y se comprueba cada hora; pulsar Regar ahora riega igualmente.",
+          "rain_sensor_inverted": "Marque si el sensor está encendido en seco y apagado en mojado.",
           "solar_entity": "Luz solar en W/m². Sin sensor, el sol se estima a partir del rango de temperatura del día.",
           "wind_exposure": "Se usa cuando no hay sensor de viento ni viento del tiempo: resguardado, abierto o expuesto.",
           "climate_dryness": "Se usa cuando no hay lectura de humedad: húmedo o seco (zonas áridas y semiáridas).",
@@ -285,6 +289,8 @@
           "notify_entity": "Teléfono para notificaciones",
           "humidity_entity": "Sensor de humedad exterior (opcional)",
           "wind_entity": "Sensor de velocidad del viento (opcional)",
+          "rain_sensor_entity": "Sensor de lluvia (opcional)",
+          "rain_sensor_inverted": "El sensor está encendido cuando está seco",
           "solar_entity": "Sensor de radiación solar (opcional)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "Qué indica el sensor del pluviómetro: un contador de vuelcos, lluvia total, intensidad de lluvia o lluvia desde la última lectura.",
           "humidity_entity": "Humedad relativa exterior. Hace que la estimación FAO-56 siga los días secos y húmedos.",
           "wind_entity": "Velocidad del viento exterior. Los días ventosos secan las plantas más rápido; sin sensor se usa un viento típico del lugar.",
+          "rain_sensor_entity": "Un sensor mojado/seco (encendido = mojado). Mientras indique mojado, un riego pendiente espera y se comprueba cada hora; pulsar Regar ahora riega igualmente.",
+          "rain_sensor_inverted": "Marque si el sensor está encendido en seco y apagado en mojado.",
           "solar_entity": "Luz solar en W/m². Sin sensor, el sol se estima a partir del rango de temperatura del día."
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "Unidades",
           "humidity_entity": "Sensor de humedad exterior (opcional)",
           "wind_entity": "Sensor de velocidad del viento (opcional)",
+          "rain_sensor_entity": "Sensor de lluvia (opcional)",
+          "rain_sensor_inverted": "El sensor está encendido cuando está seco",
           "solar_entity": "Sensor de radiación solar (opcional)",
           "wind_exposure": "Viento en este lugar (sin sensor de viento)",
           "climate_dryness": "Clima (sin sensor de humedad)",
@@ -452,6 +462,8 @@
           "unit_system": "Lo que muestra esta zona: igual que Home Assistant, o siempre métrico (mm, °C, litros) o imperial (pulgadas, °F, galones). Solo cambia lo que ves, nunca cuánto riega.",
           "humidity_entity": "Humedad relativa exterior. Hace que la estimación FAO-56 siga los días secos y húmedos.",
           "wind_entity": "Velocidad del viento exterior. Los días ventosos secan las plantas más rápido; sin sensor se usa un viento típico del lugar.",
+          "rain_sensor_entity": "Un sensor mojado/seco (encendido = mojado). Mientras indique mojado, un riego pendiente espera y se comprueba cada hora; pulsar Regar ahora riega igualmente.",
+          "rain_sensor_inverted": "Marque si el sensor está encendido en seco y apagado en mojado.",
           "solar_entity": "Luz solar en W/m². Sin sensor, el sol se estima a partir del rango de temperatura del día.",
           "wind_exposure": "Se usa cuando no hay sensor de viento ni viento del tiempo: resguardado, abierto o expuesto.",
           "climate_dryness": "Se usa cuando no hay lectura de humedad: húmedo o seco (zonas áridas y semiáridas).",
@@ -667,6 +679,7 @@
           "notify_entity": "Usar el teléfono del área",
           "humidity_entity": "Usar el sensor de humedad del área",
           "wind_entity": "Usar el sensor de viento del área",
+          "rain_sensor_entity": "Usar el sensor de lluvia del área",
           "solar_entity": "Usar el sensor solar del área"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "Marca para enviar al teléfono del área en lugar del propio de esta zona.",
           "humidity_entity": "Marca para usar el sensor de humedad del área en lugar del propio de esta zona.",
           "wind_entity": "Marca para usar el sensor de viento del área en lugar del propio de esta zona.",
+          "rain_sensor_entity": "Marque para usar el sensor de lluvia del área en lugar del propio de la zona.",
           "solar_entity": "Marca para usar el sensor solar del área en lugar del propio de esta zona."
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "Teléfono para notificaciones",
           "humidity_entity": "Sensor de humedad exterior (opcional)",
           "wind_entity": "Sensor de velocidad del viento (opcional)",
+          "rain_sensor_entity": "Sensor de lluvia (opcional)",
+          "rain_sensor_inverted": "El sensor está encendido cuando está seco",
           "solar_entity": "Sensor de radiación solar (opcional)"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "Qué indica el sensor del pluviómetro: un contador de vuelcos, lluvia total, intensidad de lluvia o lluvia desde la última lectura.",
           "humidity_entity": "Humedad relativa exterior. Hace que la estimación FAO-56 siga los días secos y húmedos.",
           "wind_entity": "Velocidad del viento exterior. Los días ventosos secan las plantas más rápido; sin sensor se usa un viento típico del lugar.",
+          "rain_sensor_entity": "Un sensor mojado/seco (encendido = mojado). Mientras indique mojado, un riego pendiente espera y se comprueba cada hora; pulsar Regar ahora riega igualmente.",
+          "rain_sensor_inverted": "Marque si el sensor está encendido en seco y apagado en mojado.",
           "solar_entity": "Luz solar en W/m². Sin sensor, el sol se estima a partir del rango de temperatura del día."
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "Teléfono para notificaciones",
           "humidity_entity": "Sensor de humedad exterior (opcional)",
           "wind_entity": "Sensor de velocidad del viento (opcional)",
+          "rain_sensor_entity": "Sensor de lluvia (opcional)",
+          "rain_sensor_inverted": "El sensor está encendido cuando está seco",
           "solar_entity": "Sensor de radiación solar (opcional)"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "Qué indica el sensor del pluviómetro: un contador de vuelcos, lluvia total, intensidad de lluvia o lluvia desde la última lectura.",
           "humidity_entity": "Humedad relativa exterior. Hace que la estimación FAO-56 siga los días secos y húmedos.",
           "wind_entity": "Velocidad del viento exterior. Los días ventosos secan las plantas más rápido; sin sensor se usa un viento típico del lugar.",
+          "rain_sensor_entity": "Un sensor mojado/seco (encendido = mojado). Mientras indique mojado, un riego pendiente espera y se comprueba cada hora; pulsar Regar ahora riega igualmente.",
+          "rain_sensor_inverted": "Marque si el sensor está encendido en seco y apagado en mojado.",
           "solar_entity": "Luz solar en W/m². Sin sensor, el sol se estima a partir del rango de temperatura del día."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Margen de tiempo en modo caudal"
+      },
+      "wind_hold_kmh": {
+        "name": "Límite de viento"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: sensor de lluvia atascado",
+      "description": "El sensor de lluvia {entity} de la zona {zone} lleva más de un día indicando mojado sin cambios, así que ZoneFlow lo ignora. Revise el sensor: puede estar sucio o averiado. Esto desaparece solo cuando indique seco."
     }
   }
 }

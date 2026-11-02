@@ -439,6 +439,15 @@
       "unknown_unit": "L'arrosage s'arrête selon le débitmètre, mais son unité ne peut pas être lue comme de l'eau : la zone arrose au temps.",
       "no_area": "L'arrosage s'arrête selon le débitmètre, mais la surface de la zone est inconnue : indiquez la Surface de la zone (ou le Débit de la zone) pour convertir les millimètres en litres.",
       "shared_meter": "L'arrosage s'arrête selon le débitmètre, mais il est partagé avec une zone d'une autre pompe qui peut arroser en même temps : la zone arrose au temps."
+    },
+    "wind_hold": {
+      "no_source": "La limite de vent est définie, mais il n'y a ni capteur de vent ni entité météo où lire le vent ; elle ne retient donc jamais rien. Ajoutez-en un dans Configurer.",
+      "off": "Une source de vent est disponible, mais la Limite de vent est désactivée (0). Fixez une limite pour que l'arroseur attende par vent fort."
+    },
+    "rain_sensor": {
+      "ok": "Le capteur de pluie {entity} répond.",
+      "fail": "Le capteur de pluie {entity} n'est pas disponible. Tant qu'il n'est pas revenu, il ne retient rien.",
+      "stuck": "Le capteur de pluie {entity} indique humide depuis plus d'un jour sans changement ; ZoneFlow l'ignore donc. Vérifiez le capteur."
     }
   },
   "why": {

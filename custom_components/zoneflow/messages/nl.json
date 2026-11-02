@@ -439,6 +439,15 @@
       "unknown_unit": "Water geven stopt op de watermeter, maar de eenheid is niet als water te lezen: de zone geeft water op tijd.",
       "no_area": "Water geven stopt op de watermeter, maar de oppervlakte van de zone is onbekend: stel Oppervlakte van de zone (of Zonedoorstroming) in om millimeters naar liters om te rekenen.",
       "shared_meter": "Water geven stopt op de watermeter, maar die wordt gedeeld met een zone op een andere pomp die tegelijk water kan geven: de zone geeft water op tijd."
+    },
+    "wind_hold": {
+      "no_source": "De windlimiet is ingesteld, maar er is geen windsensor of weerentiteit om de wind uit te lezen, dus ze houdt nooit iets tegen. Voeg er een toe onder Configureren.",
+      "off": "Er is een windbron beschikbaar, maar de Windlimiet staat uit (0). Stel een limiet in zodat de sproeier bij harde wind wacht."
+    },
+    "rain_sensor": {
+      "ok": "De regensensor {entity} meldt zich.",
+      "fail": "De regensensor {entity} is niet beschikbaar. Tot hij terug is, houdt hij niets tegen.",
+      "stuck": "De regensensor {entity} meldt al meer dan een dag onveranderd nat, dus ZoneFlow negeert hem. Controleer de sensor."
     }
   },
   "why": {

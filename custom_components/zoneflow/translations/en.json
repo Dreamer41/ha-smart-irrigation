@@ -55,6 +55,8 @@
           "unit_system": "Units",
           "humidity_entity": "Outdoor humidity sensor (optional)",
           "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
           "solar_entity": "Solar radiation sensor (optional)",
           "wind_exposure": "Wind at this spot (no wind sensor)",
           "climate_dryness": "Climate (no humidity sensor)",
@@ -92,6 +94,8 @@
           "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters.",
           "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
           "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
           "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
           "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
           "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
@@ -285,6 +289,8 @@
           "notify_entity": "Phone to notify",
           "humidity_entity": "Outdoor humidity sensor (optional)",
           "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
           "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
           "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
           "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
           "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
@@ -434,6 +442,8 @@
           "unit_system": "Units",
           "humidity_entity": "Outdoor humidity sensor (optional)",
           "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
           "solar_entity": "Solar radiation sensor (optional)",
           "wind_exposure": "Wind at this spot (no wind sensor)",
           "climate_dryness": "Climate (no humidity sensor)",
@@ -471,6 +481,8 @@
           "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters.",
           "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
           "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
           "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
           "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
           "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
@@ -686,6 +698,7 @@
           "notify_entity": "Use the area's phone",
           "humidity_entity": "Use the area's humidity sensor",
           "wind_entity": "Use the area's wind sensor",
+          "rain_sensor_entity": "Use the area's rain sensor",
           "solar_entity": "Use the area's solar sensor"
         },
         "data_description": {
@@ -695,6 +708,7 @@
           "notify_entity": "Tick to send to the area's phone instead of this zone's own.",
           "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
           "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
+          "rain_sensor_entity": "Tick to use the area's rain sensor instead of this zone's own.",
           "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
         }
       },
@@ -711,6 +725,8 @@
           "notify_entity": "Phone to notify",
           "humidity_entity": "Outdoor humidity sensor (optional)",
           "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
           "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
@@ -723,6 +739,8 @@
           "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
           "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
           "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
           "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
@@ -739,6 +757,8 @@
           "notify_entity": "Phone to notify",
           "humidity_entity": "Outdoor humidity sensor (optional)",
           "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
           "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
@@ -751,6 +771,8 @@
           "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
           "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
           "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
           "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Flow Mode Time Allowance"
+      },
+      "wind_hold_kmh": {
+        "name": "Wind Limit"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: rain sensor stuck",
+      "description": "The rain sensor {entity} of zone {zone} has read wet for over a day without a change, so ZoneFlow ignores it. Check the sensor: it may be dirty or broken. This clears by itself once it reads dry."
     }
   }
 }

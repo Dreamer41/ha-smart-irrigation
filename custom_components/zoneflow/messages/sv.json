@@ -439,6 +439,15 @@
       "unknown_unit": "Bevattningen slutar efter flödesmätaren, men enheten kan inte läsas som vatten: zonen vattnar på tid.",
       "no_area": "Bevattningen slutar efter flödesmätaren, men zonens yta är okänd: ange Zonens yta (eller Zonflöde) så att millimeter kan räknas om till liter.",
       "shared_meter": "Bevattningen slutar efter flödesmätaren, men mätaren delas med en zon på en annan pump som kan vattna samtidigt: zonen vattnar på tid."
+    },
+    "wind_hold": {
+      "no_source": "Vindgränsen är satt, men det finns ingen vindsensor eller väderentitet att läsa vinden från, så den håller aldrig något tillbaka. Lägg till en under Konfigurera.",
+      "off": "En vindkälla finns, men Vindgränsen är av (0). Sätt en gräns så att sprinklern väntar i kraftig vind."
+    },
+    "rain_sensor": {
+      "ok": "Regnsensorn {entity} rapporterar.",
+      "fail": "Regnsensorn {entity} är inte tillgänglig. Tills den är tillbaka håller den inget tillbaka.",
+      "stuck": "Regnsensorn {entity} har visat blött i över ett dygn utan ändring, så ZoneFlow ignorerar den. Kontrollera sensorn."
     }
   },
   "why": {

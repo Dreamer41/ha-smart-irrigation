@@ -439,6 +439,15 @@
       "unknown_unit": "A rega termina pelo medidor de vazão, mas a unidade não pode ser lida como água: a zona rega por tempo.",
       "no_area": "A rega termina pelo medidor de vazão, mas a área da zona é desconhecida: defina a Área da zona (ou a Vazão da zona) para converter milímetros em litros.",
       "shared_meter": "A rega termina pelo medidor de vazão, mas ele é compartilhado com uma zona de outra bomba que pode regar ao mesmo tempo: a zona rega por tempo."
+    },
+    "wind_hold": {
+      "no_source": "O limite de vento está definido, mas não há sensor de vento nem entidade meteorológica de onde o ler, por isso nunca retém nada. Adicione um em Configurar.",
+      "off": "Existe uma fonte de vento, mas o Limite de vento está desligado (0). Defina um limite para o aspersor esperar com vento forte."
+    },
+    "rain_sensor": {
+      "ok": "O sensor de chuva {entity} responde.",
+      "fail": "O sensor de chuva {entity} não está disponível. Até voltar, não retém nada.",
+      "stuck": "O sensor de chuva {entity} indica molhado há mais de um dia sem alteração, por isso o ZoneFlow ignora-o. Verifique o sensor."
     }
   },
   "why": {

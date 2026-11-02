@@ -45,6 +45,7 @@ ALL_KEYS = (
     "notify_missing",
     "flow_rate_default",
     "fao56_offer",
+    "rain_sensor_stuck",
     "shared_valve",
     "greenhouse_sensor",
     "greenhouse_outside_sensor",
@@ -206,6 +207,16 @@ def async_check(controller: ZoneFlowController) -> None:
         translation_placeholders={"zone": zone},
         learn_more_url="https://zoneflowirrigation.com/docs/getting-started",
         fix={"kind": "flow_rate"},
+    )
+
+    _set(
+        hass,
+        controller,
+        "rain_sensor_stuck",
+        controller.rain_sensor_stuck(),
+        severity=ir.IssueSeverity.WARNING,
+        translation_key="rain_sensor_stuck",
+        translation_placeholders={"zone": zone, "entity": controller.rain_sensor_entity or ""},
     )
 
     _check_fao56_offer(controller)

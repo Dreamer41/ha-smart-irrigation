@@ -439,6 +439,15 @@
       "unknown_unit": "Watering Stops On is set to the flow meter, but the meter's unit can't be read as water: the zone waters by time.",
       "no_area": "Watering Stops On is set to the flow meter, but the zone's area is not known: set Zone Area (or Zone Flow) so millimetres can be turned into litres.",
       "shared_meter": "Watering Stops On is set to the flow meter, but the meter is shared with a zone on another pump that may water at the same time: the zone waters by time."
+    },
+    "wind_hold": {
+      "no_source": "The wind limit is set, but there is no wind sensor or weather entity to read the wind from, so it never holds. Add one in Configure.",
+      "off": "A wind source is available, but the Wind Limit is off (0). Set a limit so the sprinkler waits in strong wind."
+    },
+    "rain_sensor": {
+      "ok": "The rain sensor {entity} reports.",
+      "fail": "The rain sensor {entity} is not available. Until it is back it holds nothing.",
+      "stuck": "The rain sensor {entity} has read wet for over a day without a change, so ZoneFlow ignores it. Check the sensor."
     }
   },
   "why": {

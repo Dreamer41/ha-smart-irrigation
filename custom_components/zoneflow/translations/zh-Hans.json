@@ -55,6 +55,8 @@
           "unit_system": "单位",
           "humidity_entity": "室外湿度传感器（可选）",
           "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
           "solar_entity": "太阳辐射传感器（可选）",
           "wind_exposure": "此处的风力（无风速传感器时）",
           "climate_dryness": "气候（无湿度传感器时）",
@@ -92,6 +94,8 @@
           "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。",
           "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
           "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
           "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。",
           "wind_exposure": "在没有风速传感器也没有天气服务风速时使用：避风、开阔或暴露。",
           "climate_dryness": "在没有湿度读数时使用：潮湿或干燥（干旱和半干旱地区）。",
@@ -285,6 +289,8 @@
           "notify_entity": "接收通知的手机",
           "humidity_entity": "室外湿度传感器（可选）",
           "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
           "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
           "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
           "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
           "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "单位",
           "humidity_entity": "室外湿度传感器（可选）",
           "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
           "solar_entity": "太阳辐射传感器（可选）",
           "wind_exposure": "此处的风力（无风速传感器时）",
           "climate_dryness": "气候（无湿度传感器时）",
@@ -452,6 +462,8 @@
           "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。",
           "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
           "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
           "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。",
           "wind_exposure": "在没有风速传感器也没有天气服务风速时使用：避风、开阔或暴露。",
           "climate_dryness": "在没有湿度读数时使用：潮湿或干燥（干旱和半干旱地区）。",
@@ -667,6 +679,7 @@
           "notify_entity": "使用区域的手机",
           "humidity_entity": "使用区域的湿度传感器",
           "wind_entity": "使用区域的风速传感器",
+          "rain_sensor_entity": "使用区域的雨量传感器",
           "solar_entity": "使用区域的太阳辐射传感器"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "勾选此项以将消息发送至区域的手机，而非当前区域独立的手机。",
           "humidity_entity": "勾选后使用区域的湿度传感器，而不是本分区自己的传感器。",
           "wind_entity": "勾选后使用区域的风速传感器，而不是本分区自己的传感器。",
+          "rain_sensor_entity": "勾选后使用区域的雨量传感器，而不是此区域自己的传感器。",
           "solar_entity": "勾选后使用区域的太阳辐射传感器，而不是本分区自己的传感器。"
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "接收通知的手机",
           "humidity_entity": "室外湿度传感器（可选）",
           "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
           "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
           "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
           "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
           "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "接收通知的手机",
           "humidity_entity": "室外湿度传感器（可选）",
           "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
           "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
           "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
           "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
           "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "流量模式时间余量"
+      },
+      "wind_hold_kmh": {
+        "name": "风速上限"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}：雨量传感器卡住",
+      "description": "区域 {zone} 的雨量传感器 {entity} 已超过一天读数为湿且没有变化，因此 ZoneFlow 会忽略它。请检查传感器：可能脏了或坏了。读数变干后此提示会自动消失。"
     }
   }
 }

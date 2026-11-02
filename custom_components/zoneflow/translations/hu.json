@@ -55,6 +55,8 @@
           "unit_system": "Mértékegységek",
           "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
           "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
           "solar_entity": "Napsugárzás-érzékelő (nem kötelező)",
           "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
           "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
@@ -92,6 +94,8 @@
           "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz.",
           "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
           "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
           "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli.",
           "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
           "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
@@ -285,6 +289,8 @@
           "notify_entity": "Értesítendő telefon",
           "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
           "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
           "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
           "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
           "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
           "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "Mértékegységek",
           "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
           "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
           "solar_entity": "Napsugárzás-érzékelő (nem kötelező)",
           "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
           "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
@@ -452,6 +462,8 @@
           "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz.",
           "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
           "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
           "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli.",
           "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
           "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
@@ -667,6 +679,7 @@
           "notify_entity": "A terület telefonjának használata",
           "humidity_entity": "A terület páratartalom-érzékelőjének használata",
           "wind_entity": "A terület szélérzékelőjének használata",
+          "rain_sensor_entity": "A terület esőérzékelőjének használata",
           "solar_entity": "A terület napsugárzás-érzékelőjének használata"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "Jelölje be, ha a terület telefonjára szeretne küldeni a zóna sajátja helyett.",
           "humidity_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület páratartalom-érzékelőjét szeretné használni.",
           "wind_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület szélérzékelőjét szeretné használni.",
+          "rain_sensor_entity": "Jelölje be, hogy a zóna saját érzékelője helyett a terület esőérzékelőjét használja.",
           "solar_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület napsugárzás-érzékelőjét szeretné használni."
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "Értesítendő telefon",
           "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
           "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
           "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
           "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
           "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
           "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "Értesítendő telefon",
           "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
           "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
           "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
           "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
           "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
           "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Időtartalék átfolyás módban"
+      },
+      "wind_hold_kmh": {
+        "name": "Szélhatár"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: az esőérzékelő megakadt",
+      "description": "A(z) {zone} zóna {entity} esőérzékelője több mint egy napja változatlanul nedveset jelez, ezért a ZoneFlow figyelmen kívül hagyja. Ellenőrizze az érzékelőt: lehet, hogy koszos vagy elromlott. Magától eltűnik, ha szárazat jelez."
     }
   }
 }

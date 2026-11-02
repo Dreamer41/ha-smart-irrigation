@@ -439,6 +439,15 @@
       "unknown_unit": "Zálievka končí podľa prietokomera, ale jeho jednotku nemožno čítať ako vodu: zóna zavlažuje podľa času.",
       "no_area": "Zálievka končí podľa prietokomera, ale plocha zóny nie je známa: nastavte Plochu zóny (alebo Prietok zóny), aby sa dali milimetre previesť na litre.",
       "shared_meter": "Zálievka končí podľa prietokomera, ale ten zdieľa zóna na inom čerpadle, ktorá môže zavlažovať súčasne: zóna zavlažuje podľa času."
+    },
+    "wind_hold": {
+      "no_source": "Limit vetra je nastavený, ale nie je senzor vetra ani entita počasia, z ktorej by sa vietor čítal, takže nikdy nič nezadrží. Pridajte jeden v Nastaveniach.",
+      "off": "Zdroj vetra je k dispozícii, ale Limit vetra je vypnutý (0). Nastavte limit, aby postrekovač pri silnom vetre čakal."
+    },
+    "rain_sensor": {
+      "ok": "Senzor dažďa {entity} hlási.",
+      "fail": "Senzor dažďa {entity} nie je dostupný. Kým sa nevráti, nič nezadržiava.",
+      "stuck": "Senzor dažďa {entity} hlási mokro viac než deň bez zmeny, preto ho ZoneFlow ignoruje. Skontrolujte senzor."
     }
   },
   "why": {

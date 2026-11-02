@@ -439,6 +439,15 @@
       "unknown_unit": "Zálivka končí podle průtokoměru, ale jeho jednotku nelze číst jako vodu: zóna zavlažuje podle času.",
       "no_area": "Zálivka končí podle průtokoměru, ale plocha zóny není známa: nastavte Plochu zóny (nebo Průtok zóny), aby šlo milimetry převést na litry.",
       "shared_meter": "Zálivka končí podle průtokoměru, ale ten sdílí zóna na jiném čerpadle, která může zavlažovat současně: zóna zavlažuje podle času."
+    },
+    "wind_hold": {
+      "no_source": "Limit větru je nastaven, ale není senzor větru ani entita počasí, ze které by se vítr četl, takže nikdy nic nezadrží. Přidejte jeden v Nastavení.",
+      "off": "Zdroj větru je k dispozici, ale Limit větru je vypnutý (0). Nastavte limit, aby postřikovač za silného větru čekal."
+    },
+    "rain_sensor": {
+      "ok": "Srážkový senzor {entity} hlásí.",
+      "fail": "Srážkový senzor {entity} není dostupný. Dokud se nevrátí, nic nezadržuje.",
+      "stuck": "Srážkový senzor {entity} hlásí mokro déle než den beze změny, proto ho ZoneFlow ignoruje. Zkontrolujte senzor."
     }
   },
   "why": {

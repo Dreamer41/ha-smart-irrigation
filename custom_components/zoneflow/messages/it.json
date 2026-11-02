@@ -439,6 +439,15 @@
       "unknown_unit": "L'irrigazione termina in base al flussometro, ma la sua unità non si può leggere come acqua: la zona irriga a tempo.",
       "no_area": "L'irrigazione termina in base al flussometro, ma la superficie della zona non è nota: imposta la Superficie della zona (o la Portata della zona) per convertire i millimetri in litri.",
       "shared_meter": "L'irrigazione termina in base al flussometro, ma è condiviso con una zona di un'altra pompa che può irrigare insieme: la zona irriga a tempo."
+    },
+    "wind_hold": {
+      "no_source": "Il limite del vento è impostato, ma non c'è un sensore del vento né un'entità meteo da cui leggerlo, quindi non trattiene mai nulla. Aggiungine uno in Configura.",
+      "off": "È disponibile una fonte del vento, ma il Limite del vento è disattivato (0). Imposta un limite così lo sprinkler attende con vento forte."
+    },
+    "rain_sensor": {
+      "ok": "Il sensore di pioggia {entity} risponde.",
+      "fail": "Il sensore di pioggia {entity} non è disponibile. Finché non torna, non trattiene nulla.",
+      "stuck": "Il sensore di pioggia {entity} segnala bagnato da oltre un giorno senza cambiare, quindi ZoneFlow lo ignora. Controlla il sensore."
     }
   },
   "why": {

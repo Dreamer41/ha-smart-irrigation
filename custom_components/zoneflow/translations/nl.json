@@ -55,6 +55,8 @@
           "unit_system": "Eenheden",
           "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
           "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
           "solar_entity": "Zonnestralingssensor (optioneel)",
           "wind_exposure": "Wind op deze plek (zonder windsensor)",
           "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
@@ -92,6 +94,8 @@
           "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt.",
           "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
           "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
           "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag.",
           "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
           "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
@@ -285,6 +289,8 @@
           "notify_entity": "Telefoon voor meldingen",
           "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
           "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
           "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
           "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
           "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
           "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "Eenheden",
           "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
           "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
           "solar_entity": "Zonnestralingssensor (optioneel)",
           "wind_exposure": "Wind op deze plek (zonder windsensor)",
           "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
@@ -452,6 +462,8 @@
           "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt.",
           "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
           "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
           "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag.",
           "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
           "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
@@ -667,6 +679,7 @@
           "notify_entity": "Gebruik de telefoon van het gebied",
           "humidity_entity": "Vochtigheidssensor van het gebied gebruiken",
           "wind_entity": "Windsensor van het gebied gebruiken",
+          "rain_sensor_entity": "Regensensor van het gebied gebruiken",
           "solar_entity": "Zonnesensor van het gebied gebruiken"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "Vink aan om naar de telefoon van het gebied te sturen in plaats van de eigen telefoon van deze zone.",
           "humidity_entity": "Vink aan om de vochtigheidssensor van het gebied te gebruiken in plaats van die van deze zone.",
           "wind_entity": "Vink aan om de windsensor van het gebied te gebruiken in plaats van die van deze zone.",
+          "rain_sensor_entity": "Vink aan om de regensensor van het gebied te gebruiken in plaats van die van de zone zelf.",
           "solar_entity": "Vink aan om de zonnesensor van het gebied te gebruiken in plaats van die van deze zone."
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "Telefoon voor meldingen",
           "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
           "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
           "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
           "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
           "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
           "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "Telefoon voor meldingen",
           "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
           "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
           "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
           "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
           "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
           "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Tijdmarge in watermetermodus"
+      },
+      "wind_hold_kmh": {
+        "name": "Windlimiet"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: regensensor loopt vast",
+      "description": "De regensensor {entity} van zone {zone} meldt al meer dan een dag onveranderd nat, dus ZoneFlow negeert hem. Controleer de sensor: hij kan vuil of kapot zijn. Dit verdwijnt vanzelf zodra hij droog meldt."
     }
   }
 }

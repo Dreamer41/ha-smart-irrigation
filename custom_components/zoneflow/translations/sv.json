@@ -55,6 +55,8 @@
           "unit_system": "Enheter",
           "humidity_entity": "Utomhusfuktighetssensor (valfri)",
           "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
           "solar_entity": "Sensor för solstrålning (valfri)",
           "wind_exposure": "Vind på platsen (utan vindsensor)",
           "climate_dryness": "Klimat (utan fuktsensor)",
@@ -92,6 +94,8 @@
           "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar.",
           "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
           "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
           "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann.",
           "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
           "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
@@ -285,6 +289,8 @@
           "notify_entity": "Telefon för avisering",
           "humidity_entity": "Utomhusfuktighetssensor (valfri)",
           "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
           "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
           "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
           "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
           "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "Enheter",
           "humidity_entity": "Utomhusfuktighetssensor (valfri)",
           "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
           "solar_entity": "Sensor för solstrålning (valfri)",
           "wind_exposure": "Vind på platsen (utan vindsensor)",
           "climate_dryness": "Klimat (utan fuktsensor)",
@@ -452,6 +462,8 @@
           "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar.",
           "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
           "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
           "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann.",
           "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
           "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
@@ -667,6 +679,7 @@
           "notify_entity": "Använd områdets telefon",
           "humidity_entity": "Använd områdets fuktsensor",
           "wind_entity": "Använd områdets vindsensor",
+          "rain_sensor_entity": "Använd områdets regnsensor",
           "solar_entity": "Använd områdets solsensor"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "Markera för att skicka till områdets telefon istället för den här zonens egna.",
           "humidity_entity": "Kryssa i för att använda områdets fuktsensor i stället för zonens egen.",
           "wind_entity": "Kryssa i för att använda områdets vindsensor i stället för zonens egen.",
+          "rain_sensor_entity": "Kryssa i för att använda områdets regnsensor i stället för zonens egen.",
           "solar_entity": "Kryssa i för att använda områdets solsensor i stället för zonens egen."
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "Telefon för avisering",
           "humidity_entity": "Utomhusfuktighetssensor (valfri)",
           "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
           "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
           "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
           "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
           "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "Telefon för avisering",
           "humidity_entity": "Utomhusfuktighetssensor (valfri)",
           "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
           "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
           "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
           "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
           "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Tidsmarginal i flödesläge"
+      },
+      "wind_hold_kmh": {
+        "name": "Vindgräns"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: regnsensor har fastnat",
+      "description": "Regnsensorn {entity} i zon {zone} har visat blött i över ett dygn utan ändring, så ZoneFlow ignorerar den. Kontrollera sensorn: den kan vara smutsig eller trasig. Det försvinner av sig självt när den visar torrt."
     }
   }
 }

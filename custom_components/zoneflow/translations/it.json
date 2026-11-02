@@ -55,6 +55,8 @@
           "unit_system": "Unità di misura",
           "humidity_entity": "Sensore di umidità esterna (facoltativo)",
           "wind_entity": "Sensore di velocità del vento (facoltativo)",
+          "rain_sensor_entity": "Sensore di pioggia (facoltativo)",
+          "rain_sensor_inverted": "Il sensore è acceso quando è asciutto",
           "solar_entity": "Sensore di radiazione solare (facoltativo)",
           "wind_exposure": "Vento in questo punto (senza sensore di vento)",
           "climate_dryness": "Clima (senza sensore di umidità)",
@@ -92,6 +94,8 @@
           "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà.",
           "humidity_entity": "Umidità relativa all'esterno. Fa seguire alla stima FAO-56 i giorni secchi e umidi.",
           "wind_entity": "Velocità del vento all'esterno. I giorni ventosi asciugano le piante più in fretta; senza sensore si usa un vento tipico del luogo.",
+          "rain_sensor_entity": "Un sensore bagnato/asciutto (acceso = bagnato). Finché segnala bagnato, un'irrigazione dovuta attende e ricontrolla ogni ora; premere Irriga ora irriga comunque.",
+          "rain_sensor_inverted": "Spunta se il sensore è acceso con l'asciutto e spento con il bagnato.",
           "solar_entity": "Luce solare in W/m². Senza sensore, il sole è stimato dall'escursione termica del giorno.",
           "wind_exposure": "Usato se non c'è un sensore di vento né il vento del meteo: riparato, aperto o esposto.",
           "climate_dryness": "Usato se non c'è una lettura di umidità: umido o secco (zone aride e semiaride).",
@@ -285,6 +289,8 @@
           "notify_entity": "Telefono per notifiche",
           "humidity_entity": "Sensore di umidità esterna (facoltativo)",
           "wind_entity": "Sensore di velocità del vento (facoltativo)",
+          "rain_sensor_entity": "Sensore di pioggia (facoltativo)",
+          "rain_sensor_inverted": "Il sensore è acceso quando è asciutto",
           "solar_entity": "Sensore di radiazione solare (facoltativo)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura.",
           "humidity_entity": "Umidità relativa all'esterno. Fa seguire alla stima FAO-56 i giorni secchi e umidi.",
           "wind_entity": "Velocità del vento all'esterno. I giorni ventosi asciugano le piante più in fretta; senza sensore si usa un vento tipico del luogo.",
+          "rain_sensor_entity": "Un sensore bagnato/asciutto (acceso = bagnato). Finché segnala bagnato, un'irrigazione dovuta attende e ricontrolla ogni ora; premere Irriga ora irriga comunque.",
+          "rain_sensor_inverted": "Spunta se il sensore è acceso con l'asciutto e spento con il bagnato.",
           "solar_entity": "Luce solare in W/m². Senza sensore, il sole è stimato dall'escursione termica del giorno."
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "Unità di misura",
           "humidity_entity": "Sensore di umidità esterna (facoltativo)",
           "wind_entity": "Sensore di velocità del vento (facoltativo)",
+          "rain_sensor_entity": "Sensore di pioggia (facoltativo)",
+          "rain_sensor_inverted": "Il sensore è acceso quando è asciutto",
           "solar_entity": "Sensore di radiazione solare (facoltativo)",
           "wind_exposure": "Vento in questo punto (senza sensore di vento)",
           "climate_dryness": "Clima (senza sensore di umidità)",
@@ -452,6 +462,8 @@
           "unit_system": "Cosa mostra questa zona: come Home Assistant, oppure sempre il sistema metrico (mm, °C, litri) o imperiale (pollici, °F, galloni). Cambia solo ciò che vedi, mai quanta acqua dà.",
           "humidity_entity": "Umidità relativa all'esterno. Fa seguire alla stima FAO-56 i giorni secchi e umidi.",
           "wind_entity": "Velocità del vento all'esterno. I giorni ventosi asciugano le piante più in fretta; senza sensore si usa un vento tipico del luogo.",
+          "rain_sensor_entity": "Un sensore bagnato/asciutto (acceso = bagnato). Finché segnala bagnato, un'irrigazione dovuta attende e ricontrolla ogni ora; premere Irriga ora irriga comunque.",
+          "rain_sensor_inverted": "Spunta se il sensore è acceso con l'asciutto e spento con il bagnato.",
           "solar_entity": "Luce solare in W/m². Senza sensore, il sole è stimato dall'escursione termica del giorno.",
           "wind_exposure": "Usato se non c'è un sensore di vento né il vento del meteo: riparato, aperto o esposto.",
           "climate_dryness": "Usato se non c'è una lettura di umidità: umido o secco (zone aride e semiaride).",
@@ -667,6 +679,7 @@
           "notify_entity": "Usa il telefono dell'area",
           "humidity_entity": "Usa il sensore di umidità dell'area",
           "wind_entity": "Usa il sensore di vento dell'area",
+          "rain_sensor_entity": "Usa il sensore di pioggia dell'area",
           "solar_entity": "Usa il sensore solare dell'area"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "Spunta per inviare al telefono dell'area invece che a quello proprio di questa zona.",
           "humidity_entity": "Spunta per usare il sensore di umidità dell'area invece di quello proprio di questa zona.",
           "wind_entity": "Spunta per usare il sensore di vento dell'area invece di quello proprio di questa zona.",
+          "rain_sensor_entity": "Spunta per usare il sensore di pioggia dell'area invece di quello proprio della zona.",
           "solar_entity": "Spunta per usare il sensore solare dell'area invece di quello proprio di questa zona."
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "Telefono per notifiche",
           "humidity_entity": "Sensore di umidità esterna (facoltativo)",
           "wind_entity": "Sensore di velocità del vento (facoltativo)",
+          "rain_sensor_entity": "Sensore di pioggia (facoltativo)",
+          "rain_sensor_inverted": "Il sensore è acceso quando è asciutto",
           "solar_entity": "Sensore di radiazione solare (facoltativo)"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura.",
           "humidity_entity": "Umidità relativa all'esterno. Fa seguire alla stima FAO-56 i giorni secchi e umidi.",
           "wind_entity": "Velocità del vento all'esterno. I giorni ventosi asciugano le piante più in fretta; senza sensore si usa un vento tipico del luogo.",
+          "rain_sensor_entity": "Un sensore bagnato/asciutto (acceso = bagnato). Finché segnala bagnato, un'irrigazione dovuta attende e ricontrolla ogni ora; premere Irriga ora irriga comunque.",
+          "rain_sensor_inverted": "Spunta se il sensore è acceso con l'asciutto e spento con il bagnato.",
           "solar_entity": "Luce solare in W/m². Senza sensore, il sole è stimato dall'escursione termica del giorno."
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "Telefono per notifiche",
           "humidity_entity": "Sensore di umidità esterna (facoltativo)",
           "wind_entity": "Sensore di velocità del vento (facoltativo)",
+          "rain_sensor_entity": "Sensore di pioggia (facoltativo)",
+          "rain_sensor_inverted": "Il sensore è acceso quando è asciutto",
           "solar_entity": "Sensore di radiazione solare (facoltativo)"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "Cosa riporta il sensore del pluviometro: un contatore a scatti, la pioggia totale, l'intensità di pioggia o la pioggia dall'ultima lettura.",
           "humidity_entity": "Umidità relativa all'esterno. Fa seguire alla stima FAO-56 i giorni secchi e umidi.",
           "wind_entity": "Velocità del vento all'esterno. I giorni ventosi asciugano le piante più in fretta; senza sensore si usa un vento tipico del luogo.",
+          "rain_sensor_entity": "Un sensore bagnato/asciutto (acceso = bagnato). Finché segnala bagnato, un'irrigazione dovuta attende e ricontrolla ogni ora; premere Irriga ora irriga comunque.",
+          "rain_sensor_inverted": "Spunta se il sensore è acceso con l'asciutto e spento con il bagnato.",
           "solar_entity": "Luce solare in W/m². Senza sensore, il sole è stimato dall'escursione termica del giorno."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Margine di tempo in modalità flusso"
+      },
+      "wind_hold_kmh": {
+        "name": "Limite del vento"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: sensore di pioggia bloccato",
+      "description": "Il sensore di pioggia {entity} della zona {zone} segnala bagnato da oltre un giorno senza cambiare, quindi ZoneFlow lo ignora. Controlla il sensore: può essere sporco o guasto. Sparisce da solo quando segnala asciutto."
     }
   }
 }

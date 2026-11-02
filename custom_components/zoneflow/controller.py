@@ -63,8 +63,13 @@ from .const import (
     GREENHOUSE_NUMBERS,
     RAIN_HISTORY_DEPTH_DAYS,
     CONF_HUMIDITY_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
+    CONF_RAIN_SENSOR_INVERTED,
     CONF_SOLAR_ENTITY,
     CONF_WIND_ENTITY,
+    RAIN_SENSOR_STUCK_SECONDS,
+    WIND_HOLD_SEED_KMH,
+    WIND_MAX_AGE_SECONDS,
     ET0_HISTORY_DAYS,
     FAO56_OFFER_DAYS,
     CONF_CLIMATE_DRYNESS,
@@ -917,6 +922,9 @@ class ZoneFlowController:
         entity = self.numbers.get("wetted_area_pct")
         if state.wetted_method is not None and entity is not None:
             await entity.async_set_metric_value(WETTED_SHARE_BY_METHOD.get(method, 100.0))
+        wind = self.numbers.get("wind_hold_kmh")
+        if state.wetted_method is not None and wind is not None and method in WIND_HOLD_SEED_KMH and not self.number("wind_hold_kmh"):
+            await wind.async_set_metric_value(WIND_HOLD_SEED_KMH[method])  # never over a limit already chosen
         state.wetted_method = method
         await self.store.async_save()
 
@@ -955,6 +963,20 @@ class ZoneFlowController:
     @property
     def wind_entity(self) -> str | None:
         return self._area_value(CONF_WIND_ENTITY) if self.is_outdoor else None  # a roof: near still air
+
+    @property
+    def rain_sensor_entity(self) -> str | None:
+        """A binary rain sensor (1.8), outdoors only: the zone's own, else its area's."""
+        return self._area_value(CONF_RAIN_SENSOR_ENTITY) if self.is_outdoor else None
+
+    @property
+    def rain_sensor_inverted(self) -> bool:
+        """The sensor reads on = dry. The flag belongs with the sensor: the zone's own sensor
+        takes the zone's flag, the area's takes the area's."""
+        if self._own_value(CONF_RAIN_SENSOR_ENTITY):
+            return bool(self._own_value(CONF_RAIN_SENSOR_INVERTED))
+        area = self.area
+        return bool(area.option(CONF_RAIN_SENSOR_INVERTED)) if area is not None else False
 
     @property
     def solar_entity(self) -> str | None:
@@ -2414,13 +2436,63 @@ class ZoneFlowController:
                 return "wind", wind
         return None
 
+    def rain_sensor_wet(self) -> bool | None:
+        """True while the rain sensor reads wet, False dry, None when there is no sensor or it can't
+        be trusted: unavailable, not an on/off state, or wet for a day without a change (stuck)."""
+        entity = self.rain_sensor_entity
+        state = self.hass.states.get(entity) if entity else None
+        if state is None or state.state not in ("on", "off"):
+            return None
+        wet = (state.state == "on") != self.rain_sensor_inverted
+        if wet and (dt_util.utcnow() - state.last_changed).total_seconds() > RAIN_SENSOR_STUCK_SECONDS:
+            return None
+        return wet
+
+    def rain_sensor_stuck(self) -> bool:
+        """The sensor has read wet for more than a day with no change (a Repairs notice)."""
+        entity = self.rain_sensor_entity
+        state = self.hass.states.get(entity) if entity else None
+        if state is None or state.state not in ("on", "off"):
+            return False
+        wet = (state.state == "on") != self.rain_sensor_inverted
+        return wet and (dt_util.utcnow() - state.last_changed).total_seconds() > RAIN_SENSOR_STUCK_SECONDS
+
     def _rain_sensor_hold(self) -> dict[str, Any] | None:
-        """A binary rain sensor reads wet (Part R). None: no hold."""
-        return None
+        """The rain sensor reads wet: the cycle waits for it to dry (an unreadable sensor never holds)."""
+        if not self.rain_sensor_wet():
+            return None
+        state = self.hass.states.get(self.rain_sensor_entity)
+        return {"sensor": (state.name if state is not None else None) or self.rain_sensor_entity}
+
+    def _wind_now_kmh(self) -> float | None:
+        """The wind in km/h now: the wind sensor, else the weather entity's current wind. None when
+        there is none, or it is older than WIND_MAX_AGE_SECONDS (a stuck reading never holds)."""
+        if self.wind_entity:
+            state, key = self.hass.states.get(self.wind_entity), "wind"
+        elif self.weather_entity:
+            state, key = self.hass.states.get(self.weather_entity), "weather_wind"
+        else:
+            return None
+        speed = self._et0_reading(key, state)
+        if speed is None:
+            return None
+        seen = getattr(state, "last_reported", None) or state.last_updated
+        if (dt_util.utcnow() - seen).total_seconds() > WIND_MAX_AGE_SECONDS:
+            return None
+        return speed * 3.6
 
     def _wind_hold(self) -> dict[str, Any] | None:
-        """A sprinkler zone in too much wind (Part W). None: no hold."""
-        return None
+        """A sprinkler zone waits while the wind is above its limit: the spray would drift and the
+        water not land where it is meant to. Drip and soaker lines don't care; 0 is off."""
+        if self.irrigation_method not in WIND_HOLD_SEED_KMH or not self.is_outdoor:
+            return None
+        limit = self.number("wind_hold_kmh")
+        if limit <= 0:
+            return None
+        wind = self._wind_now_kmh()
+        if wind is None or wind <= limit:
+            return None
+        return {"wind_kmh": round(wind, 1), "limit_kmh": round(limit, 1)}
 
     def _hold_phone_params(self, reason: str, numbers: dict[str, Any]) -> dict[str, Any]:
         if reason == "frost":

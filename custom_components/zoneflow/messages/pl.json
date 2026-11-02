@@ -439,6 +439,15 @@
       "unknown_unit": "Podlewanie kończy się według przepływomierza, ale jego jednostki nie da się odczytać jako wody: strefa podlewa według czasu.",
       "no_area": "Podlewanie kończy się według przepływomierza, ale powierzchnia strefy jest nieznana: ustaw Powierzchnię strefy (lub Przepływ strefy), aby przeliczyć milimetry na litry.",
       "shared_meter": "Podlewanie kończy się według przepływomierza, ale dzieli go strefa na innej pompie, która może podlewać jednocześnie: strefa podlewa według czasu."
+    },
+    "wind_hold": {
+      "no_source": "Limit wiatru jest ustawiony, ale nie ma czujnika wiatru ani encji pogody, z której można go odczytać, więc nigdy nic nie wstrzyma. Dodaj jeden w Konfiguracji.",
+      "off": "Jest źródło wiatru, ale Limit wiatru jest wyłączony (0). Ustaw limit, aby zraszacz czekał przy silnym wietrze."
+    },
+    "rain_sensor": {
+      "ok": "Czujnik deszczu {entity} odpowiada.",
+      "fail": "Czujnik deszczu {entity} jest niedostępny. Dopóki nie wróci, niczego nie wstrzymuje.",
+      "stuck": "Czujnik deszczu {entity} pokazuje mokro od ponad doby bez zmian, więc ZoneFlow go pomija. Sprawdź czujnik."
     }
   },
   "why": {

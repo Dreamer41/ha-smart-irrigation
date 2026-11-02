@@ -115,6 +115,14 @@ CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
 CONF_HUMIDITY_ENTITY = "humidity_entity"  # 1.8, optional: outdoor relative humidity (%) for FAO-56
 CONF_WIND_ENTITY = "wind_entity"  # 1.8, optional: wind speed for FAO-56
 CONF_SOLAR_ENTITY = "solar_entity"  # 1.8, optional: solar irradiance (W/m2) for FAO-56
+# 1.8, optional: a binary rain sensor (on = wet). A wet one holds the cycles of the zones that use it;
+# `inverted` is for sensors that read on = dry. The flag belongs with the sensor (the zone's, else the area's).
+CONF_RAIN_SENSOR_ENTITY = "rain_sensor_entity"
+CONF_RAIN_SENSOR_INVERTED = "rain_sensor_inverted"
+RAIN_SENSOR_STUCK_SECONDS = 24 * 3600  # wet for a day with no change: stuck, not rain
+# Wind hold (1.8): sprinklers only. A wind reading older than this is not trusted.
+WIND_MAX_AGE_SECONDS = 1800
+WIND_HOLD_SEED_KMH = {"sprinkler": 20.0, "micro_sprinkler": 25.0}  # a new zone's limit, by method
 CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
 # FAO-56 site options (1.8): what an input without a sensor falls back on. Set once with the zone.
 CONF_WIND_EXPOSURE = "wind_exposure"  # no wind reading: the typical wind at 2 m
@@ -573,6 +581,8 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # below this (needs a temperature sensor). At its lowest it's off. See
     # controller._frost_blocks.
     "frost_guard_temp": ("Frost Guard Temperature", -10.0, 10.0, 0.5, "°C"),
+    # Wind hold (1.8, sprinkler zones): a due cycle waits while the wind is above this. 0 = off.
+    "wind_hold_kmh": ("Wind Limit", 0.0, 60.0, 1.0, "km/h"),
     # --- 1.6 greenhouse / indoor climate (only created for those zones) ---
     "heat_temp": ("Heater On Below", 0.0, 30.0, 0.5, "°C"),
     "vent_temp": ("Vents Open At", 10.0, 40.0, 0.5, "°C"),
@@ -671,6 +681,7 @@ NUMBER_DEFAULTS: dict[str, float] = {
     "mulch_et_adjustment_pct": 20.0,
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
+    "wind_hold_kmh": 0.0,
     "heat_temp": 10.0,
     "vent_temp": 25.0,
     "fan_temp": 28.0,

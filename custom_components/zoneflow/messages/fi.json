@@ -439,6 +439,15 @@
       "unknown_unit": "Kastelu päättyy virtausmittarin mukaan, mutta mittarin yksikköä ei voi lukea vedeksi: vyöhyke kastelee ajan mukaan.",
       "no_area": "Kastelu päättyy virtausmittarin mukaan, mutta vyöhykkeen pinta-alaa ei tiedetä: aseta Vyöhykkeen pinta-ala (tai Vyöhykkeen virtaus), jotta millimetrit voi muuttaa litroiksi.",
       "shared_meter": "Kastelu päättyy virtausmittarin mukaan, mutta mittari on yhteinen toisen pumpun vyöhykkeen kanssa, joka voi kastella samaan aikaan: vyöhyke kastelee ajan mukaan."
+    },
+    "wind_hold": {
+      "no_source": "Tuuliraja on asetettu, mutta tuulen lukemiseen ei ole tuuli-anturia eikä sääentiteettiä, joten se ei koskaan pidätä mitään. Lisää sellainen Määritykset-kohdassa.",
+      "off": "Tuulilähde on käytettävissä, mutta Tuuliraja on pois (0). Aseta raja, jotta sadetin odottaa kovassa tuulessa."
+    },
+    "rain_sensor": {
+      "ok": "Sadeanturi {entity} raportoi.",
+      "fail": "Sadeanturi {entity} ei ole käytettävissä. Kunnes se palaa, se ei pidätä mitään.",
+      "stuck": "Sadeanturi {entity} on näyttänyt märkää yli vuorokauden muuttumatta, joten ZoneFlow ohittaa sen. Tarkista anturi."
     }
   },
   "why": {

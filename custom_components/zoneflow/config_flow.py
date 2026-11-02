@@ -32,8 +32,11 @@ from .const import (
     CONF_CLIMATE_DRYNESS,
     CONF_COASTAL,
     CONF_HUMIDITY_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
+    CONF_RAIN_SENSOR_INVERTED,
     CONF_SOLAR_ENTITY,
     CONF_WIND_ENTITY,
+    WIND_HOLD_SEED_KMH,
     CONF_WIND_EXPOSURE,
     CONF_WIND_SENSOR_HEIGHT_M,
     CLIMATE_DRYNESS_OPTIONS,
@@ -154,6 +157,7 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_WIND_ENTITY,
     CONF_SOLAR_ENTITY,
     CONF_MASTER_VALVE_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
 )
 
 
@@ -249,6 +253,7 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     humidity_key = _optional_entity_key(defaults, CONF_HUMIDITY_ENTITY)
     wind_key = _optional_entity_key(defaults, CONF_WIND_ENTITY)
     solar_key = _optional_entity_key(defaults, CONF_SOLAR_ENTITY)
+    rain_sensor_key = _optional_entity_key(defaults, CONF_RAIN_SENSOR_ENTITY)
 
     return vol.Schema(
         {
@@ -281,6 +286,8 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             # FAO-56 (1.8): the climate readings, each optional, and what each falls back on.
             humidity_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="humidity")),
             wind_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="wind_speed")),
+            rain_sensor_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="binary_sensor")),
+            vol.Optional(CONF_RAIN_SENSOR_INVERTED, default=bool(defaults.get(CONF_RAIN_SENSOR_INVERTED))): bool,
             solar_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="irradiance")),
             vol.Optional(CONF_WIND_EXPOSURE, default=defaults.get(CONF_WIND_EXPOSURE, DEFAULT_WIND_EXPOSURE)): selector.SelectSelector(
                 selector.SelectSelectorConfig(options=WIND_EXPOSURE_OPTIONS, translation_key="wind_exposure")
@@ -428,6 +435,8 @@ _WATERING_LEAVES_OUT = {
     CONF_HUMIDITY_ENTITY,
     CONF_WIND_ENTITY,
     CONF_SOLAR_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
+    CONF_RAIN_SENSOR_INVERTED,
     CONF_WIND_EXPOSURE,
     CONF_CLIMATE_DRYNESS,
     CONF_COASTAL,
@@ -534,6 +543,8 @@ def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
         # 1.8: the root zone's soil and wetted share.
         "soil_holding_mm_per_m": SOIL_HOLDING_MM_PER_M.get(soil, SOIL_HOLDING_MM_PER_M[DEFAULT_SOIL_TYPE]),
         "wetted_area_pct": WETTED_SHARE_BY_METHOD.get(method, 100.0),
+        # 1.8: a sprinkler's wind limit (a new zone only; an older sprinkler zone keeps it off).
+        **({"wind_hold_kmh": WIND_HOLD_SEED_KMH[method]} if method in WIND_HOLD_SEED_KMH else {}),
     }
 
 
@@ -631,6 +642,10 @@ def _area_schema(defaults: dict[str, Any], *, with_name: bool = True) -> vol.Sch
     fields[_optional_entity_key(defaults, CONF_SOLAR_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="sensor", device_class="irradiance")
     )
+    fields[_optional_entity_key(defaults, CONF_RAIN_SENSOR_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="binary_sensor")
+    )
+    fields[vol.Optional(CONF_RAIN_SENSOR_INVERTED, default=bool(defaults.get(CONF_RAIN_SENSOR_INVERTED)))] = bool
     fields[_optional_entity_key(defaults, CONF_NOTIFY_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="notify")
     )

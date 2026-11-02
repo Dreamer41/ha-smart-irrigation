@@ -14,7 +14,7 @@ from __future__ import annotations
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from .const import DELIVERY_FLOW, GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF, RAIN_SOURCE_TIPS
+from .const import DELIVERY_FLOW, GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF, RAIN_SOURCE_TIPS, WIND_HOLD_SEED_KMH
 
 # (platform, translation key) of each group, and when it has nothing to do.
 FORECAST = {
@@ -68,6 +68,7 @@ TEMPERATURE = {
     ("select", "sun_exposure"),
 }
 FROST = {("number", "frost_guard_temp")}
+WIND_HOLD = {("number", "wind_hold_kmh")}
 # 1.8: Root Depth is the switch and stays visible; the rest does nothing while it is 0.
 ROOT_ZONE = {
     ("number", "soil_holding_mm_per_m"),
@@ -195,6 +196,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= TEMPERATURE
     if not controller.outdoor_temp_entity and not controller.weather_entity:
         hidden |= FROST  # nothing to read the temperature from
+    if not controller.is_outdoor or controller.irrigation_method not in WIND_HOLD_SEED_KMH:
+        hidden |= WIND_HOLD  # only a sprinkler's spray drifts
     if not controller.notify_entity:
         hidden |= NOTIFY
     if not controller.flow_meter_entity:

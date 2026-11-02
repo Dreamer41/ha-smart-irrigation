@@ -55,6 +55,8 @@
           "unit_system": "Jednotky",
           "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
           "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "rain_sensor_entity": "Senzor dažďa (voliteľné)",
+          "rain_sensor_inverted": "Senzor je zapnutý, keď je sucho",
           "solar_entity": "Senzor slnečného žiarenia (voliteľný)",
           "wind_exposure": "Vietor na tomto mieste (bez senzora vetra)",
           "climate_dryness": "Klíma (bez senzora vlhkosti)",
@@ -92,6 +94,8 @@
           "unit_system": "Čo táto zóna zobrazuje: podľa Home Assistant, alebo vždy metrické (mm, °C, litre) či imperiálne (palce, °F, galóny). Mení len zobrazenie, nikdy nie množstvo vody.",
           "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
           "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "rain_sensor_entity": "Senzor mokro/sucho (zapnuté = mokro). Kým hlási mokro, plánovaná zálievka čaká a každú hodinu sa kontroluje znova; stlačenie Spustiť teraz zalieva aj tak.",
+          "rain_sensor_inverted": "Zaškrtnite, ak je senzor za sucha zapnutý a za mokra vypnutý.",
           "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt.",
           "wind_exposure": "Použije sa, keď nie je senzor vetra ani vietor z predpovede: závetrie, otvorené alebo vystavené.",
           "climate_dryness": "Použije sa, keď nie je údaj o vlhkosti: vlhké, alebo suché (aridné a semiaridné oblasti).",
@@ -285,6 +289,8 @@
           "notify_entity": "Telefón na upozornenia",
           "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
           "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "rain_sensor_entity": "Senzor dažďa (voliteľné)",
+          "rain_sensor_inverted": "Senzor je zapnutý, keď je sucho",
           "solar_entity": "Senzor slnečného žiarenia (voliteľný)"
         },
         "data_description": {
@@ -297,6 +303,8 @@
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania.",
           "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
           "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "rain_sensor_entity": "Senzor mokro/sucho (zapnuté = mokro). Kým hlási mokro, plánovaná zálievka čaká a každú hodinu sa kontroluje znova; stlačenie Spustiť teraz zalieva aj tak.",
+          "rain_sensor_inverted": "Zaškrtnite, ak je senzor za sucha zapnutý a za mokra vypnutý.",
           "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt."
         }
       },
@@ -415,6 +423,8 @@
           "unit_system": "Jednotky",
           "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
           "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "rain_sensor_entity": "Senzor dažďa (voliteľné)",
+          "rain_sensor_inverted": "Senzor je zapnutý, keď je sucho",
           "solar_entity": "Senzor slnečného žiarenia (voliteľný)",
           "wind_exposure": "Vietor na tomto mieste (bez senzora vetra)",
           "climate_dryness": "Klíma (bez senzora vlhkosti)",
@@ -452,6 +462,8 @@
           "unit_system": "Čo táto zóna zobrazuje: podľa Home Assistant, alebo vždy metrické (mm, °C, litre) či imperiálne (palce, °F, galóny). Mení len zobrazenie, nikdy nie množstvo vody.",
           "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
           "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "rain_sensor_entity": "Senzor mokro/sucho (zapnuté = mokro). Kým hlási mokro, plánovaná zálievka čaká a každú hodinu sa kontroluje znova; stlačenie Spustiť teraz zalieva aj tak.",
+          "rain_sensor_inverted": "Zaškrtnite, ak je senzor za sucha zapnutý a za mokra vypnutý.",
           "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt.",
           "wind_exposure": "Použije sa, keď nie je senzor vetra ani vietor z predpovede: závetrie, otvorené alebo vystavené.",
           "climate_dryness": "Použije sa, keď nie je údaj o vlhkosti: vlhké, alebo suché (aridné a semiaridné oblasti).",
@@ -667,6 +679,7 @@
           "notify_entity": "Použiť telefón oblasti",
           "humidity_entity": "Použiť senzor vlhkosti oblasti",
           "wind_entity": "Použiť senzor vetra oblasti",
+          "rain_sensor_entity": "Použiť senzor dažďa oblasti",
           "solar_entity": "Použiť senzor slnka oblasti"
         },
         "data_description": {
@@ -676,6 +689,7 @@
           "notify_entity": "Zaškrtnite pre odosielanie na telefón oblasti namiesto vlastného telefónu tejto zóny.",
           "humidity_entity": "Zaškrtnite, ak chcete použiť senzor vlhkosti oblasti namiesto vlastného senzora tejto zóny.",
           "wind_entity": "Zaškrtnite, ak chcete použiť senzor vetra oblasti namiesto vlastného senzora tejto zóny.",
+          "rain_sensor_entity": "Zaškrtnutím použijete senzor dažďa oblasti namiesto vlastného senzora zóny.",
           "solar_entity": "Zaškrtnite, ak chcete použiť senzor slnka oblasti namiesto vlastného senzora tejto zóny."
         }
       },
@@ -692,6 +706,8 @@
           "notify_entity": "Telefón na upozornenia",
           "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
           "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "rain_sensor_entity": "Senzor dažďa (voliteľné)",
+          "rain_sensor_inverted": "Senzor je zapnutý, keď je sucho",
           "solar_entity": "Senzor slnečného žiarenia (voliteľný)"
         },
         "data_description": {
@@ -704,6 +720,8 @@
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania.",
           "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
           "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "rain_sensor_entity": "Senzor mokro/sucho (zapnuté = mokro). Kým hlási mokro, plánovaná zálievka čaká a každú hodinu sa kontroluje znova; stlačenie Spustiť teraz zalieva aj tak.",
+          "rain_sensor_inverted": "Zaškrtnite, ak je senzor za sucha zapnutý a za mokra vypnutý.",
           "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt."
         }
       },
@@ -720,6 +738,8 @@
           "notify_entity": "Telefón na upozornenia",
           "humidity_entity": "Vonkajší senzor vlhkosti (voliteľný)",
           "wind_entity": "Senzor rýchlosti vetra (voliteľný)",
+          "rain_sensor_entity": "Senzor dažďa (voliteľné)",
+          "rain_sensor_inverted": "Senzor je zapnutý, keď je sucho",
           "solar_entity": "Senzor slnečného žiarenia (voliteľný)"
         },
         "data_description": {
@@ -732,6 +752,8 @@
           "rain_source_type": "Čo hlási snímač zrážkomera: počítadlo preklopení, celkové zrážky, intenzitu dažďa alebo zrážky od posledného odčítania.",
           "humidity_entity": "Relatívna vlhkosť vonku. Vďaka nej odhad FAO-56 sleduje suché a vlhké dni.",
           "wind_entity": "Rýchlosť vetra vonku. Veterné dni vysušujú rastliny rýchlejšie; bez senzora sa použije typický vietor pre dané miesto.",
+          "rain_sensor_entity": "Senzor mokro/sucho (zapnuté = mokro). Kým hlási mokro, plánovaná zálievka čaká a každú hodinu sa kontroluje znova; stlačenie Spustiť teraz zalieva aj tak.",
+          "rain_sensor_inverted": "Zaškrtnite, ak je senzor za sucha zapnutý a za mokra vypnutý.",
           "solar_entity": "Slnečné žiarenie vo W/m². Bez senzora sa slnko odhadne z denného rozpätia teplôt."
         }
       }
@@ -1130,6 +1152,9 @@
       },
       "flow_time_allowance_pct": {
         "name": "Časová rezerva režimu prietoku"
+      },
+      "wind_hold_kmh": {
+        "name": "Limit vetra"
       }
     },
     "datetime": {
@@ -2201,6 +2226,10 @@
           }
         }
       }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: senzor dažďa zaseknutý",
+      "description": "Senzor dažďa {entity} zóny {zone} hlási mokro viac než deň bez zmeny, preto ho ZoneFlow ignoruje. Skontrolujte senzor: môže byť zanesený alebo pokazený. Zmizne sám, len čo bude hlásiť sucho."
     }
   }
 }

@@ -439,6 +439,15 @@
       "unknown_unit": "Bewässerung endet nach dem Durchflussmesser, aber seine Einheit ist kein Wasser: die Zone bewässert nach Zeit.",
       "no_area": "Bewässerung endet nach dem Durchflussmesser, aber die Fläche der Zone ist nicht bekannt: Zonenfläche (oder Zonendurchfluss) einstellen, damit Millimeter in Liter umgerechnet werden können.",
       "shared_meter": "Bewässerung endet nach dem Durchflussmesser, aber er wird mit einer Zone an einer anderen Pumpe geteilt, die gleichzeitig bewässern kann: die Zone bewässert nach Zeit."
+    },
+    "wind_hold": {
+      "no_source": "Die Windgrenze ist gesetzt, aber es gibt keinen Windsensor und keine Wetter-Entität, aus der der Wind gelesen werden kann, daher hält sie nie etwas auf. Fügen Sie unter Konfigurieren eine hinzu.",
+      "off": "Eine Windquelle ist vorhanden, aber die Windgrenze ist aus (0). Legen Sie eine Grenze fest, damit der Regner bei starkem Wind wartet."
+    },
+    "rain_sensor": {
+      "ok": "Der Regensensor {entity} meldet sich.",
+      "fail": "Der Regensensor {entity} ist nicht verfügbar. Bis er zurück ist, hält er nichts auf.",
+      "stuck": "Der Regensensor {entity} meldet seit über einem Tag unverändert nass, deshalb ignoriert ZoneFlow ihn. Prüfen Sie den Sensor."
     }
   },
   "why": {

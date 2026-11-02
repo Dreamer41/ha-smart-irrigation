@@ -439,6 +439,15 @@
       "unknown_unit": "Vanning stopper etter vannmåleren, men enheten kan ikke leses som vann: sonen vanner etter tid.",
       "no_area": "Vanning stopper etter vannmåleren, men sonens areal er ukjent: sett Sonens areal (eller Sonens vannføring) så millimeter kan gjøres om til liter.",
       "shared_meter": "Vanning stopper etter vannmåleren, men måleren deles med en sone på en annen pumpe som kan vanne samtidig: sonen vanner etter tid."
+    },
+    "wind_hold": {
+      "no_source": "Vindgrensen er satt, men det finnes ingen vindsensor eller værentitet å lese vinden fra, så den holder aldri noe tilbake. Legg til en under Konfigurer.",
+      "off": "En vindkilde er tilgjengelig, men Vindgrensen er av (0). Sett en grense så sprinkleren venter i sterk vind."
+    },
+    "rain_sensor": {
+      "ok": "Regnsensoren {entity} melder seg.",
+      "fail": "Regnsensoren {entity} er ikke tilgjengelig. Til den er tilbake, holder den ikke noe tilbake.",
+      "stuck": "Regnsensoren {entity} har meldt vått i over et døgn uten endring, så ZoneFlow ignorerer den. Sjekk sensoren."
     }
   },
   "why": {
