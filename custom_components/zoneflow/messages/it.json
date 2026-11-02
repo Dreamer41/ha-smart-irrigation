@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} non ha confermato la chiusura alla fine di un'irrigazione.",
       "valve_stuck": "{valve} è rimasta aperta troppo a lungo.",
       "flow": "Il flussometro ha continuato a contare con tutte le valvole di zona chiuse.",
-      "pump_power": "La pompa ha continuato ad assorbire corrente con tutte le valvole di zona chiuse."
+      "pump_power": "La pompa ha continuato ad assorbire corrente con tutte le valvole di zona chiuse.",
+      "high_flow": "È scorsa molta più acqua di quella che prende {valve}: un tubo potrebbe essersi rotto."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test della valvola principale fallito",
       "message": "Il test mensile di {valve} ha rilevato acqua che scorreva ancora o la pompa ancora in funzione a valvola chiusa. Potrebbe non fermare l'acqua se una valvola di zona resta bloccata: controllala."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: troppa acqua",
+      "message": "{valve} è stata chiusa: scorrevano circa {rate} al minuto, molto più dei soliti {expected}. Un tubo potrebbe essersi rotto o staccato: controllalo prima della prossima irrigazione."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: portata bassa",
+      "message": "Dati {given} su {target} nel tempo consentito. Controlla un filtro intasato o la pressione bassa."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: il flussometro non conta",
+      "message": "{meter} non ha contato nulla a valvola aperta, quindi l'irrigazione è andata a tempo. Controlla il contatore."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "La valvola principale ha superato il test mensile del {when}.",
       "test_pending": "La valvola principale viene testata una volta al mese, alla fine di un'irrigazione normale.",
       "test_none": "Aggiungi un flussometro o un sensore di potenza della pompa per testare la valvola principale una volta al mese."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow non riesce a ricavare litri dall'unità di {entity} ('{unit}'). Usa un contatore che indichi un volume (L, gal, m³) o una portata (L/min, gal/min).",
+      "learned": "Le irrigazioni hanno misurato una portata di {learned}, ma l'impostazione Portata è {setting}. Aggiornala perché i tempi previsti siano giusti."
+    },
+    "flow_mode": {
+      "no_meter": "L'irrigazione termina in base al flussometro, ma la zona non ne ha uno: irriga a tempo.",
+      "meter_offline": "L'irrigazione termina in base al flussometro, ma è offline: la zona irriga a tempo finché non torna.",
+      "unknown_unit": "L'irrigazione termina in base al flussometro, ma la sua unità non si può leggere come acqua: la zona irriga a tempo.",
+      "no_area": "L'irrigazione termina in base al flussometro, ma la superficie della zona non è nota: imposta la Superficie della zona (o la Portata della zona) per convertire i millimetri in litri.",
+      "shared_meter": "L'irrigazione termina in base al flussometro, ma è condiviso con una zona di un'altra pompa che può irrigare insieme: la zona irriga a tempo."
     }
   },
   "why": {

@@ -73,6 +73,7 @@ from . import greenhouse_logic, location, visibility
 from .entity_cleanup import remove_entities
 from .const import (
     CROP_CURVE_FIXED,
+    DELIVERY_OPTIONS,
     DEMAND_MODEL_OPTIONS,
     DOMAIN,
     FERTILIZING_INTERVAL_OPTIONS,
@@ -119,6 +120,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
             ZoneFlowFertilizingIntervalSelect(entry, controller),
             ZoneFlowDemandModelSelect(entry, controller),
             ZoneFlowCropCurveSelect(entry, controller),
+            ZoneFlowDeliveryModeSelect(entry, controller),
             ZoneFlowMulchSelect(entry, controller),
             ZoneFlowSoilWetActionSelect(entry, controller),
             ZoneFlowNotificationsSelect(entry, controller),
@@ -433,6 +435,32 @@ class ZoneFlowCropCurveSelect(_Base):
         await self._controller.store.async_save()
         await visibility.async_apply(self.hass, self._entry, self._controller)
         self._controller._notify_status()
+
+
+class ZoneFlowDeliveryModeSelect(_Base):
+    """"Watering Stops On" (1.8): the planned time (as always), or the flow meter (each pulse ends when
+    its share of the litres has gone through; the planned time plus the allowance is the limit).
+    Read when a watering starts, so a change applies from the next one."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:water-pump"
+    _attr_options = DELIVERY_OPTIONS
+    _attr_translation_key = "delivery_mode"
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._entry = entry
+        self._attr_unique_id = f"{entry.entry_id}_delivery_mode"
+
+    @property
+    def current_option(self) -> str:
+        return self._controller.store.state.delivery_mode
+
+    async def async_select_option(self, option: str) -> None:
+        self._controller.store.state.delivery_mode = option
+        await self._controller.store.async_save()
+        await visibility.async_apply(self.hass, self._entry, self._controller)
+        self._controller._notify_status()  # the Longest Valve Open Time follows it
 
 
 class ZoneFlowSunExposureSelect(_Base):

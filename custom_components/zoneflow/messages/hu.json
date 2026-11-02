@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} egy öntözés végén nem jelezte, hogy bezárt.",
       "valve_stuck": "{valve} túl sokáig volt nyitva.",
       "flow": "Az átfolyásmérő tovább számolt, miközben minden zónaszelep zárva volt.",
-      "pump_power": "A szivattyú tovább vett fel áramot, miközben minden zónaszelep zárva volt."
+      "pump_power": "A szivattyú tovább vett fel áramot, miközben minden zónaszelep zárva volt.",
+      "high_flow": "Jóval több víz folyt, mint amennyit {valve} igényel: egy cső megrepedhetett."
     },
     "master_valve_test_failed": {
       "title": "🚨 A főszelep tesztje sikertelen",
       "message": "A(z) {valve} havi tesztjén zárt állapotban tovább folyt a víz vagy tovább járt a szivattyú. Ha egy zónaszelep beragad, lehet, hogy nem zár el: ellenőrizze."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: túl sok víz",
+      "message": "{valve} elzárva: percenként kb. {rate} folyt, jóval több a szokásos {expected} értéknél. Egy cső megrepedhetett vagy kilazulhatott: ellenőrizze a következő öntözés előtt."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: kevés átfolyás",
+      "message": "A megengedett idő alatt {given} ment ki a(z) {target} helyett. Ellenőrizze, nincs-e eltömődött szűrő vagy alacsony nyomás."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: az átfolyásmérő nem számol",
+      "message": "{meter} semmit sem számolt nyitott szelepnél, ezért az öntözés idő szerint ment. Ellenőrizze a mérőt."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "A főszelep átment a havi teszten ({when}).",
       "test_pending": "A főszelepet havonta egyszer teszteljük, egy szokásos öntözés végén.",
       "test_none": "Adjon hozzá átfolyásmérőt vagy szivattyúteljesítmény-érzékelőt, hogy a főszelep havonta tesztelve legyen."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow nem tud litert kiolvasni a(z) {entity} mértékegységéből ('{unit}'). Olyan mérőt használjon, amely térfogatot (L, gal, m³) vagy átfolyást (L/min, gal/min) jelez.",
+      "learned": "Az öntözések {learned} átfolyást mértek, de az Átfolyási sebesség beállítás {setting}. Frissítse, hogy a tervezett idők helyesek legyenek."
+    },
+    "flow_mode": {
+      "no_meter": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a zónának nincs átfolyásmérője: idő szerint öntöz.",
+      "meter_offline": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a mérő offline: a zóna idő szerint öntöz, amíg vissza nem tér.",
+      "unknown_unit": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a mértékegysége nem olvasható vízként: a zóna idő szerint öntöz.",
+      "no_area": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a zóna területe nem ismert: állítsa be A zóna területét (vagy a Zóna átfolyást), hogy a millimétert literre lehessen váltani.",
+      "shared_meter": "Az öntözés vége az átfolyásmérő szerint van beállítva, de a mérőt egy másik szivattyúhoz tartozó zóna is használja, amely egyszerre öntözhet: a zóna idő szerint öntöz."
     }
   },
   "why": {

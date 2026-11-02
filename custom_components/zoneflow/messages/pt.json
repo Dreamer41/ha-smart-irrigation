@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} não confirmou que fechou no fim de uma rega.",
       "valve_stuck": "{valve} esteve aberta tempo demais.",
       "flow": "O contador de caudal continuou a contar com todas as válvulas de zona fechadas.",
-      "pump_power": "A bomba continuou a consumir energia com todas as válvulas de zona fechadas."
+      "pump_power": "A bomba continuou a consumir energia com todas as válvulas de zona fechadas.",
+      "high_flow": "Correu muito mais água do que {valve} usa: um tubo pode ter rebentado."
     },
     "master_valve_test_failed": {
       "title": "🚨 Falhou o teste da válvula mestra",
       "message": "O teste mensal de {valve} detetou água ainda a correr ou a bomba ainda a trabalhar com ela fechada. Pode não cortar a água se uma válvula de zona ficar presa: verifique-a."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: água a mais",
+      "message": "{valve} foi fechada: corriam cerca de {rate} por minuto, muito mais do que os {expected} habituais. Um tubo pode ter rebentado ou soltado: verifique-o antes da próxima rega."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: caudal baixo",
+      "message": "Deu {given} de {target} no tempo permitido. Verifique se há um filtro entupido ou pressão baixa."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: contador de caudal não conta",
+      "message": "{meter} não contou nada com a válvula aberta, por isso a rega foi feita por tempo. Verifique o contador."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "A válvula mestra passou o teste mensal de {when}.",
       "test_pending": "A válvula mestra é testada uma vez por mês, no fim de uma rega normal.",
       "test_none": "Adicione um contador de caudal ou um sensor de potência da bomba para testar a válvula mestra uma vez por mês."
+    },
+    "flow_meter": {
+      "unknown_unit": "O ZoneFlow não consegue obter litros a partir da unidade de {entity} ('{unit}'). Use um contador que indique um volume (L, gal, m³) ou um caudal (L/min, gal/min).",
+      "learned": "As regas mediram um caudal de {learned}, mas a definição Caudal é {setting}. Atualize-a para os tempos previstos ficarem certos."
+    },
+    "flow_mode": {
+      "no_meter": "A rega termina pelo contador de caudal, mas a zona não tem nenhum: rega por tempo.",
+      "meter_offline": "A rega termina pelo contador de caudal, mas está offline: a zona rega por tempo até ele voltar.",
+      "unknown_unit": "A rega termina pelo contador de caudal, mas a unidade não pode ser lida como água: a zona rega por tempo.",
+      "no_area": "A rega termina pelo contador de caudal, mas a área da zona é desconhecida: defina a Área da zona (ou o Caudal da zona) para converter milímetros em litros.",
+      "shared_meter": "A rega termina pelo contador de caudal, mas este é partilhado com uma zona de outra bomba que pode regar ao mesmo tempo: a zona rega por tempo."
     }
   },
   "why": {

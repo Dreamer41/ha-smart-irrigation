@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 import homeassistant.util.dt as dt_util
 
 from . import fao56, messages, units
-from .const import NUMBER_DEFAULTS
+from .const import FLOW_LEARN_SUGGEST_RUNS, FLOW_LEARN_SUGGEST_SHARE, NUMBER_DEFAULTS
 
 # Less than this before the plant feels dry: even daily watering may let it dry out (1.8).
 ROOT_ZONE_SHALLOW_MM = 3.0
@@ -30,6 +30,32 @@ def _state(hass: HomeAssistant, entity_id: str | None):
 
 def _working(state) -> bool:
     return state is not None and state.state not in OFFLINE
+
+
+def _flow_meter_checks(controller: Any, add, hass: HomeAssistant) -> None:
+    """The flow meter (1.8): a unit that is no water, watering by the meter that can't, and a learned
+    flow rate far from the Flow Rate setting."""
+    meter = controller.flow_meter_entity
+    if not meter:
+        return
+    state = _state(hass, meter)
+    if _working(state) and controller.flow_meter_kind() is None:
+        add("flow_meter_unit", "warn", "flow_meter.unknown_unit", entity=meter,
+            unit=state.attributes.get("unit_of_measurement") or "")
+    problem = controller.flow_delivery_problem()
+    if problem not in (None, "off"):
+        add("flow_mode", "warn", f"flow_mode.{problem}")
+    state_data = controller.store.state
+    learned, setting = state_data.flow_learned_mm_per_min, controller.number("flow_rate_mm_per_min")
+    if (
+        learned and setting > 0 and state_data.flow_learned_runs >= FLOW_LEARN_SUGGEST_RUNS
+        and abs(learned - setting) / setting > FLOW_LEARN_SUGGEST_SHARE
+    ):
+        imperial = controller.imperial
+        unit = "in/h" if imperial else "mm/min"
+        add("flow_learned", "info", "flow_meter.learned",
+            learned=f"{units.to_display('flow_rate_mm_per_min', learned, imperial):.2f} {unit}",
+            setting=f"{units.to_display('flow_rate_mm_per_min', setting, imperial):.2f} {unit}")
 
 
 def _root_zone_checks(controller: Any, add) -> None:
@@ -150,6 +176,7 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("volume", "ok", "volume.ok")
         else:
             add("volume", "info", "volume.none", action="calibrate")
+        _flow_meter_checks(controller, add, hass)
 
     # The probe and the pump sensor, if there are any.
     probe = controller.soil_moisture_entity

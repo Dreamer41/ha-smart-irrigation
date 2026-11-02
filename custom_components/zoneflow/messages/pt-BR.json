@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} não confirmou que fechou no fim de uma rega.",
       "valve_stuck": "{valve} ficou aberta tempo demais.",
       "flow": "O medidor de vazão continuou contando com todas as válvulas de zona fechadas.",
-      "pump_power": "A bomba continuou consumindo energia com todas as válvulas de zona fechadas."
+      "pump_power": "A bomba continuou consumindo energia com todas as válvulas de zona fechadas.",
+      "high_flow": "Correu muito mais água do que {valve} usa: um cano pode ter estourado."
     },
     "master_valve_test_failed": {
       "title": "🚨 Falhou o teste da válvula mestra",
       "message": "O teste mensal de {valve} detectou água ainda correndo ou a bomba ainda funcionando com ela fechada. Ela pode não cortar a água se uma válvula de zona travar: verifique."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: água demais",
+      "message": "{valve} foi fechada: corriam cerca de {rate} por minuto, muito mais que os {expected} de sempre. Um cano pode ter estourado ou se soltado: verifique antes da próxima rega."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: vazão baixa",
+      "message": "Deu {given} de {target} no tempo permitido. Verifique se há filtro entupido ou pressão baixa."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: medidor de vazão não conta",
+      "message": "{meter} não contou nada com a válvula aberta, então a rega foi feita por tempo. Verifique o medidor."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "A válvula mestra passou no teste mensal de {when}.",
       "test_pending": "A válvula mestra é testada uma vez por mês, no fim de uma rega normal.",
       "test_none": "Adicione um medidor de vazão ou um sensor de potência da bomba para testar a válvula mestra uma vez por mês."
+    },
+    "flow_meter": {
+      "unknown_unit": "O ZoneFlow não consegue obter litros da unidade de {entity} ('{unit}'). Use um medidor que informe volume (L, gal, m³) ou vazão (L/min, gal/min).",
+      "learned": "As regas mediram uma vazão de {learned}, mas o ajuste Vazão é {setting}. Atualize para os tempos previstos ficarem certos."
+    },
+    "flow_mode": {
+      "no_meter": "A rega termina pelo medidor de vazão, mas a zona não tem nenhum: rega por tempo.",
+      "meter_offline": "A rega termina pelo medidor de vazão, mas ele está offline: a zona rega por tempo até ele voltar.",
+      "unknown_unit": "A rega termina pelo medidor de vazão, mas a unidade não pode ser lida como água: a zona rega por tempo.",
+      "no_area": "A rega termina pelo medidor de vazão, mas a área da zona é desconhecida: defina a Área da zona (ou a Vazão da zona) para converter milímetros em litros.",
+      "shared_meter": "A rega termina pelo medidor de vazão, mas ele é compartilhado com uma zona de outra bomba que pode regar ao mesmo tempo: a zona rega por tempo."
     }
   },
   "why": {

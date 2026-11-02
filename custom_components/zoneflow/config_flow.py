@@ -509,6 +509,13 @@ def _climate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | None 
     return errors
 
 
+async def _set_zone_area(controller, area_m2: float) -> None:
+    """The area a person typed for the flow rate is the zone's area too (1.8: watering by the meter)."""
+    number = controller.numbers.get("zone_area_m2")
+    if number is not None and 0 < area_m2 <= NUMBER_DEFS["zone_area_m2"][2]:
+        await number.async_set_metric_value(round(area_m2, 2))
+
+
 def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     """A new zone's cycle-and-soak starting values from its soil, drainage
     and irrigation method: the pulse-count settings (the minimum; each
@@ -1158,6 +1165,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     _zname, zlo, zhi, _zstep, _zunit = NUMBER_DEFS["zone_flow_l_min"]
                     if zlo < l_per_h / 60 <= zhi:
                         flow_numbers["zone_flow_l_min"] = round(l_per_h / 60, 2)
+                    if 0 < area_m2 <= NUMBER_DEFS["zone_area_m2"][2]:
+                        flow_numbers["zone_area_m2"] = round(area_m2, 2)  # 1.8: litres for watering by the meter
             if not errors:
                 user_input = {k: v for k, v in user_input.items() if k not in ("emitters", "emitter_flow", "area")}
                 data = _schema(defaults)({**defaults, **user_input})
@@ -1820,6 +1829,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             result = await self._apply_flow_rate(controller, mm_per_min)
             if result.get("reason") == "flow_rate_set":  # only when the entry was accepted
                 await self._set_zone_flow(controller, round(float(user_input["emitters"])) * per_emitter_l_h / 60)
+                await _set_zone_area(controller, area_m2)
             return result
         return self.async_show_form(
             step_id="flow_rate",
@@ -1860,6 +1870,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             result = await self._apply_flow_rate(controller, mm_per_min)
             if result.get("reason") == "flow_rate_set":
                 await self._set_zone_flow(controller, liters / float(user_input["minutes"]))
+                await _set_zone_area(controller, area_m2)
             return result
         return self.async_show_form(
             step_id="flow_volume",

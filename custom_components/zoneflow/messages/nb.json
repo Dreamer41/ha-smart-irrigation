@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} bekreftet ikke at den stengte på slutten av en vanning.",
       "valve_stuck": "{valve} sto åpen altfor lenge.",
       "flow": "Vannmåleren fortsatte å telle mens alle soneventiler var lukket.",
-      "pump_power": "Pumpen fortsatte å trekke strøm mens alle soneventiler var lukket."
+      "pump_power": "Pumpen fortsatte å trekke strøm mens alle soneventiler var lukket.",
+      "high_flow": "Det rant langt mer vann enn {valve} tar: et rør kan ha sprukket."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test av hovedventil feilet",
       "message": "Den månedlige testen av {valve} fant at vannet fortsatt rant eller pumpen fortsatt gikk mens den var stengt. Den holder kanskje ikke hvis en soneventil henger seg opp: sjekk den."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: for mye vann",
+      "message": "{valve} ble stengt: det rant omtrent {rate} i minuttet, langt mer enn de vanlige {expected}. Et rør kan ha sprukket eller løsnet: sjekk det før neste vanning."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: lav vannføring",
+      "message": "Ga {given} av {target} i tillatt tid. Sjekk om filteret er tett eller trykket lavt."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: vannmåleren teller ikke",
+      "message": "{meter} telte ingenting mens ventilen var åpen, så vanningen gikk etter tid i stedet. Sjekk måleren."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Hovedventilen besto den månedlige testen {when}.",
       "test_pending": "Hovedventilen testes en gang i måneden på slutten av en vanlig vanning.",
       "test_none": "Legg til en vannmåler eller en pumpeeffektsensor for å få hovedventilen testet en gang i måneden."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow kan ikke lese liter fra enheten til {entity} ('{unit}'). Bruk en måler som melder volum (L, gal, m³) eller vannføring (L/min, gal/min).",
+      "learned": "Vanninger målte en vannføring på {learned}, men innstillingen Vannføring er {setting}. Oppdater den så de planlagte tidene stemmer."
+    },
+    "flow_mode": {
+      "no_meter": "Vanning stopper etter vannmåleren, men sonen har ingen vannmåler: den vanner etter tid.",
+      "meter_offline": "Vanning stopper etter vannmåleren, men måleren er frakoblet: sonen vanner etter tid til den er tilbake.",
+      "unknown_unit": "Vanning stopper etter vannmåleren, men enheten kan ikke leses som vann: sonen vanner etter tid.",
+      "no_area": "Vanning stopper etter vannmåleren, men sonens areal er ukjent: sett Sonens areal (eller Sonens vannføring) så millimeter kan gjøres om til liter.",
+      "shared_meter": "Vanning stopper etter vannmåleren, men måleren deles med en sone på en annen pumpe som kan vanne samtidig: sonen vanner etter tid."
     }
   },
   "why": {

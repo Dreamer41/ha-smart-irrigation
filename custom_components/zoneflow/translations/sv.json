@@ -1124,6 +1124,12 @@
       },
       "wetted_area_pct": {
         "name": "Bevattnad andel av zonen"
+      },
+      "zone_area_m2": {
+        "name": "Zonens yta"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Tidsmarginal i flödesläge"
       }
     },
     "datetime": {
@@ -1563,6 +1569,13 @@
           "afternoon_sun": "Eftermiddagssol",
           "full_sun": "Full sol",
           "reflected_heat": "Reflekterad värme (vägg eller beläggning)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Bevattningen slutar efter",
+        "state": {
+          "time": "Planerad tid",
+          "flow_meter": "Flödesmätare"
         }
       }
     },

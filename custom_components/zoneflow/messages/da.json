@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} bekræftede ikke, at den lukkede ved slutningen af en vanding.",
       "valve_stuck": "{valve} stod åben alt for længe.",
       "flow": "Flowmåleren blev ved med at tælle, mens alle zoneventiler var lukkede.",
-      "pump_power": "Pumpen blev ved med at trække strøm, mens alle zoneventiler var lukkede."
+      "pump_power": "Pumpen blev ved med at trække strøm, mens alle zoneventiler var lukkede.",
+      "high_flow": "Der løb langt mere vand, end {valve} tager: et rør kan være sprunget."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test af hovedventil fejlede",
       "message": "Den månedlige test af {valve} viste, at vandet stadig løb eller pumpen stadig kørte, mens den var lukket. Den holder måske ikke, hvis en zoneventil sidder fast åben: tjek den."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: for meget vand",
+      "message": "{valve} blev lukket: der løb ca. {rate} i minuttet, langt mere end de sædvanlige {expected}. Et rør kan være sprunget eller gået løs: tjek det før næste vanding."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: lavt flow",
+      "message": "Gav {given} af {target} i den tilladte tid. Tjek for et tilstoppet filter eller lavt tryk."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: flowmåler tæller ikke",
+      "message": "{meter} talte intet, mens ventilen var åben, så vandingen gik efter tid i stedet. Tjek måleren."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Hovedventilen bestod den månedlige test {when}.",
       "test_pending": "Hovedventilen testes en gang om måneden ved slutningen af en almindelig vanding.",
       "test_none": "Tilføj en flowmåler eller en pumpeeffektsensor for at få hovedventilen testet en gang om måneden."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow kan ikke se liter ud fra enheden for {entity} ('{unit}'). Brug en måler, der melder en volumen (L, gal, m³) eller et flow (L/min, gal/min).",
+      "learned": "Vandinger målte et flow på {learned}, men indstillingen Flowhastighed er {setting}. Opdater den, så de planlagte tider passer."
+    },
+    "flow_mode": {
+      "no_meter": "Vanding stopper efter flowmåleren, men zonen har ingen flowmåler: den vander efter tid.",
+      "meter_offline": "Vanding stopper efter flowmåleren, men måleren er offline: zonen vander efter tid, til den er tilbage.",
+      "unknown_unit": "Vanding stopper efter flowmåleren, men målerens enhed kan ikke læses som vand: zonen vander efter tid.",
+      "no_area": "Vanding stopper efter flowmåleren, men zonens areal kendes ikke: angiv Zonens areal (eller Zoneflow), så millimeter kan omregnes til liter.",
+      "shared_meter": "Vanding stopper efter flowmåleren, men måleren deles med en zone på en anden pumpe, der kan vande samtidig: zonen vander efter tid."
     }
   },
   "why": {

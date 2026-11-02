@@ -28,7 +28,7 @@ from typing import Any
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.event import async_call_later
 
-from . import zone_valve
+from . import flow_meter, zone_valve
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ SETTLE_SECONDS = 60.0
 CHECK_SECONDS = 30.0
 # More than this counted while every zone valve is closed is water going somewhere.
 LEAK_LITRES = 2.0
-# A meter reporting a rate (L/min, gal/min, m³/h ...): above this is flowing.
+# A meter reporting a rate: above this many L/min is flowing.
 LEAK_RATE = 0.5
 OPEN_CONFIRM_SECONDS = 30.0
 # The self-test: how often, how long the pipe after the master may drain (and a pump take to build
@@ -53,6 +53,7 @@ REASON_VALVE_NOT_CLOSED = "valve_not_closed"
 REASON_VALVE_STUCK = "valve_stuck"
 REASON_FLOW = "flow"
 REASON_PUMP_POWER = "pump_power"
+REASON_HIGH_FLOW = "high_flow"
 
 
 class MasterValveClosed(Exception):
@@ -320,18 +321,11 @@ def test_passed(zone: Any, start_litres: float | None) -> bool | None:
 
 def _meter(zone: Any) -> tuple[float, bool] | None:
     """(the flow meter's value in litres or its rate, whether it is a rate meter), or None."""
-    meter = zone.flow_meter_entity
-    state = zone.hass.states.get(meter) if meter else None
-    try:
-        value = float(state.state) if state else None
-    except (TypeError, ValueError):
-        value = None
-    if value is None:
+    reading = zone.flow_meter_now()
+    if reading is None:
         return None
-    unit = state.attributes.get("unit_of_measurement") or ""
-    if "/" in unit:
-        return value, True
-    return zone.meter_litres(value, unit), False
+    kind, value = reading
+    return value, kind == flow_meter.METER_RATE
 
 
 def flow_while_closed(zone: Any, baseline: dict[str, float | None], first: bool) -> str | None:
@@ -347,20 +341,12 @@ def flow_while_closed(zone: Any, baseline: dict[str, float | None], first: bool)
             watts = 0.0
         if watts >= zone.number("pump_min_watts") > 0:
             return REASON_PUMP_POWER
-    meter = zone.flow_meter_entity
-    if not meter:
+    reading = _meter(zone)
+    if reading is None:
         return None
-    state = zone.hass.states.get(meter)
-    try:
-        value = float(state.state) if state else None
-    except (TypeError, ValueError):
-        value = None
-    if value is None:
-        return None
-    unit = (state.attributes.get("unit_of_measurement") or "") if state else ""
-    if "/" in unit:  # a rate meter
-        return REASON_FLOW if value > LEAK_RATE else None
-    litres = zone.meter_litres(value, unit)
+    litres, is_rate = reading
+    if is_rate:  # L/min
+        return REASON_FLOW if litres > LEAK_RATE else None
     key = zone.entry.entry_id
     if first or baseline.get(key) is None:
         baseline[key] = litres

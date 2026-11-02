@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} na konci zálivky nepotvrdil zavření.",
       "valve_stuck": "{valve} zůstal otevřený příliš dlouho.",
       "flow": "Průtokoměr dál počítal, i když byly všechny ventily zón zavřené.",
-      "pump_power": "Čerpadlo dál odebíralo proud, i když byly všechny ventily zón zavřené."
+      "pump_power": "Čerpadlo dál odebíralo proud, i když byly všechny ventily zón zavřené.",
+      "high_flow": "Teklo mnohem víc vody, než {valve} bere: možná praskla trubka."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test hlavního ventilu selhal",
       "message": "Měsíční test ventilu {valve} zjistil, že při jeho zavření voda dál teče nebo čerpadlo dál běží. Pokud se ventil zóny zasekne, nemusí vodu zastavit: zkontrolujte ho."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: příliš mnoho vody",
+      "message": "{valve} byl zavřen: teklo asi {rate} za minutu, mnohem víc než obvyklých {expected}. Možná praskla nebo se uvolnila trubka: zkontrolujte ji před další zálivkou."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: nízký průtok",
+      "message": "Za povolený čas dal {given} z {target}. Zkontrolujte ucpaný filtr nebo nízký tlak."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: průtokoměr nepočítá",
+      "message": "{meter} při otevřeném ventilu nic nenapočítal, a tak zálivka proběhla podle času. Zkontrolujte průtokoměr."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Hlavní ventil prošel měsíčním testem {when}.",
       "test_pending": "Hlavní ventil se testuje jednou měsíčně na konci běžné zálivky.",
       "test_none": "Přidejte průtokoměr nebo snímač příkonu čerpadla, aby se hlavní ventil testoval jednou měsíčně."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow nedokáže z jednotky {entity} ('{unit}') zjistit litry. Použijte měřidlo, které hlásí objem (L, gal, m³) nebo průtok (L/min, gal/min).",
+      "learned": "Zálivky naměřily průtok {learned}, ale nastavení Průtok je {setting}. Upravte ho, aby plánované časy seděly."
+    },
+    "flow_mode": {
+      "no_meter": "Zálivka končí podle průtokoměru, ale zóna žádný nemá: zavlažuje podle času.",
+      "meter_offline": "Zálivka končí podle průtokoměru, ale ten je offline: zóna zavlažuje podle času, dokud se nevrátí.",
+      "unknown_unit": "Zálivka končí podle průtokoměru, ale jeho jednotku nelze číst jako vodu: zóna zavlažuje podle času.",
+      "no_area": "Zálivka končí podle průtokoměru, ale plocha zóny není známa: nastavte Plochu zóny (nebo Průtok zóny), aby šlo milimetry převést na litry.",
+      "shared_meter": "Zálivka končí podle průtokoměru, ale ten sdílí zóna na jiném čerpadle, která může zavlažovat současně: zóna zavlažuje podle času."
     }
   },
   "why": {

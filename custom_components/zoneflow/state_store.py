@@ -170,6 +170,10 @@ class IrrigationState:
     # 1.8: the crop whose FAO-56 season curve gives this zone's crop factor (an id of data/crop_kc.json);
     # empty = the fixed Crop Factor slider. An id that no longer exists reads as empty.
     kc_crop: str = ""
+    delivery_mode: str = "time"  # 1.8: Watering Stops On (const.DELIVERY_*)
+    flow_close_lag_l: float = 0.0  # litres that still flow after the close command (learned)
+    flow_learned_mm_per_min: float | None = None  # the flow rate measured by flow-mode runs
+    flow_learned_runs: int = 0
     master_test_ts: float | None = None  # 1.8: the master valve's last monthly self-test
     master_test_ok: bool | None = None
     master_valve_latch: str | None = None  # 1.8: why the master valve was closed for safety (until Reset Lock)

@@ -33,6 +33,8 @@ DEPTH_KEYS = {
 FLOW_KEYS = {"flow_rate_mm_per_min"}
 # Whole-zone volume flow: L/min <-> gal/min (the water-use estimate).
 VOLFLOW_KEYS = {"zone_flow_l_min"}
+# Area: m² <-> ft².
+AREA_KEYS = {"zone_area_m2"}
 # Soil water-holding capacity: mm/m <-> in/ft (1 mm/m = 0.012 in/ft).
 HOLDING_KEYS = {"soil_holding_mm_per_m"}
 IN_FT_PER_MM_M = 0.012
@@ -44,8 +46,8 @@ TEMP_KEYS = {
 # Temperature DIFFERENCES: °C <-> °F without the +32 offset.
 DELTA_KEYS = {"climate_hysteresis", "outside_margin"}
 
-IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "volflow": "gal/min", "temp": "°F", "delta": "°F", "holding": "in/ft"}
-IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "volflow": 0.01, "temp": 0.5, "delta": 0.5, "holding": 0.05}
+IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "volflow": "gal/min", "temp": "°F", "delta": "°F", "holding": "in/ft", "area": "ft²"}
+IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "volflow": 0.01, "temp": 0.5, "delta": 0.5, "holding": 0.05, "area": 1.0}
 # rain_mm_per_tip is tiny (0.2-0.5 mm = 0.008-0.02 in), so finer steps; root depth is set in whole inches.
 IMPERIAL_STEP_OVERRIDE = {"rain_mm_per_tip": 0.001, "root_depth_mm": 1.0}
 
@@ -68,6 +70,8 @@ def kind(key: str) -> str | None:
         return "delta"
     if key in HOLDING_KEYS:
         return "holding"
+    if key in AREA_KEYS:
+        return "area"
     return None
 
 
@@ -85,6 +89,8 @@ def to_display(key: str, metric_value: float, imperial: bool) -> float:
         return metric_value * 9 / 5
     if k == "holding":
         return metric_value * IN_FT_PER_MM_M
+    if k == "area":
+        return metric_value / M2_PER_FT2
     return metric_value * 9 / 5 + 32
 
 
@@ -102,6 +108,8 @@ def to_metric(key: str, display_value: float, imperial: bool) -> float:
         return display_value * 5 / 9
     if k == "holding":
         return display_value / IN_FT_PER_MM_M
+    if k == "area":
+        return display_value * M2_PER_FT2
     return (display_value - 32) * 5 / 9
 
 

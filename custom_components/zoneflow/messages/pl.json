@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} nie potwierdził zamknięcia na końcu podlewania.",
       "valve_stuck": "{valve} był otwarty zdecydowanie za długo.",
       "flow": "Przepływomierz wciąż liczył, choć wszystkie zawory stref były zamknięte.",
-      "pump_power": "Pompa wciąż pobierała prąd, choć wszystkie zawory stref były zamknięte."
+      "pump_power": "Pompa wciąż pobierała prąd, choć wszystkie zawory stref były zamknięte.",
+      "high_flow": "Popłynęło dużo więcej wody, niż bierze {valve}: rura mogła pęknąć."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test zaworu głównego nieudany",
       "message": "Comiesięczny test {valve} wykazał, że przy zamkniętym zaworze woda wciąż płynęła lub pompa pracowała. Może nie odciąć wody, gdy zawór strefy się zatnie: sprawdź go."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: za dużo wody",
+      "message": "{valve} został zamknięty: płynęło około {rate} na minutę, dużo więcej niż zwykłe {expected}. Rura mogła pęknąć lub się poluzować: sprawdź ją przed następnym podlewaniem."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: słaby przepływ",
+      "message": "Dało {given} z {target} w dozwolonym czasie. Sprawdź, czy filtr nie jest zatkany lub ciśnienie za niskie."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: przepływomierz nie liczy",
+      "message": "{meter} nic nie naliczył przy otwartym zaworze, więc podlewanie poszło według czasu. Sprawdź licznik."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Zawór główny przeszedł comiesięczny test {when}.",
       "test_pending": "Zawór główny jest testowany raz w miesiącu, na końcu zwykłego podlewania.",
       "test_none": "Dodaj przepływomierz lub czujnik mocy pompy, aby zawór główny był testowany raz w miesiącu."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow nie może odczytać litrów z jednostki {entity} ('{unit}'). Użyj licznika, który podaje objętość (L, gal, m³) lub przepływ (L/min, gal/min).",
+      "learned": "Podlewania zmierzyły przepływ {learned}, ale ustawienie Natężenie przepływu wynosi {setting}. Zaktualizuj je, aby planowane czasy były prawidłowe."
+    },
+    "flow_mode": {
+      "no_meter": "Podlewanie kończy się według przepływomierza, ale strefa go nie ma: podlewa według czasu.",
+      "meter_offline": "Podlewanie kończy się według przepływomierza, ale jest on offline: strefa podlewa według czasu, aż wróci.",
+      "unknown_unit": "Podlewanie kończy się według przepływomierza, ale jego jednostki nie da się odczytać jako wody: strefa podlewa według czasu.",
+      "no_area": "Podlewanie kończy się według przepływomierza, ale powierzchnia strefy jest nieznana: ustaw Powierzchnię strefy (lub Przepływ strefy), aby przeliczyć milimetry na litry.",
+      "shared_meter": "Podlewanie kończy się według przepływomierza, ale dzieli go strefa na innej pompie, która może podlewać jednocześnie: strefa podlewa według czasu."
     }
   },
   "why": {

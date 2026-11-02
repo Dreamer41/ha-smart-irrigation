@@ -548,6 +548,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # 1.8: the root zone (FAO-56 chapter 8). Root Depth 0 = off, the zone waters exactly as before.
     # Otherwise a routine dose or a deep soak is never more than the roots hold, and the days between
     # waterings shorten when one interval's use would dry the soil past Allowed Soil Drying.
+    # 1.8: watering by the flow meter (Watering Stops On = Flow meter). The zone's area turns its mm
+    # into litres; a pulse may run this much longer than planned before its time limit stops it.
+    "zone_area_m2": ("Zone Area", 0.0, 5000.0, 0.5, "m²"),
+    "flow_time_allowance_pct": ("Flow Mode Time Allowance", 10.0, 200.0, 10.0, "%"),
     "root_depth_mm": ("Root Depth", 0.0, 2000.0, 50.0, "mm"),
     "soil_holding_mm_per_m": ("Soil Water-Holding Capacity", 40.0, 250.0, 5.0, "mm/m"),
     "allowed_depletion_pct": ("Allowed Soil Drying", 10.0, 80.0, 5.0, "%"),
@@ -658,6 +662,8 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
     "kc_curve_pct": 100.0,
+    "zone_area_m2": 0.0,
+    "flow_time_allowance_pct": 50.0,
     "root_depth_mm": 0.0,
     "soil_holding_mm_per_m": 140.0,
     "allowed_depletion_pct": 50.0,
@@ -735,6 +741,29 @@ KC_CLIMATE_DAYS = 7
 # 1.8: how much sun and reflected heat the zone gets, as a factor on its crop factor (a landscape
 # microclimate factor). Wind is not here: it is measured, or set by Wind Exposure, and the crop
 # factor's climate adjustment (eq. 62) already uses it.
+# 1.8: Watering Stops On: the planned time (as always), or the flow meter (each pulse ends when its
+# share of the litres has gone through; the planned time, stretched by the allowance, is the limit).
+DELIVERY_TIME = "time"
+DELIVERY_FLOW = "flow_meter"
+DELIVERY_OPTIONS = [DELIVERY_TIME, DELIVERY_FLOW]
+# A meter that counts nothing for this long while the valve is open is not counting: the run
+# finishes on time instead.
+FLOW_START_GRACE_SECONDS = 120.0
+# How often the volume wait looks again between readings (a held rate keeps adding up).
+FLOW_POLL_SECONDS = 5.0
+# More than this many times the expected flow, for FLOW_HIGH_SECONDS (not in the first minute,
+# while empty pipes fill): a burst or loose pipe. The valve closes.
+FLOW_HIGH_FACTOR = 2.5
+FLOW_HIGH_SECONDS = 60.0
+# A run that hit its time limit and gave less than this share of its litres: low flow.
+FLOW_LOW_SHARE = 0.8
+# The flow rate is learned from flow-mode runs with the valve open at least this long.
+FLOW_LEARN_MIN_MINUTES = 5.0
+FLOW_LEARN_WEIGHT = 0.3
+# After this many runs, a learned flow rate this far from the Flow Rate setting is pointed out.
+FLOW_LEARN_SUGGEST_RUNS = 3
+FLOW_LEARN_SUGGEST_SHARE = 0.25
+
 # 1.8: the root zone's starting values for a new zone (then ordinary sliders). Water held between
 # field capacity and wilting point, mm per m of soil (FAO-56 Table 19, the middle of each range).
 SOIL_HOLDING_MM_PER_M = {"sandy": 80.0, "sandy_loam": 130.0, "loam": 155.0, "clay_loam": 150.0, "clay": 160.0, "unknown": 140.0}

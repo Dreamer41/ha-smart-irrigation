@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} did not confirm it closed at the end of a watering.",
       "valve_stuck": "{valve} stayed open far too long.",
       "flow": "The flow meter kept counting while every zone valve was closed.",
-      "pump_power": "The pump kept drawing power while every zone valve was closed."
+      "pump_power": "The pump kept drawing power while every zone valve was closed.",
+      "high_flow": "Far more water ran than {valve} takes: a pipe may have burst."
     },
     "master_valve_test_failed": {
       "title": "🚨 Master valve test failed",
       "message": "The monthly test of {valve} found water still flowing or the pump still running with it closed. It may not hold if a zone valve sticks open: check it."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: too much water",
+      "message": "{valve} was closed: about {rate} a minute was running, far more than the usual {expected}. A pipe may have burst or come loose: check it before the next watering."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: low flow",
+      "message": "Gave {given} of {target} in the time allowed. Check for a blocked filter or low pressure."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: flow meter not counting",
+      "message": "{meter} counted nothing while the valve was open, so the watering went by time instead. Check the meter."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "The master valve passed its monthly test on {when}.",
       "test_pending": "The master valve is tested once a month, at the end of a routine watering.",
       "test_none": "Add a flow meter or a pump power sensor to have the master valve tested once a month."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow can't tell litres from the unit of {entity} ('{unit}'). Use a meter that reports a volume (L, gal, m³) or a flow (L/min, gal/min).",
+      "learned": "Waterings measured a flow rate of {learned}, but the Flow Rate setting is {setting}. Update it so the planned times are right."
+    },
+    "flow_mode": {
+      "no_meter": "Watering Stops On is set to the flow meter, but the zone has no flow meter: it waters by time.",
+      "meter_offline": "Watering Stops On is set to the flow meter, but the meter is offline: the zone waters by time until it is back.",
+      "unknown_unit": "Watering Stops On is set to the flow meter, but the meter's unit can't be read as water: the zone waters by time.",
+      "no_area": "Watering Stops On is set to the flow meter, but the zone's area is not known: set Zone Area (or Zone Flow) so millimetres can be turned into litres.",
+      "shared_meter": "Watering Stops On is set to the flow meter, but the meter is shared with a zone on another pump that may water at the same time: the zone waters by time."
     }
   },
   "why": {

@@ -1124,6 +1124,12 @@
       },
       "wetted_area_pct": {
         "name": "Quota bagnata della zona"
+      },
+      "zone_area_m2": {
+        "name": "Superficie della zona"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Margine di tempo in modalità flusso"
       }
     },
     "datetime": {
@@ -1563,6 +1569,13 @@
           "afternoon_sun": "Sole del pomeriggio",
           "full_sun": "Pieno sole",
           "reflected_heat": "Calore riflesso (muro o pavimentazione)"
+        }
+      },
+      "delivery_mode": {
+        "name": "L'irrigazione termina in base a",
+        "state": {
+          "time": "Tempo previsto",
+          "flow_meter": "Flussometro"
         }
       }
     },

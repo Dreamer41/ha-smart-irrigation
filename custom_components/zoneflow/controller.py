@@ -47,7 +47,7 @@ from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
 from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, fao56, issues, master_valve, messages, notification_actions, units, visibility, wu_logic, zone_valve
+from . import calculations as calc, fao56, flow_meter, issues, master_valve, messages, notification_actions, units, visibility, wu_logic, zone_valve
 from .crop_season import CropSeason, async_crop_seasons
 from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
@@ -155,7 +155,15 @@ from .const import (
     CONF_USE_WU,
     CONF_PARENT_ZONE,
     CROP_INHERITED_KEYS,
+    DELIVERY_FLOW,
     DOMAIN,
+    FLOW_HIGH_FACTOR,
+    FLOW_HIGH_SECONDS,
+    FLOW_LEARN_MIN_MINUTES,
+    FLOW_LEARN_WEIGHT,
+    FLOW_LOW_SHARE,
+    FLOW_POLL_SECONDS,
+    FLOW_START_GRACE_SECONDS,
     WU_CLIMATE_AGGREGATES,
     WU_DATA_KEY,
     EVENT_LOG,
@@ -264,6 +272,8 @@ _STOPPED = "stopped"
 _USER_STOPPED = "user_stopped"
 # A watering cycle stopped because the zone was paused.
 _PAUSED = "paused"
+# Stopped because far more water ran than the zone takes (a burst or loose pipe, 1.8).
+_HIGH_FLOW = "high_flow"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
@@ -274,6 +284,7 @@ VALVE_OPEN_KEYS = frozenset({
     "deep_soak_target_mm", "max_runtime_minutes", "deep_soak_max_runtime_minutes",
     "service_mode_auto_off_minutes", "mulch_et_adjustment_pct",
     "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes", "valve_timer_minutes",
+    "flow_time_allowance_pct",
 })
 # 1.8: the root-zone settings (the interval and the dose follow them).
 ROOT_ZONE_KEYS = frozenset({"root_depth_mm", "soil_holding_mm_per_m", "allowed_depletion_pct", "wetted_area_pct"})
@@ -406,6 +417,17 @@ class ZoneFlowController:
         # valve was really open (seconds).
         self._measuring = False
         self._run_liters: float | None = None
+        # 1.8: litres through the flow meter during a run (flow_meter.FlowTracker), and watering to it.
+        self._flow: flow_meter.FlowTracker | None = None
+        self._flow_tick = asyncio.Event()
+        self._flow_target_l: float | None = None  # set by a watering that stops on the meter
+        self._flow_used = False  # this run stopped its pulses on the meter (not fallen back to time)
+        self._flow_fell_back = False  # the meter stopped counting: the rest of the run is timed
+        self._flow_end_reasons: list[str] = []
+        self._flow_close_l: float | None = None
+        self._flow_last_target_l = 0.0
+        self._high_flow_since: float | None = None
+        self._high_flow_closed = False
         # The pump lock was handed to the next zone before this valve closed (valve overlap).
         self._pump_handed_over = False
         # Set on the zone that received the pump this way: its pump-power audit waits until then.
@@ -2870,22 +2892,259 @@ class ZoneFlowController:
         except (TypeError, ValueError):
             return 0.0
 
-    async def _flow_meter_reading(self) -> float | None:
-        """Current cumulative reading of the optional flow-meter entity, or
-        None if no flow meter is configured or its reading can't be parsed
-        right now. None (not 0.0) so a caller can tell "no data" apart from
-        "reads zero" -- delta math must never mix the two."""
+    def flow_meter_now(self) -> tuple[str, float] | None:
+        """(kind, value) of the flow meter now: litres for a running total, L/min for a rate. None
+        with no meter, a reading that can't be parsed, or a unit that is neither (1.8: a rate was
+        read as a total before)."""
         entity_id = self.flow_meter_entity
-        if not entity_id:
+        state = self.hass.states.get(entity_id) if entity_id else None
+        if state is None:
             return None
-        state = self.hass.states.get(entity_id)
         try:
-            value = float(state.state) if state else None
+            value = float(state.state)
         except (TypeError, ValueError):
             return None
-        if value is None:
+        if not math.isfinite(value):
             return None
-        return self.meter_litres(value, state.attributes.get("unit_of_measurement"))
+        unit = state.attributes.get("unit_of_measurement")
+        kind = flow_meter.meter_kind(unit)
+        if kind == flow_meter.METER_TOTAL:
+            return kind, self.meter_litres(value, unit)
+        if kind == flow_meter.METER_RATE:
+            return kind, flow_meter.to_l_min(value, unit)
+        return None
+
+    def flow_meter_kind(self) -> str | None:
+        """What the flow meter reports (flow_meter.METER_*), from its unit; None when it can't be told."""
+        state = self.hass.states.get(self.flow_meter_entity) if self.flow_meter_entity else None
+        return flow_meter.meter_kind(state.attributes.get("unit_of_measurement")) if state is not None else None
+
+    async def _flow_meter_reading(self) -> float | None:
+        """The flow meter's running total in litres, or None (no meter, no usable reading, or a meter
+        that reports a rate: its litres come from the run's tracker). None (not 0.0) so a caller can
+        tell "no data" apart from "reads zero"."""
+        reading = self.flow_meter_now()
+        return reading[1] if reading is not None and reading[0] == flow_meter.METER_TOTAL else None
+
+    def zone_area_m2(self) -> float | None:
+        """The area the zone waters (1.8): the Zone Area setting, else worked out from Zone Flow and the
+        Flow Rate (L/min / mm/min = m²). None when neither is known."""
+        area = self.number("zone_area_m2")
+        if area > 0:
+            return area
+        flow, rate = self.number("zone_flow_l_min"), self.number("flow_rate_mm_per_min")
+        return flow / rate if flow > 0 and rate > 0 else None
+
+    def flow_delivery_problem(self) -> str | None:
+        """Why this zone can't stop its pulses on the flow meter right now (None: it can). The run then
+        waters on time, as before."""
+        if self.store.state.delivery_mode != DELIVERY_FLOW:
+            return "off"
+        if not self.flow_meter_entity:
+            return "no_meter"
+        state = self.hass.states.get(self.flow_meter_entity)
+        if state is None or zone_valve.is_offline(state):
+            return "meter_offline"
+        if self.flow_meter_kind() is None:
+            return "unknown_unit"
+        if self.zone_area_m2() is None:
+            return "no_area"
+        for other in self.hass.data.get(DOMAIN, {}).values():
+            if (
+                isinstance(other, ZoneFlowController) and other is not self
+                and other.flow_meter_entity == self.flow_meter_entity
+                and other._pump_lock_key != self._pump_lock_key
+            ):
+                return "shared_meter"  # another zone could water at the same time and count here
+        return None
+
+    def _expected_l_min(self) -> float | None:
+        """How much the zone normally takes, L/min: Zone Flow, else the (learned) flow rate x area."""
+        if self.number("zone_flow_l_min") > 0:
+            return self.number("zone_flow_l_min")
+        area = self.zone_area_m2()
+        rate = self.store.state.flow_learned_mm_per_min or self.number("flow_rate_mm_per_min")
+        return rate * area if area and rate > 0 else None
+
+    def _start_flow_tracker(self) -> Any:
+        """Count litres while the valve is open (any run, either mode). Returns the unsubscriber."""
+        self._flow = None
+        reading = self.flow_meter_now()
+        if reading is None:
+            return None
+        kind, value = reading
+        self._flow = flow_meter.FlowTracker(kind, value, dt_util.utcnow().timestamp())
+        entity = self.flow_meter_entity
+        unsubs = [async_track_state_change_event(self.hass, [entity], self._on_flow_reading)]
+        if EVENT_STATE_REPORTED is not None:
+            # A steady rate (10 L/min again) is no state change, only a "state reported".
+            unsubs.append(self.hass.bus.async_listen(
+                EVENT_STATE_REPORTED, self._on_flow_reading, event_filter=callback(lambda data: data.get("entity_id") == entity)
+            ))
+
+        def unsub() -> None:
+            for remove in unsubs:
+                remove()
+
+        return unsub
+
+    @callback
+    def _on_flow_reading(self, _event: Event) -> None:
+        tracker = self._flow
+        reading = self.flow_meter_now()
+        if tracker is None or reading is None or reading[0] != tracker.kind:
+            return  # unavailable, unparsable or a changed unit: skipped
+        tracker.update(reading[1], dt_util.utcnow().timestamp())
+        self._flow_tick.set()
+
+    def _runaway_flow(self, now: float, opened: float) -> bool:
+        """Far more water than the zone takes, for a minute (not while empty pipes fill)."""
+        expected = self._expected_l_min()
+        rate = self._flow.rate_l_min(now) if self._flow is not None else None
+        if not expected or rate is None or now - opened < FLOW_HIGH_SECONDS or rate <= FLOW_HIGH_FACTOR * expected:
+            self._high_flow_since = None
+            return False
+        if self._high_flow_since is None:
+            self._high_flow_since = now
+        return now - self._high_flow_since >= FLOW_HIGH_SECONDS
+
+    async def _wait_pulse_volume(self, pulse_target_l: float, limit_seconds: float) -> str:
+        """The open-valve wait when watering by the meter. Ends with "volume" (delivered), "limit" (the
+        time limit), "meter_silent" (nothing counted for FLOW_START_GRACE_SECONDS), "high_flow", or
+        "stopped" (an abort, reload or pause: the code after the wait deals with it)."""
+        loop = asyncio.get_running_loop()
+        tracker = self._flow
+        opened = dt_util.utcnow().timestamp()
+        start_l = tracker.litres(opened)
+        deadline = loop.time() + limit_seconds
+        lag = min(self.store.state.flow_close_lag_l, 0.25 * pulse_target_l)
+        self._high_flow_since = None
+        waker = asyncio.ensure_future(self._abort_or_service_stop(False))
+        try:
+            while True:
+                now = dt_util.utcnow().timestamp()
+                if tracker.litres(now) - start_l >= pulse_target_l - lag:
+                    return "volume"
+                if min(tracker.flowing_since(now), now - opened) > FLOW_START_GRACE_SECONDS:
+                    return "meter_silent"
+                if self._runaway_flow(now, opened):
+                    return "high_flow"
+                left = deadline - loop.time()
+                if left <= 0:
+                    return "limit"
+                self._flow_tick.clear()
+                tick = asyncio.ensure_future(self._flow_tick.wait())
+                done, _ = await asyncio.wait(
+                    {waker, tick}, timeout=min(left, FLOW_POLL_SECONDS), return_when=asyncio.FIRST_COMPLETED
+                )
+                tick.cancel()
+                if waker in done:
+                    return "stopped"
+        finally:
+            waker.cancel()
+
+    async def _stop_for_high_flow(self, kind: str, valve: str) -> None:
+        """A burst or loose pipe: close the valve now (and the master behind it), alert even with
+        Notifications off. The run ends interrupted; the lock goes only once the valve is closed."""
+        self._expected_pulse_minutes = None
+        self._high_flow_closed = await self._close_cycle_valve()
+        now = dt_util.utcnow().timestamp()
+        rate = self._flow.rate_l_min(now) if self._flow is not None else None
+        if (master := self._master()) is not None:
+            await master.async_emergency_close(self, master_valve.REASON_HIGH_FLOW, stop_caller=False)
+        await self._log_event(
+            event_type="Flow Too High",
+            status="CRITICAL",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="flow_too_high",
+            params={
+                "cycle": self._cycle_name(kind), "valve": valve,
+                "rate": units.volume_text(rate or 0.0, self.imperial),
+                "expected": units.volume_text(self._expected_l_min() or 0.0, self.imperial),
+            },
+            level=LEVEL_WARNING,
+            always_notify=True,
+        )
+
+    def _flow_pulse_limit_minutes(self, kind: str, pulse_minutes: float, count: int) -> float:
+        """The longest a pulse may run when watering by the meter: the planned time plus the allowance,
+        but never past the run's runtime cap shared over its pulses (and never shorter than planned)."""
+        allowance = 1 + self.number("flow_time_allowance_pct") / 100
+        cap = self.number("deep_soak_max_runtime_minutes" if kind == "Deep Soak" else "max_runtime_minutes")
+        return max(pulse_minutes, min(pulse_minutes * allowance, cap / max(count, 1)))
+
+    def _flow_target_for(self, mm: float) -> float | None:
+        """The litres a watering of `mm` stops at when the zone waters by its meter, else None."""
+        if mm <= 0 or self.flow_delivery_problem() is not None:
+            return None
+        return mm * self.zone_area_m2()
+
+    def _given_amount(self, planned_minutes: float) -> tuple[float, float]:
+        """(minutes, mm) a completed watering gave: what the meter counted in flow mode, else the plan."""
+        area = self.zone_area_m2()
+        if self._flow_used and self._run_liters is not None and area:
+            return self._delivered_minutes, self._run_liters / area
+        return planned_minutes, planned_minutes * self.number("flow_rate_mm_per_min")
+
+    def _learn_flow_rate(self) -> None:
+        """A completed flow-mode run measured the zone's real flow rate: averaged into the learned one.
+        Never written to the Flow Rate setting (Check my setup points out a big difference)."""
+        area = self.zone_area_m2()
+        minutes = self._open_seconds / 60.0
+        if not (self._flow_used and self._run_liters and area and minutes >= FLOW_LEARN_MIN_MINUTES):
+            return
+        measured = self._run_liters / area / minutes
+        state = self.store.state
+        old = state.flow_learned_mm_per_min
+        state.flow_learned_mm_per_min = measured if old is None else old + FLOW_LEARN_WEIGHT * (measured - old)
+        state.flow_learned_runs += 1
+
+    async def _report_flow_delivery(self, kind: str, tracker: flow_meter.FlowTracker, completed: bool) -> None:
+        """After a run that watered by the meter: a meter that stopped counting (the run finished on
+        time), or a run that hit its time limit well short of its litres (a blocked filter, low
+        pressure). Each one warning, not one per pulse."""
+        target = self._flow_target_l or 0.0
+        litres = tracker.litres(dt_util.utcnow().timestamp())
+        if self._flow_fell_back:
+            await self._log_event(
+                event_type="Flow Meter Not Counting",
+                status="WARNING",
+                target_mm=0.0, deducted_mm=0.0, runtime=int(round(self._delivered_minutes)),
+                notify_phone=True,
+                message="meter_not_counting",
+                params={"cycle": self._cycle_name(kind), "meter": self.flow_meter_entity or ""},
+                level=LEVEL_WARNING,
+            )
+        elif completed and "limit" in self._flow_end_reasons and target > 0 and litres < FLOW_LOW_SHARE * target:
+            await self._log_event(
+                event_type="Low Flow",
+                status="WARNING",
+                target_mm=0.0, deducted_mm=0.0, runtime=int(round(self._delivered_minutes)),
+                notify_phone=True,
+                message="low_flow",
+                params={
+                    "cycle": self._cycle_name(kind),
+                    "given": units.volume_text(litres, self.imperial),
+                    "target": units.volume_text(target, self.imperial),
+                },
+                level=LEVEL_WARNING,
+            )
+        if self._flow_fell_back:
+            self._flow_used = False  # the amount given is the timed plan's, not the meter's
+
+    def _learn_close_lag(self, now: float) -> None:
+        """Litres that went through after the last flow pulse's close command: the next pulses stop
+        that much early (a valve takes a moment to close, a meter reports late)."""
+        if self._flow is None or self._flow_close_l is None or not self._flow_end_reasons:
+            return
+        if self._flow_end_reasons[-1] != "volume":
+            return
+        lag = min(max(self._flow.litres(now) - self._flow_close_l, 0.0), 0.25 * self._flow_last_target_l)
+        state = self.store.state
+        state.flow_close_lag_l = 0.7 * state.flow_close_lag_l + 0.3 * lag
 
     @staticmethod
     def meter_litres(value: float, unit: str | None) -> float:
@@ -3238,6 +3497,7 @@ class ZoneFlowController:
                     pump_lock.release()
         finally:
             self._cycle_kind = ""
+            self._flow_target_l = None  # set by a watering for its own run only
             self._notify_status()
 
     async def _acquire_pump(self, pump_lock: asyncio.Lock) -> bool:
@@ -3399,27 +3659,35 @@ class ZoneFlowController:
         if preamble > 0:
             await self._pause(preamble)
 
-        flow_start = await self._flow_meter_reading()
         self._run_liters = None
-
-        completed = await self._execute_pulses(
-            count=count,
-            pulse_minutes=pulse_minutes,
-            rest_minutes=rest_minutes,
-            min_pump_watts=min_pump_watts,
-            kind=kind,
-            target_mm_for_log=target_mm_for_log,
-            deducted_mm_for_log=deducted_mm_for_log,
-            runtime_for_log=runtime_for_log,
-        )
-
-        if self._measuring and flow_start is not None and not self._stopping:
-            # A meter that reports every so often may not have counted the
-            # last of the water yet: wait for its next report (up to a minute).
-            await self._wait_for_state_change(self.flow_meter_entity, FLOW_METER_SETTLE_SECONDS)
-        flow_end = await self._flow_meter_reading()
-        if flow_start is not None and flow_end is not None:
-            delta_liters = max(flow_end - flow_start, 0.0)
+        self._flow_used = False
+        self._flow_fell_back = False
+        self._flow_end_reasons = []
+        self._high_flow_closed = False
+        unsub_flow = self._start_flow_tracker()
+        try:
+            completed = await self._execute_pulses(
+                count=count,
+                pulse_minutes=pulse_minutes,
+                rest_minutes=rest_minutes,
+                min_pump_watts=min_pump_watts,
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            )
+            if (self._measuring or self._flow_used) and self._flow is not None and not self._stopping:
+                # A meter that reports every so often may not have counted the
+                # last of the water yet: wait for its next report (up to a minute).
+                await self._wait_for_state_change(self.flow_meter_entity, FLOW_METER_SETTLE_SECONDS)
+        finally:
+            if unsub_flow is not None:
+                unsub_flow()
+        tracker, self._flow = self._flow, None
+        if tracker is not None and self._flow_target_l is not None:
+            await self._report_flow_delivery(kind, tracker, completed)
+        if tracker is not None:
+            delta_liters = tracker.litres(dt_util.utcnow().timestamp())
             self._run_liters = delta_liters
             self.store.state.last_cycle_water_liters = delta_liters
             if kind in ("Deep Soak", "Routine Irrigation"):
@@ -3428,7 +3696,7 @@ class ZoneFlowController:
             # Only meaningful for a cycle that actually ran to
             # completion -- an aborted cycle legitimately may not have
             # moved any water, and that's not a flow-meter problem.
-            if completed and delta_liters <= 0.0 and not self._measuring:  # (a measurement says so itself)
+            if completed and delta_liters <= 0.0 and not self._measuring and not self._flow_fell_back:  # (said already)
                 await self._log_event(
                     event_type="No Flow Detected",
                     status="WARNING",
@@ -3541,6 +3809,8 @@ class ZoneFlowController:
                 deducted_mm=deducted_mm_for_log,
                 runtime=int(round(self._delivered_minutes)),
             )
+        if outcome == _HIGH_FLOW and self._high_flow_closed:
+            await self._set_lock(False)  # closed: the next run may try again (the master stays latched)
         if outcome == _STOPPED:
             await self._log_event(
                 event_type=f"{kind} Interrupted",
@@ -3567,6 +3837,10 @@ class ZoneFlowController:
         runtime_for_log: int,
     ) -> str:
         valve = self._cycle_valve
+        # 1.8: watering by the flow meter: each pulse ends when its share of the litres is through.
+        flow_target = self._flow_target_l if kind in ("Deep Soak", "Routine Irrigation") and self._flow is not None else None
+        limit_minutes = self._flow_pulse_limit_minutes(kind, pulse_minutes, count) if flow_target is not None else pulse_minutes
+        self._flow_close_l = None
         for index in range(1, count + 1):
             if self._stopping:
                 return _STOPPED
@@ -3592,7 +3866,10 @@ class ZoneFlowController:
                 return _USER_STOPPED
             if self._pause_stops(kind):
                 return _PAUSED
-            self._expected_pulse_minutes = pulse_minutes
+            flow_pulse = flow_target is not None and not self._flow_fell_back
+            if flow_pulse:
+                self._learn_close_lag(dt_util.utcnow().timestamp())
+            self._expected_pulse_minutes = limit_minutes if flow_pulse else pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
             await zone_valve.async_open(self.hass, valve)
 
@@ -3635,7 +3912,23 @@ class ZoneFlowController:
                     )
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
-            if not self._stopping and not self.store.state.abort_on:
+            if not self._stopping and not self.store.state.abort_on and flow_pulse:
+                now = dt_util.utcnow().timestamp()
+                remaining = max(flow_target - self._flow.litres(now), 0.0)
+                self._flow_last_target_l = remaining / (count - index + 1)  # a short pulse is made up later
+                self._flow_used = True
+                end = await self._wait_pulse_volume(self._flow_last_target_l, limit_minutes * 60)
+                self._flow_end_reasons.append(end)
+                if end == "high_flow":
+                    await self._stop_for_high_flow(kind, valve)
+                    self._end_pulse(limit_minutes, full=False)
+                    return _HIGH_FLOW
+                if end == "meter_silent":
+                    # The rest of the run goes by time: this pulse finishes its planned minutes.
+                    self._flow_fell_back = True
+                    elapsed = dt_util.utcnow().timestamp() - self._pulse_started_ts
+                    await self._wait_pulse(max(pulse_minutes * 60 - elapsed, 0.0), service=False)
+            elif not self._stopping and not self.store.state.abort_on:
                 await self._wait_pulse(pulse_minutes * 60, service=kind == SERVICE_RUN_KIND)
 
             if kind == SERVICE_RUN_KIND and self._service_stop.is_set() and not (
@@ -3671,7 +3964,11 @@ class ZoneFlowController:
             self._expected_pulse_minutes = None
             overlap = await self._overlap_with_next_zone(kind) if index == count else 0.0
             await zone_valve.async_close(self.hass, valve)
-            self._end_pulse(pulse_minutes, full=True)
+            if flow_pulse:
+                self._end_pulse(limit_minutes, full=False)  # the time it was really open, up to the limit
+                self._flow_close_l = self._flow.litres(dt_util.utcnow().timestamp())
+            else:
+                self._end_pulse(pulse_minutes, full=True)
             self._open_seconds += overlap
 
             if index < count:
@@ -4381,6 +4678,7 @@ class ZoneFlowController:
 
         run_started = dt_util.utcnow().timestamp()
         self._last_outcome = None  # never read an earlier run's outcome if this one does not start
+        self._flow_target_l = self._flow_target_for(plan.target_mm)
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -4406,14 +4704,11 @@ class ZoneFlowController:
         # counts (an aborted or interrupted one returned above).
         state.last_routine_ts = done_ts
         self._remember_run_length(run_started, deep=True)
-        state.today_runtime_minutes += plan.total_runtime_minutes
-        self._count_for_summary(plan.total_runtime_minutes, "deep_soak")
-        self._record_decision(
-            "deep_soak",
-            "done",
-            minutes=plan.total_runtime_minutes,
-            amount_mm=round(plan.total_runtime_minutes * self.number("flow_rate_mm_per_min"), 1),
-        )
+        given_min, given_mm = self._given_amount(plan.total_runtime_minutes)
+        state.today_runtime_minutes += given_min
+        self._count_for_summary(given_min, "deep_soak", mm=given_mm)
+        self._learn_flow_rate()
+        self._record_decision("deep_soak", "done", minutes=round(given_min), amount_mm=round(given_mm, 1))
         await self.store.async_save()
         await self._end_wet_hold()  # the zone has just been watered
         await self._set_lock(False)
@@ -4657,6 +4952,7 @@ class ZoneFlowController:
 
         run_started = dt_util.utcnow().timestamp()
         self._last_outcome = None  # never read an earlier run's outcome if this one does not start
+        self._flow_target_l = self._flow_target_for(plan.needed_mm)
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -4674,10 +4970,9 @@ class ZoneFlowController:
             given = self._delivered_minutes
             state.last_routine_ts = dt_util.utcnow().timestamp()
             self._remember_run_length(run_started, deep=False)
-            self._count_for_summary(given, "routine")
-            self._record_decision(
-                "routine", "done", minutes=round(given), amount_mm=round(given * self.number("flow_rate_mm_per_min"), 1)
-            )
+            given, given_mm = self._given_amount(given)
+            self._count_for_summary(given, "routine", mm=given_mm)
+            self._record_decision("routine", "done", minutes=round(given), amount_mm=round(given_mm, 1))
             await self.store.async_save()
             return
         if not completed or state.abort_on:
@@ -4686,11 +4981,11 @@ class ZoneFlowController:
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
         self._remember_run_length(run_started, deep=False)
-        state.today_runtime_minutes += plan.calc_runtime_minutes
-        self._count_for_summary(plan.calc_runtime_minutes, "routine")
-        self._record_decision(
-            "routine", "done", minutes=plan.calc_runtime_minutes, amount_mm=round(plan.calc_runtime_minutes * self.number("flow_rate_mm_per_min"), 1)
-        )
+        given_min, given_mm = self._given_amount(plan.calc_runtime_minutes)
+        state.today_runtime_minutes += given_min
+        self._count_for_summary(given_min, "routine", mm=given_mm)
+        self._learn_flow_rate()
+        self._record_decision("routine", "done", minutes=round(given_min), amount_mm=round(given_mm, 1))
         await self.store.async_save()
         await self._set_lock(False)
         await self._log_event(
@@ -5043,6 +5338,9 @@ class ZoneFlowController:
         )
         routine_count = max(int(round(self.number("routine_pulse_count"))), 1)
         routine = calc.longest_pulse_minutes(routine_total, flow, routine_count, self._routine_min_pulse(), self.site)
+        flow_mode = self.flow_delivery_problem() is None  # a pulse may run up to its limit (1.8)
+        if flow_mode:
+            routine = self._flow_pulse_limit_minutes("Routine Irrigation", routine, routine_count)
         deep = 0.0
         if self.deep_soak_enabled and flow > 0:
             plan = calc.plan_deep_soak(
@@ -5055,6 +5353,8 @@ class ZoneFlowController:
             # A deep soak over its own cap is refused, so it never runs.
             if plan.total_runtime_minutes <= self.number("deep_soak_max_runtime_minutes"):
                 deep = plan.pulse_runtime_minutes
+                if flow_mode:
+                    deep = self._flow_pulse_limit_minutes("Deep Soak", deep, plan.pulse_count)
         service = max(
             self.number("service_mode_auto_off_minutes"),
             float(max(SERVICE_RUN_BUTTON_MINUTES)),
@@ -5101,6 +5401,8 @@ class ZoneFlowController:
             await self._log_flow_measurement("Failed", "flow_measure_failed", minutes=minutes, liters=liters)
             return
         await number.async_set_metric_value(round(rate, 3))
+        if (area := self.numbers.get("zone_area_m2")) is not None and 0 < area_m2 <= NUMBER_DEFS["zone_area_m2"][2]:
+            await area.async_set_metric_value(round(area_m2, 2))  # 1.8: the zone's area, for watering by the meter
         shown = units.to_display("flow_rate_mm_per_min", rate, self.imperial)
         await self._log_flow_measurement(
             "Completed",
@@ -5887,13 +6189,15 @@ class ZoneFlowController:
             state.summary_skip_days = [d for d in state.summary_skip_days if d not in reported["skip_days"]]
         await self.store.async_save()
 
-    def _count_for_summary(self, minutes: float, cycle: str) -> None:
+    def _count_for_summary(self, minutes: float, cycle: str, mm: float | None = None) -> None:
         """A completed watering: the weekly summary's counts (summary.py) and
         what the Last Water Delivered sensor shows -- the valve's minutes
-        times the calibrated flow rate, like the Status sentence's amount.
+        times the calibrated flow rate, like the Status sentence's amount, or
+        `mm` when the flow meter measured it (1.8).
         Only completed cycles get here; interrupted or cancelled ones don't."""
         state = self.store.state
-        mm = minutes * self.number("flow_rate_mm_per_min")
+        if mm is None:
+            mm = minutes * self.number("flow_rate_mm_per_min")
         state.summary_runs += 1
         state.summary_minutes += minutes
         state.summary_mm += mm

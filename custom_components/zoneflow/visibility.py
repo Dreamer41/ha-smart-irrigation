@@ -14,7 +14,7 @@ from __future__ import annotations
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from .const import GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF, RAIN_SOURCE_TIPS
+from .const import DELIVERY_FLOW, GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF, RAIN_SOURCE_TIPS
 
 # (platform, translation key) of each group, and when it has nothing to do.
 FORECAST = {
@@ -76,7 +76,12 @@ ROOT_ZONE = {
     ("sensor", "root_zone"),
 }
 NOTIFY = {("select", "notifications"), ("select", "weekly_summary")}
-FLOW_METER = {("sensor", "last_cycle_water_liters")}
+FLOW_METER = {
+    ("sensor", "last_cycle_water_liters"),
+    ("select", "delivery_mode"),
+    ("number", "zone_area_m2"),
+    ("number", "flow_time_allowance_pct"),
+}
 DEEP_SOAK = {
     ("number", "deep_soak_target_mm"),
     ("number", "deep_soak_max_runtime_minutes"),
@@ -194,6 +199,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= NOTIFY
     if not controller.flow_meter_entity:
         hidden |= FLOW_METER
+    elif controller.store.state.delivery_mode != DELIVERY_FLOW:
+        hidden.add(("number", "flow_time_allowance_pct"))  # only a flow-meter watering has a time limit
     if not controller.deep_soak_enabled:
         hidden |= DEEP_SOAK
     if not controller.deep_soak_enabled or controller.rain_counter_entity or controller.uses_wu:

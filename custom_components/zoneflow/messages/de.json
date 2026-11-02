@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} hat am Ende einer Bewässerung nicht bestätigt, dass es zu ist.",
       "valve_stuck": "{valve} war viel zu lange offen.",
       "flow": "Der Durchflussmesser zählte weiter, obwohl alle Zonenventile zu waren.",
-      "pump_power": "Die Pumpe zog weiter Strom, obwohl alle Zonenventile zu waren."
+      "pump_power": "Die Pumpe zog weiter Strom, obwohl alle Zonenventile zu waren.",
+      "high_flow": "Es lief viel mehr Wasser, als {valve} braucht: ein Rohr ist vielleicht geplatzt."
     },
     "master_valve_test_failed": {
       "title": "🚨 Hauptventil-Test fehlgeschlagen",
       "message": "Beim monatlichen Test von {valve} floss bei geschlossenem Ventil weiter Wasser oder die Pumpe lief weiter. Es hält vielleicht nicht, wenn ein Zonenventil offen hängt: bitte prüfen."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: zu viel Wasser",
+      "message": "{valve} wurde geschlossen: es liefen etwa {rate} pro Minute, viel mehr als die üblichen {expected}. Ein Rohr ist vielleicht geplatzt oder hat sich gelöst: vor der nächsten Bewässerung prüfen."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: wenig Durchfluss",
+      "message": "{given} von {target} in der erlaubten Zeit gegeben. Auf einen verstopften Filter oder zu wenig Druck prüfen."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: Durchflussmesser zählt nicht",
+      "message": "{meter} hat bei offenem Ventil nichts gezählt, deshalb lief die Bewässerung nach Zeit. Bitte den Zähler prüfen."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Das Hauptventil hat den monatlichen Test am {when} bestanden.",
       "test_pending": "Das Hauptventil wird einmal im Monat am Ende einer normalen Bewässerung getestet.",
       "test_none": "Füge einen Durchflussmesser oder einen Pumpenleistungs-Sensor hinzu, damit das Hauptventil einmal im Monat getestet wird."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow kann aus der Einheit von {entity} ('{unit}') keine Liter ablesen. Nutze einen Zähler, der ein Volumen (L, gal, m³) oder einen Durchfluss (L/min, gal/min) meldet.",
+      "learned": "Bewässerungen haben eine Durchflussrate von {learned} gemessen, die Einstellung Durchflussrate ist aber {setting}. Passe sie an, damit die geplanten Zeiten stimmen."
+    },
+    "flow_mode": {
+      "no_meter": "Bewässerung endet nach dem Durchflussmesser, aber die Zone hat keinen: sie bewässert nach Zeit.",
+      "meter_offline": "Bewässerung endet nach dem Durchflussmesser, aber er ist offline: die Zone bewässert nach Zeit, bis er zurück ist.",
+      "unknown_unit": "Bewässerung endet nach dem Durchflussmesser, aber seine Einheit ist kein Wasser: die Zone bewässert nach Zeit.",
+      "no_area": "Bewässerung endet nach dem Durchflussmesser, aber die Fläche der Zone ist nicht bekannt: Zonenfläche (oder Zonendurchfluss) einstellen, damit Millimeter in Liter umgerechnet werden können.",
+      "shared_meter": "Bewässerung endet nach dem Durchflussmesser, aber er wird mit einer Zone an einer anderen Pumpe geteilt, die gleichzeitig bewässern kann: die Zone bewässert nach Zeit."
     }
   },
   "why": {

@@ -1124,6 +1124,12 @@
       },
       "wetted_area_pct": {
         "name": "Natte deel van de zone"
+      },
+      "zone_area_m2": {
+        "name": "Oppervlakte van de zone"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Tijdmarge in watermetermodus"
       }
     },
     "datetime": {
@@ -1563,6 +1569,13 @@
           "afternoon_sun": "Middagzon",
           "full_sun": "Volle zon",
           "reflected_heat": "Teruggekaatste warmte (muur of bestrating)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Water geven stopt op",
+        "state": {
+          "time": "Geplande tijd",
+          "flow_meter": "Watermeter"
         }
       }
     },

@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} bekräftade inte att den stängde i slutet av en bevattning.",
       "valve_stuck": "{valve} stod öppen alldeles för länge.",
       "flow": "Flödesmätaren fortsatte att räkna medan alla zonventiler var stängda.",
-      "pump_power": "Pumpen fortsatte att dra ström medan alla zonventiler var stängda."
+      "pump_power": "Pumpen fortsatte att dra ström medan alla zonventiler var stängda.",
+      "high_flow": "Det rann långt mer vatten än {valve} tar: ett rör kan ha spruckit."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test av huvudventil misslyckades",
       "message": "Månadstestet av {valve} visade att vattnet fortfarande rann eller pumpen fortfarande gick när den var stängd. Den kanske inte stoppar vattnet om en zonventil fastnar: kontrollera den."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: för mycket vatten",
+      "message": "{valve} stängdes: det rann omkring {rate} i minuten, långt mer än de vanliga {expected}. Ett rör kan ha spruckit eller lossnat: kontrollera det före nästa bevattning."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: lågt flöde",
+      "message": "Gav {given} av {target} på tillåten tid. Kontrollera om filtret är igensatt eller trycket lågt."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: flödesmätaren räknar inte",
+      "message": "{meter} räknade ingenting medan ventilen var öppen, så bevattningen gick på tid i stället. Kontrollera mätaren."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Huvudventilen klarade månadstestet {when}.",
       "test_pending": "Huvudventilen testas en gång i månaden i slutet av en vanlig bevattning.",
       "test_none": "Lägg till en flödesmätare eller en pumpeffektsensor så testas huvudventilen en gång i månaden."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow kan inte läsa liter ur enheten för {entity} ('{unit}'). Använd en mätare som rapporterar volym (L, gal, m³) eller flöde (L/min, gal/min).",
+      "learned": "Bevattningar mätte ett flöde på {learned}, men inställningen Flödeshastighet är {setting}. Uppdatera den så att de planerade tiderna stämmer."
+    },
+    "flow_mode": {
+      "no_meter": "Bevattningen slutar efter flödesmätaren, men zonen har ingen flödesmätare: den vattnar på tid.",
+      "meter_offline": "Bevattningen slutar efter flödesmätaren, men mätaren är offline: zonen vattnar på tid tills den är tillbaka.",
+      "unknown_unit": "Bevattningen slutar efter flödesmätaren, men enheten kan inte läsas som vatten: zonen vattnar på tid.",
+      "no_area": "Bevattningen slutar efter flödesmätaren, men zonens yta är okänd: ange Zonens yta (eller Zonflöde) så att millimeter kan räknas om till liter.",
+      "shared_meter": "Bevattningen slutar efter flödesmätaren, men mätaren delas med en zon på en annan pump som kan vattna samtidigt: zonen vattnar på tid."
     }
   },
   "why": {

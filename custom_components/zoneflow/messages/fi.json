@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} ei vahvistanut sulkeutuneensa kastelun lopussa.",
       "valve_stuck": "{valve} oli auki aivan liian kauan.",
       "flow": "Virtausmittari laski yhä, vaikka kaikki vyöhykeventtiilit olivat kiinni.",
-      "pump_power": "Pumppu otti yhä virtaa, vaikka kaikki vyöhykeventtiilit olivat kiinni."
+      "pump_power": "Pumppu otti yhä virtaa, vaikka kaikki vyöhykeventtiilit olivat kiinni.",
+      "high_flow": "Vettä virtasi paljon enemmän kuin {valve} ottaa: putki voi olla haljennut."
     },
     "master_valve_test_failed": {
       "title": "🚨 Pääventtiilin testi epäonnistui",
       "message": "Venttiilin {valve} kuukausitestissä vesi virtasi tai pumppu kävi yhä, vaikka venttiili oli kiinni. Se ei ehkä pidätä, jos vyöhykeventtiili jää auki: tarkista se."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: liikaa vettä",
+      "message": "{valve} suljettiin: vettä virtasi noin {rate} minuutissa, paljon enemmän kuin tavalliset {expected}. Putki voi olla haljennut tai irronnut: tarkista se ennen seuraavaa kastelua."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: heikko virtaus",
+      "message": "Antoi {given} / {target} sallitussa ajassa. Tarkista tukkeutunut suodatin tai matala paine."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: virtausmittari ei laske",
+      "message": "{meter} ei laskenut mitään venttiilin ollessa auki, joten kastelu tehtiin ajan mukaan. Tarkista mittari."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Pääventtiili läpäisi kuukausitestin {when}.",
       "test_pending": "Pääventtiili testataan kerran kuukaudessa tavallisen kastelun lopussa.",
       "test_none": "Lisää virtausmittari tai pumpun tehoanturi, niin pääventtiili testataan kerran kuukaudessa."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow ei saa litroja anturin {entity} yksiköstä ('{unit}'). Käytä mittaria, joka kertoo tilavuuden (L, gal, m³) tai virtauksen (L/min, gal/min).",
+      "learned": "Kasteluissa mitattiin virtaamaksi {learned}, mutta Virtaama-asetus on {setting}. Päivitä se, jotta suunnitellut ajat ovat oikein."
+    },
+    "flow_mode": {
+      "no_meter": "Kastelu päättyy virtausmittarin mukaan, mutta vyöhykkeellä ei ole virtausmittaria: se kastelee ajan mukaan.",
+      "meter_offline": "Kastelu päättyy virtausmittarin mukaan, mutta mittari ei ole yhteydessä: vyöhyke kastelee ajan mukaan, kunnes se palaa.",
+      "unknown_unit": "Kastelu päättyy virtausmittarin mukaan, mutta mittarin yksikköä ei voi lukea vedeksi: vyöhyke kastelee ajan mukaan.",
+      "no_area": "Kastelu päättyy virtausmittarin mukaan, mutta vyöhykkeen pinta-alaa ei tiedetä: aseta Vyöhykkeen pinta-ala (tai Vyöhykkeen virtaus), jotta millimetrit voi muuttaa litroiksi.",
+      "shared_meter": "Kastelu päättyy virtausmittarin mukaan, mutta mittari on yhteinen toisen pumpun vyöhykkeen kanssa, joka voi kastella samaan aikaan: vyöhyke kastelee ajan mukaan."
     }
   },
   "why": {

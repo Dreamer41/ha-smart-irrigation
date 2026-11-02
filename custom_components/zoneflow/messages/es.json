@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} no confirmó que se cerró al final de un riego.",
       "valve_stuck": "{valve} estuvo abierta demasiado tiempo.",
       "flow": "El caudalímetro siguió contando con todas las válvulas de zona cerradas.",
-      "pump_power": "La bomba siguió consumiendo con todas las válvulas de zona cerradas."
+      "pump_power": "La bomba siguió consumiendo con todas las válvulas de zona cerradas.",
+      "high_flow": "Corrió mucha más agua de la que usa {valve}: puede que se haya roto una tubería."
     },
     "master_valve_test_failed": {
       "title": "🚨 Falló la prueba de la válvula maestra",
       "message": "La prueba mensual de {valve} detectó que el agua seguía corriendo o la bomba seguía en marcha con ella cerrada. Puede que no corte el agua si se atasca una válvula de zona: revísala."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: demasiada agua",
+      "message": "Se cerró {valve}: corrían unos {rate} por minuto, mucho más que los {expected} habituales. Puede que una tubería se haya roto o soltado: revísala antes del próximo riego."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: poco caudal",
+      "message": "Dio {given} de {target} en el tiempo permitido. Revisa si hay un filtro atascado o poca presión."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: el caudalímetro no cuenta",
+      "message": "{meter} no contó nada con la válvula abierta, así que el riego fue por tiempo. Revisa el contador."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "La válvula maestra superó la prueba mensual del {when}.",
       "test_pending": "La válvula maestra se prueba una vez al mes, al final de un riego normal.",
       "test_none": "Añade un caudalímetro o un sensor de potencia de la bomba para probar la válvula maestra una vez al mes."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow no puede obtener litros de la unidad de {entity} ('{unit}'). Usa un contador que informe un volumen (L, gal, m³) o un caudal (L/min, gal/min).",
+      "learned": "Los riegos midieron un caudal de {learned}, pero el ajuste Caudal es {setting}. Actualízalo para que los tiempos previstos sean correctos."
+    },
+    "flow_mode": {
+      "no_meter": "El riego termina por caudalímetro, pero la zona no tiene: riega por tiempo.",
+      "meter_offline": "El riego termina por caudalímetro, pero está desconectado: la zona riega por tiempo hasta que vuelva.",
+      "unknown_unit": "El riego termina por caudalímetro, pero su unidad no se puede leer como agua: la zona riega por tiempo.",
+      "no_area": "El riego termina por caudalímetro, pero no se conoce la superficie de la zona: indica la Superficie de la zona (o el Caudal de la zona) para pasar milímetros a litros.",
+      "shared_meter": "El riego termina por caudalímetro, pero lo comparte una zona de otra bomba que puede regar a la vez: la zona riega por tiempo."
     }
   },
   "why": {

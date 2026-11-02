@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} na konci zálievky nepotvrdil zatvorenie.",
       "valve_stuck": "{valve} zostal otvorený príliš dlho.",
       "flow": "Prietokomer ďalej počítal, hoci boli všetky ventily zón zatvorené.",
-      "pump_power": "Čerpadlo ďalej odoberalo prúd, hoci boli všetky ventily zón zatvorené."
+      "pump_power": "Čerpadlo ďalej odoberalo prúd, hoci boli všetky ventily zón zatvorené.",
+      "high_flow": "Tieklo oveľa viac vody, než {valve} berie: možno praskla rúra."
     },
     "master_valve_test_failed": {
       "title": "🚨 Test hlavného ventilu zlyhal",
       "message": "Mesačný test ventilu {valve} zistil, že pri jeho zatvorení voda ďalej tečie alebo čerpadlo ďalej beží. Ak sa ventil zóny zasekne, nemusí vodu zastaviť: skontrolujte ho."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: príliš veľa vody",
+      "message": "{valve} bol zatvorený: tieklo asi {rate} za minútu, oveľa viac ako obvyklých {expected}. Možno praskla alebo sa uvoľnila rúra: skontrolujte ju pred ďalšou zálievkou."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: nízky prietok",
+      "message": "Za povolený čas dal {given} z {target}. Skontrolujte upchatý filter alebo nízky tlak."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: prietokomer nepočíta",
+      "message": "{meter} pri otvorenom ventile nič nenapočítal, a tak zálievka prebehla podľa času. Skontrolujte prietokomer."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "Hlavný ventil prešiel mesačným testom {when}.",
       "test_pending": "Hlavný ventil sa testuje raz mesačne na konci bežnej zálievky.",
       "test_none": "Pridajte prietokomer alebo snímač príkonu čerpadla, aby sa hlavný ventil testoval raz mesačne."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow nedokáže z jednotky {entity} ('{unit}') zistiť litre. Použite merač, ktorý hlási objem (L, gal, m³) alebo prietok (L/min, gal/min).",
+      "learned": "Zálievky namerali prietok {learned}, ale nastavenie Prietok je {setting}. Upravte ho, aby plánované časy sedeli."
+    },
+    "flow_mode": {
+      "no_meter": "Zálievka končí podľa prietokomera, ale zóna žiadny nemá: zavlažuje podľa času.",
+      "meter_offline": "Zálievka končí podľa prietokomera, ale ten je offline: zóna zavlažuje podľa času, kým sa nevráti.",
+      "unknown_unit": "Zálievka končí podľa prietokomera, ale jeho jednotku nemožno čítať ako vodu: zóna zavlažuje podľa času.",
+      "no_area": "Zálievka končí podľa prietokomera, ale plocha zóny nie je známa: nastavte Plochu zóny (alebo Prietok zóny), aby sa dali milimetre previesť na litre.",
+      "shared_meter": "Zálievka končí podľa prietokomera, ale ten zdieľa zóna na inom čerpadle, ktorá môže zavlažovať súčasne: zóna zavlažuje podľa času."
     }
   },
   "why": {

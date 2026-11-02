@@ -187,11 +187,24 @@
       "valve_not_closed": "{valve} n'a pas confirmé sa fermeture à la fin d'un arrosage.",
       "valve_stuck": "{valve} est restée ouverte bien trop longtemps.",
       "flow": "Le débitmètre a continué de compter alors que toutes les vannes de zone étaient fermées.",
-      "pump_power": "La pompe a continué de consommer alors que toutes les vannes de zone étaient fermées."
+      "pump_power": "La pompe a continué de consommer alors que toutes les vannes de zone étaient fermées.",
+      "high_flow": "Bien plus d'eau a coulé que {valve} n'en prend : un tuyau a peut-être éclaté."
     },
     "master_valve_test_failed": {
       "title": "🚨 Échec du test de la vanne maîtresse",
       "message": "Le test mensuel de {valve} a constaté que l'eau coulait encore ou que la pompe tournait encore, vanne fermée. Elle risque de ne pas couper l'eau si une vanne de zone reste bloquée : vérifiez-la."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle} : trop d'eau",
+      "message": "{valve} a été fermée : environ {rate} par minute coulaient, bien plus que les {expected} habituels. Un tuyau a peut-être éclaté ou s'est détaché : vérifiez-le avant le prochain arrosage."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle} : faible débit",
+      "message": "{given} donnés sur {target} dans le temps permis. Vérifiez un filtre bouché ou une pression trop faible."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle} : le débitmètre ne compte pas",
+      "message": "{meter} n'a rien compté vanne ouverte, l'arrosage s'est donc fait au temps. Vérifiez le compteur."
     }
   },
   "notes": {
@@ -403,6 +416,17 @@
       "test_ok": "La vanne maîtresse a réussi le test mensuel du {when}.",
       "test_pending": "La vanne maîtresse est testée une fois par mois, à la fin d'un arrosage normal.",
       "test_none": "Ajoutez un débitmètre ou un capteur de puissance de pompe pour que la vanne maîtresse soit testée une fois par mois."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow ne peut pas lire des litres dans l'unité de {entity} (« {unit} »). Utilisez un compteur qui indique un volume (L, gal, m³) ou un débit (L/min, gal/min).",
+      "learned": "Les arrosages ont mesuré un débit de {learned}, mais le réglage Débit est de {setting}. Mettez-le à jour pour que les durées prévues soient justes."
+    },
+    "flow_mode": {
+      "no_meter": "L'arrosage s'arrête selon le débitmètre, mais la zone n'en a pas : elle arrose au temps.",
+      "meter_offline": "L'arrosage s'arrête selon le débitmètre, mais il est hors ligne : la zone arrose au temps jusqu'à son retour.",
+      "unknown_unit": "L'arrosage s'arrête selon le débitmètre, mais son unité ne peut pas être lue comme de l'eau : la zone arrose au temps.",
+      "no_area": "L'arrosage s'arrête selon le débitmètre, mais la surface de la zone est inconnue : indiquez la Surface de la zone (ou le Débit de la zone) pour convertir les millimètres en litres.",
+      "shared_meter": "L'arrosage s'arrête selon le débitmètre, mais il est partagé avec une zone d'une autre pompe qui peut arroser en même temps : la zone arrose au temps."
     }
   },
   "why": {
