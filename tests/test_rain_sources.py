@@ -193,3 +193,26 @@ async def test_an_attribute_only_change_is_not_a_new_rain_reading(hass, tmp_path
     hass.states.async_set(RAIN_COUNTER, "0.2", {"unit_of_measurement": "mm", "note": "b"})  # attribute only
     await hass.async_block_till_done()
     assert controller.rain_windows()["24h"] == pytest.approx(0.2)
+
+
+@pytest.mark.asyncio
+async def test_an_impossible_jump_in_a_tip_counter_is_not_rain(hass, tmp_path):
+    from custom_components.zoneflow.const import RAIN_SOURCE_TIPS
+
+    _entry, controller = await _zone(hass, tmp_path, RAIN_SOURCE_TIPS, 5.0)
+    await _set(hass, 6)
+    await _set(hass, 99999)  # a broken sensor: 30 000 mm if believed
+    assert controller.rain_windows()["24h"] < 5
+    await _set(hass, 7)  # back to normal: carries on
+    await _set(hass, 9)
+    assert controller.rain_windows()["24h"] < 5
+
+
+@pytest.mark.asyncio
+async def test_an_impossible_reading_in_a_per_reading_sensor_is_not_rain(hass, tmp_path):
+    _entry, controller = await _zone(hass, tmp_path, "amount_mm", 0.0)
+    await _set(hass, 0.2)
+    await _set(hass, 99999)
+    await _set(hass, 0.1)
+    assert controller.rain_windows()["24h"] == pytest.approx(0.3)
+

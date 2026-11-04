@@ -98,6 +98,9 @@ RAIN_UNIT_TO_MM = {
 # A rain-rate reading counts at most this long until the next one (a sensor
 # that stopped updating must not keep adding rain).
 RAIN_RATE_MAX_GAP_SECONDS = 900
+# A rain reading that adds more than this many mm at once is a broken sensor, not weather (the record is
+# about 300 mm in an hour); it is ignored so one garbage value cannot hold back watering for days.
+RAIN_MAX_PLAUSIBLE_JUMP_MM = 500.0
 CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
 CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter
 # Optional -- a % soil-moisture sensor. When configured AND currently

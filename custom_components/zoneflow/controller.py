@@ -197,6 +197,7 @@ from .const import (
     SOIL_WET_STOP,
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
+    RAIN_MAX_PLAUSIBLE_JUMP_MM,
     RAIN_RATE_MAX_GAP_SECONDS,
     RAIN_SOURCE_AMOUNT,
     RAIN_SOURCE_OPTIONS,
@@ -1412,6 +1413,9 @@ class ZoneFlowController:
         source = self.rain_source_type
         if source != RAIN_SOURCE_TIPS:
             tips *= self._rain_unit_factor(new_state)  # inches -> mm
+        if source in (RAIN_SOURCE_AMOUNT, RAIN_SOURCE_RATE) and tips > RAIN_MAX_PLAUSIBLE_JUMP_MM:
+            _LOGGER.warning("%s: ignoring an impossible rain reading of %s from %s", self.entry.title, tips, self.rain_counter_entity)
+            tips = 0.0
         now_ts = dt_util.utcnow().timestamp()
         if source == RAIN_SOURCE_AMOUNT:
             # Rain since the previous reading: every reading is new rain.
@@ -1434,6 +1438,13 @@ class ZoneFlowController:
         else:
             # The rain windows assume an ever-growing total; see
             # calc.track_tip_total for how resets and glitches are told apart.
+            previous = state.rain_counter_last_tips
+            if previous is not None and (tips - previous) * self._rain_mm_factor() > RAIN_MAX_PLAUSIBLE_JUMP_MM:
+                # An upward jump no weather makes: no rain is counted for it, and the count carries on from here.
+                _LOGGER.warning("%s: ignoring an impossible jump in %s (%s to %s)", self.entry.title, self.rain_counter_entity, previous, tips)
+                state.rain_counter_last_tips = tips
+                self.store.schedule_save()
+                return
             self._track_rain_total(tips, now_ts)
         self._record_rain_sample(seed_only)
 
