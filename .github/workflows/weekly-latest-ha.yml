@@ -22,10 +22,10 @@ on:
 
 jobs:
   test-latest:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           # Keep in step with tests.yml's choice of 3.12 -- see that
           # workflow's comment (numpy has no 3.13 wheel pytest-homeassistant-
