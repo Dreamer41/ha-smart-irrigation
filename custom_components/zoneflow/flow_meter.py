@@ -19,6 +19,9 @@ METER_RATE = "rate"
 RATE_STALE_SECONDS = 180.0
 # A running total that drops by more than this the same run was reset (or rolled over).
 TOTAL_RESET_TOLERANCE_L = 0.5
+# A running total that rises by more than this in one reading is a broken meter, not water (a zone
+# takes litres a minute): the reading is ignored unless the next one stays there (the meter moved).
+TOTAL_MAX_JUMP_L = 10000.0
 # A total meter's "flow right now": what it counted over the last minute.
 RATE_WINDOW_SECONDS = 60.0
 
@@ -72,6 +75,7 @@ class FlowTracker:
         self._start = value if kind == METER_TOTAL else None
         self._last_value = value
         self._last_ts = ts
+        self._spike: float | None = None  # total: an implausible reading waiting for its confirmation
         self._rate_litres = 0.0  # rate: litres added up so far
         self.last_change_ts = ts  # when the count last went up (the no-flow check)
         self.started_ts = ts
@@ -85,6 +89,12 @@ class FlowTracker:
         if ts < self._last_ts:
             return  # out of order
         if self.kind == METER_TOTAL:
+            if self._last_value is not None and self._start is not None and value - self._last_value > TOTAL_MAX_JUMP_L:
+                if self._spike is None or abs(value - self._spike) > TOTAL_MAX_JUMP_L:
+                    self._spike = value
+                    return  # first reading up there: wait to see whether the meter stays
+                self._start += value - self._last_value  # it stayed: a new baseline, no litres for the jump
+            self._spike = None
             if self._start is None:
                 self._start = value
             elif self._last_value is not None and value < self._last_value - TOTAL_RESET_TOLERANCE_L:

@@ -27,6 +27,7 @@ from typing import Any
 
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.event import async_call_later
+from homeassistant.util import dt as dt_util
 
 from . import flow_meter, zone_valve
 from .const import DOMAIN
@@ -41,6 +42,9 @@ CHECK_SECONDS = 30.0
 LEAK_LITRES = 2.0
 # A meter reporting a rate: above this many L/min is flowing.
 LEAK_RATE = 0.5
+# Some rate meters hold their last rate for minutes after the water stops (a pulse meter's timeout): a rate
+# only counts as a leak when it has held for longer than that.
+RATE_LEAK_SUSTAIN_SECONDS = 400.0
 OPEN_CONFIRM_SECONDS = 30.0
 # The self-test: how often, how long the pipe after the master may drain (and a pump take to build
 # pressure and stop), how long no water may then be counted, and how much counts as water.
@@ -163,11 +167,19 @@ class MasterValve:
             raise MasterValveClosed(self.latched)
         first = not self.holders
         self.holders.add(controller.entry.entry_id)
-        state = self.hass.states.get(self.entity_id)
-        if first or not self.is_open(state):
-            await self._send_open()
-            if not await self._confirmed(open_=True, seconds=OPEN_CONFIRM_SECONDS):
-                _LOGGER.warning("ZoneFlow: master valve %s did not report open", self.entity_id)
+        try:
+            state = self.hass.states.get(self.entity_id)
+            if first or not self.is_open(state):
+                try:
+                    await self._send_open()
+                except Exception:  # noqa: BLE001 - a device may raise anything; the run still releases the master
+                    _LOGGER.exception("ZoneFlow: could not open master valve %s", self.entity_id)
+                if not await self._confirmed(open_=True, seconds=OPEN_CONFIRM_SECONDS):
+                    _LOGGER.warning("ZoneFlow: master valve %s did not report open", self.entity_id)
+        except BaseException:
+            # Cancelled while waiting (the release only starts once this returns): the zone holds nothing.
+            self.holders.discard(controller.entry.entry_id)
+            raise
 
     async def async_release(self, controller: Any, *, valve_closed: bool) -> None:
         """A run ended on `controller`. Its valve not confirmed closed: close the master for safety.
@@ -320,8 +332,10 @@ def test_passed(zone: Any, start_litres: float | None) -> bool | None:
     reading = _meter(zone)
     if reading is not None:
         value, is_rate = reading
+        # A rate meter may still show the rate from before the valves closed (see RATE_LEAK_SUSTAIN_SECONDS),
+        # so only a total, or the pump, can tell in half a minute.
         if is_rate:
-            verdicts.append(value <= LEAK_RATE)
+            pass
         elif start_litres is not None:
             verdicts.append(value - start_litres <= TEST_LEAK_LITRES)
     return all(verdicts) if verdicts else None
@@ -353,11 +367,21 @@ def flow_while_closed(zone: Any, baseline: dict[str, float | None], first: bool)
     if reading is None:
         return None
     litres, is_rate = reading
-    if is_rate:  # L/min
-        return REASON_FLOW if litres > LEAK_RATE else None
     key = zone.entry.entry_id
+    if is_rate:  # L/min
+        now = dt_util.utcnow().timestamp()
+        if litres <= LEAK_RATE:
+            baseline.pop(f"{key}:rate_since", None)
+            return None
+        since = baseline.setdefault(f"{key}:rate_since", now)
+        return REASON_FLOW if now - since >= RATE_LEAK_SUSTAIN_SECONDS else None
     if first or baseline.get(key) is None:
-        baseline[key] = litres
+        baseline[key] = baseline[f"{key}:prev"] = litres
+        baseline[f"{key}:rises"] = 0
         return None
-    return REASON_FLOW if litres - baseline[key] > LEAK_LITRES else None
+    # A meter that reports every minute or two delivers the last of the water late: more than
+    # LEAK_LITRES counts only once it has gone up on two checks in a row.
+    rises = baseline[f"{key}:rises"] + 1 if litres > baseline[f"{key}:prev"] else 0
+    baseline[f"{key}:prev"], baseline[f"{key}:rises"] = litres, rises
+    return REASON_FLOW if litres - baseline[key] > LEAK_LITRES and rises >= 2 else None
 

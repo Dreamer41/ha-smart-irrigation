@@ -96,3 +96,18 @@ async def test_check_my_setup_says_when_the_sensor_works(hass, fake_valve_servic
     c = await _wet(hass, monkeypatch, tmp_path, state="off")
     levels = {item["id"]: item["level"] for item in setup_check.run_checks(c)}
     assert levels["rain_sensor"] == "ok"
+
+
+@pytest.mark.asyncio
+async def test_a_sensor_stuck_wet_is_still_told_after_a_restart(hass, fake_valve_services, monkeypatch, tmp_path):
+    c = await _wet(hass, monkeypatch, tmp_path)
+    # Home Assistant restarted: the entity's last_changed is new, but the zone remembers when the wet spell began.
+    c._track_rain_sensor_wet()
+    assert c.store.state.rain_sensor_wet_start_ts is not None
+    later = dt_util.utcnow() + timedelta(seconds=RAIN_SENSOR_STUCK_SECONDS + 60)
+    c.store.state.rain_sensor_wet_start_ts = later.timestamp() - RAIN_SENSOR_STUCK_SECONDS - 3600
+    monkeypatch.setattr(dt_util, "utcnow", lambda: later)
+    assert c.rain_sensor_stuck() and c.rain_sensor_wet() is None
+    hass.states.async_set(SENSOR, "off")
+    c._track_rain_sensor_wet()
+    assert c.store.state.rain_sensor_wet_start_ts is None

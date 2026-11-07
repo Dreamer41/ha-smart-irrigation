@@ -196,6 +196,7 @@ async def test_a_rate_meter_showing_flow_in_a_soak_closes_the_master(hass, fake_
     await hass.async_block_till_done()
     await master._async_check()
     assert hass.states.get(MASTER).state == "on"
+    monkeypatch.setattr(master_valve, "RATE_LEAK_SUSTAIN_SECONDS", 0.0)  # (held rates: see the test below)
     hass.states.async_set(METER, "4.2", {"unit_of_measurement": "L/min"})
     await master._async_check()
     await hass.async_block_till_done()
@@ -349,3 +350,100 @@ async def test_the_checked_button_does_nothing_without_a_master(hass, fake_valve
     controller, clock, events = await _zone(hass, monkeypatch, tmp_path)
     await controller.master_valve_checked()
     assert "Master Valve Checked" not in events
+
+
+@pytest.mark.asyncio
+async def test_a_master_that_fails_to_open_does_not_leave_a_stale_holder(hass, monkeypatch):
+    from types import SimpleNamespace
+
+    from custom_components.zoneflow import master_valve as mv
+
+    monkeypatch.setattr(mv, "OPEN_CONFIRM_SECONDS", 0.0)
+    master = mv.get(hass, MASTER)
+    hass.states.async_set(MASTER, "off")
+
+    async def boom():
+        raise RuntimeError("device timeout")
+
+    monkeypatch.setattr(master, "_send_open", boom)
+    zone = SimpleNamespace(entry=SimpleNamespace(entry_id="zone-1"))
+    await master.async_acquire(zone)  # the run goes on (the pump audit catches a dead-headed pump)
+    assert master.holders == {"zone-1"}
+    await master.async_release(zone, valve_closed=True)
+    assert master.holders == set()
+
+
+@pytest.mark.asyncio
+async def test_a_restart_in_the_middle_of_a_run_closes_the_master_too(hass, fake_valve_services, monkeypatch, tmp_path):
+    controller, _clock, _events = await _master_zone(hass, monkeypatch, tmp_path)
+    await controller._set_lock(True)
+    controller.store.state.lock_set_ts = controller._setup_ts - 600  # taken before this start: stale
+    for entity in (VALVE, MASTER):
+        hass.states.async_set(entity, "on")
+    await hass.async_block_till_done()
+    await controller._on_startup(None)
+    await hass.async_block_till_done()
+    assert hass.states.get(VALVE).state == "off" and hass.states.get(MASTER).state == "off"
+
+
+@pytest.mark.asyncio
+async def test_a_run_cancelled_while_the_master_opens_holds_nothing(hass, monkeypatch):
+    import asyncio
+    from types import SimpleNamespace
+
+    from custom_components.zoneflow import master_valve as mv
+
+    master = mv.get(hass, MASTER)
+    hass.states.async_set(MASTER, "off")
+
+    async def never():
+        await asyncio.sleep(3600)
+
+    monkeypatch.setattr(master, "_confirmed", lambda **kw: never())
+    task = asyncio.ensure_future(master.async_acquire(SimpleNamespace(entry=SimpleNamespace(entry_id="zone-1"))))
+    await asyncio.sleep(0.05)
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    assert master.holders == set()
+
+
+@pytest.mark.asyncio
+async def test_a_rate_that_a_meter_holds_after_the_water_stops_is_not_a_leak(hass, fake_valve_services, monkeypatch, tmp_path):
+    from types import SimpleNamespace
+
+    hass.states.async_set(METER, "0", {"unit_of_measurement": "L/min"})
+    controller, clock, events = await _master_zone(
+        hass, monkeypatch, tmp_path, **{CONF_FLOW_METER_ENTITY: METER, CONF_PUMP_POWER_ENTITY: None}
+    )
+    now = [1000.0]
+    monkeypatch.setattr(master_valve, "dt_util", SimpleNamespace(utcnow=lambda: SimpleNamespace(timestamp=lambda: now[0])))
+    hass.states.async_set(METER, "12", {"unit_of_measurement": "L/min"})  # the last rate, held
+    baseline: dict = {}
+    assert master_valve.flow_while_closed(controller, baseline, True) is None
+    now[0] += 120
+    assert master_valve.flow_while_closed(controller, baseline, False) is None
+    hass.states.async_set(METER, "0", {"unit_of_measurement": "L/min"})  # the meter's timeout: it lets go
+    now[0] += 120
+    assert master_valve.flow_while_closed(controller, baseline, False) is None
+    hass.states.async_set(METER, "5", {"unit_of_measurement": "L/min"})  # now water really runs
+    assert master_valve.flow_while_closed(controller, baseline, False) is None
+    now[0] += master_valve.RATE_LEAK_SUSTAIN_SECONDS + 1
+    assert master_valve.flow_while_closed(controller, baseline, False) == master_valve.REASON_FLOW
+
+
+@pytest.mark.asyncio
+async def test_litres_that_a_slow_total_meter_delivers_late_are_not_a_leak(hass, fake_valve_services, monkeypatch, tmp_path):
+    hass.states.async_set(METER, "100", {"unit_of_measurement": "L"})
+    controller, clock, events = await _master_zone(
+        hass, monkeypatch, tmp_path, **{CONF_FLOW_METER_ENTITY: METER, CONF_PUMP_POWER_ENTITY: None}
+    )
+    baseline: dict = {}
+    assert master_valve.flow_while_closed(controller, baseline, True) is None
+    hass.states.async_set(METER, "108", {"unit_of_measurement": "L"})  # the last of the water, reported late
+    assert master_valve.flow_while_closed(controller, baseline, False) is None
+    assert master_valve.flow_while_closed(controller, baseline, False) is None  # and nothing more
+    hass.states.async_set(METER, "112", {"unit_of_measurement": "L"})
+    assert master_valve.flow_while_closed(controller, baseline, False) is None
+    hass.states.async_set(METER, "116", {"unit_of_measurement": "L"})  # still counting: a leak
+    assert master_valve.flow_while_closed(controller, baseline, False) == master_valve.REASON_FLOW

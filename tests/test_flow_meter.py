@@ -55,3 +55,16 @@ def test_the_flow_right_now_and_whether_it_moves():
     assert rate.flowing_since(100.0) == pytest.approx(100.0)
     rate.update(4.0, 100.0)
     assert rate.flowing_since(150.0) == 0.0 and rate.rate_l_min(150.0) == 4.0
+
+
+def test_a_broken_reading_is_not_water_but_a_meter_that_really_moved_is_followed():
+    t = fm.FlowTracker(fm.METER_TOTAL, 100.0, 0.0)
+    t.update(110.0, 10.0)
+    t.update(99999.0, 20.0)  # one wild reading
+    t.update(115.0, 30.0)  # and back to normal
+    assert t.litres(30.0) == pytest.approx(15.0)
+    moved = fm.FlowTracker(fm.METER_TOTAL, 100.0, 0.0)
+    moved.update(50000.0, 10.0)
+    moved.update(50005.0, 20.0)  # it stayed there: a new baseline
+    moved.update(50010.0, 30.0)
+    assert moved.litres(30.0) == pytest.approx(5.0)

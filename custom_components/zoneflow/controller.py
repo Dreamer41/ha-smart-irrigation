@@ -1688,6 +1688,7 @@ class ZoneFlowController:
 
     @callback
     def _on_rain_sensor_change(self, event: Event) -> None:
+        self._track_rain_sensor_wet()
         self._count_sensor_rain(dt_util.utcnow().timestamp())
 
     def _shift_missed_days(self) -> None:
@@ -1811,6 +1812,7 @@ class ZoneFlowController:
     def _on_heartbeat(self, now) -> None:
         self.store.state.last_alive_ts = dt_util.utcnow().timestamp()
         if self.rain_sensor_entity:
+            self._track_rain_sensor_wet()
             self._count_sensor_rain(self.store.state.last_alive_ts)
         self._end_stale_wu_climate(self.store.state.last_alive_ts)
         self.store.schedule_save()
@@ -2521,9 +2523,30 @@ class ZoneFlowController:
         if state is None or state.state not in ("on", "off"):
             return None
         wet = (state.state == "on") != self.rain_sensor_inverted
-        if wet and (dt_util.utcnow() - state.last_changed).total_seconds() > RAIN_SENSOR_STUCK_SECONDS:
+        if wet and self._rain_sensor_wet_seconds(state) > RAIN_SENSOR_STUCK_SECONDS:
             return None
         return wet
+
+    def _rain_sensor_wet_seconds(self, state: State) -> float:
+        """How long the sensor has read wet: from the saved start of the spell when there is one (a
+        restart resets the entity's last_changed), else from its last change."""
+        since = state.last_changed.timestamp()
+        start = self.store.state.rain_sensor_wet_start_ts
+        if start is not None:
+            since = min(since, start)
+        return dt_util.utcnow().timestamp() - since
+
+    def _track_rain_sensor_wet(self) -> None:
+        """Remember when the current wet spell began (cleared when the sensor reads dry)."""
+        entity = self.rain_sensor_entity
+        state = self.hass.states.get(entity) if entity else None
+        if state is None or state.state not in ("on", "off"):
+            return  # unavailable: what was known stands
+        if (state.state == "on") != self.rain_sensor_inverted:
+            if self.store.state.rain_sensor_wet_start_ts is None:
+                self.store.state.rain_sensor_wet_start_ts = state.last_changed.timestamp()
+        else:
+            self.store.state.rain_sensor_wet_start_ts = None
 
     def rain_sensor_stuck(self) -> bool:
         """The sensor has read wet for more than a day with no change (a Repairs notice)."""
@@ -2532,7 +2555,7 @@ class ZoneFlowController:
         if state is None or state.state not in ("on", "off"):
             return False
         wet = (state.state == "on") != self.rain_sensor_inverted
-        return wet and (dt_util.utcnow() - state.last_changed).total_seconds() > RAIN_SENSOR_STUCK_SECONDS
+        return wet and self._rain_sensor_wet_seconds(state) > RAIN_SENSOR_STUCK_SECONDS
 
     def _rain_sensor_hold(self) -> dict[str, Any] | None:
         """The rain sensor reads wet: the cycle waits for it to dry (an unreadable sensor never holds)."""
@@ -3041,8 +3064,10 @@ class ZoneFlowController:
         """Merged port of avocado_stale_lock_on_startup + avocado_startup_lock_reset."""
         await asyncio.sleep(STARTUP_GRACE_SECONDS)
         state = self.store.state
-        if (master := self._master()) is not None and not state.lock_on:
-            await master.async_close_if_idle()  # a run cut off by the restart may have left it open
+        if (master := self._master()) is not None:
+            # A run cut off by the restart may have left it open, with or without a stale lock (nothing
+            # holds it yet: a run that already has it is left alone).
+            await master.async_close_if_idle()
         if not state.lock_on:
             return
         # A lock taken after startup belongs to a cycle running right now

@@ -324,6 +324,9 @@ class IrrigationState:
     # Cumulative mm, added as the sensor stays wet; and since when it has been counted.
     sensor_rain_samples: list[list[float]] = field(default_factory=list)
     rain_sensor_wet_since: float | None = None
+    # When the rain sensor began its current wet spell: kept across restarts (Home Assistant restarts
+    # the sensor's last_changed), so a sensor stuck wet is told even when Home Assistant restarts daily.
+    rain_sensor_wet_start_ts: float | None = None
 
     def rain_tracker(self) -> RainWindowTracker:
         return RainWindowTracker.from_persisted(self.rain_samples)
