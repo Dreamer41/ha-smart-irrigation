@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
-## [Unreleased]
+## [1.8.0] — A water estimate that follows the plant and the weather
 
 ### Added
 
@@ -26,6 +26,9 @@ For detailed release notes and upgrade instructions, see the **docs/** folder fo
 
 ### Fixed
 
+- **Impossible sensor readings no longer count as water or rain.** A rain counter that jumps by more than 500 mm in one reading, or a flow-meter total that jumps by more than 10,000 L, is a broken sensor: it is ignored instead of holding watering back for days or ending a watering at once.
+- **The master valve closes after a restart in the middle of a run**, and a run that is cancelled while the master opens no longer leaves it holding the valve open for later runs. The leak checks no longer trip on a flow meter that holds its last rate or reports its last litres late.
+- **A rain sensor stuck wet is told even when Home Assistant restarts daily.**
 - **A flow meter that reports a rate (L/min, m³/h, gal/min) is read as a rate.** It was read as a running total, so its litres per run, the weekly litres and the No Flow Detected warning were wrong. A meter whose unit is neither a volume nor a rate (for example "pulses") is no longer read as litres; Check my setup says so.
 
 - **Sunrise and sunset schedules now start the watering.** A zone whose routine or deep soak was set to before/after sunrise or sunset never watered on schedule on current Home Assistant (the start ran outside Home Assistant's event loop and was refused).
