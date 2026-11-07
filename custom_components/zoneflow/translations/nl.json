@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Diepe watergift: verschuiving t.o.v. zon (minuten)",
           "routine_sun_mode": "Start routinewatergift",
           "routine_sun_offset_minutes": "Routinewatergift: verschuiving t.o.v. zon (minuten)",
-          "unit_system": "Eenheden"
+          "unit_system": "Eenheden",
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
+          "solar_entity": "Zonnestralingssensor (optioneel)",
+          "wind_exposure": "Wind op deze plek (zonder windsensor)",
+          "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
+          "coastal": "Aan zee (zonder zonnesensor)",
+          "wind_sensor_height_m": "Hoogte van de windsensor",
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
           "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
           "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
-          "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt."
+          "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt.",
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag.",
+          "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
+          "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
+          "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
+          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Trigger diepe bewatering",
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
-          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)"
+          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)",
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor or na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
-          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd."
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground regen (experimenteel)",
-        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen worden alleen gebruikt voor regenkrediet. Ze zijn niet 100% nauwkeurig, en hoe verder de stations van je zones liggen, hoe minder nauwkeurig ze zijn.",
+        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen zijn niet 100 % nauwkeurig, en minder naarmate de stations verder van je zones staan. Regen wordt gebruikt voor regenkrediet; wind, luchtvochtigheid en zonneschijn alleen met de optie hieronder.",
         "data": {
           "api_key": "API-sleutel",
-          "radius_km": "Zoekradius"
+          "radius_km": "Zoekradius",
+          "borrow_climate": "Ook wind, luchtvochtigheid en zonneschijn lenen"
         },
         "data_description": {
           "api_key": "Uit je Weather Underground-account (API Keys). Alleen opgeslagen in deze vermelding.",
-          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis."
+          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis.",
+          "borrow_climate": "Voor de FAO-56-waterschatting van buitenzones die daar geen sensor en geen weerentiteit voor hebben. Vraagt elke 30 minuten op in plaats van elke 2 uur. De wind geldt als gemeten op de Windsensorhoogte van de zone."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Regenmeter mm per kiep",
           "outdoor_temp_entity": "Buitentemperatuursensor",
           "weather_entity": "Weer-entiteit (voorspelling)",
-          "notify_entity": "Telefoon voor meldingen"
+          "notify_entity": "Telefoon voor meldingen",
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
+          "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
           "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
@@ -267,7 +300,12 @@
           "weather_entity": "Optioneel. Laat de zones van dit gebied sproeien overslaan als er regen wordt voorspeld.",
           "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
-          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
+          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
       "area_name_required": "Geef het gebied een naam.",
       "area_name_exists": "Er bestaat al een gebied met deze naam.",
-      "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte."
+      "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte.",
+      "master_is_zone_valve": "De hoofdklep moet een andere klep zijn dan de eigen kleppen van de zones.",
+      "valve_is_a_master": "Deze klep is de hoofdklep van een andere zone."
     },
     "abort": {
       "already_configured": "Weather Underground-regen is al ingesteld."
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "Diepe watergift: verschuiving t.o.v. zon (minuten)",
           "routine_sun_mode": "Start routinewatergift",
           "routine_sun_offset_minutes": "Routinewatergift: verschuiving t.o.v. zon (minuten)",
-          "unit_system": "Eenheden"
+          "unit_system": "Eenheden",
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
+          "solar_entity": "Zonnestralingssensor (optioneel)",
+          "wind_exposure": "Wind op deze plek (zonder windsensor)",
+          "climate_dryness": "Klimaat (zonder vochtigheidssensor)",
+          "coastal": "Aan zee (zonder zonnesensor)",
+          "wind_sensor_height_m": "Hoogte van de windsensor",
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "valve_entity": "De schakelaar die de klep van deze zone opent (of de pomp start). Het enige waar ZoneFlow niet zonder kan: het zet hem aan en uit, en zorgt er altijd voor dat hij weer uit staat.",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
           "routine_sun_mode": "Start de routinewatergift op de vaste tijd hierboven, of voor of na zonsopkomst of zonsondergang, zodat hij met de seizoenen meeschuift.",
           "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopkomst of zonsondergang. Niet gebruikt bij de vaste tijd.",
-          "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt."
+          "unit_system": "Wat deze zone laat zien: Home Assistant volgen, of altijd metrisch (mm, °C, liters) of imperiaal (inch, °F, gallons). Het verandert alleen wat je ziet, nooit hoeveel water er gegeven wordt.",
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag.",
+          "wind_exposure": "Gebruikt als er geen windsensor of weerwind is: beschut, open of blootgesteld.",
+          "climate_dryness": "Gebruikt als er geen vochtigheidsmeting is: vochtig of droog (dorre en halfdorre streken).",
+          "coastal": "Gebruikt als er geen zonmeting is: dicht bij de kust wordt de zon iets hoger geschat.",
+          "wind_sensor_height_m": "Hoe hoog de windsensor hangt. Thuisweerstations staan meestal op ongeveer 2 m.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "Trigger diepe bewatering",
           "deep_soak_sun_offset_minutes": "Zonneverschuiving diepe bewatering (minuten)",
           "routine_sun_mode": "Trigger routinebewatering",
-          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)"
+          "routine_sun_offset_minutes": "Zonneverschuiving routinebewatering (minuten)",
+          "master_valve_entity": "Hoofdklep (optioneel)",
+          "master_valve_normally_open": "Hoofdklep is normaal open"
         },
         "data_description": {
           "pump_power_entity": "Een vermogenssensor (W) op de pomp, bijv. van een slimme stekker. Tijdens elke bewatering controleert ZoneFlow of de pomp daadwerkelijk stroom verbruikt en waarschuwt u als dat niet zo is. Laat leeg als u er geen heeft.",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "Start de diepe bewatering op de bovenstaande vaste tijd, of voor of na zonsopgang of zonsondergang, zodat deze meebeweegt met de seizoenen.",
           "deep_soak_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
           "routine_sun_mode": "Start de routinebewatering op de bovenstaande vaste tijd, of voor of na zonsopgang or zonsondergang, zodat deze meebeweegt met de seizoenen.",
-          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd."
+          "routine_sun_offset_minutes": "Hoeveel minuten voor of na zonsopgang of zonsondergang. Niet gebruikt bij een vaste tijd.",
+          "master_valve_entity": "Een extra afsluiter vóór deze zone, bijvoorbeeld na een pomp die meerdere zones voedt. Hij gaat open bij elke beurt en dicht als de laatste klaar is. Hij gaat ook dicht voor de veiligheid, tot Reset Lock, als een zoneklep open blijft hangen of er water blijft stromen (watermeter) of de pomp blijft draaien (pompvermogen) terwijl alle zonekleppen dicht zijn. Geef alle zones erachter dezelfde klep.",
+          "master_valve_normally_open": "Laat uit voor een normaal gesloten klep (aanbevolen: die gaat vanzelf dicht bij stroomuitval). Zet aan voor een normaal open klep op een relais: ZoneFlow sluit hem dan door het relais AAN te zetten. Een klep-entiteit meldt zelf open en dicht en negeert dit."
         }
       },
       "wu_key": {
         "title": "Weather Underground regen (experimenteel)",
-        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen worden alleen gebruikt voor regenkrediet. Ze zijn niet 100% nauwkeurig, en hoe verder de stations van je zones liggen, hoe minder nauwkeurig ze zijn.",
+        "description": "Leent regenmetingen van particuliere weerstations in de buurt van je tuin, voor buitenzones ZONDER regenmeter. Heb je al een regenmeter? Dan heb je dit niet nodig.\n\n**Controleer eerst** de kaart op wunderground.com op stations binnen een paar kilometer van je tuin die regen melden. Als die er niet zijn, stop dan hier.\n\n**Ten tweede**: de gratis API-sleutel vereist een eigen station: registreer er een op wunderground.com en upload ten minste de buitentemperatuur en luchtvochtigheid (bijvoorbeeld met de ha-weather-uploader integratie). De API-sleutel staat vervolgens in je Weather Underground-account.\n\nDe metingen zijn niet 100 % nauwkeurig, en minder naarmate de stations verder van je zones staan. Regen wordt gebruikt voor regenkrediet; wind, luchtvochtigheid en zonneschijn alleen met de optie hieronder.",
         "data": {
           "api_key": "API-sleutel",
-          "radius_km": "Zoekradius"
+          "radius_km": "Zoekradius",
+          "borrow_climate": "Ook wind, luchtvochtigheid en zonneschijn lenen"
         },
         "data_description": {
           "api_key": "Uit je Weather Underground-account (API Keys). Alleen opgeslagen in deze vermelding.",
-          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis."
+          "radius_km": "0,5-2 km, dichterbij is beter: regen kan op een paar km sterk verschillen. Boven 1 km moet je in de gaten houden hoe de metingen overeenkomen met de regen bij jou thuis.",
+          "borrow_climate": "Voor de FAO-56-waterschatting van buitenzones die daar geen sensor en geen weerentiteit voor hebben. Vraagt elke 30 minuten op in plaats van elke 2 uur. De wind geldt als gemeten op de Windsensorhoogte van de zone."
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "Gebruik de regenmeter van het gebied",
           "outdoor_temp_entity": "Gebruik de buitentemperatuur van het gebied",
           "weather_entity": "Gebruik de weer-entiteit van het gebied",
-          "notify_entity": "Gebruik de telefoon van het gebied"
+          "notify_entity": "Gebruik de telefoon van het gebied",
+          "humidity_entity": "Vochtigheidssensor van het gebied gebruiken",
+          "wind_entity": "Windsensor van het gebied gebruiken",
+          "rain_sensor_entity": "Regensensor van het gebied gebruiken",
+          "solar_entity": "Zonnesensor van het gebied gebruiken"
         },
         "data_description": {
           "rain_counter_entity": "Vink aan om de regenmeter van het gebied te gebruiken in plaats van die van deze zone.",
           "outdoor_temp_entity": "Vink aan om de buitentemperatuursensor van het gebied te gebruiken in plaats van die van deze zone.",
           "weather_entity": "Vink aan om de weer-entiteit van het gebied te gebruiken in plaats van die van deze zone.",
-          "notify_entity": "Vink aan om naar de telefoon van het gebied te sturen in plaats van de eigen telefoon van deze zone."
+          "notify_entity": "Vink aan om naar de telefoon van het gebied te sturen in plaats van de eigen telefoon van deze zone.",
+          "humidity_entity": "Vink aan om de vochtigheidssensor van het gebied te gebruiken in plaats van die van deze zone.",
+          "wind_entity": "Vink aan om de windsensor van het gebied te gebruiken in plaats van die van deze zone.",
+          "rain_sensor_entity": "Vink aan om de regensensor van het gebied te gebruiken in plaats van die van de zone zelf.",
+          "solar_entity": "Vink aan om de zonnesensor van het gebied te gebruiken in plaats van die van deze zone."
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "Regenmeter mm per kiep",
           "outdoor_temp_entity": "Buitentemperatuursensor",
           "weather_entity": "Weer-entiteit (voorspelling)",
-          "notify_entity": "Telefoon voor meldingen"
+          "notify_entity": "Telefoon voor meldingen",
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
+          "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
           "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
@@ -636,7 +717,12 @@
           "weather_entity": "Optioneel. Laat de zones van dit gebied sproeien overslaan als er regen wordt voorspeld.",
           "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
-          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
+          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "Regenmeter mm per kiep",
           "outdoor_temp_entity": "Buitentemperatuursensor",
           "weather_entity": "Weer-entiteit (voorspelling)",
-          "notify_entity": "Telefoon voor meldingen"
+          "notify_entity": "Telefoon voor meldingen",
+          "humidity_entity": "Buitenvochtigheidssensor (optioneel)",
+          "wind_entity": "Windsnelheidssensor (optioneel)",
+          "rain_sensor_entity": "Regensensor (optioneel)",
+          "rain_sensor_inverted": "Sensor staat aan als het droog is",
+          "solar_entity": "Zonnestralingssensor (optioneel)"
         },
         "data_description": {
           "rain_counter_entity": "Optioneel. De zones van dit gebied lezen hun regen hier af, tenzij een zone een eigen meter heeft.",
@@ -658,7 +749,12 @@
           "weather_entity": "Optioneel. Laat de zones van dit gebied sproeien overslaan als er regen wordt voorspeld.",
           "notify_entity": "Optioneel. Waar de zones van dit gebied hun telefoonberichten naartoe sturen.",
           "area_name": "Hoe het gebied heet, bijvoorbeeld Achtertuin of Voortuin.",
-          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting."
+          "rain_source_type": "Wat de regenmetersensor doorgeeft: een kiepteller, een regen-totaal, een regensnelheid of de regen sinds de laatste meting.",
+          "humidity_entity": "Relatieve luchtvochtigheid buiten. Laat de FAO-56-schatting droge en vochtige dagen volgen.",
+          "wind_entity": "Windsnelheid buiten. Winderige dagen drogen planten sneller uit; zonder sensor wordt een voor de plek gebruikelijke wind genomen.",
+          "rain_sensor_entity": "Een nat/droog-sensor (aan = nat). Zolang hij nat meldt, wacht een verschuldigde beregening en wordt elk uur opnieuw gecontroleerd; een druk op Nu sproeien sproeit toch.",
+          "rain_sensor_inverted": "Vink aan als de sensor aan staat bij droog en uit bij nat.",
+          "solar_entity": "Zonlicht in W/m². Zonder sensor wordt de zon geschat uit het temperatuurverschil van de dag."
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "Kies 1, 2 of 3 stations.",
       "greenhouse_has_crops": "Deze kas bevat gewassen. Verplaats ze eerst naar een andere kas of verwijder ze (Configureer -> Kas van elk gewas).",
       "area_name_required": "Geef het gebied een naam.",
-      "area_name_exists": "Er bestaat al een gebied met deze naam."
+      "area_name_exists": "Er bestaat al een gebied met deze naam.",
+      "master_is_zone_valve": "De hoofdklep moet een andere klep zijn dan de eigen kleppen van de zones.",
+      "valve_is_a_master": "Deze klep is de hoofdklep van een andere zone."
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "Regentotaal (mm of in; totaal, dagelijks of wekelijks)",
         "rate_mm_h": "Regenintensiteit (mm/u)",
         "amount_mm": "Regen per meting (mm of in; bijv. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Beschut (muren, hagen)",
+        "open": "Open",
+        "exposed": "Blootgesteld (heuveltop, kust, dak)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Vochtig",
+        "dry": "Droog (dor of halfdor)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "Eigen timer van de klep"
+      },
+      "kc_curve_pct": {
+        "name": "Sterkte van de gewascurve"
+      },
+      "root_depth_mm": {
+        "name": "Worteldiepte"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Waterhoudend vermogen van de bodem"
+      },
+      "allowed_depletion_pct": {
+        "name": "Toegestane uitdroging van de bodem"
+      },
+      "wetted_area_pct": {
+        "name": "Natte deel van de zone"
+      },
+      "zone_area_m2": {
+        "name": "Oppervlakte van de zone"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Tijdmarge in watermetermodus"
+      },
+      "wind_hold_kmh": {
+        "name": "Windlimiet"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Regen per uur van de regensensor"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Automatisch hervatten"
+      },
+      "master_valve_checked": {
+        "name": "Hoofdklep gecontroleerd"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Zelfafstelling"
+      },
+      "kc_climate_adjust": {
+        "name": "Gewasfactor volgt het klimaat"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Langste kleptijd open"
+      },
+      "crop_factor": {
+        "name": "Gewasfactor vandaag"
+      },
+      "root_zone": {
+        "name": "Wortelzone houdt vast"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Waterbehoeftemodel",
         "state": {
           "temperature_tiers": "Temperatuurtrappen",
-          "et_curve": "ET-curve (Hargreaves)"
+          "et_curve": "ET-curve (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Water geven afmaken",
           "stop": "Stoppen bij het natte niveau"
+        }
+      },
+      "crop_curve": {
+        "name": "Gewascurve",
+        "state": {
+          "fixed": "Vast (schuifregelaar Gewasfactor)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Zonligging",
+        "state": {
+          "deep_shade": "De hele dag schaduw",
+          "morning_sun": "Ochtendzon",
+          "afternoon_sun": "Middagzon",
+          "full_sun": "Volle zon",
+          "reflected_heat": "Teruggekaatste warmte (muur of bestrating)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Water geven stopt op",
+        "state": {
+          "time": "Geplande tijd",
+          "flow_meter": "Watermeter"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Deze zone bestaat niet meer."
+          "zone_gone": "Deze zone bestaat niet meer.",
+          "zone_busy": "De zone is bezig. Probeer het zo opnieuw."
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Deze zone bestaat niet meer."
+          "zone_gone": "Deze zone bestaat niet meer.",
+          "zone_busy": "De zone is bezig. Probeer het zo opnieuw."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: het gebied is verwijderd",
       "description": "Het gebied {area} is verwijderd, dus {zone} gebruikt nu een kopie van de sensoren die daarvan afkomstig waren. Om deze in een ander gebied te plaatsen, gebruik Zonering -> Waar is dit?"
+    },
+    "fao56_offer": {
+      "title": "{zone}: overstappen op de FAO-56-waterschatting?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "{zone} omzetten naar FAO-56",
+            "description": "{zone} heeft twee weken FAO-56-dagen vastgelegd. Nu geeft de zone volgens het huidige model {current} per week; FAO-56 geeft op dezelfde twee weken {fao56} per week (temperatuur, plus vochtigheid, wind en zon waar je die hebt). FAO-56 geeft bij vochtig weer meestal minder en op droge, winderige dagen meer. Deze zone overzetten op FAO-56? Je kunt altijd terug met 'Waterbehoeftemodel'."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: regensensor loopt vast",
+      "description": "De regensensor {entity} van zone {zone} meldt al meer dan een dag onveranderd nat, dus ZoneFlow negeert hem. Controleer de sensor: hij kan vuil of kapot zijn. Dit verdwijnt vanzelf zodra hij droog meldt."
     }
   }
 }

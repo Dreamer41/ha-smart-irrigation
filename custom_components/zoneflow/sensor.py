@@ -3,6 +3,8 @@ estimate, last water delivered estimate, days since last run. Ports of the
 matching template sensors in configuration.yaml."""
 from __future__ import annotations
 
+from datetime import timedelta
+
 from homeassistant.components.sensor import UNIT_CONVERTERS, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
@@ -13,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
 
 from . import calculations as calc, units
-from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
+from .const import CONF_ENTRY_TYPE, CONF_PLANT, DEMAND_MODEL_ET, DEMAND_MODEL_FAO56, DOMAIN, ENTRY_TYPE_AREA, ENTRY_TYPE_WU, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF
 from .devices import zone_device
 from .entity_cleanup import remove_entities
 
@@ -47,6 +49,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowAvgPeakTempSensor(entry, controller),
         ZoneFlowReferenceEt0Sensor(entry, controller),
         ZoneFlowWeeklyTargetSensor(entry, controller),
+        ZoneFlowCropFactorSensor(entry, controller),
+        ZoneFlowRootZoneSensor(entry, controller),
         ZoneFlowNextIrrigationSensor(entry, controller),
         ZoneFlowNextFertilizingSensor(entry, controller),
         ZoneFlowDaysUntilNextRunSensor(entry, controller),
@@ -210,9 +214,10 @@ class ZoneFlowReferenceEt0Sensor(_Base):
     _unit_kind = "rate"
     _attr_device_class = "precipitation_intensity"
     """3-day average reference evapotranspiration (Hargreaves-Samani, see
-    calculations.py). Display-only for now: nothing in the watering math
-    reads it yet. Shows "unknown" until at least one full day of daily
-    min/max temperature has been recorded."""
+    calculations.py): the ET curve demand model waters by it. Shows
+    "unknown" until at least one full day of daily min/max temperature has
+    been recorded. Its attributes also carry the FAO-56 Penman-Monteith
+    days (1.8), whichever model the zone uses, so the two can be compared."""
 
     _attr_native_unit_of_measurement = "mm/d"
     _attr_icon = "mdi:water-thermometer-outline"
@@ -240,6 +245,20 @@ class ZoneFlowReferenceEt0Sensor(_Base):
             "today_min_temp_c": state.today_min_temp_c,
             "today_max_temp_c": state.today_peak_temp_c,
             "today_et0_so_far_mm": round(today, 2) if today is not None else None,
+            **self._fao56_attributes(),
+        }
+
+    def _fao56_attributes(self) -> dict:
+        history = [e for e in self._controller.store.state.et0_day_history if isinstance(e, dict)]
+        latest = self._controller.fao56_latest_day()
+        return {
+            "fao56_et0_mm": latest.get("et0") if latest else None,
+            "fao56_date": latest.get("date") if latest else None,
+            "fao56_sources": dict(latest.get("sources") or {}) if latest else {},
+            "fao56_inputs": (
+                {k: latest.get(k) for k in ("t_min", "t_max", "rh_min", "rh_max", "rh_mean", "u2", "rs")} if latest else {}
+            ),
+            "fao56_daily_et0_mm": [e.get("et0") for e in history[:7]],
         }
 
 
@@ -262,16 +281,29 @@ class ZoneFlowWeeklyTargetSensor(_Base):
 
     def _source(self) -> tuple[float, str]:
         et_weekly = self._controller.et_weekly_target_mm()
+        model = self._controller.demand_model
         if et_weekly is not None:
-            return et_weekly, "et_curve"
+            return et_weekly, ("fao56" if model == DEMAND_MODEL_FAO56 else "et_curve")
         tier = self._controller.tier_weekly_target_mm()
-        if self._controller.demand_model == DEMAND_MODEL_ET:
+        if model in (DEMAND_MODEL_ET, DEMAND_MODEL_FAO56):
             return tier, "temperature_tiers_fallback"
         return tier, "temperature_tiers"
 
     def metric_native_value(self) -> float:
         target, _ = self._source()
         return round(target * self._controller.routine_target_scale(), 2)
+
+    def _kc_attributes(self) -> dict:
+        info = self._controller.kc_info(dt_util.now().date())
+        return {
+            "crop_coefficient": round(info["kc"], 3),
+            "kc_source": info["source"],
+            "kc_stage": info["stage"],
+            "kc_crop": info["crop"],
+            "kc_season_day": info["day"],
+            "climate_adjustment": info["climate_adjustment"],
+            "sun_exposure": info["exposure"],
+        }
 
     @property
     def extra_state_attributes(self) -> dict:
@@ -284,9 +316,117 @@ class ZoneFlowWeeklyTargetSensor(_Base):
             "growth_ramp_pct": round(self._controller.growth_ramp_fraction() * 100, 0),
             "deficit_pct": round(self._controller.deficit()[0] * 100, 0),
             "avg_et0_mm_per_day": round(et0, 2) if et0 is not None else None,
-            "crop_coefficient": self._controller.number("crop_coefficient"),
+            **self._kc_attributes(),
+            # 1.8: what each model would give right now, whichever this zone uses (before the
+            # growth ramp, deficit and mulch), so a switch to FAO-56 can be judged first.
+            "tier_weekly_target_mm": round(self._controller.tier_weekly_target_mm(), 2),
+            "fao56_weekly_target_mm": (
+                round(daily * 7.0, 2) if (daily := self._controller.fao56_daily_demand_mm()) is not None else None
+            ),
             "mulch_status": self._controller.mulch_status,
             "mulch_factor": round(self._controller.mulch_factor(), 3),
+        }
+
+
+class ZoneFlowCropFactorSensor(_Base):
+    """The crop factor (Kc) the zone waters by today, and where it comes from (1.8): the Crop
+    Factor slider, or a crop's FAO-56 season curve adjusted for the zone's wind and humidity,
+    the Crop Curve Strength and the Sun Exposure (controller.kc_info)."""
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_icon = "mdi:sprout"
+    _attr_suggested_display_precision = 2
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_crop_factor"
+        self._attr_translation_key = "crop_factor"
+
+    @property
+    def native_value(self) -> float:
+        return round(self._controller.kc_info(dt_util.now().date())["kc"], 3)
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        controller = self._controller
+        today = dt_util.now().date()
+        climate = controller.kc_climate()
+        info = controller.kc_info(today, climate)
+        crop = controller.crop_seasons.get(info["crop"]) if info["crop"] else None
+        attrs = {
+            "source": info["source"],
+            "crop": info["crop"],
+            "stage": info["stage"],
+            "season_day": info["day"],
+            "strength_pct": controller.number("kc_curve_pct"),
+            "kc_table": round(info["kc_table"], 3),
+            "climate_adjustment": info["climate_adjustment"],
+            "crop_height_m": crop.height_m if crop else None,
+            "exposure": info["exposure"],
+            "exposure_factor": info["exposure_factor"],
+            "kc_before_exposure": round(info["kc_before_exposure"], 3),
+        }
+        used = info["climate"]
+        if used:
+            attrs.update(
+                climate_u2=round(used["u2"], 2), climate_rh_min=round(used["rh_min"], 1), climate_days=used["days"],
+                climate_rh_source=used["rh_source"], climate_wind_source=used["wind_source"],
+            )
+        if info["source"] == "curve":
+            attrs["next_7_days"] = [
+                round(controller.kc_for(today + timedelta(days=i), climate), 3) for i in range(7)
+            ]
+        return attrs
+
+
+class ZoneFlowRootZoneSensor(_Base):
+    """What the root zone holds (TAW, 1.8) and what that does to the watering: the most days between
+    waterings and how much the limit takes off a dose. Unavailable while Root Depth is 0 (off)."""
+
+    _unit_kind = "depth"
+    _attr_device_class = "precipitation"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_native_unit_of_measurement = "mm"
+    _attr_icon = "mdi:sprout-outline"
+    _attr_suggested_display_precision = 1
+
+    def __init__(self, entry: ConfigEntry, controller) -> None:
+        super().__init__(entry, controller)
+        self._attr_unique_id = f"{entry.entry_id}_root_zone"
+        self._attr_translation_key = "root_zone"
+
+    @property
+    def available(self) -> bool:
+        return self._controller.root_zone() is not None
+
+    def metric_native_value(self) -> float | None:
+        root_zone = self._controller.root_zone()
+        return round(root_zone.taw_mm, 1) if root_zone else None
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        controller = self._controller
+        root_zone = controller.root_zone()
+        if root_zone is None:
+            return {}
+        imperial = controller.imperial
+        interval = controller._routine_interval_days()
+        try:
+            capped = controller._routine_plan().root_zone_capped_mm
+        except Exception:  # noqa: BLE001 -- an attribute must never break the sensor
+            capped = 0.0
+
+        def depth(mm: float | None):
+            return round(units.sensor_value("depth", mm, imperial), 2) if mm is not None else None
+
+        return {
+            "readily_available": depth(root_zone.raw_mm),
+            "allowed_drying_pct": round(root_zone.p * 100.0),
+            "daily_use": depth(root_zone.etc_mm_day),
+            "waters_every_days": interval,
+            "interval_shortened": interval < controller._tier_interval_days(),
+            "dose_capped_by": depth(capped),
+            "deep_soak_capped": controller.deep_soak_target_mm() < controller.number("deep_soak_target_mm"),
         }
 
 
@@ -659,6 +799,7 @@ class ZoneFlowGrowthRampSensor(_Base):
         # being reported either way since the planting date itself is
         # unaffected by the override.
         attrs["mode"] = self._controller.store.state.growth_stage_mode
+        attrs["covered_by_crop_curve"] = self._controller.kc_curve_covers_growth()
         planting_ts = self._controller.store.state.planting_date_ts
         if planting_ts is not None:
             days = max((dt_util.utcnow().timestamp() - planting_ts) / 86400.0, 0.0)

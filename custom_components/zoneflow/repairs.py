@@ -26,6 +26,7 @@ from .const import (
     CONF_RAIN_COUNTER_ENTITY,
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_WEATHER_ENTITY,
+    DEMAND_MODEL_FAO56,
     DOMAIN,
 )
 
@@ -74,6 +75,8 @@ class NotifyFix(_Fix):
         if entry is None:
             return self._gone()
         if user_input is not None:
+            if self._controller is not None and self._controller.run_in_progress:
+                return self.async_abort(reason="zone_busy")  # the change would restart the zone mid-run
             target = self._owner_of(entry, CONF_NOTIFY_ENTITY)  # an area's phone is fixed on the area
             self.hass.config_entries.async_update_entry(
                 target, options={**target.options, CONF_NOTIFY_ENTITY: user_input.get(CONF_NOTIFY_ENTITY) or None}
@@ -101,6 +104,8 @@ class SensorFix(_Fix):
         if role == "temperature" and controller is not None and not controller.is_outdoor:
             key = CONF_INSIDE_TEMP_ENTITY  # a greenhouse waters by its inside sensor: that is the one that went
         if user_input is not None:
+            if controller is not None and controller.run_in_progress:
+                return self.async_abort(reason="zone_busy")  # the change would restart the zone mid-run
             target = self._owner_of(entry, key)
             replacement = user_input.get("replacement") or None
             self.hass.config_entries.async_update_entry(target, options={**target.options, key: replacement})
@@ -163,7 +168,37 @@ class FlowRateFix(_Fix):
         )
 
 
+def _fao56_placeholders(controller) -> dict[str, str]:
+    from . import units
+
+    current, fao = controller.fao56_comparison() or (0.0, 0.0)
+    return {
+        "zone": controller.entry.title,
+        "current": units.depth_text(current, controller.imperial),
+        "fao56": units.depth_text(fao, controller.imperial),
+    }
+
+
+class Fao56Fix(_Fix):
+    """Switch the zone's water demand model to FAO-56, on a yes."""
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> data_entry_flow.FlowResult:
+        controller = self._controller
+        if controller is None:
+            return self._gone()
+        if user_input is not None:
+            controller.store.state.demand_model = DEMAND_MODEL_FAO56
+            await controller.store.async_save()
+            controller._notify_status()
+            return self.async_create_entry(data={})
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({}),
+            description_placeholders=_fao56_placeholders(controller),
+        )
+
+
 async def async_create_fix_flow(hass: HomeAssistant, issue_id: str, data: dict[str, Any] | None) -> RepairsFlow:
     kind = (data or {}).get("kind")
-    flows = {"notify": NotifyFix, "sensor": SensorFix, "flow_rate": FlowRateFix}
+    flows = {"notify": NotifyFix, "sensor": SensorFix, "flow_rate": FlowRateFix, "fao56": Fao56Fix}
     return flows[kind](data or {})

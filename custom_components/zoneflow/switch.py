@@ -16,6 +16,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import homeassistant.util.dt as dt_util
@@ -41,6 +42,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         ZoneFlowSelfTuningSwitch(entry, controller),
     ]
     if controller.is_outdoor:
+        entities.append(ZoneFlowKcClimateSwitch(entry, controller))
         remove_entities(hass, entry, "switch", ["greenhouse_control", "mist_at_night", "auto_resume"])
     else:
         entities += [
@@ -149,6 +151,9 @@ class ZoneFlowDeepSoakEnabledSwitch(SwitchEntity):
         # _async_update_listener), so nothing about the reload/reconfigure
         # path needs a special case just because a switch triggered it
         # instead of the Options form.
+        if self._controller.run_in_progress and bool(self._controller.deep_soak_enabled) != value:
+            # Saving reloads the zone, which would stop the watering in progress.
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")
         self.hass.config_entries.async_update_entry(
             self._entry, options={**self._entry.options, CONF_DEEP_SOAK_ENABLED: value}
         )
@@ -187,6 +192,37 @@ class ZoneFlowSelfTuningSwitch(SwitchEntity):
             state.self_tune_skip_streak = 0
         await self._controller.store.async_save()
         self.async_write_ha_state()
+
+
+class ZoneFlowKcClimateSwitch(SwitchEntity):
+    """Crop Factor Follows Climate (1.8): on = a picked crop curve is raised in windy, dry weather
+    and lowered in calm, humid weather (FAO-56 eq. 62) from the zone's own wind and humidity."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:weather-windy"
+
+    def __init__(self, entry: ConfigEntry, controller: ZoneFlowController) -> None:
+        self._controller = controller
+        self._attr_unique_id = f"{entry.entry_id}_kc_climate_adjust"
+        self._attr_translation_key = "kc_climate_adjust"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)}, name=entry.title)
+
+    @property
+    def is_on(self) -> bool:
+        return self._controller.store.state.kc_climate_adjust
+
+    async def async_turn_on(self, **kwargs) -> None:
+        await self._set(True)
+
+    async def async_turn_off(self, **kwargs) -> None:
+        await self._set(False)
+
+    async def _set(self, value: bool) -> None:
+        self._controller.store.state.kc_climate_adjust = value
+        await self._controller.store.async_save()
+        self.async_write_ha_state()
+        self._controller._notify_status()
 
 
 class ZoneFlowPauseSwitch(SwitchEntity):

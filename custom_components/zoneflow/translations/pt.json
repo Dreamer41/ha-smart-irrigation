@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Rega profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da rega de rotina",
           "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol",
-          "unit_system": "Unidades"
+          "unit_system": "Unidades",
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "rain_sensor_entity": "Sensor de chuva (opcional)",
+          "rain_sensor_inverted": "O sensor está ligado quando está seco",
+          "solar_entity": "Sensor de radiação solar (opcional)",
+          "wind_exposure": "Vento neste local (sem sensor de vento)",
+          "climate_dryness": "Clima (sem sensor de humidade)",
+          "coastal": "Junto ao mar (sem sensor solar)",
+          "wind_sensor_height_m": "Altura do sensor de vento",
+          "master_valve_entity": "Válvula mestra (opcional)",
+          "master_valve_normally_open": "A válvula mestra é normalmente aberta"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
-          "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega."
+          "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega.",
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "rain_sensor_entity": "Um sensor molhado/seco (ligado = molhado). Enquanto indicar molhado, uma rega devida espera e volta a verificar de hora a hora; premir Regar agora rega na mesma.",
+          "rain_sensor_inverted": "Marque se o sensor está ligado com tempo seco e desligado quando molhado.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia.",
+          "wind_exposure": "Usado quando não há sensor de vento nem vento da meteorologia: abrigado, aberto ou exposto.",
+          "climate_dryness": "Usado quando não há leitura de humidade: húmido ou seco (zonas áridas e semiáridas).",
+          "coastal": "Usado quando não há leitura solar: junto à costa o sol é estimado um pouco mais alto.",
+          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante.",
+          "master_valve_normally_open": "Deixe desligado para uma válvula normalmente fechada (recomendado: fecha sozinha num corte de energia). Ligue para uma válvula normalmente aberta num relé: o ZoneFlow fecha-a então LIGANDO o relé. Uma entidade de válvula indica ela própria se está aberta ou fechada e ignora isto."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Gatilho da rega profunda",
           "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
-          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)"
+          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)",
+          "master_valve_entity": "Válvula mestra (opcional)",
+          "master_valve_normally_open": "A válvula mestra é normalmente aberta"
         },
         "data_description": {
           "pump_power_entity": "Um sensor de potência (W) na bomba, ex.: de uma tomada inteligente. Durante cada rega, o ZoneFlow verifica se a bomba consome energia e avisa se tal não acontecer. Deixe em branco se não tiver um.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
-          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa."
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante.",
+          "master_valve_normally_open": "Deixe desligado para uma válvula normalmente fechada (recomendado: fecha sozinha num corte de energia). Ligue para uma válvula normalmente aberta num relé: o ZoneFlow fecha-a então LIGANDO o relé. Uma entidade de válvula indica ela própria se está aberta ou fechada e ignora isto."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Chuva do Weather Underground (experimental)",
-        "description": "Usa leituras de chuva de estações meteorológicas privadas próximas do seu jardim para zonas exteriores SEM pluviómetro. Tem um pluviómetro? Não precisa disto.\n\n**Primeiro**, verifique o mapa em wunderground.com para encontrar estações a escassos km do seu jardim que comuniquem chuva. Se não houver nenhuma, pare aqui.\n\n**Segundo**, a chave API gratuita requer uma estação própria: registe uma em wunderground.com e envie pelo menos a temperatura e humidade exteriores (por exemplo com a integração ha-weather-uploader). A chave API estará disponível na sua conta Weather Underground.\n\nAs leituras são usadas apenas para o crédito de chuva. Não são 100 % precisas, e tornam-se menos precisas quanto mais distantes as estações estiverem das suas zonas.",
+        "description": "Usa leituras de chuva de estações meteorológicas privadas próximas do seu jardim para zonas exteriores SEM pluviómetro. Tem um pluviómetro? Não precisa disto.\n\n**Primeiro**, verifique o mapa em wunderground.com para encontrar estações a escassos km do seu jardim que comuniquem chuva. Se não houver nenhuma, pare aqui.\n\n**Segundo**, a chave API gratuita requer uma estação própria: registe uma em wunderground.com e envie pelo menos a temperatura e humidade exteriores (por exemplo com a integração ha-weather-uploader). A chave API estará disponível na sua conta Weather Underground.\n\nAs leituras não são 100 % exatas, e menos quanto mais longe as estações estiverem das suas zonas. A chuva é usada para o crédito de chuva; vento, humidade e sol só com a opção abaixo.",
         "data": {
           "api_key": "Chave API",
-          "radius_km": "Raio de pesquisa"
+          "radius_km": "Raio de pesquisa",
+          "borrow_climate": "Usar também vento, humidade e sol"
         },
         "data_description": {
           "api_key": "Da sua conta Weather Underground (API Keys). Guardado apenas nesta entrada.",
-          "radius_km": "0,5-2 km, quanto mais perto melhor: a chuva pode variar bastante em escassos km. Acima de 1 km, fique atento a como as leituras correspondem à chuva no seu local."
+          "radius_km": "0,5-2 km, quanto mais perto melhor: a chuva pode variar bastante em escassos km. Acima de 1 km, fique atento a como as leituras correspondem à chuva no seu local.",
+          "borrow_climate": "Para a estimativa de água FAO-56 das zonas exteriores que não têm sensor nem entidade de meteorologia para isso. Consulta a cada 30 minutos em vez de a cada 2 horas. O vento é considerado medido à Altura do sensor de vento da zona."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Medidor de chuva: mm por báscula",
           "outdoor_temp_entity": "Sensor de temperatura exterior",
           "weather_entity": "Entidade meteorológica (previsão)",
-          "notify_entity": "Telemóvel para notificações"
+          "notify_entity": "Telemóvel para notificações",
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "rain_sensor_entity": "Sensor de chuva (opcional)",
+          "rain_sensor_inverted": "O sensor está ligado quando está seco",
+          "solar_entity": "Sensor de radiação solar (opcional)"
         },
         "data_description": {
           "rain_counter_entity": "Opcional. As zonas desta área lêem a chuva a partir daqui, a menos que uma zona tenha o seu próprio medidor.",
@@ -267,7 +300,12 @@
           "weather_entity": "Opcional. Permite que as zonas desta área cancelem a rega quando houver previsão de chuva.",
           "notify_entity": "Opcional. Para onde as zonas desta área enviam as suas mensagens de telemóvel.",
           "area_name": "Como se chama a área, por exemplo Quintal ou Jardim da frente.",
-          "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura."
+          "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura.",
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "rain_sensor_entity": "Um sensor molhado/seco (ligado = molhado). Enquanto indicar molhado, uma rega devida espera e volta a verificar de hora a hora; premir Regar agora rega na mesma.",
+          "rain_sensor_inverted": "Marque se o sensor está ligado com tempo seco e desligado quando molhado.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
       "area_name_required": "Dê um nome à área.",
       "area_name_exists": "Já existe uma área com este nome.",
-      "flow_rate_out_of_range": "Esses números dão um caudal que esta zona não pode ter. Verifique o número de emissores, o caudal de um emissor e a área."
+      "flow_rate_out_of_range": "Esses números dão um caudal que esta zona não pode ter. Verifique o número de emissores, o caudal de um emissor e a área.",
+      "master_is_zone_valve": "A válvula mestra tem de ser diferente das válvulas próprias das zonas.",
+      "valve_is_a_master": "Esta válvula é a válvula mestra de outra zona."
     },
     "abort": {
       "already_configured": "A chuva do Weather Underground já está configurada."
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "Rega profunda: minutos antes/depois do sol",
           "routine_sun_mode": "Início da rega de rotina",
           "routine_sun_offset_minutes": "Rega de rotina: minutos antes/depois do sol",
-          "unit_system": "Unidades"
+          "unit_system": "Unidades",
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "rain_sensor_entity": "Sensor de chuva (opcional)",
+          "rain_sensor_inverted": "O sensor está ligado quando está seco",
+          "solar_entity": "Sensor de radiação solar (opcional)",
+          "wind_exposure": "Vento neste local (sem sensor de vento)",
+          "climate_dryness": "Clima (sem sensor de humidade)",
+          "coastal": "Junto ao mar (sem sensor solar)",
+          "wind_sensor_height_m": "Altura do sensor de vento",
+          "master_valve_entity": "Válvula mestra (opcional)",
+          "master_valve_normally_open": "A válvula mestra é normalmente aberta"
         },
         "data_description": {
           "valve_entity": "O interruptor que abre a válvula desta zona (ou liga a bomba). É a única coisa sem a qual o ZoneFlow não funciona: liga-o e desliga-o, e garante sempre que fica desligado no fim.",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina à hora fixa acima, ou antes ou depois do nascer ou do pôr do sol, para acompanhar as estações do ano.",
           "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou do pôr do sol. Não se usa com a hora fixa.",
-          "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega."
+          "unit_system": "O que esta zona mostra: seguir o Home Assistant, ou sempre métrico (mm, °C, litros) ou imperial (polegadas, °F, galões). Só muda o que vê, nunca quanto rega.",
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "rain_sensor_entity": "Um sensor molhado/seco (ligado = molhado). Enquanto indicar molhado, uma rega devida espera e volta a verificar de hora a hora; premir Regar agora rega na mesma.",
+          "rain_sensor_inverted": "Marque se o sensor está ligado com tempo seco e desligado quando molhado.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia.",
+          "wind_exposure": "Usado quando não há sensor de vento nem vento da meteorologia: abrigado, aberto ou exposto.",
+          "climate_dryness": "Usado quando não há leitura de humidade: húmido ou seco (zonas áridas e semiáridas).",
+          "coastal": "Usado quando não há leitura solar: junto à costa o sol é estimado um pouco mais alto.",
+          "wind_sensor_height_m": "A que altura está o sensor de vento. As estações meteorológicas domésticas ficam normalmente a cerca de 2 m.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante.",
+          "master_valve_normally_open": "Deixe desligado para uma válvula normalmente fechada (recomendado: fecha sozinha num corte de energia). Ligue para uma válvula normalmente aberta num relé: o ZoneFlow fecha-a então LIGANDO o relé. Uma entidade de válvula indica ela própria se está aberta ou fechada e ignora isto."
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "Gatilho da rega profunda",
           "deep_soak_sun_offset_minutes": "Desvio solar para rega profunda (minutos)",
           "routine_sun_mode": "Gatilho de rotina",
-          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)"
+          "routine_sun_offset_minutes": "Desvio solar de rotina (minutos)",
+          "master_valve_entity": "Válvula mestra (opcional)",
+          "master_valve_normally_open": "A válvula mestra é normalmente aberta"
         },
         "data_description": {
           "pump_power_entity": "Um sensor de potência (W) na bomba, ex.: de uma tomada inteligente. Durante cada rega, o ZoneFlow verifica se a bomba consome energia e avisa se tal não acontecer. Deixe em branco se não tiver um.",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "Inicie a rega profunda na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
           "deep_soak_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
           "routine_sun_mode": "Inicie a rega de rotina na hora fixa acima, ou antes/depois do nascer ou pôr do sol, acompanhando as estações do ano.",
-          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa."
+          "routine_sun_offset_minutes": "Quantos minutos antes ou depois do nascer ou pôr do sol. Não utilizado com hora fixa.",
+          "master_valve_entity": "Uma válvula de corte de reserva a montante desta zona, por exemplo depois de uma bomba partilhada por várias zonas. Abre com cada rega e fecha quando a última termina. Também fecha por segurança, até Reset Lock, se uma válvula de zona ficar presa aberta ou a água continuar a correr (contador de caudal) ou a bomba continuar a trabalhar (potência da bomba) com todas as válvulas de zona fechadas. Indique a mesma válvula em todas as zonas a jusante.",
+          "master_valve_normally_open": "Deixe desligado para uma válvula normalmente fechada (recomendado: fecha sozinha num corte de energia). Ligue para uma válvula normalmente aberta num relé: o ZoneFlow fecha-a então LIGANDO o relé. Uma entidade de válvula indica ela própria se está aberta ou fechada e ignora isto."
         }
       },
       "wu_key": {
         "title": "Chuva do Weather Underground (experimental)",
-        "description": "Usa leituras de chuva de estações meteorológicas privadas próximas do seu jardim para zonas exteriores SEM pluviómetro. Tem um pluviómetro? Não precisa disto.\n\n**Primeiro**, verifique o mapa em wunderground.com para encontrar estações a escassos km do seu jardim que comuniquem chuva. Se não houver nenhuma, pare aqui.\n\n**Segundo**, a chave API gratuita requer uma estação própria: registe uma em wunderground.com e envie pelo menos a temperatura e humidade exteriores (por exemplo com a integração ha-weather-uploader). A chave API estará disponível na sua conta Weather Underground.\n\nAs leituras são usadas apenas para o crédito de chuva. Não são 100 % precisas, e tornam-se menos precisas quanto mais distantes as estações estiverem das suas zonas.",
+        "description": "Usa leituras de chuva de estações meteorológicas privadas próximas do seu jardim para zonas exteriores SEM pluviómetro. Tem um pluviómetro? Não precisa disto.\n\n**Primeiro**, verifique o mapa em wunderground.com para encontrar estações a escassos km do seu jardim que comuniquem chuva. Se não houver nenhuma, pare aqui.\n\n**Segundo**, a chave API gratuita requer uma estação própria: registe uma em wunderground.com e envie pelo menos a temperatura e humidade exteriores (por exemplo com a integração ha-weather-uploader). A chave API estará disponível na sua conta Weather Underground.\n\nAs leituras não são 100 % exatas, e menos quanto mais longe as estações estiverem das suas zonas. A chuva é usada para o crédito de chuva; vento, humidade e sol só com a opção abaixo.",
         "data": {
           "api_key": "Chave API",
-          "radius_km": "Raio de pesquisa"
+          "radius_km": "Raio de pesquisa",
+          "borrow_climate": "Usar também vento, humidade e sol"
         },
         "data_description": {
           "api_key": "Da sua conta Weather Underground (API Keys). Guardado apenas nesta entrada.",
-          "radius_km": "0,5-2 km, quanto mais perto melhor: a chuva pode variar bastante em escassos km. Acima de 1 km, fique atento a como as leituras correspondem à chuva no seu local."
+          "radius_km": "0,5-2 km, quanto mais perto melhor: a chuva pode variar bastante em escassos km. Acima de 1 km, fique atento a como as leituras correspondem à chuva no seu local.",
+          "borrow_climate": "Para a estimativa de água FAO-56 das zonas exteriores que não têm sensor nem entidade de meteorologia para isso. Consulta a cada 30 minutos em vez de a cada 2 horas. O vento é considerado medido à Altura do sensor de vento da zona."
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "Usar o medidor de chuva da área",
           "outdoor_temp_entity": "Usar a temperatura exterior da área",
           "weather_entity": "Usar a entidade meteorológica da área",
-          "notify_entity": "Usar o telemóvel da área"
+          "notify_entity": "Usar o telemóvel da área",
+          "humidity_entity": "Usar o sensor de humidade da área",
+          "wind_entity": "Usar o sensor de vento da área",
+          "rain_sensor_entity": "Usar o sensor de chuva da área",
+          "solar_entity": "Usar o sensor solar da área"
         },
         "data_description": {
           "rain_counter_entity": "Marque para usar o medidor de chuva da área em vez do próprio desta zona.",
           "outdoor_temp_entity": "Marque para usar o sensor de temperatura exterior da área em vez do próprio desta zona.",
           "weather_entity": "Marque para usar a entidade meteorológica da área em vez da própria desta zona.",
-          "notify_entity": "Marque para enviar para o telemóvel da área em vez do próprio desta zona."
+          "notify_entity": "Marque para enviar para o telemóvel da área em vez do próprio desta zona.",
+          "humidity_entity": "Marque para usar o sensor de humidade da área em vez do próprio desta zona.",
+          "wind_entity": "Marque para usar o sensor de vento da área em vez do próprio desta zona.",
+          "rain_sensor_entity": "Marque para usar o sensor de chuva da área em vez do próprio da zona.",
+          "solar_entity": "Marque para usar o sensor solar da área em vez do próprio desta zona."
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "Medidor de chuva: mm por báscula",
           "outdoor_temp_entity": "Sensor de temperatura exterior",
           "weather_entity": "Entidade meteorológica (previsão)",
-          "notify_entity": "Telemóvel para notificações"
+          "notify_entity": "Telemóvel para notificações",
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "rain_sensor_entity": "Sensor de chuva (opcional)",
+          "rain_sensor_inverted": "O sensor está ligado quando está seco",
+          "solar_entity": "Sensor de radiação solar (opcional)"
         },
         "data_description": {
           "rain_counter_entity": "Opcional. As zonas desta área lêem a chuva a partir daqui, a menos que uma zona tenha o seu próprio medidor.",
@@ -636,7 +717,12 @@
           "weather_entity": "Opcional. Permite que as zonas desta área cancelem a rega quando houver previsão de chuva.",
           "notify_entity": "Opcional. Para onde as zonas desta área enviam as suas mensagens de telemóvel.",
           "area_name": "Como se chama a área, por exemplo Quintal ou Jardim da frente.",
-          "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura."
+          "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura.",
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "rain_sensor_entity": "Um sensor molhado/seco (ligado = molhado). Enquanto indicar molhado, uma rega devida espera e volta a verificar de hora a hora; premir Regar agora rega na mesma.",
+          "rain_sensor_inverted": "Marque se o sensor está ligado com tempo seco e desligado quando molhado.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia."
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "Medidor de chuva: mm por báscula",
           "outdoor_temp_entity": "Sensor de temperatura exterior",
           "weather_entity": "Entidade meteorológica (previsão)",
-          "notify_entity": "Telemóvel para notificações"
+          "notify_entity": "Telemóvel para notificações",
+          "humidity_entity": "Sensor de humidade exterior (opcional)",
+          "wind_entity": "Sensor de velocidade do vento (opcional)",
+          "rain_sensor_entity": "Sensor de chuva (opcional)",
+          "rain_sensor_inverted": "O sensor está ligado quando está seco",
+          "solar_entity": "Sensor de radiação solar (opcional)"
         },
         "data_description": {
           "rain_counter_entity": "Opcional. As zonas desta área lêem a chuva a partir daqui, a menos que uma zona tenha o seu próprio medidor.",
@@ -658,7 +749,12 @@
           "weather_entity": "Opcional. Permite que as zonas desta área cancelem a rega quando houver previsão de chuva.",
           "notify_entity": "Opcional. Para onde as zonas desta área enviam as suas mensagens de telemóvel.",
           "area_name": "Como se chama a área, por exemplo Quintal ou Jardim da frente.",
-          "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura."
+          "rain_source_type": "O que o sensor do medidor de chuva reporta: um contador de báscula, chuva total, taxa de chuva ou a chuva desde a última leitura.",
+          "humidity_entity": "Humidade relativa no exterior. Faz a estimativa FAO-56 acompanhar os dias secos e húmidos.",
+          "wind_entity": "Velocidade do vento no exterior. Os dias ventosos secam as plantas mais depressa; sem sensor usa-se um vento típico do local.",
+          "rain_sensor_entity": "Um sensor molhado/seco (ligado = molhado). Enquanto indicar molhado, uma rega devida espera e volta a verificar de hora a hora; premir Regar agora rega na mesma.",
+          "rain_sensor_inverted": "Marque se o sensor está ligado com tempo seco e desligado quando molhado.",
+          "solar_entity": "Luz solar em W/m². Sem sensor, o sol é estimado a partir da amplitude de temperatura do dia."
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "Escolha 1, 2 ou 3 estações.",
       "greenhouse_has_crops": "Esta estufa tem culturas. Mova-as para outra estufa ou remova-as primeiro (Configurar -> Estufa de cada cultura).",
       "area_name_required": "Dê um nome à área.",
-      "area_name_exists": "Já existe uma área com este nome."
+      "area_name_exists": "Já existe uma área com este nome.",
+      "master_is_zone_valve": "A válvula mestra tem de ser diferente das válvulas próprias das zonas.",
+      "valve_is_a_master": "Esta válvula é a válvula mestra de outra zona."
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "Total de chuva (mm ou in; acumulado, diário ou semanal)",
         "rate_mm_h": "Intensidade de chuva (mm/h)",
         "amount_mm": "Chuva por leitura (mm ou in; ex.: Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Abrigado (muros, sebes)",
+        "open": "Aberto",
+        "exposed": "Exposto (cume, costa, telhado)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Húmido",
+        "dry": "Seco (árido ou semiárido)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "Temporizador próprio da válvula"
+      },
+      "kc_curve_pct": {
+        "name": "Intensidade da curva da cultura"
+      },
+      "root_depth_mm": {
+        "name": "Profundidade das raízes"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Capacidade de retenção de água do solo"
+      },
+      "allowed_depletion_pct": {
+        "name": "Secagem permitida do solo"
+      },
+      "wetted_area_pct": {
+        "name": "Parte molhada da zona"
+      },
+      "zone_area_m2": {
+        "name": "Área da zona"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Margem de tempo no modo de caudal"
+      },
+      "wind_hold_kmh": {
+        "name": "Limite de vento"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Chuva por hora do sensor de chuva"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Retomar automático"
+      },
+      "master_valve_checked": {
+        "name": "Válvula mestra verificada"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Autoajuste"
+      },
+      "kc_climate_adjust": {
+        "name": "O coeficiente da cultura segue o clima"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Tempo máximo de válvula aberta"
+      },
+      "crop_factor": {
+        "name": "Coeficiente da cultura de hoje"
+      },
+      "root_zone": {
+        "name": "A zona radicular retém"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Modelo de necessidade de água",
         "state": {
           "temperature_tiers": "Faixas de temperatura",
-          "et_curve": "Curva ET (Hargreaves)"
+          "et_curve": "Curva ET (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Terminar a rega",
           "stop": "Parar no nível húmido"
+        }
+      },
+      "crop_curve": {
+        "name": "Curva da cultura",
+        "state": {
+          "fixed": "Fixo (controlo Coeficiente da cultura)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Exposição ao sol",
+        "state": {
+          "deep_shade": "Sombra o dia todo",
+          "morning_sun": "Sol da manhã",
+          "afternoon_sun": "Sol da tarde",
+          "full_sun": "Sol pleno",
+          "reflected_heat": "Calor refletido (parede ou pavimento)"
+        }
+      },
+      "delivery_mode": {
+        "name": "A rega termina por",
+        "state": {
+          "time": "Tempo previsto",
+          "flow_meter": "Contador de caudal"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Esta zona já não existe."
+          "zone_gone": "Esta zona já não existe.",
+          "zone_busy": "A zona está ocupada. Tente novamente dentro de momentos."
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Esta zona já não existe."
+          "zone_gone": "Esta zona já não existe.",
+          "zone_busy": "A zona está ocupada. Tente novamente dentro de momentos."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: a sua área foi removida",
       "description": "A área {area} foi eliminada, pelo que {zone} usa agora uma cópia dos sensores que obteve dela. Para a colocar noutra área, use Configurar -> Onde fica isto? da zona."
+    },
+    "fao56_offer": {
+      "title": "{zone}: passar para a estimativa de água FAO-56?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Passar {zone} para FAO-56",
+            "description": "{zone} tem duas semanas de dias FAO-56 registados. Neste momento rega {current} por semana com o seu modelo atual; o FAO-56 dá {fao56} por semana nas mesmas duas semanas (temperatura e, onde existirem, humidade, vento e sol). O FAO-56 costuma dar menos com tempo húmido e mais em dias secos e ventosos. Passar esta zona para FAO-56? Pode voltar atrás quando quiser em «Modelo de necessidade de água»."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: sensor de chuva preso",
+      "description": "O sensor de chuva {entity} da zona {zone} indica molhado há mais de um dia sem alteração, por isso o ZoneFlow ignora-o. Verifique o sensor: pode estar sujo ou avariado. Isto desaparece sozinho quando indicar seco."
     }
   }
 }

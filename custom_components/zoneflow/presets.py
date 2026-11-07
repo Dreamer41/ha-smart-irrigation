@@ -41,8 +41,9 @@ PRESET_BOOK_KEY = "zoneflow_preset_book"
 NAME_MAX_LENGTH = 40
 
 COPY_NUMBER_KEYS = (
-    "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm", "crop_coefficient",
-    "hot_temp_threshold", "cool_temp_threshold", "frost_guard_temp",
+    "target_weekly_mm", "target_weekly_hot_mm", "target_weekly_cool_mm", "crop_coefficient", "kc_curve_pct",
+    "root_depth_mm", "soil_holding_mm_per_m", "allowed_depletion_pct", "wetted_area_pct",
+    "hot_temp_threshold", "cool_temp_threshold", "frost_guard_temp", "wind_hold_kmh",
     "rain_ignore_below_mm", "rain_eff_low", "rain_eff_mid", "rain_eff_high",
     "deep_soak_target_mm", "deep_soak_max_runtime_minutes", "deep_soak_drydown_days",
     "deep_soak_interval_days", "deep_soak_rain_threshold",
@@ -60,7 +61,7 @@ COPY_NUMBER_KEYS = (
 )
 # Kept in the zone's saved state.
 COPY_STATE_KEYS = (
-    "growth_stage_mode", "demand_model", "mulch_status", "notify_level", "fertilizing_interval_months",
+    "kc_crop", "kc_climate_adjust", "sun_exposure", "growth_stage_mode", "demand_model", "mulch_status", "notify_level", "fertilizing_interval_months",
     "soil_type_override", "drainage_override", "slope_override", "growth_ramp_profile_override",
     "self_tune_enabled",
 )
@@ -100,6 +101,13 @@ def capture(controller: Any) -> dict[str, Any]:
 
 async def async_apply(hass: HomeAssistant, controller: Any, bundle: dict[str, Any]) -> None:
     """Put a bundle on an existing zone."""
+    wanted = {k: v for k, v in (bundle.get("options") or {}).items() if k in COPY_OPTION_KEYS}
+    entry = controller.entry
+    current = {**entry.data, **entry.options}
+    options_changed = any(current.get(k) != v for k, v in wanted.items())
+    if options_changed and controller.run_in_progress:
+        # Those settings reload the zone, which would stop the watering in progress.
+        raise service_error("zone_busy")
     for key, value in (bundle.get("numbers") or {}).items():
         entity = controller.numbers.get(key)
         if entity is not None and value is not None:
@@ -113,10 +121,7 @@ async def async_apply(hass: HomeAssistant, controller: Any, bundle: dict[str, An
         controller.plants._last = controller.plants.values()  # not logged as edits of the plant
     controller._notify_status()
     # Settings kept in the zone's config entry restart the zone when they change.
-    wanted = {k: v for k, v in (bundle.get("options") or {}).items() if k in COPY_OPTION_KEYS}
-    entry = controller.entry
-    current = {**entry.data, **entry.options}
-    if any(current.get(k) != v for k, v in wanted.items()):
+    if options_changed:
         hass.config_entries.async_update_entry(entry, options={**entry.options, **wanted})
 
 

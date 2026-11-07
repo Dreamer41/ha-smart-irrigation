@@ -6,6 +6,9 @@ the API key and 1-3 chosen stations. This polls them, combines their rain
 no rain gauge and use it (controller.uses_wu).
 
 Only for rain deduction -- not forecasting, and not for zones with a gauge.
+With Borrow Wind, Humidity and Sunshine on (1.8) it also hands the stations'
+wind, humidity and sunshine to every outdoor zone, for FAO-56 where the zone
+has no sensor and no weather entity of its own (controller.uses_wu_climate).
 The API key is stored only in the config entry: never logged, and redacted
 in diagnostics.
 """
@@ -28,7 +31,7 @@ from homeassistant.helpers.storage import Store
 import homeassistant.util.dt as dt_util
 
 from . import wu_logic as wl
-from .const import CONF_WU_API_KEY, CONF_WU_STATIONS, DOMAIN, REPAIR_WU_NO_DATA_SECONDS
+from .const import CONF_WU_API_KEY, CONF_WU_CLIMATE, CONF_WU_STATIONS, DOMAIN, REPAIR_WU_NO_DATA_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,14 +55,14 @@ async def _get_json(hass: HomeAssistant, url: str, params: dict[str, str]) -> di
     session = async_get_clientsession(hass)
     try:
         async with asyncio.timeout(REQUEST_TIMEOUT_SECONDS):
-            response = await session.get(url, params=params)
-            if response.status in (401, 403):
-                raise InvalidKey
-            if response.status in (204, 404):
-                return None
-            if response.status != 200:
-                raise CannotConnect(f"HTTP {response.status}")
-            return await response.json(content_type=None)
+            async with session.get(url, params=params) as response:
+                if response.status in (401, 403):
+                    raise InvalidKey
+                if response.status in (204, 404):
+                    return None
+                if response.status != 200:
+                    raise CannotConnect(f"HTTP {response.status}")
+                return await response.json(content_type=None)
     except (aiohttp.ClientError, TimeoutError, ValueError) as err:
         raise CannotConnect(type(err).__name__) from err
 
@@ -80,9 +83,9 @@ async def async_nearby_stations(hass: HomeAssistant, api_key: str) -> list[dict[
         return value if isinstance(value, list) else []
 
     stations = []
-    for sid, name, s_lat, s_lon in zip(
-        _list("stationId"), _list("stationName") or [None] * 10, _list("latitude"), _list("longitude")
-    ):
+    ids = _list("stationId")
+    names = _list("stationName") or [None] * len(ids)
+    for sid, name, s_lat, s_lon in zip(ids, names, _list("latitude"), _list("longitude")):
         try:
             s_lat, s_lon = float(s_lat), float(s_lon)
             if sid is None or not (math.isfinite(s_lat) and math.isfinite(s_lon)):
@@ -113,16 +116,32 @@ async def async_current(hass: HomeAssistant, api_key: str, station_id: str) -> w
             return None
         report = obs[0]
         metric = report.get("metric")
-        total = metric.get("precipTotal") if isinstance(metric, dict) else None
-        if total is None or isinstance(total, (bool, list, dict)):
-            return None
-        total_mm = float(total)
+        metric = metric if isinstance(metric, dict) else {}
         obs_ts = float(report["epoch"])
-        if not (math.isfinite(total_mm) and math.isfinite(obs_ts)):
+        if not math.isfinite(obs_ts):
             return None
-        return wl.Observation(total_mm=total_mm, obs_ts=obs_ts, obs_day=str(report["obsTimeLocal"])[:10])
+        total_mm = _number(metric.get("precipTotal"))
+        wind_kmh = _number(metric.get("windSpeed"))  # "units": "m" gives km/h
+        observation = wl.Observation(
+            total_mm=total_mm, obs_ts=obs_ts, obs_day=str(report["obsTimeLocal"])[:10],
+            wind_ms=wind_kmh / 3.6 if wind_kmh is not None else None,
+            humidity_pct=_number(report.get("humidity")), solar_wm2=_number(report.get("solarRadiation")),
+        )
+        readings = (observation.total_mm, observation.wind_ms, observation.humidity_pct, observation.solar_wm2)
+        return observation if any(value is not None for value in readings) else None
     except (KeyError, TypeError, ValueError, AttributeError):
         return None
+
+
+def _number(value: Any) -> float | None:
+    """A finite number from a report field, else None (missing, text, a list, NaN...)."""
+    if value is None or isinstance(value, (bool, list, dict)):
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) else None
 
 
 class WURainSource:
@@ -139,6 +158,9 @@ class WURainSource:
         self.last_good_ts: float | None = None
         self.next_poll_ts: float | None = None
         self.used_station_ids: list[str] = []
+        # 1.8: the stations' latest wind (m/s), humidity (%) and sunshine (W/m2), when borrowed.
+        self.climate: dict[str, float | None] = {}
+        self.climate_ts: float | None = None
         self._unsub_timer: Callable[[], None] | None = None
         self._listeners: list[Callable[[], None]] = []
         self._poll_lock = asyncio.Lock()
@@ -148,6 +170,19 @@ class WURainSource:
     @property
     def station_info(self) -> list[dict[str, Any]]:
         return list(self.entry.options.get(CONF_WU_STATIONS, self.entry.data.get(CONF_WU_STATIONS)) or [])
+
+    @property
+    def climate_enabled(self) -> bool:
+        """Borrow Wind, Humidity and Sunshine (1.8): the outdoor zones may use the stations' readings
+        where they have no sensor and no weather entity of their own."""
+        return bool(self.entry.options.get(CONF_WU_CLIMATE, self.entry.data.get(CONF_WU_CLIMATE, False)))
+
+    def fresh_climate(self, now_ts: float | None = None) -> dict[str, float | None] | None:
+        """The latest borrowed reading while it still holds, else None."""
+        now_ts = dt_util.utcnow().timestamp() if now_ts is None else now_ts
+        if not self.climate_enabled or self.climate_ts is None or now_ts - self.climate_ts > wl.CLIMATE_HOLD_SECONDS:
+            return None
+        return dict(self.climate)
 
     @property
     def _api_key(self) -> str:
@@ -209,6 +244,9 @@ class WURainSource:
     def _zones(self) -> list[Any]:
         return [c for c in self.hass.data.get(DOMAIN, {}).values() if getattr(c, "uses_wu", False)]
 
+    def _climate_zones(self) -> list[Any]:
+        return [c for c in self.hass.data.get(DOMAIN, {}).values() if getattr(c, "uses_wu_climate", False)]
+
     def _day_end_ts(self, now: datetime) -> float:
         local = dt_util.as_local(now)
         target = datetime.combine(local.date(), dt_time(*wl.DAY_END_POLL_TIME), tzinfo=local.tzinfo)
@@ -227,7 +265,8 @@ class WURainSource:
                 running = running or zone.store.state.lock_on
             except Exception:  # noqa: BLE001 -- a zone's schedule must never stop the poller
                 _LOGGER.exception("ZoneFlow: could not read a zone's schedule for Weather Underground polling")
-        self._schedule(wl.next_poll_ts(now_ts, waterings, running, self._day_end_ts(now)))
+        quiet = wl.CLIMATE_POLL_SECONDS if self.climate_enabled else wl.QUIET_POLL_SECONDS
+        self._schedule(wl.next_poll_ts(now_ts, waterings, running, self._day_end_ts(now), quiet))
 
     def _schedule(self, when_ts: float) -> None:
         if self._stopping:
@@ -269,6 +308,12 @@ class WURainSource:
                     _LOGGER.exception("ZoneFlow: could not update after a Weather Underground poll")
             for zone in self._zones():
                 zone.on_wu_rain()
+            if self.climate_ts is not None and self.climate_ts == self.last_poll_ts:
+                for zone in self._climate_zones():
+                    try:
+                        zone.on_wu_climate(self.climate, self.climate_ts)
+                    except Exception:  # noqa: BLE001 -- one zone must not stop the others
+                        _LOGGER.exception("ZoneFlow: could not pass Weather Underground readings to a zone")
 
     async def _poll(self) -> None:
         stations = [s["id"] for s in self.station_info]
@@ -281,6 +326,7 @@ class WURainSource:
         now_ts = dt_util.utcnow().timestamp()
         today = dt_util.now().date().isoformat()
         totals: dict[str, float] = {}
+        observations: list[wl.Observation] = []
         for sid, result in zip(stations, results):
             state = self.stations.setdefault(sid, wl.StationState())
             if isinstance(result, InvalidKey):
@@ -288,6 +334,8 @@ class WURainSource:
             elif isinstance(result, Exception):
                 _LOGGER.debug("ZoneFlow: Weather Underground station %s: %s", sid, result)
             obs = None if isinstance(result, BaseException) else result
+            if obs is not None:
+                observations.append(obs)
             value = wl.check_station(state, obs, now_ts, today)
             if value is not None:
                 totals[sid] = value
@@ -297,6 +345,8 @@ class WURainSource:
         rain = wl.new_rain(self.day, totals, today)
         fresh = self.last_poll_ts is not None and now_ts - self.last_poll_ts <= wl.FRESH_GAP_SECONDS
         self.last_poll_ts = now_ts
+        if self.climate_enabled:
+            self.climate, self.climate_ts = wl.combine_climate(observations, now_ts), now_ts
         self.used_station_ids = sorted(totals)
         if rain is not None:
             self.last_good_ts = now_ts

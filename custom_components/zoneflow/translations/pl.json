@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
           "routine_sun_mode": "Wyzwalacz regularnego podlewania",
           "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)",
-          "unit_system": "Jednostki"
+          "unit_system": "Jednostki",
+          "humidity_entity": "Zewnętrzny czujnik wilgotności (opcjonalny)",
+          "wind_entity": "Czujnik prędkości wiatru (opcjonalny)",
+          "rain_sensor_entity": "Czujnik deszczu (opcjonalnie)",
+          "rain_sensor_inverted": "Czujnik jest włączony, gdy jest sucho",
+          "solar_entity": "Czujnik promieniowania słonecznego (opcjonalny)",
+          "wind_exposure": "Wiatr w tym miejscu (bez czujnika wiatru)",
+          "climate_dryness": "Klimat (bez czujnika wilgotności)",
+          "coastal": "Nad morzem (bez czujnika słońca)",
+          "wind_sensor_height_m": "Wysokość czujnika wiatru",
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
           "routine_sun_mode": "Uruchamiaj regularne podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
           "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
-          "unit_system": "Co pokazuje ta strefa: jak w Home Assistant albo zawsze jednostki metryczne (mm, °C, litry) lub imperialne (cale, °F, galony). Zmienia tylko to, co widzisz, nigdy ilość podlewanej wody."
+          "unit_system": "Co pokazuje ta strefa: jak w Home Assistant albo zawsze jednostki metryczne (mm, °C, litry) lub imperialne (cale, °F, galony). Zmienia tylko to, co widzisz, nigdy ilość podlewanej wody.",
+          "humidity_entity": "Wilgotność względna na zewnątrz. Dzięki niej oszacowanie FAO-56 uwzględnia dni suche i wilgotne.",
+          "wind_entity": "Prędkość wiatru na zewnątrz. Wietrzne dni szybciej wysuszają rośliny; bez czujnika używany jest typowy wiatr dla miejsca.",
+          "rain_sensor_entity": "Czujnik mokro/sucho (włączony = mokro). Dopóki pokazuje mokro, należne podlewanie czeka i co godzinę sprawdza ponownie; naciśnięcie Podlej teraz i tak podlewa.",
+          "rain_sensor_inverted": "Zaznacz, jeśli czujnik jest włączony przy suchości, a wyłączony przy mokrym.",
+          "solar_entity": "Światło słoneczne w W/m². Bez czujnika nasłonecznienie jest szacowane z dziennego zakresu temperatur.",
+          "wind_exposure": "Używane, gdy nie ma czujnika wiatru ani wiatru z prognozy: osłonięte, otwarte lub odsłonięte.",
+          "climate_dryness": "Używane, gdy nie ma odczytu wilgotności: wilgotny lub suchy (obszary suche i półsuche).",
+          "coastal": "Używane, gdy nie ma odczytu słońca: blisko wybrzeża nasłonecznienie szacuje się nieco wyżej.",
+          "wind_sensor_height_m": "Na jakiej wysokości jest czujnik wiatru. Domowe stacje pogodowe stoją zwykle na wysokości około 2 m.",
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Wyzwalacz głębokiego nawadniania",
           "deep_soak_sun_offset_minutes": "przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
           "routine_sun_mode": "Wyzwalacz rutynowy",
-          "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)"
+          "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)",
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "pump_power_entity": "Czujnik poboru mocy (W) pompy, np. z inteligentnego gniazdka. Podczas każdego podawania wody ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega, jeśli tak nie jest. Pozostaw puste, jeśli nie posiadasz.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Uruchom głębokie nawadnianie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
-          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie."
+          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Deszcz Weather Underground (eksperymentalne)",
-        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty nie są w 100 % dokładne, tym mniej, im dalej stacje są od twoich stref. Deszcz służy do kredytu deszczowego; wiatr, wilgotność i nasłonecznienie tylko z opcją poniżej.",
         "data": {
           "api_key": "Klucz API",
-          "radius_km": "Promień wyszukiwania"
+          "radius_km": "Promień wyszukiwania",
+          "borrow_climate": "Pobieraj też wiatr, wilgotność i nasłonecznienie"
         },
         "data_description": {
           "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
-          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie.",
+          "borrow_climate": "Do szacunku wody FAO-56 dla stref zewnętrznych, które nie mają do tego czujnika ani encji pogody. Odpytuje co 30 minut zamiast co 2 godziny. Wiatr jest traktowany jako mierzony na Wysokości czujnika wiatru strefy."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Deszczomierz: mm na przechył",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej",
           "weather_entity": "Encja pogody (prognoza)",
-          "notify_entity": "Telefon do powiadomień"
+          "notify_entity": "Telefon do powiadomień",
+          "humidity_entity": "Zewnętrzny czujnik wilgotności (opcjonalny)",
+          "wind_entity": "Czujnik prędkości wiatru (opcjonalny)",
+          "rain_sensor_entity": "Czujnik deszczu (opcjonalnie)",
+          "rain_sensor_inverted": "Czujnik jest włączony, gdy jest sucho",
+          "solar_entity": "Czujnik promieniowania słonecznego (opcjonalny)"
         },
         "data_description": {
           "rain_counter_entity": "Opcjonalnie. Strefy tego obszaru odczytują opady z niego, chyba że strefa ma własny deszczomierz.",
@@ -267,7 +300,12 @@
           "weather_entity": "Opcjonalnie. Pozwala strefom tego obszaru pominąć podlewanie, gdy prognozowany jest deszcz.",
           "notify_entity": "Opcjonalnie. Gdzie strefy tego obszaru wysyłają wiadomości na telefon.",
           "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
-          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
+          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu.",
+          "humidity_entity": "Wilgotność względna na zewnątrz. Dzięki niej oszacowanie FAO-56 uwzględnia dni suche i wilgotne.",
+          "wind_entity": "Prędkość wiatru na zewnątrz. Wietrzne dni szybciej wysuszają rośliny; bez czujnika używany jest typowy wiatr dla miejsca.",
+          "rain_sensor_entity": "Czujnik mokro/sucho (włączony = mokro). Dopóki pokazuje mokro, należne podlewanie czeka i co godzinę sprawdza ponownie; naciśnięcie Podlej teraz i tak podlewa.",
+          "rain_sensor_inverted": "Zaznacz, jeśli czujnik jest włączony przy suchości, a wyłączony przy mokrym.",
+          "solar_entity": "Światło słoneczne w W/m². Bez czujnika nasłonecznienie jest szacowane z dziennego zakresu temperatur."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
       "area_name_required": "Nadaj nazwę obszarowi.",
       "area_name_exists": "Obszar o tej nazwie již istnieje.",
-      "flow_rate_out_of_range": "Z tych liczb wychodzi przepływ, jakiego ta strefa mieć nie może. Sprawdź liczbę emiterów, przepływ jednego emitera i powierzchnię."
+      "flow_rate_out_of_range": "Z tych liczb wychodzi przepływ, jakiego ta strefa mieć nie może. Sprawdź liczbę emiterów, przepływ jednego emitera i powierzchnię.",
+      "master_is_zone_valve": "Zawór główny musi być innym zaworem niż zawory stref.",
+      "valve_is_a_master": "Ten zawór jest zaworem głównym innej strefy."
     },
     "abort": {
       "already_configured": "Deszcz Weather Underground jest już skonfigurowany."
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "Przesunięcie głębokiego podlewania wzgl. słońca (minuty)",
           "routine_sun_mode": "Wyzwalacz regularnego podlewania",
           "routine_sun_offset_minutes": "Przesunięcie regularnego podlewania wzgl. słońca (minuty)",
-          "unit_system": "Jednostki"
+          "unit_system": "Jednostki",
+          "humidity_entity": "Zewnętrzny czujnik wilgotności (opcjonalny)",
+          "wind_entity": "Czujnik prędkości wiatru (opcjonalny)",
+          "rain_sensor_entity": "Czujnik deszczu (opcjonalnie)",
+          "rain_sensor_inverted": "Czujnik jest włączony, gdy jest sucho",
+          "solar_entity": "Czujnik promieniowania słonecznego (opcjonalny)",
+          "wind_exposure": "Wiatr w tym miejscu (bez czujnika wiatru)",
+          "climate_dryness": "Klimat (bez czujnika wilgotności)",
+          "coastal": "Nad morzem (bez czujnika słońca)",
+          "wind_sensor_height_m": "Wysokość czujnika wiatru",
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "valve_entity": "Przełącznik, który otwiera zawór tej strefy (lub uruchamia jej pompę). Jedyne, bez czego ZoneFlow nie zadziała: włącza go i wyłącza, i zawsze pilnuje, żeby na koniec był wyłączony.",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
           "routine_sun_mode": "Uruchamiaj regularne podlewanie o stałej godzinie podanej wyżej albo przed lub po wschodzie czy zachodzie słońca, żeby przesuwało się razem z porami roku.",
           "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałej godzinie.",
-          "unit_system": "Co pokazuje ta strefa: jak w Home Assistant albo zawsze jednostki metryczne (mm, °C, litry) lub imperialne (cale, °F, galony). Zmienia tylko to, co widzisz, nigdy ilość podlewanej wody."
+          "unit_system": "Co pokazuje ta strefa: jak w Home Assistant albo zawsze jednostki metryczne (mm, °C, litry) lub imperialne (cale, °F, galony). Zmienia tylko to, co widzisz, nigdy ilość podlewanej wody.",
+          "humidity_entity": "Wilgotność względna na zewnątrz. Dzięki niej oszacowanie FAO-56 uwzględnia dni suche i wilgotne.",
+          "wind_entity": "Prędkość wiatru na zewnątrz. Wietrzne dni szybciej wysuszają rośliny; bez czujnika używany jest typowy wiatr dla miejsca.",
+          "rain_sensor_entity": "Czujnik mokro/sucho (włączony = mokro). Dopóki pokazuje mokro, należne podlewanie czeka i co godzinę sprawdza ponownie; naciśnięcie Podlej teraz i tak podlewa.",
+          "rain_sensor_inverted": "Zaznacz, jeśli czujnik jest włączony przy suchości, a wyłączony przy mokrym.",
+          "solar_entity": "Światło słoneczne w W/m². Bez czujnika nasłonecznienie jest szacowane z dziennego zakresu temperatur.",
+          "wind_exposure": "Używane, gdy nie ma czujnika wiatru ani wiatru z prognozy: osłonięte, otwarte lub odsłonięte.",
+          "climate_dryness": "Używane, gdy nie ma odczytu wilgotności: wilgotny lub suchy (obszary suche i półsuche).",
+          "coastal": "Używane, gdy nie ma odczytu słońca: blisko wybrzeża nasłonecznienie szacuje się nieco wyżej.",
+          "wind_sensor_height_m": "Na jakiej wysokości jest czujnik wiatru. Domowe stacje pogodowe stoją zwykle na wysokości około 2 m.",
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "Wyzwalacz głębokiego nawadniania",
           "deep_soak_sun_offset_minutes": "Przesunięcie słoneczne dla głębokiego nawadniania (minuty)",
           "routine_sun_mode": "Wyzwalacz rutynowy",
-          "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)"
+          "routine_sun_offset_minutes": "Rutynowe przesunięcie słoneczne (minuty)",
+          "master_valve_entity": "Zawór główny (opcjonalnie)",
+          "master_valve_normally_open": "Zawór główny jest normalnie otwarty"
         },
         "data_description": {
           "pump_power_entity": "Czujnik poboru mocy (W) pompy, np. z inteligentnego gniazdka. Podczas każdego podawania wody ZoneFlow sprawdza, czy pompa naprawdę pobiera prąd, i ostrzega, jeśli tak nie jest. Pozostaw puste, jeśli nie posiadasz.",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "Uruchom głębokie nawadnianie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
           "deep_soak_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
           "routine_sun_mode": "Uruchom rutynowe podlewanie o stałej godzinie powyżej lub przed/po wschodzie bądź zachodzie słońca, aby zmieniało się wraz z porami roku.",
-          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie."
+          "routine_sun_offset_minutes": "Ile minut przed lub po wschodzie albo zachodzie słońca. Nieużywane przy stałym czasie.",
+          "master_valve_entity": "Zapasowy zawór odcinający przed tą strefą, na przykład za pompą wspólną dla kilku stref. Otwiera się przy każdym podlewaniu i zamyka, gdy skończy się ostatnie. Zamyka się też dla bezpieczeństwa, do naciśnięcia Reset Lock, gdy zawór strefy zatnie się otwarty albo woda wciąż płynie (przepływomierz) lub pompa wciąż pracuje (moc pompy), choć wszystkie zawory stref są zamknięte. Podaj ten sam zawór we wszystkich strefach za nim.",
+          "master_valve_normally_open": "Zostaw wyłączone dla zaworu normalnie zamkniętego (zalecane: zamyka się sam przy braku prądu). Włącz dla zaworu normalnie otwartego na przekaźniku: ZoneFlow zamyka go wtedy WŁĄCZAJĄC przekaźnik. Encja zaworu sama podaje, czy jest otwarta, i ignoruje to ustawienie."
         }
       },
       "wu_key": {
         "title": "Deszcz Weather Underground (eksperymentalne)",
-        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty są używane wyłącznie do kredytu deszczowego. Nie są w 100% dokładne, a im dalej stacje znajdują się od Twoich stref, tym dokładność jest mniejsza.",
+        "description": "Pobiera odczyty deszczu z prywatnych stacji pogodowych w pobliżu Twojego ogrodu dla stref zewnętrznych BEZ deszczomierza. Masz deszczomierz? Nie potrzebujesz tego.\n\n**Najpierw** sprawdź mapę na wunderground.com pod kątem stacji w promieniu kilku km od Twojego ogrodu, które zgłaszają deszcz. Jeśli takich nie ma, zatrzymaj się w tym miejscu.\n\n**Po drugie**, darmowy klucz API wymaga posiadania własnej stacji: zarejestruj ją na wunderground.com i przesyłaj co najmniej temperaturę i wilgotność na zewnątrz (na przykład za pomocą integracji ha-weather-uploader). Klucz API znajdziesz na swoim koncie Weather Underground.\n\nOdczyty nie są w 100 % dokładne, tym mniej, im dalej stacje są od twoich stref. Deszcz służy do kredytu deszczowego; wiatr, wilgotność i nasłonecznienie tylko z opcją poniżej.",
         "data": {
           "api_key": "Klucz API",
-          "radius_km": "Promień wyszukiwania"
+          "radius_km": "Promień wyszukiwania",
+          "borrow_climate": "Pobieraj też wiatr, wilgotność i nasłonecznienie"
         },
         "data_description": {
           "api_key": "Z Twojego konta Weather Underground (API Keys). Przechowywany tylko w tym wpisie.",
-          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie."
+          "radius_km": "0,5–2 km, im bliżej, tym lepiej: deszcz może się znacznie różnić na przestrzeni kilku km. Powyżej 1 km obserwuj, jak odczyty zgadzają się z deszczem u Ciebie.",
+          "borrow_climate": "Do szacunku wody FAO-56 dla stref zewnętrznych, które nie mają do tego czujnika ani encji pogody. Odpytuje co 30 minut zamiast co 2 godziny. Wiatr jest traktowany jako mierzony na Wysokości czujnika wiatru strefy."
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "Użyj deszczomierza obszaru",
           "outdoor_temp_entity": "Użyj temperatury zewnętrznej obszaru",
           "weather_entity": "Użyj encji pogody obszaru",
-          "notify_entity": "Użyj telefonu obszaru"
+          "notify_entity": "Użyj telefonu obszaru",
+          "humidity_entity": "Użyj czujnika wilgotności obszaru",
+          "wind_entity": "Użyj czujnika wiatru obszaru",
+          "rain_sensor_entity": "Użyj czujnika deszczu obszaru",
+          "solar_entity": "Użyj czujnika słońca obszaru"
         },
         "data_description": {
           "rain_counter_entity": "Zaznacz, aby używać deszczomierza obszaru zamiast własnego deszczomierza tej strefy.",
           "outdoor_temp_entity": "Zaznacz, aby używać czujnika temperatury zewnętrznej obszaru zamiast własnego czujnika tej strefy.",
           "weather_entity": "Zaznacz, aby używać encji pogody obszaru zamiast własnej encji pogody tej strefy.",
-          "notify_entity": "Zaznacz, aby wysyłać na telefon obszaru zamiast własnego telefonu tej strefy."
+          "notify_entity": "Zaznacz, aby wysyłać na telefon obszaru zamiast własnego telefonu tej strefy.",
+          "humidity_entity": "Zaznacz, aby użyć czujnika wilgotności obszaru zamiast własnego czujnika tej strefy.",
+          "wind_entity": "Zaznacz, aby użyć czujnika wiatru obszaru zamiast własnego czujnika tej strefy.",
+          "rain_sensor_entity": "Zaznacz, aby użyć czujnika deszczu obszaru zamiast własnego czujnika strefy.",
+          "solar_entity": "Zaznacz, aby użyć czujnika słońca obszaru zamiast własnego czujnika tej strefy."
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "Deszczomierz: mm na przechył",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej",
           "weather_entity": "Encja pogody (prognoza)",
-          "notify_entity": "Telefon do powiadomień"
+          "notify_entity": "Telefon do powiadomień",
+          "humidity_entity": "Zewnętrzny czujnik wilgotności (opcjonalny)",
+          "wind_entity": "Czujnik prędkości wiatru (opcjonalny)",
+          "rain_sensor_entity": "Czujnik deszczu (opcjonalnie)",
+          "rain_sensor_inverted": "Czujnik jest włączony, gdy jest sucho",
+          "solar_entity": "Czujnik promieniowania słonecznego (opcjonalny)"
         },
         "data_description": {
           "rain_counter_entity": "Opcjonalnie. Strefy tego obszaru odczytują opady z niego, chyba że strefa ma własny deszczomierz.",
@@ -636,7 +717,12 @@
           "weather_entity": "Opcjonalnie. Pozwala strefom tego obszaru pominąć podlewanie, gdy prognozowany jest deszcz.",
           "notify_entity": "Opcjonalnie. Gdzie strefy tego obszaru wysyłają wiadomości na telefon.",
           "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
-          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
+          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu.",
+          "humidity_entity": "Wilgotność względna na zewnątrz. Dzięki niej oszacowanie FAO-56 uwzględnia dni suche i wilgotne.",
+          "wind_entity": "Prędkość wiatru na zewnątrz. Wietrzne dni szybciej wysuszają rośliny; bez czujnika używany jest typowy wiatr dla miejsca.",
+          "rain_sensor_entity": "Czujnik mokro/sucho (włączony = mokro). Dopóki pokazuje mokro, należne podlewanie czeka i co godzinę sprawdza ponownie; naciśnięcie Podlej teraz i tak podlewa.",
+          "rain_sensor_inverted": "Zaznacz, jeśli czujnik jest włączony przy suchości, a wyłączony przy mokrym.",
+          "solar_entity": "Światło słoneczne w W/m². Bez czujnika nasłonecznienie jest szacowane z dziennego zakresu temperatur."
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "Deszczomierz: mm na przechył",
           "outdoor_temp_entity": "Czujnik temperatury zewnętrznej",
           "weather_entity": "Encja pogody (prognoza)",
-          "notify_entity": "Telefon do powiadomień"
+          "notify_entity": "Telefon do powiadomień",
+          "humidity_entity": "Zewnętrzny czujnik wilgotności (opcjonalny)",
+          "wind_entity": "Czujnik prędkości wiatru (opcjonalny)",
+          "rain_sensor_entity": "Czujnik deszczu (opcjonalnie)",
+          "rain_sensor_inverted": "Czujnik jest włączony, gdy jest sucho",
+          "solar_entity": "Czujnik promieniowania słonecznego (opcjonalny)"
         },
         "data_description": {
           "rain_counter_entity": "Opcjonalnie. Strefy tego obszaru odczytują opady z niego, chyba że strefa ma własny deszczomierz.",
@@ -658,7 +749,12 @@
           "weather_entity": "Opcjonalnie. Pozwala strefom tego obszaru pominąć podlewanie, gdy prognozowany jest deszcz.",
           "notify_entity": "Opcjonalnie. Gdzie strefy tego obszaru wysyłają wiadomości na telefon.",
           "area_name": "Jak nazywa się obszar, na przykład Ogród za domem lub Przed ogródkem.",
-          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu."
+          "rain_source_type": "Co zgłasza czujnik deszczomierza: licznik przechyłów, sumę opadów, intensywność deszczu lub opad od ostatniego odczytu.",
+          "humidity_entity": "Wilgotność względna na zewnątrz. Dzięki niej oszacowanie FAO-56 uwzględnia dni suche i wilgotne.",
+          "wind_entity": "Prędkość wiatru na zewnątrz. Wietrzne dni szybciej wysuszają rośliny; bez czujnika używany jest typowy wiatr dla miejsca.",
+          "rain_sensor_entity": "Czujnik mokro/sucho (włączony = mokro). Dopóki pokazuje mokro, należne podlewanie czeka i co godzinę sprawdza ponownie; naciśnięcie Podlej teraz i tak podlewa.",
+          "rain_sensor_inverted": "Zaznacz, jeśli czujnik jest włączony przy suchości, a wyłączony przy mokrym.",
+          "solar_entity": "Światło słoneczne w W/m². Bez czujnika nasłonecznienie jest szacowane z dziennego zakresu temperatur."
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "Wybierz 1, 2 lub 3 stacje.",
       "greenhouse_has_crops": "Ta szklarnia zawiera uprawy. Najpierw przenieś je do innej szklarni lub usuń (Konfiguruj -> Szklarnia dla każdej uprawy).",
       "area_name_required": "Nadaj nazwę obszarowi.",
-      "area_name_exists": "Obszar o tej nazwie již istnieje."
+      "area_name_exists": "Obszar o tej nazwie již istnieje.",
+      "master_is_zone_valve": "Zawór główny musi być innym zaworem niż zawory stref.",
+      "valve_is_a_master": "Ten zawór jest zaworem głównym innej strefy."
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "Suma opadów (mm lub in; całkowita, dzienna lub tygodniowa)",
         "rate_mm_h": "Natężenie deszczu (mm/h)",
         "amount_mm": "Deszcz na odczyt (mm lub in; np. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Osłonięte (mury, żywopłoty)",
+        "open": "Otwarte",
+        "exposed": "Odsłonięte (wzgórze, wybrzeże, dach)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Wilgotny",
+        "dry": "Suchy (suchy lub półsuchy)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "Własny timer zaworu"
+      },
+      "kc_curve_pct": {
+        "name": "Siła krzywej uprawy"
+      },
+      "root_depth_mm": {
+        "name": "Głębokość korzeni"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Pojemność wodna gleby"
+      },
+      "allowed_depletion_pct": {
+        "name": "Dopuszczalne przesychanie gleby"
+      },
+      "wetted_area_pct": {
+        "name": "Zwilżana część strefy"
+      },
+      "zone_area_m2": {
+        "name": "Powierzchnia strefy"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Zapas czasu w trybie przepływu"
+      },
+      "wind_hold_kmh": {
+        "name": "Limit wiatru"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Opad na godzinę z czujnika deszczu"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Wznów automatykę"
+      },
+      "master_valve_checked": {
+        "name": "Zawór główny sprawdzony"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Samodostrajanie"
+      },
+      "kc_climate_adjust": {
+        "name": "Współczynnik uprawy podąża za klimatem"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Najdłuższy czas otwarcia zaworu"
+      },
+      "crop_factor": {
+        "name": "Współczynnik uprawy dzisiaj"
+      },
+      "root_zone": {
+        "name": "Strefa korzeni mieści"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Model zapotrzebowania na wodę",
         "state": {
           "temperature_tiers": "Progi temperatury",
-          "et_curve": "Krzywa ET (Hargreaves)"
+          "et_curve": "Krzywa ET (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Dokończ podlewanie",
           "stop": "Zatrzymaj przy poziomie mokrym"
+        }
+      },
+      "crop_curve": {
+        "name": "Krzywa uprawy",
+        "state": {
+          "fixed": "Stały (suwak Współczynnik uprawy)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Nasłonecznienie",
+        "state": {
+          "deep_shade": "Cień przez cały dzień",
+          "morning_sun": "Słońce rano",
+          "afternoon_sun": "Słońce po południu",
+          "full_sun": "Pełne słońce",
+          "reflected_heat": "Odbite ciepło (ściana lub nawierzchnia)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Podlewanie kończy się według",
+        "state": {
+          "time": "Planowanego czasu",
+          "flow_meter": "Przepływomierza"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Ta strefa już nie istnieje."
+          "zone_gone": "Ta strefa już nie istnieje.",
+          "zone_busy": "Strefa jest zajęta. Spróbuj ponowanie za chwilę."
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Ta strefa już nie istnieje."
+          "zone_gone": "Ta strefa już nie istnieje.",
+          "zone_busy": "Strefa jest zajęta. Spróbuj ponowanie za chwilę."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: jej obszar został usunięty",
       "description": "Obszar {area} został usunięty, więc {zone} używa teraz kopii czujników z niego pobranych. Aby umieścić ją w innym obszarze, użyj opcji Konfiguruj -> Gdzie to jest? w strefie."
+    },
+    "fao56_offer": {
+      "title": "{zone}: przejść na oszacowanie wody FAO-56?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Przełącz {zone} na FAO-56",
+            "description": "Strefa {zone} ma zapisane dwa tygodnie dni FAO-56. Teraz podlewa według obecnego modelu {current} tygodniowo; FAO-56 daje z tych samych dwóch tygodni {fao56} tygodniowo (temperatura oraz wilgotność, wiatr i słońce, jeśli je masz). FAO-56 zwykle daje mniej przy wilgotnej pogodzie i więcej w suche, wietrzne dni. Przełączyć tę strefę na FAO-56? W każdej chwili możesz wrócić przez Model zapotrzebowania na wodę."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: czujnik deszczu zablokowany",
+      "description": "Czujnik deszczu {entity} strefy {zone} pokazuje mokro od ponad doby bez zmian, więc ZoneFlow go pomija. Sprawdź czujnik: może być brudny lub uszkodzony. Samo zniknie, gdy pokaże sucho."
     }
   }
 }

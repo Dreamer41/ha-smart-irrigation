@@ -46,7 +46,7 @@ async def test_a_skip_message_to_a_phone_carries_action_buttons(hass, fake_valve
     assert plain == [] and len(legacy) == 1
     actions = legacy[0]["data"]["actions"]
     assert [a["title"] for a in actions] == ["Water 10 min", "Snooze today"]
-    assert actions[0]["action"] == f"ZONEFLOW|{controller.entry.entry_id}|water"
+    assert actions[0]["action"].startswith(f"ZONEFLOW|{controller.entry.entry_id}|water|")
     assert legacy[0]["data"]["tag"] == f"zoneflow_{controller.entry.entry_id}"
 
 

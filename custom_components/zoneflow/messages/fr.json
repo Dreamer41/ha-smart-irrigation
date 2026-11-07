@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Vanne maîtresse fermée",
+      "message": "{valve} a été fermée par sécurité. {reason} Rien derrière elle n'est arrosé tant que vous n'appuyez pas sur Reset Lock dans l'une de ses zones."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle} : non lancé",
+      "message": "La vanne maîtresse {valve} est fermée par sécurité. {reason} Appuyez sur Reset Lock dans la zone une fois le problème réglé."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} n'a pas confirmé sa fermeture à la fin d'un arrosage.",
+      "valve_stuck": "{valve} est restée ouverte bien trop longtemps.",
+      "flow": "Le débitmètre a continué de compter alors que toutes les vannes de zone étaient fermées.",
+      "pump_power": "La pompe a continué de consommer alors que toutes les vannes de zone étaient fermées.",
+      "high_flow": "Bien plus d'eau a coulé que {valve} n'en prend : un tuyau a peut-être éclaté."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Échec du test de la vanne maîtresse",
+      "message": "Le test mensuel de {valve} a constaté que l'eau coulait encore ou que la pompe tournait encore, vanne fermée. Elle risque de ne pas couper l'eau si une vanne de zone reste bloquée : vérifiez-la."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle} : trop d'eau",
+      "message": "{valve} a été fermée : environ {rate} par minute coulaient, bien plus que les {expected} habituels. Un tuyau a peut-être éclaté ou s'est détaché : vérifiez-le avant le prochain arrosage."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle} : faible débit",
+      "message": "{given} donnés sur {target} dans le temps permis. Vérifiez un filtre bouché ou une pression trop faible."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle} : le débitmètre ne compte pas",
+      "message": "{meter} n'a rien compté vanne ouverte, l'arrosage s'est donc fait au temps. Vérifiez le compteur."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} en attente : pluie",
+      "message": "{sensor} indique humide. Nouvelle vérification toutes les heures pendant {hours} heures au plus, puis attente du prochain horaire prévu."
+    },
+    "wind": {
+      "title": "💨 {cycle} en attente : vent",
+      "message": "Le vent est à {wind}, au-dessus de la limite de {limit}. Nouvelle vérification toutes les heures pendant {hours} heures au plus, puis attente du prochain horaire prévu."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle} en attente depuis {time} : l'arrosage profond passe d'abord dès qu'il fait assez chaud",
     "paused_until": "En pause jusqu'au {until}",
     "paused_area": "En pause : aucun arrosage tant que {area} est en pause",
-    "paused_house": "En pause : aucun arrosage tant que la serre {house} est en pause"
+    "paused_house": "En pause : aucun arrosage tant que la serre {house} est en pause",
+    "waiting_rain": "{cycle} en attente depuis {time} : {sensor} indique humide ; nouvelle vérification toutes les heures",
+    "skipped_rain": "{cycle} sauté à {time} : {sensor} indiquait encore humide après {hours} vérifications",
+    "waiting_wind": "{cycle} en attente depuis {time} : vent {wind}, au-dessus de la limite ({limit}) ; nouvelle vérification toutes les heures",
+    "skipped_wind": "{cycle} sauté à {time} : vent encore au-dessus de {limit} après {hours} vérifications"
   },
   "summary": {
     "title": "💧 ZoneFlow : votre semaine",
@@ -319,7 +362,9 @@
       "fail": "Le pluviomètre {entity} n'est pas disponible. En son absence, ZoneFlow suppose qu'il ne pleut pas.",
       "wu": "La pluie provient de Weather Underground.",
       "manual": "La pluie est ajoutée manuellement.",
-      "none": "Aucun pluviomètre. ZoneFlow suppose qu'il ne pleut jamais, sauf si vous ajoutez la pluie manuellement ou utilisez Weather Underground."
+      "none": "Aucun pluviomètre. ZoneFlow suppose qu'il ne pleut jamais, sauf si vous ajoutez la pluie manuellement ou utilisez Weather Underground.",
+      "sensor": "La pluie est estimée par le capteur de pluie {entity} : {rate} tant qu'il indique humide.",
+      "sensor_no_rate": "Le capteur de pluie {entity} retient l'arrosage tant qu'il indique humide, mais ne compte aucune pluie. Sans pluviomètre, réglez Pluie horaire du capteur de pluie pour compter le temps humide comme de la pluie."
     },
     "temperature": {
       "ok": "La température extérieure est de {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "La courbe de culture de {crop} part de la date de plantation. Indiquez-la ; d'ici là, le réglage Coefficient cultural est utilisé."
+    },
+    "root_zone": {
+      "off": "Indiquez la Profondeur des racines pour qu'un arrosage ne donne jamais plus que ce que le sol peut retenir.",
+      "shallow": "La zone racinaire retient très peu ({raw} avant que la plante souffre du sec). Même un arrosage quotidien peut la laisser sécher : vérifiez la Profondeur des racines et la Part mouillée.",
+      "short_dose": "La zone racinaire doit être arrosée chaque jour, mais la dose d'un jour ({minutes} min) est plus courte que l'impulsion minimale ({minimum} min) : chaque arrosage donne plus que ce que le sol retient.",
+      "deep_soak": "L'arrosage en profondeur donne {taw}, ce que retient la zone racinaire, au lieu des {target} réglés."
+    },
+    "master_valve": {
+      "latched": "La vanne maîtresse {valve} est fermée par sécurité. {reason} Appuyez sur Reset Lock une fois le problème réglé.",
+      "fail": "La vanne maîtresse {valve} n'est pas disponible.",
+      "ok": "La vanne maîtresse {valve} répond.",
+      "test_failed": "La vanne maîtresse {valve} a échoué au test mensuel du {when} : vanne fermée, l'eau coulait encore ou la pompe tournait. Appuyez sur Vanne maîtresse vérifiée une fois contrôlée ; elle est testée de nouveau au prochain arrosage de routine.",
+      "test_ok": "La vanne maîtresse a réussi le test mensuel du {when}.",
+      "test_pending": "La vanne maîtresse est testée une fois par mois, à la fin d'un arrosage normal.",
+      "test_none": "Ajoutez un débitmètre ou un capteur de puissance de pompe pour que la vanne maîtresse soit testée une fois par mois."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow ne peut pas lire des litres dans l'unité de {entity} (« {unit} »). Utilisez un compteur qui indique un volume (L, gal, m³) ou un débit (L/min, gal/min).",
+      "learned": "Les arrosages ont mesuré un débit de {learned}, mais le réglage Débit est de {setting}. Mettez-le à jour pour que les durées prévues soient justes."
+    },
+    "flow_mode": {
+      "no_meter": "L'arrosage s'arrête selon le débitmètre, mais la zone n'en a pas : elle arrose au temps.",
+      "meter_offline": "L'arrosage s'arrête selon le débitmètre, mais il est hors ligne : la zone arrose au temps jusqu'à son retour.",
+      "unknown_unit": "L'arrosage s'arrête selon le débitmètre, mais son unité ne peut pas être lue comme de l'eau : la zone arrose au temps.",
+      "no_area": "L'arrosage s'arrête selon le débitmètre, mais la surface de la zone est inconnue : indiquez la Surface de la zone (ou le Débit de la zone) pour convertir les millimètres en litres.",
+      "shared_meter": "L'arrosage s'arrête selon le débitmètre, mais il est partagé avec une zone d'une autre pompe qui peut arroser en même temps : la zone arrose au temps."
+    },
+    "wind_hold": {
+      "no_source": "La limite de vent est définie, mais il n'y a ni capteur de vent ni entité météo où lire le vent ; elle ne retient donc jamais rien. Ajoutez-en un dans Configurer.",
+      "off": "Une source de vent est disponible, mais la Limite de vent est désactivée (0). Fixez une limite pour que l'arroseur attende par vent fort."
+    },
+    "rain_sensor": {
+      "ok": "Le capteur de pluie {entity} répond.",
+      "fail": "Le capteur de pluie {entity} n'est pas disponible. Tant qu'il n'est pas revenu, il ne retient rien.",
+      "stuck": "Le capteur de pluie {entity} indique humide depuis plus d'un jour sans changement ; ZoneFlow l'ignore donc. Vérifiez le capteur."
+    }
   },
   "why": {
     "method": "Méthode d'arrosage : {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "moyen",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "évapotranspiration selon FAO-56 (d'après la température, et l'humidité, le vent et l'ensoleillement lorsqu'ils sont mesurés)",
+    "fao56_inputs": "Évaporation de référence FAO-56 d'hier : {et0} par jour. Humidité : {humidity} ; vent : {wind} ; ensoleillement : {solar}.",
+    "fao56_source": {
+      "rh_min_max": "votre capteur",
+      "rh_max": "votre capteur",
+      "rh_mean": "votre capteur",
+      "measured": "votre capteur",
+      "weather": "le service météo",
+      "default": "le réglage de la zone",
+      "estimated": "estimé d'après la température",
+      "wu": "les stations Weather Underground proches"
+    },
+    "crop_factor": "Coefficient cultural du jour : {kc} ({detail}).",
+    "kc_fixed": "le réglage Coefficient cultural",
+    "kc_curve": "la saison {crop}, phase {stage}",
+    "kc_stage": {
+      "initial": "initiale",
+      "development": "de développement",
+      "mid": "de mi-saison",
+      "late": "de fin de saison",
+      "after_season": "après la saison",
+      "dormant": "de dormance",
+      "flat": "toute l'année"
+    },
+    "kc_adjust_up": "{adj} ajouté pour un temps sec et venteux",
+    "kc_adjust_down": "{adj} retiré pour un temps calme et humide",
+    "kc_exposure": "{pct} % pour l'exposition au soleil ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "ombre toute la journée",
+      "morning_sun": "soleil du matin",
+      "afternoon_sun": "soleil de l'après-midi",
+      "full_sun": "plein soleil",
+      "reflected_heat": "chaleur réfléchie"
+    },
+    "kc_needs_planting_date": "Indiquez la date de plantation pour suivre la courbe de saison de {crop} ; d'ici là, le réglage Coefficient cultural est utilisé.",
+    "root_zone": "Zone racinaire : retient {taw} ; la plante utilise environ {use} par jour et peut utiliser {raw} avant de souffrir du sec.",
+    "root_zone_interval": "Elle arrose donc tous les {days} jours au lieu de tous les {tier}.",
+    "root_zone_capped": "Un arrosage est limité à {taw}, ce que retient la zone racinaire ({capped} de moins que ce que demandent les jours).",
+    "rain_sensor_estimate": "Pas de pluviomètre : la pluie est estimée par le capteur de pluie, {rate} par heure où il indique humide (au plus {cap} par jour)."
   },
   "suggest": {
     "heading": "Éléments probables trouvés dans votre Home Assistant :",

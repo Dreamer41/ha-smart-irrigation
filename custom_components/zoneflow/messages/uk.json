@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Головний клапан закрито",
+      "message": "{valve} закрито для безпеки. {reason} За ним нічого не поливається, доки ви не натиснете Reset Lock в одній з його зон."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: не запущено",
+      "message": "Головний клапан {valve} закрито для безпеки. {reason} Після усунення натисніть Reset Lock у зоні."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} не підтвердив закриття наприкінці поливу.",
+      "valve_stuck": "{valve} був відкритий надто довго.",
+      "flow": "Витратомір далі рахував, хоча всі клапани зон були закриті.",
+      "pump_power": "Насос далі споживав потужність, хоча всі клапани зон були закриті.",
+      "high_flow": "Витекло набагато більше води, ніж бере {valve}: можливо, тріснула труба."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Перевірку головного клапана не пройдено",
+      "message": "Щомісячна перевірка {valve} показала, що при закритому клапані вода далі текла або насос далі працював. Він може не перекрити воду, якщо клапан зони застрягне: перевірте його."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: забагато води",
+      "message": "{valve} закрито: текло близько {rate} за хвилину, набагато більше за звичні {expected}. Можливо, тріснула або від'єдналася труба: перевірте її до наступного поливу."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: слабкий потік",
+      "message": "За відведений час дано {given} з {target}. Перевірте, чи не забитий фільтр і чи достатній тиск."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: витратомір не рахує",
+      "message": "{meter} нічого не нарахував при відкритому клапані, тому полив пройшов за часом. Перевірте лічильник."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} чекає: дощ",
+      "message": "{sensor} показує вологу. Перевірка щогодини до {hours} годин, потім очікування наступного запланованого часу."
+    },
+    "wind": {
+      "title": "💨 {cycle} чекає: вітер",
+      "message": "Вітер {wind}, вище межі {limit}. Перевірка щогодини до {hours} годин, потім очікування наступного запланованого часу."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle} чекає з {time}: спершу глибокий полив, щойно достатньо потеплішає",
     "paused_until": "Пауза до {until}",
     "paused_area": "Пауза: поливу не буде, доки область {area} на паузі",
-    "paused_house": "Пауза: поливу не буде, доки теплиця {house} на паузі"
+    "paused_house": "Пауза: поливу не буде, доки теплиця {house} на паузі",
+    "waiting_rain": "{cycle} чекає з {time}: {sensor} показує вологу; перевірка щогодини",
+    "skipped_rain": "{cycle} пропущено о {time}: {sensor} показував вологу й після {hours} перевірок",
+    "waiting_wind": "{cycle} чекає з {time}: вітер {wind}, вище межі ({limit}); перевірка щогодини",
+    "skipped_wind": "{cycle} пропущено о {time}: вітер вище {limit} і після {hours} перевірок"
   },
   "summary": {
     "title": "💧 ZoneFlow: ваш тиждень",
@@ -319,7 +362,9 @@
       "fail": "Дощомір {entity} недоступний. Доки він не з'явиться, ZoneFlow вважає, що дощу немає.",
       "wu": "Дані про дощ надходять з Weather Underground.",
       "manual": "Дощ додається вручну.",
-      "none": "Немає дощоміра. ZoneFlow вважає, що дощу ніколи немає, якщо ви не додасте його вручну або не використаєте Weather Underground."
+      "none": "Немає дощоміра. ZoneFlow вважає, що дощу ніколи немає, якщо ви не додасте його вручну або не використаєте Weather Underground.",
+      "sensor": "Дощ оцінюється за датчиком дощу {entity}: {rate}, поки він показує мокро.",
+      "sensor_no_rate": "Датчик дощу {entity} затримує полив, поки показує мокро, але не рахує опадів. Без дощоміра задайте «Інтенсивність дощу за датчиком», щоб час «мокро» рахувався як дощ."
     },
     "temperature": {
       "ok": "Вулична температура: {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "Крива культури «{crop}» починається з дати посадки. Вкажіть її; до того діє налаштування «Коефіцієнт культури»."
+    },
+    "root_zone": {
+      "off": "Вкажіть глибину коренів, щоб полив ніколи не давав більше, ніж може вмістити ґрунт.",
+      "shallow": "Коренева зона вміщує дуже мало ({raw}, перш ніж рослина відчує сухість). Навіть щоденний полив може дати їй пересохнути: перевірте глибину коренів і зволожувану частку.",
+      "short_dose": "Кореневу зону треба поливати щодня, але денна доза ({minutes} хв) коротша за мінімальний імпульс ({minimum} хв), тож кожен полив дає більше, ніж вміщує ґрунт.",
+      "deep_soak": "Глибокий полив дає {taw} — стільки вміщує коренева зона — замість заданих {target}."
+    },
+    "master_valve": {
+      "latched": "Головний клапан {valve} закрито для безпеки. {reason} Після усунення натисніть Reset Lock.",
+      "fail": "Головний клапан {valve} недоступний.",
+      "ok": "Головний клапан {valve} відповідає.",
+      "test_failed": "Головний клапан {valve} не пройшов щомісячну перевірку {when}: при закритому клапані вода текла або насос працював. Натисніть «Головний клапан перевірено», коли огляните його; під час наступного планового поливу його перевірять знову.",
+      "test_ok": "Головний клапан пройшов щомісячну перевірку {when}.",
+      "test_pending": "Головний клапан перевіряється раз на місяць, наприкінці звичайного поливу.",
+      "test_none": "Додайте витратомір або датчик потужності насоса, щоб головний клапан перевірявся раз на місяць."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow не може отримати літри з одиниці {entity} («{unit}»). Використовуйте лічильник, що повідомляє об'єм (L, gal, m³) або витрату (L/min, gal/min).",
+      "learned": "Поливи виміряли витрату {learned}, а налаштування «Витрата» дорівнює {setting}. Оновіть його, щоб плановий час був правильним."
+    },
+    "flow_mode": {
+      "no_meter": "Полив закінчується за витратоміром, але в зоні його немає: вона поливає за часом.",
+      "meter_offline": "Полив закінчується за витратоміром, але він не в мережі: зона поливає за часом, доки він не повернеться.",
+      "unknown_unit": "Полив закінчується за витратоміром, але його одиницю не можна прочитати як воду: зона поливає за часом.",
+      "no_area": "Полив закінчується за витратоміром, але площа зони невідома: вкажіть площу зони (або витрату зони), щоб перевести міліметри в літри.",
+      "shared_meter": "Полив закінчується за витратоміром, але він спільний із зоною на іншому насосі, яка може поливати одночасно: зона поливає за часом."
+    },
+    "wind_hold": {
+      "no_source": "Межу вітру задано, але немає датчика вітру чи погодної сутності, звідки його читати, тому вона ніколи нічого не затримає. Додайте один у налаштуваннях.",
+      "off": "Джерело вітру є, але Межу вітру вимкнено (0). Задайте межу, щоб спринклер чекав за сильного вітру."
+    },
+    "rain_sensor": {
+      "ok": "Датчик дощу {entity} відповідає.",
+      "fail": "Датчик дощу {entity} недоступний. Поки він не повернеться, нічого не затримується.",
+      "stuck": "Датчик дощу {entity} показує мокро понад добу без змін, тому ZoneFlow його ігнорує. Перевірте датчик."
+    }
   },
   "why": {
     "method": "Спосіб поливу: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "помірковано",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "випаровування за FAO-56 (за температурою, а також за вологістю, вітром і сонцем, де вони вимірюються)",
+    "fao56_inputs": "Учорашнє еталонне випаровування FAO-56: {et0} на добу. Вологість: {humidity}; вітер: {wind}; сонце: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "ваш датчик",
+      "rh_max": "ваш датчик",
+      "rh_mean": "ваш датчик",
+      "measured": "ваш датчик",
+      "weather": "служба погоди",
+      "default": "налаштування зони",
+      "estimated": "оцінено за температурою",
+      "wu": "найближчі станції Weather Underground"
+    },
+    "crop_factor": "Коефіцієнт культури сьогодні: {kc} ({detail}).",
+    "kc_fixed": "налаштування «Коефіцієнт культури»",
+    "kc_curve": "сезон «{crop}», фаза «{stage}»",
+    "kc_stage": {
+      "initial": "початкова",
+      "development": "розвиток",
+      "mid": "середина сезону",
+      "late": "кінець сезону",
+      "after_season": "після сезону",
+      "dormant": "спокій",
+      "flat": "цілий рік"
+    },
+    "kc_adjust_up": "{adj} додано через суху вітряну погоду",
+    "kc_adjust_down": "{adj} віднято через тиху вологу погоду",
+    "kc_exposure": "{pct} % за освітленість сонцем ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "тінь увесь день",
+      "morning_sun": "ранкове сонце",
+      "afternoon_sun": "післяобіднє сонце",
+      "full_sun": "повне сонце",
+      "reflected_heat": "відбите тепло"
+    },
+    "kc_needs_planting_date": "Вкажіть дату посадки, щоб слідувати кривій сезону для «{crop}»; до того діє налаштування «Коефіцієнт культури».",
+    "root_zone": "Коренева зона: вміщує {taw}; рослина витрачає близько {use} на день і може витратити {raw}, перш ніж відчує сухість.",
+    "root_zone_interval": "Тому полив раз на {days} дн. замість {tier}.",
+    "root_zone_capped": "Полив обмежено {taw} — стільки вміщує коренева зона (на {capped} менше, ніж вимагають дні).",
+    "rain_sensor_estimate": "Дощоміра немає: дощ оцінюється за датчиком дощу, {rate} за кожну годину, коли він показує мокро (не більше {cap} на добу)."
   },
   "suggest": {
     "heading": "Відповідні об'єкти, знайдені у вашому Home Assistant:",

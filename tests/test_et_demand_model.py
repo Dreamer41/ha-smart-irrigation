@@ -9,7 +9,7 @@ import pytest
 
 from custom_components.zoneflow import calculations as calc
 from custom_components.zoneflow import controller as controller_module
-from custom_components.zoneflow.const import DEMAND_MODEL_ET, DOMAIN
+from custom_components.zoneflow.const import DEMAND_MODEL_ET, DEMAND_MODEL_TIERS, DOMAIN
 
 from .test_smoke_setup import OUTDOOR_TEMP, PUMP, RAIN_COUNTER, VALVE, make_entry
 
@@ -25,6 +25,7 @@ async def _setup(hass):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][entry.entry_id]
+    controller.store.state.demand_model = DEMAND_MODEL_TIERS  # a zone saved on tiers (new zones start on FAO-56)
     # Two full days of min/max on record, normal-tier peaks.
     controller.store.state.min_temp_day_history_c = [25.0, 24.0, None]
     controller.store.state.peak_temp_day_history_c = [31.0, 31.0, 30.0]
@@ -52,10 +53,10 @@ def _entity(hass, domain, fragment):
 
 
 @pytest.mark.asyncio
-async def test_default_model_is_temperature_tiers_and_ignores_et0(hass, fake_valve_services, monkeypatch):
+async def test_a_zone_on_temperature_tiers_ignores_et0(hass, fake_valve_services, monkeypatch):
     controller = await _setup(hass)
     plans = _capture_plans(monkeypatch)
-    assert hass.states.get(_entity(hass, "select", "water_demand_model")).state == "temperature_tiers"
+    assert controller.demand_model == DEMAND_MODEL_TIERS
     assert controller.avg_et0() is not None  # ET0 is available, but must be ignored
 
     await controller.run_routine_irrigation()

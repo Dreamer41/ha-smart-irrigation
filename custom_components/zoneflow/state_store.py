@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass, field
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import DEFAULT_DEMAND_MODEL, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DEFAULT_MULCH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
+from .const import DEFAULT_DEMAND_MODEL, DEFAULT_SUN_EXPOSURE, DEMAND_MODEL_FAO56, DEFAULT_FERTILIZING_INTERVAL, DEFAULT_HEALTH_STATUS, DEFAULT_MULCH_STATUS, DOMAIN, RAIN_HISTORY_DEPTH_DAYS, STORAGE_VERSION
 from .rain_tracker import RainWindowTracker
 
 
@@ -40,6 +40,15 @@ class IrrigationState:
 
     # Today's in-progress bookkeeping (reset at local midnight)
     today_date_iso: str | None = None
+    # The day the 23:59:50 shift last closed into the day histories (1.8): a restart across that
+    # moment is caught up from this, so a day's rain and temperatures are not lost.
+    last_shift_date_iso: str | None = None
+    # FAO-56 (1.8): today's time-weighted climate readings, one DayAggregate dict per input
+    # ("humidity", "wind", "solar", "weather_humidity", "weather_wind"), and the closed days'
+    # ET0 with what each input came from, newest first.
+    day_aggregates: dict = field(default_factory=dict)
+    et0_day_history: list = field(default_factory=list)
+    last_alive_ts: float | None = None  # a heartbeat: where a crash's downtime begins
     today_peak_temp_c: float | None = None
     today_min_temp_c: float | None = None
     rain_midnight_baseline_mm: float = 0.0
@@ -158,6 +167,19 @@ class IrrigationState:
     # Which routine weekly-target model this zone uses -- see const.py's
     # DEMAND_MODEL_* comment. Defaults to the original temperature tiers.
     demand_model: str = DEFAULT_DEMAND_MODEL
+    # 1.8: the crop whose FAO-56 season curve gives this zone's crop factor (an id of data/crop_kc.json);
+    # empty = the fixed Crop Factor slider. An id that no longer exists reads as empty.
+    kc_crop: str = ""
+    delivery_mode: str = "time"  # 1.8: Watering Stops On (const.DELIVERY_*)
+    flow_close_lag_l: float = 0.0  # litres that still flow after the close command (learned)
+    flow_learned_mm_per_min: float | None = None  # the flow rate measured by flow-mode runs
+    flow_learned_runs: int = 0
+    master_test_ts: float | None = None  # 1.8: the master valve's last monthly self-test
+    master_test_ok: bool | None = None
+    master_valve_latch: str | None = None  # 1.8: why the master valve was closed for safety (until Reset Lock)
+    wetted_method: str | None = None  # 1.8: the irrigation method the Wetted Share was last set from
+    kc_climate_adjust: bool = True  # FAO-56 eq. 62: follow the zone's measured wind and humidity
+    sun_exposure: str = DEFAULT_SUN_EXPOSURE
     # Whether this zone's soil is mulched -- see const.py's MULCH_STATUS_*
     # comment. Defaults to "mulched" (no adjustment) so an existing zone's
     # watering doesn't change on upgrade.
@@ -298,6 +320,14 @@ class IrrigationState:
     # Set by the first entry: the rain sensors are shown from then on.
     manual_rain_used: bool = False
 
+    # --- 1.8 rain estimated from a binary rain sensor (controller._count_sensor_rain) ---
+    # Cumulative mm, added as the sensor stays wet; and since when it has been counted.
+    sensor_rain_samples: list[list[float]] = field(default_factory=list)
+    rain_sensor_wet_since: float | None = None
+    # When the rain sensor began its current wet spell: kept across restarts (Home Assistant restarts
+    # the sensor's last_changed), so a sensor stuck wet is told even when Home Assistant restarts daily.
+    rain_sensor_wet_start_ts: float | None = None
+
     def rain_tracker(self) -> RainWindowTracker:
         return RainWindowTracker.from_persisted(self.rain_samples)
 
@@ -310,6 +340,15 @@ class IrrigationState:
     def save_manual_rain_tracker(self, tracker: RainWindowTracker) -> None:
         self.manual_rain_samples = tracker.as_persisted()
 
+    def sensor_rain_tracker(self) -> RainWindowTracker:
+        return RainWindowTracker.from_persisted(self.sensor_rain_samples)
+
+    def save_sensor_rain_tracker(self, tracker: RainWindowTracker) -> None:
+        self.sensor_rain_samples = tracker.as_persisted()
+
+
+SCHEDULED_SAVE_DELAY_SECONDS = 10.0
+
 
 class IrrigationStateStore:
     """Thin async wrapper around HA's Store for IrrigationState."""
@@ -320,6 +359,7 @@ class IrrigationStateStore:
         # Set when the zone unloads: a reloaded zone has its own store, and a
         # leftover task of the old one must never overwrite what it loaded.
         self.closed = False
+        self._save_asked_at: float | None = None
 
     async def async_load(self) -> IrrigationState:
         raw = await self._store.async_load()
@@ -331,9 +371,35 @@ class IrrigationStateStore:
             merged = asdict(IrrigationState())
             merged.update({k: v for k, v in raw.items() if k in merged})
             self.state = IrrigationState(**merged)
+        else:
+            # A brand-new zone (nothing saved yet) starts on FAO-56 (1.8). A saved zone keeps its
+            # model, even one saved before the model was stored: it is offered the switch instead.
+            self.state.demand_model = DEMAND_MODEL_FAO56
         return self.state
 
     async def async_save(self) -> None:
         if self.closed:
             return
+        self._save_asked_at = None  # this write takes the place of a delayed one
         await self._store.async_save(asdict(self.state))
+
+    def schedule_save(self, delay: float = SCHEDULED_SAVE_DELAY_SECONDS) -> None:
+        """Save in a few seconds, once, for state that changes often (a rain sample, a temperature
+        reading): many events in a row make one write. A later `async_save` (an unload, a safety
+        change) supersedes it, and Home Assistant writes it out when it stops."""
+        if self.closed:
+            return
+        # Home Assistant moves a delayed save's deadline back every time it is asked again, so a
+        # sensor that reports every few seconds would keep it from ever writing. Ask once; the
+        # write then comes `delay` seconds after the first change. A flag that outlived its write
+        # (an `async_save` took its place) expires after a few delays.
+        now = self._store.hass.loop.time()
+        if self._save_asked_at is not None and now - self._save_asked_at < delay * 3:
+            return
+        self._save_asked_at = now
+
+        def data() -> dict:
+            self._save_asked_at = None
+            return asdict(self.state)
+
+        self._store.async_delay_save(data, delay)

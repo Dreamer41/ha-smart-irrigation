@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} pysäytetty: maa on märkä",
       "message": "Pysäytetty {given} / {planned} min jälkeen: kosteusanturi näyttää {pct} %, eli märkärajan verran tai yli. Tämä lasketaan kasteluksi."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Pääventtiili suljettu",
+      "message": "{valve} suljettiin turvallisuussyistä. {reason} Sen takana ei kastella mitään, ennen kuin painat Reset Lock jossakin sen vyöhykkeessä."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: ei aloitettu",
+      "message": "Pääventtiili {valve} on suljettu turvallisuussyistä. {reason} Paina vyöhykkeen Reset Lock, kun vika on korjattu."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} ei vahvistanut sulkeutuneensa kastelun lopussa.",
+      "valve_stuck": "{valve} oli auki aivan liian kauan.",
+      "flow": "Virtausmittari laski yhä, vaikka kaikki vyöhykeventtiilit olivat kiinni.",
+      "pump_power": "Pumppu otti yhä virtaa, vaikka kaikki vyöhykeventtiilit olivat kiinni.",
+      "high_flow": "Vettä virtasi paljon enemmän kuin {valve} ottaa: putki voi olla haljennut."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Pääventtiilin testi epäonnistui",
+      "message": "Venttiilin {valve} kuukausitestissä vesi virtasi tai pumppu kävi yhä, vaikka venttiili oli kiinni. Se ei ehkä pidätä, jos vyöhykeventtiili jää auki: tarkista se."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: liikaa vettä",
+      "message": "{valve} suljettiin: vettä virtasi noin {rate} minuutissa, paljon enemmän kuin tavalliset {expected}. Putki voi olla haljennut tai irronnut: tarkista se ennen seuraavaa kastelua."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: heikko virtaus",
+      "message": "Antoi {given} / {target} sallitussa ajassa. Tarkista tukkeutunut suodatin tai matala paine."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: virtausmittari ei laske",
+      "message": "{meter} ei laskenut mitään venttiilin ollessa auki, joten kastelu tehtiin ajan mukaan. Tarkista mittari."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} odottaa: sade",
+      "message": "{sensor} näyttää märkää. Tarkistetaan tunnin välein enintään {hours} tunnin ajan, sitten odotetaan seuraavaa ajastettua aikaa."
+    },
+    "wind": {
+      "title": "💨 {cycle} odottaa: tuuli",
+      "message": "Tuuli on {wind}, yli rajan {limit}. Tarkistetaan tunnin välein enintään {hours} tunnin ajan, sitten odotetaan seuraavaa ajastettua aikaa."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle} odottaa klo {time} alkaen: syväkastelu ajetaan ensin, kun on tarpeeksi lämmintä",
     "paused_until": "Tauolla {until} asti",
     "paused_area": "Tauolla: ei kastelua, kun alue {area} on tauolla",
-    "paused_house": "Tauolla: ei kastelua, kun kasvihuone {house} on tauolla"
+    "paused_house": "Tauolla: ei kastelua, kun kasvihuone {house} on tauolla",
+    "waiting_rain": "{cycle} odottaa klo {time} alkaen: {sensor} näyttää märkää; tarkistetaan uudelleen tunnin välein",
+    "skipped_rain": "{cycle} ohitettu klo {time}: {sensor} näytti yhä märkää {hours} tarkistuksen jälkeen",
+    "waiting_wind": "{cycle} odottaa klo {time} alkaen: tuuli {wind}, yli rajan ({limit}); tarkistetaan uudelleen tunnin välein",
+    "skipped_wind": "{cycle} ohitettu klo {time}: tuuli yhä yli {limit} {hours} tarkistuksen jälkeen"
   },
   "summary": {
     "title": "💧 ZoneFlow: viikkosi",
@@ -319,7 +362,9 @@
       "fail": "Sademittari {entity} ei ole käytettävissä. Kunnes se palaa, ZoneFlow olettaa, ettei sada.",
       "wu": "Sade saadaan Weather Underground -palvelusta.",
       "manual": "Sade lisätään käsin.",
-      "none": "Ei sademittaria. ZoneFlow olettaa, ettei koskaan sada, ellet lisää sadetta käsin tai käytä Weather Undergroundia."
+      "none": "Ei sademittaria. ZoneFlow olettaa, ettei koskaan sada, ellet lisää sadetta käsin tai käytä Weather Undergroundia.",
+      "sensor": "Sade arvioidaan sadeanturista {entity}: {rate}, kun se näyttää märkää.",
+      "sensor_no_rate": "Sadeanturi {entity} pidättää kastelua, kun se näyttää märkää, mutta ei laske sadetta. Ilman sademittaria aseta Sadeanturin sademäärä, niin märkä aika lasketaan sateeksi."
     },
     "temperature": {
       "ok": "Ulkolämpötila on {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Aseta venttiilin oma automaattisammutusajastin vähintään {minutes} minuuttiin. Se on varmistus, jos Home Assistant pysähtyy venttiilin ollessa auki. Venttiili on pisimmillään auki {longest} min kerrallaan; lyhyempi ajastin katkaisee kastelun kesken. Kirjaa asettamasi aika kohtaan Venttiilin oma ajastin, niin ZoneFlow varoittaa, jos siitä tulee liian lyhyt.",
     "backup_timer_short": "Venttiilin oma ajastin on {timer} min, mutta venttiili voi olla auki {longest} min kerrallaan, joten ajastin katkaisee kastelun kesken. Aseta se vähintään {minutes} minuuttiin.",
-    "backup_timer_ok": "Venttiilin oma ajastin ({timer} min) riittää pisimmälle ajalle, jonka venttiili on auki ({longest} min)."
+    "backup_timer_ok": "Venttiilin oma ajastin ({timer} min) riittää pisimmälle ajalle, jonka venttiili on auki ({longest} min).",
+    "kc": {
+      "planting_date": "Kasvikäyrä ({crop}) alkaa istutuspäivästä. Aseta se; siihen asti käytetään Kasvikerroin-asetusta."
+    },
+    "root_zone": {
+      "off": "Aseta Juurten syvyys, jotta kastelu ei koskaan anna enempää kuin maa pystyy pidättämään.",
+      "shallow": "Juuristovyöhyke pidättää hyvin vähän ({raw} ennen kuin kasvi kärsii kuivuudesta). Päivittäinenkin kastelu voi päästää sen kuivumaan: tarkista Juurten syvyys ja Kasteltu osuus.",
+      "short_dose": "Juuristovyöhyke tarvitsee kastelua joka päivä, mutta päivän annos ({minutes} min) on lyhyempi kuin vähimmäispulssi ({minimum} min), joten jokainen kastelu antaa enemmän kuin maa pidättää.",
+      "deep_soak": "Syväkastelu antaa {taw}, jonka juuristovyöhyke pidättää, asetetun {target} sijaan."
+    },
+    "master_valve": {
+      "latched": "Pääventtiili {valve} on suljettu turvallisuussyistä. {reason} Paina Reset Lock, kun vika on korjattu.",
+      "fail": "Pääventtiili {valve} ei ole käytettävissä.",
+      "ok": "Pääventtiili {valve} vastaa.",
+      "test_failed": "Pääventtiili {valve} ei läpäissyt kuukausitestiä {when}: vesi virtasi tai pumppu kävi, vaikka venttiili oli kiinni. Paina Pääventtiili tarkistettu, kun olet tarkistanut sen; se testataan uudelleen seuraavassa rutiinikastelussa.",
+      "test_ok": "Pääventtiili läpäisi kuukausitestin {when}.",
+      "test_pending": "Pääventtiili testataan kerran kuukaudessa tavallisen kastelun lopussa.",
+      "test_none": "Lisää virtausmittari tai pumpun tehoanturi, niin pääventtiili testataan kerran kuukaudessa."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow ei saa litroja anturin {entity} yksiköstä ('{unit}'). Käytä mittaria, joka kertoo tilavuuden (L, gal, m³) tai virtauksen (L/min, gal/min).",
+      "learned": "Kasteluissa mitattiin virtaamaksi {learned}, mutta Virtaama-asetus on {setting}. Päivitä se, jotta suunnitellut ajat ovat oikein."
+    },
+    "flow_mode": {
+      "no_meter": "Kastelu päättyy virtausmittarin mukaan, mutta vyöhykkeellä ei ole virtausmittaria: se kastelee ajan mukaan.",
+      "meter_offline": "Kastelu päättyy virtausmittarin mukaan, mutta mittari ei ole yhteydessä: vyöhyke kastelee ajan mukaan, kunnes se palaa.",
+      "unknown_unit": "Kastelu päättyy virtausmittarin mukaan, mutta mittarin yksikköä ei voi lukea vedeksi: vyöhyke kastelee ajan mukaan.",
+      "no_area": "Kastelu päättyy virtausmittarin mukaan, mutta vyöhykkeen pinta-alaa ei tiedetä: aseta Vyöhykkeen pinta-ala (tai Vyöhykkeen virtaus), jotta millimetrit voi muuttaa litroiksi.",
+      "shared_meter": "Kastelu päättyy virtausmittarin mukaan, mutta mittari on yhteinen toisen pumpun vyöhykkeen kanssa, joka voi kastella samaan aikaan: vyöhyke kastelee ajan mukaan."
+    },
+    "wind_hold": {
+      "no_source": "Tuuliraja on asetettu, mutta tuulen lukemiseen ei ole tuuli-anturia eikä sääentiteettiä, joten se ei koskaan pidätä mitään. Lisää sellainen Määritykset-kohdassa.",
+      "off": "Tuulilähde on käytettävissä, mutta Tuuliraja on pois (0). Aseta raja, jotta sadetin odottaa kovassa tuulessa."
+    },
+    "rain_sensor": {
+      "ok": "Sadeanturi {entity} raportoi.",
+      "fail": "Sadeanturi {entity} ei ole käytettävissä. Kunnes se palaa, se ei pidätä mitään.",
+      "stuck": "Sadeanturi {entity} on näyttänyt märkää yli vuorokauden muuttumatta, joten ZoneFlow ohittaa sen. Tarkista anturi."
+    }
   },
   "why": {
     "method": "Kastelutapa: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "siltä väliltä",
     "preview": "Jos kastelu ajettaisiin nyt: {minutes} min {pulses} jaksossa, noin {each} min kerrallaan, välissä {soak} min imeytystauko. Venttiili on auki enintään {longest} min kerrallaan.",
     "preview_one": "Jos kastelu ajettaisiin nyt: {minutes} min yhdellä kertaa. Venttiili on auki enintään {longest} min kerrallaan.",
-    "preview_none": "Jos kastelu ajettaisiin nyt: ei mitään, sade kattaa jo tarpeen."
+    "preview_none": "Jos kastelu ajettaisiin nyt: ei mitään, sade kattaa jo tarpeen.",
+    "method_fao56": "haihdunta FAO-56:n mukaan (lämpötilasta sekä kosteudesta, tuulesta ja auringosta, kun ne mitataan)",
+    "fao56_inputs": "Eilisen FAO-56-vertailuhaihdunta: {et0} päivässä. Kosteus: {humidity}; tuuli: {wind}; aurinko: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "anturisi",
+      "rh_max": "anturisi",
+      "rh_mean": "anturisi",
+      "measured": "anturisi",
+      "weather": "sääpalvelu",
+      "default": "vyöhykkeen asetus",
+      "estimated": "arvioitu lämpötilasta",
+      "wu": "lähellä olevat Weather Underground -asemat"
+    },
+    "crop_factor": "Kasvikerroin tänään: {kc} ({detail}).",
+    "kc_fixed": "Kasvikerroin-asetus",
+    "kc_curve": "{crop}-kausi, {stage}-vaihe",
+    "kc_stage": {
+      "initial": "alku",
+      "development": "kehitys",
+      "mid": "kauden keskivaihe",
+      "late": "kauden loppu",
+      "after_season": "kauden jälkeen",
+      "dormant": "lepotila",
+      "flat": "ympäri vuoden"
+    },
+    "kc_adjust_up": "{adj} lisätty kuivan ja tuulisen sään vuoksi",
+    "kc_adjust_down": "{adj} vähennetty tyynen ja kostean sään vuoksi",
+    "kc_exposure": "{pct} % auringonvalon vuoksi ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "varjossa koko päivän",
+      "morning_sun": "aamuaurinko",
+      "afternoon_sun": "iltapäiväaurinko",
+      "full_sun": "täysi aurinko",
+      "reflected_heat": "heijastuva lämpö"
+    },
+    "kc_needs_planting_date": "Aseta istutuspäivä, jotta {crop}-kasvukauden käyrää noudatetaan; siihen asti käytetään Kasvikerroin-asetusta.",
+    "root_zone": "Juuristovyöhyke: pidättää {taw}; kasvi käyttää noin {use} päivässä ja voi käyttää {raw} ennen kuin kärsii kuivuudesta.",
+    "root_zone_interval": "Siksi se kastelee {days} päivän välein {tier} päivän sijaan.",
+    "root_zone_capped": "Kastelu rajataan määrään {taw}, jonka juuristovyöhyke pidättää ({capped} vähemmän kuin päivät vaatisivat).",
+    "rain_sensor_estimate": "Ei sademittaria: sade arvioidaan sadeanturista, {rate} jokaista tuntia kohden, jonka se näyttää märkää (enintään {cap} päivässä)."
   },
   "suggest": {
     "heading": "Todennäköisimmät löydökset Home Assistantissasi:",

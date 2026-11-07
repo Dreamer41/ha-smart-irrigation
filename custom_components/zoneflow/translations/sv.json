@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Djupvattning: förskjutning mot solen (minuter)",
           "routine_sun_mode": "Start för rutinvattning",
           "routine_sun_offset_minutes": "Rutinvattning: förskjutning mot solen (minuter)",
-          "unit_system": "Enheter"
+          "unit_system": "Enheter",
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
+          "solar_entity": "Sensor för solstrålning (valfri)",
+          "wind_exposure": "Vind på platsen (utan vindsensor)",
+          "climate_dryness": "Klimat (utan fuktsensor)",
+          "coastal": "Vid havet (utan solsensor)",
+          "wind_sensor_height_m": "Vindsensorns höjd",
+          "master_valve_entity": "Huvudventil (valfritt)",
+          "master_valve_normally_open": "Huvudventilen är normalt öppen"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
           "routine_sun_mode": "Starta rutinvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
           "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
-          "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar."
+          "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar.",
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann.",
+          "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
+          "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
+          "coastal": "Används när det inte finns något solvärde: nära kusten uppskattas solen något högre.",
+          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den.",
+          "master_valve_normally_open": "Lämna av för en normalt stängd ventil (rekommenderas: den stänger av sig själv vid strömavbrott). Slå på för en normalt öppen ventil på ett relä: ZoneFlow stänger den då genom att slå PÅ reläet. En ventilentitet rapporterar själv öppen och stängd och ignorerar detta."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Utlösare för djupvattning",
           "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
           "routine_sun_mode": "Utlösare för rutinbevattning",
-          "routine_sun_offset_minutes": "Solförskjutning för rutinbevattning (minuter)"
+          "routine_sun_offset_minutes": "Solförskjutning för rutinbevattning (minuter)",
+          "master_valve_entity": "Huvudventil (valfritt)",
+          "master_valve_normally_open": "Huvudventilen är normalt öppen"
         },
         "data_description": {
           "pump_power_entity": "En effektgivare (W) på pumpen, t.ex. från en smart plug. Under varje bevattning kontrollerar ZoneFlow att pumpen faktiskt drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
           "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång so att den följer årstiderna.",
-          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid."
+          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den.",
+          "master_valve_normally_open": "Lämna av för en normalt stängd ventil (rekommenderas: den stänger av sig själv vid strömavbrott). Slå på för en normalt öppen ventil på ett relä: ZoneFlow stänger den då genom att slå PÅ reläet. En ventilentitet rapporterar själv öppen och stängd och ignorerar detta."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground regn (experimentell)",
-        "description": "Lånar regnavläsningar från privata väderstationer nära din trädgård för utomhuszoner UTAN regnmätare. Har du en regnmätare? Då behöver du inte detta.\n\n**Kontrollera först** kartan på wunderground.com efter stationer inom ett par km från din trädgård som rapporterar regn. Om det inte finns några, stoppa här.\n\n**För det andra** kräver den kostnadsfria API-nyckeln en egen station: registrera en på wunderground.com och överför minst utomhustemperatur och luftfuktighet (till exempel med ha-weather-uploader-integrationen). API-nyckeln finns sedan i ditt Weather Underground-konto.\n\nAvläsningarna används endast för regnkredit. De är inte 100 % exakta, och blir mindre exakta ju längre bort stationerna ligger från dina zoner.",
+        "description": "Lånar regnavläsningar från privata väderstationer nära din trädgård för utomhuszoner UTAN regnmätare. Har du en regnmätare? Då behöver du inte detta.\n\n**Kontrollera först** kartan på wunderground.com efter stationer inom ett par km från din trädgård som rapporterar regn. Om det inte finns några, stoppa här.\n\n**För det andra** kräver den kostnadsfria API-nyckeln en egen station: registrera en på wunderground.com och överför minst utomhustemperatur och luftfuktighet (till exempel med ha-weather-uploader-integrationen). API-nyckeln finns sedan i ditt Weather Underground-konto.\n\nMätvärdena är inte 100 % exakta, och mindre ju längre stationerna är från dina zoner. Regn används för regnkredit; vind, luftfuktighet och solsken bara med valet nedan.",
         "data": {
           "api_key": "API-nyckel",
-          "radius_km": "Sökradie"
+          "radius_km": "Sökradie",
+          "borrow_climate": "Låna även vind, luftfuktighet och solsken"
         },
         "data_description": {
           "api_key": "Från ditt Weather Underground-konto (API Keys). Lagras endast i denna post.",
-          "radius_km": "0,5–2 km, närmare är bättre: regnet kan skilja sig mycket över ett par km. Över 1 km bör du hålla koll på hur avläsningarna stämmer med regnet hos dig."
+          "radius_km": "0,5–2 km, närmare är bättre: regnet kan skilja sig mycket över ett par km. Över 1 km bör du hålla koll på hur avläsningarna stämmer med regnet hos dig.",
+          "borrow_climate": "För FAO-56-vattenberäkningen för utomhuszoner som saknar sensor och väderentitet för det. Hämtar var 30:e minut i stället för varannan timme. Vinden räknas som uppmätt på zonens Vindsensorns höjd."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Regnmätare mm per vipp",
           "outdoor_temp_entity": "Utomhustemperatursensor",
           "weather_entity": "Väderentitet (prognos)",
-          "notify_entity": "Telefon för avisering"
+          "notify_entity": "Telefon för avisering",
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
+          "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
           "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
@@ -267,7 +300,12 @@
           "weather_entity": "Valfritt. Låter zonerna i det här området hoppa över vattning när regn finns i prognosen.",
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
-          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
       "area_name_required": "Ge området ett namn.",
       "area_name_exists": "Ett område med detta namn finns redan.",
-      "flow_rate_out_of_range": "De siffrorna ger ett flöde som zonen inte kan ha. Kontrollera antalet droppare, flödet från en droppare och ytan."
+      "flow_rate_out_of_range": "De siffrorna ger ett flöde som zonen inte kan ha. Kontrollera antalet droppare, flödet från en droppare och ytan.",
+      "master_is_zone_valve": "Huvudventilen måste vara en annan ventil än zonernas egna ventiler.",
+      "valve_is_a_master": "Den här ventilen är en annan zons huvudventil."
     },
     "abort": {
       "already_configured": "Weather Underground-regn är redan inställt."
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "Djupvattning: förskjutning mot solen (minuter)",
           "routine_sun_mode": "Start för rutinvattning",
           "routine_sun_offset_minutes": "Rutinvattning: förskjutning mot solen (minuter)",
-          "unit_system": "Enheter"
+          "unit_system": "Enheter",
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
+          "solar_entity": "Sensor för solstrålning (valfri)",
+          "wind_exposure": "Vind på platsen (utan vindsensor)",
+          "climate_dryness": "Klimat (utan fuktsensor)",
+          "coastal": "Vid havet (utan solsensor)",
+          "wind_sensor_height_m": "Vindsensorns höjd",
+          "master_valve_entity": "Huvudventil (valfritt)",
+          "master_valve_normally_open": "Huvudventilen är normalt öppen"
         },
         "data_description": {
           "valve_entity": "Brytaren som öppnar zonens ventil (eller startar dess pump). Det enda ZoneFlow inte klarar sig utan: ZoneFlow slår på och stänger av den, och ser alltid till att den till sist är avstängd.",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
           "routine_sun_mode": "Starta rutinvattningen vid den fasta klocktiden ovan, eller före eller efter soluppgång eller solnedgång, så att den följer årstiderna.",
           "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast klocktid.",
-          "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar."
+          "unit_system": "Vad zonen visar: följ Home Assistant, eller alltid metriskt (mm, °C, liter) eller brittiskt (tum, °F, gallon). Det ändrar bara vad du ser, aldrig hur mycket den vattnar.",
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann.",
+          "wind_exposure": "Används när det varken finns vindsensor eller vindvärde från vädertjänsten: skyddat, öppet eller utsatt.",
+          "climate_dryness": "Används när det inte finns något fuktvärde: fuktigt eller torrt (torra och halvtorra trakter).",
+          "coastal": "Används när det inte finns något solvärde: nära kusten uppskattas solen något högre.",
+          "wind_sensor_height_m": "Hur högt vindsensorn sitter. Väderstationer för hemmabruk sitter oftast cirka 2 m upp.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den.",
+          "master_valve_normally_open": "Lämna av för en normalt stängd ventil (rekommenderas: den stänger av sig själv vid strömavbrott). Slå på för en normalt öppen ventil på ett relä: ZoneFlow stänger den då genom att slå PÅ reläet. En ventilentitet rapporterar själv öppen och stängd och ignorerar detta."
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "Utlösare för djupvattning",
           "deep_soak_sun_offset_minutes": "Soltidsförskjutning för djupvattning (minuter)",
           "routine_sun_mode": "Utlösare för rutinbevattning",
-          "routine_sun_offset_minutes": "Soltidsförskjutning för rutinbevattning (minuter)"
+          "routine_sun_offset_minutes": "Soltidsförskjutning för rutinbevattning (minuter)",
+          "master_valve_entity": "Huvudventil (valfritt)",
+          "master_valve_normally_open": "Huvudventilen är normalt öppen"
         },
         "data_description": {
           "pump_power_entity": "En effektgivare (W) på pumpen, t.ex. från en smart plug. Under varje bevattning kontrollerar ZoneFlow att pumpen faktiskt drar ström och varnar dig om den inte gör det. Lämna tomt om du inte har någon.",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "Starta djupvattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
           "deep_soak_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
           "routine_sun_mode": "Starta rutinbevattningen vid den fasta tiden ovan, eller före/efter soluppgång eller solnedgång så att den följer årstiderna.",
-          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid."
+          "routine_sun_offset_minutes": "Hur många minuter före eller efter soluppgång eller solnedgång. Används inte med fast tid.",
+          "master_valve_entity": "En extra avstängningsventil före den här zonen, till exempel efter en pump som flera zoner delar. Den öppnar med varje bevattning och stänger när den sista är klar. Den stänger också av säkerhetsskäl, tills Reset Lock, om en zonventil fastnar öppen eller vattnet fortsätter att rinna (flödesmätare) eller pumpen fortsätter att gå (pumpeffekt) medan alla zonventiler är stängda. Ange samma ventil för alla zoner bakom den.",
+          "master_valve_normally_open": "Lämna av för en normalt stängd ventil (rekommenderas: den stänger av sig själv vid strömavbrott). Slå på för en normalt öppen ventil på ett relä: ZoneFlow stänger den då genom att slå PÅ reläet. En ventilentitet rapporterar själv öppen och stängd och ignorerar detta."
         }
       },
       "wu_key": {
         "title": "Weather Underground regn (experimentell)",
-        "description": "Lånar regnavläsningar från privata väderstationer nära din trädgård för utomhuszoner UTAN regnmätare. Har du en regnmätare? Då behöver du inte detta.\n\n**Kontrollera först** kartan på wunderground.com efter stationer inom ett par km från din trädgård som rapporterar regn. Om det inte finns några, stoppa här.\n\n**För det andra** kräver den kostnadsfria API-nyckeln en egen station: registrera en på wunderground.com och överför minst utomhustemperatur och luftfuktighet (till exempel med ha-weather-uploader-integrationen). API-nyckeln finns sedan i ditt Weather Underground-konto.\n\nAvläsningarna används endast för regnkredit. De är inte 100 % exakta, och blir mindre exakta ju längre bort stationerna ligger från dina zoner.",
+        "description": "Lånar regnavläsningar från privata väderstationer nära din trädgård för utomhuszoner UTAN regnmätare. Har du en regnmätare? Då behöver du inte detta.\n\n**Kontrollera först** kartan på wunderground.com efter stationer inom ett par km från din trädgård som rapporterar regn. Om det inte finns några, stoppa här.\n\n**För det andra** kräver den kostnadsfria API-nyckeln en egen station: registrera en på wunderground.com och överför minst utomhustemperatur och luftfuktighet (till exempel med ha-weather-uploader-integrationen). API-nyckeln finns sedan i ditt Weather Underground-konto.\n\nMätvärdena är inte 100 % exakta, och mindre ju längre stationerna är från dina zoner. Regn används för regnkredit; vind, luftfuktighet och solsken bara med valet nedan.",
         "data": {
           "api_key": "API-nyckel",
-          "radius_km": "Sökradie"
+          "radius_km": "Sökradie",
+          "borrow_climate": "Låna även vind, luftfuktighet och solsken"
         },
         "data_description": {
           "api_key": "Från ditt Weather Underground-konto (API Keys). Lagras endast i denna post.",
-          "radius_km": "0,5–2 km, närmare är bättre: regnet kan skilja sig mycket över ett par km. Över 1 km bör du hålla koll på hur avläsningarna stämmer med regnet hos dig."
+          "radius_km": "0,5–2 km, närmare är bättre: regnet kan skilja sig mycket över ett par km. Över 1 km bör du hålla koll på hur avläsningarna stämmer med regnet hos dig.",
+          "borrow_climate": "För FAO-56-vattenberäkningen för utomhuszoner som saknar sensor och väderentitet för det. Hämtar var 30:e minut i stället för varannan timme. Vinden räknas som uppmätt på zonens Vindsensorns höjd."
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "Använd områdets regnmätare",
           "outdoor_temp_entity": "Använd områdets utomhustemperatur",
           "weather_entity": "Använd områdets väderentitet",
-          "notify_entity": "Använd områdets telefon"
+          "notify_entity": "Använd områdets telefon",
+          "humidity_entity": "Använd områdets fuktsensor",
+          "wind_entity": "Använd områdets vindsensor",
+          "rain_sensor_entity": "Använd områdets regnsensor",
+          "solar_entity": "Använd områdets solsensor"
         },
         "data_description": {
           "rain_counter_entity": "Markera för att använda områdets regnmätare istället för den här zonens egna.",
           "outdoor_temp_entity": "Markera för att använda områdets utomhustemperatursensor istället för den här zonens egna.",
           "weather_entity": "Markera för att använda områdets väderentitet istället för den här zonens egna.",
-          "notify_entity": "Markera för att skicka till områdets telefon istället för den här zonens egna."
+          "notify_entity": "Markera för att skicka till områdets telefon istället för den här zonens egna.",
+          "humidity_entity": "Kryssa i för att använda områdets fuktsensor i stället för zonens egen.",
+          "wind_entity": "Kryssa i för att använda områdets vindsensor i stället för zonens egen.",
+          "rain_sensor_entity": "Kryssa i för att använda områdets regnsensor i stället för zonens egen.",
+          "solar_entity": "Kryssa i för att använda områdets solsensor i stället för zonens egen."
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "Regnmätare mm per vipp",
           "outdoor_temp_entity": "Utomhustemperatursensor",
           "weather_entity": "Väderentitet (prognos)",
-          "notify_entity": "Telefon för avisering"
+          "notify_entity": "Telefon för avisering",
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
+          "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
           "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
@@ -636,7 +717,12 @@
           "weather_entity": "Valfritt. Låter zonerna i det här området hoppa över vattning när regn finns i prognosen.",
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
-          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "Regnmätare mm per vipp",
           "outdoor_temp_entity": "Utomhustemperatursensor",
           "weather_entity": "Väderentitet (prognos)",
-          "notify_entity": "Telefon för avisering"
+          "notify_entity": "Telefon för avisering",
+          "humidity_entity": "Utomhusfuktighetssensor (valfri)",
+          "wind_entity": "Vindhastighetssensor (valfri)",
+          "rain_sensor_entity": "Regnsensor (valfri)",
+          "rain_sensor_inverted": "Sensorn är på när det är torrt",
+          "solar_entity": "Sensor för solstrålning (valfri)"
         },
         "data_description": {
           "rain_counter_entity": "Valfritt. Zonerna i det här området läser sitt regn härifrån, såvida inte en zon har en egen mätare.",
@@ -658,7 +749,12 @@
           "weather_entity": "Valfritt. Låter zonerna i det här området hoppa över vattning när regn finns i prognosen.",
           "notify_entity": "Valfritt. Var zonerna i det här området skickar sina telefonmeddelanden.",
           "area_name": "Vad området kallas, till exempel Baksida eller Framsida.",
-          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen."
+          "rain_source_type": "Vad regnmätarsensorn rapporterar: en vippräknare, en regntotal, en regnintensitet eller regnet sedan senaste avläsningen.",
+          "humidity_entity": "Relativ luftfuktighet utomhus. Låter FAO-56-uppskattningen följa torra och fuktiga dagar.",
+          "wind_entity": "Vindhastighet utomhus. Blåsiga dagar torkar växter snabbare; utan sensor används en typisk vind för platsen.",
+          "rain_sensor_entity": "En blöt/torr-sensor (på = blött). Medan den visar blött väntar en förfallen bevattning och kollar igen varje timme; ett tryck på Kör nu bevattnar ändå.",
+          "rain_sensor_inverted": "Kryssa i om sensorn är på när det är torrt och av när det är blött.",
+          "solar_entity": "Solljus i W/m². Utan sensor uppskattas solen från dagens temperaturspann."
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "Välj 1, 2 eller 3 stationer.",
       "greenhouse_has_crops": "Det här växthuset har grödor. Flytta dem till ett annat växthus eller ta bort dem först (varje grödas Konfigurera -> Växthus).",
       "area_name_required": "Ge området ett namn.",
-      "area_name_exists": "Ett område med detta namn finns redan."
+      "area_name_exists": "Ett område med detta namn finns redan.",
+      "master_is_zone_valve": "Huvudventilen måste vara en annan ventil än zonernas egna ventiler.",
+      "valve_is_a_master": "Den här ventilen är en annan zons huvudventil."
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "Regnsumma (mm eller tum; total, daglig eller veckovis)",
         "rate_mm_h": "Regnintensitet (mm/h)",
         "amount_mm": "Regn per avläsning (mm eller tum; t.ex. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Skyddat (murar, häckar)",
+        "open": "Öppet",
+        "exposed": "Utsatt (bergstopp, kust, tak)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Fuktigt",
+        "dry": "Torrt (torrt eller halvtorrt)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "Ventilens egen timer"
+      },
+      "kc_curve_pct": {
+        "name": "Grödokurvans styrka"
+      },
+      "root_depth_mm": {
+        "name": "Rotdjup"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Jordens vattenhållande förmåga"
+      },
+      "allowed_depletion_pct": {
+        "name": "Tillåten uttorkning av jorden"
+      },
+      "wetted_area_pct": {
+        "name": "Bevattnad andel av zonen"
+      },
+      "zone_area_m2": {
+        "name": "Zonens yta"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Tidsmarginal i flödesläge"
+      },
+      "wind_hold_kmh": {
+        "name": "Vindgräns"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Regnmängd från regnsensor"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Återgå till automatik"
+      },
+      "master_valve_checked": {
+        "name": "Huvudventil kontrollerad"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Självjustering"
+      },
+      "kc_climate_adjust": {
+        "name": "Grödofaktorn följer klimatet"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Längsta tid ventilen är öppen"
+      },
+      "crop_factor": {
+        "name": "Grödofaktor idag"
+      },
+      "root_zone": {
+        "name": "Rotzonen rymmer"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Modell för vattenbehov",
         "state": {
           "temperature_tiers": "Temperaturnivåer",
-          "et_curve": "ET-kurva (Hargreaves)"
+          "et_curve": "ET-kurva (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Avsluta bevattningen",
           "stop": "Stoppa vid blöt nivå"
+        }
+      },
+      "crop_curve": {
+        "name": "Grödokurva",
+        "state": {
+          "fixed": "Fast (reglaget Grödofaktor)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Solexponering",
+        "state": {
+          "deep_shade": "Skugga hela dagen",
+          "morning_sun": "Morgonsol",
+          "afternoon_sun": "Eftermiddagssol",
+          "full_sun": "Full sol",
+          "reflected_heat": "Reflekterad värme (vägg eller beläggning)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Bevattningen slutar efter",
+        "state": {
+          "time": "Planerad tid",
+          "flow_meter": "Flödesmätare"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Denna zon finns inte längre."
+          "zone_gone": "Denna zon finns inte längre.",
+          "zone_busy": "Zonen är upptagen. Försök igen om ett ögonblick."
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Denna zon finns inte längre."
+          "zone_gone": "Denna zon finns inte längre.",
+          "zone_busy": "Zonen är upptagen. Försök igen om ett ögonblick."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: dess område togs bort",
       "description": "Området {area} togs bort, så {zone} använder nu en kopia av sensorerna den fick därifrån. För att placera den i ett annat område, använd zonens Konfigurera -> Var är detta?"
+    },
+    "fao56_offer": {
+      "title": "{zone}: byta till FAO-56-vattenuppskattningen?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Byt {zone} till FAO-56",
+            "description": "{zone} har två veckors FAO-56-dagar registrerade. Just nu vattnar den {current} i veckan enligt sin nuvarande modell; FAO-56 ger {fao56} i veckan utifrån samma två veckor (temperatur, plus fuktighet, vind och sol där du har dem). FAO-56 ger oftast mindre i fuktigt väder och mer på torra, blåsiga dagar. Byta den här zonen till FAO-56? Du kan byta tillbaka när som helst med Modell för vattenbehov."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: regnsensor har fastnat",
+      "description": "Regnsensorn {entity} i zon {zone} har visat blött i över ett dygn utan ändring, så ZoneFlow ignorerar den. Kontrollera sensorn: den kan vara smutsig eller trasig. Det försvinner av sig självt när den visar torrt."
     }
   }
 }

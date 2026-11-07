@@ -24,7 +24,8 @@ import csv
 import functools
 import logging
 import math
-from datetime import datetime, time as dt_time, timedelta
+from dataclasses import dataclass
+from datetime import date, datetime, time as dt_time, timedelta
 from typing import Any
 
 from homeassistant.core import Event, HassJob, HomeAssistant, State, callback
@@ -44,13 +45,41 @@ from homeassistant.helpers.sun import get_astral_event_next
 import homeassistant.util.dt as dt_util
 from homeassistant.const import UnitOfTemperature, UnitOfVolume
 from homeassistant import const as ha_const
-from homeassistant.util.unit_conversion import TemperatureConverter, VolumeConverter
+from homeassistant.util.unit_conversion import SpeedConverter, TemperatureConverter, VolumeConverter
 
-from . import calculations as calc, issues, messages, notification_actions, units, visibility
+from . import calculations as calc, fao56, flow_meter, issues, master_valve, messages, notification_actions, units, visibility, wu_logic, zone_valve
+from .crop_season import CropSeason, async_crop_seasons
+from .day_aggregate import DayAggregate
 from .area import AREA_SHARED_KEYS, get_area
 from .greenhouse import GreenhouseManager
 from .const import (
+    CONF_CLIMATE,
+    DEFAULT_CLIMATE,
+    DEFAULT_SUN_EXPOSURE,
+    KC_CLIMATE_DAYS,
+    KC_GREEN_UP_DOY,
+    SOUTHERN_HEMISPHERE_SHIFT_DAYS,
+    SUN_EXPOSURE_FACTORS,
     GREENHOUSE_NUMBERS,
+    RAIN_HISTORY_DEPTH_DAYS,
+    CONF_HUMIDITY_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
+    CONF_RAIN_SENSOR_INVERTED,
+    CONF_SOLAR_ENTITY,
+    CONF_WIND_ENTITY,
+    RAIN_SENSOR_ESTIMATE_MAX_MM_DAY,
+    RAIN_SENSOR_STUCK_SECONDS,
+    WIND_HOLD_SEED_KMH,
+    WIND_MAX_AGE_SECONDS,
+    ET0_HISTORY_DAYS,
+    FAO56_OFFER_DAYS,
+    CONF_CLIMATE_DRYNESS,
+    CONF_COASTAL,
+    CONF_WIND_EXPOSURE,
+    CONF_WIND_SENSOR_HEIGHT_M,
+    DEFAULT_WIND_EXPOSURE,
+    DEFAULT_WIND_SENSOR_HEIGHT_M,
+    WIND_EXPOSURE_M_S,
     DEEP_SOAK_INTERVAL_BUFFER_SECONDS,
     ROUTINE_INTERVAL_BUFFER_SECONDS,
     FLOW_MEASURE_MIN_MINUTES,
@@ -62,8 +91,9 @@ from .const import (
     REPAIR_FIRST_CHECK_SECONDS,
     FROST_TEMP_MAX_AGE_SECONDS,
     FROST_TEMP_MIN_PLAUSIBLE_C,
-    FROST_RETRY_COUNT,
-    FROST_RETRY_SECONDS,
+    HOLD_RETRY_COUNT,
+    HOLD_RETRY_SECONDS,
+    WAITING_HOLD_CODES,
     LEVEL_INFO,
     LEVEL_WARNING,
     NOTIFY_NONE,
@@ -80,6 +110,8 @@ from .const import (
     CONF_DEEP_SOAK_TIME,
     CONF_DRAINAGE,
     CONF_FLOW_METER_ENTITY,
+    CONF_MASTER_VALVE_ENTITY,
+    CONF_MASTER_VALVE_NORMALLY_OPEN,
     CONF_GROWTH_RAMP_PROFILE,
     CONF_IRRIGATION_METHOD,
     CONF_NOTIFY_ENTITY,
@@ -122,12 +154,24 @@ from .const import (
     DEFAULT_IRRIGATION_METHOD,
     DEFAULT_SLOPE,
     DEFAULT_SOIL_TYPE,
+    SOIL_HOLDING_MM_PER_M,
+    WETTED_SHARE_BY_METHOD,
     DEMAND_MODEL_ET,
+    DEMAND_MODEL_FAO56,
     MULCH_STATUS_NOT_MULCHED,
     CONF_USE_WU,
     CONF_PARENT_ZONE,
     CROP_INHERITED_KEYS,
+    DELIVERY_FLOW,
     DOMAIN,
+    FLOW_HIGH_FACTOR,
+    FLOW_HIGH_SECONDS,
+    FLOW_LEARN_MIN_MINUTES,
+    FLOW_LEARN_WEIGHT,
+    FLOW_LOW_SHARE,
+    FLOW_POLL_SECONDS,
+    FLOW_START_GRACE_SECONDS,
+    WU_CLIMATE_AGGREGATES,
     WU_DATA_KEY,
     EVENT_LOG,
     GROWTH_RAMP_CURVES,
@@ -153,6 +197,7 @@ from .const import (
     SOIL_WET_STOP,
     VALVE_STUCK_MARGIN_MINUTES,
     VALVE_STUCK_ON_MINUTES,
+    RAIN_MAX_PLAUSIBLE_JUMP_MM,
     RAIN_RATE_MAX_GAP_SECONDS,
     RAIN_SOURCE_AMOUNT,
     RAIN_SOURCE_OPTIONS,
@@ -209,6 +254,11 @@ def _weather_temp_c(state: State | None) -> float | None:
 
 _LOGGER = logging.getLogger(__name__)
 
+# Longest a phone notification may hold up the watering logic that logs it.
+NOTIFY_TIMEOUT_SECONDS = 20
+# How long a valve entity that reports "closing" is given to finish before it counts as unconfirmed.
+VALVE_CLOSING_CONFIRM_SECONDS = 60
+
 
 # hass.data key: pump lock key -> {"zones": entry ids that were waiting, "until": time the
 # handing-over zone closes} while it keeps its own valve open for the next one (valve overlap).
@@ -230,6 +280,8 @@ _STOPPED = "stopped"
 _USER_STOPPED = "user_stopped"
 # A watering cycle stopped because the zone was paused.
 _PAUSED = "paused"
+# Stopped because far more water ran than the zone takes (a burst or loose pipe, 1.8).
+_HIGH_FLOW = "high_flow"
 
 # Service / check runs: never counted as watering (see start_service_run).
 SERVICE_RUN_KIND = "Service Run"
@@ -240,7 +292,10 @@ VALVE_OPEN_KEYS = frozenset({
     "deep_soak_target_mm", "max_runtime_minutes", "deep_soak_max_runtime_minutes",
     "service_mode_auto_off_minutes", "mulch_et_adjustment_pct",
     "routine_min_pulse_minutes", "deep_soak_min_pulse_minutes", "valve_timer_minutes",
+    "flow_time_allowance_pct",
 })
+# 1.8: the root-zone settings (the interval and the dose follow them).
+ROOT_ZONE_KEYS = frozenset({"root_depth_mm", "soil_holding_mm_per_m", "allowed_depletion_pct", "wetted_area_pct"})
 # Home Assistant 2024.4+: a sensor that reports the same value again.
 EVENT_STATE_REPORTED = getattr(ha_const, "EVENT_STATE_REPORTED", None)
 WATER_LEDGER_DAYS = 400
@@ -289,6 +344,25 @@ def _tracked_run(func):
     return wrapper
 
 
+MAX_PLAUSIBLE_WIND_M_S = 75.0  # above a hurricane: a sentinel such as 6553.5 or "inf", not wind
+
+
+def _plausible_wind(value: float) -> float | None:
+    return value if math.isfinite(value) and 0 <= value <= MAX_PLAUSIBLE_WIND_M_S else None
+
+
+@dataclass(frozen=True)
+class RootZone:
+    """The zone's root zone now (1.8): what it holds (TAW), what the plant can use before it feels
+    dry (RAW = p x TAW), the plant's daily use and the most days between waterings that allows."""
+
+    taw_mm: float
+    raw_mm: float
+    p: float
+    etc_mm_day: float | None
+    max_interval_days: int | None
+
+
 class ZoneFlowController:
     """Owns all scheduling, safety watchdogs, and irrigation state."""
 
@@ -299,6 +373,9 @@ class ZoneFlowController:
         self.numbers: dict[str, Any] = {}  # key -> NumberEntity, registered at platform setup
         self._unsubs: list[Any] = []
         self._valve_stuck_cancel = None
+        self._crop_seasons: dict[str, CropSeason] = {}  # data/crop_kc.json, loaded in async_setup
+        self._valve_stuck_fired = False  # the watchdog fired and the valve has not reported closed since
+        self._valve_open_since = None  # when the valve first opened (or began to), for the stuck-valve watchdog
         self._power_loss_cancel = None
         self._lock_stale_cancel = None
         self._abort_event = asyncio.Event()
@@ -348,6 +425,17 @@ class ZoneFlowController:
         # valve was really open (seconds).
         self._measuring = False
         self._run_liters: float | None = None
+        # 1.8: litres through the flow meter during a run (flow_meter.FlowTracker), and watering to it.
+        self._flow: flow_meter.FlowTracker | None = None
+        self._flow_tick = asyncio.Event()
+        self._flow_target_l: float | None = None  # set by a watering that stops on the meter
+        self._flow_used = False  # this run stopped its pulses on the meter (not fallen back to time)
+        self._flow_fell_back = False  # the meter stopped counting: the rest of the run is timed
+        self._flow_end_reasons: list[str] = []
+        self._flow_close_l: float | None = None
+        self._flow_last_target_l = 0.0
+        self._high_flow_since: float | None = None
+        self._high_flow_closed = False
         # The pump lock was handed to the next zone before this valve closed (valve overlap).
         self._pump_handed_over = False
         # Set on the zone that received the pump this way: its pump-power audit waits until then.
@@ -358,11 +446,11 @@ class ZoneFlowController:
         # always re-checked before the routine), the pending hourly
         # re-check, how many re-checks this wait has had, whether one is
         # running now, and which cycles have already sent their message.
-        self._frost_held: set[str] = set()
-        self._frost_retry_cancel: Any = None
-        self._frost_rechecks = 0
-        self._frost_rechecking = False
-        self._frost_notified: set[str] = set()
+        self._hold_held: set[str] = set()
+        self._hold_retry_cancel: Any = None
+        self._hold_rechecks = 0
+        self._hold_rechecking = False
+        self._hold_notified: set[tuple[str, str]] = set()  # (cycle, reason) already told by phone
         self._service_counted = False
         # Greenhouse / indoor climate control (1.6). Does nothing for a zone
         # with no climate devices.
@@ -500,7 +588,7 @@ class ZoneFlowController:
     async def on_area_paused(self) -> None:
         """The area was paused: stop what this zone is doing, as its own Pause does."""
         self._paused_event.set()
-        self._cancel_frost_wait()
+        self._cancel_hold_wait()
 
     async def on_area_resumed(self) -> None:
         """An area or greenhouse stopped pausing this zone: free it unless
@@ -534,6 +622,12 @@ class ZoneFlowController:
     @property
     def has_valve(self) -> bool:
         return bool(self.valve_entity)
+
+    @property
+    def run_in_progress(self) -> bool:
+        """A watering is running, or about to: saving a setting kept in the config entry would
+        reload the zone and stop it."""
+        return bool(self.store.state.lock_on or self._runs or self._service_active)
 
     def _refuse_without_valve(self) -> None:
         if not self.has_valve:
@@ -662,6 +756,35 @@ class ZoneFlowController:
         is loaded."""
         return self.hass.data.get(WU_DATA_KEY) if self.uses_wu else None
 
+    @property
+    def uses_wu_climate(self) -> bool:
+        """Wind, humidity and sunshine borrowed from the Weather Underground stations (1.8): any
+        outdoor zone, rain gauge or not, while the poller has Borrow Wind, Humidity and Sunshine on.
+        Used only where the zone's own sensor and its weather entity have nothing (_close_et0_day)."""
+        source = self.hass.data.get(WU_DATA_KEY)
+        return self.is_outdoor and source is not None and source.climate_enabled
+
+    @callback
+    def on_wu_climate(self, reading: dict[str, Any], ts: float) -> None:
+        """A poll's borrowed wind (m/s), humidity (%) and sunshine (W/m2): into the day aggregates.
+        A reading the stations did not have is a gap. Saved by the heartbeat, like the sensors."""
+        for key, field in WU_CLIMATE_AGGREGATES.items():
+            agg = self._aggregate(key)
+            agg.add(ts, reading.get(field))
+            self._put_aggregate(key, agg)
+
+    def _end_stale_wu_climate(self, now_ts: float) -> None:
+        """A borrowed reading holds CLIMATE_HOLD_SECONDS after its poll; after that (the poller stopped,
+        the setting was turned off, the zone moved under a roof) the day has a gap there."""
+        for key in WU_CLIMATE_AGGREGATES:
+            data = self.store.state.day_aggregates.get(key)
+            if not data:
+                continue
+            agg = self._aggregate(key)
+            if agg.last_value is not None and agg.last_ts is not None and now_ts - agg.last_ts > wu_logic.CLIMATE_HOLD_SECONDS:
+                agg.add(agg.last_ts + wu_logic.CLIMATE_HOLD_SECONDS, None)
+                self._put_aggregate(key, agg)
+
     def wu_watering_slots(self, now_ts: float) -> list[float]:
         """The next scheduled starts, for the poller's watering mode."""
         if not self.has_valve:
@@ -691,6 +814,44 @@ class ZoneFlowController:
         if not self.is_outdoor:
             return self.inside_temp_entity  # under a roof, water by the inside temperature
         return self._area_value(CONF_OUTDOOR_TEMP_ENTITY)
+
+    @property
+    def master_valve_entity(self) -> str | None:
+        """The master (backup) shut-off valve upstream of this zone (1.8, master_valve.py), or None."""
+        if not self.valve_entity:
+            return None
+        return self.entry.options.get(CONF_MASTER_VALVE_ENTITY, self.entry.data.get(CONF_MASTER_VALVE_ENTITY)) or None
+
+    @property
+    def master_valve_normally_open(self) -> bool:
+        """The master valve is open without power (a relay switched ON closes it). Default: closed."""
+        return bool(self.entry.options.get(CONF_MASTER_VALVE_NORMALLY_OPEN, self.entry.data.get(CONF_MASTER_VALVE_NORMALLY_OPEN, False)))
+
+    def _master(self) -> master_valve.MasterValve | None:
+        entity = self.master_valve_entity
+        return master_valve.get(self.hass, entity) if entity else None
+
+    async def master_valve_stopped_run(self) -> None:
+        """The master valve closed for safety while this zone's run held it: stop the run."""
+        await self._set_abort(True)
+        await self._set_lock(False)
+
+    async def log_master_valve_closed(self, reason: str, entity_id: str) -> None:
+        await self._log_event(
+            event_type="Master Valve Closed",
+            status="CRITICAL",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="master_valve_closed",
+            params={"valve": entity_id, "reason": self._master_reason_text(reason)},
+            level=LEVEL_WARNING,
+            always_notify=True,  # water may be running where it should not: even with Notifications off
+        )
+
+    def _master_reason_text(self, reason: str) -> str:
+        return self._msg(f"notify.master_valve_reason.{reason}", valve=self.valve_entity or "")
 
     @property
     def flow_meter_entity(self) -> str | None:
@@ -740,14 +901,34 @@ class ZoneFlowController:
         (calculations.soil_pulse_count)."""
         return self.soil_type, self.drainage, self.slope
 
-    async def async_soil_changed(self) -> None:
+    async def async_soil_changed(self, soil_type: bool = False) -> None:
         """Soil type or drainage was picked or changed: the soak between
-        pulses follows it (the person can still move the sliders after)."""
+        pulses follows it, and a new soil type sets the root zone's water-holding
+        capacity (the person can still move the sliders after)."""
         minutes = calc.soak_minutes(self.soil_type, self.drainage)
         for key in ("routine_pulse_rest_minutes", "deep_soak_pulse_rest_minutes"):
             entity = self.numbers.get(key)
             if entity is not None:
                 await entity.async_set_metric_value(minutes)
+        holding = self.numbers.get("soil_holding_mm_per_m")  # 1.8: the root zone's soil
+        if soil_type and holding is not None:
+            await holding.async_set_metric_value(SOIL_HOLDING_MM_PER_M.get(self.soil_type, SOIL_HOLDING_MM_PER_M[DEFAULT_SOIL_TYPE]))
+
+    async def async_method_changed(self) -> None:
+        """At each start: when the irrigation method changed in Configure, the root zone's Wetted
+        Share follows it (1.8). A zone seen for the first time keeps what it has."""
+        state = self.store.state
+        method = self.irrigation_method
+        if state.wetted_method == method:
+            return
+        entity = self.numbers.get("wetted_area_pct")
+        if state.wetted_method is not None and entity is not None:
+            await entity.async_set_metric_value(WETTED_SHARE_BY_METHOD.get(method, 100.0))
+        wind = self.numbers.get("wind_hold_kmh")
+        if state.wetted_method is not None and wind is not None and method in WIND_HOLD_SEED_KMH and not self.number("wind_hold_kmh"):
+            await wind.async_set_metric_value(WIND_HOLD_SEED_KMH[method])  # never over a limit already chosen
+        state.wetted_method = method
+        await self.store.async_save()
 
     @property
     def irrigation_method(self) -> str:
@@ -775,6 +956,34 @@ class ZoneFlowController:
         if not self.is_outdoor:
             return None  # a roof: the outdoor forecast doesn't apply
         return self._area_value(CONF_WEATHER_ENTITY)
+
+    @property
+    def humidity_entity(self) -> str | None:
+        """FAO-56 humidity: outside, the area's or zone's sensor; under a roof, the inside one."""
+        return self._area_value(CONF_HUMIDITY_ENTITY) if self.is_outdoor else self.inside_humidity_entity
+
+    @property
+    def wind_entity(self) -> str | None:
+        return self._area_value(CONF_WIND_ENTITY) if self.is_outdoor else None  # a roof: near still air
+
+    @property
+    def rain_sensor_entity(self) -> str | None:
+        """A binary rain sensor (1.8), outdoors only: the zone's own, else its area's."""
+        return self._area_value(CONF_RAIN_SENSOR_ENTITY) if self.is_outdoor else None
+
+    @property
+    def rain_sensor_inverted(self) -> bool:
+        """The sensor reads on = dry. The flag belongs with the sensor: the zone's own sensor
+        takes the zone's flag, the area's takes the area's."""
+        if self._own_value(CONF_RAIN_SENSOR_ENTITY):
+            return bool(self._own_value(CONF_RAIN_SENSOR_INVERTED))
+        area = self.area
+        return bool(area.option(CONF_RAIN_SENSOR_INVERTED)) if area is not None else False
+
+    @property
+    def solar_entity(self) -> str | None:
+        """FAO-56 sunshine: outside, the solar sensor; under a roof, the light sensor (W/m2 or lux)."""
+        return self._area_value(CONF_SOLAR_ENTITY) if self.is_outdoor else self.light_entity
 
     @property
     def csv_path(self) -> str:
@@ -924,6 +1133,7 @@ class ZoneFlowController:
         # that loads later starts the zone again (__init__._async_setup_area).
         self.had_area_at_setup = self.area is not None or not self.area_entry_id
         await messages.async_setup(self.hass)
+        self._crop_seasons = await async_crop_seasons(self.hass)
         await self.store.async_load()
         state = self.store.state
         # A zone made from another zone or a preset starts with its saved-state
@@ -951,7 +1161,7 @@ class ZoneFlowController:
         # ...and once a few minutes after a start, so a restart does not leave rain that fell meanwhile waiting an hour.
         self._unsubs.append(async_call_later(self.hass, RAIN_CREDIT_FIRST_CHECK_SECONDS, self._on_rain_credit_check))
         issues.async_prune(self)  # e.g. a sensor just removed from the zone
-        self._resume_frost_wait()
+        self._resume_hold_wait()
 
         # Seed the rain window baseline from the counter's current value
         # *before* anything else touches the tracker, so a fresh install (or
@@ -973,6 +1183,11 @@ class ZoneFlowController:
             state.peak_temp_day_history_c = [None, None, None]
             state.min_temp_day_history_c = [None, None, None]
             await self.store.async_save()
+
+        # FAO-56 readings stopped holding when Home Assistant stopped (a clean stop paused them
+        # already; after a crash, at the last heartbeat).
+        now_ts = dt_util.utcnow().timestamp()
+        self._pause_et0_inputs(min(state.last_alive_ts or now_ts, now_ts))
 
         if state.today_date_iso != dt_util.now().date().isoformat():
             self._start_new_day()
@@ -1009,8 +1224,19 @@ class ZoneFlowController:
             # the listener above to see, so arm the stuck-valve watchdog for it
             # here, from when it actually turned on.
             valve_now = self.hass.states.get(self.valve_entity)
-            if valve_now is not None and valve_now.state == "on":
+            if zone_valve.is_open(valve_now):
                 self._arm_valve_stuck_watchdog(valve_now.last_changed)
+        et0_entities = list(self._et0_inputs())
+        if et0_entities:
+            self._unsubs.append(async_track_state_change_event(self.hass, et0_entities, self._on_et0_input_change))
+            self._seed_et0_inputs()
+        self._unsubs.append(async_track_time_interval(self.hass, self._on_heartbeat, timedelta(minutes=10)))
+        if self.rain_sensor_entity:
+            self._unsubs.append(
+                async_track_state_change_event(self.hass, [self.rain_sensor_entity], self._on_rain_sensor_change)
+            )
+            # A wet spell over a restart: counted up to the last heartbeat, then from now.
+            self._count_sensor_rain(now_ts, until_ts=state.last_alive_ts or now_ts)
         if self.rain_counter_entity:
             self._unsubs.append(
                 async_track_state_change_event(
@@ -1089,6 +1315,8 @@ class ZoneFlowController:
         # the valve closed and the lock released, so the reloaded zone
         # starts clean instead of racing an unsupervised old cycle.
         await self._interrupt_cycle("the zone was reloaded")
+        if (master := self._master()) is not None:
+            master.forget(self)  # its run (if any) has released it above
         if self.plants is not None:
             await self.plants.async_unload()
         await self.greenhouse.async_unload()  # misters off first
@@ -1105,10 +1333,11 @@ class ZoneFlowController:
             self._power_loss_cancel()
         if self._lock_stale_cancel:
             self._lock_stale_cancel()
-        self._cancel_frost_wait()
+        self._cancel_hold_wait()
         if self._resume_cancel is not None:
             self._resume_cancel()
             self._resume_cancel = None
+        self._pause_et0_inputs(dt_util.utcnow().timestamp())
         # Write out anything only scheduled for saving (e.g. when a sensor
         # was first seen offline) -- once closed, a late save is dropped, and
         # the reloaded zone would load the state without it.
@@ -1118,6 +1347,8 @@ class ZoneFlowController:
         self.store.closed = True
 
     async def _on_shutdown(self) -> None:
+        self._pause_et0_inputs(dt_util.utcnow().timestamp())
+        await self.store.async_save()
         await self.greenhouse.async_shutdown()
         # Home Assistant gives shutdown jobs 20 s in all, so a tighter budget.
         await self._interrupt_cycle(
@@ -1182,6 +1413,9 @@ class ZoneFlowController:
         source = self.rain_source_type
         if source != RAIN_SOURCE_TIPS:
             tips *= self._rain_unit_factor(new_state)  # inches -> mm
+        if source in (RAIN_SOURCE_AMOUNT, RAIN_SOURCE_RATE) and tips > RAIN_MAX_PLAUSIBLE_JUMP_MM:
+            _LOGGER.warning("%s: ignoring an impossible rain reading of %s from %s", self.entry.title, tips, self.rain_counter_entity)
+            tips = 0.0
         now_ts = dt_util.utcnow().timestamp()
         if source == RAIN_SOURCE_AMOUNT:
             # Rain since the previous reading: every reading is new rain.
@@ -1204,6 +1438,13 @@ class ZoneFlowController:
         else:
             # The rain windows assume an ever-growing total; see
             # calc.track_tip_total for how resets and glitches are told apart.
+            previous = state.rain_counter_last_tips
+            if previous is not None and (tips - previous) * self._rain_mm_factor() > RAIN_MAX_PLAUSIBLE_JUMP_MM:
+                # An upward jump no weather makes: no rain is counted for it, and the count carries on from here.
+                _LOGGER.warning("%s: ignoring an impossible jump in %s (%s to %s)", self.entry.title, self.rain_counter_entity, previous, tips)
+                state.rain_counter_last_tips = tips
+                self.store.schedule_save()
+                return
             self._track_rain_total(tips, now_ts)
         self._record_rain_sample(seed_only)
 
@@ -1233,11 +1474,13 @@ class ZoneFlowController:
         tracker = state.rain_tracker()
         first_sample = not tracker.samples
         if not seed_only:
-            tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
-            state.save_rain_tracker(tracker)
-            if first_sample:
-                state.rain_midnight_baseline_mm = cumulative_mm
-            self.hass.async_create_task(self.store.async_save())
+            if first_sample or cumulative_mm != tracker.latest_cumulative():
+                # A repeated report of the same total adds no information: no sample, no write.
+                tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
+                state.save_rain_tracker(tracker)
+                if first_sample:
+                    state.rain_midnight_baseline_mm = cumulative_mm
+                self.store.schedule_save()
             self._check_significant_rain()
         elif first_sample:
             tracker.record(dt_util.utcnow().timestamp(), cumulative_mm)
@@ -1378,12 +1621,310 @@ class ZoneFlowController:
         `async_setup` in case a midnight tick was missed (HA was restarting,
         etc.)."""
         state = self.store.state
+        self._shift_missed_days()
+        self._reset_et0_inputs(dt_util.start_of_local_day().timestamp())
         state.today_date_iso = dt_util.now().date().isoformat()
         state.today_peak_temp_c = seed_temp
         state.today_min_temp_c = seed_temp
         state.rain_midnight_baseline_mm = state.rain_tracker().latest_cumulative()
         state.today_runtime_minutes = 0.0
         self.judge_skip_journal()
+
+    def _rain_between_mm(self, start_ts: float, end_ts: float) -> float:
+        """Rain between two times from every source, the higher one (as today_rain_mm)."""
+        state = self.store.state
+        gauge = state.rain_tracker().sum_between_mm(start_ts, end_ts)
+        source = self._wu()
+        manual = state.manual_rain_tracker().sum_between_mm(start_ts, end_ts) if state.manual_rain_samples else 0.0
+        wu = source.sum_between(start_ts, end_ts) if source is not None else 0.0
+        estimate = self._sensor_rain()
+        sensor = estimate.sum_between_mm(start_ts, end_ts) if estimate is not None else 0.0
+        return max(gauge, manual, wu, sensor)
+
+    # ------------------------------------------------------------------
+    # Rain from the rain sensor's wet time (1.8): for a zone with no rain gauge and no Weather
+    # Underground, Rain Sensor Rain Rate x the hours it reads wet, added as it goes.
+    # ------------------------------------------------------------------
+    @property
+    def rain_estimate_active(self) -> bool:
+        return (
+            bool(self.rain_sensor_entity) and not self.rain_counter_entity and not self.uses_wu
+            and self.number("rain_sensor_mm_per_hour") > 0
+        )
+
+    def _sensor_rain(self):
+        """The estimated rain, or None while the zone doesn't estimate (a gauge or Weather
+        Underground measures it; then what was estimated before stops counting)."""
+        state = self.store.state
+        return state.sensor_rain_tracker() if state.sensor_rain_samples and self.rain_estimate_active else None
+
+    def _count_sensor_rain(self, now_ts: float, until_ts: float | None = None) -> None:
+        """Add the rain of the wet time since the last count (until `until_ts`: after a restart, the
+        last heartbeat before it, as nothing is known of the time Home Assistant was down), then
+        start counting again from now if the sensor still reads wet. Called on each change of the
+        sensor and every heartbeat, so a wet spell adds up in steps of at most ten minutes. A sensor
+        that is stuck or unreadable adds nothing; no day gets more than RAIN_SENSOR_ESTIMATE_MAX_MM_DAY."""
+        state = self.store.state
+        if not self.rain_estimate_active:
+            state.rain_sensor_wet_since = None
+            return
+        since = state.rain_sensor_wet_since
+        end = now_ts if until_ts is None else min(until_ts, now_ts)
+        added = 0.0
+        if since is not None and end > since:
+            tracker = state.sensor_rain_tracker()
+            day_start = dt_util.start_of_local_day(dt_util.as_local(dt_util.utc_from_timestamp(end))).timestamp()
+            room = max(RAIN_SENSOR_ESTIMATE_MAX_MM_DAY - tracker.sum_between_mm(day_start, end), 0.0)
+            added = min((end - since) / 3600.0 * self.number("rain_sensor_mm_per_hour"), room)
+            if added > 0:
+                if not tracker.samples or tracker.samples[-1][0] < since:
+                    tracker.record(since, tracker.latest_cumulative())  # where this rain starts
+                tracker.record(end, tracker.latest_cumulative() + added)
+                state.save_sensor_rain_tracker(tracker)
+        state.rain_sensor_wet_since = now_ts if self.rain_sensor_wet() else None
+        if added > 0:
+            self._check_significant_rain()
+        self.store.schedule_save()
+
+    @callback
+    def _on_rain_sensor_change(self, event: Event) -> None:
+        self._track_rain_sensor_wet()
+        self._count_sensor_rain(dt_util.utcnow().timestamp())
+
+    def _shift_missed_days(self) -> None:
+        """The day the open bucket belongs to has ended without the 23:59:50 shift (Home Assistant
+        was down then): close that day, and any whole day after it, into the day histories now, so
+        its rain and temperatures are not lost. Days with no record count as no reading, no rain."""
+        state = self.store.state
+        try:
+            first = dt_util.parse_date(state.today_date_iso or "")
+        except (TypeError, ValueError):
+            first = None
+        today = dt_util.now().date()
+        if first is None or first >= today:
+            return
+        days = [first + timedelta(days=i) for i in range((today - first).days)]
+        for day in days[-RAIN_HISTORY_DEPTH_DAYS:]:
+            if day.isoformat() == state.last_shift_date_iso:
+                continue  # that day was closed on time
+            start = dt_util.start_of_local_day(day).timestamp()
+            end = dt_util.start_of_local_day(day + timedelta(days=1)).timestamp()
+            own = day == first  # only the open bucket holds that day's temperatures
+            state.peak_temp_day_history_c = [state.today_peak_temp_c if own else None, *state.peak_temp_day_history_c[:2]]
+            state.min_temp_day_history_c = [state.today_min_temp_c if own else None, *state.min_temp_day_history_c[:2]]
+            state.rain_day_history_mm = [self._rain_between_mm(start, end), *state.rain_day_history_mm[:9]]
+            state.last_shift_date_iso = day.isoformat()
+            self._close_et0_day(day, end, has_record=own)
+
+    # ------------------------------------------------------------------
+    # FAO-56 inputs (1.8): each climate reading is aggregated over the local day, time-weighted,
+    # and each completed day is closed into et0_day_history with where every input came from.
+    # ------------------------------------------------------------------
+    def _et0_inputs(self) -> dict[str, list[str]]:
+        """Entity -> the day aggregates its readings go to."""
+        inputs: dict[str, list[str]] = {}
+        for key, entity in (("humidity", self.humidity_entity), ("wind", self.wind_entity), ("solar", self.solar_entity)):
+            if entity:
+                inputs.setdefault(entity, []).append(key)
+        if self.weather_entity:
+            inputs.setdefault(self.weather_entity, []).extend(["weather_humidity", "weather_wind"])
+        if self.outdoor_temp_entity:
+            inputs.setdefault(self.outdoor_temp_entity, []).append("temperature")  # for the coverage rule only
+        return inputs
+
+    def _aggregate(self, key: str) -> DayAggregate:
+        agg = DayAggregate.from_dict(self.store.state.day_aggregates.get(key))
+        if not agg.start_ts:
+            agg.reset(dt_util.start_of_local_day().timestamp())
+        return agg
+
+    def _put_aggregate(self, key: str, agg: DayAggregate) -> None:
+        self.store.state.day_aggregates[key] = agg.as_dict()
+
+    @staticmethod
+    def _et0_reading(key: str, state: State | None) -> float | None:
+        """A reading in FAO-56's units (%, m/s, W/m2), or None when it can't be read."""
+        if state is None or state.state in ("unavailable", "unknown"):
+            return None
+        if key == "temperature":
+            temp = _state_temp_c(state)
+            return temp if calc.plausible_temp(temp) else None
+        try:
+            if key == "weather_humidity":
+                value = float(state.attributes["humidity"])
+                return value if 0 <= value <= 100 else None
+            if key == "weather_wind":
+                speed = float(state.attributes["wind_speed"])
+                unit = state.attributes.get("wind_speed_unit") or "km/h"
+                return _plausible_wind(SpeedConverter.convert(speed, unit, "m/s")) if speed >= 0 else None
+            value = float(state.state)
+            unit = state.attributes.get("unit_of_measurement")
+            if key == "humidity":
+                return value if 0 <= value <= 100 else None
+            if key == "wind":
+                return _plausible_wind(SpeedConverter.convert(value, unit or "m/s", "m/s")) if value >= 0 else None
+            if key == "solar":
+                if unit in ("lx", "lux"):
+                    value /= fao56.LUX_PER_W_M2  # daylight; grow lights are rougher
+                elif unit not in (None, "W/m\u00b2", "W/m2"):
+                    return None  # not an irradiance
+                return value if 0 <= value <= 1500 else None
+        except (KeyError, TypeError, ValueError, HomeAssistantError):
+            return None
+        return None
+
+    @callback
+    def _on_et0_input_change(self, event: Event) -> None:
+        entity_id = event.data.get("entity_id")
+        new_state: State | None = event.data.get("new_state")
+        keys = self._et0_inputs().get(entity_id, [])
+        if not keys:
+            return
+        ts = dt_util.utcnow().timestamp()
+        for key in keys:
+            agg = self._aggregate(key)
+            agg.add(ts, self._et0_reading(key, new_state))
+            self._put_aggregate(key, agg)
+        # No save here: a station reporting every few seconds would write the whole state each
+        # time. The 10-minute heartbeat saves the aggregates, and coverage after a crash ends at
+        # the last heartbeat anyway.
+
+    def _pause_et0_inputs(self, ts: float) -> None:
+        """Readings stop holding at `ts`: Home Assistant stopped, or crashed after its last heartbeat."""
+        for key in list(self.store.state.day_aggregates):
+            agg = self._aggregate(key)
+            agg.pause(max(ts, agg.last_ts or 0.0))
+            self._put_aggregate(key, agg)
+
+    def _seed_et0_inputs(self) -> None:
+        ts = dt_util.utcnow().timestamp()
+        source = self.hass.data.get(WU_DATA_KEY)
+        if self.uses_wu_climate and (reading := source.fresh_climate(ts)) is not None:
+            self.on_wu_climate(reading, ts)  # the poller's latest, until its next poll
+        for entity_id, keys in self._et0_inputs().items():
+            state = self.hass.states.get(entity_id)
+            for key in keys:
+                agg = self._aggregate(key)
+                agg.add(ts, self._et0_reading(key, state))
+                self._put_aggregate(key, agg)
+
+    @callback
+    def _on_heartbeat(self, now) -> None:
+        self.store.state.last_alive_ts = dt_util.utcnow().timestamp()
+        if self.rain_sensor_entity:
+            self._track_rain_sensor_wet()
+            self._count_sensor_rain(self.store.state.last_alive_ts)
+        self._end_stale_wu_climate(self.store.state.last_alive_ts)
+        self.store.schedule_save()
+
+    def _reset_et0_inputs(self, start_ts: float) -> None:
+        for key in list(self.store.state.day_aggregates):
+            agg = self._aggregate(key)
+            agg.reset(start_ts)
+            self._put_aggregate(key, agg)
+
+    def _fao56_settings(self) -> dict[str, float]:
+        """What an input without a sensor falls back on: the zone's site options."""
+        options = {**self.entry.data, **self.entry.options}
+        exposure = options.get(CONF_WIND_EXPOSURE) or DEFAULT_WIND_EXPOSURE
+        try:
+            height = float(options.get(CONF_WIND_SENSOR_HEIGHT_M) or DEFAULT_WIND_SENSOR_HEIGHT_M)
+        except (TypeError, ValueError):
+            height = DEFAULT_WIND_SENSOR_HEIGHT_M
+        if not self.is_outdoor:
+            # Under a roof (FAO-56 assumes open grass): near still air, sunshine through glass.
+            return {"default_wind": fao56.INDOOR_WIND_2M, "k0": fao56.K0_HUMID, "krs": fao56.KRS_INLAND,
+                    "wind_height_m": 2.0, "solar_factor": fao56.GLAZING_TRANSMISSION}
+        return {
+            "default_wind": WIND_EXPOSURE_M_S.get(exposure, fao56.DEFAULT_WIND_2M),
+            "k0": fao56.K0_DRY if options.get(CONF_CLIMATE_DRYNESS) == "dry" else fao56.K0_HUMID,
+            "krs": fao56.KRS_COASTAL if options.get(CONF_COASTAL) else fao56.KRS_INLAND,
+            "wind_height_m": height,
+            "solar_factor": 1.0,
+        }
+
+    def _close_et0_day(self, day, end_ts: float, *, has_record: bool = True) -> None:
+        """Close `day` (a local date ending at `end_ts`) into et0_day_history."""
+        state = self.store.state
+        summaries = {}
+        if has_record:
+            for key in list(state.day_aggregates):
+                agg = self._aggregate(key)
+                summaries[key] = agg.close(end_ts)
+                self._put_aggregate(key, agg)
+        t_min = state.today_min_temp_c if has_record else None
+        t_max = state.today_peak_temp_c if has_record else None
+        temperature = summaries.get("temperature")
+        if temperature is not None and not temperature.usable:
+            t_min = t_max = None  # a day with hours of readings missing has a too-narrow range: no ET0
+        entry: dict[str, Any] = {"date": day.isoformat(), "et0": None, "sources": {}}
+        if calc.plausible_temp(t_min) and calc.plausible_temp(t_max):  # a glitch (85 C) must not set the dose
+            settings = self._fao56_settings()
+            rh_min = rh_max = rh_mean = wind = rs = None
+            humidity_source = wind_source = None
+            hum = summaries.get("humidity")
+            weather_hum = summaries.get("weather_humidity")
+            # Borrowed from the Weather Underground stations (1.8): the last choice before an estimate.
+            wu_hum, wu_win, wu_sol = (summaries.get(k) for k in ("wu_humidity", "wu_wind", "wu_solar"))
+            solar_source = None
+            if hum is not None and hum.usable:
+                rh_min, rh_max = hum.minimum, hum.maximum
+            elif weather_hum is not None and weather_hum.usable:
+                rh_mean, humidity_source = weather_hum.mean, "weather"
+            elif wu_hum is not None and wu_hum.usable:
+                rh_min, rh_max, humidity_source = wu_hum.minimum, wu_hum.maximum, "wu"
+            win = summaries.get("wind")
+            weather_win = summaries.get("weather_wind")
+            if win is not None and win.usable:
+                wind = fao56.wind_to_2m(win.mean, settings["wind_height_m"])
+            elif weather_win is not None and weather_win.usable:
+                wind, wind_source = fao56.wind_to_2m(weather_win.mean, 10.0), "weather"  # weather services: 10 m
+            elif wu_win is not None and wu_win.usable:
+                # A station's anemometer height is not reported: the zone's Wind Sensor Height is used.
+                wind, wind_source = fao56.wind_to_2m(wu_win.mean, settings["wind_height_m"]), "wu"
+            sol = summaries.get("solar")
+            day_of_year = day.timetuple().tm_yday
+            daylight_s = fao56.daylight_hours(self.hass.config.latitude, day_of_year) * 3600
+
+            def covers_daylight(summary) -> bool:
+                # A sensor that goes offline at night is fine: it needs readings above zero for most of
+                # the daylight (night zeros do not count, so a daytime outage cannot hide behind them).
+                return summary is not None and summary.mean is not None and summary.positive_seconds >= max(1800.0, 0.8 * daylight_s)
+
+            if covers_daylight(sol):
+                rs = sol.integral / 1e6  # J/m2 -> MJ/m2 (night and short gaps count as dark)
+            elif covers_daylight(wu_sol):
+                rs, solar_source = wu_sol.integral / 1e6, "wu"
+            result = fao56.et0_daily(
+                fao56.DayInputs(t_min, t_max, rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean, wind_2m=wind, rs_mj=rs),
+                latitude_deg=self.hass.config.latitude,
+                day_of_year=day_of_year,
+                elevation_m=float(self.hass.config.elevation or 0),
+                default_wind=settings["default_wind"],
+                k0=settings["k0"],
+                krs=settings["krs"],
+                solar_factor=settings["solar_factor"],
+            )
+            if not math.isfinite(result.et0_mm):
+                result = None
+            sources = dict(result.sources) if result is not None else {}
+            if result is None:
+                history = [e for e in state.et0_day_history if isinstance(e, dict) and e.get("date") != entry["date"]]
+                state.et0_day_history = [entry, *history][:ET0_HISTORY_DAYS]
+                return
+            if humidity_source:
+                sources["humidity"] = humidity_source
+            if wind_source:
+                sources["wind"] = wind_source
+            if solar_source:
+                sources["solar"] = solar_source
+            entry.update(
+                et0=round(result.et0_mm, 2), sources=sources, t_min=t_min, t_max=t_max,
+                rh_min=rh_min, rh_max=rh_max, rh_mean=rh_mean,
+                u2=round(result.u2, 2), rs=round(result.rs_mj, 2), ea=round(result.ea_kpa, 3),
+            )
+        history = [e for e in state.et0_day_history if isinstance(e, dict) and e.get("date") != entry["date"]]
+        state.et0_day_history = [entry, *history][:ET0_HISTORY_DAYS]
 
     @callback
     def _on_midnight(self, now) -> None:
@@ -1421,7 +1962,7 @@ class ZoneFlowController:
             elif state.today_peak_temp_c is None:
                 state.today_min_temp_c = temp
             state.today_peak_temp_c = max(temp, state.today_peak_temp_c) if state.today_peak_temp_c is not None else temp
-        self.hass.async_create_task(self.store.async_save())
+        self.store.schedule_save()
 
     @callback
     def _on_daily_shift(self, now) -> None:
@@ -1457,6 +1998,8 @@ class ZoneFlowController:
         # Rain day shift register (10-deep)
         today_rain = self.today_rain_mm()
         state.rain_day_history_mm = [today_rain, *state.rain_day_history_mm[:9]]
+        state.last_shift_date_iso = dt_util.now().date().isoformat()
+        self._close_et0_day(dt_util.now().date(), dt_util.utcnow().timestamp())
         self.hass.async_create_task(self.store.async_save())
 
     def today_rain_mm(self) -> float:
@@ -1465,13 +2008,15 @@ class ZoneFlowController:
         state = self.store.state
         gauge = max(state.rain_tracker().latest_cumulative() - state.rain_midnight_baseline_mm, 0.0)
         source = self._wu()
-        if not state.manual_rain_samples and source is None:
+        estimate = self._sensor_rain()
+        if not state.manual_rain_samples and source is None and estimate is None:
             return gauge
         midnight = dt_util.start_of_local_day().timestamp()
         now_ts = dt_util.utcnow().timestamp()
         manual = state.manual_rain_tracker().sum_between_mm(midnight, now_ts)
         wu = source.sum_between(midnight, now_ts) if source is not None else 0.0
-        return max(gauge, manual, wu)
+        sensor = estimate.sum_between_mm(midnight, now_ts) if estimate is not None else 0.0
+        return max(gauge, manual, wu, sensor)
 
     def avg_peak_temp(self) -> float | None:
         """Average of the real daily peaks recorded in the last 3 days, or
@@ -1544,12 +2089,206 @@ class ZoneFlowController:
         growth ramp), or None when this zone uses temperature tiers, or
         uses the ET curve but ET0 isn't available right now -- None always
         means "use the tier target", see const.py's DEMAND_MODEL_*."""
+        if self.demand_model == DEMAND_MODEL_FAO56:
+            daily = self.fao56_daily_demand_mm()
+            return daily * 7.0 if daily is not None else None
         if self.demand_model != DEMAND_MODEL_ET:
             return None
         et0 = self.effective_avg_et0()
         if et0 is None:
             return None
-        return calc.et_weekly_target_mm(et0, self.number("crop_coefficient"))
+        return calc.et_weekly_target_mm(et0, self.kc_for(dt_util.now().date()))  # a 3-day average: today's Kc is close enough
+
+    # ------------------------------------------------------------------
+    # The crop factor (Kc): decided in one place
+    # ------------------------------------------------------------------
+    def _green_up_doy(self) -> int | None:
+        """The day of the year a perennial's season starts here; None in the tropics (no dormant season)."""
+        climate = self.entry.data.get(CONF_CLIMATE, DEFAULT_CLIMATE)
+        doy = KC_GREEN_UP_DOY.get(climate, KC_GREEN_UP_DOY[DEFAULT_CLIMATE])
+        if doy is None:
+            return None
+        if self.hass.config.latitude < 0:
+            doy = (doy + SOUTHERN_HEMISPHERE_SHIFT_DAYS - 1) % 365 + 1
+        return doy
+
+    def _day_rh_min(self, entry: dict, k0: float) -> float | None:
+        """A closed day's minimum humidity for FAO-56 eq. 62: measured, else eq. 63 from the vapour
+        pressure the day's ET0 used, else the no-humidity estimate (dew point Tmin - k0)."""
+        if entry.get("rh_min") is not None:
+            return float(entry["rh_min"])
+        t_max, t_min = entry.get("t_max"), entry.get("t_min")
+        if t_max is None:
+            return None
+        es_max = fao56.sat_vapour_pressure(float(t_max))
+        if es_max <= 0:
+            return None
+        if entry.get("ea") is not None:
+            return 100.0 * float(entry["ea"]) / es_max
+        if t_min is None:
+            return None
+        return 100.0 * fao56.sat_vapour_pressure(float(t_min) - k0) / es_max
+
+    def kc_climate(self) -> dict[str, Any] | None:
+        """The average wind at 2 m and minimum humidity of the last KC_CLIMATE_DAYS completed days that
+        have an ET0 record, for FAO-56 eq. 62; None with no such day, or for a zone under a roof.
+        {"u2", "rh_min", "days", "rh_source", "wind_source"}."""
+        if not self.is_outdoor:
+            return None
+        k0 = self._fao56_settings()["k0"]
+        today = dt_util.now().date()
+        wanted = {(today - timedelta(days=i + 1)).isoformat() for i in range(KC_CLIMATE_DAYS)}
+        u2s: list[float] = []
+        rhs: list[float] = []
+        measured = 0
+        wind_sources: set[str] = set()
+        for e in self.store.state.et0_day_history:
+            if not isinstance(e, dict) or e.get("date") not in wanted or e.get("et0") is None:
+                continue
+            rh = self._day_rh_min(e, k0)
+            if e.get("u2") is None or rh is None:
+                continue
+            u2s.append(float(e["u2"]))
+            rhs.append(rh)
+            measured += e.get("rh_min") is not None
+            wind_sources.add((e.get("sources") or {}).get("wind", "default"))
+        if not u2s:
+            return None
+        return {
+            "u2": sum(u2s) / len(u2s),
+            "rh_min": sum(rhs) / len(rhs),
+            "days": len(u2s),
+            "rh_source": "measured" if measured == len(u2s) else ("estimated" if measured == 0 else "mixed"),
+            "wind_source": wind_sources.pop() if len(wind_sources) == 1 else "mixed",
+        }
+
+    def _kc_base_info(self, day: date, climate: dict[str, Any] | None) -> dict[str, Any]:
+        state = self.store.state
+        fixed = {
+            "kc": self.number("crop_coefficient"), "kc_table": self.number("crop_coefficient"), "source": "fixed",
+            "stage": None, "day": None, "crop": None, "climate_adjustment": 0.0, "climate": None,
+        }
+        crop = self._crop_seasons.get(state.kc_crop) if state.kc_crop else None
+        if crop is None:
+            return fixed
+        strength = self.number("kc_curve_pct") / 100.0
+        adjustment = 0.0
+        used_climate = None
+        if state.kc_climate_adjust and crop.height_m is not None and climate is not None:
+            adjustment = fao56.kc_climate_adjustment(climate["u2"], climate["rh_min"], crop.height_m)
+            used_climate = climate
+        stages = fao56.adjusted_stages(crop.stages, adjustment) if crop.stages is not None else None
+        base = {"source": "curve", "crop": crop.crop_id, "climate_adjustment": round(adjustment, 3), "climate": used_climate}
+        if crop.season == fao56.SEASON_FLAT or stages is None:
+            table = crop.kc_flat
+            return {**base, "kc": max(table + adjustment, 0.1) * strength, "kc_table": table, "stage": fao56.STAGE_FLAT, "day": None}
+        if crop.season == fao56.SEASON_ANNUAL:
+            planted = state.planting_date_ts
+            if planted is None:
+                return {**fixed, "crop": crop.crop_id}  # Status says: set the planting date
+            start = dt_util.as_local(dt_util.utc_from_timestamp(planted)).date()
+            d = (day - start).days
+            if d < 0:
+                return {**fixed, "crop": crop.crop_id}  # planted in the future
+            table = fao56.kc_on_day(crop.stages, d)
+            return {**base, "kc": fao56.kc_on_day(stages, d) * strength, "kc_table": table, "stage": fao56.kc_stage(stages, d), "day": d}
+        green_up = self._green_up_doy()
+        if green_up is None:  # tropical: no dormant season
+            return {**base, "kc": stages.kc_mid * strength, "kc_table": crop.stages.kc_mid, "stage": fao56.STAGE_FLAT, "day": None}
+        d = fao56.perennial_day(day.timetuple().tm_yday, green_up)
+        kc, stage = fao56.perennial_kc(stages, d)
+        table, _stage = fao56.perennial_kc(crop.stages, d)
+        return {**base, "kc": kc * strength, "kc_table": table, "stage": stage, "day": d}
+
+    @property
+    def crop_seasons(self) -> dict[str, CropSeason]:
+        return self._crop_seasons
+
+    def kc_info(self, day: date, climate: Any = ...) -> dict[str, Any]:
+        """This zone's crop factor on `day`, and where it comes from: {"kc", "kc_table", "source",
+        "stage", "day", "crop", "climate_adjustment", "climate", "exposure", "exposure_factor",
+        "kc_before_exposure"}. source "fixed" = the Crop Factor slider (no curve picked, the crop is
+        unknown, or an annual crop with no planting date yet); "curve" = the crop's FAO-56 season.
+        The one place Kc is decided. Everything that scales the water, in order: Kc table -> climate
+        adjustment (eq. 62) -> Crop Curve Strength -> Sun Exposure -> (weekly target) -> growth ramp x
+        deficit mode x mulch (routine_target_scale) -> root-zone limit. Pass `climate` (kc_climate())
+        to share one reading over several days."""
+        if climate is ...:
+            climate = self.kc_climate()
+        info = self._kc_base_info(day, climate)
+        exposure = self.store.state.sun_exposure if self.is_outdoor else DEFAULT_SUN_EXPOSURE
+        factor = SUN_EXPOSURE_FACTORS.get(exposure, 1.0)
+        return {**info, "kc_before_exposure": info["kc"], "kc": info["kc"] * factor, "exposure": exposure, "exposure_factor": factor}
+
+    def kc_for(self, day: date, climate: Any = ...) -> float:
+        return self.kc_info(day, climate)["kc"]
+
+    def kc_curve_covers_growth(self) -> bool:
+        """An annual crop curve counted from a planting date models the young plant itself."""
+        crop = self._crop_seasons.get(self.store.state.kc_crop) if self.store.state.kc_crop else None
+        if crop is None or crop.season != fao56.SEASON_ANNUAL:
+            return False
+        return self.kc_info(dt_util.now().date(), None)["source"] == "curve"
+
+    def fao56_et0_entries(self, days: int) -> list[tuple[date, float]]:
+        """(date, ET0) of the last `days` completed days that have one, newest first."""
+        today = dt_util.now().date()
+        wanted = {(today - timedelta(days=i + 1)).isoformat() for i in range(max(days, 0))}
+        entries = []
+        for e in self.store.state.et0_day_history:
+            if isinstance(e, dict) and e.get("date") in wanted and e.get("et0") is not None:
+                try:
+                    entries.append((date.fromisoformat(e["date"]), float(e["et0"])))
+                except (TypeError, ValueError):
+                    continue
+        return entries
+
+    def fao56_et0_days(self, days: int) -> list[float]:
+        """FAO-56 ET0 of the last `days` completed days that have one (newest first)."""
+        return [et0 for _day, et0 in self.fao56_et0_entries(days)]
+
+    def _fao56_kc_sum(self, entries: list[tuple[date, float]]) -> float:
+        """The sum of each day's ET0 x that day's Kc (Kc changes through a season), with one
+        reading of the climate for every day."""
+        climate = self.kc_climate()
+        return sum(et0 * self.kc_for(d, climate) for d, et0 in entries)
+
+    def fao56_comparison(self) -> tuple[float, float] | None:
+        """(this zone's weekly target now, FAO-56's weekly target from the average of the last
+        FAO56_OFFER_DAYS days), both as the zone would water them (growth ramp, deficit and
+        mulch included), once that many FAO-56 days are on record; else None."""
+        values = self.fao56_et0_days(FAO56_OFFER_DAYS)
+        if len(values) < FAO56_OFFER_DAYS or not self.outdoor_temp_entity:
+            return None
+        scale = self.routine_target_scale()
+        current = self.et_weekly_target_mm() if self.demand_model == DEMAND_MODEL_ET else None
+        if current is None:
+            current = self.tier_weekly_target_mm()
+        fao = self._fao56_kc_sum(self.fao56_et0_entries(FAO56_OFFER_DAYS)) / len(values) * 7.0
+        return current * scale, fao * scale
+
+    def fao56_latest_day(self) -> dict | None:
+        """The newest closed day that has an FAO-56 ET0, or None."""
+        for entry in self.store.state.et0_day_history:
+            if isinstance(entry, dict) and entry.get("et0") is not None:
+                return entry
+        return None
+
+    def fao56_daily_demand_mm(self) -> float | None:
+        """The plant's daily water use by FAO-56: the average ET0 x Kc over the completed days
+        since the last real watering (the same window the rain credit looks back over), at
+        least one day and at most two weeks. With no FAO-56 day in that window, the last seven
+        days; with none at all, None (the zone then uses its tier target, as the ET curve does).
+        Today is left out: it isn't over yet, the same as rain."""
+        if not self.outdoor_temp_entity or not self.fao56_latest_day():
+            return None  # nothing to average (and nothing else is read: no side effects)
+        base_ts = dt_util.utcnow().timestamp() - self._rain_pool_elapsed()
+        base_day = dt_util.as_local(dt_util.utc_from_timestamp(base_ts)).date()
+        days = min(max((dt_util.now().date() - base_day).days, 1), ET0_HISTORY_DAYS)
+        entries = self.fao56_et0_entries(days) or self.fao56_et0_entries(7)
+        if not entries:
+            return None
+        return self._fao56_kc_sum(entries) / len(entries)
 
     def tier_weekly_target_mm(self) -> float:
         """The original temperature-tier weekly target (before the growth
@@ -1622,7 +2361,7 @@ class ZoneFlowController:
             # Stops a cycle that's running or queued for the pump (at once,
             # valve closed and confirmed); a frost wait ends too.
             self._paused_event.set()
-            self._cancel_frost_wait()
+            self._cancel_hold_wait()
         else:
             state.paused_since_ts = None
             state.pause_ended_ts = now_ts
@@ -1660,6 +2399,15 @@ class ZoneFlowController:
             self._notify_status()  # when the next watering is changed with it: show it at once
         elif key in GREENHOUSE_NUMBERS and self.greenhouse.active:
             self.hass.async_create_task(self.greenhouse.async_evaluate("setting"))
+        elif key == "rain_sensor_mm_per_hour":
+            # Counted so far at the old rate; the rain sensors show while it estimates.
+            self._count_sensor_rain(dt_util.utcnow().timestamp())
+            self.hass.async_create_task(visibility.async_apply(self.hass, self.entry, self))
+        elif key in ROOT_ZONE_KEYS:
+            # The interval and the dose follow at once; Root Depth 0 <-> on shows or hides the rest.
+            self._notify_status()
+            if key == "root_depth_mm":
+                self.hass.async_create_task(visibility.async_apply(self.hass, self.entry, self))
         if key in VALVE_OPEN_KEYS:
             self._notify_status()  # the Longest Valve Open Time follows the change at once
 
@@ -1749,106 +2497,207 @@ class ZoneFlowController:
             return None
         return temp
 
-    async def _frost_blocks(self, cycle: str) -> bool:
-        """Water freezing in the lines or on leaves does more harm than a
-        missed watering: a due cycle waits while the outdoor temperature is
-        below the frost guard. Cycles usually run early in the morning, the
-        coldest time of day, so the zone checks again every hour, up to
-        FROST_RETRY_COUNT times, before leaving it to the next scheduled
-        time. While the deep soak waits, the routine waits for it too (a
-        finished deep soak counts as the routine watering)."""
+    def _hold_reason(self) -> tuple[str, dict[str, Any]] | None:
+        """The first weather reason that holds a cycle right now, with its numbers, or None. Frost
+        (water freezing in the lines or on leaves does more harm than a missed watering), then rain
+        and wind (1.8), which never hold a press of Run Now: the person is looking at the garden.
+        A reading that can't be trusted never holds anything."""
         limit = self.frost_guard_c()
         temp = self._frost_temp_c() if limit is not None else None
-        cold = temp is not None and limit is not None and temp < limit
-        if not cold:
-            self._frost_held.discard(cycle)
-            if cycle == "routine" and "deep_soak" in self._frost_held:
-                self._frost_held.add(cycle)
+        if temp is not None and limit is not None and temp < limit:
+            return "frost", {"temp_c": round(temp, 1), "limit_c": round(limit, 1)}
+        if not self._manual_press:
+            rain = self._rain_sensor_hold()
+            if rain is not None:
+                return "rain", rain
+            wind = self._wind_hold()
+            if wind is not None:
+                return "wind", wind
+        return None
+
+    def rain_sensor_wet(self) -> bool | None:
+        """True while the rain sensor reads wet, False dry, None when there is no sensor or it can't
+        be trusted: unavailable, not an on/off state, or wet for a day without a change (stuck)."""
+        entity = self.rain_sensor_entity
+        state = self.hass.states.get(entity) if entity else None
+        if state is None or state.state not in ("on", "off"):
+            return None
+        wet = (state.state == "on") != self.rain_sensor_inverted
+        if wet and self._rain_sensor_wet_seconds(state) > RAIN_SENSOR_STUCK_SECONDS:
+            return None
+        return wet
+
+    def _rain_sensor_wet_seconds(self, state: State) -> float:
+        """How long the sensor has read wet: from the saved start of the spell when there is one (a
+        restart resets the entity's last_changed), else from its last change."""
+        since = state.last_changed.timestamp()
+        start = self.store.state.rain_sensor_wet_start_ts
+        if start is not None:
+            since = min(since, start)
+        return dt_util.utcnow().timestamp() - since
+
+    def _track_rain_sensor_wet(self) -> None:
+        """Remember when the current wet spell began (cleared when the sensor reads dry)."""
+        entity = self.rain_sensor_entity
+        state = self.hass.states.get(entity) if entity else None
+        if state is None or state.state not in ("on", "off"):
+            return  # unavailable: what was known stands
+        if (state.state == "on") != self.rain_sensor_inverted:
+            if self.store.state.rain_sensor_wet_start_ts is None:
+                self.store.state.rain_sensor_wet_start_ts = state.last_changed.timestamp()
+        else:
+            self.store.state.rain_sensor_wet_start_ts = None
+
+    def rain_sensor_stuck(self) -> bool:
+        """The sensor has read wet for more than a day with no change (a Repairs notice)."""
+        entity = self.rain_sensor_entity
+        state = self.hass.states.get(entity) if entity else None
+        if state is None or state.state not in ("on", "off"):
+            return False
+        wet = (state.state == "on") != self.rain_sensor_inverted
+        return wet and self._rain_sensor_wet_seconds(state) > RAIN_SENSOR_STUCK_SECONDS
+
+    def _rain_sensor_hold(self) -> dict[str, Any] | None:
+        """The rain sensor reads wet: the cycle waits for it to dry (an unreadable sensor never holds)."""
+        if not self.rain_sensor_wet():
+            return None
+        state = self.hass.states.get(self.rain_sensor_entity)
+        return {"sensor": (state.name if state is not None else None) or self.rain_sensor_entity}
+
+    def _wind_now_kmh(self) -> float | None:
+        """The wind in km/h now: the wind sensor, else the weather entity's current wind. None when
+        there is none, or it is older than WIND_MAX_AGE_SECONDS (a stuck reading never holds)."""
+        if self.wind_entity:
+            state, key = self.hass.states.get(self.wind_entity), "wind"
+        elif self.weather_entity:
+            state, key = self.hass.states.get(self.weather_entity), "weather_wind"
+        else:
+            return None
+        speed = self._et0_reading(key, state)
+        if speed is None:
+            return None
+        seen = getattr(state, "last_reported", None) or state.last_updated
+        if (dt_util.utcnow() - seen).total_seconds() > WIND_MAX_AGE_SECONDS:
+            return None
+        return speed * 3.6
+
+    def _wind_hold(self) -> dict[str, Any] | None:
+        """A sprinkler zone waits while the wind is above its limit: the spray would drift and the
+        water not land where it is meant to. Drip and soaker lines don't care; 0 is off."""
+        if self.irrigation_method not in WIND_HOLD_SEED_KMH or not self.is_outdoor:
+            return None
+        limit = self.number("wind_hold_kmh")
+        if limit <= 0:
+            return None
+        wind = self._wind_now_kmh()
+        if wind is None or wind <= limit:
+            return None
+        return {"wind_kmh": round(wind, 1), "limit_kmh": round(limit, 1)}
+
+    def _hold_phone_params(self, reason: str, numbers: dict[str, Any]) -> dict[str, Any]:
+        if reason == "frost":
+            return {"temp": units.temp_text(numbers["temp_c"], self.imperial), "limit": units.temp_text(numbers["limit_c"], self.imperial)}
+        if reason == "wind":
+            return {"wind": units.speed_text(numbers["wind_kmh"], self.imperial), "limit": units.speed_text(numbers["limit_kmh"], self.imperial)}
+        return {"sensor": numbers.get("sensor", "")}
+
+    async def _weather_blocks(self, cycle: str) -> bool:
+        """A due cycle waits while the weather is against it (_hold_reason): frost, a rain sensor that
+        reads wet, or wind on a sprinkler zone. Cycles usually run early in the morning, so the zone
+        checks again every hour, up to HOLD_RETRY_COUNT times, before leaving it to the next scheduled
+        time. While the deep soak waits, the routine waits for it too (a finished deep soak counts as
+        the routine watering)."""
+        hold = self._hold_reason()
+        if hold is None:
+            self._hold_held.discard(cycle)
+            if cycle == "routine" and "deep_soak" in self._hold_held:
+                self._hold_held.add(cycle)
                 await self._decide(cycle, "waiting_deep_soak")
                 return True
-            if not self._frost_held:
-                self._cancel_frost_wait()
+            if not self._hold_held:
+                self._cancel_hold_wait()
             return False
 
-        if not self._frost_held and self._frost_retry_cancel is None and not self._frost_rechecking:
-            # A new frost wait (not a re-check of the current one).
-            self._frost_rechecks = 0
-            self._frost_notified = set()
-        self._frost_held.add(cycle)
-        if self._frost_retry_cancel is None and not self._frost_rechecking and self._frost_rechecks < FROST_RETRY_COUNT:
-            self._schedule_frost_recheck()
-        waiting = self._frost_retry_cancel is not None or (
-            self._frost_rechecking and self._frost_rechecks < FROST_RETRY_COUNT
+        reason, numbers = hold
+        if not self._hold_held and self._hold_retry_cancel is None and not self._hold_rechecking:
+            # A new hold (not a re-check of the current one).
+            self._hold_rechecks = 0
+            self._hold_notified = set()
+        self._hold_held.add(cycle)
+        if self._hold_retry_cancel is None and not self._hold_rechecking and self._hold_rechecks < HOLD_RETRY_COUNT:
+            self._schedule_hold_recheck()
+        waiting = self._hold_retry_cancel is not None or (
+            self._hold_rechecking and self._hold_rechecks < HOLD_RETRY_COUNT
         )
         if not waiting:
-            self._frost_held.discard(cycle)
+            self._hold_held.discard(cycle)
         await self._decide(
             cycle,
-            "waiting_frost" if waiting else "skipped_frost",
-            temp_c=round(temp, 1),
-            limit_c=round(limit, 1),
-            rechecks=self._frost_rechecks,  # so a restart doesn't start the count over
+            f"waiting_{reason}" if waiting else f"skipped_{reason}",
+            **numbers,
+            hours=HOLD_RETRY_COUNT,
+            rechecks=self._hold_rechecks,  # so a restart doesn't start the count over
         )
-        first = cycle not in self._frost_notified
-        self._frost_notified.add(cycle)
+        # One phone message per cycle and reason, not one per re-check (a hold that changes reason,
+        # frost cleared and now raining, tells the new one).
+        first = (cycle, reason) not in self._hold_notified
+        self._hold_notified.add((cycle, reason))
         kind = "Deep Soak" if cycle == "deep_soak" else "Routine Irrigation"
         await self._log_event(
-            event_type=f"{kind} Skipped (Frost)",
+            event_type=f"{kind} Skipped ({reason.title()})",
             status="Skipped",
             target_mm=0.0,
             deducted_mm=0.0,
             runtime=0,
-            # One phone message per cycle and frost wait, not one per re-check.
             notify_phone=first,
-            message="frost",
-            params={
-                "cycle": self._cycle_name(kind),
-                "temp": units.temp_text(temp, self.imperial),
-                "limit": units.temp_text(limit, self.imperial),
-                "hours": FROST_RETRY_COUNT,
-            },
+            message="frost" if reason == "frost" else "rain" if reason == "rain" else "wind",  # (literal keys: checked by a test)
+            params={"cycle": self._cycle_name(kind), "hours": HOLD_RETRY_COUNT, **self._hold_phone_params(reason, numbers)},
             extra_log=(
-                f"Outdoor temperature {temp:.1f} C is below the frost guard ({limit:.1f} C); "
+                {
+                    "frost": f"Outdoor temperature {numbers.get('temp_c')} C is below the frost guard ({numbers.get('limit_c')} C); ",
+                    "rain": f"The rain sensor {numbers.get('sensor')} reads wet; ",
+                    "wind": f"Wind {numbers.get('wind_kmh')} km/h is above the wind hold ({numbers.get('limit_kmh')} km/h); ",
+                }[reason]
                 + (
                     "no re-checks left."
                     if not waiting
-                    else f"re-check {self._frost_rechecks} of {FROST_RETRY_COUNT}."
-                    if self._frost_rechecking
+                    else f"re-check {self._hold_rechecks} of {HOLD_RETRY_COUNT}."
+                    if self._hold_rechecking
                     else "checking again in an hour."
                 )
             ),
         )
         return True
 
-    def _schedule_frost_recheck(self) -> None:
+    def _schedule_hold_recheck(self) -> None:
         @callback
         def _due(_now) -> None:
-            self._frost_retry_cancel = None
+            self._hold_retry_cancel = None
             if self._stopping:
                 return
-            self._frost_rechecks += 1
-            self.hass.async_create_task(self._frost_recheck())
+            self._hold_rechecks += 1
+            self.hass.async_create_task(self._hold_recheck())
 
-        self._frost_retry_cancel = async_call_later(self.hass, FROST_RETRY_SECONDS, _due)
+        self._hold_retry_cancel = async_call_later(self.hass, HOLD_RETRY_SECONDS, _due)
 
-    async def _frost_recheck(self) -> None:
+    async def _hold_recheck(self) -> None:
         """One hourly frost re-check: the waiting cycles, deep soak first,
         through all their usual gates."""
-        cycles = [c for c in ("deep_soak", "routine") if c in self._frost_held]
-        self._frost_held.clear()
-        self._frost_rechecking = True
+        cycles = [c for c in ("deep_soak", "routine") if c in self._hold_held]
+        self._hold_held.clear()
+        self._hold_rechecking = True
         try:
             for cycle in cycles:
                 await (self.run_deep_soak() if cycle == "deep_soak" else self.run_routine_irrigation())
         finally:
-            self._frost_rechecking = False
-        if self._frost_held and not self._stopping and self._frost_rechecks < FROST_RETRY_COUNT:
-            self._schedule_frost_recheck()
+            self._hold_rechecking = False
+        if self._hold_held and not self._stopping and self._hold_rechecks < HOLD_RETRY_COUNT:
+            self._schedule_hold_recheck()
         else:
-            self._frost_held.clear()
+            self._hold_held.clear()
         self._notify_status()
 
-    def _resume_frost_wait(self) -> None:
+    def _resume_hold_wait(self) -> None:
         """After a restart or reload: a frost wait from earlier today picks
         up again (without a second phone message)."""
         latest = self._today_decision()
@@ -1858,7 +2707,7 @@ class ZoneFlowController:
             for cycle, decision in decisions.items()
             if cycle in ("routine", "deep_soak")
             and isinstance(decision, dict)
-            and decision.get("code") in ("waiting_frost", "waiting_deep_soak")
+            and decision.get("code") in WAITING_HOLD_CODES
             and latest is not None
             and isinstance(decision.get("ts"), (int, float))
             and dt_util.as_local(dt_util.utc_from_timestamp(decision["ts"])).date() == dt_util.now().date()
@@ -1872,18 +2721,22 @@ class ZoneFlowController:
             ),
             default=0,
         )
-        if not held or self.paused or not isinstance(rechecks, int) or rechecks >= FROST_RETRY_COUNT:
+        if not held or self.paused or not isinstance(rechecks, int) or rechecks >= HOLD_RETRY_COUNT:
             return
-        self._frost_rechecks = rechecks
-        self._frost_held = held
-        self._frost_notified = set(held)
-        self._schedule_frost_recheck()
+        self._hold_rechecks = rechecks
+        self._hold_held = held
+        # Told already before the restart: no second phone message for the same reason.
+        self._hold_notified = {
+            (cycle, decisions[cycle]["code"][len("waiting_"):]) for cycle in held
+            if decisions[cycle]["code"] != "waiting_deep_soak"
+        }
+        self._schedule_hold_recheck()
 
-    def _cancel_frost_wait(self) -> None:
-        if self._frost_retry_cancel is not None:
-            self._frost_retry_cancel()
-            self._frost_retry_cancel = None
-        self._frost_held.clear()
+    def _cancel_hold_wait(self) -> None:
+        if self._hold_retry_cancel is not None:
+            self._hold_retry_cancel()
+            self._hold_retry_cancel = None
+        self._hold_held.clear()
 
     def watering_temp(self) -> tuple[float | None, str]:
         """The temperature that picks the hot/cool/normal tier, and where it
@@ -1939,6 +2792,8 @@ class ZoneFlowController:
             return 1.0
         if self.store.state.growth_stage_mode != GROWTH_STAGE_MODE_AUTO:
             return max(0.0, min(1.0, self.number("growth_stage_override_pct") / 100.0))
+        if self.kc_curve_covers_growth():
+            return 1.0  # the crop's own season curve already models the young plant
         planting_ts = self.store.state.planting_date_ts
         if planting_ts is None:
             return 1.0
@@ -1983,6 +2838,11 @@ class ZoneFlowController:
             for name, value in manual.items():
                 if name not in SHORT_RAIN_WINDOWS:
                     windows[name] = max(windows[name], value)
+        estimate = self._sensor_rain()
+        if estimate is not None:
+            # Counted as it falls: the "raining now" windows too.
+            for name, value in estimate.all_windows_mm(now_ts).items():
+                windows[name] = max(windows[name], value)
         source = self._wu()
         if source is not None:
             # Weather Underground: only rain that arrived fresh counts as
@@ -2003,6 +2863,9 @@ class ZoneFlowController:
         gauge = state.rain_tracker().window_sum_mm(window_minutes, now_ts)
         source = self._wu()
         wu = source.sum_between(since_ts, now_ts) if source is not None else 0.0
+        estimate = self._sensor_rain()
+        if estimate is not None:
+            wu = max(wu, estimate.sum_between_mm(since_ts, now_ts))
         if not state.manual_rain_samples:
             return max(gauge, wu)
         return max(gauge, wu, state.manual_rain_tracker().window_sum_mm(window_minutes, now_ts))
@@ -2078,6 +2941,13 @@ class ZoneFlowController:
         if new_state is None:
             return
 
+        if (master := self._master()) is not None:
+            master.valve_changed(self, zone_valve.is_open(new_state))
+        if zone_valve.is_open(new_state) and zone_valve.is_open(old_state):
+            # Open -> closing (or an attribute change) while the clock runs, or after it already
+            # fired: keep it. Re-arming would put the deadline in the past and fire it again.
+            if self._valve_stuck_cancel is not None or self._valve_stuck_fired:
+                return
         if self._valve_stuck_cancel:
             self._valve_stuck_cancel()
             self._valve_stuck_cancel = None
@@ -2090,9 +2960,16 @@ class ZoneFlowController:
         # after the state actually changed (event-loop scheduling, or a
         # slow test/CI run), and anchoring to "now" at execution time lets
         # that gap silently steal minutes from the watchdog window.
-        if new_state.state == "on":
-            self._arm_valve_stuck_watchdog(new_state.last_changed)
-        elif new_state.state == "unavailable":
+        if zone_valve.is_open(new_state):
+            # A valve entity reports opening, then open: time it from when it first began to open.
+            # open -> closing -> open must not restart the clock: count from the first opening.
+            if not zone_valve.is_open(old_state) or self._valve_open_since is None:
+                self._valve_open_since = new_state.last_changed
+            self._arm_valve_stuck_watchdog(self._valve_open_since)
+        else:
+            self._valve_open_since = None
+            self._valve_stuck_fired = False
+        if not zone_valve.is_open(new_state) and new_state.state == "unavailable":
             fire_at = new_state.last_changed + timedelta(minutes=POWER_LOSS_GRACE_MINUTES)
             self._power_loss_cancel = async_track_point_in_time(self.hass, self._on_power_loss, fire_at)
 
@@ -2116,15 +2993,21 @@ class ZoneFlowController:
     @callback
     def _on_valve_stuck(self, now) -> None:
         """Port of avocado_valve_safety_watchdog (150min stuck ON)."""
+        self._valve_stuck_cancel = None
+        self._valve_stuck_fired = True
         self.hass.async_create_task(self._fire_valve_stuck())
 
     async def _fire_valve_stuck(self) -> None:
         limit = getattr(self, "_valve_stuck_limit_armed", VALVE_STUCK_ON_MINUTES)
-        await self.hass.services.async_call(
-            "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-        )
+        try:
+            await zone_valve.async_close(self.hass, self.valve_entity)
+        except Exception:  # noqa: BLE001 - a device may raise anything; the abort and the alert still go out
+            _LOGGER.exception("%s: the stuck-valve close command failed", self.entry.title)
         await self._set_abort(True)
         await self._set_lock(False)
+        if (master := self._master()) is not None:
+            # A valve open far too long: cut the water behind it too, whether or not it obeyed.
+            await master.async_emergency_close(self, master_valve.REASON_VALVE_STUCK, stop_caller=False)
         await self._log_event(
             event_type="Valve Stuck Watchdog Fired",
             status="CRITICAL",
@@ -2161,10 +3044,8 @@ class ZoneFlowController:
 
     async def _on_power_restore(self, new_state: State) -> None:
         """Port of avocado_power_restore_check."""
-        if new_state.state == "on":
-            await self.hass.services.async_call(
-                "switch", "turn_off", {"entity_id": self.valve_entity}, blocking=True
-            )
+        if zone_valve.is_open(new_state):
+            await zone_valve.async_close(self.hass, self.valve_entity)
             await self._log_event(
                 event_type="Power Restore Anomaly",
                 status="CRITICAL",
@@ -2183,6 +3064,10 @@ class ZoneFlowController:
         """Merged port of avocado_stale_lock_on_startup + avocado_startup_lock_reset."""
         await asyncio.sleep(STARTUP_GRACE_SECONDS)
         state = self.store.state
+        if (master := self._master()) is not None:
+            # A run cut off by the restart may have left it open, with or without a stale lock (nothing
+            # holds it yet: a run that already has it is left alone).
+            await master.async_close_if_idle()
         if not state.lock_on:
             return
         # A lock taken after startup belongs to a cycle running right now
@@ -2198,10 +3083,8 @@ class ZoneFlowController:
         # may no longer name, and the zone's current valve.
         for valve in dict.fromkeys(v for v in (lock_valve, self.valve_entity) if v):
             valve_state = self.hass.states.get(valve)
-            if valve_state is not None and valve_state.state not in ("unavailable", "off"):
-                await self.hass.services.async_call(
-                    "switch", "turn_off", {"entity_id": valve}, blocking=True
-                )
+            if valve_state is not None and valve_state.state not in ("unavailable", *zone_valve.CLOSED_STATES):
+                await zone_valve.async_close(self.hass, valve)
         await self._log_event(
             event_type="Stale Lock Cleared On Startup",
             status="ABORTED",
@@ -2226,24 +3109,264 @@ class ZoneFlowController:
         except (TypeError, ValueError):
             return 0.0
 
-    async def _flow_meter_reading(self) -> float | None:
-        """Current cumulative reading of the optional flow-meter entity, or
-        None if no flow meter is configured or its reading can't be parsed
-        right now. None (not 0.0) so a caller can tell "no data" apart from
-        "reads zero" -- delta math must never mix the two."""
+    def flow_meter_now(self) -> tuple[str, float] | None:
+        """(kind, value) of the flow meter now: litres for a running total, L/min for a rate. None
+        with no meter, a reading that can't be parsed, or a unit that is neither (1.8: a rate was
+        read as a total before)."""
         entity_id = self.flow_meter_entity
-        if not entity_id:
+        state = self.hass.states.get(entity_id) if entity_id else None
+        if state is None:
             return None
-        state = self.hass.states.get(entity_id)
         try:
-            value = float(state.state) if state else None
+            value = float(state.state)
         except (TypeError, ValueError):
             return None
-        if value is None:
+        if not math.isfinite(value):
             return None
-        # Internally litres; a meter reporting gallons, m³, ft³ etc. is
-        # converted from its own unit (no unit is taken as litres).
         unit = state.attributes.get("unit_of_measurement")
+        kind = flow_meter.meter_kind(unit)
+        if kind == flow_meter.METER_TOTAL:
+            return kind, self.meter_litres(value, unit)
+        if kind == flow_meter.METER_RATE:
+            return kind, flow_meter.to_l_min(value, unit)
+        return None
+
+    def flow_meter_kind(self) -> str | None:
+        """What the flow meter reports (flow_meter.METER_*), from its unit; None when it can't be told."""
+        state = self.hass.states.get(self.flow_meter_entity) if self.flow_meter_entity else None
+        return flow_meter.meter_kind(state.attributes.get("unit_of_measurement")) if state is not None else None
+
+    async def _flow_meter_reading(self) -> float | None:
+        """The flow meter's running total in litres, or None (no meter, no usable reading, or a meter
+        that reports a rate: its litres come from the run's tracker). None (not 0.0) so a caller can
+        tell "no data" apart from "reads zero"."""
+        reading = self.flow_meter_now()
+        return reading[1] if reading is not None and reading[0] == flow_meter.METER_TOTAL else None
+
+    def zone_area_m2(self) -> float | None:
+        """The area the zone waters (1.8): the Zone Area setting, else worked out from Zone Flow and the
+        Flow Rate (L/min / mm/min = m²). None when neither is known."""
+        area = self.number("zone_area_m2")
+        if area > 0:
+            return area
+        flow, rate = self.number("zone_flow_l_min"), self.number("flow_rate_mm_per_min")
+        return flow / rate if flow > 0 and rate > 0 else None
+
+    def flow_delivery_problem(self) -> str | None:
+        """Why this zone can't stop its pulses on the flow meter right now (None: it can). The run then
+        waters on time, as before."""
+        if self.store.state.delivery_mode != DELIVERY_FLOW:
+            return "off"
+        if not self.flow_meter_entity:
+            return "no_meter"
+        state = self.hass.states.get(self.flow_meter_entity)
+        if state is None or zone_valve.is_offline(state):
+            return "meter_offline"
+        if self.flow_meter_kind() is None:
+            return "unknown_unit"
+        if self.zone_area_m2() is None:
+            return "no_area"
+        for other in self.hass.data.get(DOMAIN, {}).values():
+            if (
+                isinstance(other, ZoneFlowController) and other is not self
+                and other.flow_meter_entity == self.flow_meter_entity
+                and other._pump_lock_key != self._pump_lock_key
+            ):
+                return "shared_meter"  # another zone could water at the same time and count here
+        return None
+
+    def _expected_l_min(self) -> float | None:
+        """How much the zone normally takes, L/min: Zone Flow, else the (learned) flow rate x area."""
+        if self.number("zone_flow_l_min") > 0:
+            return self.number("zone_flow_l_min")
+        area = self.zone_area_m2()
+        rate = self.store.state.flow_learned_mm_per_min or self.number("flow_rate_mm_per_min")
+        return rate * area if area and rate > 0 else None
+
+    def _start_flow_tracker(self) -> Any:
+        """Count litres while the valve is open (any run, either mode). Returns the unsubscriber."""
+        self._flow = None
+        reading = self.flow_meter_now()
+        if reading is None:
+            return None
+        kind, value = reading
+        self._flow = flow_meter.FlowTracker(kind, value, dt_util.utcnow().timestamp())
+        entity = self.flow_meter_entity
+        unsubs = [async_track_state_change_event(self.hass, [entity], self._on_flow_reading)]
+        if EVENT_STATE_REPORTED is not None:
+            # A steady rate (10 L/min again) is no state change, only a "state reported".
+            unsubs.append(self.hass.bus.async_listen(
+                EVENT_STATE_REPORTED, self._on_flow_reading, event_filter=callback(lambda data: data.get("entity_id") == entity)
+            ))
+
+        def unsub() -> None:
+            for remove in unsubs:
+                remove()
+
+        return unsub
+
+    @callback
+    def _on_flow_reading(self, _event: Event) -> None:
+        tracker = self._flow
+        reading = self.flow_meter_now()
+        if tracker is None or reading is None or reading[0] != tracker.kind:
+            return  # unavailable, unparsable or a changed unit: skipped
+        tracker.update(reading[1], dt_util.utcnow().timestamp())
+        self._flow_tick.set()
+
+    def _runaway_flow(self, now: float, opened: float) -> bool:
+        """Far more water than the zone takes, for a minute (not while empty pipes fill)."""
+        expected = self._expected_l_min()
+        rate = self._flow.rate_l_min(now) if self._flow is not None else None
+        if not expected or rate is None or now - opened < FLOW_HIGH_SECONDS or rate <= FLOW_HIGH_FACTOR * expected:
+            self._high_flow_since = None
+            return False
+        if self._high_flow_since is None:
+            self._high_flow_since = now
+        return now - self._high_flow_since >= FLOW_HIGH_SECONDS
+
+    async def _wait_pulse_volume(self, pulse_target_l: float, limit_seconds: float) -> str:
+        """The open-valve wait when watering by the meter. Ends with "volume" (delivered), "limit" (the
+        time limit), "meter_silent" (nothing counted for FLOW_START_GRACE_SECONDS), "high_flow", or
+        "stopped" (an abort, reload or pause: the code after the wait deals with it)."""
+        loop = asyncio.get_running_loop()
+        tracker = self._flow
+        opened = dt_util.utcnow().timestamp()
+        start_l = tracker.litres(opened)
+        deadline = loop.time() + limit_seconds
+        lag = min(self.store.state.flow_close_lag_l, 0.25 * pulse_target_l)
+        self._high_flow_since = None
+        waker = asyncio.ensure_future(self._abort_or_service_stop(False))
+        try:
+            while True:
+                now = dt_util.utcnow().timestamp()
+                if tracker.litres(now) - start_l >= pulse_target_l - lag:
+                    return "volume"
+                if min(tracker.flowing_since(now), now - opened) > FLOW_START_GRACE_SECONDS:
+                    return "meter_silent"
+                if self._runaway_flow(now, opened):
+                    return "high_flow"
+                left = deadline - loop.time()
+                if left <= 0:
+                    return "limit"
+                self._flow_tick.clear()
+                tick = asyncio.ensure_future(self._flow_tick.wait())
+                done, _ = await asyncio.wait(
+                    {waker, tick}, timeout=min(left, FLOW_POLL_SECONDS), return_when=asyncio.FIRST_COMPLETED
+                )
+                tick.cancel()
+                if waker in done:
+                    return "stopped"
+        finally:
+            waker.cancel()
+
+    async def _stop_for_high_flow(self, kind: str, valve: str) -> None:
+        """A burst or loose pipe: close the valve now (and the master behind it), alert even with
+        Notifications off. The run ends interrupted; the lock goes only once the valve is closed."""
+        self._expected_pulse_minutes = None
+        self._high_flow_closed = await self._close_cycle_valve()
+        now = dt_util.utcnow().timestamp()
+        rate = self._flow.rate_l_min(now) if self._flow is not None else None
+        if (master := self._master()) is not None:
+            await master.async_emergency_close(self, master_valve.REASON_HIGH_FLOW, stop_caller=False)
+        await self._log_event(
+            event_type="Flow Too High",
+            status="CRITICAL",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=True,
+            message="flow_too_high",
+            params={
+                "cycle": self._cycle_name(kind), "valve": valve,
+                "rate": units.volume_text(rate or 0.0, self.imperial),
+                "expected": units.volume_text(self._expected_l_min() or 0.0, self.imperial),
+            },
+            level=LEVEL_WARNING,
+            always_notify=True,
+        )
+
+    def _flow_pulse_limit_minutes(self, kind: str, pulse_minutes: float, count: int) -> float:
+        """The longest a pulse may run when watering by the meter: the planned time plus the allowance,
+        but never past the run's runtime cap shared over its pulses (and never shorter than planned)."""
+        allowance = 1 + self.number("flow_time_allowance_pct") / 100
+        cap = self.number("deep_soak_max_runtime_minutes" if kind == "Deep Soak" else "max_runtime_minutes")
+        return max(pulse_minutes, min(pulse_minutes * allowance, cap / max(count, 1)))
+
+    def _flow_target_for(self, mm: float) -> float | None:
+        """The litres a watering of `mm` stops at when the zone waters by its meter, else None."""
+        if mm <= 0 or self.flow_delivery_problem() is not None:
+            return None
+        return mm * self.zone_area_m2()
+
+    def _given_amount(self, planned_minutes: float) -> tuple[float, float]:
+        """(minutes, mm) a completed watering gave: what the meter counted in flow mode, else the plan."""
+        area = self.zone_area_m2()
+        if self._flow_used and self._run_liters is not None and area:
+            return self._delivered_minutes, self._run_liters / area
+        return planned_minutes, planned_minutes * self.number("flow_rate_mm_per_min")
+
+    def _learn_flow_rate(self) -> None:
+        """A completed flow-mode run measured the zone's real flow rate: averaged into the learned one.
+        Never written to the Flow Rate setting (Check my setup points out a big difference)."""
+        area = self.zone_area_m2()
+        minutes = self._open_seconds / 60.0
+        if not (self._flow_used and self._run_liters and area and minutes >= FLOW_LEARN_MIN_MINUTES):
+            return
+        measured = self._run_liters / area / minutes
+        state = self.store.state
+        old = state.flow_learned_mm_per_min
+        state.flow_learned_mm_per_min = measured if old is None else old + FLOW_LEARN_WEIGHT * (measured - old)
+        state.flow_learned_runs += 1
+
+    async def _report_flow_delivery(self, kind: str, tracker: flow_meter.FlowTracker, completed: bool) -> None:
+        """After a run that watered by the meter: a meter that stopped counting (the run finished on
+        time), or a run that hit its time limit well short of its litres (a blocked filter, low
+        pressure). Each one warning, not one per pulse."""
+        target = self._flow_target_l or 0.0
+        litres = tracker.litres(dt_util.utcnow().timestamp())
+        if self._flow_fell_back:
+            await self._log_event(
+                event_type="Flow Meter Not Counting",
+                status="WARNING",
+                target_mm=0.0, deducted_mm=0.0, runtime=int(round(self._delivered_minutes)),
+                notify_phone=True,
+                message="meter_not_counting",
+                params={"cycle": self._cycle_name(kind), "meter": self.flow_meter_entity or ""},
+                level=LEVEL_WARNING,
+            )
+        elif completed and "limit" in self._flow_end_reasons and target > 0 and litres < FLOW_LOW_SHARE * target:
+            await self._log_event(
+                event_type="Low Flow",
+                status="WARNING",
+                target_mm=0.0, deducted_mm=0.0, runtime=int(round(self._delivered_minutes)),
+                notify_phone=True,
+                message="low_flow",
+                params={
+                    "cycle": self._cycle_name(kind),
+                    "given": units.volume_text(litres, self.imperial),
+                    "target": units.volume_text(target, self.imperial),
+                },
+                level=LEVEL_WARNING,
+            )
+        if self._flow_fell_back:
+            self._flow_used = False  # the amount given is the timed plan's, not the meter's
+
+    def _learn_close_lag(self, now: float) -> None:
+        """Litres that went through after the last flow pulse's close command: the next pulses stop
+        that much early (a valve takes a moment to close, a meter reports late)."""
+        if self._flow is None or self._flow_close_l is None or not self._flow_end_reasons:
+            return
+        if self._flow_end_reasons[-1] != "volume":
+            return
+        lag = min(max(self._flow.litres(now) - self._flow_close_l, 0.0), 0.25 * self._flow_last_target_l)
+        state = self.store.state
+        state.flow_close_lag_l = 0.7 * state.flow_close_lag_l + 0.3 * lag
+
+    @staticmethod
+    def meter_litres(value: float, unit: str | None) -> float:
+        """Internally litres; a meter reporting gallons, m³, ft³ etc. is
+        converted from its own unit (no unit is taken as litres)."""
         if unit and unit != UnitOfVolume.LITERS:
             try:
                 return VolumeConverter.convert(value, unit, UnitOfVolume.LITERS)
@@ -2339,24 +3462,64 @@ class ZoneFlowController:
         if deep:
             state.last_deep_run_seconds, state.last_deep_run_for_ts = took, state.last_deep_soak_ts
 
-    def _routine_interval_settings(self) -> dict[str, int]:
-        """The two Routine Days Between Waterings settings, as the keyword
+    def _routine_interval_settings(self, root_zone: Any = ...) -> dict[str, int | None]:
+        """The two Routine Days Between Waterings settings, and the most days the
+        root zone allows (1.8, None while Root Depth is 0), as the keyword
         arguments the calculations take (one place, so the dose, the due check
-        and the Status estimate can never read them differently)."""
+        and the Status estimate can never read them differently). Pass `root_zone`
+        when it is already worked out."""
+        if root_zone is ...:
+            root_zone = self.root_zone()
         return {
             "normal_interval_days": max(int(round(self.number("routine_interval_days"))), 1),
             "hot_interval_days": max(int(round(self.number("routine_interval_hot_days"))), 1),
+            "max_interval_days": root_zone.max_interval_days if root_zone else None,
         }
 
     def _routine_interval_days(self) -> int:
-        """Days between routine waterings now: the hot gap in the hot tier, else the normal one."""
+        """Days between routine waterings now: the hot gap in the hot tier, else the normal one,
+        shortened when the root zone can't hold that many days (1.8)."""
         gaps = self._routine_interval_settings()
         return calc.routine_interval_days(
             self.effective_avg_peak_temp(),
             self.number("hot_temp_threshold"),
             gaps["normal_interval_days"],
             gaps["hot_interval_days"],
+            gaps["max_interval_days"],
         )
+
+    def _tier_interval_days(self) -> int:
+        """The Days Between Waterings setting in use, before the root-zone limit."""
+        gaps = self._routine_interval_settings()
+        return calc.routine_interval_days(
+            self.effective_avg_peak_temp(), self.number("hot_temp_threshold"),
+            gaps["normal_interval_days"], gaps["hot_interval_days"],
+        )
+
+    def daily_demand_mm(self) -> float:
+        """What the plant uses per day, as the routine will water it (any demand model)."""
+        weekly = self.et_weekly_target_mm()
+        if weekly is None:
+            weekly = self.tier_weekly_target_mm()
+        return weekly * self.routine_target_scale() / 7.0
+
+    def root_zone(self) -> RootZone | None:
+        """The root zone (1.8), or None while Root Depth is 0 (off: the zone waters as before)."""
+        taw = calc.root_zone_capacity_mm(
+            self.number("soil_holding_mm_per_m"), self.number("root_depth_mm"), self.number("wetted_area_pct")
+        )
+        if taw is None:
+            return None
+        etc = self.daily_demand_mm()
+        p = calc.allowed_depletion(self.number("allowed_depletion_pct") / 100.0, etc if etc > 0 else 5.0)
+        raw = p * taw
+        return RootZone(taw, raw, p, etc if etc > 0 else None, calc.capacity_interval_days(raw, etc))
+
+    def deep_soak_target_mm(self) -> float:
+        """The Deep Soak Target, never more than the root zone holds (1.8)."""
+        target = self.number("deep_soak_target_mm")
+        root_zone = self.root_zone()
+        return min(target, root_zone.taw_mm) if root_zone else target
 
     def _wet_hold_days(self) -> float | None:
         since = self.store.state.wet_hold_since_ts
@@ -2551,6 +3714,7 @@ class ZoneFlowController:
                     pump_lock.release()
         finally:
             self._cycle_kind = ""
+            self._flow_target_l = None  # set by a watering for its own run only
             self._notify_status()
 
     async def _acquire_pump(self, pump_lock: asyncio.Lock) -> bool:
@@ -2606,30 +3770,160 @@ class ZoneFlowController:
             # The zone before is still open for a moment: the pump's power says nothing
             # about this zone's own valve until it has closed.
             self._audit_not_before = handover["until"]
-        if preamble > 0 and not pump_running:
-            await self._pause(preamble)
+        master = self._master()
+        if master is not None:
+            # 1.8: the master valve opens before the pump starts and the zone valve opens.
+            try:
+                await master.async_acquire(self)
+            except master_valve.MasterValveClosed as err:
+                await self._set_lock(False)  # nothing was opened
+                await self._log_event(
+                    event_type=f"{kind} Refused (Master Valve Closed)",
+                    status="WARNING",
+                    target_mm=target_mm_for_log,
+                    deducted_mm=deducted_mm_for_log,
+                    runtime=0,
+                    notify_phone=True,
+                    message="master_valve_refused",
+                    params={"cycle": self._cycle_name(kind), "valve": master.entity_id, "reason": self._master_reason_text(str(err))},
+                    level=LEVEL_WARNING,
+                )
+                return False
+        try:
+            completed = await self._run_pulses_behind_master(
+                preamble=0.0 if pump_running else preamble,
+                count=count,
+                pulse_minutes=pulse_minutes,
+                rest_minutes=rest_minutes,
+                min_pump_watts=min_pump_watts,
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            )
+            if master is not None and completed and kind == "Routine Irrigation" and self._master_test_wanted(master):
+                await self._master_self_test(master)
+            return completed
+        finally:
+            if master is not None:
+                valve = self._cycle_valve or self.store.state.lock_valve or self.valve_entity
+                closed = await self._valve_confirmed_closed(valve) if valve else True
+                await master.async_release(self, valve_closed=closed)
 
-        flow_start = await self._flow_meter_reading()
-        self._run_liters = None
+    def _master_test_wanted(self, master: master_valve.MasterValve) -> bool:
+        """The monthly self-test runs now: a zone that can tell (flow meter or pump power), the last
+        run on the master, nothing waiting for the pump, and nothing stopping the zone."""
+        if not (self.flow_meter_entity or (self.pump_power_entity and self.number("pump_min_watts") > 0)):
+            return False
+        if master.holders != {self.entry.entry_id} or master.latched or self._pump_handed_over:
+            return False
+        if self._stopping or self.store.state.abort_on or self.paused or self._zones_waiting_on_my_pump():
+            return False
+        return master.test_due(dt_util.utcnow().timestamp())
 
-        completed = await self._execute_pulses(
-            count=count,
-            pulse_minutes=pulse_minutes,
-            rest_minutes=rest_minutes,
-            min_pump_watts=min_pump_watts,
-            kind=kind,
-            target_mm_for_log=target_mm_for_log,
-            deducted_mm_for_log=deducted_mm_for_log,
-            runtime_for_log=runtime_for_log,
+    async def master_valve_checked(self) -> None:
+        """The "Master Valve Checked" button: the person fixed or checked the backup valve, so its
+        last self-test is forgotten and the next routine watering tests it again."""
+        master = self._master()
+        if master is None:
+            return
+        await master.async_clear_test()
+        self._notify_status()
+        await self._log_event(
+            event_type="Master Valve Checked",
+            status="INFO",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=False,
+            phone_title="",
+            phone_msg="",
         )
 
-        if self._measuring and flow_start is not None and not self._stopping:
-            # A meter that reports every so often may not have counted the
-            # last of the water yet: wait for its next report (up to a minute).
-            await self._wait_for_state_change(self.flow_meter_entity, FLOW_METER_SETTLE_SECONDS)
-        flow_end = await self._flow_meter_reading()
-        if flow_start is not None and flow_end is not None:
-            delta_liters = max(flow_end - flow_start, 0.0)
+    async def _master_self_test(self, master: master_valve.MasterValve) -> None:
+        """Close the master, open this zone's valve for half a minute and check that no water flows
+        and the pump stops. The zone valve is closed again whatever happens (and confirmed closed by
+        the master's release after this)."""
+        valve = self._cycle_valve or self.valve_entity
+        passed = None
+        try:
+            if not await master.async_close_for_test():
+                _LOGGER.warning("%s: master valve self-test skipped: %s did not report closed", self.entry.title, master.entity_id)
+                return
+            await zone_valve.async_open(self.hass, valve)
+            await self._pause(master_valve.TEST_SETTLE_SECONDS)  # the pipe after it drains, the pump builds pressure
+            if self._stopping or self.store.state.abort_on:
+                return
+            start = master_valve.test_reading(self)
+            await self._pause(master_valve.TEST_MEASURE_SECONDS)
+            if self._stopping or self.store.state.abort_on:
+                return
+            passed = master_valve.test_passed(self, start)
+        except Exception:  # noqa: BLE001 - a failed test must never leave the zone valve open
+            _LOGGER.exception("%s: master valve self-test stopped by an error", self.entry.title)
+        finally:
+            await self._close_cycle_valve()
+        if passed is None:
+            return
+        await master.async_record_test(passed, dt_util.utcnow().timestamp())
+        await self._log_event(
+            event_type="Master Valve Test " + ("Passed" if passed else "Failed"),
+            status="OK" if passed else "CRITICAL",
+            target_mm=0.0,
+            deducted_mm=0.0,
+            runtime=0,
+            notify_phone=not passed,
+            message=None if passed else "master_valve_test_failed",
+            params={"valve": master.entity_id},
+            level=LEVEL_WARNING,
+            always_notify=not passed,  # a backup valve that doesn't hold: even with Notifications off
+        )
+
+    async def _run_pulses_behind_master(
+        self,
+        *,
+        preamble: float,
+        count: int,
+        pulse_minutes: float,
+        rest_minutes: int,
+        min_pump_watts: float,
+        kind: str,
+        target_mm_for_log: float,
+        deducted_mm_for_log: float,
+        runtime_for_log: int,
+    ) -> bool:
+        if preamble > 0:
+            await self._pause(preamble)
+
+        self._run_liters = None
+        self._flow_used = False
+        self._flow_fell_back = False
+        self._flow_end_reasons = []
+        self._high_flow_closed = False
+        unsub_flow = self._start_flow_tracker()
+        try:
+            completed = await self._execute_pulses(
+                count=count,
+                pulse_minutes=pulse_minutes,
+                rest_minutes=rest_minutes,
+                min_pump_watts=min_pump_watts,
+                kind=kind,
+                target_mm_for_log=target_mm_for_log,
+                deducted_mm_for_log=deducted_mm_for_log,
+                runtime_for_log=runtime_for_log,
+            )
+            if (self._measuring or self._flow_used) and self._flow is not None and not self._stopping:
+                # A meter that reports every so often may not have counted the
+                # last of the water yet: wait for its next report (up to a minute).
+                await self._wait_for_state_change(self.flow_meter_entity, FLOW_METER_SETTLE_SECONDS)
+        finally:
+            if unsub_flow is not None:
+                unsub_flow()
+        tracker, self._flow = self._flow, None
+        if tracker is not None and self._flow_target_l is not None:
+            await self._report_flow_delivery(kind, tracker, completed)
+        if tracker is not None:
+            delta_liters = tracker.litres(dt_util.utcnow().timestamp())
             self._run_liters = delta_liters
             self.store.state.last_cycle_water_liters = delta_liters
             if kind in ("Deep Soak", "Routine Irrigation"):
@@ -2638,7 +3932,7 @@ class ZoneFlowController:
             # Only meaningful for a cycle that actually ran to
             # completion -- an aborted cycle legitimately may not have
             # moved any water, and that's not a flow-meter problem.
-            if completed and delta_liters <= 0.0 and not self._measuring:  # (a measurement says so itself)
+            if completed and delta_liters <= 0.0 and not self._measuring and not self._flow_fell_back:  # (said already)
                 await self._log_event(
                     event_type="No Flow Detected",
                     status="WARNING",
@@ -2751,6 +4045,8 @@ class ZoneFlowController:
                 deducted_mm=deducted_mm_for_log,
                 runtime=int(round(self._delivered_minutes)),
             )
+        if outcome == _HIGH_FLOW and self._high_flow_closed:
+            await self._set_lock(False)  # closed: the next run may try again (the master stays latched)
         if outcome == _STOPPED:
             await self._log_event(
                 event_type=f"{kind} Interrupted",
@@ -2777,6 +4073,10 @@ class ZoneFlowController:
         runtime_for_log: int,
     ) -> str:
         valve = self._cycle_valve
+        # 1.8: watering by the flow meter: each pulse ends when its share of the litres is through.
+        flow_target = self._flow_target_l if kind in ("Deep Soak", "Routine Irrigation") and self._flow is not None else None
+        limit_minutes = self._flow_pulse_limit_minutes(kind, pulse_minutes, count) if flow_target is not None else pulse_minutes
+        self._flow_close_l = None
         for index in range(1, count + 1):
             if self._stopping:
                 return _STOPPED
@@ -2802,9 +4102,12 @@ class ZoneFlowController:
                 return _USER_STOPPED
             if self._pause_stops(kind):
                 return _PAUSED
-            self._expected_pulse_minutes = pulse_minutes
+            flow_pulse = flow_target is not None and not self._flow_fell_back
+            if flow_pulse:
+                self._learn_close_lag(dt_util.utcnow().timestamp())
+            self._expected_pulse_minutes = limit_minutes if flow_pulse else pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
-            await self.hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_open(self.hass, valve)
 
             # The pump-power audit only makes sense when a pump-power
             # sensor is actually configured -- without one, _pump_watts()
@@ -2845,7 +4148,23 @@ class ZoneFlowController:
                     )
 
             # wait_template: abort flag on, timeout pulse_minutes, continue_on_timeout
-            if not self._stopping and not self.store.state.abort_on:
+            if not self._stopping and not self.store.state.abort_on and flow_pulse:
+                now = dt_util.utcnow().timestamp()
+                remaining = max(flow_target - self._flow.litres(now), 0.0)
+                self._flow_last_target_l = remaining / (count - index + 1)  # a short pulse is made up later
+                self._flow_used = True
+                end = await self._wait_pulse_volume(self._flow_last_target_l, limit_minutes * 60)
+                self._flow_end_reasons.append(end)
+                if end == "high_flow":
+                    await self._stop_for_high_flow(kind, valve)
+                    self._end_pulse(limit_minutes, full=False)
+                    return _HIGH_FLOW
+                if end == "meter_silent":
+                    # The rest of the run goes by time: this pulse finishes its planned minutes.
+                    self._flow_fell_back = True
+                    elapsed = dt_util.utcnow().timestamp() - self._pulse_started_ts
+                    await self._wait_pulse(max(pulse_minutes * 60 - elapsed, 0.0), service=False)
+            elif not self._stopping and not self.store.state.abort_on:
                 await self._wait_pulse(pulse_minutes * 60, service=kind == SERVICE_RUN_KIND)
 
             if kind == SERVICE_RUN_KIND and self._service_stop.is_set() and not (
@@ -2880,8 +4199,12 @@ class ZoneFlowController:
 
             self._expected_pulse_minutes = None
             overlap = await self._overlap_with_next_zone(kind) if index == count else 0.0
-            await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
-            self._end_pulse(pulse_minutes, full=True)
+            await zone_valve.async_close(self.hass, valve)
+            if flow_pulse:
+                self._end_pulse(limit_minutes, full=False)  # the time it was really open, up to the limit
+                self._flow_close_l = self._flow.litres(dt_util.utcnow().timestamp())
+            else:
+                self._end_pulse(pulse_minutes, full=True)
             self._open_seconds += overlap
 
             if index < count:
@@ -2916,8 +4239,8 @@ class ZoneFlowController:
         waiting = self._zones_waiting_on_my_pump()
         if not waiting:
             return 0.0
-        if self.flow_meter_entity and any(z.flow_meter_entity == self.flow_meter_entity for z in waiting):
-            return 0.0  # one meter for both: the overlap water would be counted in both zones
+        # One meter for both zones: the few seconds of overlap water show in both zones' litres. Too
+        # little to matter, and it is never counted as watering time (only toward the daily cap).
         pump_lock = self._get_pump_lock()
         handovers = self.hass.data.setdefault(PUMP_HANDOVER_KEY, {})
         started = dt_util.utcnow().timestamp()
@@ -3022,7 +4345,7 @@ class ZoneFlowController:
         if state is None or state.state == "unavailable":
             return state is None
         try:
-            await self.hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_close(self.hass, valve)
         except Exception:  # noqa: BLE001 - last line of defence, must not raise
             _LOGGER.exception("%s: could not close valve %s", self.entry.title, valve)
             return False
@@ -3030,14 +4353,20 @@ class ZoneFlowController:
 
     async def _valve_confirmed_closed(self, valve: str, seconds: float = VALVE_CLOSE_CONFIRM_SECONDS) -> bool:
         """Waits briefly for a valve that was just told to close to report
-        it -- some devices take a few seconds to confirm."""
-        for _ in range(int(seconds * 2)):
+        it -- some devices take a few seconds to confirm. A valve that reports
+        unavailable or unknown is not confirmed: it may still be open, so its
+        lock stays for the power-loss and stale-lock watchdogs."""
+        waited = 0.0
+        while True:
             state = self.hass.states.get(valve)
-            if state is None or state.state != "on":
+            if state is None or zone_valve.is_closed(state):
                 return True
+            # A motorised valve reports "closing" for up to half a minute: it is still on its way.
+            limit = max(seconds, VALVE_CLOSING_CONFIRM_SECONDS) if state.state == "closing" else seconds
+            if waited >= limit:
+                return False
             await asyncio.sleep(0.5)
-        state = self.hass.states.get(valve)
-        return state is None or state.state != "on"
+            waited += 0.5
 
     async def _wait_for_state_change(self, entity_id: str | None, seconds: float) -> None:
         """Until `entity_id` reports a new state, or `seconds` pass."""
@@ -3207,7 +4536,9 @@ class ZoneFlowController:
         # unlike async_track_time_change (which passes `now`) -- adapt so
         # the same _on_deep_soak_time/_on_routine_time callbacks work either
         # way.
+        @callback
         def sun_action() -> None:
+            # A plain function would run in a worker thread, where hass.async_create_task is refused.
             action(None)
 
         if sun_mode == SUN_MODE_BEFORE_SUNRISE:
@@ -3369,6 +4700,9 @@ class ZoneFlowController:
         gauge = state.rain_tracker().sum_between_mm(start_ts, end_ts)
         source = self._wu()
         wu = source.sum_between(start_ts, end_ts) if source is not None else 0.0
+        estimate = self._sensor_rain()
+        if estimate is not None:
+            wu = max(wu, estimate.sum_between_mm(start_ts, end_ts))
         if not state.manual_rain_samples:
             return max(gauge, wu)
         return max(gauge, wu, state.manual_rain_tracker().sum_between_mm(start_ts, end_ts))
@@ -3377,7 +4711,7 @@ class ZoneFlowController:
         """Fill in the entries that are 48 h old. True when something changed."""
         state = self.store.state
         now_ts = dt_util.utcnow().timestamp()
-        has_rain_data = bool(self.rain_counter_entity) or state.manual_rain_used or self.uses_wu
+        has_rain_data = bool(self.rain_counter_entity) or state.manual_rain_used or self.uses_wu or self.rain_estimate_active
         threshold = self.number("forecast_rain_threshold_mm")
         changed = False
         for entry in state.forecast_skip_journal:
@@ -3450,7 +4784,7 @@ class ZoneFlowController:
         if self.rain_windows()["14d"] >= self.number("deep_soak_rain_threshold"):
             return False
         plan = calc.plan_deep_soak(
-            self.number("deep_soak_target_mm"),
+            self.deep_soak_target_mm(),
             self.number("flow_rate_mm_per_min"),
             pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
             min_pulse_minutes=self._deep_min_pulse(),
@@ -3509,14 +4843,14 @@ class ZoneFlowController:
         if rain_14d >= self.number("deep_soak_rain_threshold"):
             await self._decide("deep_soak", "skipped_wet_fortnight", rain_mm=round(rain_14d, 1))
             return
-        if await self._frost_blocks("deep_soak"):
+        if await self._weather_blocks("deep_soak"):
             return
         if not await self._forecast_gate_allows_run("deep_soak"):
             return
 
         deep_soak_pulse_count = max(int(round(self.number("deep_soak_pulse_count"))), 1)
         plan = calc.plan_deep_soak(
-            self.number("deep_soak_target_mm"),
+            self.deep_soak_target_mm(),
             self.number("flow_rate_mm_per_min"),
             pulse_count=deep_soak_pulse_count,
             min_pulse_minutes=self._deep_min_pulse(),
@@ -3583,6 +4917,7 @@ class ZoneFlowController:
 
         run_started = dt_util.utcnow().timestamp()
         self._last_outcome = None  # never read an earlier run's outcome if this one does not start
+        self._flow_target_l = self._flow_target_for(plan.target_mm)
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -3608,14 +4943,11 @@ class ZoneFlowController:
         # counts (an aborted or interrupted one returned above).
         state.last_routine_ts = done_ts
         self._remember_run_length(run_started, deep=True)
-        state.today_runtime_minutes += plan.total_runtime_minutes
-        self._count_for_summary(plan.total_runtime_minutes, "deep_soak")
-        self._record_decision(
-            "deep_soak",
-            "done",
-            minutes=plan.total_runtime_minutes,
-            amount_mm=round(plan.total_runtime_minutes * self.number("flow_rate_mm_per_min"), 1),
-        )
+        given_min, given_mm = self._given_amount(plan.total_runtime_minutes)
+        state.today_runtime_minutes += given_min
+        self._count_for_summary(given_min, "deep_soak", mm=given_mm)
+        self._learn_flow_rate()
+        self._record_decision("deep_soak", "done", minutes=round(given_min), amount_mm=round(given_mm, 1))
         await self.store.async_save()
         await self._end_wet_hold()  # the zone has just been watered
         await self._set_lock(False)
@@ -3684,8 +5016,6 @@ class ZoneFlowController:
         # effective_avg_peak_temp() (not avg_peak_temp()) drives this: real
         # recorded days when there are any, otherwise the Fallback / Manual
         # Temperature slider -- see watering_temp.
-        avg_peak_temp = self.effective_avg_peak_temp()
-        hot_threshold = self.number("hot_temp_threshold")
         interval_days = self._routine_interval_days()
         interval_due = calc.routine_due(elapsed_seconds, interval_days, self._routine_buffer())
 
@@ -3746,7 +5076,7 @@ class ZoneFlowController:
                 until_ts=(state.last_significant_rain_ts or 0.0) + self.number("routine_drydown_days") * 86400,
             )
             return
-        if await self._frost_blocks("routine"):
+        if await self._weather_blocks("routine"):
             return
         if not manual and not await self._forecast_gate_allows_run("routine"):
             return
@@ -3861,6 +5191,7 @@ class ZoneFlowController:
 
         run_started = dt_util.utcnow().timestamp()
         self._last_outcome = None  # never read an earlier run's outcome if this one does not start
+        self._flow_target_l = self._flow_target_for(plan.needed_mm)
         completed = await self._run_pulses(
             count=plan.pulse_count,
             pulse_minutes=plan.pulse_runtime_minutes,
@@ -3878,10 +5209,9 @@ class ZoneFlowController:
             given = self._delivered_minutes
             state.last_routine_ts = dt_util.utcnow().timestamp()
             self._remember_run_length(run_started, deep=False)
-            self._count_for_summary(given, "routine")
-            self._record_decision(
-                "routine", "done", minutes=round(given), amount_mm=round(given * self.number("flow_rate_mm_per_min"), 1)
-            )
+            given, given_mm = self._given_amount(given)
+            self._count_for_summary(given, "routine", mm=given_mm)
+            self._record_decision("routine", "done", minutes=round(given), amount_mm=round(given_mm, 1))
             await self.store.async_save()
             return
         if not completed or state.abort_on:
@@ -3890,11 +5220,11 @@ class ZoneFlowController:
 
         state.last_routine_ts = dt_util.utcnow().timestamp()
         self._remember_run_length(run_started, deep=False)
-        state.today_runtime_minutes += plan.calc_runtime_minutes
-        self._count_for_summary(plan.calc_runtime_minutes, "routine")
-        self._record_decision(
-            "routine", "done", minutes=plan.calc_runtime_minutes, amount_mm=round(plan.calc_runtime_minutes * self.number("flow_rate_mm_per_min"), 1)
-        )
+        given_min, given_mm = self._given_amount(plan.calc_runtime_minutes)
+        state.today_runtime_minutes += given_min
+        self._count_for_summary(given_min, "routine", mm=given_mm)
+        self._learn_flow_rate()
+        self._record_decision("routine", "done", minutes=round(given_min), amount_mm=round(given_mm, 1))
         await self.store.async_save()
         await self._set_lock(False)
         await self._log_event(
@@ -4243,14 +5573,17 @@ class ZoneFlowController:
             ),
             interval_days=(normal_gap, hot_gap, normal_gap),
             scale=self.mulch_factor(),
-            demand_model_et=self.demand_model == DEMAND_MODEL_ET,
+            demand_model_et=self.demand_model in (DEMAND_MODEL_ET, DEMAND_MODEL_FAO56),
         )
         routine_count = max(int(round(self.number("routine_pulse_count"))), 1)
         routine = calc.longest_pulse_minutes(routine_total, flow, routine_count, self._routine_min_pulse(), self.site)
+        flow_mode = self.flow_delivery_problem() is None  # a pulse may run up to its limit (1.8)
+        if flow_mode:
+            routine = self._flow_pulse_limit_minutes("Routine Irrigation", routine, routine_count)
         deep = 0.0
         if self.deep_soak_enabled and flow > 0:
             plan = calc.plan_deep_soak(
-                self.number("deep_soak_target_mm"),
+                self.number("deep_soak_target_mm"),  # not the root-zone cap: the longest the settings allow
                 flow,
                 pulse_count=max(int(round(self.number("deep_soak_pulse_count"))), 1),
                 min_pulse_minutes=self._deep_min_pulse(),
@@ -4259,6 +5592,8 @@ class ZoneFlowController:
             # A deep soak over its own cap is refused, so it never runs.
             if plan.total_runtime_minutes <= self.number("deep_soak_max_runtime_minutes"):
                 deep = plan.pulse_runtime_minutes
+                if flow_mode:
+                    deep = self._flow_pulse_limit_minutes("Deep Soak", deep, plan.pulse_count)
         service = max(
             self.number("service_mode_auto_off_minutes"),
             float(max(SERVICE_RUN_BUTTON_MINUTES)),
@@ -4305,6 +5640,8 @@ class ZoneFlowController:
             await self._log_flow_measurement("Failed", "flow_measure_failed", minutes=minutes, liters=liters)
             return
         await number.async_set_metric_value(round(rate, 3))
+        if (area := self.numbers.get("zone_area_m2")) is not None and 0 < area_m2 <= NUMBER_DEFS["zone_area_m2"][2]:
+            await area.async_set_metric_value(round(area_m2, 2))  # 1.8: the zone's area, for watering by the meter
         shown = units.to_display("flow_rate_mm_per_min", rate, self.imperial)
         await self._log_flow_measurement(
             "Completed",
@@ -4373,6 +5710,8 @@ class ZoneFlowController:
         await self.greenhouse.async_reset_mist_halt()  # a halted mister too
         await self._set_lock(False)
         await self._set_abort(False)
+        if (master := self._master()) is not None:
+            await master.async_reset()  # a master valve closed for safety may open again
         await self._log_event(
             event_type="Manual Lock Reset",
             status="WARNING",
@@ -4563,6 +5902,8 @@ class ZoneFlowController:
         et_weekly = self.et_weekly_target_mm()
         if elapsed_seconds is None:
             elapsed_seconds = self._rain_pool_elapsed()
+        root_zone = self.root_zone()
+        gaps = self._routine_interval_settings(root_zone)
         return calc.plan_routine_irrigation(
             avg_peak_temp=self.effective_avg_peak_temp(),
             hot_threshold=self.number("hot_temp_threshold"),
@@ -4584,7 +5925,10 @@ class ZoneFlowController:
             interval_fraction=interval_fraction,
             rain_offset_mm=self._rain_offset_in_window(elapsed_seconds),
             rain_ignore_below_mm=self.number("rain_ignore_below_mm"),
-            **self._routine_interval_settings(),
+            normal_interval_days=gaps["normal_interval_days"],
+            hot_interval_days=gaps["hot_interval_days"],
+            max_interval_days=gaps["max_interval_days"],
+            root_zone_mm=root_zone.taw_mm if root_zone else None,
         )
 
     def rain_credit_breakdown(self, plan: calc.RoutinePlan) -> tuple[float, float, float | None]:
@@ -4706,7 +6050,7 @@ class ZoneFlowController:
         state = self.store.state
         if not self.deep_soak_enabled:
             return False
-        target = self.number("deep_soak_target_mm")
+        target = self.deep_soak_target_mm()
         if target <= 0:
             return False
         last = state.last_deep_soak_ts or 0.0
@@ -4988,34 +6332,42 @@ class ZoneFlowController:
 
         if notify_phone and self.notify_entity and (always_notify or self._notify_allowed(level)):
             try:
-                verbs = notification_actions.ACTIONS_FOR_MESSAGE.get(message or "", ())
-                legacy = notification_actions.legacy_service(self.hass, self.notify_entity) if verbs else None
-                if legacy is not None:
-                    # The companion app's service takes action buttons.
-                    await self.hass.services.async_call(
-                        "notify",
-                        legacy,
-                        {
-                            "title": phone_title,
-                            "message": phone_msg,
-                            "data": {
-                                "tag": f"zoneflow_{self.entry.entry_id}",
-                                "actions": notification_actions.build(self.hass, self.entry.entry_id, verbs),
-                            },
-                        },
-                        blocking=True,
-                    )
-                else:
-                    await self.hass.services.async_call(
-                        "notify",
-                        "send_message",
-                        {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
-                        blocking=True,
-                    )
+                # A notify service that hangs must not hold a valve open (this
+                # runs mid-run), so the call is bounded.
+                async with asyncio.timeout(NOTIFY_TIMEOUT_SECONDS):
+                    await self._send_phone_notification(message, phone_title, phone_msg)
+            except TimeoutError:
+                _LOGGER.warning("The phone notification for %s did not finish in %s s; moving on", event_type, NOTIFY_TIMEOUT_SECONDS)
             except Exception:  # noqa: BLE001 - never let a notify failure break irrigation logic
                 _LOGGER.exception("Failed to send phone notification for %s", event_type)
 
         self.hass.bus.async_fire(EVENT_LOG, {"event_type": event_type, "status": status})
+
+    async def _send_phone_notification(self, message: str | None, phone_title: str, phone_msg: str) -> None:
+        verbs = notification_actions.ACTIONS_FOR_MESSAGE.get(message or "", ())
+        legacy = notification_actions.legacy_service(self.hass, self.notify_entity) if verbs else None
+        if legacy is not None:
+            # The companion app's service takes action buttons.
+            await self.hass.services.async_call(
+                "notify",
+                legacy,
+                {
+                    "title": phone_title,
+                    "message": phone_msg,
+                    "data": {
+                        "tag": f"zoneflow_{self.entry.entry_id}",
+                        "actions": notification_actions.build(self.hass, self.entry.entry_id, verbs),
+                    },
+                },
+                blocking=True,
+            )
+        else:
+            await self.hass.services.async_call(
+                "notify",
+                "send_message",
+                {"entity_id": self.notify_entity, "title": phone_title, "message": phone_msg},
+                blocking=True,
+            )
 
     def _notify_allowed(self, level: str) -> bool:
         """The zone's Notifications setting: all, warnings only, or none."""
@@ -5076,13 +6428,15 @@ class ZoneFlowController:
             state.summary_skip_days = [d for d in state.summary_skip_days if d not in reported["skip_days"]]
         await self.store.async_save()
 
-    def _count_for_summary(self, minutes: float, cycle: str) -> None:
+    def _count_for_summary(self, minutes: float, cycle: str, mm: float | None = None) -> None:
         """A completed watering: the weekly summary's counts (summary.py) and
         what the Last Water Delivered sensor shows -- the valve's minutes
-        times the calibrated flow rate, like the Status sentence's amount.
+        times the calibrated flow rate, like the Status sentence's amount, or
+        `mm` when the flow meter measured it (1.8).
         Only completed cycles get here; interrupted or cancelled ones don't."""
         state = self.store.state
-        mm = minutes * self.number("flow_rate_mm_per_min")
+        if mm is None:
+            mm = minutes * self.number("flow_rate_mm_per_min")
         state.summary_runs += 1
         state.summary_minutes += minutes
         state.summary_mm += mm
@@ -5238,6 +6592,8 @@ class ZoneFlowController:
                 params[key[:-3]] = self._when(value)
             elif key.endswith("_c") and isinstance(value, (int, float)):
                 params[key[:-2]] = units.temp_text(value, self.imperial)
+            elif key.endswith("_kmh") and isinstance(value, (int, float)):
+                params[key[:-4]] = units.speed_text(value, self.imperial)
             else:
                 params[key] = value
         params["cycle"] = self._msg(f"cycle.{cycle}")
@@ -5422,9 +6778,9 @@ class ZoneFlowController:
         if latest is not None:
             cycle, decision = latest
             code = decision["code"]
-            if code in ("waiting_frost", "waiting_deep_soak") and cycle not in self._frost_held:
+            if code in WAITING_HOLD_CODES and cycle not in self._hold_held:
                 # No re-check pending any more (it ended, or after a restart).
-                code = "skipped_frost" if code == "waiting_frost" else None
+                code = None if code == "waiting_deep_soak" else "skipped_" + code[len("waiting_"):]
             if code is None:
                 latest = None
         if latest is not None:
@@ -5434,7 +6790,7 @@ class ZoneFlowController:
                 cycle=cycle,
                 decided_at=dt_util.utc_from_timestamp(decision["ts"]).isoformat(),
                 # (a frost re-check comes before any scheduled time)
-                text=text if code in ("waiting_frost", "waiting_deep_soak") else with_next(
+                text=text if code in WAITING_HOLD_CODES else with_next(
                     text if code == "skipped_drydown" else with_drydown(text)
                 ),
             )
@@ -5476,7 +6832,7 @@ class ZoneFlowController:
         if not self.has_valve:
             return None
         if cycle == "deep_soak":
-            return self.number("deep_soak_target_mm")
+            return self.deep_soak_target_mm()
         try:
             return self._routine_plan().needed_mm
         except Exception:  # noqa: BLE001 -- only an estimate: never let it break the Status sentence

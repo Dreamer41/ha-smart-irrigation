@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Mélyöntözés eltolása a naphoz (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
           "routine_sun_offset_minutes": "Rendszeres öntözés eltolása a naphoz (perc)",
-          "unit_system": "Mértékegységek"
+          "unit_system": "Mértékegységek",
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)",
+          "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
+          "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
+          "coastal": "Tengerparton (napsugárzás-érzékelő nélkül)",
+          "wind_sensor_height_m": "A szélérzékelő magassága",
+          "master_valve_entity": "Főszelep (nem kötelező)",
+          "master_valve_normally_open": "A főszelep alaphelyzetben nyitott"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
           "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
           "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
-          "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz."
+          "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz.",
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli.",
+          "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
+          "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
+          "coastal": "Akkor használja, ha nincs napsugárzás-adat: a tengerpart közelében a napsütést kicsit magasabbra becsüli.",
+          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg.",
+          "master_valve_normally_open": "Hagyja kikapcsolva alaphelyzetben zárt szelepnél (ajánlott: áramszünetkor magától bezár). Kapcsolja be alaphelyzetben nyitott, relével vezérelt szelepnél: ZoneFlow ekkor a relé BEkapcsolásával zárja. Egy szelep entitás maga jelzi a nyitott és zárt állapotot, és ezt figyelmen kívül hagyja."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
-          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)"
+          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)",
+          "master_valve_entity": "Főszelep (nem kötelező)",
+          "master_valve_normally_open": "A főszelep alaphelyzetben nyitott"
         },
         "data_description": {
           "pump_power_entity": "Egy teljesítményérzékelő (W) a szivattyún, pl. egy okoskonnektorból. Minden öntözés során a ZoneFlow ellenőrzi, hogy a szivattyú valóban vesz-e fel áramot, és figyelmeztet, ha nem. Hagyja üresen, ha nincs ilyenje.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
           "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
-          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos."
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg.",
+          "master_valve_normally_open": "Hagyja kikapcsolva alaphelyzetben zárt szelepnél (ajánlott: áramszünetkor magától bezár). Kapcsolja be alaphelyzetben nyitott, relével vezérelt szelepnél: ZoneFlow ekkor a relé BEkapcsolásával zárja. Egy szelep entitás maga jelzi a nyitott és zárt állapotot, és ezt figyelmen kívül hagyja."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground eső (kísérleti)",
-        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nA méréseket csak az esőjóváíráshoz használjuk. Nem 100%-os pontosságúak, és minél távolabb vannak az állomások a zónáktól, annál kevésbé pontosak.",
+        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nAz adatok nem 100 %-ig pontosak, és annál kevésbé, minél messzebb vannak az állomások a zónáktól. Az esőt az esőjóváíráshoz használjuk; a szelet, a páratartalmat és a napsütést csak az alábbi beállítással.",
         "data": {
           "api_key": "API-kulcs",
-          "radius_km": "Keresési sugár"
+          "radius_km": "Keresési sugár",
+          "borrow_climate": "A szél, a páratartalom és a napsütés átvétele is"
         },
         "data_description": {
           "api_key": "A Weather Underground fiókjából (API Keys). Csak ebben a bejegyzésben tárolódik.",
-          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel."
+          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel.",
+          "borrow_climate": "Az FAO-56 vízbecsléshez azoknál a kültéri zónáknál, amelyeknek nincs ehhez érzékelőjük és időjárás-entitásuk. 2 óra helyett 30 percenként kérdez le. A szelet a zóna Szélérzékelő magassága szerint mértnek veszi."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Esőmérő mm/billenés",
           "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
           "weather_entity": "Időjárás-entitás (előrejelzés)",
-          "notify_entity": "Értesítendő telefon"
+          "notify_entity": "Értesítendő telefon",
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
           "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
@@ -267,7 +300,12 @@
           "weather_entity": "Opcionális. Lehetővé teszi a terület zónái számára az öntözés kihagyását eső-előrejelzés esetén.",
           "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
           "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
-          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt."
+          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
       "area_name_required": "Nevezze el a területet.",
       "area_name_exists": "Már létezik egy terület ezzel a névvel.",
-      "flow_rate_out_of_range": "Ezekből a számokból olyan térfogatáram jön ki, amilyen ennek a zónának nem lehet. Ellenőrizze a kibocsátók számát, egy kibocsátó hozamát és a területet."
+      "flow_rate_out_of_range": "Ezekből a számokból olyan térfogatáram jön ki, amilyen ennek a zónának nem lehet. Ellenőrizze a kibocsátók számát, egy kibocsátó hozamát és a területet.",
+      "master_is_zone_valve": "A főszelepnek más szelepnek kell lennie, mint a zónák saját szelepei.",
+      "valve_is_a_master": "Ez a szelep egy másik zóna főszelepe."
     },
     "abort": {
       "already_configured": "A Weather Underground eső már be van állítva."
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "Mélyöntözés eltolása a naphoz (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
           "routine_sun_offset_minutes": "Rendszeres öntözés eltolása a naphoz (perc)",
-          "unit_system": "Mértékegységek"
+          "unit_system": "Mértékegységek",
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)",
+          "wind_exposure": "Szél ezen a helyen (szélérzékelő nélkül)",
+          "climate_dryness": "Éghajlat (páratartalom-érzékelő nélkül)",
+          "coastal": "Tengerparton (napsugárzás-érzékelő nélkül)",
+          "wind_sensor_height_m": "A szélérzékelő magassága",
+          "master_valve_entity": "Főszelep (nem kötelező)",
+          "master_valve_normally_open": "A főszelep alaphelyzetben nyitott"
         },
         "data_description": {
           "valve_entity": "A kapcsoló, amely kinyitja a zóna szelepét (vagy elindítja a szivattyúját). Enélkül a ZoneFlow nem tud működni: ezt kapcsolja be és ki, és mindig gondoskodik róla, hogy végül kikapcsolva maradjon.",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
           "routine_sun_mode": "A rendszeres öntözés indulhat a fenti rögzített időpontban, vagy napkelte vagy napnyugta előtt vagy után, így együtt változik az évszakokkal.",
           "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpontnál nincs jelentősége.",
-          "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz."
+          "unit_system": "Mit mutasson ez a zóna: kövesse a Home Assistantot, vagy mindig metrikus (mm, °C, liter) vagy angolszász (hüvelyk, °F, gallon) legyen. Csak azt változtatja meg, amit látsz, azt soha, hogy mennyit öntöz.",
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli.",
+          "wind_exposure": "Akkor használja, ha nincs szélérzékelő és az időjárás-szolgáltatás szele sem áll rendelkezésre: védett, nyílt vagy kitett.",
+          "climate_dryness": "Akkor használja, ha nincs páratartalom-adat: párás vagy száraz (száraz és félszáraz vidékek).",
+          "coastal": "Akkor használja, ha nincs napsugárzás-adat: a tengerpart közelében a napsütést kicsit magasabbra becsüli.",
+          "wind_sensor_height_m": "Milyen magasan van a szélérzékelő. Az otthoni időjárás-állomások általában kb. 2 m magasan vannak.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg.",
+          "master_valve_normally_open": "Hagyja kikapcsolva alaphelyzetben zárt szelepnél (ajánlott: áramszünetkor magától bezár). Kapcsolja be alaphelyzetben nyitott, relével vezérelt szelepnél: ZoneFlow ekkor a relé BEkapcsolásával zárja. Egy szelep entitás maga jelzi a nyitott és zárt állapotot, és ezt figyelmen kívül hagyja."
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "Mélyöntözés indítása",
           "deep_soak_sun_offset_minutes": "Mélyöntözés napfázis eltolása (perc)",
           "routine_sun_mode": "Rendszeres öntözés indítása",
-          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)"
+          "routine_sun_offset_minutes": "Rendszeres öntözés napfázis eltolása (perc)",
+          "master_valve_entity": "Főszelep (nem kötelező)",
+          "master_valve_normally_open": "A főszelep alaphelyzetben nyitott"
         },
         "data_description": {
           "pump_power_entity": "Egy teljesítményérzékelő (W) a szivattyún, pl. egy okoskonnektorból. Minden öntözés során a ZoneFlow ellenőrzi, hogy a szivattyú valóban vesz-e fel áramot, és figyelmeztet, ha nem. Hagyja üresen, ha nincs ilyenje.",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "Indítsa el a mélyöntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
           "deep_soak_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
           "routine_sun_mode": "Indítsa el a rendszeres öntözést a fenti rögzített időpontban, vagy napkelte/napnyugta előtt vagy után, így az az évszakokkal együtt változik.",
-          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos."
+          "routine_sun_offset_minutes": "Hány perccel napkelte vagy napnyugta előtt vagy után. Rögzített időpont esetén nem használatos.",
+          "master_valve_entity": "Tartalék elzárószelep a zóna előtt, például egy több zónát ellátó szivattyú után. Minden öntözéssel kinyit, és bezár, amikor az utolsó véget ér. Biztonsági okból is bezár, a Reset Lock megnyomásáig, ha egy zónaszelep nyitva ragad, vagy tovább folyik a víz (átfolyásmérő), vagy tovább jár a szivattyú (szivattyúteljesítmény), miközben minden zónaszelep zárva van. Minden mögötte lévő zónának ugyanezt a szelepet adja meg.",
+          "master_valve_normally_open": "Hagyja kikapcsolva alaphelyzetben zárt szelepnél (ajánlott: áramszünetkor magától bezár). Kapcsolja be alaphelyzetben nyitott, relével vezérelt szelepnél: ZoneFlow ekkor a relé BEkapcsolásával zárja. Egy szelep entitás maga jelzi a nyitott és zárt állapotot, és ezt figyelmen kívül hagyja."
         }
       },
       "wu_key": {
         "title": "Weather Underground eső (kísérleti)",
-        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nA méréseket csak az esőjóváíráshoz használjuk. Nem 100%-os pontosságúak, és minél távolabb vannak az állomások a zónáktól, annál kevésbé pontosak.",
+        "description": "Esőadatokat vesz át a kertje közelében lévő magán időjárás-állomásokról a csapadékmérő NÉLKÜLI szabadtéri zónákhoz. Van csapadékmérője? Akkor erre nincs szüksége.\n\n**Először** ellenőrizze a wunderground.com térképén, hogy vannak-e a kertjétől néhány km-en belül esőt jelentő állomások. Ha nincsenek, itt megállhat.\n\n**Másodszor**, az ingyenes API-kulcshoz saját állomás szükséges: regisztráljon egyet a wunderground.com oldalon, és küldjön be legalább külső hőmérsékletet és páratartalmat (például a ha-weather-uploader integrációval). Az API-kulcs ezután a Weather Underground fiókjában található.\n\nAz adatok nem 100 %-ig pontosak, és annál kevésbé, minél messzebb vannak az állomások a zónáktól. Az esőt az esőjóváíráshoz használjuk; a szelet, a páratartalmat és a napsütést csak az alábbi beállítással.",
         "data": {
           "api_key": "API-kulcs",
-          "radius_km": "Keresési sugár"
+          "radius_km": "Keresési sugár",
+          "borrow_climate": "A szél, a páratartalom és a napsütés átvétele is"
         },
         "data_description": {
           "api_key": "A Weather Underground fiókjából (API Keys). Csak ebben a bejegyzésben tárolódik.",
-          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel."
+          "radius_km": "0,5–2 km, a közelebbi jobb: az eső sokat változhat pár km-en belül. 1 km felett figyelje, mennyire egyeznek a mérések a helyi esővel.",
+          "borrow_climate": "Az FAO-56 vízbecsléshez azoknál a kültéri zónáknál, amelyeknek nincs ehhez érzékelőjük és időjárás-entitásuk. 2 óra helyett 30 percenként kérdez le. A szelet a zóna Szélérzékelő magassága szerint mértnek veszi."
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "A terület esőmérőjének használata",
           "outdoor_temp_entity": "A terület külső hőmérsékletének használata",
           "weather_entity": "A terület időjárás-entitásának használata",
-          "notify_entity": "A terület telefonjának használata"
+          "notify_entity": "A terület telefonjának használata",
+          "humidity_entity": "A terület páratartalom-érzékelőjének használata",
+          "wind_entity": "A terület szélérzékelőjének használata",
+          "rain_sensor_entity": "A terület esőérzékelőjének használata",
+          "solar_entity": "A terület napsugárzás-érzékelőjének használata"
         },
         "data_description": {
           "rain_counter_entity": "Jelölje be, ha a terület esőmérőjét szeretné használni a zóna sajátja helyett.",
           "outdoor_temp_entity": "Jelölje be, ha a terület külső hőmérséklet-érzékelőjét szeretné használni a zóna sajátja helyett.",
           "weather_entity": "Jelölje be, ha a terület időjárás-entitását szeretné használni a zóna sajátja helyett.",
-          "notify_entity": "Jelölje be, ha a terület telefonjára szeretne küldeni a zóna sajátja helyett."
+          "notify_entity": "Jelölje be, ha a terület telefonjára szeretne küldeni a zóna sajátja helyett.",
+          "humidity_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület páratartalom-érzékelőjét szeretné használni.",
+          "wind_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület szélérzékelőjét szeretné használni.",
+          "rain_sensor_entity": "Jelölje be, hogy a zóna saját érzékelője helyett a terület esőérzékelőjét használja.",
+          "solar_entity": "Pipálja be, ha a zóna saját érzékelője helyett a terület napsugárzás-érzékelőjét szeretné használni."
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "Esőmérő mm/billenés",
           "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
           "weather_entity": "Időjárás-entitás (előrejelzés)",
-          "notify_entity": "Értesítendő telefon"
+          "notify_entity": "Értesítendő telefon",
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
           "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
@@ -636,7 +717,12 @@
           "weather_entity": "Opcionális. Lehetővé teszi a terület zónái számára az öntözés kihagyását eső-előrejelzés esetén.",
           "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
           "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
-          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt."
+          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "Esőmérő mm/billenés",
           "outdoor_temp_entity": "Külső hőmérséklet-érzékelő",
           "weather_entity": "Időjárás-entitás (előrejelzés)",
-          "notify_entity": "Értesítendő telefon"
+          "notify_entity": "Értesítendő telefon",
+          "humidity_entity": "Kültéri páratartalom-érzékelő (nem kötelező)",
+          "wind_entity": "Szélsebesség-érzékelő (nem kötelező)",
+          "rain_sensor_entity": "Esőérzékelő (opcionális)",
+          "rain_sensor_inverted": "Az érzékelő szárazon van bekapcsolva",
+          "solar_entity": "Napsugárzás-érzékelő (nem kötelező)"
         },
         "data_description": {
           "rain_counter_entity": "Opcionális. A terület zónái innen olvassák az esőt, hacsak egy zónának nincs saját esőmérője.",
@@ -658,7 +749,12 @@
           "weather_entity": "Opcionális. Lehetővé teszi a terület zónái számára az öntözés kihagyását eső-előrejelzés esetén.",
           "notify_entity": "Opcionális. Hová küldjék a terület zónái a telefonos üzeneteket.",
           "area_name": "A terület neve, például Hátsó kert vagy Első kert.",
-          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt."
+          "rain_source_type": "Mit jelent az esőmérő-érzékelő: billenésszámlálót, összes esőt, esőzési intenzitást vagy az utolsó leolvasás óta esett esőt.",
+          "humidity_entity": "A kinti relatív páratartalom. Ettől követi az FAO-56 becslés a száraz és a párás napokat.",
+          "wind_entity": "A kinti szélsebesség. A szeles napok gyorsabban szárítják a növényeket; érzékelő nélkül a helyre jellemző szelet használja.",
+          "rain_sensor_entity": "Nedves/száraz érzékelő (be = nedves). Amíg nedveset jelez, az esedékes öntözés vár és óránként újra ellenőriz; az Öntözés most gomb ettől még öntöz.",
+          "rain_sensor_inverted": "Jelölje be, ha az érzékelő szárazon be, nedvesen ki van kapcsolva.",
+          "solar_entity": "A napfény W/m²-ben. Érzékelő nélkül a napsütést a nap hőmérséklet-ingadozásából becsüli."
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "Válasszon 1, 2 vagy 3 állomást.",
       "greenhouse_has_crops": "Ez az üvegház növényeket tartalmaz. Először helyezze át őket egy másik üvegházba, vagy távolítsa el őket (minden növény Beállítás -> Üvegház menüpontjában).",
       "area_name_required": "Nevezze el a területet.",
-      "area_name_exists": "Már létezik egy terület ezzel a névvel."
+      "area_name_exists": "Már létezik egy terület ezzel a névvel.",
+      "master_is_zone_valve": "A főszelepnek más szelepnek kell lennie, mint a zónák saját szelepei.",
+      "valve_is_a_master": "Ez a szelep egy másik zóna főszelepe."
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "Esőösszeg (mm vagy in; teljes, napi vagy heti)",
         "rate_mm_h": "Eső intenzitás (mm/h)",
         "amount_mm": "Eső leolvasásonként (mm vagy in; pl. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Védett (falak, sövények)",
+        "open": "Nyílt",
+        "exposed": "Kitett (dombtető, tengerpart, tető)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Párás",
+        "dry": "Száraz (száraz vagy félszáraz)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "A szelep saját időzítője"
+      },
+      "kc_curve_pct": {
+        "name": "Növénygörbe erőssége"
+      },
+      "root_depth_mm": {
+        "name": "Gyökérmélység"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "A talaj víztartó képessége"
+      },
+      "allowed_depletion_pct": {
+        "name": "Megengedett talajszáradás"
+      },
+      "wetted_area_pct": {
+        "name": "A zóna nedvesített része"
+      },
+      "zone_area_m2": {
+        "name": "A zóna területe"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Időtartalék átfolyás módban"
+      },
+      "wind_hold_kmh": {
+        "name": "Szélhatár"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Esőérzékelő esőintenzitása"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Automatika folytatása"
+      },
+      "master_valve_checked": {
+        "name": "Főszelep ellenőrizve"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Önhangolás"
+      },
+      "kc_climate_adjust": {
+        "name": "A növénytényező követi az éghajlatot"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Szelep leghosszabb nyitvatartása"
+      },
+      "crop_factor": {
+        "name": "Mai növénytényező"
+      },
+      "root_zone": {
+        "name": "A gyökérzóna tárol"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Vízigény-modell",
         "state": {
           "temperature_tiers": "Hőmérsékleti sávok",
-          "et_curve": "ET-görbe (Hargreaves)"
+          "et_curve": "ET-görbe (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Öntözés befejezése",
           "stop": "Leállítás a nedves szintnél"
+        }
+      },
+      "crop_curve": {
+        "name": "Növénygörbe",
+        "state": {
+          "fixed": "Fix (Növénytényező csúszka)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Napsütés",
+        "state": {
+          "deep_shade": "Egész nap árnyék",
+          "morning_sun": "Délelőtti nap",
+          "afternoon_sun": "Délutáni nap",
+          "full_sun": "Teljes napsütés",
+          "reflected_heat": "Visszavert hő (fal vagy burkolat)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Az öntözés vége",
+        "state": {
+          "time": "Tervezett idő szerint",
+          "flow_meter": "Átfolyásmérő szerint"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Ez a zóna már nem létezik."
+          "zone_gone": "Ez a zóna már nem létezik.",
+          "zone_busy": "A zóna elfoglalt. Próbálja újra egy pillanat múlva."
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Ez a zóna már nem létezik."
+          "zone_gone": "Ez a zóna már nem létezik.",
+          "zone_busy": "A zóna elfoglalt. Próbálja újra egy pillanat múlva."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: a területe el lett távolítva",
       "description": "A(z) {area} terület törölve lett, így a(z) {zone} zóna most az onnan kapott érzékelők másolatát használja. Másik területre való áthelyezéshez használja a zóna Konfigurálás -> Hol van ez? lehetőségét."
+    },
+    "fao56_offer": {
+      "title": "{zone}: átáll az FAO-56 vízbecslésre?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "{zone} átállítása FAO-56-ra",
+            "description": "A(z) {zone} zónáról két hétnyi FAO-56 nap van feljegyezve. Jelenleg a mostani modellje szerint heti {current} vizet ad; az FAO-56 ugyanerre a két hétre heti {fao56} adna (a hőmérséklet, valamint a páratartalom, a szél és a napsütés, ahol van ilyen adat). Az FAO-56 párás időben általában kevesebbet, száraz, szeles napokon többet ad. Átállítja ezt a zónát FAO-56-ra? Bármikor visszaállhat a Vízigény-modell beállítással."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: az esőérzékelő megakadt",
+      "description": "A(z) {zone} zóna {entity} esőérzékelője több mint egy napja változatlanul nedveset jelez, ezért a ZoneFlow figyelmen kívül hagyja. Ellenőrizze az érzékelőt: lehet, hogy koszos vagy elromlott. Magától eltűnik, ha szárazat jelez."
     }
   }
 }

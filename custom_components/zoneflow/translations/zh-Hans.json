@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "深层浇灌日出日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
           "routine_sun_offset_minutes": "常规浇水日出日落偏移（分钟）",
-          "unit_system": "单位"
+          "unit_system": "单位",
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
+          "solar_entity": "太阳辐射传感器（可选）",
+          "wind_exposure": "此处的风力（无风速传感器时）",
+          "climate_dryness": "气候（无湿度传感器时）",
+          "coastal": "靠海（无太阳辐射传感器时）",
+          "wind_sensor_height_m": "风速传感器高度",
+          "master_valve_entity": "总阀（可选）",
+          "master_valve_normally_open": "总阀为常开型"
         },
         "data_description": {
           "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
           "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
           "routine_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
-          "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。"
+          "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。",
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。",
+          "wind_exposure": "在没有风速传感器也没有天气服务风速时使用：避风、开阔或暴露。",
+          "climate_dryness": "在没有湿度读数时使用：潮湿或干燥（干旱和半干旱地区）。",
+          "coastal": "在没有太阳辐射读数时使用：靠近海岸时日照估算会略高一些。",
+          "wind_sensor_height_m": "风速传感器安装的高度。家用气象站通常约在 2 米高处。",
+          "master_valve_entity": "位于此区域上游的备用截止阀，例如多个区域共用的水泵之后。每次浇水时打开，最后一次浇水结束时关闭。若某个区域阀卡在打开状态，或在所有区域阀都关闭时仍有水流（流量计）或水泵仍在运行（水泵功率），它也会出于安全而关闭，直到按下 Reset Lock。请为其后的所有区域填写同一个阀门。",
+          "master_valve_normally_open": "常闭型阀门请保持关闭（推荐：停电时会自动关闭）。继电器控制的常开型阀门请打开：ZoneFlow 将通过打开继电器来关闭它。阀门实体会自行报告开关状态，不受此项影响。"
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "深层浸润触发方式",
           "deep_soak_sun_offset_minutes": "深层浸润日出/日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
-          "routine_sun_offset_minutes": "常规浇水日出/日落偏移（分钟）"
+          "routine_sun_offset_minutes": "常规浇水日出/日落偏移（分钟）",
+          "master_valve_entity": "总阀（可选）",
+          "master_valve_normally_open": "总阀为常开型"
         },
         "data_description": {
           "pump_power_entity": "水泵上的功率传感器（W），例如智能插座。每次浇水期间，ZoneFlow 会检查水泵是否真的在消耗功率，若未消耗则发出警告。如果没有请留空。",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "在上述固定时间启动深层浸润，或在日出/日落之前或之后启动，以便随季节自动调整。",
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
           "routine_sun_mode": "在上述固定时间启动常规浇水，或在日出/日落之前或之后启动，以便随季节自动调整。",
-          "routine_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。"
+          "routine_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
+          "master_valve_entity": "位于此区域上游的备用截止阀，例如多个区域共用的水泵之后。每次浇水时打开，最后一次浇水结束时关闭。若某个区域阀卡在打开状态，或在所有区域阀都关闭时仍有水流（流量计）或水泵仍在运行（水泵功率），它也会出于安全而关闭，直到按下 Reset Lock。请为其后的所有区域填写同一个阀门。",
+          "master_valve_normally_open": "常闭型阀门请保持关闭（推荐：停电时会自动关闭）。继电器控制的常开型阀门请打开：ZoneFlow 将通过打开继电器来关闭它。阀门实体会自行报告开关状态，不受此项影响。"
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground 降雨（实验性）",
-        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n这些读数仅用于计算降雨抵扣。数据并非 100% 准确，气象站距离您的区域越远，准确度就越低。",
+        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n读数并非 100% 准确，气象站离您的区域越远越不准确。降雨用于计算降雨抵扣；风、湿度和日照仅在开启下方选项时使用。",
         "data": {
           "api_key": "API 密钥",
-          "radius_km": "搜索半径"
+          "radius_km": "搜索半径",
+          "borrow_climate": "同时借用风、湿度和日照"
         },
         "data_description": {
           "api_key": "来自您的 Weather Underground 账户（API Keys）。仅保存在此条目中。",
-          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。"
+          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。",
+          "borrow_climate": "用于没有相应传感器和天气实体的户外区域的 FAO-56 需水估算。每 30 分钟查询一次，而不是每 2 小时。风速按该区域的“风速传感器高度”测得处理。"
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "雨量计每斗毫米数",
           "outdoor_temp_entity": "室外温度传感器",
           "weather_entity": "天气实体（预报）",
-          "notify_entity": "接收通知的手机"
+          "notify_entity": "接收通知的手机",
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
+          "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
           "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
@@ -267,7 +300,12 @@
           "weather_entity": "选填。允许该区域内的各区域在预报有雨时跳过浇水。",
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
-          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
       "area_name_required": "为区域命名。",
       "area_name_exists": "已存在同名区域。",
-      "flow_rate_out_of_range": "这些数字得出的流量是该区域不可能有的。请检查出水器数量、单个出水器的流量和面积。"
+      "flow_rate_out_of_range": "这些数字得出的流量是该区域不可能有的。请检查出水器数量、单个出水器的流量和面积。",
+      "master_is_zone_valve": "总阀必须与各区域自己的阀门不同。",
+      "valve_is_a_master": "此阀门是另一个区域的总阀。"
     },
     "abort": {
       "already_configured": "Weather Underground 降雨功能已设置。"
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "深层浇灌日出日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
           "routine_sun_offset_minutes": "常规浇水日出日落偏移（分钟）",
-          "unit_system": "单位"
+          "unit_system": "单位",
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
+          "solar_entity": "太阳辐射传感器（可选）",
+          "wind_exposure": "此处的风力（无风速传感器时）",
+          "climate_dryness": "气候（无湿度传感器时）",
+          "coastal": "靠海（无太阳辐射传感器时）",
+          "wind_sensor_height_m": "风速传感器高度",
+          "master_valve_entity": "总阀（可选）",
+          "master_valve_normally_open": "总阀为常开型"
         },
         "data_description": {
           "valve_entity": "打开该区域阀门（或启动其水泵）的开关。这是 ZoneFlow 唯一必需的实体：它负责开关阀门，并始终确保最后处于关闭状态。",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
           "routine_sun_mode": "在上面的固定时间开始常规浇水，或在日出、日落之前或之后开始，这样会随季节变化。",
           "routine_sun_offset_minutes": "在日出或日落之前或之后多少分钟。使用固定时间时无效。",
-          "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。"
+          "unit_system": "该区域的显示单位：跟随 Home Assistant，或始终使用公制（mm、°C、升）或英制（英寸、°F、加仑）。只影响显示，不会改变浇水量。",
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。",
+          "wind_exposure": "在没有风速传感器也没有天气服务风速时使用：避风、开阔或暴露。",
+          "climate_dryness": "在没有湿度读数时使用：潮湿或干燥（干旱和半干旱地区）。",
+          "coastal": "在没有太阳辐射读数时使用：靠近海岸时日照估算会略高一些。",
+          "wind_sensor_height_m": "风速传感器安装的高度。家用气象站通常约在 2 米高处。",
+          "master_valve_entity": "位于此区域上游的备用截止阀，例如多个区域共用的水泵之后。每次浇水时打开，最后一次浇水结束时关闭。若某个区域阀卡在打开状态，或在所有区域阀都关闭时仍有水流（流量计）或水泵仍在运行（水泵功率），它也会出于安全而关闭，直到按下 Reset Lock。请为其后的所有区域填写同一个阀门。",
+          "master_valve_normally_open": "常闭型阀门请保持关闭（推荐：停电时会自动关闭）。继电器控制的常开型阀门请打开：ZoneFlow 将通过打开继电器来关闭它。阀门实体会自行报告开关状态，不受此项影响。"
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "深层浸润触发方式",
           "deep_soak_sun_offset_minutes": "深层浸润日出/日落偏移（分钟）",
           "routine_sun_mode": "常规浇水触发方式",
-          "routine_sun_offset_minutes": "常规浇水日出/日落偏移（分钟）"
+          "routine_sun_offset_minutes": "常规浇水日出/日落偏移（分钟）",
+          "master_valve_entity": "总阀（可选）",
+          "master_valve_normally_open": "总阀为常开型"
         },
         "data_description": {
           "pump_power_entity": "水泵上的功率传感器（W），例如智能插座。每次浇水期间，ZoneFlow 会检查水泵是否真的在消耗功率，若未消耗则发出警告。如果没有请留空。",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "在上述固定时间启动深层浸润，或在日出/日落之前或之后启动，以便随季节自动调整。",
           "deep_soak_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
           "routine_sun_mode": "在上述固定时间启动常规浇水，或在日出/日落之前或之后启动，以便随季节自动调整。",
-          "routine_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。"
+          "routine_sun_offset_minutes": "在日出或日落之前或之后的分钟数。使用固定时间时不生效。",
+          "master_valve_entity": "位于此区域上游的备用截止阀，例如多个区域共用的水泵之后。每次浇水时打开，最后一次浇水结束时关闭。若某个区域阀卡在打开状态，或在所有区域阀都关闭时仍有水流（流量计）或水泵仍在运行（水泵功率），它也会出于安全而关闭，直到按下 Reset Lock。请为其后的所有区域填写同一个阀门。",
+          "master_valve_normally_open": "常闭型阀门请保持关闭（推荐：停电时会自动关闭）。继电器控制的常开型阀门请打开：ZoneFlow 将通过打开继电器来关闭它。阀门实体会自行报告开关状态，不受此项影响。"
         }
       },
       "wu_key": {
         "title": "Weather Underground 降雨（实验性）",
-        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n这些读数仅用于计算降雨抵扣。数据并非 100% 准确，气象站距离您的区域越远，准确度就越低。",
+        "description": "为没有雨量计的室外区域从花园附近的私人气象站获取降雨读数。如果您已有雨量计，则无需此功能。\n\n**首先**，请在 wunderground.com 的地图上查看花园数公里范围内是否有上报降雨的气象站。如果没有，请在此停止。\n\n**其次**，免费 API 密钥需要您拥有自己的气象站：请在 wunderground.com 上注册一个气象站，并至少上传室外温度和湿度（例如使用 ha-weather-uploader 集成）。然后即可在 Weather Underground 账户中找到 API 密钥。\n\n读数并非 100% 准确，气象站离您的区域越远越不准确。降雨用于计算降雨抵扣；风、湿度和日照仅在开启下方选项时使用。",
         "data": {
           "api_key": "API 密钥",
-          "radius_km": "搜索半径"
+          "radius_km": "搜索半径",
+          "borrow_climate": "同时借用风、湿度和日照"
         },
         "data_description": {
           "api_key": "来自您的 Weather Underground 账户（API Keys）。仅保存在此条目中。",
-          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。"
+          "radius_km": "0.5-2 公里，越近越好：两公里范围内的降雨量可能会有很大差异。超过 1 公里时，请留意读数与您所在位置的实际降雨是否吻合。",
+          "borrow_climate": "用于没有相应传感器和天气实体的户外区域的 FAO-56 需水估算。每 30 分钟查询一次，而不是每 2 小时。风速按该区域的“风速传感器高度”测得处理。"
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "使用区域的雨量计",
           "outdoor_temp_entity": "使用区域的室外温度",
           "weather_entity": "使用区域的天气实体",
-          "notify_entity": "使用区域的手机"
+          "notify_entity": "使用区域的手机",
+          "humidity_entity": "使用区域的湿度传感器",
+          "wind_entity": "使用区域的风速传感器",
+          "rain_sensor_entity": "使用区域的雨量传感器",
+          "solar_entity": "使用区域的太阳辐射传感器"
         },
         "data_description": {
           "rain_counter_entity": "勾选此项以使用区域的雨量计，而非当前区域独立的雨量计。",
           "outdoor_temp_entity": "勾选此项以使用区域的室外温度传感器，而非当前区域独立的传感器。",
           "weather_entity": "勾选此项以使用区域的天气实体，而非当前区域独立的天气实体。",
-          "notify_entity": "勾选此项以将消息发送至区域的手机，而非当前区域独立的手机。"
+          "notify_entity": "勾选此项以将消息发送至区域的手机，而非当前区域独立的手机。",
+          "humidity_entity": "勾选后使用区域的湿度传感器，而不是本分区自己的传感器。",
+          "wind_entity": "勾选后使用区域的风速传感器，而不是本分区自己的传感器。",
+          "rain_sensor_entity": "勾选后使用区域的雨量传感器，而不是此区域自己的传感器。",
+          "solar_entity": "勾选后使用区域的太阳辐射传感器，而不是本分区自己的传感器。"
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "雨量计每斗毫米数",
           "outdoor_temp_entity": "室外温度传感器",
           "weather_entity": "天气实体（预报）",
-          "notify_entity": "接收通知的手机"
+          "notify_entity": "接收通知的手机",
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
+          "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
           "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
@@ -636,7 +717,12 @@
           "weather_entity": "选填。允许该区域内的各区域在预报有雨时跳过浇水。",
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
-          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "雨量计每斗毫米数",
           "outdoor_temp_entity": "室外温度传感器",
           "weather_entity": "天气实体（预报）",
-          "notify_entity": "接收通知的手机"
+          "notify_entity": "接收通知的手机",
+          "humidity_entity": "室外湿度传感器（可选）",
+          "wind_entity": "风速传感器（可选）",
+          "rain_sensor_entity": "雨量传感器（可选）",
+          "rain_sensor_inverted": "传感器干燥时为开",
+          "solar_entity": "太阳辐射传感器（可选）"
         },
         "data_description": {
           "rain_counter_entity": "选填。除非特定区域配有自己的雨量计，否则该区域内的各区域均由此读取降雨数据。",
@@ -658,7 +749,12 @@
           "weather_entity": "选填。允许该区域内的各区域在预报有雨时跳过浇水。",
           "notify_entity": "选填。该区域内的各区域向何处发送手机消息。",
           "area_name": "该区域的名称，例如“后院”或“前院”。",
-          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。"
+          "rain_source_type": "雨量计传感器报告的内容：翻斗计数器、总降雨量、降雨速率或自上次读数以来的降雨量。",
+          "humidity_entity": "室外相对湿度。让 FAO-56 估算能反映干燥和潮湿的日子。",
+          "wind_entity": "室外风速。多风的日子植物干得更快；没有传感器时使用该地点的典型风速。",
+          "rain_sensor_entity": "干/湿传感器（开 = 湿）。读数为湿时，到期的浇水会等待并每小时重新检查；按下“立即浇水”仍会浇水。",
+          "rain_sensor_inverted": "如果传感器干燥时为开、潮湿时为关，请勾选。",
+          "solar_entity": "太阳辐射，单位 W/m²。没有传感器时，根据当天的温差估算日照。"
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "请选择 1、2 或 3 个气象站。",
       "greenhouse_has_crops": "此温室中有作物。请先将它们移动到另一个温室或进行移除（每种作物的 配置 -> 温室）。",
       "area_name_required": "为区域命名。",
-      "area_name_exists": "已存在同名区域。"
+      "area_name_exists": "已存在同名区域。",
+      "master_is_zone_valve": "总阀必须与各区域自己的阀门不同。",
+      "valve_is_a_master": "此阀门是另一个区域的总阀。"
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "降雨总量（毫米或英寸；累计、每日或每周）",
         "rate_mm_h": "降雨速率（毫米/小时）",
         "amount_mm": "每次读数的降雨量（毫米或英寸；例如 Tempest）"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "避风（墙、树篱）",
+        "open": "开阔",
+        "exposed": "暴露（山顶、海岸、屋顶）"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "潮湿",
+        "dry": "干燥（干旱或半干旱）"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "阀门自带定时器"
+      },
+      "kc_curve_pct": {
+        "name": "作物曲线强度"
+      },
+      "root_depth_mm": {
+        "name": "根系深度"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "土壤持水能力"
+      },
+      "allowed_depletion_pct": {
+        "name": "允许的土壤干燥程度"
+      },
+      "wetted_area_pct": {
+        "name": "区域湿润比例"
+      },
+      "zone_area_m2": {
+        "name": "区域面积"
+      },
+      "flow_time_allowance_pct": {
+        "name": "流量模式时间余量"
+      },
+      "wind_hold_kmh": {
+        "name": "风速上限"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "雨量传感器降雨强度"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "恢复自动"
+      },
+      "master_valve_checked": {
+        "name": "总阀已检查"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "自动调整"
+      },
+      "kc_climate_adjust": {
+        "name": "作物系数随气候调整"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "阀门最长开启时间"
+      },
+      "crop_factor": {
+        "name": "今日作物系数"
+      },
+      "root_zone": {
+        "name": "根区可容纳水量"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "需水量模型",
         "state": {
           "temperature_tiers": "温度分档",
-          "et_curve": "ET 曲线（Hargreaves）"
+          "et_curve": "ET 曲线（Hargreaves）",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "完成浇水",
           "stop": "达到湿润水平时停止"
+        }
+      },
+      "crop_curve": {
+        "name": "作物曲线",
+        "state": {
+          "fixed": "固定（作物系数滑块）",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "日照",
+        "state": {
+          "deep_shade": "全天阴凉",
+          "morning_sun": "上午有阳光",
+          "afternoon_sun": "下午有阳光",
+          "full_sun": "全日照",
+          "reflected_heat": "反射热（墙壁或铺装）"
+        }
+      },
+      "delivery_mode": {
+        "name": "浇水停止依据",
+        "state": {
+          "time": "计划时间",
+          "flow_meter": "流量计"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "该区域已不存在。"
+          "zone_gone": "该区域已不存在。",
+          "zone_busy": "该区域忙碌中。请稍后再试。"
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "该区域已不存在。"
+          "zone_gone": "该区域已不存在。",
+          "zone_busy": "该区域忙碌中。请稍后再试。"
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}：所属区域已被移除",
       "description": "区域 {area} 已被删除，因此 {zone} 目前使用的是继承自该区域的传感器副本。若要将其放入其他区域，请使用该区域的“配置 -> 这在哪里？”。"
+    },
+    "fao56_offer": {
+      "title": "{zone}：切换到 FAO-56 用水估算？",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "将 {zone} 切换到 FAO-56",
+            "description": "{zone} 已记录两周的 FAO-56 日数据。目前它按当前模型每周浇水 {current}；用同样这两周的数据，FAO-56 每周给出 {fao56}（温度，以及你有的湿度、风速和日照）。FAO-56 在潮湿天气通常给出更少，在干燥多风的日子给出更多。要把此分区切换到 FAO-56 吗？你随时可以通过“需水量模型”切换回来。"
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}：雨量传感器卡住",
+      "description": "区域 {zone} 的雨量传感器 {entity} 已超过一天读数为湿且没有变化，因此 ZoneFlow 会忽略它。请检查传感器：可能脏了或坏了。读数变干后此提示会自动消失。"
     }
   }
 }

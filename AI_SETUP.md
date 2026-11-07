@@ -603,7 +603,9 @@ have one.
 - Flow meter (optional): a `sensor.*` reporting a cumulative volume (name
   hints: "flow", "water meter", "liters"/"litres"/"gallons") — must be
   cumulative (always increasing), the same shape as the rain counter, not
-  an instantaneous flow-rate reading. If more than one zone will point at
+  an instantaneous flow-rate reading (from 1.8 a meter that reports a rate,
+  such as L/min, is read as a rate, but a running total is still the better
+  choice; §7.17). If more than one zone will point at
   the same flow meter entity, ask where it's physically plumbed relative
   to those zones' valves and pumps before assuming that's fine as-is —
   see §7.2a, since a meter shared across genuinely different pumps only
@@ -1121,7 +1123,7 @@ its factory default.
 | `..._deep_soak_pulse_count_split_cycle` / `..._deep_soak_soak_interval_between_pulses` (split-cycle for deep soak) | same, for the deep-soak cycle | **irrelevant if deep soak is disabled (§6a)** — otherwise same soil-driven guidance; deep soak's larger total depth often benefits from leaning slightly higher on pulse count for clay than the routine cycle does |
 | `..._deep_soak_max_safety_runtime_cap` / `..._routine_max_safety_runtime_cap` (min) | hard abort ceiling for a single cycle — if the calculated runtime exceeds this, that cycle is aborted rather than run, since it usually means a miscalibration | **check this for very low-flow drip emitters** (below roughly 0.1mm/min): the calculated runtime for a full target can genuinely run into several hundred minutes, and the factory default caps (124min / 103min) will wrongly abort a perfectly correct, just-slow cycle. Raise the cap (up to 900min) to comfortably cover `target_mm / flow_rate_mm_per_min` for this zone's real numbers — don't just raise it blindly to max "to be safe," since its whole job is catching a genuine miscalibration. The deep-soak cap is moot if deep soak is disabled (§6a). |
 | `..._service_mode_auto_off` (min) | how long the **Service Mode** switch keeps the valve open before switching itself off (with a phone alert) | default 30 min is right for most checks; raise it only if they flush long lines or do long leak hunts (5–120). Service runs never count as watering, but their minutes do count toward the daily safety cap below |
-| `..._frost_guard_temperature` (°C/°F) | a due cycle waits while the outdoor temperature is below this, re-checking every hour up to 6 times, then waits for its next scheduled time (reads the temperature sensor, or else the weather entity's current temperature; hidden when the zone has neither) | default 2 °C (36 °F). In a frost-free climate leave it; where mornings freeze, keep it at 1–3 °C. Set it to its lowest (−10 °C / 14 °F) to switch it off |
+| `..._frost_guard_temperature` (°C/°F) | a due cycle waits while the outdoor temperature is below this, re-checking every hour up to 6 times, then waits for its next scheduled time (reads the temperature sensor, or else the weather entity's current temperature; hidden when the zone has neither) | default 2 °C (36 °F). This is the frost part of the 1.8 weather hold (rain sensor and wind limit: §7.15). In a frost-free climate leave it; where mornings freeze, keep it at 1–3 °C. Set it to its lowest (−10 °C / 14 °F) to switch it off |
 | `..._max_daily_irrigation_runtime_safety_cap` (min) | hard ceiling on TOTAL runtime across both cycles in a rolling day — catches a mis-set schedule firing more often than intended, separate from the per-cycle caps above | factory default (240min) is generous; only worth lowering for a genuinely water-restricted setup, and worth checking it comfortably covers deep soak + routine's realistic combined runtime for this zone before lowering it |
 | `..._pump_low_power_warning_threshold` (W) | pump-power audit floor | **only relevant if a pump-power sensor is configured** — ask for the pump's rated running wattage, set ~20-30% below it; skip this row entirely for a zone with no pump-power sensor |
 | `..._routine_dry_down_holdoff` (days) | holdoff after significant rain before routine resumes; also the number the **self-tuning** feature (below) nudges automatically | shallow-rooted/thirsty plants: lower (1-2d); drought-tolerant: higher (4-6d). Note this one can drift 0.5d at a time on its own over time based on how the person actually uses the manual/snooze buttons — that's expected, not a bug, and they can always move it back by hand |
@@ -1130,7 +1132,7 @@ its factory default.
 | `..._pump_preamble_warm_up_delay` (s) / `..._pump_postamble_settle_delay` (s) | only relevant if this zone shares a pump with another zone (§7.2) | leave at 0 for a single-zone/independent-pump setup |
 | `..._forecast_rain_skip_threshold` (mm) / `..._forecast_rain_probability_threshold` (%) / `..._forecast_dry_spell_override` (days) | only relevant if a weather entity was set (§7.4) | see §7.4 |
 | `..._soil_moisture_dry_threshold` (%) / `..._soil_moisture_wet_threshold` (%) | only exist for a zone with a soil-moisture sensor (§7.7) -- skip them otherwise | see §7.7 |
-| `..._crop_factor_kc` | how much water this plant uses relative to reference ET₀ | only read when the zone's **Water Demand Model** is set to the ET curve — see §7.8; leave at the 0.8 default otherwise |
+| `..._crop_factor_kc` | how much water this plant uses relative to reference ET₀ | only read when the zone's **Water Demand Model** is the ET curve (§7.8), or FAO-56 (§7.12) with **Crop Curve** on Fixed; leave at the 0.8 default otherwise, and see §7.13 for the crop curve that replaces it |
 
 **Quick weekly-water-target starting points by crop type** (per week, normal
 weather — adjust from here rather than treating these as exact; use the
@@ -1317,8 +1319,8 @@ If the pipes bang when a valve closes against the running pump, set
 pump: when a zone finishes its last pulse and another zone is waiting for the
 pump, it hands the pump over and keeps its own valve open for that many
 seconds, so the next valve opens first. 0 (the default) leaves it as it was.
-It is not used for service runs or flow measurements, or when both zones
-share one flow meter. For that hand-over the next zone skips its pump
+It is not used for service runs or flow measurements. (Before 1.8 it was also
+not used when both zones shared one flow meter; now it is, see §7.17.) For that hand-over the next zone skips its pump
 preamble (the pump is already running) and the finishing zone its postamble.
 
 For a zone with a soil probe, the select `soil_wet_action` ("When Soil Gets Wet
@@ -1640,6 +1642,10 @@ Requires a `sensor.*` entity reporting moisture as a percentage.
    Moisture card in the dashboard (§9).
 
 ### 7.8 Optional ET curve (evapotranspiration-based weekly target)
+From 1.8 a new zone starts on the FAO-56 water estimate instead (§7.12), and
+the crop factor can come from a crop curve (§7.13). This section is still right
+for a zone that stays on the ET curve.
+
 By default a zone's routine weekly target comes from three fixed tiers —
 cool, normal, hot — picked by the 3-day average peak temperature. Each
 zone can instead use a continuous curve: set its **Water Demand Model**
@@ -2114,6 +2120,229 @@ together; ask whether crops on separate supplies should clear it.
    setup, not an optional extra.
 
 
+### 7.12 The FAO-56 water estimate (1.8+)
+
+**What it is.** A third **Water Demand Model** (next to the temperature tiers
+and the ET curve): **FAO-56 (Penman-Monteith)**, the standard way to work out
+how much water a plant uses. Each day's use is worked out from that day's real
+readings; the weekly target is the average daily use since the last watering,
+less the rain credit as before. **A brand-new zone starts on FAO-56. A zone
+that already existed keeps the model it had** until the person switches it
+(`select.<zone>_water_demand_model`); after two weeks of FAO-56 days on
+record, such a zone gets a Repairs item offering the switch with both weekly
+amounts side by side. Never switch an existing zone for the person without
+their yes: FAO-56 usually gives less water in humid weather and more on dry,
+windy days, so run times change.
+
+**When to use it / what to set.**
+- It works from the outdoor temperature alone, and gets more accurate with
+  each sensor added. All of these are optional, in the zone's (or area's)
+  settings: **Outdoor humidity sensor**, **Wind speed sensor**, **Solar
+  radiation sensor** (W/m²). Ask for each as its own short yes/no, find
+  candidates as in §3 and confirm each entity ID with the person, as for any
+  sensor. Never suggest buying one.
+- An input with no sensor falls back on a site setting, not on another model:
+  **Wind at this spot (no wind sensor)** (sheltered, open or exposed),
+  **Climate (no humidity sensor)** (humid, or dry) and **By the sea (no solar
+  sensor)**. Ask the person about the wind and the climate in plain words and
+  set these. If the zone has a weather entity, its wind and humidity are used
+  before the site settings.
+- **Wind sensor height** (default 2 m) is how high the wind sensor sits. Home
+  weather stations are usually about 2 m; change it only if the person knows
+  theirs is much higher or lower.
+- A sensor counts for a day only if its readings cover at least 18 hours of
+  that day, so a sensor that was offline most of a day is ignored for that day.
+- A greenhouse or indoor zone uses its inside humidity and light sensors, and
+  assumes near-still air and sunshine through glass.
+
+**Leave alone.** The three weekly targets of the temperature tiers (§5) are
+only used when FAO-56 has nothing to work from (no temperature reading yet), so
+do not spend time tuning them for an FAO-56 zone. Do not set the Crop Factor
+slider and a Crop Curve against each other by hand (§7.13).
+
+**What to show them.** The **Reference ET₀ (3-Day Avg)** and **Routine Weekly
+Target** sensors, and the card's **Why?** panel, which says where each FAO-56
+input came from (the person's sensor, the weather service, the zone's setting,
+or estimated from the temperature). Say plainly that an input marked
+"estimated" is a reason to add a sensor, not a fault.
+
+### 7.13 Crop curve, weather-following crop factor and sun exposure (1.8+)
+
+**Crop Curve** (select) replaces the single fixed crop factor with a crop's own
+season: low water use for a young plant, the most at mid-season, less late.
+52 crops are included (FAO-56 Tables 11 and 12); **Fixed (Crop Factor slider)**
+is the old behaviour. Annual crops count from the **planting date** (until it is
+set, the Crop Factor slider is used and Check my setup says so, so ask for the
+planting date); perennials follow the year from green-up, set by the climate;
+grass and the like use one value.
+
+- **New zones** start on the curve of their plant type, or of the plant picked
+  in the setup lookup. **Existing zones keep the fixed Crop Factor** and water
+  exactly as before until a curve is picked. Do not pick a curve for an
+  existing zone unless the person asks; it changes run times.
+- **Crop Curve Strength** (50-150 %, default 100) tunes the curve for the
+  person's own plant. Leave it at 100 until they have watched the plant for a
+  week or two (§7.9), then nudge it the way you would the Crop Factor.
+- The **Crop Factor Today** sensor shows the number in use and where it comes
+  from.
+- A curve that counts from planting already covers the young plant's growth, so
+  the growth ramp (§6) is not applied on top of it. Do not turn the ramp on for
+  such a zone.
+- **Crop Factor Follows Climate** (switch, on by default for a picked curve)
+  raises the curve in a dry, windy week and lowers it in a calm, humid one, from
+  the zone's own wind and humidity of the last 7 days. Leave it on; switch it off
+  only if the person wants the curve exactly as published.
+- **Sun Exposure** (select) is how much sun and reflected heat the spot gets:
+  shade all day (0.60), morning sun (0.75), afternoon sun (0.85), **full sun
+  (1.00, the default)**, reflected heat against a wall or paving (1.20). Ask
+  where the bed sits and set it. It is a factor on the crop factor, so **do not
+  also lower the Crop Factor for shade** (that would count it twice). The Why?
+  panel names it when it is not full sun.
+
+### 7.14 Root-zone limit (1.8+)
+
+Four settings from FAO-56 chapter 8: **Root Depth** (mm, 0-2000, step 50),
+**Soil Water-Holding Capacity** (mm of water per m of soil, 40-250, default
+140), **Allowed Soil Drying** (%, 10-80, default 50) and **Wetted Share of the
+Zone** (%, 5-100, default 100). With Root Depth above 0, a watering or deep
+soak never gives more than the roots can hold (the rest would drain past
+them), and the days between waterings shorten when one interval would dry the
+soil too far, for example a drip bed on light soil in a hot week. **It can only
+make waterings sooner and smaller.**
+
+- **New zones** start with the root depth of their crop or plant type, the
+  holding capacity of their soil and the wetted share of their irrigation
+  method (drip 40 %, soaker hose 50 %, micro-sprinkler 70 %, sprinkler and
+  other 100 %). Leave these as seeded unless the person knows better.
+- **Existing zones keep Root Depth at 0** and water exactly as before. Check my
+  setup suggests setting it. Offer it to someone with a drip bed on sandy soil
+  or a shallow-rooted crop; for everyone else, leaving it at 0 is fine. If you
+  set it, take the depth from the crop (the sources in §7.8, step 2) and say it
+  is a starting number.
+- **Leave alone** the holding capacity and the allowed drying unless the soil
+  is clearly unusual: the soil type already seeds the first.
+- Show them the **Root Zone Holds** sensor and the Why? panel, which say what
+  the roots hold and what the limit changed.
+
+### 7.15 Weather hold: frost, rain and wind (1.8+)
+
+The frost wait became one **weather hold** with a reason. A due watering waits
+while the weather is against it, checks again every hour for up to six hours,
+then waits for its next scheduled time. One phone message goes out per cycle and
+reason, and a restart picks the wait up again. A press of **Run Now** is never
+held by rain or wind (the person is looking at the garden), only by frost. The
+frost guard works as before (§5).
+
+**Rain sensor** (optional, zone or area): a wet/dry binary sensor, on = wet.
+While it reads wet, due watering waits for it to dry. Tick **Sensor reads on when
+dry** for the other kind; ask which way the person's sensor reads and, if they
+can, have them wet it to confirm. An unreadable sensor never holds anything. One
+that has read wet for a day without a change is treated as stuck: ignored, noted
+in Check my setup, and a Repairs item asks the person to look at it. Only ask
+about this sensor if they have one.
+
+**Rain Sensor Rain Rate** (mm/h, 0-10, default 0 = off). A zone with **no rain
+gauge and no Weather Underground** can count the sensor's wet time as rain:
+every hour it reads wet counts as that much rain (at most 30 mm a day) for the
+rain credit, the rain windows and the dry-down. Why? says the rain is an
+estimate. Offer it only to such a zone, and say it is a rough estimate; a real
+gauge (§2a) is better. Leave it off if unsure.
+
+**Wind Limit** (sprinkler and micro-sprinkler zones only; km/h or mph; 0-60
+km/h, 0 = off). A due watering waits while the wind, from the wind sensor or
+else the weather entity, is above it. **New sprinkler zones start at 20 km/h
+and micro-sprinklers at 25; zones that already exist keep it off (0)** until the
+person sets it. Drip and soaker zones never wait for wind and do not show the
+setting. Check my setup points out a limit with nothing to read the wind from,
+so if the person wants a wind limit, make sure there is a wind sensor or a
+weather entity.
+
+### 7.16 Master valve (1.8+)
+
+A **Master valve** is a backup shut-off valve upstream of a zone, for example
+after a pump shared by several zones. Ask only if the person already has one;
+never suggest buying one. Two fields: **Master valve (optional)** and **Master
+valve is normally open**.
+
+- Give **every zone behind it the same valve**. It must be a different valve
+  from the zones' own valves (the form refuses otherwise).
+- It opens before a watering's first pulse and closes after the last (zones
+  sharing it keep it open while any of them waters), so a zone valve that sticks
+  open has no water behind it once the run is over.
+- It also closes for safety, and stays closed until **Reset Lock**, when a zone
+  valve does not confirm it closed, when the stuck-valve watchdog fires, or when
+  the flow meter keeps counting or the pump keeps drawing power while every
+  zone valve behind it is closed. A phone alert goes out even with
+  notifications off. **Never suggest a workaround for this;** it is a safety
+  watchdog (see the non-negotiables at the top).
+- **Normally closed (default, recommended):** it shuts by itself in a power cut.
+  **Normally open:** tick the box only if the valve is on a relay that closes it
+  when switched ON; ZoneFlow then switches the relay ON to close it. Ask which
+  kind it is; do not guess. A `valve.*` entity reports open and closed by
+  itself and ignores the box.
+- **Monthly self-test.** With a flow meter or a pump power sensor, ZoneFlow
+  tests the master valve once a month at the end of a routine watering: it
+  closes the master, opens the zone valve for about half a minute and checks
+  that the water stops and the pump stops, then closes the zone valve. A failed
+  test sends a phone alert and is not repeated for a month: the button **Master
+  Valve Checked** (pressed after the valve was fixed or checked) makes the next
+  routine watering test it again. Tell the person it happens, so a short run of the
+  zone valve at the end of a watering is not a surprise. Without either sensor
+  there is no test.
+
+### 7.17 Watering by the flow meter (1.8+)
+
+**Watering Stops On** (select): **Planned time** (default, as before) or
+**Flow meter**. With the flow meter, each pulse ends when its share of the
+litres has gone through, and a short pulse is made up by the later ones. The
+planned time plus **Flow Mode Time Allowance** (10-200 %, default 50) is the
+limit, never past the runtime cap. **Zone Area** (m², 0-5000, 0 = not set) turns
+millimetres into litres; it is remembered from the flow-rate helper (§5), or
+worked out from Zone Flow.
+
+- **When to use it:** the person has a flow meter they trust and the flow
+  varies (changing pressure, a clogged filter, a well). **What to leave
+  alone:** a zone without a flow meter, and any zone on a meter shared across
+  different pumps (§7.2a): those water by time whatever the select says. Do not
+  switch to Flow meter until a few waterings on Planned time show **Last Cycle
+  Water Delivered (Measured)** matching what the person expects.
+- Safety checks (do not suggest turning them off): far too much water (a burst
+  or loose pipe) closes the valve, and the master valve behind it, with an alert
+  even with notifications off; a meter that stops counting finishes the watering
+  on time with one warning; a run that can't give its litres in time warns of
+  low flow. What a watering gave is recorded from the meter.
+- A flow rate learned from these runs is pointed out in Check my setup when it
+  is far from the Flow Rate setting.
+- **Rate meters.** A flow meter that reports a rate (L/min, m³/h, gal/min) is
+  read as a rate, not as a running total. A meter whose unit is neither a
+  volume nor a rate (for example "pulses") is not read as litres; Check my
+  setup says so. A cumulative volume is still the preferred kind (§3).
+- **Valve Overlap with a shared meter** (§7.2): zones that share one flow meter
+  now overlap too. The second or two of shared water counts in both zones'
+  litres, too little to matter, and never counts as watering time.
+
+### 7.18 Wind, humidity and sunshine from Weather Underground stations (1.8+)
+
+The Weather Underground entry (experimental) has a new option, **Also borrow
+wind, humidity and sunshine**, **off by default**. On, it takes the median of
+the chosen stations every 30 minutes (instead of every 2 hours) and gives it to
+every outdoor zone, with or without a rain gauge. It is used only where the zone
+has no sensor and no weather entity for that reading, before the zone's settings
+or an estimate. The wind counts as measured at the zone's Wind Sensor Height.
+The Why? panel says when a reading came from the stations.
+
+When to offer it: the person already uses Weather Underground rain, has
+FAO-56 zones and no wind or humidity sensor. Leave it off otherwise; it only
+helps FAO-56 zones.
+
+### 7.19 Valve entities (1.8+)
+
+A zone's valve can be a `valve.*` entity (opened with Open valve, closed with
+Close valve) as well as a `switch.*`. Offer both when searching in §3. The
+safety checks treat a valve that is opening or closing as open and only "closed"
+as closed.
+
+
 ## 8. Verify before you're done
 
 Do not consider setup finished until these are confirmed for each zone:
@@ -2429,7 +2658,7 @@ views:
           - entity: <sensor.zone_reference_et0_3_day_avg_if_temp_sensor_configured>
             name: Reference ET0 (3-day avg)
           - entity: <number.zone_crop_factor_kc>
-            name: Crop Factor Kc (ET curve only)
+            name: Crop Factor Kc (ET curve, or FAO-56 with no Crop Curve)
           - entity: <select.zone_mulch>
             name: Mulch
           - entity: <number.zone_mulch_et_adjustment>

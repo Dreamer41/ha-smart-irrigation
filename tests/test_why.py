@@ -5,7 +5,7 @@ import pytest
 from homeassistant.helpers import device_registry as dr
 
 from custom_components.zoneflow import plant_api, why
-from custom_components.zoneflow.const import DOMAIN
+from custom_components.zoneflow.const import DEMAND_MODEL_TIERS, DOMAIN
 
 from .test_plants import _boot, _ctl, _zone
 from .test_smoke_setup import VALVE
@@ -16,6 +16,7 @@ async def test_the_explanation_lists_method_target_rain_and_what_it_would_water(
     zone = _zone(hass, valve=VALVE)
     await _boot(hass, zone)
     c = _ctl(hass, zone)
+    c.store.state.demand_model = DEMAND_MODEL_TIERS
     c.store.state.rain_day_history_mm = [0.0, 12.0] + [0.0] * 8
     items = {i["id"]: i["text"] for i in why.explain(c)}
     assert items["method"].startswith("Watering method: temperature tiers")

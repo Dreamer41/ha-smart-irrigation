@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hovedventil stengt",
+      "message": "{valve} ble stengt av sikkerhetshensyn. {reason} Ingenting bak den vannes før du trykker Reset Lock på en av sonene."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: ikke startet",
+      "message": "Hovedventilen {valve} er stengt av sikkerhetshensyn. {reason} Trykk Reset Lock på sonen når det er fikset."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} bekreftet ikke at den stengte på slutten av en vanning.",
+      "valve_stuck": "{valve} sto åpen altfor lenge.",
+      "flow": "Vannmåleren fortsatte å telle mens alle soneventiler var lukket.",
+      "pump_power": "Pumpen fortsatte å trekke strøm mens alle soneventiler var lukket.",
+      "high_flow": "Det rant langt mer vann enn {valve} tar: et rør kan ha sprukket."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test av hovedventil feilet",
+      "message": "Den månedlige testen av {valve} fant at vannet fortsatt rant eller pumpen fortsatt gikk mens den var stengt. Den holder kanskje ikke hvis en soneventil henger seg opp: sjekk den."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: for mye vann",
+      "message": "{valve} ble stengt: det rant omtrent {rate} i minuttet, langt mer enn de vanlige {expected}. Et rør kan ha sprukket eller løsnet: sjekk det før neste vanning."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: lav vannføring",
+      "message": "Ga {given} av {target} i tillatt tid. Sjekk om filteret er tett eller trykket lavt."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: vannmåleren teller ikke",
+      "message": "{meter} telte ingenting mens ventilen var åpen, så vanningen gikk etter tid i stedet. Sjekk måleren."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} venter: regn",
+      "message": "{sensor} melder vått. Det sjekkes hver time i opptil {hours} timer, deretter venter den på neste planlagte tid."
+    },
+    "wind": {
+      "title": "💨 {cycle} venter: vind",
+      "message": "Vinden er {wind}, over grensen på {limit}. Det sjekkes hver time i opptil {hours} timer, deretter venter den på neste planlagte tid."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle} venter siden {time}: dypvanningen går først når det er varmt nok",
     "paused_until": "På pause til {until}",
     "paused_area": "På pause: ingen vanning mens {area} er på pause",
-    "paused_house": "På pause: ingen vanning mens drivhuset {house} er på pause"
+    "paused_house": "På pause: ingen vanning mens drivhuset {house} er på pause",
+    "waiting_rain": "{cycle} venter siden {time}: {sensor} melder vått; sjekker igjen hver time",
+    "skipped_rain": "{cycle} hoppet over kl. {time}: {sensor} meldte fortsatt vått etter {hours} sjekker",
+    "waiting_wind": "{cycle} venter siden {time}: vind {wind}, over grensen ({limit}); sjekker igjen hver time",
+    "skipped_wind": "{cycle} hoppet over kl. {time}: vinden fortsatt over {limit} etter {hours} sjekker"
   },
   "summary": {
     "title": "💧 ZoneFlow: uka di",
@@ -319,7 +362,9 @@
       "fail": "Regnmåleren {entity} er ikke tilgjengelig. Inntil den er tilbake, antar ZoneFlow at det ikke regner.",
       "wu": "Regn kommer fra Weather Underground.",
       "manual": "Regn legges til manuelt.",
-      "none": "Ingen regnmåler. ZoneFlow antar at det aldri regner, med mindre du legger til regn manuelt eller bruker Weather Underground."
+      "none": "Ingen regnmåler. ZoneFlow antar at det aldri regner, med mindre du legger til regn manuelt eller bruker Weather Underground.",
+      "sensor": "Regnet anslås fra regnsensoren {entity}: {rate} mens den melder vått.",
+      "sensor_no_rate": "Regnsensoren {entity} holder vanningen tilbake mens den melder vått, men teller ikke regn. Uten regnmåler: sett Regnmengde fra regnsensor for å telle den våte tiden som regn."
     },
     "temperature": {
       "ok": "Utendørstemperaturen er {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "Plantekurven for {crop} starter fra plantedatoen. Sett den; inntil da brukes innstillingen Plantefaktor."
+    },
+    "root_zone": {
+      "off": "Sett Rotdybde så en vanning aldri gir mer enn jorda kan holde.",
+      "shallow": "Rotsonen holder svært lite ({raw} før planten merker tørke). Selv daglig vanning kan la den tørke ut: sjekk Rotdybde og Vannet andel.",
+      "short_dose": "Rotsonen må vannes hver dag, men en dags dose ({minutes} min) er kortere enn minste puls ({minimum} min), så hver vanning gir mer enn jorda holder.",
+      "deep_soak": "Dypvanning gir {taw}, det rotsonen holder, i stedet for de innstilte {target}."
+    },
+    "master_valve": {
+      "latched": "Hovedventilen {valve} er stengt av sikkerhetshensyn. {reason} Trykk Reset Lock når det er fikset.",
+      "fail": "Hovedventilen {valve} er ikke tilgjengelig.",
+      "ok": "Hovedventilen {valve} svarer.",
+      "test_failed": "Hovedventilen {valve} besto ikke den månedlige testen {when}: vannet rant fortsatt eller pumpen gikk mens den var stengt. Trykk på Hovedventil kontrollert når du har sett på den; den testes på nytt ved neste rutinevanning.",
+      "test_ok": "Hovedventilen besto den månedlige testen {when}.",
+      "test_pending": "Hovedventilen testes en gang i måneden på slutten av en vanlig vanning.",
+      "test_none": "Legg til en vannmåler eller en pumpeeffektsensor for å få hovedventilen testet en gang i måneden."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow kan ikke lese liter fra enheten til {entity} ('{unit}'). Bruk en måler som melder volum (L, gal, m³) eller vannføring (L/min, gal/min).",
+      "learned": "Vanninger målte en vannføring på {learned}, men innstillingen Vannføring er {setting}. Oppdater den så de planlagte tidene stemmer."
+    },
+    "flow_mode": {
+      "no_meter": "Vanning stopper etter vannmåleren, men sonen har ingen vannmåler: den vanner etter tid.",
+      "meter_offline": "Vanning stopper etter vannmåleren, men måleren er frakoblet: sonen vanner etter tid til den er tilbake.",
+      "unknown_unit": "Vanning stopper etter vannmåleren, men enheten kan ikke leses som vann: sonen vanner etter tid.",
+      "no_area": "Vanning stopper etter vannmåleren, men sonens areal er ukjent: sett Sonens areal (eller Sonens vannføring) så millimeter kan gjøres om til liter.",
+      "shared_meter": "Vanning stopper etter vannmåleren, men måleren deles med en sone på en annen pumpe som kan vanne samtidig: sonen vanner etter tid."
+    },
+    "wind_hold": {
+      "no_source": "Vindgrensen er satt, men det finnes ingen vindsensor eller værentitet å lese vinden fra, så den holder aldri noe tilbake. Legg til en under Konfigurer.",
+      "off": "En vindkilde er tilgjengelig, men Vindgrensen er av (0). Sett en grense så sprinkleren venter i sterk vind."
+    },
+    "rain_sensor": {
+      "ok": "Regnsensoren {entity} melder seg.",
+      "fail": "Regnsensoren {entity} er ikke tilgjengelig. Til den er tilbake, holder den ikke noe tilbake.",
+      "stuck": "Regnsensoren {entity} har meldt vått i over et døgn uten endring, så ZoneFlow ignorerer den. Sjekk sensoren."
+    }
   },
   "why": {
     "method": "Vanningsmetode: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "middels",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "fordampning etter FAO-56 (ut fra temperaturen, og fuktighet, vind og sol der de måles)",
+    "fao56_inputs": "Gårsdagens FAO-56-referansefordampning: {et0} per dag. Fuktighet: {humidity}; vind: {wind}; sol: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "din sensor",
+      "rh_max": "din sensor",
+      "rh_mean": "din sensor",
+      "measured": "din sensor",
+      "weather": "værtjenesten",
+      "default": "sonens innstilling",
+      "estimated": "anslått ut fra temperaturen",
+      "wu": "Weather Underground-stasjoner i nærheten"
+    },
+    "crop_factor": "Plantefaktor i dag: {kc} ({detail}).",
+    "kc_fixed": "innstillingen Plantefaktor",
+    "kc_curve": "{crop}-sesongen, {stage}-fasen",
+    "kc_stage": {
+      "initial": "start",
+      "development": "utvikling",
+      "mid": "midtsesong",
+      "late": "sen sesong",
+      "after_season": "etter sesongen",
+      "dormant": "hvile",
+      "flat": "hele året"
+    },
+    "kc_adjust_up": "{adj} lagt til for tørt, vindfullt vær",
+    "kc_adjust_down": "{adj} trukket fra for rolig, fuktig vær",
+    "kc_exposure": "{pct} % for solforholdene ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "skygge hele dagen",
+      "morning_sun": "morgensol",
+      "afternoon_sun": "ettermiddagssol",
+      "full_sun": "full sol",
+      "reflected_heat": "reflektert varme"
+    },
+    "kc_needs_planting_date": "Sett plantedatoen for å følge sesongkurven for {crop}; inntil da brukes innstillingen Plantefaktor.",
+    "root_zone": "Rotsone: holder {taw}; planten bruker omtrent {use} om dagen og kan bruke {raw} før den merker tørke.",
+    "root_zone_interval": "Derfor vanner den hver {days}. dag i stedet for hver {tier}.",
+    "root_zone_capped": "En vanning begrenses til {taw}, det rotsonen holder ({capped} mindre enn dagene krever).",
+    "rain_sensor_estimate": "Ingen regnmåler: regnet anslås fra regnsensoren, {rate} for hver time den melder vått (høyst {cap} i døgnet)."
   },
   "suggest": {
     "heading": "Sannsynlige funnet i din Home Assistant:",

@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 总阀已关闭",
+      "message": "{valve} 已出于安全关闭。{reason}在其任一区域按下 Reset Lock 之前，其后的区域都不会浇水。"
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}：未开始",
+      "message": "总阀 {valve} 已出于安全关闭。{reason}修复后请在该区域按下 Reset Lock。"
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} 在浇水结束时未确认已关闭。",
+      "valve_stuck": "{valve} 打开的时间过长。",
+      "flow": "所有区域阀都已关闭，但流量计仍在计数。",
+      "pump_power": "所有区域阀都已关闭，但水泵仍在耗电。",
+      "high_flow": "流过的水远多于 {valve} 的用量：可能有水管破裂。"
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 总阀测试失败",
+      "message": "{valve} 的月度测试发现，关闭时仍有水流或水泵仍在运行。若区域阀卡住，它可能无法截断水流：请检查。"
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}：水量过大",
+      "message": "{valve} 已关闭：每分钟约流过 {rate}，远多于平常的 {expected}。可能有水管破裂或脱落：请在下次浇水前检查。"
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}：流量偏低",
+      "message": "在允许的时间内只给了 {given}，目标为 {target}。请检查过滤器是否堵塞或水压是否偏低。"
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}：流量计未计数",
+      "message": "阀门打开时 {meter} 没有计数，因此本次按时间浇水。请检查流量计。"
+    },
+    "rain": {
+      "title": "🌧️ {cycle} 等待：下雨",
+      "message": "{sensor} 显示潮湿。将每小时检查一次，最多 {hours} 小时，然后等待下一个计划时间。"
+    },
+    "wind": {
+      "title": "💨 {cycle} 等待：大风",
+      "message": "风速为 {wind}，高于上限 {limit}。将每小时检查一次，最多 {hours} 小时，然后等待下一个计划时间。"
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle}自 {time} 起等待：天气够暖后先进行深层浇灌",
     "paused_until": "暂停至 {until}",
     "paused_area": "已暂停：{area} 处于暂停状态时不会浇水",
-    "paused_house": "已暂停：温室 {house} 处于暂停状态时不会浇水"
+    "paused_house": "已暂停：温室 {house} 处于暂停状态时不会浇水",
+    "waiting_rain": "{cycle} 自 {time} 起等待：{sensor} 显示潮湿；每小时再检查一次",
+    "skipped_rain": "{cycle} 于 {time} 跳过：{hours} 次每小时检查后 {sensor} 仍显示潮湿",
+    "waiting_wind": "{cycle} 自 {time} 起等待：风速 {wind}，高于上限（{limit}）；每小时再检查一次",
+    "skipped_wind": "{cycle} 于 {time} 跳过：{hours} 次每小时检查后风速仍高于 {limit}"
   },
   "summary": {
     "title": "💧 ZoneFlow：本周概况",
@@ -319,7 +362,9 @@
       "fail": "雨量计 {entity} 不可用。在恢复之前，ZoneFlow 假定未下雨。",
       "wu": "降雨数据来自 Weather Underground。",
       "manual": "手动添加降雨。",
-      "none": "未配置雨量计。ZoneFlow 假定从不下雨，除非您手动添加降雨或使用 Weather Underground。"
+      "none": "未配置雨量计。ZoneFlow 假定从不下雨，除非您手动添加降雨或使用 Weather Underground。",
+      "sensor": "根据雨量传感器 {entity} 估算降雨：读数为湿时按 {rate} 计。",
+      "sensor_no_rate": "雨量传感器 {entity} 读数为湿时会暂停浇水，但不计算降雨量。没有雨量计时，请设置“雨量传感器降雨强度”，把潮湿时间计为降雨。"
     },
     "temperature": {
       "ok": "室外温度为 {value} {unit}。",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "{crop}的作物曲线从种植日期开始。请设置；在此之前使用“作物系数”设置。"
+    },
+    "root_zone": {
+      "off": "请设置根系深度，使每次浇水不会超过土壤可容纳的量。",
+      "shallow": "根区容纳的水很少（植物感到干旱前仅 {raw}）。即使每天浇水也可能变干：请检查根系深度和区域湿润比例。",
+      "short_dose": "根区需要每天浇水，但一天的用量（{minutes} 分钟）短于最短脉冲（{minimum} 分钟），因此每次浇水都超过土壤可容纳的量。",
+      "deep_soak": "深层浇灌给水 {taw}，即根区可容纳的量，而不是设定的 {target}。"
+    },
+    "master_valve": {
+      "latched": "总阀 {valve} 已出于安全关闭。{reason}修复后请按下 Reset Lock。",
+      "fail": "总阀 {valve} 不可用。",
+      "ok": "总阀 {valve} 有响应。",
+      "test_failed": "总阀 {valve} 未通过 {when} 的月度测试：关闭时仍有水流或水泵仍在运行。 检查后请按“总阀已检查”；下一次例行浇水时会再次测试。",
+      "test_ok": "总阀已通过 {when} 的月度测试。",
+      "test_pending": "总阀每月在一次常规浇水结束时测试一次。",
+      "test_none": "添加流量计或水泵功率传感器，即可每月测试一次总阀。"
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow 无法从 {entity} 的单位（“{unit}”）得出升数。请使用报告体积（L、gal、m³）或流量（L/min、gal/min）的仪表。",
+      "learned": "浇水测得的流速为 {learned}，但“流速”设置为 {setting}。请更新它，使计划时间准确。"
+    },
+    "flow_mode": {
+      "no_meter": "浇水停止依据设为流量计，但该区域没有流量计：将按时间浇水。",
+      "meter_offline": "浇水停止依据设为流量计，但流量计离线：在其恢复前按时间浇水。",
+      "unknown_unit": "浇水停止依据设为流量计，但其单位无法读作水量：将按时间浇水。",
+      "no_area": "浇水停止依据设为流量计，但区域面积未知：请设置区域面积（或区域流量），以便将毫米换算为升。",
+      "shared_meter": "浇水停止依据设为流量计，但该流量计与另一台水泵上可能同时浇水的区域共用：将按时间浇水。"
+    },
+    "wind_hold": {
+      "no_source": "已设置风速上限，但没有风速传感器或天气实体可读取风速，因此它永远不会暂停浇水。请在配置中添加一个。",
+      "off": "有可用的风速来源，但风速上限已关闭（0）。请设置上限，让喷头在大风时等待。"
+    },
+    "rain_sensor": {
+      "ok": "雨量传感器 {entity} 正常上报。",
+      "fail": "雨量传感器 {entity} 不可用。在恢复之前，它不会暂停任何浇水。",
+      "stuck": "雨量传感器 {entity} 已超过一天读数为湿且没有变化，因此 ZoneFlow 会忽略它。请检查传感器。"
+    }
   },
   "why": {
     "method": "浇水方式：{method}。",
@@ -397,7 +480,46 @@
     "soil_ok": "居中",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "按 FAO-56 计算蒸散量（根据温度，以及有测量的湿度、风速和日照）",
+    "fao56_inputs": "昨天的 FAO-56 参考蒸发量：每天 {et0}。湿度：{humidity}；风：{wind}；日照：{solar}。",
+    "fao56_source": {
+      "rh_min_max": "你的传感器",
+      "rh_max": "你的传感器",
+      "rh_mean": "你的传感器",
+      "measured": "你的传感器",
+      "weather": "天气服务",
+      "default": "分区的设置",
+      "estimated": "根据温度估算",
+      "wu": "附近的 Weather Underground 气象站"
+    },
+    "crop_factor": "今日作物系数：{kc}（{detail}）。",
+    "kc_fixed": "“作物系数”设置",
+    "kc_curve": "{crop}的生长季，{stage}阶段",
+    "kc_stage": {
+      "initial": "初期",
+      "development": "发育期",
+      "mid": "中期",
+      "late": "后期",
+      "after_season": "季后",
+      "dormant": "休眠期",
+      "flat": "全年"
+    },
+    "kc_adjust_up": "因干燥多风的天气增加 {adj}",
+    "kc_adjust_down": "因平静湿润的天气减少 {adj}",
+    "kc_exposure": "因日照（{exposure}）调整为 {pct} %",
+    "kc_exposure_name": {
+      "deep_shade": "全天阴凉",
+      "morning_sun": "上午有阳光",
+      "afternoon_sun": "下午有阳光",
+      "full_sun": "全日照",
+      "reflected_heat": "反射热"
+    },
+    "kc_needs_planting_date": "请设置种植日期，以遵循{crop}的生长季曲线；在此之前使用“作物系数”设置。",
+    "root_zone": "根区：可容纳 {taw}；植物每天约用 {use}，在感到干旱前可用 {raw}。",
+    "root_zone_interval": "因此每 {days} 天浇水一次，而不是每 {tier} 天。",
+    "root_zone_capped": "每次浇水上限为 {taw}，即根区可容纳的量（比按天数计算少 {capped}）。",
+    "rain_sensor_estimate": "没有雨量计：根据雨量传感器估算降雨，读数为湿的每小时按 {rate} 计（每天最多 {cap}）。"
   },
   "suggest": {
     "heading": "在您的 Home Assistant 中找到的匹配项：",

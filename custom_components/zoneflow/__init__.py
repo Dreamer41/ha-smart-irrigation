@@ -398,6 +398,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await controller.async_setup()
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await controller.async_method_changed()  # the sliders exist now (1.8: the wetted share)
     # Hide what this zone doesn't use (see visibility.py).
     await visibility.async_apply(hass, entry, controller)
     # The zone's plant: its record and history (plants.py).
@@ -468,12 +469,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             zone = _resolve_controller(hass, call) if (
                 call.data.get(ATTR_DEVICE_ID) or call.data.get(ATTR_ENTITY_ID)
             ) else None
+            if zone is not None and zone.run_in_progress:
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")  # moving a zone reloads it
             data = {"name": name, **(location.area_defaults(zone) if zone is not None else {})}
             result = await hass.config_entries.flow.async_init(
                 DOMAIN, context={"source": "area_create"}, data=data
             )
+            created = result.get("result") if result.get("type") == "create_entry" else None
+            if created is None:
+                raise ServiceValidationError(translation_domain=DOMAIN, translation_key="area_name_exists")
             if zone is not None:
-                await location.async_set(hass, zone.entry, location.AREA_PREFIX + result["result"].entry_id)
+                await location.async_set(hass, zone.entry, location.AREA_PREFIX + created.entry_id)
 
         hass.services.async_register(DOMAIN, SERVICE_CREATE_AREA, _handle_create_area, schema=CREATE_AREA_SCHEMA)
 

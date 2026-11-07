@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
           "routine_sun_mode": "Peruskastelun ajoitus",
           "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
-          "unit_system": "Yksiköt"
+          "unit_system": "Yksiköt",
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "rain_sensor_entity": "Sadeanturi (valinnainen)",
+          "rain_sensor_inverted": "Anturi on päällä, kun on kuivaa",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)",
+          "wind_exposure": "Tuuli tässä paikassa (ei tuuliantureita)",
+          "climate_dryness": "Ilmasto (ei kosteusanturia)",
+          "coastal": "Meren rannalla (ei aurinkoanturia)",
+          "wind_sensor_height_m": "Tuuliantureen korkeus",
+          "master_valve_entity": "Pääventtiili (valinnainen)",
+          "master_valve_normally_open": "Pääventtiili on normaalisti auki"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
           "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
-          "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää."
+          "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää.",
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "rain_sensor_entity": "Märkä/kuiva-anturi (päällä = märkä). Kun se näyttää märkää, erääntynyt kastelu odottaa ja tarkistaa uudelleen tunnin välein; Kastele nyt -painike kastelee silti.",
+          "rain_sensor_inverted": "Rastita, jos anturi on päällä kuivalla ja pois päältä märällä.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta.",
+          "wind_exposure": "Käytetään, kun ei ole tuuliantureita eikä sääpalvelun tuulta: suojaisa, avoin tai alttiina.",
+          "climate_dryness": "Käytetään, kun kosteuslukemaa ei ole: kostea tai kuiva (kuivat ja puolikuivat alueet).",
+          "coastal": "Käytetään, kun aurinkolukemaa ei ole: rannikon lähellä auringonpaiste arvioidaan hieman korkeammaksi.",
+          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili.",
+          "master_valve_normally_open": "Jätä pois päältä normaalisti suljetulle venttiilille (suositus: se sulkeutuu itsestään sähkökatkossa). Kytke päälle normaalisti avoimelle releohjatulle venttiilille: ZoneFlow sulkee sen silloin kytkemällä releen PÄÄLLE. Venttiilientiteetti kertoo itse olevansa auki tai kiinni eikä käytä tätä."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Syväkastelun käynnistys",
           "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
           "routine_sun_mode": "Rutiinikastelun käynnistys",
-          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)"
+          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)",
+          "master_valve_entity": "Pääventtiili (valinnainen)",
+          "master_valve_normally_open": "Pääventtiili on normaalisti auki"
         },
         "data_description": {
           "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, ottaako pumppu todella virtaa, ja varoittaa, jos se ei ota. Jätä tyhjäksi, jos sellaista ei ole.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
-          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili.",
+          "master_valve_normally_open": "Jätä pois päältä normaalisti suljetulle venttiilille (suositus: se sulkeutuu itsestään sähkökatkossa). Kytke päälle normaalisti avoimelle releohjatulle venttiilille: ZoneFlow sulkee sen silloin kytkemällä releen PÄÄLLE. Venttiilientiteetti kertoo itse olevansa auki tai kiinni eikä käytä tätä."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground -sade (kokeellinen)",
-        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemia käytetään vain sadehyvitykseen. Ne eivät ole 100 % tarkkoja, ja sitä epätarkempia, mitä kauempana asemat ovat vyöhykkeistäsi.",
+        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemat eivät ole 100 % tarkkoja, ja sitä vähemmän mitä kauempana asemat ovat vyöhykkeistäsi. Sadetta käytetään sadehyvitykseen; tuulta, kosteutta ja auringonpaistetta vain alla olevalla valinnalla.",
         "data": {
           "api_key": "API-avain",
-          "radius_km": "Hakusäde"
+          "radius_km": "Hakusäde",
+          "borrow_climate": "Lainaa myös tuuli, kosteus ja auringonpaiste"
         },
         "data_description": {
           "api_key": "Weather Underground -tilisi API-avaimet-kohdasta. Tallennetaan vain tähän merkintään.",
-          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi."
+          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi.",
+          "borrow_climate": "FAO-56-vesiarvioon ulkovyöhykkeille, joilla ei ole niille anturia eikä sääentiteettiä. Hakee 30 minuutin välein 2 tunnin sijaan. Tuuli katsotaan mitatuksi vyöhykkeen Tuulianturin korkeudella."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Sademittarin mm/kippaus",
           "outdoor_temp_entity": "Ulkolämpötila-anturi",
           "weather_entity": "Sääentiteetti (ennuste)",
-          "notify_entity": "Ilmoituspuhelin"
+          "notify_entity": "Ilmoituspuhelin",
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "rain_sensor_entity": "Sadeanturi (valinnainen)",
+          "rain_sensor_inverted": "Anturi on päällä, kun on kuivaa",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)"
         },
         "data_description": {
           "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
@@ -267,7 +300,12 @@
           "weather_entity": "Valinnainen. Sallii tämän alueen vyöhykkeiden ohittaa kastelun, kun sadetta on ennustettu.",
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
-          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta.",
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "rain_sensor_entity": "Märkä/kuiva-anturi (päällä = märkä). Kun se näyttää märkää, erääntynyt kastelu odottaa ja tarkistaa uudelleen tunnin välein; Kastele nyt -painike kastelee silti.",
+          "rain_sensor_inverted": "Rastita, jos anturi on päällä kuivalla ja pois päältä märällä.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
       "area_name_required": "Anna alueelle nimi.",
       "area_name_exists": "Alue tällä nimellä on jo olemassa.",
-      "flow_rate_out_of_range": "Näillä luvuilla virtaama on sellainen, jota tällä vyöhykkeellä ei voi olla. Tarkista suuttimien määrä, yhden suuttimen virtaama ja ala."
+      "flow_rate_out_of_range": "Näillä luvuilla virtaama on sellainen, jota tällä vyöhykkeellä ei voi olla. Tarkista suuttimien määrä, yhden suuttimen virtaama ja ala.",
+      "master_is_zone_valve": "Pääventtiilin on oltava eri venttiili kuin vyöhykkeiden omat venttiilit.",
+      "valve_is_a_master": "Tämä venttiili on toisen vyöhykkeen pääventtiili."
     },
     "abort": {
       "already_configured": "Weather Underground -sade on jo otettu käyttöön."
@@ -380,7 +420,18 @@
           "deep_soak_sun_offset_minutes": "Syväkastelun siirtymä auringosta (minuuttia)",
           "routine_sun_mode": "Peruskastelun ajoitus",
           "routine_sun_offset_minutes": "Peruskastelun siirtymä auringosta (minuuttia)",
-          "unit_system": "Yksiköt"
+          "unit_system": "Yksiköt",
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "rain_sensor_entity": "Sadeanturi (valinnainen)",
+          "rain_sensor_inverted": "Anturi on päällä, kun on kuivaa",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)",
+          "wind_exposure": "Tuuli tässä paikassa (ei tuuliantureita)",
+          "climate_dryness": "Ilmasto (ei kosteusanturia)",
+          "coastal": "Meren rannalla (ei aurinkoanturia)",
+          "wind_sensor_height_m": "Tuuliantureen korkeus",
+          "master_valve_entity": "Pääventtiili (valinnainen)",
+          "master_valve_normally_open": "Pääventtiili on normaalisti auki"
         },
         "data_description": {
           "valve_entity": "Kytkin, joka avaa tämän vyöhykkeen venttiilin (tai käynnistää sen pumpun). Ainoa, jota ilman ZoneFlow ei toimi: ZoneFlow kytkee sen päälle ja pois ja varmistaa aina, että se jää lopuksi pois päältä.",
@@ -408,7 +459,18 @@
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
           "routine_sun_mode": "Aloita peruskastelu yllä olevaan kellonaikaan tai ennen tai jälkeen auringonnousun tai -laskun, jolloin se siirtyy vuodenaikojen mukana.",
           "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen auringonnousua tai -laskua tai sen jälkeen. Ei käytetä kiinteän kellonajan kanssa.",
-          "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää."
+          "unit_system": "Miten tämä vyöhyke näyttää arvot: Home Assistantin mukaan tai aina metrisinä (mm, °C, litrat) tai imperiaalisina (tuumat, °F, gallonat). Tämä muuttaa vain sitä, mitä näet, ei koskaan kastelumäärää.",
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "rain_sensor_entity": "Märkä/kuiva-anturi (päällä = märkä). Kun se näyttää märkää, erääntynyt kastelu odottaa ja tarkistaa uudelleen tunnin välein; Kastele nyt -painike kastelee silti.",
+          "rain_sensor_inverted": "Rastita, jos anturi on päällä kuivalla ja pois päältä märällä.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta.",
+          "wind_exposure": "Käytetään, kun ei ole tuuliantureita eikä sääpalvelun tuulta: suojaisa, avoin tai alttiina.",
+          "climate_dryness": "Käytetään, kun kosteuslukemaa ei ole: kostea tai kuiva (kuivat ja puolikuivat alueet).",
+          "coastal": "Käytetään, kun aurinkolukemaa ei ole: rannikon lähellä auringonpaiste arvioidaan hieman korkeammaksi.",
+          "wind_sensor_height_m": "Kuinka korkealla tuuliantureita on. Kotisääasemat ovat yleensä noin 2 m korkeudella.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili.",
+          "master_valve_normally_open": "Jätä pois päältä normaalisti suljetulle venttiilille (suositus: se sulkeutuu itsestään sähkökatkossa). Kytke päälle normaalisti avoimelle releohjatulle venttiilille: ZoneFlow sulkee sen silloin kytkemällä releen PÄÄLLE. Venttiilientiteetti kertoo itse olevansa auki tai kiinni eikä käytä tätä."
         }
       },
       "flow_rate": {
@@ -498,7 +560,9 @@
           "deep_soak_sun_mode": "Syväkastelun käynnistys",
           "deep_soak_sun_offset_minutes": "Syväkastelun aurinkosiirtymä (minuuttia)",
           "routine_sun_mode": "Rutiinikastelun käynnistys",
-          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)"
+          "routine_sun_offset_minutes": "Rutiinikastelun aurinkosiirtymä (minuuttia)",
+          "master_valve_entity": "Pääventtiili (valinnainen)",
+          "master_valve_normally_open": "Pääventtiili on normaalisti auki"
         },
         "data_description": {
           "pump_power_entity": "Pumpun tehoanturi (W), esim. älypistorasiasta. Jokaisen kastelun aikana ZoneFlow tarkistaa, ottaako pumppu todella virtaa, ja varoittaa, jos se ei ota. Jätä tyhjäksi, jos sellaista ei ole.",
@@ -518,19 +582,23 @@
           "deep_soak_sun_mode": "Käynnistä syväkastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
           "deep_soak_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
           "routine_sun_mode": "Käynnistä rutiinikastelu yllä olevana kiinteänä aikana tai ennen/jälkeen auringonnousun tai -laskun, jotta se joustaa vuodenaikojen mukaan.",
-          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa."
+          "routine_sun_offset_minutes": "Kuinka monta minuuttia ennen tai jälkeen auringonnousun tai -laskun. Ei käytössä kiinteän ajan kanssa.",
+          "master_valve_entity": "Varasulkuventtiili tämän vyöhykkeen edellä, esimerkiksi usean vyöhykkeen yhteisen pumpun jälkeen. Se avautuu jokaisen kastelun alkaessa ja sulkeutuu, kun viimeinen päättyy. Se sulkeutuu myös turvallisuussyistä, Reset Lock -painallukseen asti, jos vyöhykeventtiili jää auki tai vesi virtaa yhä (virtausmittari) tai pumppu käy yhä (pumpun teho), kun kaikki vyöhykeventtiilit ovat kiinni. Anna kaikille sen takana oleville vyöhykkeille sama venttiili.",
+          "master_valve_normally_open": "Jätä pois päältä normaalisti suljetulle venttiilille (suositus: se sulkeutuu itsestään sähkökatkossa). Kytke päälle normaalisti avoimelle releohjatulle venttiilille: ZoneFlow sulkee sen silloin kytkemällä releen PÄÄLLE. Venttiilientiteetti kertoo itse olevansa auki tai kiinni eikä käytä tätä."
         }
       },
       "wu_key": {
         "title": "Weather Underground -sade (kokeellinen)",
-        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemia käytetään vain sadehyvitykseen. Ne eivät ole 100 % tarkkoja, ja sitä epätarkempia, mitä kauempana asemat ovat vyöhykkeistäsi.",
+        "description": "Hakee sadelukemat kotisi lähellä olevilta yksityisiltä sääasemilta ulkovyöhykkeille, joilla EI ole sademittaria. Onko sinulla sademittari? Tätä ei tarvita.\n\n**Tarkista ensin** wunderground.com-sivuston kartalta, onko puutarhasi lähellä asemia, jotka raportoivat sadetta. Jos ei ole, lopeta tähän.\n\n**Toiseksi**, ilmainen API-avain edellyttää omaa asemaa: rekisteröi asema wunderground.comiin ja lähetä sinne vähintään ulkolämpötila ja ilmankosteus (esimerkiksi ha-weather-uploader-integraatiolla). API-avain löytyy sen jälkeen Weather Underground -tililtäsi.\n\nLukemat eivät ole 100 % tarkkoja, ja sitä vähemmän mitä kauempana asemat ovat vyöhykkeistäsi. Sadetta käytetään sadehyvitykseen; tuulta, kosteutta ja auringonpaistetta vain alla olevalla valinnalla.",
         "data": {
           "api_key": "API-avain",
-          "radius_km": "Hakusäde"
+          "radius_km": "Hakusäde",
+          "borrow_climate": "Lainaa myös tuuli, kosteus ja auringonpaiste"
         },
         "data_description": {
           "api_key": "Weather Underground -tilisi API-avaimet-kohdasta. Tallennetaan vain tähän merkintään.",
-          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi."
+          "radius_km": "0,5–2 km, lähempi on parempi: sade voi vaihdella paljon parin kilometrin matkalla. Yli 1 km:n päässä seuraa, vastaavatko lukemat sadetta luonasi.",
+          "borrow_climate": "FAO-56-vesiarvioon ulkovyöhykkeille, joilla ei ole niille anturia eikä sääentiteettiä. Hakee 30 minuutin välein 2 tunnin sijaan. Tuuli katsotaan mitatuksi vyöhykkeen Tuulianturin korkeudella."
         }
       },
       "wu_stations": {
@@ -608,13 +676,21 @@
           "rain_counter_entity": "Käytä alueen sademittaria",
           "outdoor_temp_entity": "Käytä alueen ulkolämpötilaa",
           "weather_entity": "Käytä alueen sääentiteettiä",
-          "notify_entity": "Käytä alueen puhelinta"
+          "notify_entity": "Käytä alueen puhelinta",
+          "humidity_entity": "Käytä alueen kosteusanturia",
+          "wind_entity": "Käytä alueen tuuliantureita",
+          "rain_sensor_entity": "Käytä alueen sadeanturia",
+          "solar_entity": "Käytä alueen aurinkoanturia"
         },
         "data_description": {
           "rain_counter_entity": "Rastita käyttääksesi alueen sademittaria tämän vyöhykkeen oman sijaan.",
           "outdoor_temp_entity": "Rastita käyttääksesi alueen ulkolämpötila-anturia tämän vyöhykkeen oman sijaan.",
           "weather_entity": "Rastita käyttääksesi alueen sääentiteettiä tämän vyöhykkeen oman sijaan.",
-          "notify_entity": "Rastita lähettääksesi alueen puhelimeen tämän vyöhykkeen oman sijaan."
+          "notify_entity": "Rastita lähettääksesi alueen puhelimeen tämän vyöhykkeen oman sijaan.",
+          "humidity_entity": "Valitse, jos haluat käyttää alueen kosteusanturia tämän vyöhykkeen omansa sijaan.",
+          "wind_entity": "Valitse, jos haluat käyttää alueen tuuliantureita tämän vyöhykkeen omansa sijaan.",
+          "rain_sensor_entity": "Rastita, jos haluat käyttää alueen sadeanturia vyöhykkeen oman sijaan.",
+          "solar_entity": "Valitse, jos haluat käyttää alueen aurinkoanturia tämän vyöhykkeen omansa sijaan."
         }
       },
       "new_area": {
@@ -627,7 +703,12 @@
           "area_rain_mm_per_tip": "Sademittarin mm/kippaus",
           "outdoor_temp_entity": "Ulkolämpötila-anturi",
           "weather_entity": "Sääentiteetti (ennuste)",
-          "notify_entity": "Ilmoituspuhelin"
+          "notify_entity": "Ilmoituspuhelin",
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "rain_sensor_entity": "Sadeanturi (valinnainen)",
+          "rain_sensor_inverted": "Anturi on päällä, kun on kuivaa",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)"
         },
         "data_description": {
           "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
@@ -636,7 +717,12 @@
           "weather_entity": "Valinnainen. Sallii tämän alueen vyöhykkeiden ohittaa kastelun, kun sadetta on ennustettu.",
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
-          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta.",
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "rain_sensor_entity": "Märkä/kuiva-anturi (päällä = märkä). Kun se näyttää märkää, erääntynyt kastelu odottaa ja tarkistaa uudelleen tunnin välein; Kastele nyt -painike kastelee silti.",
+          "rain_sensor_inverted": "Rastita, jos anturi on päällä kuivalla ja pois päältä märällä.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta."
         }
       },
       "area_settings": {
@@ -649,7 +735,12 @@
           "area_rain_mm_per_tip": "Sademittarin mm/kippaus",
           "outdoor_temp_entity": "Ulkolämpötila-anturi",
           "weather_entity": "Sääentiteetti (ennuste)",
-          "notify_entity": "Ilmoituspuhelin"
+          "notify_entity": "Ilmoituspuhelin",
+          "humidity_entity": "Ulkoilman kosteusanturi (valinnainen)",
+          "wind_entity": "Tuulennopeusanturi (valinnainen)",
+          "rain_sensor_entity": "Sadeanturi (valinnainen)",
+          "rain_sensor_inverted": "Anturi on päällä, kun on kuivaa",
+          "solar_entity": "Auringonsäteilyanturi (valinnainen)"
         },
         "data_description": {
           "rain_counter_entity": "Valinnainen. Tämän alueen vyöhykkeet lukevat sade-edensa siitä, ellei vyöhykkeellä ole omaa mittaria.",
@@ -658,7 +749,12 @@
           "weather_entity": "Valinnainen. Sallii tämän alueen vyöhykkeiden ohittaa kastelun, kun sadetta on ennustettu.",
           "notify_entity": "Valinnainen. Mihin tämän alueen vyöhykkeet lähettävät puhelinviestinsä.",
           "area_name": "Mitä aluetta kutsutaan, esimerkiksi Takapiha tai Etupiha.",
-          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta."
+          "rain_source_type": "Mitä sademittarianturi ilmoittaa: kippaussensori, kokonaissademäärä, sateen voimakkuus tai sade viime lukemasta.",
+          "humidity_entity": "Ulkoilman suhteellinen kosteus. Saa FAO-56-arvion seuraamaan kuivia ja kosteita päiviä.",
+          "wind_entity": "Tuulen nopeus ulkona. Tuuliset päivät kuivattavat kasveja nopeammin; ilman anturia käytetään paikalle tyypillistä tuulta.",
+          "rain_sensor_entity": "Märkä/kuiva-anturi (päällä = märkä). Kun se näyttää märkää, erääntynyt kastelu odottaa ja tarkistaa uudelleen tunnin välein; Kastele nyt -painike kastelee silti.",
+          "rain_sensor_inverted": "Rastita, jos anturi on päällä kuivalla ja pois päältä märällä.",
+          "solar_entity": "Auringonvalo yksikössä W/m². Ilman anturia auringonpaiste arvioidaan päivän lämpötilavaihtelusta."
         }
       }
     },
@@ -688,7 +784,9 @@
       "wu_pick_1_to_3": "Valitse 1, 2 tai 3 asemaa.",
       "greenhouse_has_crops": "Tässä kasvihuoneessa on kasveja. Siirrä ne toiseen kasvihuoneeseen tai poista ne ensin (kunkin kasvin Määritä -> Kasvihuone).",
       "area_name_required": "Anna alueelle nimi.",
-      "area_name_exists": "Alue tällä nimellä on jo olemassa."
+      "area_name_exists": "Alue tällä nimellä on jo olemassa.",
+      "master_is_zone_valve": "Pääventtiilin on oltava eri venttiili kuin vyöhykkeiden omat venttiilit.",
+      "valve_is_a_master": "Tämä venttiili on toisen vyöhykkeen pääventtiili."
     }
   },
   "selector": {
@@ -788,6 +886,19 @@
         "total_mm": "Sademäärän summa (mm tai in; kokonais-, päivä- tai viikkosumma)",
         "rate_mm_h": "Sateen voimakkuus (mm/h)",
         "amount_mm": "Sade lukemaa kohden (mm tai in; esim. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Suojaisa (muurit, pensasaidat)",
+        "open": "Avoin",
+        "exposed": "Alttiina (kukkulan laki, rannikko, katto)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Kostea",
+        "dry": "Kuiva (kuiva tai puolikuiva)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "Venttiilin oma ajastin"
+      },
+      "kc_curve_pct": {
+        "name": "Kasvikäyrän voimakkuus"
+      },
+      "root_depth_mm": {
+        "name": "Juurten syvyys"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Maan vedenpidätyskyky"
+      },
+      "allowed_depletion_pct": {
+        "name": "Sallittu maan kuivuminen"
+      },
+      "wetted_area_pct": {
+        "name": "Kasteltu osuus vyöhykkeestä"
+      },
+      "zone_area_m2": {
+        "name": "Vyöhykkeen pinta-ala"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Virtaustilan aikavara"
+      },
+      "wind_hold_kmh": {
+        "name": "Tuuliraja"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Sadeanturin sademäärä"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Palauta automatiikka"
+      },
+      "master_valve_checked": {
+        "name": "Pääventtiili tarkistettu"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Itsesäätö"
+      },
+      "kc_climate_adjust": {
+        "name": "Kasvikerroin seuraa ilmastoa"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Venttiilin pisin aukioloaika"
+      },
+      "crop_factor": {
+        "name": "Kasvikerroin tänään"
+      },
+      "root_zone": {
+        "name": "Juuristovyöhyke pidättää"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Vedentarvemalli",
         "state": {
           "temperature_tiers": "Lämpötilaportaat",
-          "et_curve": "ET-käyrä (Hargreaves)"
+          "et_curve": "ET-käyrä (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Kastele loppuun",
           "stop": "Pysäytä märkärajalla"
+        }
+      },
+      "crop_curve": {
+        "name": "Kasvikäyrä",
+        "state": {
+          "fixed": "Kiinteä (Kasvikerroin-liukusäädin)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Auringonvalo",
+        "state": {
+          "deep_shade": "Varjossa koko päivän",
+          "morning_sun": "Aamuaurinko",
+          "afternoon_sun": "Iltapäiväaurinko",
+          "full_sun": "Täysi aurinko",
+          "reflected_heat": "Heijastuva lämpö (seinä tai kiveys)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Kastelu päättyy",
+        "state": {
+          "time": "Suunnitellun ajan mukaan",
+          "flow_meter": "Virtausmittarin mukaan"
         }
       }
     },
@@ -1892,7 +2118,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa."
+          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa.",
+          "zone_busy": "Vyöhyke on varattu. Yritä hetken kuluttua uudelleen."
         }
       }
     },
@@ -1912,7 +2139,8 @@
           }
         },
         "abort": {
-          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa."
+          "zone_gone": "Tätä vyöhykettä ei ole enää olemassa.",
+          "zone_busy": "Vyöhyke on varattu. Yritä hetken kuluttua uudelleen."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: sen alue poistettiin",
       "description": "Alue {area} poistettiin, joten {zone} käyttää nyt sen antureiden kopiota. Voit sijoittaa sen toiselle alueelle valitsemalla vyöhykkeen Määritä -> Missä tämä on?"
+    },
+    "fao56_offer": {
+      "title": "{zone}: vaihdetaanko FAO-56-vesiarvioon?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Vaihda {zone} FAO-56:een",
+            "description": "Vyöhykkeellä {zone} on kahden viikon FAO-56-päivät tallessa. Nyt se kastelee nykyisen mallinsa mukaan {current} viikossa; FAO-56 antaa samoista kahdesta viikosta {fao56} viikossa (lämpötila sekä kosteus, tuuli ja aurinko, kun ne ovat käytössä). FAO-56 antaa yleensä vähemmän kosteassa säässä ja enemmän kuivina, tuulisina päivinä. Vaihdetaanko tämä vyöhyke FAO-56:een? Voit vaihtaa takaisin milloin tahansa asetuksella Vedentarvemalli."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: sadeanturi jumissa",
+      "description": "Vyöhykkeen {zone} sadeanturi {entity} on näyttänyt märkää yli vuorokauden muuttumatta, joten ZoneFlow ohittaa sen. Tarkista anturi: se voi olla likainen tai rikki. Tämä poistuu itsestään, kun anturi näyttää kuivaa."
     }
   }
 }

@@ -52,7 +52,18 @@
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "unit_system": "Units"
+          "unit_system": "Units",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height",
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -80,7 +91,18 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
-          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters."
+          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "climate": {
@@ -168,7 +190,9 @@
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
-          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)",
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
@@ -188,7 +212,9 @@
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
-          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "start": {
@@ -202,14 +228,16 @@
       },
       "weather_underground": {
         "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are not 100 % accurate, and less so the further the stations are from your zones. Rain is used for rain deduction; wind, humidity and sunshine only with the option below.",
         "data": {
           "api_key": "API key",
-          "radius_km": "Search radius"
+          "radius_km": "Search radius",
+          "borrow_climate": "Also borrow wind, humidity and sunshine"
         },
         "data_description": {
           "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place.",
+          "borrow_climate": "For the FAO-56 water estimate of outdoor zones that have no sensor and no weather entity for them. Polls every 30 minutes instead of every 2 hours. The wind is taken as measured at the zone's Wind Sensor Height."
         }
       },
       "wu_stations": {
@@ -258,7 +286,12 @@
           "area_rain_mm_per_tip": "Rain gauge mm per tip",
           "outdoor_temp_entity": "Outdoor temperature sensor",
           "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "notify_entity": "Phone to notify",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
@@ -267,7 +300,12 @@
           "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "quick": {
@@ -329,7 +367,9 @@
       "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
       "area_name_required": "Give the area a name.",
       "area_name_exists": "An area with this name already exists.",
-      "flow_rate_out_of_range": "Those numbers give a flow rate this zone cannot have. Check the number of emitters, the flow of one emitter and the area."
+      "flow_rate_out_of_range": "Those numbers give a flow rate this zone cannot have. Check the number of emitters, the flow of one emitter and the area.",
+      "master_is_zone_valve": "The master valve must be a different valve from the zones' own valves.",
+      "valve_is_a_master": "This valve is another zone's master valve."
     },
     "abort": {
       "already_configured": "Weather Underground rain is already set up."
@@ -351,7 +391,9 @@
       "wu_pick_1_to_3": "Pick 1, 2 or 3 stations.",
       "greenhouse_has_crops": "This greenhouse has crops. Move them to another greenhouse or remove them first (each crop's Configure -> Greenhouse).",
       "area_name_required": "Give the area a name.",
-      "area_name_exists": "An area with this name already exists."
+      "area_name_exists": "An area with this name already exists.",
+      "master_is_zone_valve": "The master valve must be a different valve from the zones' own valves.",
+      "valve_is_a_master": "This valve is another zone's master valve."
     },
     "step": {
       "init": {
@@ -397,7 +439,18 @@
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
           "routine_sun_offset_minutes": "Routine sun offset (minutes)",
-          "unit_system": "Units"
+          "unit_system": "Units",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
+          "solar_entity": "Solar radiation sensor (optional)",
+          "wind_exposure": "Wind at this spot (no wind sensor)",
+          "climate_dryness": "Climate (no humidity sensor)",
+          "coastal": "By the sea (no solar sensor)",
+          "wind_sensor_height_m": "Wind sensor height",
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "valve_entity": "The switch that opens this zone's valve (or starts its pump). The only thing ZoneFlow can't work without: it switches it on and off, and always makes sure it ends up off.",
@@ -425,7 +478,18 @@
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
-          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters."
+          "unit_system": "What this zone shows: follow Home Assistant, or always metric (mm, °C, litres) or imperial (inches, °F, gallons). It only changes what you see, never how much it waters.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range.",
+          "wind_exposure": "Used when there is no wind sensor or weather wind: sheltered, open or exposed.",
+          "climate_dryness": "Used when there is no humidity reading: humid, or dry (arid and semi-arid places).",
+          "coastal": "Used when there is no solar reading: sunshine is estimated a little higher near the coast.",
+          "wind_sensor_height_m": "How high the wind sensor sits. Home weather stations are usually about 2 m up.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "flow_rate": {
@@ -515,7 +579,9 @@
           "deep_soak_sun_mode": "Deep soak trigger",
           "deep_soak_sun_offset_minutes": "Deep soak sun offset (minutes)",
           "routine_sun_mode": "Routine trigger",
-          "routine_sun_offset_minutes": "Routine sun offset (minutes)"
+          "routine_sun_offset_minutes": "Routine sun offset (minutes)",
+          "master_valve_entity": "Master valve (optional)",
+          "master_valve_normally_open": "Master valve is normally open"
         },
         "data_description": {
           "pump_power_entity": "A power sensor (W) on the pump, e.g. from a smart plug. During each watering ZoneFlow checks that the pump really draws power, and warns you if it doesn't. Leave empty if you don't have one.",
@@ -535,19 +601,23 @@
           "deep_soak_sun_mode": "Start the deep soak at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
           "deep_soak_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
           "routine_sun_mode": "Start the routine watering at the fixed time above, or before or after sunrise or sunset, so it moves with the seasons.",
-          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time."
+          "routine_sun_offset_minutes": "How many minutes before or after sunrise or sunset. Not used with the fixed time.",
+          "master_valve_entity": "A backup shut-off valve upstream of this zone, for example after a pump shared by several zones. It opens with each watering and closes when the last one ends. It also closes for safety, until Reset Lock, if a zone valve sticks open or water keeps flowing (flow meter) or the pump keeps running (pump power) while every zone valve is closed. Give every zone behind it the same valve.",
+          "master_valve_normally_open": "Leave off for a normally closed valve (recommended: it shuts by itself in a power cut). Turn on for a normally open valve on a relay: ZoneFlow then switches the relay ON to close it. A valve entity reports open and closed itself and ignores this."
         }
       },
       "wu_key": {
         "title": "Weather Underground rain (experimental)",
-        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are only used for rain deduction. They are not 100 % accurate, and less so the further the stations are from your zones.",
+        "description": "Borrows rain readings from private weather stations near your garden, for outdoor zones WITHOUT a rain gauge. Have a rain gauge? You don't need this.\n\n**First**, check the map on wunderground.com for stations within a few km of your garden that report rain. If there are none, stop here.\n\n**Second**, the free API key needs a station of your own: register one on wunderground.com and upload at least outdoor temperature and humidity (for example with the ha-weather-uploader integration). The API key is then in your Weather Underground account.\n\nThe readings are not 100 % accurate, and less so the further the stations are from your zones. Rain is used for rain deduction; wind, humidity and sunshine only with the option below.",
         "data": {
           "api_key": "API key",
-          "radius_km": "Search radius"
+          "radius_km": "Search radius",
+          "borrow_climate": "Also borrow wind, humidity and sunshine"
         },
         "data_description": {
           "api_key": "From your Weather Underground account (API Keys). Stored only in this entry.",
-          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place."
+          "radius_km": "0.5-2 km, nearer is better: rain can differ a lot over a couple of km. Over 1 km, keep an eye on how the readings match the rain at your place.",
+          "borrow_climate": "For the FAO-56 water estimate of outdoor zones that have no sensor and no weather entity for them. Polls every 30 minutes instead of every 2 hours. The wind is taken as measured at the zone's Wind Sensor Height."
         }
       },
       "wu_stations": {
@@ -625,13 +695,21 @@
           "rain_counter_entity": "Use the area's rain gauge",
           "outdoor_temp_entity": "Use the area's outdoor temperature",
           "weather_entity": "Use the area's weather entity",
-          "notify_entity": "Use the area's phone"
+          "notify_entity": "Use the area's phone",
+          "humidity_entity": "Use the area's humidity sensor",
+          "wind_entity": "Use the area's wind sensor",
+          "rain_sensor_entity": "Use the area's rain sensor",
+          "solar_entity": "Use the area's solar sensor"
         },
         "data_description": {
           "rain_counter_entity": "Tick to use the area's rain gauge instead of this zone's own.",
           "outdoor_temp_entity": "Tick to use the area's outdoor temperature sensor instead of this zone's own.",
           "weather_entity": "Tick to use the area's weather entity instead of this zone's own.",
-          "notify_entity": "Tick to send to the area's phone instead of this zone's own."
+          "notify_entity": "Tick to send to the area's phone instead of this zone's own.",
+          "humidity_entity": "Tick to use the area's humidity sensor instead of this zone's own.",
+          "wind_entity": "Tick to use the area's wind sensor instead of this zone's own.",
+          "rain_sensor_entity": "Tick to use the area's rain sensor instead of this zone's own.",
+          "solar_entity": "Tick to use the area's solar sensor instead of this zone's own."
         }
       },
       "new_area": {
@@ -644,7 +722,12 @@
           "area_rain_mm_per_tip": "Rain gauge mm per tip",
           "outdoor_temp_entity": "Outdoor temperature sensor",
           "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "notify_entity": "Phone to notify",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
@@ -653,7 +736,12 @@
           "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       },
       "area_settings": {
@@ -666,7 +754,12 @@
           "area_rain_mm_per_tip": "Rain gauge mm per tip",
           "outdoor_temp_entity": "Outdoor temperature sensor",
           "weather_entity": "Weather entity (forecast)",
-          "notify_entity": "Phone to notify"
+          "notify_entity": "Phone to notify",
+          "humidity_entity": "Outdoor humidity sensor (optional)",
+          "wind_entity": "Wind speed sensor (optional)",
+          "rain_sensor_entity": "Rain sensor (optional)",
+          "rain_sensor_inverted": "Sensor reads on when dry",
+          "solar_entity": "Solar radiation sensor (optional)"
         },
         "data_description": {
           "rain_counter_entity": "Optional. The zones of this area read their rain from it unless a zone has its own gauge.",
@@ -675,7 +768,12 @@
           "weather_entity": "Optional. Lets the zones of this area skip watering when rain is forecast.",
           "notify_entity": "Optional. Where the zones of this area send their phone messages.",
           "area_name": "What the area is called, for example Backyard or Front yard.",
-          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading."
+          "rain_source_type": "What the rain gauge sensor reports: a tip counter, a rain total, a rain rate, or the rain since the last reading.",
+          "humidity_entity": "Relative humidity outside. Makes the FAO-56 water estimate follow dry and humid days.",
+          "wind_entity": "Wind speed outside. Windy days dry plants faster; without it a typical wind for the site is used.",
+          "rain_sensor_entity": "A wet/dry sensor (on = wet). While it reads wet, a due watering waits and checks again every hour; a press of Run Now still waters.",
+          "rain_sensor_inverted": "Tick if the sensor is on when dry and off when wet.",
+          "solar_entity": "Sunlight in W/m². Without it, sunshine is estimated from the day's temperature range."
         }
       }
     },
@@ -788,6 +886,19 @@
         "total_mm": "Rain total (mm or in; lifetime, daily or weekly)",
         "rate_mm_h": "Rain rate (mm/h)",
         "amount_mm": "Rain per reading (mm or in; e.g. Tempest)"
+      }
+    },
+    "wind_exposure": {
+      "options": {
+        "sheltered": "Sheltered (walls, hedges)",
+        "open": "Open",
+        "exposed": "Exposed (hilltop, coast, roof)"
+      }
+    },
+    "climate_dryness": {
+      "options": {
+        "humid": "Humid",
+        "dry": "Dry (arid or semi-arid)"
       }
     }
   },
@@ -1020,6 +1131,33 @@
       },
       "valve_timer_minutes": {
         "name": "My Valve's Own Timer"
+      },
+      "kc_curve_pct": {
+        "name": "Crop Curve Strength"
+      },
+      "root_depth_mm": {
+        "name": "Root Depth"
+      },
+      "soil_holding_mm_per_m": {
+        "name": "Soil Water-Holding Capacity"
+      },
+      "allowed_depletion_pct": {
+        "name": "Allowed Soil Drying"
+      },
+      "wetted_area_pct": {
+        "name": "Wetted Share of the Zone"
+      },
+      "zone_area_m2": {
+        "name": "Zone Area"
+      },
+      "flow_time_allowance_pct": {
+        "name": "Flow Mode Time Allowance"
+      },
+      "wind_hold_kmh": {
+        "name": "Wind Limit"
+      },
+      "rain_sensor_mm_per_hour": {
+        "name": "Rain Sensor Rain Rate"
       }
     },
     "datetime": {
@@ -1084,6 +1222,9 @@
       },
       "resume_automatic": {
         "name": "Resume Automatic"
+      },
+      "master_valve_checked": {
+        "name": "Master valve checked"
       }
     },
     "binary_sensor": {
@@ -1121,6 +1262,9 @@
       },
       "self_tuning": {
         "name": "Self-Tuning"
+      },
+      "kc_climate_adjust": {
+        "name": "Crop Factor Follows Climate"
       }
     },
     "sensor": {
@@ -1230,6 +1374,12 @@
       },
       "longest_valve_open": {
         "name": "Longest Valve Open Time"
+      },
+      "crop_factor": {
+        "name": "Crop Factor Today"
+      },
+      "root_zone": {
+        "name": "Root Zone Holds"
       }
     },
     "select": {
@@ -1299,7 +1449,8 @@
         "name": "Water Demand Model",
         "state": {
           "temperature_tiers": "Temperature tiers",
-          "et_curve": "ET curve (Hargreaves)"
+          "et_curve": "ET curve (Hargreaves)",
+          "fao56": "FAO-56 (Penman-Monteith)"
         }
       },
       "mulch_status": {
@@ -1381,6 +1532,81 @@
         "state": {
           "finish": "Finish the watering",
           "stop": "Stop at the wet level"
+        }
+      },
+      "crop_curve": {
+        "name": "Crop Curve",
+        "state": {
+          "fixed": "Fixed (Crop Factor slider)",
+          "tomato": "Tomato",
+          "pepper": "Pepper (sweet and chili)",
+          "eggplant": "Eggplant",
+          "cucumber": "Cucumber",
+          "watermelon": "Watermelon",
+          "cantaloupe": "Cantaloupe",
+          "melon": "Melon (sweet)",
+          "pumpkin": "Pumpkin and winter squash",
+          "squash": "Squash and zucchini",
+          "lettuce": "Lettuce",
+          "spinach": "Spinach",
+          "brassica": "Cabbage family (cabbage, broccoli, cauliflower, kale)",
+          "carrot": "Carrot",
+          "radish": "Radish",
+          "celery": "Celery",
+          "garlic": "Garlic",
+          "onion_green": "Green onion",
+          "onion": "Onion family",
+          "sweet_potato": "Sweet potato",
+          "potato": "Potato",
+          "beet": "Beet",
+          "turnip": "Turnip and rutabaga",
+          "parsnip": "Parsnip",
+          "pea": "Pea (fresh)",
+          "bean": "Bean (green)",
+          "sweet_corn": "Sweet corn",
+          "strawberry": "Strawberry",
+          "mint": "Mint",
+          "artichoke": "Artichoke",
+          "asparagus": "Asparagus",
+          "berries": "Berry bushes",
+          "grapes": "Grapes (table)",
+          "avocado": "Avocado",
+          "citrus": "Citrus",
+          "olive": "Olive",
+          "apple": "Apple, pear and cherry",
+          "stone_fruit": "Peach, apricot and plum",
+          "almond": "Almond",
+          "walnut": "Walnut",
+          "pistachio": "Pistachio",
+          "kiwi": "Kiwi",
+          "banana": "Banana (second year)",
+          "palm": "Palm",
+          "coffee": "Coffee",
+          "cacao": "Cacao",
+          "conifer": "Conifer trees",
+          "turf_cool": "Lawn, cool-season grass",
+          "mango": "Mango",
+          "guava": "Guava",
+          "papaya": "Papaya",
+          "basil": "Basil",
+          "turf_warm": "Lawn, warm-season grass"
+        }
+      },
+      "sun_exposure": {
+        "name": "Sun Exposure",
+        "state": {
+          "deep_shade": "Shade all day",
+          "morning_sun": "Morning sun",
+          "afternoon_sun": "Afternoon sun",
+          "full_sun": "Full sun",
+          "reflected_heat": "Reflected heat (wall or paving)"
+        }
+      },
+      "delivery_mode": {
+        "name": "Watering Stops On",
+        "state": {
+          "time": "Planned time",
+          "flow_meter": "Flow meter"
         }
       }
     },
@@ -1896,7 +2122,8 @@
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
         }
       }
     },
@@ -1916,7 +2143,8 @@
           }
         },
         "abort": {
-          "zone_gone": "This zone no longer exists."
+          "zone_gone": "This zone no longer exists.",
+          "zone_busy": "The zone is busy. Try again in a moment."
         }
       }
     },
@@ -1993,6 +2221,21 @@
     "area_removed": {
       "title": "{zone}: its area was removed",
       "description": "The area {area} was deleted, so {zone} now uses a copy of the sensors it got from it. To put it in another area, use the zone's Configure -> Where is this?"
+    },
+    "fao56_offer": {
+      "title": "{zone}: switch to the FAO-56 water estimate?",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Switch {zone} to FAO-56",
+            "description": "{zone} has two weeks of FAO-56 days on record. At the moment it waters {current} a week by its current model; FAO-56 gives {fao56} a week from the same two weeks (temperature, and humidity, wind and sunshine where you have them). FAO-56 usually gives less in humid weather and more on dry, windy days. Switch this zone to FAO-56? You can switch back any time with Water Demand Model."
+          }
+        }
+      }
+    },
+    "rain_sensor_stuck": {
+      "title": "{zone}: rain sensor stuck",
+      "description": "The rain sensor {entity} of zone {zone} has read wet for over a day without a change, so ZoneFlow ignores it. Check the sensor: it may be dirty or broken. This clears by itself once it reads dry."
     }
   }
 }

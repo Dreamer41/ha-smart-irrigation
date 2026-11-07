@@ -23,14 +23,32 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import selector
 from homeassistant.util import slugify
 
-from . import calculations as calc, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic
+from . import calculations as calc, crop_season, greenhouse_logic, location, messages, plant_water, presets, suggest, units, wu_logic, zone_valve
 from .area import AREA_SHARED_KEYS, DEFAULT_AREA_MM_PER_TIP, areas
 
 from .const import (
     CONF_PARENT_ZONE,
+    VALVE_DOMAINS,
+    CONF_CLIMATE_DRYNESS,
+    CONF_COASTAL,
+    CONF_HUMIDITY_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
+    CONF_RAIN_SENSOR_INVERTED,
+    CONF_SOLAR_ENTITY,
+    CONF_WIND_ENTITY,
+    WIND_HOLD_SEED_KMH,
+    CONF_WIND_EXPOSURE,
+    CONF_WIND_SENSOR_HEIGHT_M,
+    CLIMATE_DRYNESS_OPTIONS,
+    DEFAULT_CLIMATE_DRYNESS,
+    DEFAULT_COASTAL,
+    DEFAULT_WIND_EXPOSURE,
+    DEFAULT_WIND_SENSOR_HEIGHT_M,
+    WIND_EXPOSURE_OPTIONS,
     CONF_ENTRY_TYPE,
     CONF_USE_WU,
     CONF_WU_API_KEY,
+    CONF_WU_CLIMATE,
     CONF_WU_RADIUS_KM,
     CONF_WU_STATIONS,
     ENTRY_TYPE_WU,
@@ -46,6 +64,11 @@ from .const import (
     FLOW_MEASURE_MINUTES,
     PLANT_CUSTOM,
     PLANT_OPTIONS,
+    KC_CROP_FOR_PLANT,
+    ROOT_DEPTH_BY_PLANT,
+    SOIL_HOLDING_MM_PER_M,
+    WETTED_SHARE_BY_METHOD,
+    KC_CROP_FOR_PLANT_CLIMATE,
     PLANT_PRESETS,
     CONF_DEEP_SOAK_ENABLED,
     CONF_DEEP_SOAK_SUN_MODE,
@@ -54,6 +77,8 @@ from .const import (
     CONF_DRAINAGE,
     CONF_FLOW_METER_ENTITY,
     CONF_GROWTH_RAMP_PROFILE,
+    CONF_MASTER_VALVE_ENTITY,
+    CONF_MASTER_VALVE_NORMALLY_OPEN,
     CONF_IRRIGATION_METHOD,
     CONF_UNIT_SYSTEM,
     CONF_NOTIFY_ENTITY,
@@ -128,6 +153,11 @@ OPTIONAL_ENTITY_KEYS = (
     CONF_SOIL_MOISTURE_ENTITY,
     CONF_NOTIFY_ENTITY,
     CONF_WEATHER_ENTITY,
+    CONF_HUMIDITY_ENTITY,
+    CONF_WIND_ENTITY,
+    CONF_SOLAR_ENTITY,
+    CONF_MASTER_VALVE_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
 )
 
 
@@ -141,38 +171,38 @@ async def _test_valve(hass, valve: str) -> str:
     closed again, it never reported open, or it did not report closed. Always ends
     by telling the valve to close."""
     state = hass.states.get(valve)
-    if state is None or state.state in ("unavailable", "unknown"):
+    if state is None or zone_valve.is_offline(state):
         return messages.text(hass, "valve_test.unavailable", valve=valve)
-    if state.state == "on":
+    if zone_valve.is_open(state):
         # Someone is watering by hand: leave it exactly as it is.
         return messages.text(hass, "valve_test.already_open", valve=valve)
 
-    async def _reaches(target: str) -> bool:
+    async def _reaches(check) -> bool:
         for _ in range(int(VALVE_TEST_WAIT_SECONDS / 0.25)):
-            current = hass.states.get(valve)
-            if current is not None and current.state == target:
+            if check(hass.states.get(valve)):
                 return True
             await asyncio.sleep(0.25)
         return False
 
     try:
-        await hass.services.async_call("switch", "turn_on", {"entity_id": valve}, blocking=True)
-        opened = await _reaches("on")
+        await zone_valve.async_open(hass, valve)
+        # A valve entity is open once it reports open (not while still opening).
+        opened = await _reaches(lambda s: s is not None and s.state in ("on", "open"))
         if opened:
             await asyncio.sleep(VALVE_TEST_HOLD_SECONDS)
     except asyncio.CancelledError:
         # The flow was cut short (Home Assistant stopping) with the valve open: close it anyway.
-        hass.async_create_task(hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True))
+        hass.async_create_task(zone_valve.async_close(hass, valve))
         raise
     except Exception:  # noqa: BLE001 - a device may raise anything on a lost answer; the valve is closed below
         opened = False
     closed = False
     for _ in range(2):  # told twice before it is called stuck open
         try:
-            await hass.services.async_call("switch", "turn_off", {"entity_id": valve}, blocking=True)
+            await zone_valve.async_close(hass, valve)
         except Exception:  # noqa: BLE001
             continue
-        if await _reaches("off"):
+        if await _reaches(zone_valve.is_closed):
             closed = True
             break
     if not closed:
@@ -218,12 +248,17 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
     rain_counter_key = _optional_entity_key(defaults, CONF_RAIN_COUNTER_ENTITY)
     outdoor_temp_key = _optional_entity_key(defaults, CONF_OUTDOOR_TEMP_ENTITY)
     flow_meter_key = _optional_entity_key(defaults, CONF_FLOW_METER_ENTITY)
+    master_valve_key = _optional_entity_key(defaults, CONF_MASTER_VALVE_ENTITY)
     soil_moisture_key = _optional_entity_key(defaults, CONF_SOIL_MOISTURE_ENTITY)
+    humidity_key = _optional_entity_key(defaults, CONF_HUMIDITY_ENTITY)
+    wind_key = _optional_entity_key(defaults, CONF_WIND_ENTITY)
+    solar_key = _optional_entity_key(defaults, CONF_SOLAR_ENTITY)
+    rain_sensor_key = _optional_entity_key(defaults, CONF_RAIN_SENSOR_ENTITY)
 
     return vol.Schema(
         {
             vol.Required(CONF_VALVE_ENTITY, default=defaults.get(CONF_VALVE_ENTITY)): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="switch")
+                selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
             ),
             pump_power_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
             # Plain text, not an entity selector -- this identifies the
@@ -232,6 +267,11 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             # comment. Blank is a valid, common answer (single-pump/
             # independent-pump setups never need this).
             vol.Optional(CONF_PUMP_ID, default=defaults.get(CONF_PUMP_ID, "")): str,
+            # 1.8: a backup shut-off valve upstream, shared by the zones that name it (master_valve.py).
+            master_valve_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=VALVE_DOMAINS)),
+            vol.Optional(
+                CONF_MASTER_VALVE_NORMALLY_OPEN, default=bool(defaults.get(CONF_MASTER_VALVE_NORMALLY_OPEN, False))
+            ): selector.BooleanSelector(),
             rain_counter_key: selector.EntitySelector(selector.EntitySelectorConfig(domain=["counter", "sensor"])),
             vol.Optional(CONF_RAIN_SOURCE, default=defaults.get(CONF_RAIN_SOURCE) or RAIN_SOURCE_TIPS): selector.SelectSelector(
                 selector.SelectSelectorConfig(options=RAIN_SOURCE_OPTIONS, translation_key="rain_source")
@@ -243,6 +283,24 @@ def _schema(defaults: dict[str, Any]) -> vol.Schema:
             soil_moisture_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor")),
             notify_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="notify")),
             weather_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="weather")),
+            # FAO-56 (1.8): the climate readings, each optional, and what each falls back on.
+            humidity_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="humidity")),
+            wind_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="wind_speed")),
+            rain_sensor_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="binary_sensor")),
+            vol.Optional(CONF_RAIN_SENSOR_INVERTED, default=bool(defaults.get(CONF_RAIN_SENSOR_INVERTED))): bool,
+            solar_key: selector.EntitySelector(selector.EntitySelectorConfig(domain="sensor", device_class="irradiance")),
+            vol.Optional(CONF_WIND_EXPOSURE, default=defaults.get(CONF_WIND_EXPOSURE, DEFAULT_WIND_EXPOSURE)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=WIND_EXPOSURE_OPTIONS, translation_key="wind_exposure")
+            ),
+            vol.Optional(CONF_CLIMATE_DRYNESS, default=defaults.get(CONF_CLIMATE_DRYNESS, DEFAULT_CLIMATE_DRYNESS)): selector.SelectSelector(
+                selector.SelectSelectorConfig(options=CLIMATE_DRYNESS_OPTIONS, translation_key="climate_dryness")
+            ),
+            vol.Optional(CONF_COASTAL, default=defaults.get(CONF_COASTAL, DEFAULT_COASTAL)): selector.BooleanSelector(),
+            vol.Optional(
+                CONF_WIND_SENSOR_HEIGHT_M, default=defaults.get(CONF_WIND_SENSOR_HEIGHT_M, DEFAULT_WIND_SENSOR_HEIGHT_M)
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(min=0.5, max=20.0, step=0.5, unit_of_measurement="m", mode=selector.NumberSelectorMode.BOX)
+            ),
             # Descriptive soil/site metadata -- see const.py's comment on
             # CONF_SOIL_TYPE for why these never drive scheduler logic
             # directly. "unknown"/"flat"/"drip" are always valid answers,
@@ -343,12 +401,19 @@ def _duplicate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | Non
     errors: dict[str, str] = {}
     valve = data.get(CONF_VALVE_ENTITY)
     csv_path = data.get(CONF_CSV_PATH)
+    master = data.get(CONF_MASTER_VALVE_ENTITY)
+    if master and master == valve:
+        errors[CONF_MASTER_VALVE_ENTITY] = "master_is_zone_valve"
     for entry in hass.config_entries.async_entries(DOMAIN):
         if entry.entry_id == exclude_entry_id:
             continue
         other = {**entry.data, **entry.options}
         if valve and CONF_VALVE_ENTITY not in errors and other.get(CONF_VALVE_ENTITY) == valve:
             errors[CONF_VALVE_ENTITY] = "valve_already_used"
+        if valve and CONF_VALVE_ENTITY not in errors and other.get(CONF_MASTER_VALVE_ENTITY) == valve:
+            errors[CONF_VALVE_ENTITY] = "valve_is_a_master"  # another zone's master valve
+        if master and CONF_MASTER_VALVE_ENTITY not in errors and other.get(CONF_VALVE_ENTITY) == master:
+            errors[CONF_MASTER_VALVE_ENTITY] = "master_is_zone_valve"
         if csv_path and CONF_CSV_PATH not in errors and other.get(CONF_CSV_PATH) == csv_path:
             errors[CONF_CSV_PATH] = "csv_path_already_used"
     return errors
@@ -367,6 +432,15 @@ _WATERING_LEAVES_OUT = {
     CONF_NOTIFY_ENTITY,
     CONF_UNIT_SYSTEM,
     CONF_CSV_PATH,
+    CONF_HUMIDITY_ENTITY,
+    CONF_WIND_ENTITY,
+    CONF_SOLAR_ENTITY,
+    CONF_RAIN_SENSOR_ENTITY,
+    CONF_RAIN_SENSOR_INVERTED,
+    CONF_WIND_EXPOSURE,
+    CONF_CLIMATE_DRYNESS,
+    CONF_COASTAL,
+    CONF_WIND_SENSOR_HEIGHT_M,
 }
 
 
@@ -389,7 +463,7 @@ def _devices_schema(defaults: dict[str, Any], *, with_valve: bool) -> vol.Schema
     fields: dict[Any, Any] = {}
     if with_valve:
         fields[_optional_entity_key(defaults, CONF_VALVE_ENTITY)] = selector.EntitySelector(
-            selector.EntitySelectorConfig(domain="switch")
+            selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
         )
     fields[_optional_entity_key(defaults, CONF_INSIDE_TEMP_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
@@ -444,6 +518,13 @@ def _climate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | None 
     return errors
 
 
+async def _set_zone_area(controller, area_m2: float) -> None:
+    """The area a person typed for the flow rate is the zone's area too (1.8: watering by the meter)."""
+    number = controller.numbers.get("zone_area_m2")
+    if number is not None and 0 < area_m2 <= NUMBER_DEFS["zone_area_m2"][2]:
+        await number.async_set_metric_value(round(area_m2, 2))
+
+
 def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     """A new zone's cycle-and-soak starting values from its soil, drainage
     and irrigation method: the pulse-count settings (the minimum; each
@@ -453,11 +534,17 @@ def _site_numbers(data: dict[str, Any]) -> dict[str, float]:
     drainage = data.get(CONF_DRAINAGE, DEFAULT_DRAINAGE)
     count = float(calc.starting_pulse_count(soil, data.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)))
     soak = calc.soak_minutes(soil, drainage)
+    method = data.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
     return {
         "routine_pulse_count": count,
         "deep_soak_pulse_count": count,
         "routine_pulse_rest_minutes": soak,
         "deep_soak_pulse_rest_minutes": soak,
+        # 1.8: the root zone's soil and wetted share.
+        "soil_holding_mm_per_m": SOIL_HOLDING_MM_PER_M.get(soil, SOIL_HOLDING_MM_PER_M[DEFAULT_SOIL_TYPE]),
+        "wetted_area_pct": WETTED_SHARE_BY_METHOD.get(method, 100.0),
+        # 1.8: a sprinkler's wind limit (a new zone only; an older sprinkler zone keeps it off).
+        **({"wind_hold_kmh": WIND_HOLD_SEED_KMH[method]} if method in WIND_HOLD_SEED_KMH else {}),
     }
 
 
@@ -546,6 +633,19 @@ def _area_schema(defaults: dict[str, Any], *, with_name: bool = True) -> vol.Sch
     fields[_optional_entity_key(defaults, CONF_WEATHER_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="weather")
     )
+    fields[_optional_entity_key(defaults, CONF_HUMIDITY_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="humidity")
+    )
+    fields[_optional_entity_key(defaults, CONF_WIND_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="wind_speed")
+    )
+    fields[_optional_entity_key(defaults, CONF_SOLAR_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="sensor", device_class="irradiance")
+    )
+    fields[_optional_entity_key(defaults, CONF_RAIN_SENSOR_ENTITY)] = selector.EntitySelector(
+        selector.EntitySelectorConfig(domain="binary_sensor")
+    )
+    fields[vol.Optional(CONF_RAIN_SENSOR_INVERTED, default=bool(defaults.get(CONF_RAIN_SENSOR_INVERTED)))] = bool
     fields[_optional_entity_key(defaults, CONF_NOTIFY_ENTITY)] = selector.EntitySelector(
         selector.EntitySelectorConfig(domain="notify")
     )
@@ -581,6 +681,8 @@ def _wu_key_schema(defaults: dict[str, Any]) -> vol.Schema:
                     mode=selector.NumberSelectorMode.SLIDER,
                 )
             ),
+            # 1.8: the stations' wind, humidity and sunshine for FAO-56, where a zone has none of its own.
+            vol.Optional(CONF_WU_CLIMATE, default=bool(defaults.get(CONF_WU_CLIMATE, False))): selector.BooleanSelector(),
         }
     )
 
@@ -657,6 +759,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._plant_search = ""  # what was typed to look the plant up
         self._quick = False
         self._lookup_numbers: dict[str, float] = {}  # the weekly targets picked from the lookup
+        self._crops: dict[str, Any] = {}
+        self._lookup_crop: str | None = None  # the crop curve of the picked plant ("" = it has none)
         self._lookup_items: list[dict[str, Any]] = []
         self._lookup_next = None  # the step to go on with after the lookup
 
@@ -750,7 +854,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="crop_valve",
             data_schema=vol.Schema(
-                {vol.Required(CONF_VALVE_ENTITY): selector.EntitySelector(selector.EntitySelectorConfig(domain="switch"))}
+                {vol.Required(CONF_VALVE_ENTITY): selector.EntitySelector(selector.EntitySelectorConfig(domain=VALVE_DOMAINS))}
             ),
             errors=errors,
         )
@@ -794,6 +898,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_WU_API_KEY: self._wu[CONF_WU_API_KEY].strip(),
                         CONF_WU_RADIUS_KM: float(self._wu[CONF_WU_RADIUS_KM]),
                         CONF_WU_STATIONS: stations,
+                        CONF_WU_CLIMATE: bool(self._wu.get(CONF_WU_CLIMATE, False)),
                     },
                 )
         nearest = [s["id"] for s in self._wu_candidates[: wu_logic.MAX_STATIONS]]
@@ -831,6 +936,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return {}
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
+        self._crops = await crop_season.async_crop_seasons(self.hass)  # a new zone's root depth (1.8)
         if user_input is None and not self._menu_done and len(self._menu_options()) > 1:
             return await self.async_step_start()
         errors: dict[str, str] = {}
@@ -941,6 +1047,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._plant == PLANT_CUSTOM and item.get("preset") in PLANT_PRESETS:
             self._plant = item["preset"]
         self._lookup_numbers = self._lookup_starting_numbers(item)
+        self._lookup_crop = item.get("crop_id") or ""
 
     def _lookup_starting_numbers(self, item: dict[str, Any]) -> dict[str, float]:
         """The starting values a picked plant gives: its weekly water (the hot and cool weeks in the
@@ -961,6 +1068,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         going on (nothing is shown when the field was left empty)."""
         self._plant_search = (user_input.get(CONF_PLANT_SEARCH) or "").strip()
         self._lookup_numbers = {}
+        self._lookup_crop = None
         if not self._plant_search:
             return await next_step()
         data = await plant_water.async_get_data(self.hass)
@@ -1072,6 +1180,8 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     _zname, zlo, zhi, _zstep, _zunit = NUMBER_DEFS["zone_flow_l_min"]
                     if zlo < l_per_h / 60 <= zhi:
                         flow_numbers["zone_flow_l_min"] = round(l_per_h / 60, 2)
+                    if 0 < area_m2 <= NUMBER_DEFS["zone_area_m2"][2]:
+                        flow_numbers["zone_area_m2"] = round(area_m2, 2)  # 1.8: litres for watering by the meter
             if not errors:
                 user_input = {k: v for k, v in user_input.items() if k not in ("emitters", "emitter_flow", "area")}
                 data = _schema(defaults)({**defaults, **user_input})
@@ -1091,7 +1201,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_VALVE_ENTITY, description={"suggested_value": valve_default}): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="switch")
+                        selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
                     ),
                     vol.Required(
                         CONF_IRRIGATION_METHOD, default=defaults.get(CONF_IRRIGATION_METHOD, DEFAULT_IRRIGATION_METHOD)
@@ -1119,6 +1229,24 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders={"suggestions": suggest.describe(self.hass, found) or messages.text(self.hass, "setup.nothing_found")},
         )
 
+    def _start_kc_crop(self) -> str:
+        """The crop curve a new zone starts on: the picked plant's crop, else the plant type's (1.8)."""
+        if self._lookup_crop is not None:
+            return self._lookup_crop
+        return KC_CROP_FOR_PLANT_CLIMATE.get((self._plant, self._climate)) or KC_CROP_FOR_PLANT.get(self._plant, "")
+
+    def _root_zone_numbers(self) -> dict[str, float]:
+        """A new zone's Root Depth and Allowed Soil Drying (1.8): from its crop curve (FAO-56 Table 22,
+        the shallow end of the rooting depth), else its plant type; nothing (off) for neither."""
+        crop = self._crops.get(self._start_kc_crop())
+        if crop is not None and crop.root_min_m:
+            numbers = {"root_depth_mm": round(crop.root_min_m * 1000.0 / 50.0) * 50.0}
+            if crop.p:
+                numbers["allowed_depletion_pct"] = round(crop.p * 100.0 / 5.0) * 5.0
+            return numbers
+        depth = ROOT_DEPTH_BY_PLANT.get(self._plant)
+        return {"root_depth_mm": depth} if depth else {}
+
     def _create_outdoor_entry(self, metric: dict[str, float], extra_numbers: dict[str, float] | None = None):
         """The zone, once its settings are known (`metric`: the hot / cool /
         fallback temperatures in degC; `extra_numbers`: more starting values,
@@ -1130,12 +1258,14 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_PLANT: self._plant,
             CONF_CLIMATE: self._climate,
             CONF_INITIAL_NUMBERS: {
-                **plant_numbers, **_site_numbers(self._data), **(self._bundle.get("numbers") or {}),
+                **plant_numbers, **_site_numbers(self._data), **self._root_zone_numbers(),
+                **(self._bundle.get("numbers") or {}),
                 **self._lookup_numbers, **metric, **(extra_numbers or {}),
             },
         }
-        if self._bundle.get("state"):
-            data[CONF_START_STATE] = dict(self._bundle["state"])
+        start_state = {**({"kc_crop": crop} if (crop := self._start_kc_crop()) else {}), **(self._bundle.get("state") or {})}
+        if start_state:
+            data[CONF_START_STATE] = start_state
         if self._zone_type != ZONE_TYPE_OUTDOOR:
             data[CONF_ZONE_TYPE] = self._zone_type
             data[CONF_INITIAL_NUMBERS] = {**self._greenhouse_numbers(), **data[CONF_INITIAL_NUMBERS]}
@@ -1236,7 +1366,7 @@ class ZoneFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     _optional_entity_key({}, CONF_VALVE_ENTITY): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="switch")
+                        selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
                     )
                 }
             ),
@@ -1379,6 +1509,11 @@ class AreaOptionsFlow(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
         # Its own step id: "init" is the zones' Configure menu.
+        if any(
+            getattr(c, "area_entry_id", None) == self._config_entry.entry_id and c.run_in_progress
+            for c in self.hass.data.get(DOMAIN, {}).values()
+        ):
+            return self.async_abort(reason="zone_busy")  # saving reloads every zone in the area
         return await self.async_step_area_settings()
 
     async def async_step_area_settings(self, user_input: dict[str, Any] | None = None):
@@ -1443,6 +1578,7 @@ class WeatherUndergroundOptionsFlow(config_entries.OptionsFlow):
                         CONF_WU_API_KEY: self._wu[CONF_WU_API_KEY].strip(),
                         CONF_WU_RADIUS_KM: float(self._wu[CONF_WU_RADIUS_KM]),
                         CONF_WU_STATIONS: stations,
+                        CONF_WU_CLIMATE: bool(self._wu.get(CONF_WU_CLIMATE, False)),
                     },
                 )
         current = [s["id"] for s in self._merged().get(CONF_WU_STATIONS) or []]
@@ -1475,6 +1611,9 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
         return bool(parent_id and self.hass.config_entries.async_get_entry(parent_id))
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        controller = self._controller()
+        if controller is not None and controller.run_in_progress:
+            return self.async_abort(reason="zone_busy")  # saving reloads the zone and would stop the run
         outdoor = self._zone_type() == ZONE_TYPE_OUTDOOR
         has_valve = self._has_valve()
         crop = self._is_crop()
@@ -1510,7 +1649,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_VALVE_ENTITY, default=self._merged().get(CONF_VALVE_ENTITY)): selector.EntitySelector(
-                        selector.EntitySelectorConfig(domain="switch")
+                        selector.EntitySelectorConfig(domain=VALVE_DOMAINS)
                     )
                 }
             ),
@@ -1705,6 +1844,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             result = await self._apply_flow_rate(controller, mm_per_min)
             if result.get("reason") == "flow_rate_set":  # only when the entry was accepted
                 await self._set_zone_flow(controller, round(float(user_input["emitters"])) * per_emitter_l_h / 60)
+                await _set_zone_area(controller, area_m2)
             return result
         return self.async_show_form(
             step_id="flow_rate",
@@ -1745,6 +1885,7 @@ class ZoneFlowOptionsFlow(config_entries.OptionsFlow):
             result = await self._apply_flow_rate(controller, mm_per_min)
             if result.get("reason") == "flow_rate_set":
                 await self._set_zone_flow(controller, liters / float(user_input["minutes"]))
+                await _set_zone_area(controller, area_m2)
             return result
         return self.async_show_form(
             step_id="flow_volume",

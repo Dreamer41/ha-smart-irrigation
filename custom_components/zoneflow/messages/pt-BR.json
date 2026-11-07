@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Válvula mestra fechada",
+      "message": "{valve} foi fechada por segurança. {reason} Nada depois dela é regado até você apertar Reset Lock em uma das zonas."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: não iniciado",
+      "message": "A válvula mestra {valve} está fechada por segurança. {reason} Aperte Reset Lock na zona depois de resolver."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} não confirmou que fechou no fim de uma rega.",
+      "valve_stuck": "{valve} ficou aberta tempo demais.",
+      "flow": "O medidor de vazão continuou contando com todas as válvulas de zona fechadas.",
+      "pump_power": "A bomba continuou consumindo energia com todas as válvulas de zona fechadas.",
+      "high_flow": "Correu muito mais água do que {valve} usa: um cano pode ter estourado."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Falhou o teste da válvula mestra",
+      "message": "O teste mensal de {valve} detectou água ainda correndo ou a bomba ainda funcionando com ela fechada. Ela pode não cortar a água se uma válvula de zona travar: verifique."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: água demais",
+      "message": "{valve} foi fechada: corriam cerca de {rate} por minuto, muito mais que os {expected} de sempre. Um cano pode ter estourado ou se soltado: verifique antes da próxima rega."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: vazão baixa",
+      "message": "Deu {given} de {target} no tempo permitido. Verifique se há filtro entupido ou pressão baixa."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: medidor de vazão não conta",
+      "message": "{meter} não contou nada com a válvula aberta, então a rega foi feita por tempo. Verifique o medidor."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} aguardando: chuva",
+      "message": "{sensor} indica molhado. Verifica a cada hora por até {hours} horas e depois espera o próximo horário agendado."
+    },
+    "wind": {
+      "title": "💨 {cycle} aguardando: vento",
+      "message": "O vento está em {wind}, acima do limite de {limit}. Verifica a cada hora por até {hours} horas e depois espera o próximo horário agendado."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle} aguardando desde as {time}: a irrigação profunda vai primeiro, quando esquentar o suficiente",
     "paused_until": "Em pausa até {until}",
     "paused_area": "Em pausa: sem irrigação enquanto {area} estiver em pausa",
-    "paused_house": "Em pausa: sem irrigação enquanto a estufa {house} estiver em pausa"
+    "paused_house": "Em pausa: sem irrigação enquanto a estufa {house} estiver em pausa",
+    "waiting_rain": "{cycle} aguardando desde {time}: {sensor} indica molhado; nova verificação a cada hora",
+    "skipped_rain": "{cycle} pulada às {time}: {sensor} ainda indicava molhado após {hours} verificações",
+    "waiting_wind": "{cycle} aguardando desde {time}: vento {wind}, acima do limite ({limit}); nova verificação a cada hora",
+    "skipped_wind": "{cycle} pulada às {time}: vento ainda acima de {limit} após {hours} verificações"
   },
   "summary": {
     "title": "💧 ZoneFlow: sua semana",
@@ -319,7 +362,9 @@
       "fail": "O pluviômetro {entity} não está disponível. Até que retorne, o ZoneFlow assume que não chove.",
       "wu": "A chuva vem do Weather Underground.",
       "manual": "A chuva é adicionada manualmente.",
-      "none": "Nenhum pluviômetro. O ZoneFlow assume que nunca chove, a menos que você adicione chuva manualmente ou use o Weather Underground."
+      "none": "Nenhum pluviômetro. O ZoneFlow assume que nunca chove, a menos que você adicione chuva manualmente ou use o Weather Underground.",
+      "sensor": "A chuva é estimada pelo sensor de chuva {entity}: {rate} enquanto indicar molhado.",
+      "sensor_no_rate": "O sensor de chuva {entity} retém a rega enquanto indica molhado, mas não conta chuva. Sem pluviómetro, defina Chuva por hora do sensor de chuva para contar o tempo molhado como chuva."
     },
     "temperature": {
       "ok": "A temperatura externa é {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "A curva da cultura de {crop} parte da data de plantio. Defina-a; até lá vale o ajuste Coeficiente da cultura."
+    },
+    "root_zone": {
+      "off": "Defina a Profundidade das raízes para que uma rega nunca dê mais do que o solo consegue reter.",
+      "shallow": "A zona radicular retém muito pouco ({raw} antes de a planta sentir a seca). Mesmo uma rega diária pode deixá-la secar: verifique a Profundidade das raízes e a Parte molhada.",
+      "short_dose": "A zona radicular precisa de rega todos os dias, mas a dose de um dia ({minutes} min) é mais curta do que o pulso mínimo ({minimum} min), então cada rega dá mais do que o solo retém.",
+      "deep_soak": "A rega profunda dá {taw}, o que a zona radicular retém, em vez dos {target} definidos."
+    },
+    "master_valve": {
+      "latched": "A válvula mestra {valve} está fechada por segurança. {reason} Aperte Reset Lock depois de resolver.",
+      "fail": "A válvula mestra {valve} não está disponível.",
+      "ok": "A válvula mestra {valve} responde.",
+      "test_failed": "A válvula mestra {valve} falhou no teste mensal de {when}: com ela fechada a água continuou correndo ou a bomba funcionando. Pressione Válvula mestra verificada depois de verificá-la; ela será testada de novo na próxima rega de rotina.",
+      "test_ok": "A válvula mestra passou no teste mensal de {when}.",
+      "test_pending": "A válvula mestra é testada uma vez por mês, no fim de uma rega normal.",
+      "test_none": "Adicione um medidor de vazão ou um sensor de potência da bomba para testar a válvula mestra uma vez por mês."
+    },
+    "flow_meter": {
+      "unknown_unit": "O ZoneFlow não consegue obter litros da unidade de {entity} ('{unit}'). Use um medidor que informe volume (L, gal, m³) ou vazão (L/min, gal/min).",
+      "learned": "As regas mediram uma vazão de {learned}, mas o ajuste Vazão é {setting}. Atualize para os tempos previstos ficarem certos."
+    },
+    "flow_mode": {
+      "no_meter": "A rega termina pelo medidor de vazão, mas a zona não tem nenhum: rega por tempo.",
+      "meter_offline": "A rega termina pelo medidor de vazão, mas ele está offline: a zona rega por tempo até ele voltar.",
+      "unknown_unit": "A rega termina pelo medidor de vazão, mas a unidade não pode ser lida como água: a zona rega por tempo.",
+      "no_area": "A rega termina pelo medidor de vazão, mas a área da zona é desconhecida: defina a Área da zona (ou a Vazão da zona) para converter milímetros em litros.",
+      "shared_meter": "A rega termina pelo medidor de vazão, mas ele é compartilhado com uma zona de outra bomba que pode regar ao mesmo tempo: a zona rega por tempo."
+    },
+    "wind_hold": {
+      "no_source": "O limite de vento está definido, mas não há sensor de vento nem entidade meteorológica de onde o ler, por isso nunca retém nada. Adicione um em Configurar.",
+      "off": "Existe uma fonte de vento, mas o Limite de vento está desligado (0). Defina um limite para o aspersor esperar com vento forte."
+    },
+    "rain_sensor": {
+      "ok": "O sensor de chuva {entity} responde.",
+      "fail": "O sensor de chuva {entity} não está disponível. Até voltar, não retém nada.",
+      "stuck": "O sensor de chuva {entity} indica molhado há mais de um dia sem alteração, por isso o ZoneFlow ignora-o. Verifique o sensor."
+    }
   },
   "why": {
     "method": "Método de irrigação: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "médio",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "evapotranspiração pelo FAO-56 (a partir da temperatura e, onde medidos, da umidade, do vento e do sol)",
+    "fao56_inputs": "Evaporação de referência FAO-56 de ontem: {et0} por dia. Umidade: {humidity}; vento: {wind}; sol: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "seu sensor",
+      "rh_max": "seu sensor",
+      "rh_mean": "seu sensor",
+      "measured": "seu sensor",
+      "weather": "o serviço meteorológico",
+      "default": "a configuração da zona",
+      "estimated": "estimado a partir da temperatura",
+      "wu": "estações Weather Underground próximas"
+    },
+    "crop_factor": "Coeficiente da cultura de hoje: {kc} ({detail}).",
+    "kc_fixed": "o ajuste Coeficiente da cultura",
+    "kc_curve": "a temporada de {crop}, fase {stage}",
+    "kc_stage": {
+      "initial": "inicial",
+      "development": "de desenvolvimento",
+      "mid": "de meio de temporada",
+      "late": "de fim de temporada",
+      "after_season": "após a temporada",
+      "dormant": "de dormência",
+      "flat": "o ano todo"
+    },
+    "kc_adjust_up": "{adj} somado por tempo seco e ventoso",
+    "kc_adjust_down": "{adj} subtraído por tempo calmo e úmido",
+    "kc_exposure": "{pct} % pela exposição ao sol ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "sombra o dia todo",
+      "morning_sun": "sol da manhã",
+      "afternoon_sun": "sol da tarde",
+      "full_sun": "sol pleno",
+      "reflected_heat": "calor refletido"
+    },
+    "kc_needs_planting_date": "Defina a data de plantio para seguir a curva de temporada de {crop}; até lá vale o ajuste Coeficiente da cultura.",
+    "root_zone": "Zona radicular: retém {taw}; a planta usa cerca de {use} por dia e pode usar {raw} antes de sentir a seca.",
+    "root_zone_interval": "Por isso rega a cada {days} dias em vez de a cada {tier}.",
+    "root_zone_capped": "Uma rega é limitada a {taw}, o que a zona radicular retém ({capped} a menos do que os dias pedem).",
+    "rain_sensor_estimate": "Sem pluviómetro: a chuva é estimada pelo sensor de chuva, {rate} por cada hora em que indica molhado (no máximo {cap} por dia)."
   },
   "suggest": {
     "heading": "Possíveis elementos encontrados no seu Home Assistant:",

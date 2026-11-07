@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hlavní ventil zavřen",
+      "message": "{valve} byl z bezpečnostních důvodů zavřen. {reason} Nic za ním nezavlažuje, dokud na některé z jeho zón nestisknete Reset Lock."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: nespuštěno",
+      "message": "Hlavní ventil {valve} je z bezpečnostních důvodů zavřený. {reason} Po opravě stiskněte na zóně Reset Lock."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} na konci zálivky nepotvrdil zavření.",
+      "valve_stuck": "{valve} zůstal otevřený příliš dlouho.",
+      "flow": "Průtokoměr dál počítal, i když byly všechny ventily zón zavřené.",
+      "pump_power": "Čerpadlo dál odebíralo proud, i když byly všechny ventily zón zavřené.",
+      "high_flow": "Teklo mnohem víc vody, než {valve} bere: možná praskla trubka."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test hlavního ventilu selhal",
+      "message": "Měsíční test ventilu {valve} zjistil, že při jeho zavření voda dál teče nebo čerpadlo dál běží. Pokud se ventil zóny zasekne, nemusí vodu zastavit: zkontrolujte ho."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: příliš mnoho vody",
+      "message": "{valve} byl zavřen: teklo asi {rate} za minutu, mnohem víc než obvyklých {expected}. Možná praskla nebo se uvolnila trubka: zkontrolujte ji před další zálivkou."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: nízký průtok",
+      "message": "Za povolený čas dal {given} z {target}. Zkontrolujte ucpaný filtr nebo nízký tlak."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: průtokoměr nepočítá",
+      "message": "{meter} při otevřeném ventilu nic nenapočítal, a tak zálivka proběhla podle času. Zkontrolujte průtokoměr."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} čeká: déšť",
+      "message": "{sensor} hlásí mokro. Kontroluje se každou hodinu nejvýše {hours} hodin, pak se čeká na další plánovaný čas."
+    },
+    "wind": {
+      "title": "💨 {cycle} čeká: vítr",
+      "message": "Vítr má {wind}, nad limitem {limit}. Kontroluje se každou hodinu nejvýše {hours} hodin, pak se čeká na další plánovaný čas."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle}: čeká od {time}, jakmile se oteplí, má přednost hloubková zálivka",
     "paused_until": "Pozastaveno do {until}",
     "paused_area": "Pozastaveno: nezalévá se, dokud je oblast {area} pozastavena",
-    "paused_house": "Pozastaveno: nezalévá se, dokud je skleník {house} pozastaven"
+    "paused_house": "Pozastaveno: nezalévá se, dokud je skleník {house} pozastaven",
+    "waiting_rain": "{cycle} čeká od {time}: {sensor} hlásí mokro; kontrola každou hodinu",
+    "skipped_rain": "{cycle} vynecháno v {time}: {sensor} hlásil mokro i po {hours} hodinových kontrolách",
+    "waiting_wind": "{cycle} čeká od {time}: vítr {wind}, nad limitem ({limit}); kontrola každou hodinu",
+    "skipped_wind": "{cycle} vynecháno v {time}: vítr stále nad {limit} po {hours} hodinových kontrolách"
   },
   "summary": {
     "title": "💧 ZoneFlow: váš týden",
@@ -319,7 +362,9 @@
       "fail": "Srážkoměr {entity} není k dispozici. Dokud se nevrátí, ZoneFlow předpokládá, že neprší.",
       "wu": "Údaje o dešti pocházejí ze služby Weather Underground.",
       "manual": "Déšť se přidává ručně.",
-      "none": "Bez srážkoměru. ZoneFlow předpokládá, že nikdy neprší, dokud nepřidáte déšť ručně nebo nepoužijete Weather Underground."
+      "none": "Bez srážkoměru. ZoneFlow předpokládá, že nikdy neprší, dokud nepřidáte déšť ručně nebo nepoužijete Weather Underground.",
+      "sensor": "Déšť se odhaduje ze srážkového senzoru {entity}: {rate}, dokud hlásí mokro.",
+      "sensor_no_rate": "Srážkový senzor {entity} zadržuje zálivku, dokud hlásí mokro, ale nepočítá žádný déšť. Bez srážkoměru nastavte Intenzitu deště ze srážkového senzoru, aby se doba mokra počítala jako déšť."
     },
     "temperature": {
       "ok": "Venkovní teplota je {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "Křivka plodiny {crop} začíná datem výsadby. Nastavte ho; do té doby platí nastavení Koeficient plodiny."
+    },
+    "root_zone": {
+      "off": "Nastavte Hloubku kořenů, aby zálivka nikdy nedala víc, než půda pojme.",
+      "shallow": "Kořenová zóna pojme velmi málo ({raw}, než rostlina pocítí sucho). I denní zálivka ji může nechat vyschnout: zkontrolujte Hloubku kořenů a Zavlažovaný podíl.",
+      "short_dose": "Kořenová zóna potřebuje zálivku každý den, ale denní dávka ({minutes} min) je kratší než minimální pulz ({minimum} min), takže každá zálivka dá víc, než půda pojme.",
+      "deep_soak": "Hloubkové zavlažení dá {taw}, co pojme kořenová zóna, místo nastavených {target}."
+    },
+    "master_valve": {
+      "latched": "Hlavní ventil {valve} je z bezpečnostních důvodů zavřený. {reason} Po opravě stiskněte Reset Lock.",
+      "fail": "Hlavní ventil {valve} není dostupný.",
+      "ok": "Hlavní ventil {valve} odpovídá.",
+      "test_failed": "Hlavní ventil {valve} neprošel měsíčním testem {when}: při zavření voda dál tekla nebo čerpadlo běželo. Po kontrole stiskněte Hlavní ventil zkontrolován; při další pravidelné zálivce se otestuje znovu.",
+      "test_ok": "Hlavní ventil prošel měsíčním testem {when}.",
+      "test_pending": "Hlavní ventil se testuje jednou měsíčně na konci běžné zálivky.",
+      "test_none": "Přidejte průtokoměr nebo snímač příkonu čerpadla, aby se hlavní ventil testoval jednou měsíčně."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow nedokáže z jednotky {entity} ('{unit}') zjistit litry. Použijte měřidlo, které hlásí objem (L, gal, m³) nebo průtok (L/min, gal/min).",
+      "learned": "Zálivky naměřily průtok {learned}, ale nastavení Průtok je {setting}. Upravte ho, aby plánované časy seděly."
+    },
+    "flow_mode": {
+      "no_meter": "Zálivka končí podle průtokoměru, ale zóna žádný nemá: zavlažuje podle času.",
+      "meter_offline": "Zálivka končí podle průtokoměru, ale ten je offline: zóna zavlažuje podle času, dokud se nevrátí.",
+      "unknown_unit": "Zálivka končí podle průtokoměru, ale jeho jednotku nelze číst jako vodu: zóna zavlažuje podle času.",
+      "no_area": "Zálivka končí podle průtokoměru, ale plocha zóny není známa: nastavte Plochu zóny (nebo Průtok zóny), aby šlo milimetry převést na litry.",
+      "shared_meter": "Zálivka končí podle průtokoměru, ale ten sdílí zóna na jiném čerpadle, která může zavlažovat současně: zóna zavlažuje podle času."
+    },
+    "wind_hold": {
+      "no_source": "Limit větru je nastaven, ale není senzor větru ani entita počasí, ze které by se vítr četl, takže nikdy nic nezadrží. Přidejte jeden v Nastavení.",
+      "off": "Zdroj větru je k dispozici, ale Limit větru je vypnutý (0). Nastavte limit, aby postřikovač za silného větru čekal."
+    },
+    "rain_sensor": {
+      "ok": "Srážkový senzor {entity} hlásí.",
+      "fail": "Srážkový senzor {entity} není dostupný. Dokud se nevrátí, nic nezadržuje.",
+      "stuck": "Srážkový senzor {entity} hlásí mokro déle než den beze změny, proto ho ZoneFlow ignoruje. Zkontrolujte senzor."
+    }
   },
   "why": {
     "method": "Způsob zalévání: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "střední",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "evapotranspirace podle FAO-56 (z teploty a tam, kde se měří, z vlhkosti, větru a slunce)",
+    "fao56_inputs": "Včerejší referenční výpar FAO-56: {et0} za den. Vlhkost: {humidity}; vítr: {wind}; slunce: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "váš senzor",
+      "rh_max": "váš senzor",
+      "rh_mean": "váš senzor",
+      "measured": "váš senzor",
+      "weather": "meteorologická služba",
+      "default": "nastavení zóny",
+      "estimated": "odhadnuto z teploty",
+      "wu": "okolní stanice Weather Underground"
+    },
+    "crop_factor": "Koeficient plodiny dnes: {kc} ({detail}).",
+    "kc_fixed": "nastavení Koeficient plodiny",
+    "kc_curve": "sezóna {crop}, fáze {stage}",
+    "kc_stage": {
+      "initial": "počáteční",
+      "development": "vývoj",
+      "mid": "střed sezóny",
+      "late": "konec sezóny",
+      "after_season": "po sezóně",
+      "dormant": "klidová",
+      "flat": "celý rok"
+    },
+    "kc_adjust_up": "{adj} přidáno kvůli suchému, větrnému počasí",
+    "kc_adjust_down": "{adj} ubráno kvůli klidnému, vlhkému počasí",
+    "kc_exposure": "{pct} % podle oslunění ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "stín celý den",
+      "morning_sun": "ranní slunce",
+      "afternoon_sun": "odpolední slunce",
+      "full_sun": "plné slunce",
+      "reflected_heat": "odražené teplo"
+    },
+    "kc_needs_planting_date": "Nastavte datum výsadby, aby se řídilo křivkou sezóny {crop}; do té doby platí nastavení Koeficient plodiny.",
+    "root_zone": "Kořenová zóna: pojme {taw}; rostlina spotřebuje asi {use} denně a může využít {raw}, než pocítí sucho.",
+    "root_zone_interval": "Proto zavlažuje každé {days} dny místo {tier}.",
+    "root_zone_capped": "Zálivka je omezena na {taw}, co pojme kořenová zóna (o {capped} méně, než by odpovídalo dnům).",
+    "rain_sensor_estimate": "Bez srážkoměru: déšť se odhaduje ze srážkového senzoru, {rate} za každou hodinu, kdy hlásí mokro (nejvýše {cap} denně)."
   },
   "suggest": {
     "heading": "Pravděpodobné položky nalezené v systému Home Assistant:",

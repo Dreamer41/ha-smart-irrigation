@@ -156,7 +156,7 @@ async def test_frost_gives_up_after_the_last_recheck(hass, fake_valve_services, 
         async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=hour * (FROST_RETRY_SECONDS + 1)))
         await hass.async_block_till_done()
     assert controller.clock.pulses_for(VALVE) == []
-    assert controller._frost_retry_cancel is None and not controller._frost_held
+    assert controller._hold_retry_cancel is None and not controller._hold_held
     assert len(controller.notes) == 1  # one phone message for the whole wait
     status = controller.status()
     assert status["code"] == "skipped_frost"
@@ -176,12 +176,12 @@ async def test_frost_guard_off_unreadable_sensor_and_fahrenheit(hass, fake_valve
 
     await controller.numbers["frost_guard_temp"].async_set_metric_value(2.0)
     hass.states.async_set(OUTDOOR_TEMP, "unavailable")
-    assert await controller._frost_blocks("routine") is False  # never blocks on a missing reading
+    assert await controller._weather_blocks("routine") is False  # never blocks on a missing reading
 
     hass.states.async_set(OUTDOOR_TEMP, "30", {"unit_of_measurement": "°F"})  # -1.1 °C
-    assert await controller._frost_blocks("routine") is True
+    assert await controller._weather_blocks("routine") is True
     hass.states.async_set(OUTDOOR_TEMP, "40", {"unit_of_measurement": "°F"})  # 4.4 °C
-    assert await controller._frost_blocks("deep_soak") is False
+    assert await controller._weather_blocks("deep_soak") is False
 
 
 @pytest.mark.asyncio
@@ -192,12 +192,12 @@ async def test_frost_guard_holds_the_deep_soak_too(hass, fake_valve_services, mo
     await hass.async_block_till_done()
     assert controller.clock.pulses_for(VALVE) == []
     assert controller.status()["cycle"] == "deep_soak"
-    assert controller._frost_held == {"deep_soak"} and controller._frost_retry_cancel is not None
+    assert controller._hold_held == {"deep_soak"} and controller._hold_retry_cancel is not None
 
     # Unloading the zone cancels the pending re-check.
     assert await hass.config_entries.async_unload(controller.entry.entry_id)
     await hass.async_block_till_done()
-    assert controller._frost_retry_cancel is None
+    assert controller._hold_retry_cancel is None
     async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=FROST_RETRY_SECONDS + 1))
     await hass.async_block_till_done()
     assert controller.clock.pulses_for(VALVE) == []
@@ -251,7 +251,7 @@ async def test_pause_gives_up_a_place_in_the_pump_queue(hass, fake_valve_service
 
 
 @pytest.mark.asyncio
-async def test_the_routine_waits_for_a_frost_held_deep_soak(hass, fake_valve_services, monkeypatch, tmp_path):
+async def test_the_routine_waits_for_a_hold_held_deep_soak(hass, fake_valve_services, monkeypatch, tmp_path):
     controller = await _zone(hass, monkeypatch, tmp_path, temp="0.0")
     _history(controller, last_routine_days_ago=5, last_deep_days_ago=20)
     await controller.run_deep_soak()  # 05:00: frost
@@ -261,18 +261,18 @@ async def test_the_routine_waits_for_a_frost_held_deep_soak(hass, fake_valve_ser
     # Only the deep soak ran (it counts as the routine watering too).
     assert "Deep Soak Completed" in (tmp_path / "p.csv").read_text()
     assert "Routine Irrigation Completed" not in (tmp_path / "p.csv").read_text()
-    assert not controller._frost_held and controller._frost_retry_cancel is None
+    assert not controller._hold_held and controller._hold_retry_cancel is None
 
 
 @pytest.mark.asyncio
 async def test_a_stale_or_impossible_reading_never_holds_watering(hass, fake_valve_services, monkeypatch, tmp_path):
     controller = await _zone(hass, monkeypatch, tmp_path)
     hass.states.async_set(OUTDOOR_TEMP, "-127")
-    assert await controller._frost_blocks("routine") is False
+    assert await controller._weather_blocks("routine") is False
     hass.states.async_set(OUTDOOR_TEMP, "-1")
     later = dt_util.utcnow() + timedelta(hours=7)
     monkeypatch.setattr(dt_util, "utcnow", lambda: later)
-    assert await controller._frost_blocks("routine") is False
+    assert await controller._weather_blocks("routine") is False
 
 
 @pytest.mark.asyncio
@@ -330,12 +330,12 @@ async def test_restarts_dont_restart_the_recheck_count(hass, fake_valve_services
     for hour in range(1, FROST_RETRY_COUNT):
         async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=hour * (FROST_RETRY_SECONDS + 1)))
         await hass.async_block_till_done()
-    assert controller._frost_rechecks == FROST_RETRY_COUNT - 1
+    assert controller._hold_rechecks == FROST_RETRY_COUNT - 1
     assert await hass.config_entries.async_reload(controller.entry.entry_id)
     await hass.async_block_till_done()
     controller = hass.data[DOMAIN][controller.entry.entry_id]
-    assert controller._frost_rechecks == FROST_RETRY_COUNT - 1
+    assert controller._hold_rechecks == FROST_RETRY_COUNT - 1
     async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=(FROST_RETRY_COUNT + 1) * (FROST_RETRY_SECONDS + 1)))
     await hass.async_block_till_done()
-    assert controller._frost_retry_cancel is None
+    assert controller._hold_retry_cancel is None
     assert (tmp_path / "p.csv").read_text().count("Skipped (Frost)") == FROST_RETRY_COUNT + 1

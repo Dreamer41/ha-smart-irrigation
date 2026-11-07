@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Zawór główny zamknięty",
+      "message": "{valve} został zamknięty dla bezpieczeństwa. {reason} Nic za nim nie jest podlewane, dopóki nie naciśniesz Reset Lock w jednej z jego stref."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: nie uruchomiono",
+      "message": "Zawór główny {valve} jest zamknięty dla bezpieczeństwa. {reason} Po naprawie naciśnij Reset Lock w strefie."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} nie potwierdził zamknięcia na końcu podlewania.",
+      "valve_stuck": "{valve} był otwarty zdecydowanie za długo.",
+      "flow": "Przepływomierz wciąż liczył, choć wszystkie zawory stref były zamknięte.",
+      "pump_power": "Pompa wciąż pobierała prąd, choć wszystkie zawory stref były zamknięte.",
+      "high_flow": "Popłynęło dużo więcej wody, niż bierze {valve}: rura mogła pęknąć."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test zaworu głównego nieudany",
+      "message": "Comiesięczny test {valve} wykazał, że przy zamkniętym zaworze woda wciąż płynęła lub pompa pracowała. Może nie odciąć wody, gdy zawór strefy się zatnie: sprawdź go."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: za dużo wody",
+      "message": "{valve} został zamknięty: płynęło około {rate} na minutę, dużo więcej niż zwykłe {expected}. Rura mogła pęknąć lub się poluzować: sprawdź ją przed następnym podlewaniem."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: słaby przepływ",
+      "message": "Dało {given} z {target} w dozwolonym czasie. Sprawdź, czy filtr nie jest zatkany lub ciśnienie za niskie."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: przepływomierz nie liczy",
+      "message": "{meter} nic nie naliczył przy otwartym zaworze, więc podlewanie poszło według czasu. Sprawdź licznik."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} czeka: deszcz",
+      "message": "{sensor} wskazuje mokro. Sprawdzanie co godzinę przez maks. {hours} godzin, potem czeka na następny zaplanowany termin."
+    },
+    "wind": {
+      "title": "💨 {cycle} czeka: wiatr",
+      "message": "Wiatr ma {wind}, powyżej limitu {limit}. Sprawdzanie co godzinę przez maks. {hours} godzin, potem czeka na następny zaplanowany termin."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle}: czeka od {time} – najpierw głębokie podlewanie, gdy zrobi się dość ciepło",
     "paused_until": "Wstrzymane do {until}",
     "paused_area": "Wstrzymane: brak podlewania, gdy obszar {area} jest wstrzymany",
-    "paused_house": "Wstrzymane: brak podlewania, gdy szklarnia {house} jest wstrzymana"
+    "paused_house": "Wstrzymane: brak podlewania, gdy szklarnia {house} jest wstrzymana",
+    "waiting_rain": "{cycle} czeka od {time}: {sensor} wskazuje mokro; sprawdzanie co godzinę",
+    "skipped_rain": "{cycle} pominięte o {time}: {sensor} wciąż wskazywał mokro po {hours} sprawdzeniach",
+    "waiting_wind": "{cycle} czeka od {time}: wiatr {wind}, powyżej limitu ({limit}); sprawdzanie co godzinę",
+    "skipped_wind": "{cycle} pominięte o {time}: wiatr wciąż powyżej {limit} po {hours} sprawdzeniach"
   },
   "summary": {
     "title": "💧 ZoneFlow: Twój tydzień",
@@ -319,7 +362,9 @@
       "fail": "Deszczomierz {entity} jest niedostępny. Dopóki nie wróci, ZoneFlow zakłada, że nie pada.",
       "wu": "Dane o deszczu pochodzą z Weather Underground.",
       "manual": "Deszcz jest dodawany ręcznie.",
-      "none": "Brak deszczomierza. ZoneFlow zakłada, że nigdy nie pada, chyba że dodasz deszcz ręcznie lub użyjesz Weather Underground."
+      "none": "Brak deszczomierza. ZoneFlow zakłada, że nigdy nie pada, chyba że dodasz deszcz ręcznie lub użyjesz Weather Underground.",
+      "sensor": "Opad jest szacowany z czujnika deszczu {entity}: {rate}, dopóki pokazuje mokro.",
+      "sensor_no_rate": "Czujnik deszczu {entity} wstrzymuje podlewanie, dopóki pokazuje mokro, ale nie liczy opadu. Bez deszczomierza ustaw Opad na godzinę z czujnika deszczu, aby liczyć czas mokry jako deszcz."
     },
     "temperature": {
       "ok": "Temperatura zewnętrzna wynosi {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "Krzywa uprawy dla: {crop} zaczyna się od daty sadzenia. Ustaw ją; do tego czasu obowiązuje ustawienie Współczynnik uprawy."
+    },
+    "root_zone": {
+      "off": "Ustaw Głębokość korzeni, aby podlewanie nigdy nie dawało więcej, niż gleba może pomieścić.",
+      "shallow": "Strefa korzeni mieści bardzo mało ({raw}, zanim roślina odczuje suszę). Nawet codzienne podlewanie może pozwolić jej przeschnąć: sprawdź Głębokość korzeni i Zwilżaną część.",
+      "short_dose": "Strefa korzeni wymaga codziennego podlewania, ale dzienna dawka ({minutes} min) jest krótsza niż minimalny impuls ({minimum} min), więc każde podlewanie daje więcej, niż gleba mieści.",
+      "deep_soak": "Głębokie podlewanie daje {taw}, tyle mieści strefa korzeni, zamiast ustawionych {target}."
+    },
+    "master_valve": {
+      "latched": "Zawór główny {valve} jest zamknięty dla bezpieczeństwa. {reason} Po naprawie naciśnij Reset Lock.",
+      "fail": "Zawór główny {valve} jest niedostępny.",
+      "ok": "Zawór główny {valve} odpowiada.",
+      "test_failed": "Zawór główny {valve} nie przeszedł comiesięcznego testu {when}: przy zamkniętym zaworze woda płynęła lub pompa pracowała. Naciśnij Zawór główny sprawdzony po jego sprawdzeniu; zostanie przetestowany ponownie przy następnym podlewaniu rutynowym.",
+      "test_ok": "Zawór główny przeszedł comiesięczny test {when}.",
+      "test_pending": "Zawór główny jest testowany raz w miesiącu, na końcu zwykłego podlewania.",
+      "test_none": "Dodaj przepływomierz lub czujnik mocy pompy, aby zawór główny był testowany raz w miesiącu."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow nie może odczytać litrów z jednostki {entity} ('{unit}'). Użyj licznika, który podaje objętość (L, gal, m³) lub przepływ (L/min, gal/min).",
+      "learned": "Podlewania zmierzyły przepływ {learned}, ale ustawienie Natężenie przepływu wynosi {setting}. Zaktualizuj je, aby planowane czasy były prawidłowe."
+    },
+    "flow_mode": {
+      "no_meter": "Podlewanie kończy się według przepływomierza, ale strefa go nie ma: podlewa według czasu.",
+      "meter_offline": "Podlewanie kończy się według przepływomierza, ale jest on offline: strefa podlewa według czasu, aż wróci.",
+      "unknown_unit": "Podlewanie kończy się według przepływomierza, ale jego jednostki nie da się odczytać jako wody: strefa podlewa według czasu.",
+      "no_area": "Podlewanie kończy się według przepływomierza, ale powierzchnia strefy jest nieznana: ustaw Powierzchnię strefy (lub Przepływ strefy), aby przeliczyć milimetry na litry.",
+      "shared_meter": "Podlewanie kończy się według przepływomierza, ale dzieli go strefa na innej pompie, która może podlewać jednocześnie: strefa podlewa według czasu."
+    },
+    "wind_hold": {
+      "no_source": "Limit wiatru jest ustawiony, ale nie ma czujnika wiatru ani encji pogody, z której można go odczytać, więc nigdy nic nie wstrzyma. Dodaj jeden w Konfiguracji.",
+      "off": "Jest źródło wiatru, ale Limit wiatru jest wyłączony (0). Ustaw limit, aby zraszacz czekał przy silnym wietrze."
+    },
+    "rain_sensor": {
+      "ok": "Czujnik deszczu {entity} odpowiada.",
+      "fail": "Czujnik deszczu {entity} jest niedostępny. Dopóki nie wróci, niczego nie wstrzymuje.",
+      "stuck": "Czujnik deszczu {entity} pokazuje mokro od ponad doby bez zmian, więc ZoneFlow go pomija. Sprawdź czujnik."
+    }
   },
   "why": {
     "method": "Metoda podlewania: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "umiarkowanie",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "ewapotranspiracja według FAO-56 (z temperatury oraz wilgotności, wiatru i słońca, jeśli są mierzone)",
+    "fao56_inputs": "Wczorajsze parowanie referencyjne FAO-56: {et0} dziennie. Wilgotność: {humidity}; wiatr: {wind}; słońce: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "twój czujnik",
+      "rh_max": "twój czujnik",
+      "rh_mean": "twój czujnik",
+      "measured": "twój czujnik",
+      "weather": "serwis pogodowy",
+      "default": "ustawienie strefy",
+      "estimated": "oszacowane z temperatury",
+      "wu": "pobliskie stacje Weather Underground"
+    },
+    "crop_factor": "Współczynnik uprawy dzisiaj: {kc} ({detail}).",
+    "kc_fixed": "ustawienie Współczynnik uprawy",
+    "kc_curve": "sezon: {crop}, faza: {stage}",
+    "kc_stage": {
+      "initial": "początkowa",
+      "development": "rozwój",
+      "mid": "środek sezonu",
+      "late": "koniec sezonu",
+      "after_season": "po sezonie",
+      "dormant": "spoczynek",
+      "flat": "cały rok"
+    },
+    "kc_adjust_up": "{adj} dodano przy suchej, wietrznej pogodzie",
+    "kc_adjust_down": "{adj} odjęto przy spokojnej, wilgotnej pogodzie",
+    "kc_exposure": "{pct} % za nasłonecznienie ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "cień przez cały dzień",
+      "morning_sun": "słońce rano",
+      "afternoon_sun": "słońce po południu",
+      "full_sun": "pełne słońce",
+      "reflected_heat": "odbite ciepło"
+    },
+    "kc_needs_planting_date": "Ustaw datę sadzenia, aby stosować krzywą sezonu dla: {crop}; do tego czasu obowiązuje ustawienie Współczynnik uprawy.",
+    "root_zone": "Strefa korzeni: mieści {taw}; roślina zużywa około {use} dziennie i może zużyć {raw}, zanim odczuje suszę.",
+    "root_zone_interval": "Dlatego podlewa co {days} dni zamiast co {tier}.",
+    "root_zone_capped": "Podlewanie jest ograniczone do {taw}, tyle mieści strefa korzeni (o {capped} mniej, niż wymagają dni).",
+    "rain_sensor_estimate": "Brak deszczomierza: opad jest szacowany z czujnika deszczu, {rate} za każdą godzinę, gdy pokazuje mokro (najwyżej {cap} na dobę)."
   },
   "suggest": {
     "heading": "Prawdopodobne encje znalezione w Home Assistant:",

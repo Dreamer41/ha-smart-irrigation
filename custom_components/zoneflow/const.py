@@ -54,6 +54,11 @@ ENTRY_TYPE_WU = "weather_underground"
 CONF_WU_API_KEY = "api_key"
 CONF_WU_RADIUS_KM = "radius_km"
 CONF_WU_STATIONS = "stations"
+CONF_MASTER_VALVE_ENTITY = "master_valve_entity"  # 1.8: a backup shut-off valve upstream (master_valve.py)
+CONF_MASTER_VALVE_NORMALLY_OPEN = "master_valve_normally_open"  # its relay closes it when ON (default: normally closed)
+CONF_WU_CLIMATE = "borrow_climate"  # 1.8: also borrow wind, humidity and sunshine (off by default)
+# The zone day aggregates the borrowed readings go to, and the field of the poller's reading each takes.
+WU_CLIMATE_AGGREGATES = {"wu_humidity": "humidity", "wu_wind": "wind", "wu_solar": "solar"}
 CONF_USE_WU = "use_weather_underground"
 WU_DATA_KEY = "zoneflow_weather_underground"
 REPAIR_WU_NO_DATA_SECONDS = 6 * 3600
@@ -93,6 +98,9 @@ RAIN_UNIT_TO_MM = {
 # A rain-rate reading counts at most this long until the next one (a sensor
 # that stopped updating must not keep adding rain).
 RAIN_RATE_MAX_GAP_SECONDS = 900
+# A rain reading that adds more than this many mm at once is a broken sensor, not weather (the record is
+# about 300 mm in an hour); it is ignored so one garbage value cannot hold back watering for days.
+RAIN_MAX_PLAUSIBLE_JUMP_MM = 500.0
 CONF_OUTDOOR_TEMP_ENTITY = "outdoor_temp_entity"  # optional -- hot/cool tiers fall back to "normal" without it
 CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume sensor, e.g. a pulse flow meter
 # Optional -- a % soil-moisture sensor. When configured AND currently
@@ -107,7 +115,33 @@ CONF_FLOW_METER_ENTITY = "flow_meter_entity"  # optional -- cumulative-volume se
 # existing modeled schedule exactly as if this feature didn't exist.
 CONF_SOIL_MOISTURE_ENTITY = "soil_moisture_entity"
 CONF_NOTIFY_ENTITY = "notify_entity"  # phone notify.* entity, optional
+CONF_HUMIDITY_ENTITY = "humidity_entity"  # 1.8, optional: outdoor relative humidity (%) for FAO-56
+CONF_WIND_ENTITY = "wind_entity"  # 1.8, optional: wind speed for FAO-56
+CONF_SOLAR_ENTITY = "solar_entity"  # 1.8, optional: solar irradiance (W/m2) for FAO-56
+# 1.8, optional: a binary rain sensor (on = wet). A wet one holds the cycles of the zones that use it;
+# `inverted` is for sensors that read on = dry. The flag belongs with the sensor (the zone's, else the area's).
+CONF_RAIN_SENSOR_ENTITY = "rain_sensor_entity"
+CONF_RAIN_SENSOR_INVERTED = "rain_sensor_inverted"
+RAIN_SENSOR_STUCK_SECONDS = 24 * 3600  # wet for a day with no change: stuck, not rain
+# A zone with no rain gauge or Weather Underground can estimate rain from the sensor's wet time
+# (Rain Sensor Rain Rate x hours wet), at most this much a day.
+RAIN_SENSOR_ESTIMATE_MAX_MM_DAY = 30.0
+# Wind hold (1.8): sprinklers only. A wind reading older than this is not trusted.
+WIND_MAX_AGE_SECONDS = 1800
+WIND_HOLD_SEED_KMH = {"sprinkler": 20.0, "micro_sprinkler": 25.0}  # a new zone's limit, by method
 CONF_WEATHER_ENTITY = "weather_entity"  # weather.* entity, optional -- enables the forecast gate
+# FAO-56 site options (1.8): what an input without a sensor falls back on. Set once with the zone.
+CONF_WIND_EXPOSURE = "wind_exposure"  # no wind reading: the typical wind at 2 m
+WIND_EXPOSURE_M_S = {"sheltered": 1.0, "open": 2.0, "exposed": 3.5}
+WIND_EXPOSURE_OPTIONS = list(WIND_EXPOSURE_M_S)
+DEFAULT_WIND_EXPOSURE = "open"  # 2 m/s, FAO-56's own default
+CONF_CLIMATE_DRYNESS = "climate_dryness"  # no humidity reading: dew point = Tmin (humid) or Tmin - 2 C (dry)
+CLIMATE_DRYNESS_OPTIONS = ["humid", "dry"]
+DEFAULT_CLIMATE_DRYNESS = "humid"
+CONF_COASTAL = "coastal"  # no solar reading: Hargreaves radiation coefficient 0.19 by the sea, else 0.16
+DEFAULT_COASTAL = False
+CONF_WIND_SENSOR_HEIGHT_M = "wind_sensor_height_m"  # how high the wind sensor sits (home stations ~2 m)
+DEFAULT_WIND_SENSOR_HEIGHT_M = 2.0
 CONF_CSV_PATH = "csv_path"
 CONF_UNIT_SYSTEM = "unit_system"  # "auto" (follow Home Assistant) / "metric" / "imperial" -- display only, see units.py
 # Off-switch for the whole deep-soak cycle -- some plants/setups (shallow-
@@ -179,7 +213,10 @@ FERTILIZE_REMINDER_HOUR = 9
 # unavailable) the zone falls back to the tier target for that cycle.
 DEMAND_MODEL_TIERS = "temperature_tiers"
 DEMAND_MODEL_ET = "et_curve"
-DEMAND_MODEL_OPTIONS = [DEMAND_MODEL_TIERS, DEMAND_MODEL_ET]
+# 1.8: FAO-56 Penman-Monteith from every climate reading the zone has (fao56.py), the weekly
+# target = the average daily ET0 x Kc since the last real watering, x 7.
+DEMAND_MODEL_FAO56 = "fao56"
+DEMAND_MODEL_OPTIONS = [DEMAND_MODEL_TIERS, DEMAND_MODEL_ET, DEMAND_MODEL_FAO56]
 DEFAULT_DEMAND_MODEL = DEMAND_MODEL_TIERS
 
 # Mulch: whether this zone's bare soil is covered (mulch, or a full canopy/
@@ -520,6 +557,19 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # surface). Only read while the zone's "Water Demand Model" select is
     # set to the ET curve -- see DEMAND_MODEL_* below.
     "crop_coefficient": ("Crop Factor (Kc)", 0.1, 1.5, 0.05, None),
+    # 1.8: tunes a crop curve (a picked crop, see kc_crop) up or down for the person's own plant.
+    "kc_curve_pct": ("Crop Curve Strength", 50.0, 150.0, 5.0, "%"),
+    # 1.8: the root zone (FAO-56 chapter 8). Root Depth 0 = off, the zone waters exactly as before.
+    # Otherwise a routine dose or a deep soak is never more than the roots hold, and the days between
+    # waterings shorten when one interval's use would dry the soil past Allowed Soil Drying.
+    # 1.8: watering by the flow meter (Watering Stops On = Flow meter). The zone's area turns its mm
+    # into litres; a pulse may run this much longer than planned before its time limit stops it.
+    "zone_area_m2": ("Zone Area", 0.0, 5000.0, 0.5, "m²"),
+    "flow_time_allowance_pct": ("Flow Mode Time Allowance", 10.0, 200.0, 10.0, "%"),
+    "root_depth_mm": ("Root Depth", 0.0, 2000.0, 50.0, "mm"),
+    "soil_holding_mm_per_m": ("Soil Water-Holding Capacity", 40.0, 250.0, 5.0, "mm/m"),
+    "allowed_depletion_pct": ("Allowed Soil Drying", 10.0, 80.0, 5.0, "%"),
+    "wetted_area_pct": ("Wetted Share of the Zone", 5.0, 100.0, 5.0, "%"),
     # How much to scale the routine weekly target up while this zone's
     # "Mulch" select is "Not Mulched" -- see CONF_MULCH_STATUS above. Has no
     # effect while the select is "Mulched". Default 20% is a starting point
@@ -537,6 +587,10 @@ NUMBER_DEFS: dict[str, tuple[str, float, float, float, str | None]] = {
     # below this (needs a temperature sensor). At its lowest it's off. See
     # controller._frost_blocks.
     "frost_guard_temp": ("Frost Guard Temperature", -10.0, 10.0, 0.5, "°C"),
+    # Wind hold (1.8, sprinkler zones): a due cycle waits while the wind is above this. 0 = off.
+    "wind_hold_kmh": ("Wind Limit", 0.0, 60.0, 1.0, "km/h"),
+    # Rain estimate (1.8, a rain sensor and no gauge): rain per hour the sensor reads wet. 0 = off.
+    "rain_sensor_mm_per_hour": ("Rain Sensor Rain Rate", 0.0, 10.0, 0.1, "mm/h"),
     # --- 1.6 greenhouse / indoor climate (only created for those zones) ---
     "heat_temp": ("Heater On Below", 0.0, 30.0, 0.5, "°C"),
     "vent_temp": ("Vents Open At", 10.0, 40.0, 0.5, "°C"),
@@ -625,9 +679,18 @@ NUMBER_DEFAULTS: dict[str, float] = {
     # Middle of the usual 0.6-1.0 range for established trees and most
     # fruiting crops; set per zone (AI_SETUP.md has per-crop guidance).
     "crop_coefficient": 0.8,
+    "kc_curve_pct": 100.0,
+    "zone_area_m2": 0.0,
+    "flow_time_allowance_pct": 50.0,
+    "root_depth_mm": 0.0,
+    "soil_holding_mm_per_m": 140.0,
+    "allowed_depletion_pct": 50.0,
+    "wetted_area_pct": 100.0,
     "mulch_et_adjustment_pct": 20.0,
     "service_mode_auto_off_minutes": 30.0,
     "frost_guard_temp": 2.0,
+    "wind_hold_kmh": 0.0,
+    "rain_sensor_mm_per_hour": 0.0,
     "heat_temp": 10.0,
     "vent_temp": 25.0,
     "fan_temp": 28.0,
@@ -654,6 +717,12 @@ EVENT_LOG = f"{DOMAIN}_log_event"
 CYCLE_STOP_TIMEOUT_SECONDS = 30
 # How long to wait for a valve told to close to report "off".
 VALVE_CLOSE_CONFIRM_SECONDS = 10
+# FAO-56 day history (1.8): enough days for the longest interval and the 10-day rain lookback.
+ET0_HISTORY_DAYS = 14
+# 1.8: FAO-56 days on record before a zone on another model is offered the switch (a repair).
+FAO56_OFFER_DAYS = 14
+# Entity kinds a zone valve can be (1.8: valve entities too, opened with open_valve / close_valve).
+VALVE_DOMAINS = ["switch", "valve"]
 # Home Assistant gives shutdown jobs 20 s in all; stay well inside it.
 SHUTDOWN_STOP_TIMEOUT_SECONDS = 12
 SHUTDOWN_CONFIRM_SECONDS = 3
@@ -679,6 +748,63 @@ CLIMATE_OPTIONS = list(CLIMATE_PRESETS)
 DEFAULT_CLIMATE = "temperate"
 CLIMATE_NUMBER_KEYS = ("hot_temp_threshold", "cool_temp_threshold", "fallback_temp")
 
+# 1.8: when a perennial's season starts (FAO-56 Table 11 counts perennials from green-up / leaf-out), by
+# the zone's climate, as a day of the year in the northern hemisphere. Tropical: no dormant season, so
+# perennials use their mid-season Kc all year. In the southern hemisphere the date moves half a year.
+KC_GREEN_UP_DOY: dict[str, int | None] = {"tropical": None, "hot_dry": 60, "temperate": 91, "cool": 121}
+SOUTHERN_HEMISPHERE_SHIFT_DAYS = 182
+
+# 1.8: the crop factor follows the zone's own climate (FAO-56 eq. 62 and 65): the average wind and
+# minimum humidity of this many completed days.
+KC_CLIMATE_DAYS = 7
+
+# 1.8: how much sun and reflected heat the zone gets, as a factor on its crop factor (a landscape
+# microclimate factor). Wind is not here: it is measured, or set by Wind Exposure, and the crop
+# factor's climate adjustment (eq. 62) already uses it.
+# 1.8: Watering Stops On: the planned time (as always), or the flow meter (each pulse ends when its
+# share of the litres has gone through; the planned time, stretched by the allowance, is the limit).
+DELIVERY_TIME = "time"
+DELIVERY_FLOW = "flow_meter"
+DELIVERY_OPTIONS = [DELIVERY_TIME, DELIVERY_FLOW]
+# A meter that counts nothing for this long while the valve is open is not counting: the run
+# finishes on time instead.
+FLOW_START_GRACE_SECONDS = 120.0
+# How often the volume wait looks again between readings (a held rate keeps adding up).
+FLOW_POLL_SECONDS = 5.0
+# More than this many times the expected flow, for FLOW_HIGH_SECONDS (not in the first minute,
+# while empty pipes fill): a burst or loose pipe. The valve closes.
+FLOW_HIGH_FACTOR = 2.5
+FLOW_HIGH_SECONDS = 60.0
+# A run that hit its time limit and gave less than this share of its litres: low flow.
+FLOW_LOW_SHARE = 0.8
+# The flow rate is learned from flow-mode runs with the valve open at least this long.
+FLOW_LEARN_MIN_MINUTES = 5.0
+FLOW_LEARN_WEIGHT = 0.3
+# After this many runs, a learned flow rate this far from the Flow Rate setting is pointed out.
+FLOW_LEARN_SUGGEST_RUNS = 3
+FLOW_LEARN_SUGGEST_SHARE = 0.25
+
+# 1.8: the root zone's starting values for a new zone (then ordinary sliders). Water held between
+# field capacity and wilting point, mm per m of soil (FAO-56 Table 19, the middle of each range).
+SOIL_HOLDING_MM_PER_M = {"sandy": 80.0, "sandy_loam": 130.0, "loam": 155.0, "clay_loam": 150.0, "clay": 160.0, "unknown": 140.0}
+# The share of the zone's area the emitters wet: ZoneFlow's mm are spread over the whole area.
+WETTED_SHARE_BY_METHOD = {"drip": 40.0, "micro_sprinkler": 70.0, "soaker_hose": 50.0, "sprinkler": 100.0, "other": 100.0}
+# Root depth (mm) for a plant type with no crop curve (a crop curve brings FAO-56 Table 22's
+# shallower rooting depth). No entry: off. Garden soil is rarely as deep as a field's: the shallow
+# end is used on purpose (too tight only waters more often).
+ROOT_DEPTH_BY_PLANT = {"herbs": 300.0, "flowers": 300.0, "shrubs": 600.0, "young_tree": 500.0, "fruit_tree": 1000.0, "lawn": 300.0}
+
+SUN_EXPOSURE_FACTORS = {
+    "deep_shade": 0.60,  # shade all day
+    "morning_sun": 0.75,  # morning sun, afternoon shade
+    "afternoon_sun": 0.85,  # morning shade, afternoon sun
+    "full_sun": 1.00,  # open, sunny (what ET0 assumes)
+    "reflected_heat": 1.20,  # against a sunny wall, or surrounded by paving
+}
+CROP_CURVE_FIXED = "fixed"  # the Crop Curve select's "no curve: use the Crop Factor slider"
+SUN_EXPOSURE_OPTIONS = list(SUN_EXPOSURE_FACTORS)
+DEFAULT_SUN_EXPOSURE = "full_sun"
+
 # A soil-moisture reading not reported for this long counts as offline: many
 # Zigbee/BLE/cloud sensors keep showing their last value for hours or days
 # after a battery dies. Uses Home Assistant's last_reported, which moves on
@@ -703,10 +829,15 @@ NOTIFY_WARNINGS = "warnings"
 NOTIFY_NONE = "none"
 NOTIFY_LEVEL_OPTIONS = [NOTIFY_ALL, NOTIFY_WARNINGS, NOTIFY_NONE]
 
-# Frost guard (controller._frost_blocks): a cycle skipped for frost checks
-# again this often, this many times that day.
-FROST_RETRY_SECONDS = 3600
-FROST_RETRY_COUNT = 6
+# Weather hold (controller._weather_blocks, 1.8; the frost guard before): a cycle held for frost,
+# rain or wind checks again this often, this many times that day, then waits for its next time.
+HOLD_RETRY_SECONDS = 3600
+HOLD_RETRY_COUNT = 6
+FROST_RETRY_SECONDS = HOLD_RETRY_SECONDS  # the 1.7 names, kept for one release
+FROST_RETRY_COUNT = HOLD_RETRY_COUNT
+# The reasons, most harmful first, and the decision codes of a cycle that waits for one.
+HOLD_REASONS = ("frost", "rain", "wind")
+WAITING_HOLD_CODES = ("waiting_frost", "waiting_rain", "waiting_wind", "waiting_deep_soak")
 # A temperature reading older than this, or below this, is not trusted to
 # hold watering back (a sensor stuck on a cold reading, an error value).
 FROST_TEMP_MAX_AGE_SECONDS = 6 * 3600
@@ -792,6 +923,17 @@ PLANT_PRESETS: dict[str, dict] = {
     },
 }
 PLANT_OPTIONS = [PLANT_CUSTOM, *PLANT_PRESETS]
+# 1.8: the crop curve (data/crop_kc.json) a new zone of each plant type starts on. A plant picked in the
+# lookup brings its own crop; the types without an entry here start on the fixed Crop Factor.
+KC_CROP_FOR_PLANT: dict[str, str] = {
+    "tomatoes": "tomato", "chilis": "pepper", "leafy_vegetables": "lettuce", "strawberries": "strawberry",
+    "herbs": "basil", "lawn": "turf_cool", "fruit_tree": "apple", "young_tree": "apple",
+}
+# The same, where the climate changes the crop (warm-season grass, evergreen fruit).
+KC_CROP_FOR_PLANT_CLIMATE: dict[tuple[str, str], str] = {
+    ("lawn", "tropical"): "turf_warm", ("lawn", "hot_dry"): "turf_warm",
+    ("fruit_tree", "tropical"): "avocado", ("young_tree", "tropical"): "avocado",
+}
 # Plants raised from seed in a nursery are ready to move to their bed about
 # this many days after planting (1.7.1). Types that are not raised that way
 # have no figure; a plant's own number (the person's) always wins.

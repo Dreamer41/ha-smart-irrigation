@@ -27,11 +27,21 @@ DEPTH_KEYS = {
     "forecast_rain_threshold_mm",
     "rain_ignore_below_mm",
     "manual_rain_mm",
+    "root_depth_mm",
 }
 # Emitter application rate: mm/min <-> in/h (the usual drip rating in the US).
 FLOW_KEYS = {"flow_rate_mm_per_min"}
 # Whole-zone volume flow: L/min <-> gal/min (the water-use estimate).
 VOLFLOW_KEYS = {"zone_flow_l_min"}
+# Area: m² <-> ft².
+AREA_KEYS = {"zone_area_m2"}
+# Soil water-holding capacity: mm/m <-> in/ft (1 mm/m = 0.012 in/ft).
+HOLDING_KEYS = {"soil_holding_mm_per_m"}
+# Wind speed: km/h <-> mph.
+SPEED_KEYS = {"wind_hold_kmh"}
+# Rain per hour: mm/h <-> in/h.
+RAIN_RATE_KEYS = {"rain_sensor_mm_per_hour"}
+IN_FT_PER_MM_M = 0.012
 # Temperature thresholds: °C <-> °F.
 TEMP_KEYS = {
     "hot_temp_threshold", "cool_temp_threshold", "fallback_temp", "frost_guard_temp",
@@ -40,10 +50,10 @@ TEMP_KEYS = {
 # Temperature DIFFERENCES: °C <-> °F without the +32 offset.
 DELTA_KEYS = {"climate_hysteresis", "outside_margin"}
 
-IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "volflow": "gal/min", "temp": "°F", "delta": "°F"}
-IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "volflow": 0.01, "temp": 0.5, "delta": 0.5}
-# rain_mm_per_tip is tiny (0.2-0.5 mm = 0.008-0.02 in), so finer steps.
-IMPERIAL_STEP_OVERRIDE = {"rain_mm_per_tip": 0.001}
+IMPERIAL_UNIT = {"depth": "in", "flow": "in/h", "volflow": "gal/min", "temp": "°F", "delta": "°F", "holding": "in/ft", "area": "ft²", "speed": "mph", "rain_rate": "in/h"}
+IMPERIAL_STEP = {"depth": 0.01, "flow": 0.01, "volflow": 0.01, "temp": 0.5, "delta": 0.5, "holding": 0.05, "area": 1.0, "speed": 1.0, "rain_rate": 0.01}
+# rain_mm_per_tip is tiny (0.2-0.5 mm = 0.008-0.02 in), so finer steps; root depth is set in whole inches.
+IMPERIAL_STEP_OVERRIDE = {"rain_mm_per_tip": 0.001, "root_depth_mm": 1.0}
 
 UNIT_SYSTEM_AUTO = "auto"
 UNIT_SYSTEM_METRIC = "metric"
@@ -62,6 +72,14 @@ def kind(key: str) -> str | None:
         return "temp"
     if key in DELTA_KEYS:
         return "delta"
+    if key in HOLDING_KEYS:
+        return "holding"
+    if key in AREA_KEYS:
+        return "area"
+    if key in SPEED_KEYS:
+        return "speed"
+    if key in RAIN_RATE_KEYS:
+        return "rain_rate"
     return None
 
 
@@ -77,6 +95,14 @@ def to_display(key: str, metric_value: float, imperial: bool) -> float:
         return metric_value / LITERS_PER_GALLON
     if k == "delta":
         return metric_value * 9 / 5
+    if k == "holding":
+        return metric_value * IN_FT_PER_MM_M
+    if k == "area":
+        return metric_value / M2_PER_FT2
+    if k == "speed":
+        return metric_value / KMH_PER_MPH
+    if k == "rain_rate":
+        return metric_value / MM_PER_INCH
     return metric_value * 9 / 5 + 32
 
 
@@ -92,6 +118,14 @@ def to_metric(key: str, display_value: float, imperial: bool) -> float:
         return display_value * LITERS_PER_GALLON
     if k == "delta":
         return display_value * 5 / 9
+    if k == "holding":
+        return display_value / IN_FT_PER_MM_M
+    if k == "area":
+        return display_value * M2_PER_FT2
+    if k == "speed":
+        return display_value * KMH_PER_MPH
+    if k == "rain_rate":
+        return display_value * MM_PER_INCH
     return (display_value - 32) * 5 / 9
 
 
@@ -184,6 +218,14 @@ def temp_text(celsius: float, imperial: bool) -> str:
 def depth_text(mm: float, imperial: bool) -> str:
     """An amount of water for log/phone text, in the zone's units."""
     return f"{mm / MM_PER_INCH:.2f} in" if imperial else f"{mm:.1f} mm"
+
+
+KMH_PER_MPH = 1.609344
+
+
+def speed_text(kmh: float, imperial: bool) -> str:
+    """A wind speed for phone and status text, in the zone's units."""
+    return f"{kmh / KMH_PER_MPH:.0f} mph" if imperial else f"{kmh:.0f} km/h"
 
 
 def volume_text(liters: float, imperial: bool) -> str:

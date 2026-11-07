@@ -157,6 +157,79 @@ CROPS: list[tuple] = [
 ]
 
 
+# 1.8: the crop's season and root zone, for the seasonal crop factor and the root-zone limit.
+#   Lengths of the stages in days: FAO-56 Table 11. Several regions are listed for most crops; the row nearest
+#   Mediterranean or temperate gardens is used and named in the note. A crop with no Table 11 row (or an
+#   evergreen without a real cycle) is "flat": always Kc mid. "annual" counts from the planting date;
+#   "perennial" counts from green-up each year (see const.py KC_GREEN_UP_DOY).
+#   Maximum effective rooting depth Zr (m) and the depletion fraction for no stress p (at ETc 5 mm/day): Table 22.
+#   Maximum crop height h (m): Table 12 (mid-season; for a range, the middle; for a tree, the garden size).
+#   Crops outside the tables (basil, mango, guava, papaya) have estimated values, and the note says so.
+# id: (season, l_ini, l_dev, l_mid, l_late, zr_min, zr_max, p, h, note)
+SEASONS: dict[str, tuple] = {
+    "tomato": ("annual", 30, 40, 45, 30, 0.7, 1.5, 0.40, 0.6, "Table 11, Mediterranean"),
+    "pepper": ("annual", 25, 35, 40, 20, 0.5, 1.0, 0.30, 0.7, "Table 11, Europe and Mediterranean"),
+    "eggplant": ("annual", 30, 45, 40, 25, 0.7, 1.2, 0.45, 0.8, "Table 11, Mediterranean"),
+    "cucumber": ("annual", 20, 30, 40, 15, 0.7, 1.2, 0.50, 0.3, "Table 11, arid region (the only rows given)"),
+    "watermelon": ("annual", 20, 30, 30, 30, 0.8, 1.5, 0.40, 0.4, "Table 11, Italy"),
+    "cantaloupe": ("annual", 30, 45, 35, 10, 0.9, 1.5, 0.45, 0.3, "Table 11, California"),
+    "melon": ("annual", 25, 35, 40, 20, 0.8, 1.5, 0.40, 0.4, "Table 11, Mediterranean"),
+    "pumpkin": ("annual", 20, 30, 30, 20, 1.0, 1.5, 0.35, 0.4, "Table 11, Mediterranean"),
+    "squash": ("annual", 25, 35, 25, 15, 0.6, 1.0, 0.50, 0.3, "Table 11, Mediterranean and arid"),
+    "lettuce": ("annual", 20, 30, 15, 10, 0.3, 0.5, 0.30, 0.3, "Table 11, Mediterranean (the shortest row)"),
+    "spinach": ("annual", 20, 20, 15, 5, 0.3, 0.5, 0.20, 0.3, "Table 11, Mediterranean"),
+    "brassica": ("annual", 20, 30, 20, 10, 0.5, 0.8, 0.45, 0.4, "Table 11, crucifers (cabbage, cauliflower, broccoli)"),
+    "carrot": ("annual", 30, 40, 60, 20, 0.5, 1.0, 0.35, 0.3, "Table 11, Mediterranean"),
+    "radish": ("annual", 5, 10, 15, 5, 0.3, 0.5, 0.30, 0.3, "Table 11, Mediterranean and Europe"),
+    "celery": ("annual", 25, 40, 45, 15, 0.3, 0.5, 0.20, 0.6, "Table 11, Mediterranean"),
+    "garlic": ("flat", None, None, None, None, 0.3, 0.5, 0.30, 0.3, "no stage lengths in Table 11"),
+    "onion_green": ("annual", 25, 30, 10, 5, 0.3, 0.6, 0.30, 0.3, "Table 11, Mediterranean"),
+    "onion": ("annual", 15, 25, 70, 40, 0.3, 0.6, 0.30, 0.4, "Table 11, Mediterranean"),
+    "sweet_potato": ("annual", 20, 30, 60, 40, 1.0, 1.5, 0.65, 0.4, "Table 11, Mediterranean"),
+    "potato": ("annual", 30, 35, 50, 30, 0.4, 0.6, 0.35, 0.6, "Table 11, Europe"),
+    "beet": ("annual", 15, 25, 20, 10, 0.6, 1.0, 0.50, 0.4, "Table 11, Mediterranean"),
+    "turnip": ("flat", None, None, None, None, 0.5, 1.0, 0.50, 0.6, "no stage lengths in Table 11"),
+    "parsnip": ("flat", None, None, None, None, 0.5, 1.0, 0.40, 0.4, "no stage lengths in Table 11"),
+    "pea": ("annual", 20, 30, 35, 15, 0.6, 1.0, 0.35, 0.5, "Table 11, Mediterranean"),
+    "bean": ("annual", 20, 30, 30, 10, 0.5, 0.7, 0.45, 0.4, "Table 11, California and Mediterranean"),
+    "sweet_corn": ("annual", 20, 25, 25, 10, 0.8, 1.2, 0.50, 1.5, "Table 11, Mediterranean"),
+    "strawberry": ("flat", None, None, None, None, 0.2, 0.3, 0.20, 0.2, "no stage lengths in Table 11"),
+    "mint": ("flat", None, None, None, None, 0.4, 0.8, 0.40, 0.7, "no stage lengths in Table 11"),
+    "artichoke": ("perennial", 20, 25, 250, 30, 0.6, 0.9, 0.45, 0.7, "Table 11, California, second year"),
+    "asparagus": ("perennial", 90, 30, 200, 45, 1.2, 1.8, 0.45, 0.8, "Table 11, Mediterranean"),
+    "berries": ("flat", None, None, None, None, 0.6, 1.2, 0.50, 1.5, "no stage lengths in Table 11"),
+    "grapes": ("perennial", 20, 50, 75, 60, 1.0, 2.0, 0.35, 2.0, "Table 11, California"),
+    "avocado": ("flat", None, None, None, None, 0.5, 1.0, 0.70, 3.0, "evergreen: no stage lengths in Table 11"),
+    "citrus": ("perennial", 60, 90, 120, 95, 1.2, 1.5, 0.50, 3.0, "Table 11, Mediterranean; Table 12 height at a 50% canopy"),
+    "olive": ("perennial", 30, 90, 60, 90, 1.2, 1.7, 0.65, 4.0, "Table 11, Mediterranean"),
+    "apple": ("perennial", 20, 70, 90, 30, 1.0, 2.0, 0.50, 4.0, "Table 11, deciduous orchard, high latitudes"),
+    "stone_fruit": ("perennial", 20, 70, 90, 30, 1.0, 2.0, 0.50, 3.0, "Table 11, deciduous orchard, high latitudes"),
+    "almond": ("flat", None, None, None, None, 1.0, 2.0, 0.40, 5.0, "no stage lengths in Table 11"),
+    "walnut": ("perennial", 20, 10, 130, 30, 1.7, 2.4, 0.50, 4.5, "Table 11, Utah"),
+    "pistachio": ("perennial", 20, 60, 30, 40, 1.0, 1.5, 0.40, 4.0, "Table 11, Mediterranean"),
+    "kiwi": ("flat", None, None, None, None, 0.7, 1.3, 0.35, 3.0, "no stage lengths in Table 11"),
+    "banana": ("flat", None, None, None, None, 0.5, 0.9, 0.35, 4.0, "second year; no yearly cycle"),
+    "palm": ("flat", None, None, None, None, 0.7, 1.1, 0.65, 8.0, "evergreen: no stage lengths in Table 11"),
+    "coffee": ("flat", None, None, None, None, 0.9, 1.5, 0.40, 2.5, "evergreen: no stage lengths in Table 11"),
+    "cacao": ("flat", None, None, None, None, 0.7, 1.0, 0.30, 3.0, "evergreen: no stage lengths in Table 11"),
+    "conifer": ("flat", None, None, None, None, 1.0, 1.5, 0.70, 10.0, "evergreen: no stage lengths in Table 11"),
+    "turf_cool": ("flat", None, None, None, None, 0.5, 1.0, 0.40, 0.1, "turf grass, Table 12"),
+    "mango": ("flat", None, None, None, None, 1.0, 2.0, 0.50, 4.0, "estimate: not in Tables 11, 12 or 22"),
+    "guava": ("flat", None, None, None, None, 1.0, 2.0, 0.50, 4.0, "estimate: not in Tables 11, 12 or 22"),
+    "papaya": ("flat", None, None, None, None, 0.5, 1.0, 0.50, 3.0, "estimate: not in Tables 11, 12 or 22"),
+    "basil": ("flat", None, None, None, None, 0.3, 0.5, 0.40, 0.4, "estimate: not in Tables 11, 12 or 22"),
+    "turf_warm": ("flat", None, None, None, None, 0.5, 1.0, 0.50, 0.1, "turf grass, Table 12"),
+}
+
+
+def _season(crop_id: str) -> dict:
+    season, l_ini, l_dev, l_mid, l_late, zr_min, zr_max, p, height, note = SEASONS[crop_id]
+    return {
+        "season": season, "l_ini": l_ini, "l_dev": l_dev, "l_mid": l_mid, "l_late": l_late,
+        "root_min_m": zr_min, "root_max_m": zr_max, "p": p, "height_m": height, "season_source": note,
+    }
+
+
 def build() -> dict:
     return {
         "sources": SOURCES,
@@ -166,6 +239,7 @@ def build() -> dict:
             {
                 "id": row[0], "name": row[1], "kc_ini": row[2], "kc_mid": row[3], "kc_end": row[4],
                 "categories": row[5], "words": row[6], "source": row[7] if len(row) > 7 else "fao56",
+                **_season(row[0]),
             }
             for row in CROPS
         ],

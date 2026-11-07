@@ -13,8 +13,11 @@ from typing import Any
 from homeassistant.core import HomeAssistant
 import homeassistant.util.dt as dt_util
 
-from . import messages
-from .const import NUMBER_DEFAULTS
+from . import fao56, messages, units
+from .const import FLOW_LEARN_SUGGEST_RUNS, FLOW_LEARN_SUGGEST_SHARE, NUMBER_DEFAULTS
+
+# Less than this before the plant feels dry: even daily watering may let it dry out (1.8).
+ROOT_ZONE_SHALLOW_MM = 3.0
 from .issues import FLOW_DEFAULT_TOLERANCE, OFFLINE
 
 LEVEL_ORDER = {"fail": 0, "warn": 1, "info": 2, "ok": 3}
@@ -27,6 +30,76 @@ def _state(hass: HomeAssistant, entity_id: str | None):
 
 def _working(state) -> bool:
     return state is not None and state.state not in OFFLINE
+
+
+def _flow_meter_checks(controller: Any, add, hass: HomeAssistant) -> None:
+    """The flow meter (1.8): a unit that is no water, watering by the meter that can't, and a learned
+    flow rate far from the Flow Rate setting."""
+    meter = controller.flow_meter_entity
+    if not meter:
+        return
+    state = _state(hass, meter)
+    if _working(state) and controller.flow_meter_kind() is None:
+        add("flow_meter_unit", "warn", "flow_meter.unknown_unit", entity=meter,
+            unit=state.attributes.get("unit_of_measurement") or "")
+    problem = controller.flow_delivery_problem()
+    if problem not in (None, "off"):
+        add("flow_mode", "warn", f"flow_mode.{problem}")
+    state_data = controller.store.state
+    learned, setting = state_data.flow_learned_mm_per_min, controller.number("flow_rate_mm_per_min")
+    if (
+        learned and setting > 0 and state_data.flow_learned_runs >= FLOW_LEARN_SUGGEST_RUNS
+        and abs(learned - setting) / setting > FLOW_LEARN_SUGGEST_SHARE
+    ):
+        imperial = controller.imperial
+        unit = "in/h" if imperial else "mm/min"
+        add("flow_learned", "info", "flow_meter.learned",
+            learned=f"{units.to_display('flow_rate_mm_per_min', learned, imperial):.2f} {unit}",
+            setting=f"{units.to_display('flow_rate_mm_per_min', setting, imperial):.2f} {unit}")
+
+
+def _weather_hold_checks(controller: Any, add, hass: HomeAssistant) -> None:
+    """The weather holds (1.8): a wind limit with nothing to read the wind from, a rain sensor that
+    is offline or stuck."""
+    from .const import WIND_HOLD_SEED_KMH
+
+    if controller.irrigation_method in WIND_HOLD_SEED_KMH:
+        source = controller.wind_entity or controller.weather_entity
+        limit = controller.number("wind_hold_kmh")
+        if limit > 0 and not source:
+            add("wind_hold", "warn", "wind_hold.no_source")
+        elif limit <= 0 and source:
+            add("wind_hold", "info", "wind_hold.off")
+    sensor = controller.rain_sensor_entity
+    if sensor:
+        state = _state(hass, sensor)
+        if not _working(state):
+            add("rain_sensor", "warn", "rain_sensor.fail", entity=sensor)
+        elif controller.rain_sensor_stuck():
+            add("rain_sensor", "warn", "rain_sensor.stuck", entity=sensor)
+        else:
+            add("rain_sensor", "ok", "rain_sensor.ok", entity=sensor)
+
+
+def _root_zone_checks(controller: Any, add) -> None:
+    root_zone = controller.root_zone()
+    if root_zone is None:
+        add("root_zone", "info", "root_zone.off")
+        return
+    imperial = controller.imperial
+    if root_zone.raw_mm < ROOT_ZONE_SHALLOW_MM:
+        add("root_zone_shallow", "warn", "root_zone.shallow", raw=units.depth_text(root_zone.raw_mm, imperial))
+    flow = controller.number("flow_rate_mm_per_min")
+    if root_zone.max_interval_days == 1 and root_zone.etc_mm_day and flow > 0:
+        minutes = root_zone.etc_mm_day / flow
+        if minutes < controller._routine_min_pulse():
+            # A day's dose is stretched to the Minimum Pulse: more than the soil holds, every day.
+            add("root_zone_short_dose", "warn", "root_zone.short_dose", minutes=f"{minutes:.1f}",
+                minimum=f"{controller._routine_min_pulse()}")
+    target = controller.number("deep_soak_target_mm")
+    if controller.deep_soak_enabled and target > root_zone.taw_mm:
+        add("root_zone_deep_soak", "info", "root_zone.deep_soak",
+            taw=units.depth_text(root_zone.taw_mm, imperial), target=units.depth_text(target, imperial))
 
 
 def run_checks(controller: Any) -> list[dict[str, Any]]:
@@ -62,6 +135,13 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("rain", "fail", "rain.fail", entity=gauge)
     elif controller.uses_wu:
         add("rain", "ok", "rain.wu")
+    elif controller.rain_estimate_active:
+        imperial = controller.imperial
+        rate = units.to_display("rain_sensor_mm_per_hour", controller.number("rain_sensor_mm_per_hour"), imperial)
+        add("rain", "ok", "rain.sensor", entity=controller.rain_sensor_entity,
+            rate=f"{rate:.2f} in/h" if imperial else f"{rate:.1f} mm/h")
+    elif controller.is_outdoor and controller.rain_sensor_entity and not controller.store.state.manual_rain_used:
+        add("rain", "info", "rain.sensor_no_rate", entity=controller.rain_sensor_entity)
     elif controller.is_outdoor and controller.store.state.manual_rain_used:
         add("rain", "ok", "rain.manual")
     elif controller.is_outdoor:
@@ -126,6 +206,8 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("volume", "ok", "volume.ok")
         else:
             add("volume", "info", "volume.none", action="calibrate")
+        _flow_meter_checks(controller, add, hass)
+        _weather_hold_checks(controller, add, hass)
 
     # The probe and the pump sensor, if there are any.
     probe = controller.soil_moisture_entity
@@ -153,6 +235,37 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
         elif area is not None:
             add("paused", "warn", "paused.area", area=area.name)
 
+    # The crop curve (1.8): an annual crop needs a planting date.
+    if controller.has_valve and (crop := controller.crop_seasons.get(controller.store.state.kc_crop)) is not None:
+        if crop.season == fao56.SEASON_ANNUAL and controller.store.state.planting_date_ts is None:
+            add("kc_planting", "info", "kc.planting_date", crop=crop.name)
+
+    # The master valve (1.8): closed for safety, nothing behind it waters until Reset Lock.
+    if (master := controller.master_valve_entity) is not None:
+        reason = controller.store.state.master_valve_latch
+        if reason:
+            add("master_valve", "warn", "master_valve.latched", valve=master,
+                reason=messages.text(hass, f"notify.master_valve_reason.{reason}", valve=controller.valve_entity or ""))
+        elif _state(hass, master) is None or not _working(_state(hass, master)):
+            add("master_valve", "warn", "master_valve.fail", valve=master)
+        else:
+            add("master_valve", "ok", "master_valve.ok", valve=master)
+        # The monthly self-test (needs a flow meter or a pump power sensor to tell).
+        test_ts, test_ok = controller._master().last_test
+        when = dt_util.as_local(dt_util.utc_from_timestamp(test_ts)).strftime("%Y-%m-%d") if test_ts else ""
+        if test_ts is not None and test_ok is False:
+            add("master_valve_test", "warn", "master_valve.test_failed", valve=master, when=when)
+        elif test_ts is not None:
+            add("master_valve_test", "ok", "master_valve.test_ok", when=when)
+        elif controller.flow_meter_entity or controller.pump_power_entity:
+            add("master_valve_test", "info", "master_valve.test_pending")
+        else:
+            add("master_valve_test", "info", "master_valve.test_none")
+
+    # The root zone (1.8).
+    if controller.has_valve:
+        _root_zone_checks(controller, add)
+
     # The last watering.
     if controller.has_valve:
         last = controller.store.state.last_routine_ts
@@ -160,8 +273,6 @@ def run_checks(controller: Any) -> list[dict[str, Any]]:
             add("last", "info", "last.never")
         else:
             days = (dt_util.utcnow().timestamp() - last) / 86400
-            from . import calculations as calc
-
             interval = controller._routine_interval_days()
             when = dt_util.as_local(dt_util.utc_from_timestamp(last)).strftime("%Y-%m-%d %H:%M")
             if days > interval * OVERDUE_FACTOR and not controller.paused:

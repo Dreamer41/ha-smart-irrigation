@@ -14,7 +14,7 @@ from __future__ import annotations
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from .const import GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF, RAIN_SOURCE_TIPS
+from .const import DELIVERY_FLOW, GREENHOUSE_NUMBERS, GROWTH_RAMP_CUSTOM, GROWTH_RAMP_OFF, RAIN_SOURCE_TIPS, WIND_HOLD_SEED_KMH
 
 # (platform, translation key) of each group, and when it has nothing to do.
 FORECAST = {
@@ -61,10 +61,29 @@ TEMPERATURE = {
     ("sensor", "reference_et0_3d"),
     ("number", "crop_coefficient"),
     ("select", "demand_model"),
+    ("select", "crop_curve"),
+    ("number", "kc_curve_pct"),
+    ("sensor", "crop_factor"),
+    ("switch", "kc_climate_adjust"),
+    ("select", "sun_exposure"),
 }
 FROST = {("number", "frost_guard_temp")}
+WIND_HOLD = {("number", "wind_hold_kmh")}
+RAIN_ESTIMATE = {("number", "rain_sensor_mm_per_hour")}
+# 1.8: Root Depth is the switch and stays visible; the rest does nothing while it is 0.
+ROOT_ZONE = {
+    ("number", "soil_holding_mm_per_m"),
+    ("number", "allowed_depletion_pct"),
+    ("number", "wetted_area_pct"),
+    ("sensor", "root_zone"),
+}
 NOTIFY = {("select", "notifications"), ("select", "weekly_summary")}
-FLOW_METER = {("sensor", "last_cycle_water_liters")}
+FLOW_METER = {
+    ("sensor", "last_cycle_water_liters"),
+    ("select", "delivery_mode"),
+    ("number", "zone_area_m2"),
+    ("number", "flow_time_allowance_pct"),
+}
 DEEP_SOAK = {
     ("number", "deep_soak_target_mm"),
     ("number", "deep_soak_max_runtime_minutes"),
@@ -157,7 +176,8 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         # the 30-minute ones too (fresh rain around a watering).
         hidden.add(("number", "rain_mm_per_tip"))
     elif not controller.rain_counter_entity:
-        hidden |= RAIN_GAUGE_ONLY if controller.store.state.manual_rain_used else RAIN_GAUGE
+        rain_shown = controller.store.state.manual_rain_used or controller.rain_estimate_active
+        hidden |= RAIN_GAUGE_ONLY if rain_shown else RAIN_GAUGE
     elif controller.rain_source_type != RAIN_SOURCE_TIPS:
         hidden.add(("number", "rain_mm_per_tip"))  # a total or rate is already in mm
     elif controller.rain_from_area:
@@ -178,10 +198,18 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden |= TEMPERATURE
     if not controller.outdoor_temp_entity and not controller.weather_entity:
         hidden |= FROST  # nothing to read the temperature from
+    if not controller.is_outdoor or controller.irrigation_method not in WIND_HOLD_SEED_KMH:
+        hidden |= WIND_HOLD  # only a sprinkler's spray drifts
+    if not controller.rain_sensor_entity or controller.rain_counter_entity or controller.uses_wu:
+        hidden |= RAIN_ESTIMATE  # a gauge or Weather Underground measures the rain
     if not controller.notify_entity:
         hidden |= NOTIFY
+    if not controller.master_valve_entity:
+        hidden.add(("button", "master_valve_checked"))
     if not controller.flow_meter_entity:
         hidden |= FLOW_METER
+    elif controller.store.state.delivery_mode != DELIVERY_FLOW:
+        hidden.add(("number", "flow_time_allowance_pct"))  # only a flow-meter watering has a time limit
     if not controller.deep_soak_enabled:
         hidden |= DEEP_SOAK
     if not controller.deep_soak_enabled or controller.rain_counter_entity or controller.uses_wu:
@@ -190,8 +218,14 @@ def hidden_for(controller) -> set[tuple[str, str]]:
         hidden.add(("button", "resume_automatic"))
     else:
         hidden |= _greenhouse_hidden(controller)
+    if controller.store.state.kc_crop in controller.crop_seasons:
+        hidden.add(("number", "crop_coefficient"))  # the curve decides, not the slider
+    else:
+        hidden |= {("number", "kc_curve_pct"), ("switch", "kc_climate_adjust")}
+    if controller.root_zone() is None:
+        hidden |= ROOT_ZONE
     profile = controller.growth_ramp_profile
-    if profile == GROWTH_RAMP_OFF:
+    if profile == GROWTH_RAMP_OFF or controller.kc_curve_covers_growth():
         hidden |= GROWTH_RAMP | CUSTOM_RAMP
     elif profile != GROWTH_RAMP_CUSTOM:
         hidden |= CUSTOM_RAMP

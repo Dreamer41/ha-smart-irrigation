@@ -174,6 +174,45 @@
     "stopped_soil_wet": {
       "title": "💧 {cycle} stopped: soil is wet",
       "message": "Stopped after {given} of {planned} min: the soil probe reads {pct}%, at or above the wet threshold. It counts as the watering."
+    },
+    "master_valve_closed": {
+      "title": "🚨 Hoofdklep dicht",
+      "message": "{valve} is voor de veiligheid gesloten. {reason} Niets erachter krijgt water tot je op een van de zones op Reset Lock drukt."
+    },
+    "master_valve_refused": {
+      "title": "⚠️ {cycle}: niet gestart",
+      "message": "De hoofdklep {valve} is voor de veiligheid dicht. {reason} Druk op Reset Lock bij de zone zodra het verholpen is."
+    },
+    "master_valve_reason": {
+      "valve_not_closed": "{valve} bevestigde aan het eind van een beurt niet dat hij dicht was.",
+      "valve_stuck": "{valve} stond veel te lang open.",
+      "flow": "De watermeter bleef tellen terwijl alle zonekleppen dicht waren.",
+      "pump_power": "De pomp bleef stroom trekken terwijl alle zonekleppen dicht waren.",
+      "high_flow": "Er liep veel meer water dan {valve} nodig heeft: een leiding is misschien gesprongen."
+    },
+    "master_valve_test_failed": {
+      "title": "🚨 Test hoofdklep mislukt",
+      "message": "Bij de maandelijkse test van {valve} bleef er water stromen of bleef de pomp draaien terwijl hij dicht was. Hij houdt het water misschien niet tegen als een zoneklep blijft hangen: controleer hem."
+    },
+    "flow_too_high": {
+      "title": "🚨 {cycle}: te veel water",
+      "message": "{valve} is gesloten: er liep ongeveer {rate} per minuut, veel meer dan de gebruikelijke {expected}. Een leiding is misschien gesprongen of losgeraakt: controleer die vóór de volgende beurt."
+    },
+    "low_flow": {
+      "title": "⚠️ {cycle}: weinig doorstroming",
+      "message": "{given} van {target} gegeven in de toegestane tijd. Controleer op een verstopt filter of lage druk."
+    },
+    "meter_not_counting": {
+      "title": "⚠️ {cycle}: watermeter telt niet",
+      "message": "{meter} telde niets terwijl de klep open was, dus de beurt ging op tijd. Controleer de meter."
+    },
+    "rain": {
+      "title": "🌧️ {cycle} wacht: regen",
+      "message": "{sensor} meldt nat. Er wordt tot {hours} uur lang elk uur opnieuw gekeken, daarna wacht hij op zijn volgende geplande tijd."
+    },
+    "wind": {
+      "title": "💨 {cycle} wacht: wind",
+      "message": "De wind is {wind}, boven de grens van {limit}. Er wordt tot {hours} uur lang elk uur opnieuw gekeken, daarna wacht hij op zijn volgende geplande tijd."
     }
   },
   "notes": {
@@ -222,7 +261,11 @@
     "waiting_deep_soak": "{cycle} wacht sinds {time}: de diepe watergift gaat voor zodra het warm genoeg is",
     "paused_until": "Gepauzeerd tot {until}",
     "paused_area": "Gepauzeerd: geen water zolang {area} gepauzeerd is",
-    "paused_house": "Gepauzeerd: geen water zolang de kas {house} gepauzeerd is"
+    "paused_house": "Gepauzeerd: geen water zolang de kas {house} gepauzeerd is",
+    "waiting_rain": "{cycle} wacht sinds {time}: {sensor} meldt nat; elk uur opnieuw gecontroleerd",
+    "skipped_rain": "{cycle} overgeslagen om {time}: {sensor} meldde na {hours} controles nog nat",
+    "waiting_wind": "{cycle} wacht sinds {time}: wind {wind}, boven de grens ({limit}); elk uur opnieuw gecontroleerd",
+    "skipped_wind": "{cycle} overgeslagen om {time}: wind na {hours} controles nog boven {limit}"
   },
   "summary": {
     "title": "💧 ZoneFlow: je week",
@@ -319,7 +362,9 @@
       "fail": "De regenmeter {entity} is niet beschikbaar. Tot deze terug is, gaat ZoneFlow er van uit dat het niet regent.",
       "wu": "Regen komt van Weather Underground.",
       "manual": "Regen wordt handmatig toegevoegd.",
-      "none": "Geen regenmeter. ZoneFlow gaat er van uit dat het nooit regent, tenzij je handmatig regen toevoegt of Weather Underground gebruikt."
+      "none": "Geen regenmeter. ZoneFlow gaat er van uit dat het nooit regent, tenzij je handmatig regen toevoegt of Weather Underground gebruikt.",
+      "sensor": "De regen wordt geschat met de regensensor {entity}: {rate} zolang hij nat meldt.",
+      "sensor_no_rate": "De regensensor {entity} houdt beregening tegen zolang hij nat meldt, maar telt geen regen. Zonder regenmeter: stel Regen per uur van de regensensor in om de natte tijd als regen te tellen."
     },
     "temperature": {
       "ok": "Buitentemperatuur is {value} {unit}.",
@@ -367,7 +412,45 @@
     },
     "backup_timer": "Set your valve's own auto-off timer to at least {minutes} min. It is a backup in case Home Assistant stops while the valve is open. The longest the valve is open at once is {longest} min; a shorter timer cuts a run short. Enter what you set under My Valve's Own Timer, and ZoneFlow warns you if it becomes too short.",
     "backup_timer_short": "The valve's own timer is set to {timer} min, but the valve can be open {longest} min at once, so the timer will cut waterings short. Set it to at least {minutes} min.",
-    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min)."
+    "backup_timer_ok": "The valve's own timer ({timer} min) is long enough for the longest the valve is open ({longest} min).",
+    "kc": {
+      "planting_date": "De gewascurve voor {crop} start op de plantdatum. Stel die in; tot dan geldt de instelling Gewasfactor."
+    },
+    "root_zone": {
+      "off": "Stel de Worteldiepte in zodat een beurt nooit meer geeft dan de bodem kan vasthouden.",
+      "shallow": "De wortelzone houdt heel weinig vast ({raw} voordat de plant droogte voelt). Zelfs dagelijks water geven kan haar laten uitdrogen: controleer Worteldiepte en Natte deel.",
+      "short_dose": "De wortelzone moet elke dag water krijgen, maar een dagdosis ({minutes} min) is korter dan de minimale puls ({minimum} min), dus elke beurt geeft meer dan de bodem vasthoudt.",
+      "deep_soak": "Diep water geven geeft {taw}, wat de wortelzone vasthoudt, in plaats van de ingestelde {target}."
+    },
+    "master_valve": {
+      "latched": "De hoofdklep {valve} is voor de veiligheid dicht. {reason} Druk op Reset Lock zodra het verholpen is.",
+      "fail": "De hoofdklep {valve} is niet beschikbaar.",
+      "ok": "De hoofdklep {valve} reageert.",
+      "test_failed": "De hoofdklep {valve} zakte voor de maandelijkse test op {when}: terwijl hij dicht was, bleef er water stromen of bleef de pomp draaien. Druk op Hoofdklep gecontroleerd als u hem hebt bekeken; hij wordt bij de volgende routinebeurt opnieuw getest.",
+      "test_ok": "De hoofdklep slaagde voor de maandelijkse test op {when}.",
+      "test_pending": "De hoofdklep wordt eens per maand getest, aan het eind van een gewone beurt.",
+      "test_none": "Voeg een watermeter of een pompvermogenssensor toe om de hoofdklep eens per maand te laten testen."
+    },
+    "flow_meter": {
+      "unknown_unit": "ZoneFlow kan geen liters afleiden uit de eenheid van {entity} ('{unit}'). Gebruik een meter die een volume (L, gal, m³) of een doorstroming (L/min, gal/min) meldt.",
+      "learned": "Beurten maten een doorstroming van {learned}, maar de instelling Doorstroming is {setting}. Pas die aan zodat de geplande tijden kloppen."
+    },
+    "flow_mode": {
+      "no_meter": "Water geven stopt op de watermeter, maar de zone heeft er geen: hij geeft water op tijd.",
+      "meter_offline": "Water geven stopt op de watermeter, maar die is offline: de zone geeft water op tijd tot hij terug is.",
+      "unknown_unit": "Water geven stopt op de watermeter, maar de eenheid is niet als water te lezen: de zone geeft water op tijd.",
+      "no_area": "Water geven stopt op de watermeter, maar de oppervlakte van de zone is onbekend: stel Oppervlakte van de zone (of Zonedoorstroming) in om millimeters naar liters om te rekenen.",
+      "shared_meter": "Water geven stopt op de watermeter, maar die wordt gedeeld met een zone op een andere pomp die tegelijk water kan geven: de zone geeft water op tijd."
+    },
+    "wind_hold": {
+      "no_source": "De windlimiet is ingesteld, maar er is geen windsensor of weerentiteit om de wind uit te lezen, dus ze houdt nooit iets tegen. Voeg er een toe onder Configureren.",
+      "off": "Er is een windbron beschikbaar, maar de Windlimiet staat uit (0). Stel een limiet in zodat de sproeier bij harde wind wacht."
+    },
+    "rain_sensor": {
+      "ok": "De regensensor {entity} meldt zich.",
+      "fail": "De regensensor {entity} is niet beschikbaar. Tot hij terug is, houdt hij niets tegen.",
+      "stuck": "De regensensor {entity} meldt al meer dan een dag onveranderd nat, dus ZoneFlow negeert hem. Controleer de sensor."
+    }
   },
   "why": {
     "method": "Sproeimethode: {method}.",
@@ -397,7 +480,46 @@
     "soil_ok": "gemiddeld",
     "preview": "If it ran now: {minutes} min in {pulses} pulses of about {each} min, with {soak} min of soak between them. The valve is open at most {longest} min at once.",
     "preview_one": "If it ran now: {minutes} min in one go. The valve is open at most {longest} min at once.",
-    "preview_none": "If it ran now: nothing, the rain already covers what it needs."
+    "preview_none": "If it ran now: nothing, the rain already covers what it needs.",
+    "method_fao56": "verdamping volgens FAO-56 (uit de temperatuur, en vochtigheid, wind en zon waar die gemeten worden)",
+    "fao56_inputs": "FAO-56-referentieverdamping van gisteren: {et0} per dag. Vochtigheid: {humidity}; wind: {wind}; zon: {solar}.",
+    "fao56_source": {
+      "rh_min_max": "jouw sensor",
+      "rh_max": "jouw sensor",
+      "rh_mean": "jouw sensor",
+      "measured": "jouw sensor",
+      "weather": "de weerdienst",
+      "default": "de instelling van de zone",
+      "estimated": "geschat uit de temperatuur",
+      "wu": "Weather Underground-stations in de buurt"
+    },
+    "crop_factor": "Gewasfactor vandaag: {kc} ({detail}).",
+    "kc_fixed": "de instelling Gewasfactor",
+    "kc_curve": "het seizoen van {crop}, fase {stage}",
+    "kc_stage": {
+      "initial": "begin",
+      "development": "ontwikkeling",
+      "mid": "midden van het seizoen",
+      "late": "laat in het seizoen",
+      "after_season": "na het seizoen",
+      "dormant": "rust",
+      "flat": "het hele jaar"
+    },
+    "kc_adjust_up": "{adj} erbij door droog, winderig weer",
+    "kc_adjust_down": "{adj} eraf door rustig, vochtig weer",
+    "kc_exposure": "{pct} % voor de zonligging ({exposure})",
+    "kc_exposure_name": {
+      "deep_shade": "de hele dag schaduw",
+      "morning_sun": "ochtendzon",
+      "afternoon_sun": "middagzon",
+      "full_sun": "volle zon",
+      "reflected_heat": "teruggekaatste warmte"
+    },
+    "kc_needs_planting_date": "Stel de plantdatum in om de seizoencurve van {crop} te volgen; tot dan geldt de instelling Gewasfactor.",
+    "root_zone": "Wortelzone: houdt {taw} vast; de plant gebruikt ongeveer {use} per dag en kan {raw} gebruiken voordat hij droogte voelt.",
+    "root_zone_interval": "Daarom geeft hij elke {days} dagen water in plaats van elke {tier}.",
+    "root_zone_capped": "Een beurt wordt beperkt tot {taw}, wat de wortelzone vasthoudt ({capped} minder dan de dagen vragen).",
+    "rain_sensor_estimate": "Geen regenmeter: de regen wordt geschat met de regensensor, {rate} voor elk uur dat hij nat meldt (hoogstens {cap} per dag)."
   },
   "suggest": {
     "heading": "Mogelijke entiteiten gevonden in je Home Assistant:",

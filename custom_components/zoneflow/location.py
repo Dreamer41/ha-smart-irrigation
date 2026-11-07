@@ -187,5 +187,8 @@ def apply(
 
 
 async def async_set(hass: HomeAssistant, entry: ConfigEntry, token: str, use_area_keys: set[str] | None = None) -> None:
+    controller = hass.data.get(DOMAIN, {}).get(entry.entry_id)
+    if controller is not None and getattr(controller, "run_in_progress", False):
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="zone_busy")  # moving a zone reloads it
     options = apply(hass, entry, token, use_area_keys)
     hass.config_entries.async_update_entry(entry, options=options)

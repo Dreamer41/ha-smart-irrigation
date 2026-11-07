@@ -6,10 +6,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           # 3.13 has no numpy==1.26.0 wheel, which pytest-homeassistant-custom-component
           # pins -- same issue hit setting this up locally on Windows. 3.12 has one.
