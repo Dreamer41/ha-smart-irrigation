@@ -2238,8 +2238,9 @@ While it reads wet, due watering waits for it to dry. Tick **Sensor reads on whe
 dry** for the other kind; ask which way the person's sensor reads and, if they
 can, have them wet it to confirm. An unreadable sensor never holds anything. One
 that has read wet for a day without a change is treated as stuck: ignored, noted
-in Check my setup, and a Repairs item asks the person to look at it. Only ask
-about this sensor if they have one.
+in Check my setup, and a Repairs item asks the person to look at it. This is
+caught even when Home Assistant restarts every day. Only ask about this sensor
+if they have one.
 
 **Rain Sensor Rain Rate** (mm/h, 0-10, default 0 = off). A zone with **no rain
 gauge and no Weather Underground** can count the sensor's wet time as rain:
@@ -2274,7 +2275,12 @@ valve is normally open**.
   the flow meter keeps counting or the pump keeps drawing power while every
   zone valve behind it is closed. A phone alert goes out even with
   notifications off. **Never suggest a workaround for this;** it is a safety
-  watchdog (see the non-negotiables at the top).
+  watchdog (see the non-negotiables at the top). The flow check needs the flow to
+  last a few minutes, and a meter that holds its last rate or reports its last
+  litres late is not taken for a leak, so one blip does not close the master.
+- **After a restart.** If Home Assistant restarts in the middle of a run, the
+  master valve is closed at start-up, and a run that is cancelled while the master
+  opens does not leave it holding the valve open for later runs.
 - **Normally closed (default, recommended):** it shuts by itself in a power cut.
   **Normally open:** tick the box only if the valve is on a relay that closes it
   when switched ON; ZoneFlow then switches the relay ON to close it. Ask which
@@ -2313,6 +2319,10 @@ worked out from Zone Flow.
   low flow. What a watering gave is recorded from the meter.
 - A flow rate learned from these runs is pointed out in Check my setup when it
   is far from the Flow Rate setting.
+- **Impossible readings are ignored.** A meter total that jumps by more than
+  10,000 L in one reading (and a rain counter that jumps by more than 500 mm) is
+  taken as a broken sensor, not as water or rain. If a person reports a jump like
+  that, tell them it was ignored and to check the sensor.
 - **Rate meters.** A flow meter that reports a rate (L/min, m³/h, gal/min) is
   read as a rate, not as a running total. A meter whose unit is neither a
   volume nor a rate (for example "pulses") is not read as litres; Check my
