@@ -114,7 +114,9 @@ async def test_et0_sensor_averages_the_recorded_days_at_the_home_latitude(hass, 
     assert daily[2] is None
     assert daily[0] is not None and daily[1] is not None
     assert controller.avg_et0() == calc.average_et0(daily)
-    assert 4.0 < controller.avg_et0() < 6.0
+    # Hargreaves follows the time of year (the sun's radiation at 9.5 N is lowest in December,
+    # about 3.9 here, highest in spring, about 4.8), so the bounds hold on any day the suite runs.
+    assert 3.5 < controller.avg_et0() < 6.0
 
     entity_id = _et0_entity(hass)
     ent = next(e for e in hass.data["sensor"].entities if e.entity_id == entity_id)
