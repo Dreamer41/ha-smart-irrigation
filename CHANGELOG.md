@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.8.2] — OpenSprinkler stations
+
+### Added
+
+- **An OpenSprinkler station can be a zone's valve.** Pick the station's "Station Enabled" switch as the zone's valve, as before. ZoneFlow now waters it with the OpenSprinkler `run` service (for the length of the pulse) and stops it with `stop`, and reads whether it is open from the station's "Station Running" sensor. Before, ZoneFlow only turned the enable switch on and off, which does not water anything (issue #2).
+- **Clear errors instead of a silent miss.** A disabled station, a station that does not start within 15 seconds (for example queued behind another one) and a station whose "Station Running" sensor is missing are reported as an error on the run.
+- **A station can't be picked as the master valve.** OpenSprinkler opens its own master with each station; the form says so.
+
 ## [1.8.1] — Guide and test fixes
 
 ### Fixed
