@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 
 For detailed release notes and upgrade instructions, see the **docs/** folder for each version.
 
+## [1.8.1] — Guide and test fixes
+
+### Fixed
+
+- **The AI setup guide matches 1.8.0.** It now says the master valve is closed after a restart in the middle of a run, that the leak check needs a few minutes of flow and is not fooled by a meter that holds its last rate or reports late, that impossible meter and rain readings are ignored, and that a rain sensor stuck wet is caught even when Home Assistant restarts daily.
+- **A test that depended on the time of year** (the reference ET0 average at a tropical latitude) failed in the weekly run from late autumn. It now holds on any day. Nothing in the integration changed.
+
 ## [1.8.0] — A water estimate that follows the plant and the weather
 
 ### Added
