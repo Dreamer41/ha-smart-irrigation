@@ -821,7 +821,10 @@ class ZoneFlowController:
         """The master (backup) shut-off valve upstream of this zone (1.8, master_valve.py), or None."""
         if not self.valve_entity:
             return None
-        return self.entry.options.get(CONF_MASTER_VALVE_ENTITY, self.entry.data.get(CONF_MASTER_VALVE_ENTITY)) or None
+        entity = self.entry.options.get(CONF_MASTER_VALVE_ENTITY, self.entry.data.get(CONF_MASTER_VALVE_ENTITY)) or None
+        if entity and zone_valve.is_opensprinkler_station(self.hass, entity):
+            return None  # OpenSprinkler opens its own master with the station (1.8.2)
+        return entity
 
     @property
     def master_valve_normally_open(self) -> bool:
@@ -1218,8 +1221,12 @@ class ZoneFlowController:
         )
         if self.has_valve:
             self._unsubs.append(
+                # An OpenSprinkler station is read from its Station Running sensor, which may be enabled or
+                # re-created after setup: listen to both and let the handler take only the current one.
                 async_track_state_change_event(
-                    self.hass, [zone_valve.state_entity(self.hass, self.valve_entity)], self._on_valve_state_change
+                    self.hass,
+                    list(dict.fromkeys([self.valve_entity, zone_valve.state_entity(self.hass, self.valve_entity)])),
+                    self._on_valve_state_change,
                 )
             )
             # A valve that is already open when ZoneFlow starts (restored "on"
@@ -2943,6 +2950,8 @@ class ZoneFlowController:
         new_state: State | None = event.data.get("new_state")
         if new_state is None:
             return
+        if event.data.get("entity_id") != zone_valve.state_entity(self.hass, self.valve_entity):
+            return  # an OpenSprinkler station's enable switch: not the valve's open / closed state
 
         if (master := self._master()) is not None:
             master.valve_changed(self, zone_valve.is_open(new_state))
@@ -4112,9 +4121,13 @@ class ZoneFlowController:
                 self._learn_close_lag(dt_util.utcnow().timestamp())
             self._expected_pulse_minutes = limit_minutes if flow_pulse else pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
-            await zone_valve.async_open(
-                self.hass, valve, (limit_minutes if flow_pulse else pulse_minutes) * 60 + OPEN_RUN_MARGIN_SECONDS
-            )
+            try:
+                await zone_valve.async_open(
+                    self.hass, valve, (limit_minutes if flow_pulse else pulse_minutes) * 60 + OPEN_RUN_MARGIN_SECONDS
+                )
+            except Exception:
+                self._pulse_started_ts = None  # it never started: no watering time to count
+                raise
 
             # The pump-power audit only makes sense when a pump-power
             # sensor is actually configured -- without one, _pump_watts()

@@ -105,7 +105,7 @@ async def test_the_run_time_is_kept_within_what_opensprinkler_accepts(hass, fake
     await zone_valve.async_open(hass, SWITCH, 10**7)
     await zone_valve.async_open(hass, SWITCH, 0)
     await zone_valve.async_open(hass, SWITCH)
-    assert [c[1]["run_seconds"] for c in fake_opensprinkler] == [64800, 64800, 64800]
+    assert [c[1]["run_seconds"] for c in fake_opensprinkler] == [64800, 1, 64800]
 
 
 @pytest.mark.asyncio
@@ -203,3 +203,62 @@ async def test_a_station_without_its_running_sensor_is_refused(hass, fake_opensp
     with pytest.raises(HomeAssistantError, match="Station Running"):
         await zone_valve.async_open(hass, "switch.no_sensor_station_enabled", 60)
     assert fake_opensprinkler == []
+
+
+@pytest.mark.asyncio
+async def test_the_enable_switch_changing_is_not_read_as_the_valve_opening(hass, fake_opensprinkler):
+    c = await _zone(hass)
+    armed = []
+    c._arm_valve_stuck_watchdog = lambda when: armed.append(when)
+    hass.states.async_set(SWITCH, "off")
+    hass.states.async_set(SWITCH, "on")
+    await hass.async_block_till_done()
+    assert armed == []
+    hass.states.async_set(RUNNING, "on")
+    await hass.async_block_till_done()
+    assert len(armed) == 1
+
+
+@pytest.mark.asyncio
+async def test_a_saved_master_that_is_a_station_is_ignored(hass, fake_opensprinkler):
+    from custom_components.zoneflow.const import CONF_MASTER_VALVE_ENTITY
+
+    registry = er.async_get(hass)
+    registry.async_get_or_create(
+        "switch", "opensprinkler", "ctl_switch_station_enabled_0", suggested_object_id="master_station_enabled"
+    )
+    hass.states.async_set("switch.master_station_enabled", "on")
+    await _seed_source_entities(hass)
+    hass.states.async_set(PUMP, NUMBER_DEFAULTS["pump_min_watts"] + 50)
+    entry = make_entry(hass, **{CONF_VALVE_ENTITY: SWITCH, CONF_MASTER_VALVE_ENTITY: "switch.master_station_enabled"})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert hass.data[DOMAIN][entry.entry_id].master_valve_entity is None
+
+
+@pytest.mark.asyncio
+async def test_a_disabled_running_sensor_counts_as_missing(hass, fake_opensprinkler):
+    from homeassistant.exceptions import HomeAssistantError
+    from homeassistant.helpers.entity_registry import RegistryEntryDisabler
+
+    registry = er.async_get(hass)
+    registry.async_update_entity(RUNNING, disabled_by=RegistryEntryDisabler.USER)
+    hass.states.async_remove(RUNNING)
+    assert zone_valve.state_entity(hass, SWITCH) == SWITCH
+    with pytest.raises(HomeAssistantError, match="Station Running"):
+        await zone_valve.async_open(hass, SWITCH, 60)
+    assert fake_opensprinkler == []  # nothing was sent, so nothing runs untracked
+
+
+@pytest.mark.asyncio
+async def test_a_station_that_never_starts_counts_no_watering_time(hass, fake_opensprinkler, monkeypatch):
+    c = await _zone(hass)
+    monkeypatch.setattr(zone_valve, "OS_START_CONFIRM_SECONDS", 1)
+
+    async def _queued(call):
+        fake_opensprinkler.append(("run", dict(call.data)))
+
+    hass.services.async_register("opensprinkler", "run", _queued)
+    await hass.services.async_call(DOMAIN, "test_pulse", {"seconds": 1}, blocking=True)
+    await hass.async_block_till_done()
+    assert c.store.state.today_runtime_minutes == 0

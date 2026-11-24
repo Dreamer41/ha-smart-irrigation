@@ -717,8 +717,9 @@ EVENT_LOG = f"{DOMAIN}_log_event"
 CYCLE_STOP_TIMEOUT_SECONDS = 30
 # How long to wait for a valve told to close to report "off".
 VALVE_CLOSE_CONFIRM_SECONDS = 10
-# 1.8.2: an OpenSprinkler station is run for a set time; this much longer than the pulse, so ZoneFlow's own close always comes first
-OPEN_RUN_MARGIN_SECONDS = 60
+# 1.8.2: an OpenSprinkler station is run for a set time; this much longer than the pulse (the start check and the
+# pump-power wait come first), so ZoneFlow's own close always comes first
+OPEN_RUN_MARGIN_SECONDS = 180
 # FAO-56 day history (1.8): enough days for the longest interval and the 10-day rain lookback.
 ET0_HISTORY_DAYS = 14
 # 1.8: FAO-56 days on record before a zone on another model is offered the switch (a repair).

@@ -49,7 +49,8 @@ def state_entity(hass: HomeAssistant, entity_id: str) -> str:
         registry = er.async_get(hass)
         unique_id = registry.async_get(entity_id).unique_id.replace(_OS_SWITCH_PART, _OS_RUNNING_PART)
         running = registry.async_get_entity_id("binary_sensor", OPENSPRINKLER, unique_id)
-        if running:
+        sensor = registry.async_get(running) if running else None
+        if sensor is not None and sensor.disabled_by is None:  # a disabled sensor never reports a state
             return running
     return entity_id
 
@@ -82,10 +83,12 @@ async def async_open(hass: HomeAssistant, entity_id: str, run_seconds: float | N
                 f"{entity_id}: its OpenSprinkler 'Station Running' sensor was not found (is it disabled?), "
                 "so ZoneFlow could not tell that the station is watering"
             )
+        if hass.states.get(running) is None:
+            raise HomeAssistantError(f"{entity_id}: the 'Station Running' sensor {running} has no state, so ZoneFlow could not tell that the station is watering")
         enabled = hass.states.get(entity_id)
         if enabled is not None and enabled.state == "off":
             raise HomeAssistantError(f"{entity_id} is a disabled OpenSprinkler station: turn it on first")
-        seconds = int(min(OS_MAX_RUN_SECONDS, max(1, math.ceil(run_seconds or OS_MAX_RUN_SECONDS))))
+        seconds = int(min(OS_MAX_RUN_SECONDS, max(1, math.ceil(OS_MAX_RUN_SECONDS if run_seconds is None else run_seconds))))
         await hass.services.async_call(
             OPENSPRINKLER, "run", {"entity_id": entity_id, "run_seconds": seconds}, blocking=True
         )
