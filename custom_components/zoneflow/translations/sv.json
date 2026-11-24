@@ -369,6 +369,7 @@
       "area_name_exists": "Ett område med detta namn finns redan.",
       "flow_rate_out_of_range": "De siffrorna ger ett flöde som zonen inte kan ha. Kontrollera antalet droppare, flödet från en droppare och ytan.",
       "master_is_zone_valve": "Huvudventilen måste vara en annan ventil än zonernas egna ventiler.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Den här ventilen är en annan zons huvudventil."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Ge området ett namn.",
       "area_name_exists": "Ett område med detta namn finns redan.",
       "master_is_zone_valve": "Huvudventilen måste vara en annan ventil än zonernas egna ventiler.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Den här ventilen är en annan zons huvudventil."
     }
   },

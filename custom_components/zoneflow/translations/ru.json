@@ -369,6 +369,7 @@
       "area_name_exists": "Область с таким названием уже существует.",
       "flow_rate_out_of_range": "Эти числа дают расход, которого у этой зоны быть не может. Проверьте число эмиттеров, расход одного эмиттера и площадь.",
       "master_is_zone_valve": "Главный клапан должен отличаться от собственных клапанов зон.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Этот клапан — главный клапан другой зоны."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Дайте название области.",
       "area_name_exists": "Область с таким названием уже существует.",
       "master_is_zone_valve": "Главный клапан должен отличаться от собственных клапанов зон.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Этот клапан — главный клапан другой зоны."
     }
   },

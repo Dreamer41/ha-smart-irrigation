@@ -369,6 +369,7 @@
       "area_name_exists": "Alue tällä nimellä on jo olemassa.",
       "flow_rate_out_of_range": "Näillä luvuilla virtaama on sellainen, jota tällä vyöhykkeellä ei voi olla. Tarkista suuttimien määrä, yhden suuttimen virtaama ja ala.",
       "master_is_zone_valve": "Pääventtiilin on oltava eri venttiili kuin vyöhykkeiden omat venttiilit.",
+      "master_is_opensprinkler": "OpenSprinkler-asemaa ei voi käyttää pääventtiilinä: OpenSprinkler avaa oman pääventtiilinsä aseman mukana. Jätä tämä tyhjäksi.",
       "valve_is_a_master": "Tämä venttiili on toisen vyöhykkeen pääventtiili."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Anna alueelle nimi.",
       "area_name_exists": "Alue tällä nimellä on jo olemassa.",
       "master_is_zone_valve": "Pääventtiilin on oltava eri venttiili kuin vyöhykkeiden omat venttiilit.",
+      "master_is_opensprinkler": "OpenSprinkler-asemaa ei voi käyttää pääventtiilinä: OpenSprinkler avaa oman pääventtiilinsä aseman mukana. Jätä tämä tyhjäksi.",
       "valve_is_a_master": "Tämä venttiili on toisen vyöhykkeen pääventtiili."
     }
   },

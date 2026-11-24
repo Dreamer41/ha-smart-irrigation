@@ -369,6 +369,7 @@
       "area_name_exists": "Une zone portant ce nom existe déjà.",
       "flow_rate_out_of_range": "Ces nombres donnent un débit que cette zone ne peut pas avoir. Vérifiez le nombre d'émetteurs, le débit d'un émetteur et la surface.",
       "master_is_zone_valve": "La vanne maîtresse doit être différente des vannes propres aux zones.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Cette vanne est la vanne maîtresse d'une autre zone."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Nommez la zone.",
       "area_name_exists": "Une zone portant ce nom existe déjà.",
       "master_is_zone_valve": "La vanne maîtresse doit être différente des vannes propres aux zones.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Cette vanne est la vanne maîtresse d'une autre zone."
     }
   },

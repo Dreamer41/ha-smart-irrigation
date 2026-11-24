@@ -369,6 +369,7 @@
       "area_name_exists": "An area with this name already exists.",
       "flow_rate_out_of_range": "Those numbers give a flow rate this zone cannot have. Check the number of emitters, the flow of one emitter and the area.",
       "master_is_zone_valve": "The master valve must be a different valve from the zones' own valves.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "This valve is another zone's master valve."
     },
     "abort": {
@@ -393,6 +394,7 @@
       "area_name_required": "Give the area a name.",
       "area_name_exists": "An area with this name already exists.",
       "master_is_zone_valve": "The master valve must be a different valve from the zones' own valves.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "This valve is another zone's master valve."
     },
     "step": {

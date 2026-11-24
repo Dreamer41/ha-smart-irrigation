@@ -369,6 +369,7 @@
       "area_name_exists": "Obszar o tej nazwie již istnieje.",
       "flow_rate_out_of_range": "Z tych liczb wychodzi przepływ, jakiego ta strefa mieć nie może. Sprawdź liczbę emiterów, przepływ jednego emitera i powierzchnię.",
       "master_is_zone_valve": "Zawór główny musi być innym zaworem niż zawory stref.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Ten zawór jest zaworem głównym innej strefy."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Nadaj nazwę obszarowi.",
       "area_name_exists": "Obszar o tej nazwie již istnieje.",
       "master_is_zone_valve": "Zawór główny musi być innym zaworem niż zawory stref.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Ten zawór jest zaworem głównym innej strefy."
     }
   },

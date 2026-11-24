@@ -369,6 +369,7 @@
       "area_name_exists": "Oblasť s týmto názvom už existuje.",
       "flow_rate_out_of_range": "Z týchto čísel vychádza prietok, aký táto zóna mať nemôže. Skontrolujte počet výtokov, prietok jedného výtoku a plochu.",
       "master_is_zone_valve": "Hlavný ventil musí byť iný ako vlastné ventily zón.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Tento ventil je hlavným ventilom inej zóny."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Pomenujte oblasť.",
       "area_name_exists": "Oblasť s týmto názvom už existuje.",
       "master_is_zone_valve": "Hlavný ventil musí byť iný ako vlastné ventily zón.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Tento ventil je hlavným ventilom inej zóny."
     }
   },

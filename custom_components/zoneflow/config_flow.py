@@ -170,7 +170,7 @@ async def _test_valve(hass, valve: str) -> str:
     """Open the valve for a moment and say, in words, what happened: it answered and
     closed again, it never reported open, or it did not report closed. Always ends
     by telling the valve to close."""
-    state = hass.states.get(valve)
+    state = zone_valve.get_state(hass, valve)
     if state is None or zone_valve.is_offline(state):
         return messages.text(hass, "valve_test.unavailable", valve=valve)
     if zone_valve.is_open(state):
@@ -179,13 +179,13 @@ async def _test_valve(hass, valve: str) -> str:
 
     async def _reaches(check) -> bool:
         for _ in range(int(VALVE_TEST_WAIT_SECONDS / 0.25)):
-            if check(hass.states.get(valve)):
+            if check(zone_valve.get_state(hass, valve)):
                 return True
             await asyncio.sleep(0.25)
         return False
 
     try:
-        await zone_valve.async_open(hass, valve)
+        await zone_valve.async_open(hass, valve, VALVE_TEST_WAIT_SECONDS + VALVE_TEST_HOLD_SECONDS + 60)
         # A valve entity is open once it reports open (not while still opening).
         opened = await _reaches(lambda s: s is not None and s.state in ("on", "open"))
         if opened:
@@ -404,6 +404,8 @@ def _duplicate_errors(hass, data: dict[str, Any], *, exclude_entry_id: str | Non
     master = data.get(CONF_MASTER_VALVE_ENTITY)
     if master and master == valve:
         errors[CONF_MASTER_VALVE_ENTITY] = "master_is_zone_valve"
+    if master and CONF_MASTER_VALVE_ENTITY not in errors and zone_valve.is_opensprinkler_station(hass, master):
+        errors[CONF_MASTER_VALVE_ENTITY] = "master_is_opensprinkler"  # it opens its own master with the station
     for entry in hass.config_entries.async_entries(DOMAIN):
         if entry.entry_id == exclude_entry_id:
             continue

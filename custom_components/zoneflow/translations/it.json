@@ -369,6 +369,7 @@
       "area_name_exists": "Un'area con questo nome esiste già.",
       "flow_rate_out_of_range": "Quei numeri danno una portata che questa zona non può avere. Controlli il numero di erogatori, la portata di uno e l'area.",
       "master_is_zone_valve": "La valvola principale deve essere diversa dalle valvole proprie delle zone.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Questa valvola è la valvola principale di un'altra zona."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Assegna un nome all'area.",
       "area_name_exists": "Un'area con questo nome esiste già.",
       "master_is_zone_valve": "La valvola principale deve essere diversa dalle valvole proprie delle zone.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Questa valvola è la valvola principale di un'altra zona."
     }
   },

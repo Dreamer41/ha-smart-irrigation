@@ -369,6 +369,7 @@
       "area_name_exists": "已存在同名区域。",
       "flow_rate_out_of_range": "这些数字得出的流量是该区域不可能有的。请检查出水器数量、单个出水器的流量和面积。",
       "master_is_zone_valve": "总阀必须与各区域自己的阀门不同。",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "此阀门是另一个区域的总阀。"
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "为区域命名。",
       "area_name_exists": "已存在同名区域。",
       "master_is_zone_valve": "总阀必须与各区域自己的阀门不同。",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "此阀门是另一个区域的总阀。"
     }
   },

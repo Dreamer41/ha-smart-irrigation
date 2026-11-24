@@ -369,6 +369,7 @@
       "area_name_exists": "Ein Bereich mit diesem Namen existiert bereits.",
       "flow_rate_out_of_range": "Aus diesen Zahlen ergibt sich ein Durchfluss, den diese Zone nicht haben kann. Prüfen Sie die Anzahl der Auslässe, den Durchfluss eines Auslasses und die Fläche.",
       "master_is_zone_valve": "Das Hauptventil muss ein anderes Ventil sein als die Ventile der Zonen.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Dieses Ventil ist das Hauptventil einer anderen Zone."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Geben Sie dem Bereich einen Namen.",
       "area_name_exists": "Ein Bereich mit diesem Namen existiert bereits.",
       "master_is_zone_valve": "Das Hauptventil muss ein anderes Ventil sein als die Ventile der Zonen.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Dieses Ventil ist das Hauptventil einer anderen Zone."
     }
   },

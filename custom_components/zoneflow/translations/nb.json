@@ -369,6 +369,7 @@
       "area_name_exists": "Et område med dette navnet finnes allerede.",
       "flow_rate_out_of_range": "Disse tallene gir en vannmengde sonen ikke kan ha. Sjekk antall dryppere, vannmengden fra én dypper og arealet.",
       "master_is_zone_valve": "Hovedventilen må være en annen ventil enn sonenes egne ventiler.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Denne ventilen er en annen sones hovedventil."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Gi området et navn.",
       "area_name_exists": "Et område med dette navnet finnes allerede.",
       "master_is_zone_valve": "Hovedventilen må være en annen ventil enn sonenes egne ventiler.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Denne ventilen er en annen sones hovedventil."
     }
   },

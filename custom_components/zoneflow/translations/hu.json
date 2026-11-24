@@ -369,6 +369,7 @@
       "area_name_exists": "Már létezik egy terület ezzel a névvel.",
       "flow_rate_out_of_range": "Ezekből a számokból olyan térfogatáram jön ki, amilyen ennek a zónának nem lehet. Ellenőrizze a kibocsátók számát, egy kibocsátó hozamát és a területet.",
       "master_is_zone_valve": "A főszelepnek más szelepnek kell lennie, mint a zónák saját szelepei.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Ez a szelep egy másik zóna főszelepe."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Nevezze el a területet.",
       "area_name_exists": "Már létezik egy terület ezzel a névvel.",
       "master_is_zone_valve": "A főszelepnek más szelepnek kell lennie, mint a zónák saját szelepei.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Ez a szelep egy másik zóna főszelepe."
     }
   },

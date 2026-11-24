@@ -369,6 +369,7 @@
       "area_name_exists": "Er bestaat al een gebied met deze naam.",
       "flow_rate_out_of_range": "Die getallen geven een debiet dat deze zone niet kan hebben. Controleer het aantal druppelaars, het debiet van één druppelaar en de oppervlakte.",
       "master_is_zone_valve": "De hoofdklep moet een andere klep zijn dan de eigen kleppen van de zones.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Deze klep is de hoofdklep van een andere zone."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Geef het gebied een naam.",
       "area_name_exists": "Er bestaat al een gebied met deze naam.",
       "master_is_zone_valve": "De hoofdklep moet een andere klep zijn dan de eigen kleppen van de zones.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Deze klep is de hoofdklep van een andere zone."
     }
   },

@@ -101,6 +101,7 @@ from .const import (
     CYCLE_STOP_TIMEOUT_SECONDS,
     SHUTDOWN_CONFIRM_SECONDS,
     SHUTDOWN_STOP_TIMEOUT_SECONDS,
+    OPEN_RUN_MARGIN_SECONDS,
     VALVE_CLOSE_CONFIRM_SECONDS,
     CONF_UNIT_SYSTEM,
     CONF_CSV_PATH,
@@ -1217,13 +1218,15 @@ class ZoneFlowController:
         )
         if self.has_valve:
             self._unsubs.append(
-                async_track_state_change_event(self.hass, [self.valve_entity], self._on_valve_state_change)
+                async_track_state_change_event(
+                    self.hass, [zone_valve.state_entity(self.hass, self.valve_entity)], self._on_valve_state_change
+                )
             )
             # A valve that is already open when ZoneFlow starts (restored "on"
             # after a restart mid-cycle) never produces an "on" state change for
             # the listener above to see, so arm the stuck-valve watchdog for it
             # here, from when it actually turned on.
-            valve_now = self.hass.states.get(self.valve_entity)
+            valve_now = zone_valve.get_state(self.hass, self.valve_entity)
             if zone_valve.is_open(valve_now):
                 self._arm_valve_stuck_watchdog(valve_now.last_changed)
         et0_entities = list(self._et0_inputs())
@@ -3082,7 +3085,7 @@ class ZoneFlowController:
         # The valve the lock was taken for, which a changed valve setting
         # may no longer name, and the zone's current valve.
         for valve in dict.fromkeys(v for v in (lock_valve, self.valve_entity) if v):
-            valve_state = self.hass.states.get(valve)
+            valve_state = zone_valve.get_state(self.hass, valve)
             if valve_state is not None and valve_state.state not in ("unavailable", *zone_valve.CLOSED_STATES):
                 await zone_valve.async_close(self.hass, valve)
         await self._log_event(
@@ -3850,7 +3853,9 @@ class ZoneFlowController:
             if not await master.async_close_for_test():
                 _LOGGER.warning("%s: master valve self-test skipped: %s did not report closed", self.entry.title, master.entity_id)
                 return
-            await zone_valve.async_open(self.hass, valve)
+            await zone_valve.async_open(
+                self.hass, valve, master_valve.TEST_SETTLE_SECONDS + master_valve.TEST_MEASURE_SECONDS + OPEN_RUN_MARGIN_SECONDS
+            )
             await self._pause(master_valve.TEST_SETTLE_SECONDS)  # the pipe after it drains, the pump builds pressure
             if self._stopping or self.store.state.abort_on:
                 return
@@ -4107,7 +4112,9 @@ class ZoneFlowController:
                 self._learn_close_lag(dt_util.utcnow().timestamp())
             self._expected_pulse_minutes = limit_minutes if flow_pulse else pulse_minutes
             self._pulse_started_ts = dt_util.utcnow().timestamp()
-            await zone_valve.async_open(self.hass, valve)
+            await zone_valve.async_open(
+                self.hass, valve, (limit_minutes if flow_pulse else pulse_minutes) * 60 + OPEN_RUN_MARGIN_SECONDS
+            )
 
             # The pump-power audit only makes sense when a pump-power
             # sensor is actually configured -- without one, _pump_watts()
@@ -4341,7 +4348,7 @@ class ZoneFlowController:
         Returns True once the valve is confirmed not open; if even this
         fails, the stuck-valve watchdog is still armed for it."""
         valve = self._cycle_valve or self.valve_entity
-        state = self.hass.states.get(valve)
+        state = zone_valve.get_state(self.hass, valve)
         if state is None or state.state == "unavailable":
             return state is None
         try:
@@ -4358,7 +4365,7 @@ class ZoneFlowController:
         lock stays for the power-loss and stale-lock watchdogs."""
         waited = 0.0
         while True:
-            state = self.hass.states.get(valve)
+            state = zone_valve.get_state(self.hass, valve)
             if state is None or zone_valve.is_closed(state):
                 return True
             # A motorised valve reports "closing" for up to half a minute: it is still on its way.

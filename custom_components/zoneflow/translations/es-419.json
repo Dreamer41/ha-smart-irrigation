@@ -369,6 +369,7 @@
       "area_name_exists": "Ya existe un área con este nombre.",
       "flow_rate_out_of_range": "Esos números dan un caudal que esta zona no puede tener. Compruebe el número de emisores, el caudal de uno y el área.",
       "master_is_zone_valve": "La válvula maestra debe ser distinta de las válvulas propias de las zonas.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Esta válvula es la válvula maestra de otra zona."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Asigna un nombre al área.",
       "area_name_exists": "Ya existe un área con este nombre.",
       "master_is_zone_valve": "La válvula maestra debe ser distinta de las válvulas propias de las zonas.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Esta válvula es la válvula maestra de otra zona."
     }
   },

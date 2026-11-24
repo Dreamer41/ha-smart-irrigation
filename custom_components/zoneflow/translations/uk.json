@@ -369,6 +369,7 @@
       "area_name_exists": "Область з такою назвою вже існує.",
       "flow_rate_out_of_range": "Ці числа дають витрату, якої ця зона мати не може. Перевірте кількість емітерів, витрату одного емітера та площу.",
       "master_is_zone_valve": "Головний клапан має відрізнятися від власних клапанів зон.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Цей клапан — головний клапан іншої зони."
     },
     "abort": {
@@ -786,6 +787,7 @@
       "area_name_required": "Дайте назву області.",
       "area_name_exists": "Область з такою назвою вже існує.",
       "master_is_zone_valve": "Головний клапан має відрізнятися від власних клапанів зон.",
+      "master_is_opensprinkler": "An OpenSprinkler station can't be the master valve here: OpenSprinkler opens its own master with each station. Leave this empty.",
       "valve_is_a_master": "Цей клапан — головний клапан іншої зони."
     }
   },
